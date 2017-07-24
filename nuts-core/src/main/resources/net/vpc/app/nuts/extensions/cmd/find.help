@@ -1,0 +1,47 @@
+[[find]]         : searches for installed and available <<nuts>>
+
+===SYNOPSYS:===
+find <options> [-js <JAVASCRIPT EXPRESSION>]  [ [-e] <LIKE EXPRESSION> ...]
+
+searches for installed and available <<nuts>>. Found <<nuts>> are displayed as namespace aware <<nuts>> ids
+(starting wth namespace:// where namespace is the name of the repository where the <<nuts>> was found).
+When no expressions and no options are provided, all available <<nuts>> (in all registered repositories)
+will be listed.
+
+options :
+-l          : display long format
+-i          : only installed <<nuts>> will be displayed.
+-!i         : only non installed <<nuts>> will be displayed.
+-u          : only updatable <<nuts>> will be displayed.
+-!u         : only non updatable <<nuts>> will be displayed.
+-o          : offline mode (no remote/http access)
+-R          : remote mode (no local files)
+-d          : display descriptor
+-D          : display effective descriptor
+-e          : shell like expressions are used for searching. (SLE) Shell Like Expression may continue * as wildcard.
+              When using SLE expressions (with or without the -e option), multiple expressions are interpreted as an OR expression.
+-js         : the filter expression is interpreted as javascript expression which MUST contain a return clause.
+              The expression should filter against the predefined 'id' variable.
+When using both javascript and SLE expressions, an error will be thrown.
+--display-id        : (default) display <<nuts>> ids
+--display-packaging : display packaging instead of ids
+--display-arch      : display architectures instead of ids
+
+-r  <REPOSITORY>    : accept only listed repository
+
+===EXAMPLES:===
+
+find
+   searches for and displays ALL available <<nuts>>
+
+find -i
+   searches for and displays ALL installed <<nuts>>
+
+find -i ab* *yz
+   searches for and displays installed <<nuts>> that starts with 'ab' or ends with 'yz'
+
+find -js "return id.version.ge('1.2') && id.version.le('1.8')"
+   searches for and displays installed <<nuts>> with version between 1.2 and 1.8 (exclusively)
+
+find -r maven-vpc-public -R net.vpc.app.nuts:nuts net.vpc.app.nuts:nuts-core
+   searches for and displays remote (will not look locally) at the maven-vpc-public repository for newest versions of nuts and nuts-core

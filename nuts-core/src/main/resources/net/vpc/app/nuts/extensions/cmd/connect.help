@@ -1,0 +1,14 @@
+[[connect]]      : connects to a [[nuts]] server
+
+===SYNOPSYS:===
+[[connect]] [user@]server[:port]
+
+connects to a [[nuts]] server as user
+
+
+===EXAMPLES:===
+
+[[connect]] toto@192.36.6.8
+   connects to 192.36.6.8 on the default port (8898)
+
+

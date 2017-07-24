@@ -1,0 +1,14 @@
+[[deploy]]       : deploys a <<nuts>>
+
+===SYNOPSYS:===
+deploy file [desc-file [repositoryId]]
+
+deploys a new file to the given repository
+
+
+===EXAMPLES:===
+
+deploy myjar.jar
+   deploy the myjar.jar file
+
+

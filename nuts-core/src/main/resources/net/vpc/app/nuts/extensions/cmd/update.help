@@ -1,0 +1,14 @@
+[[update]]       : updates a <<nuts>>
+
+===SYNOPSYS:===
+update id
+
+updates a <<nuts>> from remote servers
+
+
+===EXAMPLES:===
+
+update my-group:my-name
+   update the <<nuts>>
+
+

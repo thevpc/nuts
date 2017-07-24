@@ -1,0 +1,19 @@
+[[uname]]        : print system information
+
+===SYNOPSYS:===
+uname <options>
+
+print system information
+
+-a : all information
+-m : machine hardware/arch name
+-r : os release
+-d : os distribution
+
+
+===EXAMPLES:===
+
+uname -a
+   print system information
+
+

@@ -1,0 +1,17 @@
+<!-- 22-Nov-2011 AYA : BDT 26587 update profile for the Jenkins build. -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.vpc.app.nuts</groupId>
+    <artifactId>nuts-root</artifactId>
+    <version>0.3.1.5</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>nuts</module>
+        <module>nuts-core</module>
+        <module>nuts-clown</module>
+    </modules>
+    <properties>
+    </properties>
+</project>

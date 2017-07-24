@@ -1,0 +1,12 @@
+[[fetch]]        : fetches a <<nuts>>
+
+===SYNOPSYS:===
+fetch <<<nuts-id>>>  ...
+
+fetches (without installing) a <<nuts>> package
+
+
+===EXAMPLES:===
+
+[[fetch]] ab*
+   fetches all <<nuts>> that starts with 'ab'

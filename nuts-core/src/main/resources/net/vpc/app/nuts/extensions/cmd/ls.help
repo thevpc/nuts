@@ -1,0 +1,16 @@
+[[ls]]           : lists directory
+
+===SYNOPSYS:===
+ls [options] <directory>
+
+-l : long format
+-d : list directory names
+
+lists directory content
+
+===EXAMPLES:===
+
+cd /another/path
+   changes to another path
+
+

@@ -1,0 +1,14 @@
+[[push]]         : pushes a <<nuts>>
+
+===SYNOPSYS:===
+push id
+
+pushes a <<nuts>> to remote server
+
+
+===EXAMPLES:===
+
+push my-group:my-name
+   pushes the <<nuts>>
+
+

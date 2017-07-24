@@ -1,0 +1,17 @@
+[[login]]        : logs in as a given user
+
+===SYNOPSYS===
+login <username> [user-password]
+
+logs in as <username>. If user-password is not specified, will be asked for
+
+
+===EXAMPLES:===
+
+login admin admin
+   connects as admin with default credentials admin
+
+login admin
+   connects as admin. Password  will be asked for
+
+

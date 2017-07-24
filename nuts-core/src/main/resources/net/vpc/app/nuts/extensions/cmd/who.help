@@ -1,0 +1,13 @@
+[[who]]          : shows who is logged in
+
+===SYNOPSYS:===
+[[who]]
+
+shows who is logged in
+
+===EXAMPLES:===
+
+login toto@192.36.6.8
+   connects to 192.36.6.8 on the default port (8898)
+
+
