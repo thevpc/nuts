@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="nuts-clown:war exploded">
+    <output-path>$PROJECT_DIR$/nuts-clown/target/nuts-clown-0.3.2.0</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="nuts-clown" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="archive" name="nuts-0.3.2.jar">
+            <element id="module-output" name="nuts" />
+          </element>
+          <element id="library" level="project" name="Maven: org.glassfish:javax.json:1.0.4" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/nuts-clown/target/nuts-clown-0.3.2.0/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="nuts-clown/web/Web" />
+    </root>
+  </artifact>
+</component>

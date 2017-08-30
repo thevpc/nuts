@@ -206,7 +206,7 @@ public class NutsHttpServletFacade {
                     filter = JsonUtils.deserialize(pattern,NutsIdPatternFilter.class);
                 }
                 if (filter != null) {
-                    Iterator<NutsId> it = context.getWorkspace().find(null, filter, context.getSession().copy().setTransitive(transitive));
+                    Iterator<NutsId> it = context.getWorkspace().findIterator(null, filter, context.getSession().copy().setTransitive(transitive));
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                     context.sendResponseText(200, iteratorNamedNutIdToString(it));
                 } else {

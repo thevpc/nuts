@@ -108,11 +108,19 @@ public class NutsUtils {
 
 
     public static boolean isEffectiveValue(String value) {
-        return (!StringUtils.isEmpty(value) && !value.contains("${"));
+        return (!StringUtils.isEmpty(value) && !containsVars(value));
+    }
+
+    public static boolean containsVars(String value) {
+        return value.contains("${");
     }
 
     public static boolean isEffectiveId(NutsId id) {
         return (isEffectiveValue(id.getGroup()) && isEffectiveValue(id.getName()) && isEffectiveValue(id.getVersion().getValue()));
+    }
+
+    public static boolean containsVars(NutsId id) {
+        return (containsVars(id.getGroup()) && containsVars(id.getName()) && containsVars(id.getVersion().getValue()));
     }
 
 
@@ -317,5 +325,37 @@ public class NutsUtils {
             list.add(it.next());
         }
         return list;
+    }
+
+    public static String[] applyStringProperties(String[] child, StringMapper properties) {
+        String[] vals = new String[child.length];
+        for (int i = 0; i < vals.length; i++) {
+            vals[i] = applyStringProperties(child[i], properties);
+        }
+        return vals;
+    }
+
+    public static Map<String,String> applyMapProperties(Map<String, String> child, StringMapper properties) {
+        Map<String,String> m2=new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : child.entrySet()) {
+            m2.put(applyStringProperties(entry.getKey(),properties),applyStringProperties(entry.getValue(),properties));
+        }
+        return m2;
+    }
+
+    public static String applyStringProperties(String child, StringMapper properties) {
+        if (StringUtils.isEmpty(child)) {
+            return null;
+        }
+        return StringUtils.replaceVars(child, properties);
+    }
+
+    public static String applyStringInheritance(String child, String parent) {
+        child = StringUtils.trimToNull(child);
+        parent = StringUtils.trimToNull(parent);
+        if (child == null) {
+            return parent;
+        }
+        return child;
     }
 }

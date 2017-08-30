@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import net.vpc.app.nuts.util.NutsUtils;
+import net.vpc.app.nuts.util.StringMapper;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.util.Map;
@@ -359,4 +360,15 @@ public class NutsId {
         result = 31 * result + (query != null ? query.hashCode() : 0);
         return result;
     }
+
+    public NutsId apply(StringMapper properties) {
+        return new NutsId(
+                NutsUtils.applyStringProperties(this.getNamespace(), properties),
+                NutsUtils.applyStringProperties(this.getGroup(), properties),
+                NutsUtils.applyStringProperties(this.getName(), properties),
+                NutsUtils.applyStringProperties(this.getVersion().getValue(), properties),
+                NutsUtils.applyMapProperties(this.getQueryMap(), properties)
+        );
+    }
+
 }

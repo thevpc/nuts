@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="nuts" />
+        <module name="nuts-clown" />
+        <module name="nuts-core" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="nuts" target="1.8" />
+      <module name="nuts-clown" target="1.5" />
+      <module name="nuts-core" target="1.8" />
+      <module name="nuts-root" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

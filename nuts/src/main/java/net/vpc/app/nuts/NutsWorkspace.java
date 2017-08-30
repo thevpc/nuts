@@ -134,7 +134,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsId resolveId(String id, NutsSession session) throws IOException;
 
-    Iterator<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException;
+    Iterator<NutsId> findIterator(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException;
+
+    List<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException;
 
     /**
      * finds all Ids for the group and name (aka finds all versions)

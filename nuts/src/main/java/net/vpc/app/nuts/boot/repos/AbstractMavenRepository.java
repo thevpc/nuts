@@ -34,9 +34,7 @@ import net.vpc.app.nuts.boot.AbstractNutsRepository;
 import net.vpc.app.nuts.util.*;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,15 +126,15 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             for (NutsId nutsId : nutsDescriptor.getParents()) {
                 parentId = nutsId;
             }
+            NutsDescriptor parentDescriptor = null;
             if (parentId != null) {
                 if (!NutsUtils.isEffectiveId(parentId)) {
-                    NutsDescriptor pd = null;
                     try {
-                        pd = ws.fetchDescriptor(parentId.toString(), true, transitiveSession);
+                        parentDescriptor = ws.fetchDescriptor(parentId.toString(), true, transitiveSession);
                     } catch (Exception ex) {
                         throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
                     }
-                    parentId = pd.getId();
+                    parentId = parentDescriptor.getId();
                 }
             }
             if (parentId != null) {
@@ -147,14 +145,43 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             }
             NutsId thisId = nutsDescriptor.getId();
             if (!NutsUtils.isEffectiveId(thisId)) {
-                if (parentId == null) {
+                if (parentId != null) {
+                    if (StringUtils.isEmpty(thisId.getGroup())) {
+                        thisId = thisId.setGroup(parentId.getGroup());
+                    }
+                    if (StringUtils.isEmpty(thisId.getVersion().getValue())) {
+                        thisId = thisId.setVersion(parentId.getVersion().getValue());
+                    }
+                }
+                HashMap<NutsId,NutsDescriptor> cache=new HashMap<>();
+                Set<String> done=new HashSet<>();
+                Stack<NutsId> todo=new Stack<>();
+                todo.push(nutsDescriptor.getId());
+                cache.put(nutsDescriptor.getId(),nutsDescriptor);
+                while(todo.isEmpty()) {
+                    NutsId pid=todo.pop();
+                    NutsDescriptor d=cache.get(pid);
+                    if(d==null){
+                        try {
+                            d = ws.fetchDescriptor(pid.toString(), true, transitiveSession);
+                        } catch (Exception ex) {
+                            throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
+                        }
+                    }
+                    done.add(pid.getFullName());
+                    if (NutsUtils.containsVars(thisId)) {
+                        thisId.apply(new MapStringMapper(d.getProperties()));
+                    }else{
+                        break;
+                    }
+                    for (NutsId nutsId : d.getParents()) {
+                        if(!done.contains(nutsId.getFullName())){
+                            todo.push(nutsId);
+                        }
+                    }
+                }
+                if (NutsUtils.containsVars(thisId)) {
                     throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
-                }
-                if (StringUtils.isEmpty(thisId.getGroup())) {
-                    thisId = thisId.setGroup(parentId.getGroup());
-                }
-                if (StringUtils.isEmpty(thisId.getVersion().getValue())) {
-                    thisId = thisId.setVersion(parentId.getVersion().getValue());
                 }
                 nutsDescriptor = nutsDescriptor.setId(thisId);
             }

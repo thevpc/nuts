@@ -1,0 +1,13 @@
+[[version]]           : shows version
+
+===SYNOPSYS:===
+version
+
+shows version
+
+===EXAMPLES:===
+
+version
+   shows version
+
+

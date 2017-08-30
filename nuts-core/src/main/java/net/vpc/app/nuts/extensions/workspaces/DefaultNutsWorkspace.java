@@ -1286,7 +1286,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         throw new NutsNotFoundException(id);
     }
 
-    public Iterator<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
+    @Override
+    public List<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
+        return CorePlatformUtils.toList(findIterator(repositoryFilter, filter, session));
+    }
+
+    public Iterator<NutsId> findIterator(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }

@@ -94,7 +94,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                 try {
                     t = model.parseDescriptor(file, session);
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
                 if (t != null) {
                     if (!NutsUtils.isEffectiveId(t.getId())) {

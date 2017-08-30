@@ -30,10 +30,11 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
 import net.vpc.app.nuts.boot.NutsIdPatternFilter;
 import net.vpc.app.nuts.extensions.cmd.cmdline.*;
+import net.vpc.app.nuts.util.NutsUtils;
 import net.vpc.app.nuts.util.PlatformUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
@@ -54,6 +55,15 @@ public class FindCommand extends AbstractNutsCommand {
         String jsCode = null;
         HashSet<String> nonjs = new HashSet<String>();
     }
+    enum SearchMode{
+        OFFLINE,
+        ONLINE,
+        REMOTE,
+        COMMIT,
+        UPDATE,
+        STATUS,
+    }
+
     class FindContext{
         HashSet<String> arch = new HashSet<String>();
         HashSet<String> pack = new HashSet<String>();
@@ -62,7 +72,7 @@ public class FindCommand extends AbstractNutsCommand {
         boolean showFile = false;
         boolean showClass = false;
         boolean jsflag = false;
-        FetchMode fecthMode = FetchMode.ONLINE;
+        SearchMode fecthMode = SearchMode.ONLINE;
         boolean desc = false;
         boolean eff = false;
         boolean executable = true;
@@ -103,11 +113,17 @@ public class FindCommand extends AbstractNutsCommand {
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-c", "--class")) {
                 findContext.showClass = true;
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-off", "--offline")) {
-                findContext.fecthMode = FetchMode.OFFLINE;
+                findContext.fecthMode = SearchMode.OFFLINE;
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-on", "--online")) {
-                findContext.fecthMode = FetchMode.ONLINE;
+                findContext.fecthMode = SearchMode.ONLINE;
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-R", "--remote")) {
-                findContext.fecthMode = FetchMode.REMOTE;
+                findContext.fecthMode = SearchMode.REMOTE;
+            } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-C", "--commitable")) {
+                findContext.fecthMode = SearchMode.COMMIT;
+            } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-U", "--updatable")) {
+                findContext.fecthMode = SearchMode.UPDATE;
+            } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-S", "--status")) {
+                findContext.fecthMode = SearchMode.STATUS;
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-e", "--exec")) {
                 findContext.executable=true;
                 findContext.library=false;
@@ -195,16 +211,58 @@ public class FindCommand extends AbstractNutsCommand {
         if (findContext.installedDependencies == null) {
             findContext.installedDependencies = false;
         }
-        for (FindWhat findWhat : findWhats) {
-            search(findWhat,findContext);
+
+        if(findContext.fecthMode==SearchMode.STATUS){
+            findContext.fecthMode=SearchMode.COMMIT;
+            boolean first=true;
+            for (FindWhat findWhat : findWhats) {
+                List<NutsId> it = (find(findWhat, findContext));
+                if(!it.isEmpty()) {
+                    if(first){
+                        first=false;
+                        findContext.out.drawln("===Packages to COMMIT===:");
+                    }
+                    display(it, findContext);
+                }
+            }
+
+            first=true;
+            findContext.fecthMode=SearchMode.UPDATE;
+            for (FindWhat findWhat : findWhats) {
+                List<NutsId> it = (find(findWhat, findContext));
+                if(!it.isEmpty()) {
+                    if (first) {
+                        first = false;
+                        findContext.out.drawln("===Packages to UPDATE===:");
+                    }
+                    display(it, findContext);
+                }
+            }
+
+            first=true;
+            findContext.fecthMode=SearchMode.REMOTE;
+            for (FindWhat findWhat : findWhats) {
+                List<NutsId> it = (find(findWhat, findContext));
+                if(!it.isEmpty()) {
+                    if (first) {
+                        first = false;
+                        findContext.out.drawln("===Packages versions on Remote servers===:");
+                    }
+                    display(it, findContext);
+                }
+            }
+        }else {
+            for (FindWhat findWhat : findWhats) {
+                List<NutsId> it = find(findWhat, findContext);
+                display(it, findContext);
+            }
         }
     }
 
-    private void search(FindWhat findWhat,FindContext findContext) throws IOException {
+    private List<NutsId> find(FindWhat findWhat,FindContext findContext) throws IOException {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        Set<String> visitedItems=new HashSet<>();
         NutsDescriptorFilter filter = null;
         if (findWhat.jsCode != null) {
             filter = new NutsDescriptorJavascriptFilter(findWhat.jsCode);
@@ -212,19 +270,103 @@ public class FindCommand extends AbstractNutsCommand {
             filter = new NutsIdPatternFilter(findWhat.nonjs.toArray(new String[findWhat.nonjs.size()]), findContext.pack.toArray(new String[findContext.pack.size()]), findContext.arch.toArray(new String[findContext.arch.size()]));
         }
         NutsWorkspace ws = findContext.context.getValidWorkspace();
-        Iterator<NutsId> it = ws.find(new NutsRepositoryFilter() {
-                                          @Override
-                                          public boolean accept(NutsRepository repository) {
-                                              return findContext.repos.isEmpty() || findContext.repos.contains(repository.getRepositoryId());
-                                          }
-                                      }, filter, findContext.context.getSession().copy().setTransitive(true)
-//                .setOffline(offline || (installed != null && installed))
-                        .setFetchMode(findContext.fecthMode)
-        );
+        NutsRepositoryFilter repositoryFilter = new NutsRepositoryFilter() {
+            @Override
+            public boolean accept(NutsRepository repository) {
+                return findContext.repos.isEmpty() || findContext.repos.contains(repository.getRepositoryId());
+            }
+        };
+        switch (findContext.fecthMode){
+            case ONLINE:{
+                return searchOnline(findContext, filter, ws, repositoryFilter);
+            }
+            case OFFLINE:{
+                return searchOffline(findContext, filter, ws, repositoryFilter);
+            }
+            case REMOTE:{
+                return searchRemote(findContext, filter, ws, repositoryFilter);
+            }
+            case COMMIT:{
+                return searchCommit(findContext, filter, ws, repositoryFilter);
+            }
+            case UPDATE:{
+                return searchUpdate(findContext, filter, ws, repositoryFilter);
+            }
+            case STATUS:{
+                throw new IllegalArgumentException("Unsupported");
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    private List<NutsId> searchUpdate(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+        Map<String,NutsId> local=new LinkedHashMap<>();
+        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE)))) {
+            NutsId r = local.get(nutsId.getFullName());
+            if(r==null || nutsId.getVersion().compareTo(r.getVersion())>=0){
+                local.put(nutsId.getFullName(),nutsId);
+            }
+        }
+        Map<String,NutsId> remote=new LinkedHashMap<>();
+        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.REMOTE)))) {
+            NutsId r = remote.get(nutsId.getFullName());
+            if(r==null || nutsId.getVersion().compareTo(r.getVersion())>=0){
+                remote.put(nutsId.getFullName(),nutsId);
+            }
+        }
+        for (NutsId nutsId : local.values()) {
+            NutsId r = remote.get(nutsId.getFullName());
+            if(r!=null && nutsId.getVersion().compareTo(r.getVersion())<=0){
+                remote.remove(nutsId.getFullName());
+            }
+        }
+        return new ArrayList<NutsId>(remote.values());
+    }
+
+    private List<NutsId> searchCommit(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+        Map<String,NutsId> local=new LinkedHashMap<>();
+        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE)))) {
+            NutsId r = local.get(nutsId.getFullName());
+            if(r==null || nutsId.getVersion().compareTo(r.getVersion())>=0){
+                local.put(nutsId.getFullName(),nutsId);
+            }
+        }
+        Map<String,NutsId> remote=new LinkedHashMap<>();
+        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.REMOTE)))) {
+            NutsId r = remote.get(nutsId.getFullName());
+            if(r==null || nutsId.getVersion().compareTo(r.getVersion())>=0){
+                remote.put(nutsId.getFullName(),nutsId);
+            }
+        }
+        for (NutsId nutsId : remote.values()) {
+            NutsId r = local.get(nutsId.getFullName());
+            if(r!=null && nutsId.getVersion().compareTo(r.getVersion())>=0){
+                local.remove(nutsId.getFullName());
+            }
+        }
+        return new ArrayList<NutsId>(local.values());
+    }
+
+    private List<NutsId> searchRemote(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+        return ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.REMOTE));
+    }
+
+    private List<NutsId> searchOffline(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+        return ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE));
+    }
+
+    private List<NutsId> searchOnline(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+        return ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.ONLINE));
+        //display(nutsIdIterator,findContext);
+    }
+
+    private void display(List<NutsId> nutsList,FindContext findContext) throws IOException {
+        Set<String> visitedItems=new HashSet<>();
+        NutsWorkspace ws = findContext.context.getValidWorkspace();
         Set<String> visitedPackaging = new HashSet<>();
         Set<String> visitedArchs = new HashSet<>();
-        while (it.hasNext()) {
-            NutsInfo info = new NutsInfo(it.next(), findContext.context);
+        for (NutsId nutsId : nutsList) {
+            NutsInfo info = new NutsInfo(nutsId, findContext.context);
             if (findContext.installed != null) {
                 if (findContext.installed != info.isInstalled(findContext.installedDependencies)) {
                     continue;
@@ -314,8 +456,16 @@ public class FindCommand extends AbstractNutsCommand {
                     findContext.out.println("");
                 }
                 if ("dependencies".equals(findContext.display)) {
+                    FetchMode m=null;
+                    switch (findContext.fecthMode){
+                        case ONLINE:{m=FetchMode.ONLINE;break;}
+                        case OFFLINE:{m=FetchMode.OFFLINE;break;}
+                        case REMOTE:{m=FetchMode.REMOTE;break;}
+                        case COMMIT:{m=FetchMode.ONLINE;break;}
+                        case UPDATE:{m=FetchMode.ONLINE;break;}
+                    }
                     List<NutsFile> depsFiles = ws.fetchWithDependencies(info.nuts.toString(), false, null, findContext.context.getSession().copy().setTransitive(true)
-                            .setFetchMode(findContext.fecthMode)
+                            .setFetchMode(m)
                     );
                     for (NutsFile dd : depsFiles) {
                         NutsInfo dinfo = new NutsInfo(dd.getId(), findContext.context);

@@ -317,9 +317,9 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
             //packaging is not inherited!!
             //n_packaging = applyStringInheritance(n_packaging, parentDescriptor.getPackaging());
-            n_ext = applyStringInheritance(n_ext, parentDescriptor.getExt());
-            n_name = applyStringInheritance(n_name, parentDescriptor.getName());
-            n_desc = applyStringInheritance(n_desc, parentDescriptor.getDescription());
+            n_ext = NutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
+            n_name = NutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
+            n_desc = NutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
             n_archs.addAll(Arrays.asList(parentDescriptor.getArch()));
             n_os.addAll(Arrays.asList(parentDescriptor.getOs()));
@@ -355,19 +355,19 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     public NutsDescriptor applyProperties(Map<String, String> properties) throws IOException {
         MapStringMapper map = new MapStringMapper(properties);
 
-        NutsId n_id = applyNutsIdProperties(getId(), map);
-        String n_alt = applyStringProperties(getFace(), map);
-        String n_packaging = applyStringProperties(getPackaging(), map);
-        String n_ext = applyStringProperties(getExt(), map);
-        String n_name = applyStringProperties(getName(), map);
-        String n_desc = applyStringProperties(getDescription(), map);
+        NutsId n_id = getId().apply(map);
+        String n_alt = NutsUtils.applyStringProperties(getFace(), map);
+        String n_packaging = NutsUtils.applyStringProperties(getPackaging(), map);
+        String n_ext = NutsUtils.applyStringProperties(getExt(), map);
+        String n_name = NutsUtils.applyStringProperties(getName(), map);
+        String n_desc = NutsUtils.applyStringProperties(getDescription(), map);
         NutsExecutorDescriptor n_executor = getExecutor();
         NutsExecutorDescriptor n_installer = getInstaller();
         Map<String, String> n_props = new HashMap<>();
         Map<String, String> properties1 = getProperties();
         if (properties1 != null) {
             for (Map.Entry<String, String> ee : properties1.entrySet()) {
-                n_props.put(applyStringProperties(ee.getKey(), map), applyStringProperties(ee.getValue(), map));
+                n_props.put(NutsUtils.applyStringProperties(ee.getKey(), map), NutsUtils.applyStringProperties(ee.getValue(), map));
             }
         }
 
@@ -377,10 +377,10 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
         return new DefaultNutsDescriptor(
                 n_id, n_alt,getParents(), n_packaging, isExecutable(), n_ext, n_executor, n_installer, n_name, n_desc,
-                applyStringProperties(getArch(), map),
-                applyStringProperties(getOs(), map),
-                applyStringProperties(getOsdist(), map),
-                applyStringProperties(getPlatform(), map),
+                NutsUtils.applyStringProperties(getArch(), map),
+                NutsUtils.applyStringProperties(getOs(), map),
+                NutsUtils.applyStringProperties(getOsdist(), map),
+                NutsUtils.applyStringProperties(getPlatform(), map),
                 n_deps.toArray(new NutsDependency[n_deps.size()]),
                 n_props
         );
@@ -388,55 +388,23 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     private NutsId applyNutsIdProperties(NutsId child, StringMapper properties) {
         return new NutsId(
-                applyStringProperties(child.getNamespace(), properties),
-                applyStringProperties(child.getGroup(), properties),
-                applyStringProperties(child.getName(), properties),
-                applyStringProperties(child.getVersion().getValue(), properties),
-                applyMapProperties(child.getQueryMap(), properties)
+                NutsUtils.applyStringProperties(child.getNamespace(), properties),
+                NutsUtils.applyStringProperties(child.getGroup(), properties),
+                NutsUtils.applyStringProperties(child.getName(), properties),
+                NutsUtils.applyStringProperties(child.getVersion().getValue(), properties),
+                NutsUtils.applyMapProperties(child.getQueryMap(), properties)
         );
     }
 
     private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringMapper properties) {
         return new NutsDependency(
-                applyStringProperties(child.getNamespace(), properties),
-                applyStringProperties(child.getGroup(), properties),
-                applyStringProperties(child.getName(), properties),
-                applyStringProperties(child.getVersion().getValue(), properties),
-                applyStringProperties(child.getScope(), properties),
-                applyStringProperties(child.getOptional(), properties)
+                NutsUtils.applyStringProperties(child.getNamespace(), properties),
+                NutsUtils.applyStringProperties(child.getGroup(), properties),
+                NutsUtils.applyStringProperties(child.getName(), properties),
+                NutsUtils.applyStringProperties(child.getVersion().getValue(), properties),
+                NutsUtils.applyStringProperties(child.getScope(), properties),
+                NutsUtils.applyStringProperties(child.getOptional(), properties)
         );
-    }
-
-    private String[] applyStringProperties(String[] child, StringMapper properties) {
-        String[] vals = new String[child.length];
-        for (int i = 0; i < vals.length; i++) {
-            vals[i] = applyStringProperties(child[i], properties);
-        }
-        return vals;
-    }
-
-    private Map<String,String> applyMapProperties(Map<String,String> child, StringMapper properties) {
-        Map<String,String> m2=new LinkedHashMap<>();
-        for (Map.Entry<String, String> entry : child.entrySet()) {
-            m2.put(applyStringProperties(entry.getKey(),properties),applyStringProperties(entry.getValue(),properties));
-        }
-        return m2;
-    }
-
-    private String applyStringProperties(String child, StringMapper properties) {
-        if (StringUtils.isEmpty(child)) {
-            return null;
-        }
-        return StringUtils.replaceVars(child, properties);
-    }
-
-    private String applyStringInheritance(String child, String parent) {
-        child = StringUtils.trimToNull(child);
-        parent = StringUtils.trimToNull(parent);
-        if (child == null) {
-            return parent;
-        }
-        return child;
     }
 
     private NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {

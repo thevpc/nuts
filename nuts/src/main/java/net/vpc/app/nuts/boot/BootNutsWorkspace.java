@@ -682,7 +682,15 @@ public class BootNutsWorkspace implements NutsWorkspace {
         throw new NutsNotFoundException(id);
     }
 
-    public Iterator<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
+    public List<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
+        ArrayList<NutsId> all = new ArrayList<>();
+        Iterator<NutsId> it = findIterator(repositoryFilter, filter, session);
+        while(it.hasNext()){
+            all.add(it.next());
+        }
+        return all;
+    }
+    public Iterator<NutsId> findIterator(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }
