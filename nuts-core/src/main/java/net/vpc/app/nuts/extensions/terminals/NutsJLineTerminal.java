@@ -35,8 +35,10 @@ import net.vpc.app.nuts.util.IOUtils;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -56,6 +58,10 @@ public class NutsJLineTerminal implements NutsTerminal {
     private NutsPrintStream err;
     private NutsCommandContext nutsCommandContext;
     private DefaultNutsTerminal fallback;
+    private NutsPrintStream outReplace;
+    private NutsPrintStream errReplace;
+    private InputStream inReplace;
+    private BufferedReader inReplaceReader;
 
     public NutsJLineTerminal()  {
     }
@@ -168,6 +174,15 @@ public class NutsJLineTerminal implements NutsTerminal {
 
     @Override
     public String readLine(String prompt) throws IOException {
+        if(inReplace!=null){
+            if(outReplace!=null){
+                outReplace.print(prompt);
+            }
+            if(inReplaceReader==null){
+                inReplaceReader=new BufferedReader(new InputStreamReader(inReplace));
+            }
+            return inReplaceReader.readLine();
+        }
         if (fallback != null) {
             return fallback.readLine(prompt);
         }
@@ -177,12 +192,21 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     @Override
-    public String readPassword(String prompt) {
+    public String readPassword(String prompt) throws IOException {
+        if(inReplace!=null){
+            if(inReplaceReader==null){
+                inReplaceReader=new BufferedReader(new InputStreamReader(inReplace));
+            }
+            return inReplaceReader.readLine();
+        }
         return reader.readLine(prompt, '*');
     }
 
     @Override
     public InputStream getIn() {
+        if(inReplace!=null){
+            return inReplace;
+        }
         if (fallback != null) {
             return fallback.getIn();
         }
@@ -190,7 +214,25 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     @Override
+    public void setOut(NutsPrintStream out) {
+        outReplace=out;
+    }
+
+    @Override
+    public void setIn(InputStream in) {
+        inReplace=in;
+    }
+
+    @Override
+    public void setErr(NutsPrintStream err) {
+        errReplace=err;
+    }
+
+    @Override
     public NutsPrintStream getOut() {
+        if(outReplace!=null){
+            return outReplace;
+        }
         if (fallback != null) {
             return fallback.getOut();
         }
@@ -199,6 +241,9 @@ public class NutsJLineTerminal implements NutsTerminal {
 
     @Override
     public NutsPrintStream getErr() {
+        if(errReplace!=null){
+            return errReplace;
+        }
         if (fallback != null) {
             return fallback.getErr();
         }

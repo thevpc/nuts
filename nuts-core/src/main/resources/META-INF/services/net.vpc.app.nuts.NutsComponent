@@ -10,7 +10,10 @@ net.vpc.app.nuts.extensions.cmd.ServerCommand
 net.vpc.app.nuts.extensions.installers.ZipNutsInstallerComponent
 net.vpc.app.nuts.extensions.parsers.BashNutsDescriptorContentParserComponent
 net.vpc.app.nuts.extensions.parsers.ZipNutsDescriptorContentParserComponent
+net.vpc.app.nuts.extensions.parsers.JarNutsDescriptorContentParserComponent
+net.vpc.app.nuts.extensions.parsers.NutsShellDescriptorContentParserComponent
 net.vpc.app.nuts.extensions.executors.JavaNutsExecutorComponent
+net.vpc.app.nuts.extensions.executors.NutsShellNutsExecutorComponent
 net.vpc.app.nuts.extensions.executors.ProcessNutsExecutorComponent
 net.vpc.app.nuts.extensions.cmd.ConfigCommand
 net.vpc.app.nuts.extensions.cmd.ConnectCommand
@@ -30,6 +33,7 @@ net.vpc.app.nuts.extensions.cmd.UpdateCommand
 net.vpc.app.nuts.extensions.cmd.WhichCommand
 net.vpc.app.nuts.extensions.cmd.WhoCommand
 net.vpc.app.nuts.extensions.cmd.ErrCommand
+net.vpc.app.nuts.extensions.cmd.EchoCommand
 net.vpc.app.nuts.extensions.cmd.LsCommand
 net.vpc.app.nuts.extensions.cmd.PwdCommand
 net.vpc.app.nuts.extensions.cmd.CdCommand

@@ -70,6 +70,11 @@ public class BootNutsWorkspace implements NutsWorkspace {
         public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria) {
             return Collections.EMPTY_LIST;
         }
+
+        @Override
+        public <T> List<T> createAll(Class<T> type) {
+            return Collections.EMPTY_LIST;
+        }
     };
     List<NutsFile> nutsComponentIdDependencies;
     NutsFile nutsComponentId;
@@ -1155,17 +1160,14 @@ public class BootNutsWorkspace implements NutsWorkspace {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public void exec(String[] cmd, NutsSession session) throws IOException, InterruptedException {
+    public void exec(String[] cmd, NutsSession session) throws IOException {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public void exec(String id, String[] args, NutsSession session) throws IOException, InterruptedException {
+    public void exec(String id, String[] args, NutsSession session) throws IOException {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public void exec(NutsId id, String[] args, NutsSession session) throws IOException, InterruptedException {
-        throwSecurityException(NutsConstants.RIGHT_ADMIN);
-    }
     public void push(NutsId id, String repositoryId, NutsSession session) throws IOException {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
@@ -1226,7 +1228,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
 
 
     @Override
-    public NutsCommandLineConsoleComponent createCommandLineConsole(String[] bootstrapArguments, NutsSession session) throws IOException {
+    public NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) throws IOException {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
@@ -1374,5 +1376,15 @@ public class BootNutsWorkspace implements NutsWorkspace {
     @Override
     public NutsUpdate checkUpdates(String id, NutsSession session) throws IOException {
         return null;
+    }
+
+    @Override
+    public File getCwd() {
+        throw new IllegalArgumentException("Unsupported");
+    }
+
+    @Override
+    public void setCwd(File file) {
+        throw new IllegalArgumentException("Unsupported");
     }
 }

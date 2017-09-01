@@ -45,8 +45,8 @@ public class CheckoutCommand extends AbstractNutsCommand {
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
-        String id = cmdLine.removeNonOptionOrError(new NutsIdNonOption("Nuts",context)).getString();
-        String contentFile = cmdLine.removeNonOptionOrError(new FolderNonOption("folder")).getString();
+        String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("Nuts",context)).getString();
+        String contentFile = cmdLine.readNonOptionOrError(new FolderNonOption("folder")).getString();
         if (autoComplete != null) {
             return;
         }

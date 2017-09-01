@@ -84,7 +84,7 @@ public class VersionUtils {
                 last.append(c);
             } else {
                 parts.add(last.toString());
-                last.delete(0, last.length());
+                StringUtils.clear(last);
             }
         }
         if (last.length() > 0) {

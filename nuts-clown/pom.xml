@@ -6,13 +6,13 @@
 
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-clown</artifactId>
-    <version>0.3.2.0</version>
+    <version>0.3.3.0</version>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.3.2</version>
+            <version>0.3.3</version>
         </dependency>
     </dependencies>
 </project>

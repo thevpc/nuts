@@ -34,7 +34,9 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.RepositoryNonOption;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+
+import java.io.File;
 
 /**
  * Created by vpc on 1/7/17.
@@ -69,10 +71,10 @@ public class InstallCommand extends AbstractNutsCommand {
                 deployOnly = false;
                 bundleOnly = true;
             } else {
-                String id = cmdLine.removeNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
+                String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
                     if (deployOnly) {
-                        for (String s : IOUtils.expandPath(id)) {
+                        for (String s : CoreIOUtils.expandPath(id,new File(context.getCommandLine().getCwd()))) {
                             NutsId deployedId = context.getValidWorkspace().deploy(
                                     s,
                                     null,
@@ -84,18 +86,18 @@ public class InstallCommand extends AbstractNutsCommand {
                             context.getTerminal().getOut().println("File " + s + " deployed successfully as " + deployedId);
                         }
                     } else if (bundleOnly) {
-                        for (String s : IOUtils.expandPath(id)) {
+                        for (String s : CoreIOUtils.expandPath(id,new File(context.getCommandLine().getCwd()))) {
                             NutsFile deployedId = context.getValidWorkspace().createBundle(
-                                    IOUtils.createFile(s),
-                                    descriptorFile == null ? null : IOUtils.createFile(descriptorFile),
+                                    CoreIOUtils.createFileByCwd(s,new File(context.getCommandLine().getCwd())),
+                                    descriptorFile == null ? null : CoreIOUtils.createFileByCwd(descriptorFile,new File(context.getCommandLine().getCwd())),
                                     context.getSession()
                             );
                             context.getTerminal().getOut().println("File " + s + " bundled successfully as " + deployedId.getId() + " to " + deployedId.getFile());
                         }
                     } else {
 
-                        for (String s : IOUtils.expandPath(id)) {
-                            if (IOUtils.isFilePath(s)) {
+                        for (String s : CoreIOUtils.expandPath(id,new File(context.getCommandLine().getCwd()))) {
+                            if (CoreIOUtils.isFilePath(s)) {
                                 //this is a file to deploy first
                                 NutsId deployedId = context.getValidWorkspace().deploy(
                                         s,

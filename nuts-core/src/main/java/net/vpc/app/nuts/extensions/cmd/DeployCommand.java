@@ -36,7 +36,9 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.RepositoryNonOption;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+
+import java.io.File;
 
 /**
  * Created by vpc on 1/7/17.
@@ -49,13 +51,13 @@ public class DeployCommand extends AbstractNutsCommand {
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
-        String contentFile = cmdLine.removeNonOptionOrError(new FileNonOption("File")).getString();
+        String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         String descriptorFile = cmdLine.removeNonOption(new FileNonOption("DescriptorFile")).getString();
         String repository = cmdLine.removeNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
         if (autoComplete != null) {
             return;
         }
-        for (String s : IOUtils.expandPath(contentFile)) {
+        for (String s : CoreIOUtils.expandPath(contentFile,new File(context.getCommandLine().getCwd()))) {
             NutsId id = null;
             id = context.getValidWorkspace().deploy(
                     s,

@@ -169,7 +169,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     NutsPrintStream eout = invokerWorkspace.createEnhancedPrintStream(out);
-                                    cli = invokerWorkspace.createCommandLineConsole(args, new NutsSession()
+                                    cli = invokerWorkspace.createCommandLineConsole(new NutsSession()
                                             .setTerminal(invokerWorkspace.createTerminal(finalAccept.getInputStream(),
                                                     eout, eout)));
 //                                    cli.uninstallCommand("server");

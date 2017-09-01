@@ -81,7 +81,7 @@ public class CmdLine {
 //    public Val tryRemoveNonOptionOrError(String name, String defaultValue) {
 //        if (args.size() > 0 && !isOption()) {
 //            String r = args.get(0);
-//            removeHead(1);
+//            readHead(1);
 //            return new Val(r);
 //        } else {
 //            return new Val(defaultValue);
@@ -90,18 +90,18 @@ public class CmdLine {
     public Val removeOptionOrError(String name) {
         if (args.size() > 0 && isOption()) {
             String r = args.get(0);
-            removeHead(1);
+            readHead(1);
             return new Val(r);
         } else {
             throw new IllegalArgumentException("Missing argument " + name);
         }
     }
 
-    public Val removeNonOptionOrError(String name) {
-        return removeNonOptionOrError(new DefaultNonOption(name));
+    public Val readNonOptionOrError(String name) {
+        return readNonOptionOrError(new DefaultNonOption(name));
     }
 
-    public Val removeNonOptionOrError(NonOption name) {
+    public Val readNonOptionOrError(NonOption name) {
         if (args.size() > 0 && !isOption()) {
             if (isAutoComplete()) {
                 List<ArgumentCandidate> values = name.getValues();
@@ -114,7 +114,7 @@ public class CmdLine {
                 }
             }
             String r = args.get(0);
-            removeHead(1);
+            readHead(1);
             return new Val(r);
         } else {
             if (autoComplete!=null) {
@@ -147,7 +147,7 @@ public class CmdLine {
                 }
             }
             String r = args.get(0);
-            removeHead(1);
+            readHead(1);
             return new Val(r);
         } else {
             if (autoComplete!=null) {
@@ -166,13 +166,13 @@ public class CmdLine {
         }
     }
 
-    public Val removeHead() {
+    public Val readHead() {
         Val val = getVal(0);
-        removeHead(1);
+        readHead(1);
         return val;
     }
 
-    public void removeHead(int count) {
+    public void readHead(int count) {
         for (int i = 0; i < count; i++) {
             args.remove(0);
             wordIndex++;
@@ -221,7 +221,7 @@ public class CmdLine {
                 if ((acceptDuplicates || !isVisitedSequence(val))) {
                     if (acceptSequence(0, val)) {
                         setVisitedSequence(val);
-                        removeHead(val.length);
+                        readHead(val.length);
                         return true;
                     } else {
                         setVisitedSequence(val);
@@ -240,7 +240,7 @@ public class CmdLine {
         for (String[] val : vals) {
             if ((acceptDuplicates || !isVisitedSequence(val)) && acceptSequence(0, val)) {
                 setVisitedSequence(val);
-                removeHead(val.length);
+                readHead(val.length);
                 return true;
             }
         }

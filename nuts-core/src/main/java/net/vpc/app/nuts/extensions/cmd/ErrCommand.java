@@ -48,10 +48,6 @@ public class ErrCommand extends AbstractNutsCommand {
     }
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
-        Throwable lastError = context.getLatestError();
-        if (lastError == null) {
-            return;
-        }
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean verbose = false;
         boolean visitedArgVerbose = false;
@@ -64,6 +60,11 @@ public class ErrCommand extends AbstractNutsCommand {
             }
         }
         if (cmdLine.isExecMode()) {
+            String lastErrorMessage = context.getCommandLine().getLastErrorMessage();
+            Throwable lastError = context.getCommandLine().getLastThrowable();
+            if (lastError == null) {
+                return;
+            }
             if (verbose) {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
                 PrintStream po = new PrintStream(o);
@@ -72,16 +73,8 @@ public class ErrCommand extends AbstractNutsCommand {
                 String s = new String(o.toByteArray());
                 context.getTerminal().getErr().println(s);
             } else {
-                String message = StringUtils.exceptionToString(lastError);
-                if (StringUtils.isEmpty(message)) {
-                    message = lastError.toString();
-                }
-                if (StringUtils.isEmpty(message)) {
-                    message = lastError.getClass().getName();
-                }
-                context.getTerminal().getErr().println(message);
+                context.getTerminal().getErr().println(lastErrorMessage);
             }
-            context.setLastError(lastError);
         }
     }
 }

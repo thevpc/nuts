@@ -64,19 +64,19 @@ public class NutsExecutionContext {
         }
     }
 
-    public NutsExecutionContext(NutsFile nutsFile, String[] args, String[] execArgs, Properties execProperties, NutsSession session, NutsWorkspace workspace) {
-        if (args == null) {
-            args = new String[0];
+    public NutsExecutionContext(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties execProperties, NutsSession session, NutsWorkspace workspace) {
+        if (appArgs == null) {
+            appArgs = new String[0];
         }
-        if (execArgs == null) {
-            execArgs = new String[0];
+        if (executorArgs == null) {
+            executorArgs = new String[0];
         }
         if (execProperties == null) {
             execProperties = new Properties();
         }
         this.nutsFile = nutsFile;
-        this.args = args;
-        this.execArgs = execArgs;
+        this.args = appArgs;
+        this.execArgs = executorArgs;
         this.execProperties = execProperties;
         this.workspace = workspace;
         this.session = session;
@@ -132,5 +132,9 @@ public class NutsExecutionContext {
 
     public NutsSession getSession() {
         return session;
+    }
+
+    public NutsTerminal getTerminal() {
+        return session.getTerminal();
     }
 }

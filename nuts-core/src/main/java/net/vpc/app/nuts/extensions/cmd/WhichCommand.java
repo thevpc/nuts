@@ -65,7 +65,7 @@ public class WhichCommand extends AbstractNutsCommand {
             return;
         }
         do {
-            String id = cmdLine.removeNonOptionOrError(new NutsIdNonOption("NutsId",context)).getString();
+            String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId",context)).getString();
             if (cmdLine.isExecMode()) {
                 NutsId found = validWorkspace.resolveId(id, context.getSession());
                 if (found == null) {

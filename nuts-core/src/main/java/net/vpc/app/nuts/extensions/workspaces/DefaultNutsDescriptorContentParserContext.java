@@ -30,7 +30,9 @@
 package net.vpc.app.nuts.extensions.workspaces;
 
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.*;
 
@@ -39,23 +41,35 @@ import java.io.*;
  */
 public class DefaultNutsDescriptorContentParserContext implements NutsDescriptorContentParserContext {
 
+    private NutsWorkspace workspace;
+    private NutsSession session;
     private File file;
     private String fileExtension;
     private String fileType;
     private String mimeType;
     private byte[] bytes;
 
-    public DefaultNutsDescriptorContentParserContext(File file, String fileExtension, String fileType, String mimeType) {
+    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace,NutsSession session,File file, String fileExtension, String fileType, String mimeType) {
         this.file = file;
+        this.workspace = workspace;
+        this.session = session;
         this.fileExtension = fileExtension;
         this.fileType = fileType;
         this.mimeType = mimeType;
     }
 
+    public NutsWorkspace getWorkspace() {
+        return workspace;
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
     @Override
     public InputStream getHeadStream() throws IOException {
         if (bytes == null) {
-            bytes = IOUtils.readStreamAsBytes(file, 1024 * 1024 * 10);
+            bytes = CoreIOUtils.readStreamAsBytes(file, 1024 * 1024 * 10);
         }
         return new ByteArrayInputStream(bytes);
     }
@@ -75,5 +89,9 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
 
     public String getMimeType() {
         return mimeType;
+    }
+
+    public File getFile() {
+        return file;
     }
 }

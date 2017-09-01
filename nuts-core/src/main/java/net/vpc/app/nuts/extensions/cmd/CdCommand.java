@@ -32,6 +32,7 @@ package net.vpc.app.nuts.extensions.cmd;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FolderNonOption;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.util.IOUtils;
 
 import java.io.File;
@@ -49,13 +50,13 @@ public class CdCommand extends AbstractNutsCommand {
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         while (!cmdLine.isEmpty()) {
-            String folder=cmdLine.removeNonOptionOrError(new FolderNonOption("Folder")).getString();
-            File[] validFiles = Arrays.stream(IOUtils.findFilesOrError(folder)).filter(
+            String folder=cmdLine.readNonOptionOrError(new FolderNonOption("Folder")).getString();
+            File[] validFiles = Arrays.stream(CoreIOUtils.findFilesOrError(folder,new File(context.getCommandLine().getCwd()))).filter(
                     x->x.isDirectory()
             ).toArray(File[]::new);
             NutsPrintStream out = context.getTerminal().getOut();
             if(validFiles.length==1) {
-                IOUtils.setCwd(validFiles[0].getPath());
+                context.getCommandLine().setCwd(validFiles[0].getPath());
             }else if(validFiles.length==0) {
                 out.println("invalid folder "+folder);
             }else{

@@ -186,7 +186,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public Iterator<NutsId> findImpl(final NutsDescriptorFilter filter, NutsSession session) throws IOException {
         String url = IOUtils.buildUrl(getConfig().getLocation(), "/archetype-catalog.xml");
         log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{StringUtils.alignLeft(getRepositoryId(), 20), StringUtils.alignLeft("\'archetype-catalog\'", 20), url});
-        List aa=NutsUtils.toList(parseArchetypeCatalog(openStream(url), filter));
+        List aa= PlatformUtils.toList(parseArchetypeCatalog(openStream(url), filter));
         return parseArchetypeCatalog(openStream(url), filter);
     }
 

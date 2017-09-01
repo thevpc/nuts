@@ -35,7 +35,8 @@ import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.NutsNonBlockingInputStreamAdapter;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.PrintStream;
@@ -57,9 +58,9 @@ public class ConnectCommand extends AbstractNutsCommand {
         String server = null;
         while (!cmdLine.isEmpty()) {
             if (cmdLine.acceptAndRemoveNoDuplicates("--password")) {
-                password = cmdLine.removeNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
+                password = cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
             } else {
-                server = cmdLine.removeNonOptionOrError(new DefaultNonOption("ServerAddress")).getStringOrError();
+                server = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerAddress")).getStringOrError();
                 cmdLine.requireEmpty();
             }
         }
@@ -84,8 +85,9 @@ public class ConnectCommand extends AbstractNutsCommand {
         }
         Socket socket = null;
         try {
-            socket = new Socket(InetAddress.getByName(server), port <= 0 ? NutsConstants.DEFAULT_ADMIN_SERVER_PORT : port);
-            IOUtils.pipe(socket.getInputStream(), context.getTerminal().getOut());
+            int validPort = port <= 0 ? NutsConstants.DEFAULT_ADMIN_SERVER_PORT : port;
+            socket = new Socket(InetAddress.getByName(server), validPort);
+            CoreIOUtils.pipe("pipe-out-socket-"+server+":"+validPort,new NutsNonBlockingInputStreamAdapter("pipe-out-socket-"+server+":"+validPort,socket.getInputStream()), context.getTerminal().getOut());
             PrintStream out = new PrintStream(socket.getOutputStream());
             if (!StringUtils.isEmpty(login)) {
                 out.println("connect " + login + " " + password);

@@ -30,11 +30,9 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
 import net.vpc.app.nuts.boot.NutsIdPatternFilter;
 import net.vpc.app.nuts.extensions.cmd.cmdline.*;
-import net.vpc.app.nuts.util.NutsUtils;
 import net.vpc.app.nuts.util.PlatformUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
@@ -169,13 +167,13 @@ public class FindCommand extends AbstractNutsCommand {
                 }
                 return;
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-p", "--pkg")) {
-                findContext.pack.add(cmdLine.removeNonOptionOrError(new PackagingNonOption("Packaging", context)).getString());
+                findContext.pack.add(cmdLine.readNonOptionOrError(new PackagingNonOption("Packaging", context)).getString());
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-a", "--arch")) {
-                findContext.arch.add(cmdLine.removeNonOptionOrError(new ArchitectureNonOption("Architecture", context)).getString());
+                findContext.arch.add(cmdLine.readNonOptionOrError(new ArchitectureNonOption("Architecture", context)).getString());
             } else if (currentFindWhat==0 && cmdLine.acceptAndRemoveNoDuplicates("-r", "--repo")) {
-                findContext.repos.add(cmdLine.removeNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
+                findContext.repos.add(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
             } else {
-                CmdLine.Val val = cmdLine.removeNonOptionOrError(new DefaultNonOption("Expression"));
+                CmdLine.Val val = cmdLine.readNonOptionOrError(new DefaultNonOption("Expression"));
                 if(currentFindWhat+1>=findWhats.size()){
                     findWhats.add(new FindWhat());
                 }
@@ -238,19 +236,19 @@ public class FindCommand extends AbstractNutsCommand {
                     display(it, findContext);
                 }
             }
-
-            first=true;
-            findContext.fecthMode=SearchMode.REMOTE;
-            for (FindWhat findWhat : findWhats) {
-                List<NutsId> it = (find(findWhat, findContext));
-                if(!it.isEmpty()) {
-                    if (first) {
-                        first = false;
-                        findContext.out.drawln("===Packages versions on Remote servers===:");
-                    }
-                    display(it, findContext);
-                }
-            }
+//          // there is no need to see only remote nuts for status
+//            first=true;
+//            findContext.fecthMode=SearchMode.REMOTE;
+//            for (FindWhat findWhat : findWhats) {
+//                List<NutsId> it = (find(findWhat, findContext));
+//                if(!it.isEmpty()) {
+//                    if (first) {
+//                        first = false;
+//                        findContext.out.drawln("===Packages versions on Remote servers===:");
+//                    }
+//                    display(it, findContext);
+//                }
+//            }
         }else {
             for (FindWhat findWhat : findWhats) {
                 List<NutsId> it = find(findWhat, findContext);
@@ -314,10 +312,10 @@ public class FindCommand extends AbstractNutsCommand {
                 remote.put(nutsId.getFullName(),nutsId);
             }
         }
-        for (NutsId nutsId : local.values()) {
-            NutsId r = remote.get(nutsId.getFullName());
-            if(r!=null && nutsId.getVersion().compareTo(r.getVersion())<=0){
-                remote.remove(nutsId.getFullName());
+        for (NutsId localNutsId : local.values()) {
+            NutsId remoteNutsId = remote.get(localNutsId.getFullName());
+            if(remoteNutsId!=null && localNutsId.getVersion().compareTo(remoteNutsId.getVersion())>=0){
+                remote.remove(localNutsId.getFullName());
             }
         }
         return new ArrayList<NutsId>(remote.values());

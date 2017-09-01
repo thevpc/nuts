@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.parsers;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,7 +48,7 @@ import java.util.Set;
 public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList("nuts.json", "/META-INF/nuts.json", "/WEB-INF/nuts.json", "/APP-INF/nuts.json"));
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("jar", "war", "ear", "zip", "gzip", "gz"));
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz"));
 
     @Override
     public int getSupportLevel(Object criteria) {
@@ -61,7 +61,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
             return null;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        if (IOUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
+        if (CoreIOUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
             return NutsDescriptor.parse(new ByteArrayInputStream(buffer.toByteArray()));
         }
         return null;

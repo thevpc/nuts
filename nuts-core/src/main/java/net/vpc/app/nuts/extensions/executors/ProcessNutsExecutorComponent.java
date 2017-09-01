@@ -29,16 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.executors;
 
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsFile;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -46,6 +43,12 @@ import java.util.logging.Logger;
  */
 public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     private static final Logger log = Logger.getLogger(ProcessNutsExecutorComponent.class.getName());
+    public static final NutsId ID = NutsId.parse("exec");
+
+    @Override
+    public NutsId getId() throws IOException {
+        return ID;
+    }
 
     @Override
     public int getSupportLevel(NutsFile nutsFile) {
@@ -55,22 +58,49 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     public void exec(NutsExecutionContext executionContext) throws IOException {
         NutsFile nutMainFile = executionContext.getNutsFile();
         File storeFolder = nutMainFile.getInstallFolder();
-        List<String> args = new ArrayList<>();
+        String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
+        String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
 
-        if (executionContext.getExecArgs().length == 0) {
+        List<String> env = new ArrayList<>();
+        env.addAll(Arrays.asList(envAndApp0[0]));
+        env.addAll(Arrays.asList(envAndApp[0]));
+
+        List<String> app = new ArrayList<>();
+        app.addAll(Arrays.asList(envAndApp0[1]));
+        if (app.isEmpty()) {
             if (storeFolder == null) {
-                args.add("${nuts.file}");
+                app.add("${nuts.file}");
             } else {
-                args.add("${nuts.store}/run");
+                app.add("${nuts.store}/run");
             }
-        } else {
-            args.addAll(Arrays.asList(executionContext.getExecArgs()));
         }
-        args.addAll(Arrays.asList(executionContext.getArgs()));
+        app.addAll(Arrays.asList(envAndApp[1]));
 
-        IOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
-                (String[]) args.toArray(new String[args.size()]),
-                null, null, executionContext.getSession().getTerminal()
+        Map<String, String> envMap = new HashMap<>();
+        File dir = null;
+        boolean showCommand = false;
+        for (Iterator<String> iterator = env.iterator(); iterator.hasNext(); ) {
+            String e = iterator.next();
+            if (e.startsWith("-dir=")) {
+                dir = new File(e.substring(("-dir=").length()));
+                iterator.remove();
+            } else if (e.startsWith("-env-")) {
+                String nv = e.substring("-env-".length());
+                int endIndex = nv.indexOf('=');
+                if (endIndex >= 0) {
+                    String n = nv.substring(0, endIndex);
+                    String v = nv.substring(endIndex + 1);
+                    envMap.put(n, v);
+                }
+                iterator.remove();
+            } else if (e.equals("-show-command")) {
+                iterator.remove();
+                showCommand = true;
+            }
+        }
+        CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
+                app.toArray(new String[app.size()]),
+                envMap, dir, executionContext.getTerminal(),showCommand
         );
     }
 }

@@ -35,9 +35,11 @@ import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vpc on 1/7/17.
@@ -56,40 +58,66 @@ public class LsCommand extends AbstractNutsCommand {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean any=false;
         Options options=new Options();
+        List<File> folders=new ArrayList<>();
+        List<File> files=new ArrayList<>();
+        List<File> invalids=new ArrayList<>();
         while (!cmdLine.isEmpty()) {
             if(cmdLine.acceptAndRemove("-d")) {
                 options.d = true;
             }else if(cmdLine.acceptAndRemove("-l")){
                 options.l=true;
             }else {
-                String folder = cmdLine.removeNonOptionOrError(new FileNonOption("Folder")).getString();
-                any = true;
-                ls(folder, options,context.getTerminal());
+                String path = cmdLine.readNonOptionOrError(new FileNonOption("FileOrFolder")).getString();
+                File file = CoreIOUtils.createFileByCwd(path, new File(context.getCommandLine().getCwd()));
+                if(file.isDirectory()) {
+                    folders.add(file);
+                }else if(file.exists()){
+                    files.add(file);
+                }else {
+                    invalids.add(file);
+                }
             }
         }
-        if(!any){
-            ls(".",options,context.getTerminal());
+        boolean first=true;
+        for (File f : invalids) {
+            ls(f, options,context,context.getTerminal(),false);
+        }
+        for (File f : files) {
+            first=false;
+            ls(f, options,context,context.getTerminal(),false);
+        }
+        for (File f : folders) {
+            if(first){
+                first=false;
+            }else{
+                context.getTerminal().getOut().println();
+            }
+            ls(f, options,context,context.getTerminal(),folders.size()>0 ||files.size()>0);
+        }
+        if(invalids.size()+files.size()+folders.size()==0){
+            ls(new File(context.getCommandLine().getCwd()),options,context,context.getTerminal(),false);
         }
     }
 
-    private void ls(String path, Options options,NutsTerminal terminal){
-        for (File file : IOUtils.findFilesOrError(path)) {
-            if(file.isDirectory()){
-                if(options.d) {
-                    ls0(file,options,terminal);
-                }else{
-                    File[] files = file.listFiles();
-                    if(files!=null){
-                        for (File file1 : files) {
-                            ls0(file1,options,terminal);
-                        }
-                    }
+    private void ls(File path, Options options,NutsCommandContext context,NutsTerminal terminal,boolean addPrefix){
+        if(!path.exists()){
+            throw new IllegalArgumentException("ls: cannot access '"+path.getPath()+"': No such file or directory");
+        }else if(path.isDirectory()){
+            if(addPrefix){
+                terminal.getOut().println(path.getName()+":");
+                for (File file1 : path.listFiles()) {
+                    ls0(file1,options,terminal);
                 }
             }else{
-                ls0(file,options,terminal);
+                for (File file1 : path.listFiles()) {
+                    ls0(file1,options,terminal);
+                }
             }
+        }else{
+            ls0(path,options,terminal);
         }
     }
+
     private void ls0(File path, Options options,NutsTerminal terminal){
         String name = path.getName();
         if(options.l){

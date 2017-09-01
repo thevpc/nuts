@@ -1,0 +1,159 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ * <p>
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ * <p>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
+ */
+package net.vpc.app.nuts.extensions.parsers;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.Ref;
+import net.vpc.app.nuts.extensions.util.StreamVisitor;
+import net.vpc.app.nuts.util.MavenUtils;
+import net.vpc.app.nuts.util.ObjectFilter;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+/**
+ * Created by vpc on 1/15/17.
+ */
+public class JarNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("jar"));//, "war", "ear"
+
+    @Override
+    public int getSupportLevel(Object criteria) {
+        return CORE_SUPPORT;
+    }
+
+    @Override
+    public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) throws IOException {
+        if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
+            return null;
+        }
+        NutsId JAVA = NutsId.parse("java");
+        Ref<NutsDescriptor> nutsjson = new Ref<>();
+        Ref<NutsDescriptor> metainf = new Ref<>();
+        Ref<NutsDescriptor> maven = new Ref<>();
+        Ref<String> mainClass = new Ref<>();
+        CoreIOUtils.visitZipFile(parserContext.getFullStream(), new ObjectFilter<String>() {
+            @Override
+            public boolean accept(String path) {
+                if ("META-INF/MANIFEST.MF".equals(path)) {
+                    return true;
+                }
+                if ("META-INF/nuts.json".equals(path)) {
+                    return true;
+                }
+                return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
+            }
+        }, new StreamVisitor() {
+            @Override
+            public boolean visit(String path, InputStream inputStream) throws IOException {
+                if ("META-INF/MANIFEST.MF".equals(path)) {
+                    Manifest manifest = new Manifest(inputStream);
+                    Attributes attrs = manifest.getMainAttributes();
+                    for (Object o : attrs.keySet()) {
+                        Attributes.Name attrName = (Attributes.Name) o;
+                        if ("Main-Class".equals(attrName.toString())) {
+                            mainClass.set(attrs.getValue(attrName));
+                        }
+                    }
+                    NutsDescriptor d = new DefaultNutsDescriptor(
+                            NutsId.parse("temp:jar#1.0"),
+                            null,
+                            null,
+                            "jar",
+                            mainClass.isSet(), "jar", new NutsExecutorDescriptor(JAVA, new String[]{
+                            "--nuts-jar"
+                    }, null), null, null, null, null, null, null, null, null, null
+                    );
+                    metainf.set(d);
+                } else if ("META-INF/nuts.json".equals(path)) {
+                    nutsjson.set(NutsDescriptor.parse(inputStream));
+                } else {
+                    try {
+                        maven.set(MavenUtils.parsePomXml(inputStream,parserContext.getWorkspace(),parserContext.getSession()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                //continue
+                return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
+            }
+        });
+        if (nutsjson.isSet()) {
+            return nutsjson.get();
+        }
+        NutsDescriptor baseNutsDescriptor = null;
+        if (maven.isSet()) {
+            baseNutsDescriptor = maven.get();
+            if (mainClass.isSet()) {
+                return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
+                        "--nuts-main-class", mainClass.get(),
+                }, null));
+            }
+        } else if (metainf.isSet()) {
+            baseNutsDescriptor = metainf.get();
+        }
+        if (baseNutsDescriptor == null) {
+            baseNutsDescriptor = new DefaultNutsDescriptor(
+                    NutsId.parse("temp:jar#1.0"),
+                    null,
+                    null,
+                    "jar",
+                    true, "jar", null, null, null, null, null, null, null, null, null, null
+            );
+        }
+        List<String> classes = CoreIOUtils.resolveMainClasses(parserContext.getFullStream());
+        if (classes.isEmpty()) {
+            return null;
+        } else if (classes.size() == 1) {
+            return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
+                    "--nuts-main-class="+ classes.get(0),
+            }, null)).setExecutable(true);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < classes.size(); i++) {
+                if (i > 0) {
+                    sb.append(":");
+                }
+                sb.append(classes.get(i));
+            }
+            return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
+                    "--nuts-main-class="+ sb.toString(),
+            }, null)).setExecutable(true);
+        }
+    }
+}

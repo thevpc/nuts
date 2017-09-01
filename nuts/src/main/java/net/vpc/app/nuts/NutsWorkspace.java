@@ -186,9 +186,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     /////////////////////////////////////////////////////////////////
     // EXEC SUPPORT
-    void exec(String[] cmd, NutsSession session) throws IOException, InterruptedException;
+    void exec(String[] cmd, NutsSession session) throws IOException;
 
-    void exec(String id, String[] args, NutsSession session) throws IOException, InterruptedException;
+    void exec(String id, String[] args, NutsSession session) throws IOException;
 
     /////////////////////////////////////////////////////////////////
     // EXTENSION MANAGEMENT
@@ -248,11 +248,13 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsRepositoryListener[] getRepositoryListeners();
 
-    NutsCommandLineConsoleComponent createCommandLineConsole(String[] bootstrapArguments, NutsSession session) throws IOException;
+    NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) throws IOException;
 
     NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException;
 
     NutsPrintStream createEnhancedPrintStream(OutputStream out) throws IOException;
 
+    File getCwd();
 
+    void setCwd(File file);
 }

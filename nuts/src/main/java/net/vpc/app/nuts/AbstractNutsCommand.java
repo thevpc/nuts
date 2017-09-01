@@ -123,7 +123,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
         }
     }
 
-    public void run(String[] args, NutsCommandContext context) throws Exception {
+    public void exec(String[] args, NutsCommandContext context) throws Exception {
         run(args, context, null);
     }
 

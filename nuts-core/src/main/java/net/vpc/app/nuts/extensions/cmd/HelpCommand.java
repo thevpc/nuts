@@ -39,6 +39,8 @@ import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -60,7 +62,14 @@ public class HelpCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 out.drawln(getHelpContent());
                 out.drawln("===AVAILABLE COMMANDS ARE:===");
-                for (NutsCommand cmd : context.getCommandLine().getCommands()) {
+                NutsCommand[] commands = context.getCommandLine().getCommands();
+                Arrays.sort(commands, new Comparator<NutsCommand>() {
+                    @Override
+                    public int compare(NutsCommand o1, NutsCommand o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                for (NutsCommand cmd : commands) {
                     out.drawln(cmd.getHelpHeader());
                 }
             }
@@ -68,7 +77,7 @@ public class HelpCommand extends AbstractNutsCommand {
         }
 
         while (!cmdLine.isEmpty()) {
-            String command = cmdLine.removeNonOptionOrError(new CommandNonOption("Command", context)).getString();
+            String command = cmdLine.readNonOptionOrError(new CommandNonOption("Command", context)).getString();
             if (cmdLine.isExecMode()) {
                 NutsCommand command1 = context.getCommandLine().findCommand(command);
                 if (command1 == null) {

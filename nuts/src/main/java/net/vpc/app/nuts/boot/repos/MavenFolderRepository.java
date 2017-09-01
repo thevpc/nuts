@@ -163,7 +163,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
 
         if (descFile.isFile()) {
-            NutsDescriptor nutsDescriptor = parsePomXml(new FileInputStream(descFile), session);
+            NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(descFile), getWorkspace(),session);
 
             File localFile = nutsDescriptor==null? new File(versionFolder,
                     id.getName() + "-" + id.getVersion().getValue()+".jar"
@@ -264,7 +264,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             @Override
             public NutsDescriptor parseDescriptor(File pathname, NutsSession session) throws IOException {
 //                System.out.println("parse "+pathname);
-                NutsDescriptor nutsDescriptor = parsePomXml(new FileInputStream(pathname), session);
+                NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(),session);
                 if(pathname.getName().endsWith(".pom")){
                     File loc=new File(pathname.getPath().substring(0,pathname.getPath().length()-4)+".jar");
                     nutsDescriptor=nutsDescriptor.setExecutable(PlatformUtils.isExecutableJar(loc));
@@ -292,7 +292,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             try {
                 stream = getStream(id, ".pom");
                 bytes = IOUtils.readStreamAsBytes(stream, true);
-                nutsDescriptor = parsePomXml(new ByteArrayInputStream(bytes), session);
+                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(),session);
             } finally {
                 if (stream != null) {
                     stream.close();

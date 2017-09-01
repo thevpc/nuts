@@ -54,9 +54,9 @@ public class PushCommand extends AbstractNutsCommand {
         while (!cmdLine.isEmpty()) {
             if (!argVisitedRepo && cmdLine.acceptAndRemove("--repo","-r")) {
                 argVisitedRepo = true;
-                repo = cmdLine.removeNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+                repo = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else {
-                String id = cmdLine.removeNonOptionOrError(new DefaultNonOption("NewNutsId")).toString();
+                String id = cmdLine.readNonOptionOrError(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().push(id, repo, context.getSession());
                     context.getTerminal().getOut().println(id + " pushed successfully");

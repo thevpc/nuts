@@ -42,6 +42,6 @@ public class PwdCommand extends AbstractNutsCommand {
     }
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
-        context.getTerminal().getOut().println(IOUtils.getCwd());
+        context.getTerminal().getOut().println(context.getCommandLine().getCwd());
     }
 }

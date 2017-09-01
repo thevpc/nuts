@@ -35,6 +35,7 @@ import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
 import net.vpc.app.nuts.extensions.util.IteratorFilter;
 import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
 import net.vpc.app.nuts.boot.NutsIdPatternFilter;
+import net.vpc.app.nuts.extensions.util.VersionFilterToNutsIdFilterAdapter;
 import net.vpc.app.nuts.util.*;
 
 import java.io.*;

@@ -290,7 +290,11 @@ public class Main {
                     all.add("--private-caller-version");
                     all.add(StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
                     all.addAll(Arrays.asList(args));
-                    int x = IOUtils.execAndWait(all.toArray(new String[all.size()]), null, null, session.getTerminal());
+                    ProcessBuilder pb=new ProcessBuilder();
+                    pb.command(all);
+                    pb.inheritIO();
+                    Process process = pb.start();
+                    int x = process.waitFor();
                     perf = showPerf(startTime, perf, session);
                 } else {
                     if (!checkupdates) {
@@ -316,7 +320,7 @@ public class Main {
             }
             NutsCommandLineConsoleComponent commandLine = null;
             try {
-                commandLine = ws.createCommandLineConsole(args2, session);
+                commandLine = ws.createCommandLineConsole(session);
             } catch (NutsExtensionMissingException ex) {
                 perf = showPerf(startTime, perf, session);
                 session.getTerminal().getErr().println("Unable to create Console. Make sure nuts-core is installed properly.");

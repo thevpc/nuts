@@ -91,4 +91,33 @@ public class CoreNutsUtils {
         }
         return new File(versionFolder, face);
     }
+
+    public static String[][] splitEnvAndAppArgs(String[] args) {
+        List<String> env=new ArrayList<>();
+        List<String> app=new ArrayList<>();
+        boolean expectEnv=true;
+        for (String s : args) {
+            if(expectEnv) {
+                if (s.startsWith("--nuts-")) {
+                    if (s.startsWith("--nuts-arg-")) {
+                        app.add("--nuts-"+s.substring(0,"--nuts-arg-".length()));
+                    }else {
+                        env.add(s.substring("--nuts".length()));
+                    }
+                }else{
+                    app.add(s);
+                    expectEnv=false;
+                }
+            }else{
+                app.add(s);
+            }
+        }
+        return new String[][]{
+                env.toArray(new String[env.size()]),
+                app.toArray(new String[app.size()]),
+        };
+    }
+
+
+
 }

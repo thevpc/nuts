@@ -97,7 +97,7 @@ public class SimpleHttpTransportComponent implements NutsTransportComponent {
                             writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamTextFilePart) part).getName() + "\"; filename=\"" + ((TransportParamTextFilePart) part).getFileName() + "\"").append(CRLF);
                             writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF); // Text file itself must be saved in this charset!
                             writer.append(CRLF).flush();
-                            IOUtils.copy(((TransportParamTextFilePart) part).getValue(), output, false);
+                            CoreIOUtils.copy(((TransportParamTextFilePart) part).getValue(), output, false);
                             output.flush(); // Important before continuing with writer!
                             writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
                         } else if (part instanceof TransportParamTextReaderPart) {
@@ -106,7 +106,7 @@ public class SimpleHttpTransportComponent implements NutsTransportComponent {
                             writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamTextReaderPart) part).getName() + "\"; filename=\"" + ((TransportParamTextReaderPart) part).getFileName() + "\"").append(CRLF);
                             writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF); // Text file itself must be saved in this charset!
                             writer.append(CRLF).flush();
-                            IOUtils.copy(((TransportParamTextReaderPart) part).getValue(), output, true, false);
+                            CoreIOUtils.copy(((TransportParamTextReaderPart) part).getValue(), output, true, false);
                             output.flush(); // Important before continuing with writer!
                             writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
                         } else if (part instanceof TransportParamBinaryFilePart) {
@@ -116,7 +116,7 @@ public class SimpleHttpTransportComponent implements NutsTransportComponent {
                             writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(((TransportParamBinaryFilePart) part).getName())).append(CRLF);
                             writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                             writer.append(CRLF).flush();
-                            IOUtils.copy(((TransportParamBinaryFilePart) part).getValue(), output, false);
+                            CoreIOUtils.copy(((TransportParamBinaryFilePart) part).getValue(), output, false);
                             output.flush(); // Important before continuing with writer!
                             writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
                         } else if (part instanceof TransportParamBinaryStreamPart) {

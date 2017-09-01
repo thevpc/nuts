@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.cmd;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
 
@@ -47,11 +47,11 @@ public class CommitCommand extends AbstractNutsCommand {
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
-        String contentFile = cmdLine.removeNonOptionOrError(new FileNonOption("File")).getString();
+        String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         if (autoComplete != null) {
             return;
         }
-        for (String s : IOUtils.expandPath(contentFile)) {
+        for (String s : CoreIOUtils.expandPath(contentFile,new File(context.getCommandLine().getCwd()))) {
             NutsId nf = context.getValidWorkspace().commit(
                     new File(s),
                     context.getSession()

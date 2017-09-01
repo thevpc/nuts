@@ -12,14 +12,6 @@ import java.util.regex.Pattern;
  */
 public class EnhancedTextParser {
     public static final EnhancedTextParser INSTANCE=new EnhancedTextParser();
-    public static void main(String[] args) {
-        EnhancedTextParser p=new EnhancedTextParser();
-        System.out.println(p.parse("===AVAILABLE COMMANDS ARE:==="));
-//        List<EnhancedTextChunck> parsed = p.parse(Main.getHelpString());
-//        for (EnhancedTextChunck enhancedTextChunck : parsed) {
-//            System.out.println(enhancedTextChunck);
-//        }
-    }
 
     private static int[] findNext2(char[][] start,char[][] end,char[] source,int index){
         int expectedIndex=0;

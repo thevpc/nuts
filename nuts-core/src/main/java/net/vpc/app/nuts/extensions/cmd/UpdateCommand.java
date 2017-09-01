@@ -59,7 +59,7 @@ public class UpdateCommand extends AbstractNutsCommand {
             }
         }
         while (!cmdLine.isEmpty()) {
-            String id = cmdLine.removeNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
+            String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
             if (!cmdLine.isExecMode()) {
                 update(id, context);
             }

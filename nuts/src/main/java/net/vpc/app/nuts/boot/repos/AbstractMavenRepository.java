@@ -114,93 +114,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         throw new UnsupportedOperationException();
     }
 
-    public NutsDescriptor parsePomXml(InputStream stream, NutsSession session) throws IOException {
-        NutsDescriptor nutsDescriptor = null;
-        try {
-//            bytes = IOUtils.readStreamAsBytes(stream, true);
-            nutsDescriptor = MavenUtils.parsePomXml(stream);
-            HashMap<String, String> properties = new HashMap<>();
-            NutsWorkspace ws = getWorkspace();
-            NutsSession transitiveSession = session.copy().setTransitive(true);
-            NutsId parentId = null;
-            for (NutsId nutsId : nutsDescriptor.getParents()) {
-                parentId = nutsId;
-            }
-            NutsDescriptor parentDescriptor = null;
-            if (parentId != null) {
-                if (!NutsUtils.isEffectiveId(parentId)) {
-                    try {
-                        parentDescriptor = ws.fetchDescriptor(parentId.toString(), true, transitiveSession);
-                    } catch (Exception ex) {
-                        throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
-                    }
-                    parentId = parentDescriptor.getId();
-                }
-            }
-            if (parentId != null) {
-                properties.put("parent.groupId", parentId.getGroup());
-                properties.put("parent.artifactId", parentId.getName());
-                properties.put("parent.version", parentId.getVersion().getValue());
-                nutsDescriptor = nutsDescriptor.setProperties(properties, true).applyProperties(properties);
-            }
-            NutsId thisId = nutsDescriptor.getId();
-            if (!NutsUtils.isEffectiveId(thisId)) {
-                if (parentId != null) {
-                    if (StringUtils.isEmpty(thisId.getGroup())) {
-                        thisId = thisId.setGroup(parentId.getGroup());
-                    }
-                    if (StringUtils.isEmpty(thisId.getVersion().getValue())) {
-                        thisId = thisId.setVersion(parentId.getVersion().getValue());
-                    }
-                }
-                HashMap<NutsId,NutsDescriptor> cache=new HashMap<>();
-                Set<String> done=new HashSet<>();
-                Stack<NutsId> todo=new Stack<>();
-                todo.push(nutsDescriptor.getId());
-                cache.put(nutsDescriptor.getId(),nutsDescriptor);
-                while(todo.isEmpty()) {
-                    NutsId pid=todo.pop();
-                    NutsDescriptor d=cache.get(pid);
-                    if(d==null){
-                        try {
-                            d = ws.fetchDescriptor(pid.toString(), true, transitiveSession);
-                        } catch (Exception ex) {
-                            throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
-                        }
-                    }
-                    done.add(pid.getFullName());
-                    if (NutsUtils.containsVars(thisId)) {
-                        thisId.apply(new MapStringMapper(d.getProperties()));
-                    }else{
-                        break;
-                    }
-                    for (NutsId nutsId : d.getParents()) {
-                        if(!done.contains(nutsId.getFullName())){
-                            todo.push(nutsId);
-                        }
-                    }
-                }
-                if (NutsUtils.containsVars(thisId)) {
-                    throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
-                }
-                nutsDescriptor = nutsDescriptor.setId(thisId);
-            }
-            String nutsPackaging = nutsDescriptor.getProperties().get("nuts-packaging");
-            if (!StringUtils.isEmpty(nutsPackaging)) {
-                nutsDescriptor = nutsDescriptor.setPackaging(nutsPackaging);
-            }
-            properties.put("project.groupId", thisId.getGroup());
-            properties.put("project.artifactId", thisId.getName());
-            properties.put("project.version", thisId.getVersion().getValue());
-            properties.put("version", thisId.getVersion().getValue());
-            nutsDescriptor = nutsDescriptor.setProperties(properties, true).applyProperties(properties);
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
-        return nutsDescriptor;
-    }
 
     @Override
     protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) throws IOException {
@@ -211,7 +124,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             try {
                 stream = getStream(id, ".pom");
                 bytes = IOUtils.readStreamAsBytes(stream, true);
-                nutsDescriptor = parsePomXml(new ByteArrayInputStream(bytes), session);
+                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(),session);
             } finally {
                 if (stream != null) {
                     stream.close();

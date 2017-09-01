@@ -32,20 +32,15 @@ package net.vpc.app.nuts.extensions.workspaces;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.boot.NutsIdPatternFilter;
 import net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.extensions.util.ListMap;
+import net.vpc.app.nuts.extensions.executors.CustomNutsExecutorComponent;
+import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.app.nuts.util.*;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -97,6 +92,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
     private ListMap<String, String> defaultWiredComponents = new ListMap<>();
     private NutsWorkspace bootstrapWorkspace;
     private ClassLoader workspaceClassLoader;
+    private File cwd=new File(System.getProperty("user.dir"));
 
     public DefaultNutsWorkspace() {
 
@@ -749,7 +745,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             }
             NutsId newId = deploy(folder, null, d, null, session);
             d.write(file);
-            IOUtils.delete(folder);
+            CoreIOUtils.delete(folder);
             return newId;
         } else {
             throw new IllegalArgumentException("commit not supported");
@@ -763,7 +759,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         }
         NutsFile nutToInstall = fetch(id, true, session);
         if ("zip".equals(nutToInstall.getDescriptor().getExt())) {
-            IOUtils.unzip(nutToInstall.getFile(), folder);
+            CoreIOUtils.unzip(nutToInstall.getFile(), folder,getCwd());
             File file = new File(folder, NutsConstants.NUTS_DESC_FILE);
             NutsDescriptor d = NutsDescriptor.parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
@@ -862,12 +858,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
      * this with other logic :
      * core extension is required when there are no extensions or when the <code>NutsConstants.ENV_KEY_EXCLUDE_CORE_EXTENSION</code>
      * is forced to false
+     *
      * @return true when core extension is required for running this workspace
      */
     public boolean requiresCoreExtension() {
-        boolean exclude=false;
+        boolean exclude = false;
         if (getConfig().getExtensions().length > 0) {
-            exclude=Boolean.parseBoolean(getConfig().getEnv(NutsConstants.ENV_KEY_EXCLUDE_CORE_EXTENSION,"false"));
+            exclude = Boolean.parseBoolean(getConfig().getEnv(NutsConstants.ENV_KEY_EXCLUDE_CORE_EXTENSION, "false"));
         }
         if (!exclude) {
             boolean coreFound = false;
@@ -1046,7 +1043,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         return fetch(id, true, session);
     }
 
-    public void exec(String[] cmd, NutsSession session) throws IOException, InterruptedException {
+    public void exec(String[] cmd, NutsSession session) throws IOException{
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }
@@ -1055,9 +1052,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         }
         String[] args2 = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args2, 0, args2.length);
-        NutsId id = NutsId.parseOrError(cmd[0]);
         exec(
-                id,
+                cmd[0],
                 args2,
                 session
         );
@@ -1067,11 +1063,47 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         return config;
     }
 
-    public void exec(String id, String[] args, NutsSession session) throws IOException, InterruptedException {
+    public void exec(String id, String[] args, NutsSession session) throws IOException{
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }
-        exec(NutsId.parseOrError(id), args, session);
+        if (!isAllowed(NutsConstants.RIGHT_EXEC)) {
+            throw new SecurityException("Not Allowed " + NutsConstants.RIGHT_EXEC + " : " + id);
+        }
+        if (id.contains("/") || id.contains("\\")) {
+            try (CharacterizedFile c=characterize(new File(id), null,session)){
+                if (c.descriptor == null) {
+                    //this is a native file?
+                    c.descriptor= new DefaultNutsDescriptor(
+                            NutsId.parse("temp:exe#1.0"),
+                            null,
+                            null,
+                            "exe",
+                            true, "exe", new NutsExecutorDescriptor(NutsId.parse("exec"), new String[0], null), null, null, null, null, null, null, null, null, null
+                    );
+                }
+                NutsFile nutToRun=new NutsFile(
+                        c.descriptor.getId(),
+                        c.descriptor,
+                        c.contentFile,
+                        false,
+                        c.tempFile!=null
+                );
+                exec(nutToRun,args,session);
+            }
+        } else {
+            NutsId nid = NutsId.parseOrError(id);
+            exec(nid, args, session);
+        }
+    }
+
+    private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) throws IOException {
+        for (NutsExecutorComponent nutsExecutorComponent : getFactory().createAll(NutsExecutorComponent.class)) {
+            if(nutsExecutorComponent.getId().isSameFullName(nutsId)){
+                return nutsExecutorComponent;
+            }
+        }
+        return new CustomNutsExecutorComponent(nutsId);
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsFile nutsFile) throws IOException {
@@ -1082,15 +1114,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         throw new NutsNotFoundException("Nuts Executor not found for " + nutsFile);
     }
 
-    public void exec(NutsId id, String[] args, NutsSession session) throws IOException, InterruptedException {
-        if (session == null) {
-            throw new IllegalArgumentException("Missing Session");
-        }
-        if (!isAllowed(NutsConstants.RIGHT_EXEC)) {
-            throw new SecurityException("Not Allowed " + NutsConstants.RIGHT_EXEC);
-        }
-        //NutsId goodId = resolveId(id, session);
-        NutsFile nutToRun = fetch(id, session, true);
+    protected void exec(NutsId nutsId, String[] args, NutsSession session) throws IOException{
+        NutsFile nutToRun = fetch(nutsId, session, true);
+        exec(nutToRun, args, session);
+    }
+
+    protected void exec(NutsFile nutToRun, String[] appArgs, NutsSession session) throws IOException{
         if (nutToRun != null && nutToRun.getFile() != null) {
             NutsDescriptor descriptor = nutToRun.getDescriptor();
             if (!descriptor.isExecutable()) {
@@ -1098,7 +1127,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             }
             NutsExecutorDescriptor executor = descriptor.getExecutor();
             NutsExecutorComponent execComponent = null;
-            String[] execArgs = null;
+            String[] executrorArgs = null;
             Properties execProps = null;
             if (executor == null) {
                 execComponent = resolveNutsExecutorComponent(nutToRun);
@@ -1106,29 +1135,30 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
                 if (executor.getId() == null) {
                     execComponent = resolveNutsExecutorComponent(nutToRun);
                 } else {
-                    NutsFile runnerFile = fetch(executor.getId(), session, true);
-                    execComponent = resolveNutsExecutorComponent(runnerFile);
+                    execComponent = resolveNutsExecutorComponent(executor.getId());
+//                    NutsFile runnerFile = fetch(executor.getId(), session, true);
+//                    execComponent = resolveNutsExecutorComponent(runnerFile);
                 }
-                execArgs = executor.getArgs();
+                executrorArgs = executor.getArgs();
                 execProps = executor.getProperties();
             }
             boolean nowait = false;
-            if (args.length > 0 && "&".equals(args[args.length - 1])) {
-                String[] arg2 = new String[args.length - 1];
-                System.arraycopy(args, 0, arg2, 0, arg2.length);
-                args = arg2;
+            if (appArgs.length > 0 && "&".equals(appArgs[appArgs.length - 1])) {
+                String[] arg2 = new String[appArgs.length - 1];
+                System.arraycopy(appArgs, 0, arg2, 0, arg2.length);
+                appArgs = arg2;
                 nowait = true;
             }
-            if (args.length > 0 && ">null".equals(args[args.length - 1])) {
-                String[] arg2 = new String[args.length - 1];
-                System.arraycopy(args, 0, arg2, 0, arg2.length);
-                args = arg2;
+            if (appArgs.length > 0 && ">null".equals(appArgs[appArgs.length - 1])) {
+                String[] arg2 = new String[appArgs.length - 1];
+                System.arraycopy(appArgs, 0, arg2, 0, arg2.length);
+                appArgs = arg2;
                 session = session.copy();
-                NutsPrintStream nostream = createEnhancedPrintStream(IOUtils.NULL_PRINT_STREAM);
+                NutsPrintStream nostream = createEnhancedPrintStream(CoreIOUtils.NULL_PRINT_STREAM);
                 NutsTerminal t = createTerminal(null, nostream, nostream);
                 session.setTerminal(t);
             }
-            final NutsExecutionContext executionContext = new NutsExecutionContext(nutToRun, args, execArgs, execProps, session, this);
+            final NutsExecutionContext executionContext = new NutsExecutionContext(nutToRun, appArgs, executrorArgs, execProps, session, this,nutToRun.getDescriptor().getExecutor());
             if (nowait) {
                 NutsExecutorComponent finalExecComponent = execComponent;
                 Thread thread = new Thread("Exec-" + nutToRun.getId().toString()) {
@@ -1148,7 +1178,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             }
             return;
         }
-        throw new NutsNotFoundException("Nuts not found " + id);
+        throw new NutsNotFoundException("Nuts not found " + nutToRun);
     }
 
     public boolean isFetched(String id, NutsSession session) throws IOException {
@@ -1553,19 +1583,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         }
     }
 
-    private NutsDescriptor resolveNutsDescriptorFromFileContent(File localPath) {
+    private NutsDescriptor resolveNutsDescriptorFromFileContent(File localPath,NutsSession session) {
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = factory.createAllSupported(NutsDescriptorContentParserComponent.class, this);
             if (allParsers.size() > 0) {
                 NutsEnvironmentContext.WORKSPACE.set(this);
                 String fileExtension = IOUtils.getFileExtension(localPath);
-                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(localPath, fileExtension, null, null);
+                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(this,session,localPath, fileExtension, null, null);
                 for (NutsDescriptorContentParserComponent parser : allParsers) {
                     NutsDescriptor desc = null;
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-//                        e.printStackTrace();
+                        e.printStackTrace();
                     }
                     if (desc != null) {
                         return desc;
@@ -1583,15 +1613,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             if (ext.exists()) {
                 descriptor = NutsDescriptor.parse(ext);
             } else {
-                descriptor = resolveNutsDescriptorFromFileContent(contentFolder);
+                descriptor = resolveNutsDescriptorFromFileContent(contentFolder,session);
             }
             if (descriptor != null) {
                 if ("zip".equals(descriptor.getExt())) {
                     if (destFile == null) {
-                        destFile = IOUtils.createFile(contentFolder.getParent() + "/" + descriptor.getId().getGroup() + "." + descriptor.getId().getName() + "." + descriptor.getId().getVersion() + ".zip");
+                        destFile = CoreIOUtils.createFileByCwd(contentFolder.getParent() + "/" + descriptor.getId().getGroup() + "." + descriptor.getId().getName() + "." + descriptor.getId().getVersion() + ".zip",getCwd());
 //                        destFile=new File(contentFolder.getPath() + ".zip");
                     }
-                    IOUtils.zip(contentFolder, destFile);
+                    CoreIOUtils.zip(contentFolder, destFile);
                     return new NutsFile(
                             descriptor.getId(),
                             descriptor,
@@ -1609,79 +1639,82 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         }
     }
 
+    private CharacterizedFile characterize(File contentFile, File descFile, NutsSession session) throws IOException {
+        if (session == null) {
+            throw new IllegalArgumentException("Missing Session");
+        }
+        CharacterizedFile c = new CharacterizedFile();
+        c.contentFile=contentFile;
+        if (!c.contentFile.exists()) {
+            throw new IOException("File does not exists " + c.contentFile);
+        }
+        if (c.contentFile.isDirectory()) {
+            if (descFile == null) {
+                File ext = new File(c.contentFile, NutsConstants.NUTS_DESC_FILE);
+                if (ext.exists()) {
+                    c.descriptor = NutsDescriptor.parse(ext);
+                } else {
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile,session);
+                }
+                if (c.descriptor != null) {
+                    if ("zip".equals(c.descriptor.getExt())) {
+                        File zipFilePath = CoreIOUtils.createFileByCwd(c.contentFile.getPath() + ".zip",getCwd());
+                        CoreIOUtils.zip(c.contentFile, zipFilePath);
+                        c.contentFile = zipFilePath;
+                        c.tempFile = c.contentFile;
+                    } else {
+                        throw new IOException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
+                    }
+                }
+            } else {
+                c.descriptor = NutsDescriptor.parse(descFile);
+            }
+        } else if (c.contentFile.isFile()) {
+            if (descFile == null) {
+                File ext = CoreIOUtils.createFileByCwd(c.contentFile.getPath() + "." + NutsConstants.NUTS_DESC_FILE,cwd);
+                if (ext.exists()) {
+                    c.descriptor = NutsDescriptor.parse(ext);
+                } else {
+                    c.descriptor = resolveNutsDescriptorFromFileContent(c.contentFile,session);
+                }
+            } else {
+                c.descriptor = NutsDescriptor.parse(descFile);
+            }
+        } else {
+            throw new IOException("Path does not denote a valid file or folder " + c.contentFile);
+        }
+        return c;
+    }
+
     public NutsId deploy(File contentFile, String contentFileSHA1, File descFile, String descSHA1, String repositoryId, NutsSession session) throws IOException {
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }
-        File tempFile = null;
-        try {
-            NutsDescriptor descriptor = null;
-            if (!contentFile.exists()) {
-                throw new IOException("File does not exists " + contentFile);
-            }
-            if (contentFile.isDirectory()) {
-                if (descFile == null) {
-                    File ext = new File(contentFile, NutsConstants.NUTS_DESC_FILE);
-                    if (ext.exists()) {
-                        descriptor = NutsDescriptor.parse(ext);
-                    } else {
-                        descriptor = resolveNutsDescriptorFromFileContent(contentFile);
-                    }
-                    if (descriptor != null) {
-                        if ("zip".equals(descriptor.getExt())) {
-                            File zipFilePath = IOUtils.createFile(contentFile.getPath() + ".zip");
-                            IOUtils.zip(contentFile, zipFilePath);
-                            contentFile = zipFilePath;
-                            tempFile = contentFile;
-                        } else {
-                            throw new IOException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
-                        }
-                    }
-                } else {
-                    if (descSHA1 != null && SecurityUtils.evalSHA1(descFile).equals(descSHA1)) {
-                        throw new IOException("Invalid Content Hash");
-                    }
-                    descriptor = NutsDescriptor.parse(descFile);
-                }
-            } else if (contentFile.isFile()) {
-                if (descFile == null) {
-                    File ext = IOUtils.createFile(contentFile.getPath() + "." + NutsConstants.NUTS_DESC_FILE);
-                    if (ext.exists()) {
-                        descriptor = NutsDescriptor.parse(ext);
-                    } else {
-                        descriptor = resolveNutsDescriptorFromFileContent(contentFile);
-                    }
-                } else {
-                    if (descSHA1 != null && SecurityUtils.evalSHA1(descFile).equals(descSHA1)) {
-                        throw new IOException("Invalid Content Hash");
-                    }
-                    descriptor = NutsDescriptor.parse(descFile);
-                }
-            } else {
-                throw new IOException("Path does not denote a valid file or folder " + contentFile);
-            }
-            if (descriptor == null) {
-                throw new IOException("Missing descriptor");
-            }
-
-            return deploy(contentFile, contentFileSHA1, descriptor, repositoryId, session);
-        } finally {
-            if (tempFile != null) {
-                tempFile.delete();
+        if (!contentFile.exists()) {
+            throw new IOException("File does not exists " + contentFile);
+        }
+        if (descFile != null) {
+            if (descSHA1 != null && SecurityUtils.evalSHA1(descFile).equals(descSHA1)) {
+                throw new IOException("Invalid Content Hash");
             }
         }
+        try (CharacterizedFile c=characterize(contentFile, descFile,session)){
+            if (c.descriptor == null) {
+                throw new IOException("Missing descriptor");
+            }
+            return deploy(c.contentFile, contentFileSHA1, c.descriptor, repositoryId, session);
+        }
     }
-
 
     public NutsId deploy(String contentURL, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) throws IOException {
         File tempFile = null;
         File contentFile = null;
         try {
             if (contentURL.contains("://")) {
-                tempFile = IOUtils.createTempFile(new URL(contentURL));
+                tempFile = CoreIOUtils.createTempFile(new URL(contentURL));
                 contentFile = tempFile;
             } else {
-                contentFile = IOUtils.createFile(contentURL);
+                contentFile = CoreIOUtils.createFileByCwd(contentURL,getCwd());
             }
             return deploy(contentFile, sha1, descriptor, repositoryId, session);
         } finally {
@@ -1701,17 +1734,17 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         File descFile = null;
         try {
             if (contentURL.contains("://")) {
-                tempFile = IOUtils.createTempFile(new URL(contentURL));
+                tempFile = CoreIOUtils.createTempFile(new URL(contentURL));
                 contentFile = tempFile;
             } else {
-                contentFile = IOUtils.createFile(contentURL);
+                contentFile = CoreIOUtils.createFileByCwd(contentURL,getCwd());
             }
             if (descriptorURL != null) {
                 if (descriptorURL.contains("://")) {
-                    tempDescFile = IOUtils.createTempFile(new URL(descriptorURL));
+                    tempDescFile = CoreIOUtils.createTempFile(new URL(descriptorURL));
                     descFile = tempDescFile;
                 } else {
-                    descFile = IOUtils.createFile(descriptorURL);
+                    descFile = CoreIOUtils.createFileByCwd(descriptorURL,getCwd());
                 }
             }
             return deploy(contentFile, sha1, descFile, descSHA1, repositoryId, session);
@@ -1737,7 +1770,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
                 if (descFile.exists()) {
                     descriptor2 = NutsDescriptor.parse(descFile);
                 } else {
-                    descriptor2 = resolveNutsDescriptorFromFileContent(contentFile);
+                    descriptor2 = resolveNutsDescriptorFromFileContent(contentFile,session);
                 }
                 if (descriptor == null) {
                     descriptor = descriptor2;
@@ -1748,8 +1781,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
                 }
                 if (descriptor != null) {
                     if ("zip".equals(descriptor.getExt())) {
-                        File zipFilePath = IOUtils.createFile(contentFile.getPath() + ".zip");
-                        IOUtils.zip(contentFile, zipFilePath);
+                        File zipFilePath = CoreIOUtils.createFileByCwd(contentFile.getPath() + ".zip",getCwd());
+                        CoreIOUtils.zip(contentFile, zipFilePath);
                         contentFile = zipFilePath;
                         tempFile = contentFile;
                     } else {
@@ -1761,7 +1794,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
                     throw new IOException("Invalid Content Hash");
                 }
                 if (descriptor == null) {
-                    descriptor = resolveNutsDescriptorFromFileContent(contentFile);
+                    descriptor = resolveNutsDescriptorFromFileContent(contentFile,session);
                 }
             }
             if (descriptor == null) {
@@ -2336,7 +2369,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsCommandLineConsoleComponent createCommandLineConsole(String[] bootstrapArguments, NutsSession session) throws IOException {
+    public NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) throws IOException {
         NutsCommandLineConsoleComponent cmd = getFactory().createSupported(NutsCommandLineConsoleComponent.class, this);
         if (cmd == null) {
             throw new NutsExtensionMissingException(NutsCommandLineConsoleComponent.class, "Console");
@@ -2406,6 +2439,39 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         if (out == null) {
             return null;
         }
+        if(out instanceof NutsPrintStream){
+            return (NutsPrintStream) out;
+        }
         return getFactory().createSupported(NutsPrintStream.class, this, new Class[]{OutputStream.class}, new Object[]{out});
+    }
+
+    public File getCwd() {
+        return cwd;
+    }
+
+    public void setCwd(File cwd) {
+        if(cwd==null){
+            throw new IllegalArgumentException("Invalid cwd");
+        }
+        if(!cwd.isDirectory()){
+            throw new IllegalArgumentException("Invalid cwd "+cwd);
+        }
+        if(!cwd.isAbsolute()){
+            throw new IllegalArgumentException("Invalid cwd "+cwd);
+        }
+        this.cwd = cwd;
+    }
+
+    private class CharacterizedFile implements AutoCloseable{
+        File contentFile;
+        File tempFile;
+        NutsDescriptor descriptor;
+
+        @Override
+        public void close() {
+            if (tempFile != null) {
+                tempFile.delete();
+            }
+        }
     }
 }

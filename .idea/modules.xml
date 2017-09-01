@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../java-shell/java-shell.iml" filepath="$PROJECT_DIR$/../java-shell/java-shell.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts/nuts.iml" filepath="$PROJECT_DIR$/nuts/nuts.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-clown/nuts-clown.iml" filepath="$PROJECT_DIR$/nuts-clown/nuts-clown.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-core/nuts-core.iml" filepath="$PROJECT_DIR$/nuts-core/nuts-core.iml" />

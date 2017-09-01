@@ -319,14 +319,6 @@ public class NutsUtils {
         return id.getName() + "-" + id.getVersion() + ext;
     }
 
-    public static <T> List<T> toList(Iterator<T> it) {
-        List<T> list = new ArrayList<>();
-        while (it.hasNext()) {
-            list.add(it.next());
-        }
-        return list;
-    }
-
     public static String[] applyStringProperties(String[] child, StringMapper properties) {
         String[] vals = new String[child.length];
         for (int i = 0; i < vals.length; i++) {
@@ -335,10 +327,10 @@ public class NutsUtils {
         return vals;
     }
 
-    public static Map<String,String> applyMapProperties(Map<String, String> child, StringMapper properties) {
-        Map<String,String> m2=new LinkedHashMap<>();
+    public static Map<String, String> applyMapProperties(Map<String, String> child, StringMapper properties) {
+        Map<String, String> m2 = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : child.entrySet()) {
-            m2.put(applyStringProperties(entry.getKey(),properties),applyStringProperties(entry.getValue(),properties));
+            m2.put(applyStringProperties(entry.getKey(), properties), applyStringProperties(entry.getValue(), properties));
         }
         return m2;
     }

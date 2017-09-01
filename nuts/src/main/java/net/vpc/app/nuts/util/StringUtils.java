@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
  * Created by vpc on 1/15/17.
  */
 public class StringUtils {
+    private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)\\}");
 
     public static StringBuilder clear(StringBuilder c) {
         return c.delete(0, c.length());
@@ -139,76 +140,6 @@ public class StringUtils {
         return sb.toString();
     }
 
-    /**
-     * code from org.apache.tools.ant.types.Commandline copyrights goes to
-     * Apache Ant Authors (Licensed to the Apache Software Foundation (ASF))
-     * Crack a command line.
-     *
-     * @param line the command line to process.
-     * @return the command line broken into strings. An empty or null toProcess
-     * parameter results in a zero sized array.
-     */
-    public static String[] parseCommandline(String line) {
-        if (line == null || line.length() == 0) {
-            //no command? no string
-            return new String[0];
-        }
-        // parse with a simple finite state machine
-
-        final int normal = 0;
-        final int inQuote = 1;
-        final int inDoubleQuote = 2;
-        int state = normal;
-        final StringTokenizer tok = new StringTokenizer(line, "\"\' ", true);
-        final ArrayList<String> result = new ArrayList<String>();
-        final StringBuilder current = new StringBuilder();
-        boolean lastTokenHasBeenQuoted = false;
-
-        while (tok.hasMoreTokens()) {
-            String nextTok = tok.nextToken();
-            switch (state) {
-                case inQuote:
-                    if ("\'".equals(nextTok)) {
-                        lastTokenHasBeenQuoted = true;
-                        state = normal;
-                    } else {
-                        current.append(nextTok);
-                    }
-                    break;
-                case inDoubleQuote:
-                    if ("\"".equals(nextTok)) {
-                        lastTokenHasBeenQuoted = true;
-                        state = normal;
-                    } else {
-                        current.append(nextTok);
-                    }
-                    break;
-                default:
-                    if ("\'".equals(nextTok)) {
-                        state = inQuote;
-                    } else if ("\"".equals(nextTok)) {
-                        state = inDoubleQuote;
-                    } else if (" ".equals(nextTok)) {
-                        if (lastTokenHasBeenQuoted || current.length() != 0) {
-                            result.add(current.toString());
-                            current.setLength(0);
-                        }
-                    } else {
-                        current.append(nextTok);
-                    }
-                    lastTokenHasBeenQuoted = false;
-                    break;
-            }
-        }
-        if (lastTokenHasBeenQuoted || current.length() != 0) {
-            result.add(current.toString());
-        }
-        if (state == inQuote || state == inDoubleQuote) {
-            throw new RuntimeException("unbalanced quotes in " + line);
-        }
-        return result.toArray(new String[result.size()]);
-    }
-
     public static String join(String sep, Collection<String> items) {
         StringBuilder sb = new StringBuilder();
         Iterator<String> i = items.iterator();
@@ -279,7 +210,6 @@ public class StringUtils {
         return sb.toString();
     }
 
-    private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)\\}");
 
     public static String replaceVars(String format, StringMapper map) {
         return replaceVars(format, map, new HashSet<>());

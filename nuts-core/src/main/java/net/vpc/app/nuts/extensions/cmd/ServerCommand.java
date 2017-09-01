@@ -31,10 +31,11 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
@@ -77,7 +78,7 @@ public class ServerCommand extends AbstractNutsCommand {
                     if (cmdLine.acceptAndRemoveNoDuplicates("-c", "--create")) {
                         autocreate = true;
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("-h", "--archetype")) {
-                        archetype = cmdLine.removeNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
+                        archetype = cmdLine.readNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("-!s", "--no-save")) {
                         save = false;
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("--http")) {
@@ -93,39 +94,39 @@ public class ServerCommand extends AbstractNutsCommand {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).name = cmdLine.removeNonOptionOrError(new DefaultNonOption("ServerName")).getString();
+                        servers.get(servers.size() - 1).name = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerName")).getString();
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("-a", "--address")) {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).addr = cmdLine.removeNonOptionOrError(new DefaultNonOption("ServerAddress")).getString();
+                        servers.get(servers.size() - 1).addr = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerAddress")).getString();
 
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("-p", "--port")) {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).port = cmdLine.removeNonOptionOrError(new DefaultNonOption("ServerPort")).getIntOrError();
+                        servers.get(servers.size() - 1).port = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerPort")).getIntOrError();
 
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("-l", "--backlog")) {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).port = cmdLine.removeNonOptionOrError(new DefaultNonOption("ServerBacklog")).getIntOrError();
+                        servers.get(servers.size() - 1).port = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerBacklog")).getIntOrError();
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("--ssl-certificate")) {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).sslCertificate = cmdLine.removeNonOptionOrError(new DefaultNonOption("SslCertificate")).getStringOrError();
+                        servers.get(servers.size() - 1).sslCertificate = cmdLine.readNonOptionOrError(new DefaultNonOption("SslCertificate")).getStringOrError();
                     } else if (cmdLine.acceptAndRemoveNoDuplicates("--ssl-passphrase")) {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).sslPassphrase = cmdLine.removeNonOptionOrError(new DefaultNonOption("SslPassPhrase")).getStringOrError();
+                        servers.get(servers.size() - 1).sslPassphrase = cmdLine.readNonOptionOrError(new DefaultNonOption("SslPassPhrase")).getStringOrError();
                     } else {
                         if (servers.size() == 0) {
                             throw new IllegalArgumentException("Server Type missing");
                         }
-                        String s = cmdLine.removeNonOptionOrError(new DefaultNonOption("Workspace")).getString();
+                        String s = cmdLine.readNonOptionOrError(new DefaultNonOption("Workspace")).getString();
                         int eq = s.indexOf('=');
                         if (eq >= 0) {
                             String serverContext = s.substring(0, eq);
@@ -189,7 +190,7 @@ public class ServerCommand extends AbstractNutsCommand {
                                 if (server.sslCertificate == null) {
                                     throw new IllegalArgumentException("Missing SSL Certificate");
                                 }
-                                config.setSslKeystoreCertificate(IOUtils.readStreamAsBytes(IOUtils.createFile(server.sslCertificate)));
+                                config.setSslKeystoreCertificate(CoreIOUtils.readStreamAsBytes(CoreIOUtils.createFileByCwd(server.sslCertificate,new File(context.getCommandLine().getCwd()))));
                                 if (server.sslPassphrase == null) {
                                     throw new IllegalArgumentException("Missing SSL Passphrase");
                                 }
@@ -210,12 +211,12 @@ public class ServerCommand extends AbstractNutsCommand {
                     }
                 }
             } else if (cmdLine.acceptAndRemove("stop")) {
-                String s = cmdLine.removeNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
+                String s = cmdLine.readNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().stopServer(s);
                 }
                 while (!cmdLine.isEmpty()) {
-                    s = cmdLine.removeNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
+                    s = cmdLine.readNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
                     if (cmdLine.isExecMode()) {
                         context.getValidWorkspace().stopServer(s);
                     }

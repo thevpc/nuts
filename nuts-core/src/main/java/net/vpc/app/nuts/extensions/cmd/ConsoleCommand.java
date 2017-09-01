@@ -30,8 +30,11 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.apps.javashell.interpreter.QuitShellException;
+
+import java.io.File;
 
 /**
  * Created by vpc on 1/7/17.
@@ -52,11 +55,17 @@ public class ConsoleCommand extends AbstractNutsCommand {
                 .append(" console (").append(NutsPrintColors.BLUE,"Network Updatable Things Services").append("), v")
                 .append(NutsPrintColors.BLUE, context.getValidWorkspace().getWorkspaceVersion()).append(" (c) vpc 2017")
                 .println();
+
+        NutsCommandLineConsoleComponent commandLine = null;
+        commandLine = context.getWorkspace().createCommandLineConsole(context.getSession());
+
         while (true) {
+
+
             terminal = context.getTerminal();
             terminal.setCommandContext(context);
             NutsWorkspace ws = context.getWorkspace();
-            String wss = ws == null ? "" : IOUtils.createFile(ws.getWorkspaceLocation()).getName();
+            String wss = ws == null ? "" : CoreIOUtils.createFileByCwd(ws.getWorkspaceLocation(),new File(context.getCommandLine().getCwd())).getName();
             String login = null;
             if (ws != null) {
                 login = ws.getCurrentLogin();
@@ -75,20 +84,10 @@ public class ConsoleCommand extends AbstractNutsCommand {
                 break;
             }
             if (line.trim().length() > 0) {
-                String[] strings = null;
                 try {
-                    strings=StringUtils.parseCommandline(line);
-                }catch (Exception ex){
-                    terminal.getErr().println(StringUtils.exceptionToString(ex));
-                }
-                if (strings!=null && strings.length > 0) {
-                    if (strings[0].equals("quit")) {
-                        return;
-                    }
-                    if (strings[0].equals("exit")) {
-                        return;
-                    }
-                    context.getCommandLine().run(strings);
+                    commandLine.runLine(line);
+                }catch (QuitShellException q){
+                    return;
                 }
             }
         }

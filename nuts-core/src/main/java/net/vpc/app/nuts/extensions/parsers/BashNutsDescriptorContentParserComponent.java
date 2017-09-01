@@ -36,15 +36,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by vpc on 1/15/17.
  */
 public class BashNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+
+    public static final NutsId SH = NutsId.parse("sh");
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("sh","bash"));//, "war", "ear"
+
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
+        if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
+            return null;
+        }
         try {
             return readNutDescriptorFromBashScriptFile(parserContext.getFullStream());
         } catch (IOException e) {
@@ -115,6 +121,15 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                         break;
                     }
                 }
+            }
+            if(comment.toString().trim().isEmpty()){
+                return new DefaultNutsDescriptor(
+                        NutsId.parse("temp:sh#1.0"),
+                        null,
+                        null,
+                        "sh",
+                        true, "sh", new NutsExecutorDescriptor(SH, new String[0], null), null, null, null, null, null, null, null, null, null
+                );
             }
             return NutsDescriptor.parse(comment.getValidString());
         } finally {

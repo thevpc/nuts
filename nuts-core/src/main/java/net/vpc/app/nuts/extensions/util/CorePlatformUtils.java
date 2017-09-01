@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.util.IOUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.*;
@@ -64,7 +63,7 @@ public class CorePlatformUtils {
      * @return
      */
     public static Map<String, String> getOsDistMapLinux() {
-        File dir = IOUtils.createFile("/etc/");
+        File dir = CoreIOUtils.createFileByCwd("/etc/",null);
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
             File[] a = dir.listFiles(new FilenameFilter() {
@@ -76,14 +75,14 @@ public class CorePlatformUtils {
                 fileList.addAll(Arrays.asList(a));
             }
         }
-        File fileVersion = IOUtils.createFile("/proc/version");
+        File fileVersion = CoreIOUtils.createFileByCwd("/proc/version",null);
         if (fileVersion.exists()) {
             fileList.add(fileVersion);
         }
         String disId = null;
         String disName = null;
         String disVersion = null;
-        File linuxOsrelease = IOUtils.createFile("/proc/sys/kernel/osrelease");
+        File linuxOsrelease = CoreIOUtils.createFileByCwd("/proc/sys/kernel/osrelease",null);
         StringBuilder osVersion = new StringBuilder();
         if (linuxOsrelease.isFile()) {
             BufferedReader myReader = null;
@@ -104,9 +103,9 @@ public class CorePlatformUtils {
             }
         }
         if (osVersion.toString().trim().isEmpty()) {
-            osVersion.delete(0, osVersion.length());
+            StringUtils.clear(osVersion);
             try {
-                IOUtils.execAndEcho(new String[]{"uname", "-r"}, null, null, osVersion, null, 50);
+                CoreIOUtils.execAndEcho(new String[]{"uname", "-r"}, null, null, osVersion, null, 50);
             } catch (Exception e) {
                 e.printStackTrace();
             }

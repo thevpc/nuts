@@ -31,7 +31,6 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.*;
-import net.vpc.app.nuts.util.IOUtils;
 import net.vpc.app.nuts.util.LogUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
@@ -83,6 +82,8 @@ public class ConfigCommand extends AbstractNutsCommand {
                     out.println("add user");
                     out.println("edit user");
                     out.println("passwd");
+                    out.println("secure");
+                    out.println("unsecure");
                     out.println("");
                     out.println("type 'help config' for more detailed help");
                 }
@@ -241,7 +242,7 @@ public class ConfigCommand extends AbstractNutsCommand {
     private boolean processRepositoryCommands(CmdLine cmdLine, Boolean autoSave, NutsCommandContext context) throws IOException, LoginException {
         NutsWorkspace validWorkspace = context.getValidWorkspace();
         if (cmdLine.acceptAndRemove("save repository", "sw")) {
-            String repositoryId = cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+            String repositoryId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
                 trySave(context,validWorkspace,validWorkspace.findRepository(repositoryId),true,null);
@@ -249,7 +250,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             return true;
 
         } else if (cmdLine.acceptAndRemove("create repo", "cr")) {
-            String repositoryId = cmdLine.removeNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
+            String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
             String location = cmdLine.removeNonOption(new DefaultNonOption("RepositoryLocation")).getString();
             String repoType = cmdLine.removeNonOption(new RepositoryNonOption("RepositoryType", context.getValidWorkspace())).getString();
             cmdLine.requireEmpty();
@@ -287,7 +288,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                             new RepoPattern("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven")}) {
                         repoPatterns.put(repoPattern.id, repoPattern);
                     }
-                    String repositoryId = cmdLine.removeNonOptionOrError(new DefaultNonOption("RepositoryId") {
+                    String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("RepositoryId") {
                         @Override
                         public List<ArgumentCandidate> getValues() {
                             ArrayList<ArgumentCandidate> arrayList = new ArrayList<>();
@@ -309,8 +310,8 @@ public class ConfigCommand extends AbstractNutsCommand {
                         location = found.location;
                         repoType = found.type;
                     } else {
-                        location = cmdLine.removeNonOptionOrError(new FolderNonOption("Location")).getString();
-                        repoType = cmdLine.removeNonOptionOrError(new RepositoryTypeNonOption("RepositoryType", context)).getString();
+                        location = cmdLine.readNonOptionOrError(new FolderNonOption("Location")).getString();
+                        repoType = cmdLine.readNonOptionOrError(new RepositoryTypeNonOption("RepositoryType", context)).getString();
                     }
                     if (cmdLine.isExecMode()) {
                         NutsRepository repo = null;
@@ -329,7 +330,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             return true;
 
         } else if (cmdLine.acceptAndRemove("remove repo", "rr")) {
-            String locationOrRepositoryId = cmdLine.removeNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+            String locationOrRepositoryId = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             if (cmdLine.isExecMode()) {
                 validWorkspace.removeRepository(locationOrRepositoryId);
                 trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
@@ -354,7 +355,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             return true;
 
         } else if (cmdLine.acceptAndRemove("enable repo", "er")) {
-            String localId = cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+            String localId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
             if (cmdLine.isExecMode()) {
 
                 NutsRepository editedRepo = validWorkspace.findRepository(localId);
@@ -363,7 +364,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             return true;
         } else if (cmdLine.acceptAndRemove("disable repo", "rr")) {
-            String localId = cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+            String localId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
             if (cmdLine.isExecMode()) {
                 NutsRepository editedRepo = validWorkspace.findRepository(localId);
                 editedRepo.getWorkspace().getConfig().getRepository(editedRepo.getRepositoryId()).setEnabled(false);
@@ -371,10 +372,10 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             return true;
         } else if (cmdLine.acceptAndRemove("edit repo", "er")) {
-            String repoId = cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoyId", context.getValidWorkspace())).getString();
+            String repoId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoyId", context.getValidWorkspace())).getString();
             if (cmdLine.acceptAndRemove("add repo", "ar")) {
-                String repositoryId = cmdLine.removeNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
-                String location = cmdLine.removeNonOptionOrError(new FolderNonOption("RepositoryLocation")).getString();
+                String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
+                String location = cmdLine.readNonOptionOrError(new FolderNonOption("RepositoryLocation")).getString();
                 String repoType = cmdLine.removeNonOption(new RepositoryTypeNonOption("RepositoryType", context)).getString();
 
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
@@ -383,7 +384,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 trySave(context,validWorkspace,repo,autoSave,null);
 
             } else if (cmdLine.acceptAndRemove("remove repo", "rr")) {
-                String location = cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+                String location = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
                 editedRepo.removeMirror(location);
                 trySave(context,validWorkspace,editedRepo,autoSave,null);
@@ -428,12 +429,12 @@ public class ConfigCommand extends AbstractNutsCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.acceptAndRemove("--repo", "-r")) {
-                    repository = context.getValidWorkspace().findRepository(cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
+                    repository = context.getValidWorkspace().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
                 }
             }
             if (repository == null) {
                 NutsSecurityEntityConfig u = new NutsSecurityEntityConfig();
-                String user = cmdLine.removeNonOptionOrError(new DefaultNonOption("Username")).getString();
+                String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 String password = cmdLine.removeNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
                     u.setUser(user);
@@ -442,7 +443,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
             } else {
                 NutsSecurityEntityConfig u = new NutsSecurityEntityConfig();
-                String user = cmdLine.removeNonOptionOrError(new DefaultNonOption("Username")).getString();
+                String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 String mappedUser = cmdLine.removeNonOption(new DefaultNonOption("MappedUser")).getString();
                 String password = cmdLine.removeNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
@@ -462,7 +463,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.acceptAndRemove("--repo", "-r")) {
-                    repository = context.getValidWorkspace().findRepository(cmdLine.removeNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
+                    repository = context.getValidWorkspace().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -494,7 +495,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.acceptAndRemove("--repo", "-r")) {
-                    repository = context.getValidWorkspace().findRepository(cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
+                    repository = context.getValidWorkspace().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
                 }
             }
 
@@ -503,11 +504,11 @@ public class ConfigCommand extends AbstractNutsCommand {
             String oldPassword = null;
             do {
                 if (cmdLine.acceptAndRemove("--user")) {
-                    user = cmdLine.removeNonOptionOrError(new DefaultNonOption("Username")).getString();
+                    user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 } else if (cmdLine.acceptAndRemove("--password")) {
-                    password = cmdLine.removeNonOptionOrError(new DefaultNonOption("Password")).getString();
+                    password = cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getString();
                 } else if (cmdLine.acceptAndRemove("--old-password")) {
-                    oldPassword = cmdLine.removeNonOptionOrError(new DefaultNonOption("OldPassword")).getString();
+                    oldPassword = cmdLine.readNonOptionOrError(new DefaultNonOption("OldPassword")).getString();
                 } else {
                     cmdLine.requireEmpty();
                 }
@@ -542,11 +543,11 @@ public class ConfigCommand extends AbstractNutsCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.acceptAndRemove("--repo", "-r")) {
-                    repository = context.getValidWorkspace().findRepository(cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
+                    repository = context.getValidWorkspace().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
                 }
             }
 
-            String user = cmdLine.removeNonOptionOrError(new DefaultNonOption("Username")).getString();
+            String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
             NutsSecurityEntityConfig u = null;
             if (repository == null) {
                 u = context.getValidWorkspace().getConfig().getSecurity(user);
@@ -574,32 +575,32 @@ public class ConfigCommand extends AbstractNutsCommand {
                     lastOption = "--password";
                 } else {
                     if (lastOption.equals("--add-group")) {
-                        String a = cmdLine.removeNonOptionOrError(new DefaultNonOption("Group")).getString();
+                        String a = cmdLine.readNonOptionOrError(new DefaultNonOption("Group")).getString();
                         if (u != null && cmdLine.isExecMode()) {
                             u.addGroup(a);
                         }
                     } else if (lastOption.equals("--remove-group")) {
-                        String a = cmdLine.removeNonOptionOrError(new GroupNonOption("Group", u)).getString();
+                        String a = cmdLine.readNonOptionOrError(new GroupNonOption("Group", u)).getString();
                         if (u != null && cmdLine.isExecMode()) {
                             u.removeGroup(a);
                         }
                     } else if (lastOption.equals("--add-right")) {
-                        String a = cmdLine.removeNonOptionOrError(new RightNonOption("Right", u, false)).getString();
+                        String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", u, false)).getString();
                         if (u != null && cmdLine.isExecMode()) {
                             u.addRight(a);
                         }
                     } else if (lastOption.equals("--remove-right")) {
-                        String a = cmdLine.removeNonOptionOrError(new RightNonOption("Right", u, true)).getString();
+                        String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", u, true)).getString();
                         if (u != null && cmdLine.isExecMode()) {
                             u.removeRight(a);
                         }
                     } else if (lastOption.equals("--mapped-user")) {
-                        String a = cmdLine.removeNonOptionOrError(new DefaultNonOption("MappedUser")).getString();
+                        String a = cmdLine.readNonOptionOrError(new DefaultNonOption("MappedUser")).getString();
                         if (u != null && cmdLine.isExecMode()) {
                             u.setMappedUser(a);
                         }
                     } else if (lastOption.equals("--password")) {
-                        String pwd = (cmdLine.removeNonOptionOrError(new DefaultNonOption("Password")).getString());
+                        String pwd = (cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getString());
                         if (cmdLine.isExecMode()) {
                             if (repository == null) {
                                 context.getValidWorkspace().getConfig().setSecurity(u);
@@ -630,7 +631,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.acceptAndRemove("--repo", "-r")) {
-                    repository = context.getValidWorkspace().findRepository(cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
+                    repository = context.getValidWorkspace().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
                 }
             }
             //unsecure-box
@@ -657,7 +658,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.acceptAndRemove("--repo", "-r")) {
-                    repository = context.getValidWorkspace().findRepository(cmdLine.removeNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
+                    repository = context.getValidWorkspace().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString());
                 }
             }
             //secure-box
@@ -732,7 +733,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             return true;
         } else if (cmdLine.acceptAndRemove("import", "ia")) {
             do {
-                String a = cmdLine.removeNonOptionOrError(new DefaultNonOption("Import")).getString();
+                String a = cmdLine.readNonOptionOrError(new DefaultNonOption("Import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().getConfig().addImport(a);
                 }
@@ -743,7 +744,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             return true;
         } else if (cmdLine.acceptAndRemove("unimport", "ir")) {
             while (!cmdLine.isEmpty()) {
-                String ii = cmdLine.removeNonOptionOrError(new DefaultNonOption("Import")).getString();
+                String ii = cmdLine.readNonOptionOrError(new DefaultNonOption("Import")).getString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().getConfig().removeImport(ii);
                 }
@@ -761,12 +762,12 @@ public class ConfigCommand extends AbstractNutsCommand {
             autoSave=false;
         }
         if (cmdLine.acceptAndRemove("add extension", "ax")) {
-            String extensionId = cmdLine.removeNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
+            String extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
             if (cmdLine.isExecMode()) {
                 context.getValidWorkspace().addExtension(extensionId, context.getSession());
             }
             while (!cmdLine.isEmpty()) {
-                extensionId = cmdLine.removeNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
+                extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().addExtension(extensionId, context.getSession());
                 }
@@ -808,13 +809,13 @@ public class ConfigCommand extends AbstractNutsCommand {
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-s", "--save")) {
                     save = true;
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-h", "--archetype")) {
-                    archetype = cmdLine.removeNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
+                    archetype = cmdLine.readNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-u", "--login")) {
-                    login = cmdLine.removeNonOptionOrError(new DefaultNonOption("Login")).getStringOrError();
+                    login = cmdLine.readNonOptionOrError(new DefaultNonOption("Login")).getStringOrError();
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-x", "--password")) {
-                    password = cmdLine.removeNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
+                    password = cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
                 } else {
-                    String ws = cmdLine.removeNonOptionOrError(new DefaultNonOption("NewWorkspaceName")).getString();
+                    String ws = cmdLine.readNonOptionOrError(new DefaultNonOption("NewWorkspaceName")).getString();
                     NutsWorkspace workspace = context.getWorkspace().openWorkspace(
                             ws,
                             new NutsWorkspaceCreateOptions()
@@ -848,13 +849,13 @@ public class ConfigCommand extends AbstractNutsCommand {
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-s", "--nosave")) {
                     save = false;
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-h", "--archetype")) {
-                    archetype = cmdLine.removeNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
+                    archetype = cmdLine.readNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-u", "--login")) {
-                    login = cmdLine.removeNonOptionOrError(new DefaultNonOption("Username")).getStringOrError();
+                    login = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getStringOrError();
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("-x", "--password")) {
-                    password = cmdLine.removeNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
+                    password = cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
                 } else {
-                    String ws = cmdLine.removeNonOptionOrError(new FolderNonOption("WorkspacePath")).getString();
+                    String ws = cmdLine.readNonOptionOrError(new FolderNonOption("WorkspacePath")).getString();
                     wsCount++;
                     cmdLine.requireEmpty();
                     if (cmdLine.isExecMode()) {

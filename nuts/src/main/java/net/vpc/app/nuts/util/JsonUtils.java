@@ -162,7 +162,7 @@ public class JsonUtils {
                 if (key.equals("serialVersionUID")) {
                     key = "instanceSerialVersionUID";
                 }
-                PlatformUtils.PlatformBeanProperty pp = PlatformUtils.findPlatformBeanProperty(key, t);
+                PlatformBeanProperty pp = PlatformUtils.findPlatformBeanProperty(key, t);
                 if (pp != null) {
                     pp.setValue(ooo, deserialize(entry.getValue(), pp.getPlatformType()));
                 }
@@ -204,7 +204,7 @@ public class JsonUtils {
         } catch (Exception e) {
             //
         }
-        for (PlatformUtils.PlatformBeanProperty property : PlatformUtils.findPlatformBeanProperties(type)) {
+        for (PlatformBeanProperty property : PlatformUtils.findPlatformBeanProperties(type)) {
             if (property.isReadSupported() && !property.isDeprecated() && !property.isTransient() && !"instanceSerialVersionUID".equals(property.getName())) {
                 Class t = property.getPlatformType();
                 Object value = property.getValue(obj);

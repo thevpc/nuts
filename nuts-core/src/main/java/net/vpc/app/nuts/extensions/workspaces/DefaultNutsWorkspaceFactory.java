@@ -235,8 +235,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         return (T) resolveInstance(classes.getOne(type), type);
     }
-
-    //    @Override
+    @Override
     public <T> List<T> createAll(Class<T> type) {
         List<T> all = new ArrayList<T>();
         for (Object obj : instances.getAll(type)) {

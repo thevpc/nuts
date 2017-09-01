@@ -39,7 +39,7 @@ public interface NutsCommand extends NutsComponent<Object> {
 
 //    int getSupportLevel();
 
-    void run(String[] args, NutsCommandContext context) throws Exception;
+    void exec(String[] args, NutsCommandContext context) throws Exception;
 
     String getHelp();
 
