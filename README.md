@@ -30,3 +30,13 @@ uninstall packages allowing multiple versions of the very same package to  be in
 + checkout,commit   : create new versions of the packages
 + fetch,push        : download, upload to remote repositories
 + find              : searches for existing/installable packages
+
+## Download
+
+[Latest stable version (jar)](https://github.com/thevpc/vpc-public-maven/blob/master/net/vpc/app/nuts/nuts/0.3.3/nuts-0.3.3.jar)
+
+## Run
+java -jar nuts-0.3.3.jar console
+
+
+
