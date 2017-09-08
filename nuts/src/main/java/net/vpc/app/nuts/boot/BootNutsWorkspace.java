@@ -1387,4 +1387,19 @@ public class BootNutsWorkspace implements NutsWorkspace {
     public void setCwd(File file) {
         throw new IllegalArgumentException("Unsupported");
     }
+
+    @Override
+    public boolean switchUnsecureMode(String adminPassword) throws LoginException, IOException {
+        return false;
+    }
+
+    @Override
+    public boolean switchSecureMode(String adminPassword) throws LoginException, IOException {
+        return false;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return true;
+    }
 }

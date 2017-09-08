@@ -40,6 +40,7 @@ import java.util.*;
  */
 public class NutsWorkspaceConfig {
     private static final long serialVersionUID=1;
+    private boolean secure = false;
     private String workspace = null;
     private Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
     private List<String> extensions = new ArrayList<>();
@@ -327,4 +328,11 @@ public class NutsWorkspaceConfig {
         }
     }
 
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
 }

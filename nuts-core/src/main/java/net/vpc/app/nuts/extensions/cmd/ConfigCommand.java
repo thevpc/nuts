@@ -636,23 +636,23 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             //unsecure-box
             if (cmdLine.isExecMode()) {
-                NutsSecurityEntityConfig security = (repository == null ? context.getValidWorkspace().getConfig().getSecurity(NutsConstants.USER_ANONYMOUS) : repository.getConfig().getSecurity(NutsConstants.USER_ANONYMOUS));
-                HashSet<String> anonymousRights = new HashSet<>(Arrays.asList(security.getRights()));
-                HashSet<String> neededRights = new HashSet<>(Arrays.asList(NutsConstants.RIGHTS));
-                neededRights.remove(NutsConstants.RIGHT_ADMIN);
-                neededRights.removeAll(anonymousRights);
-                if (!neededRights.isEmpty()) {
-                    for (String neededRight : neededRights) {
-                        security.addRight(neededRight);
-                    }
+                String adminPassword=null;
+                if(!context.getWorkspace().isAdmin()){
+                    adminPassword = context.getTerminal().readPassword("Enter password : ");
+                }
+                if(context.getValidWorkspace().switchUnsecureMode(adminPassword)){
                     context.getTerminal().getOut().drawln("<<unsecure box activated.Anonymous has all rights.>>");
-                } else {
+                }else{
                     context.getTerminal().getOut().drawln("<<unsecure box is already activated.>>");
                 }
             }
             trySave(context, context.getValidWorkspace(),repository, autoSave, cmdLine);
             return true;
         } else if (cmdLine.acceptAndRemove("secure")) {
+            String adminPassword=null;
+            if(!context.getWorkspace().isAdmin()){
+                adminPassword = context.getTerminal().readPassword("Enter password : ");
+            }
             NutsRepository repository = null;
             if (editedRepo != null) {
                 repository = editedRepo;
@@ -663,13 +663,10 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             //secure-box
             if (cmdLine.isExecMode()) {
-                NutsSecurityEntityConfig security = repository == null ? context.getValidWorkspace().getConfig().getSecurity(NutsConstants.USER_ANONYMOUS) : repository.getConfig().getSecurity(NutsConstants.USER_ANONYMOUS);
-                HashSet<String> anonymousRights = new HashSet<>(Arrays.asList(security.getRights()));
-                if (anonymousRights.isEmpty()) {
-                    context.getTerminal().getOut().drawln("\"\"secure box already activated.\"\"");
-                } else {
-                    security.setRights(new String[0]);
+                if(context.getValidWorkspace().switchSecureMode(adminPassword)){
                     context.getTerminal().getOut().drawln("\"\"secure box activated.\"\"");
+                }else{
+                    context.getTerminal().getOut().drawln("\"\"secure box already activated.\"\"");
                 }
             }
             trySave(context, context.getValidWorkspace(),repository, autoSave,cmdLine);

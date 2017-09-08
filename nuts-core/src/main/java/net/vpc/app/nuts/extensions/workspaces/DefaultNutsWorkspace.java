@@ -199,6 +199,53 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         });
     }
 
+    @Override
+    public boolean switchUnsecureMode(String adminPassword) throws LoginException, IOException {
+        if (adminPassword == null){
+            adminPassword="";
+        }
+        NutsSecurityEntityConfig adminSecurity = getConfig().getSecurity(NutsConstants.USER_ADMIN);
+        if (adminSecurity == null || StringUtils.isEmpty(adminSecurity.getCredentials())) {
+            log.log(Level.SEVERE, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+            setUserCredentials(NutsConstants.USER_ADMIN, "admin");
+        }
+        String credentials = SecurityUtils.evalSHA1(adminPassword);
+        if(Objects.equals(credentials,adminPassword)){
+            throw new SecurityException("Invalid credentials");
+        }
+        boolean activated=false;
+        if (getConfig().isSecure()) {
+            getConfig().setSecure(false);
+            activated=true;
+        } else {
+            activated=false;
+        }
+        return activated;
+    }
+
+    public boolean isAdmin() {
+        return NutsConstants.USER_ADMIN.equals(getCurrentLogin());
+    }
+
+    @Override
+    public boolean switchSecureMode(String adminPassword) throws LoginException, IOException {
+        if (adminPassword == null){
+            adminPassword="";
+        }
+        boolean deactivated=false;
+        String credentials = SecurityUtils.evalSHA1(adminPassword);
+        if(Objects.equals(credentials,adminPassword)){
+            throw new SecurityException("Invalid credentials");
+        }
+        if (!getConfig().isSecure()) {
+            getConfig().setSecure(true);
+            deactivated=true;
+        } else {
+            deactivated=false;
+        }
+        return deactivated;
+    }
+
     public String login(CallbackHandler handler) throws LoginException {
         NutsWorkspaceLoginModule.install();//initialize it
         NutsEnvironmentContext.WORKSPACE.set(this);
@@ -2293,6 +2340,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
 
     @Override
     public boolean isAllowed(String right) {
+        NutsWorkspaceConfig c = getConfig();
+        if(!c.isSecure()){
+            return true;
+        }
         String name = getCurrentLogin();
         if (StringUtils.isEmpty(name)) {
             return false;
@@ -2304,7 +2355,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         Set<String> visitedGroups = new HashSet<>();
         visitedGroups.add(name);
         items.push(name);
-        NutsWorkspaceConfig c = getConfig();
         while (!items.isEmpty()) {
             String n = items.pop();
             NutsSecurityEntityConfig s = c.getSecurity(n);

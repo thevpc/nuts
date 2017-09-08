@@ -87,7 +87,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter {
                 } else if (!inclusiveLowerBoundary) {
                     d.add(new NutsVersionInterval(false, true, null, val));
                     // [a[    == [a,[
-                } else if (!inclusiveLowerBoundary) {
+                } else if (!inclusiveUpperBoundary) {
                     d.add(new NutsVersionInterval(false, true, val, null));
                 }
             } else {

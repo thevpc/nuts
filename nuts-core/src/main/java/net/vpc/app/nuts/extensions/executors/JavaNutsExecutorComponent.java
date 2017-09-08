@@ -192,6 +192,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         }
                     }
                 }
+            }else{
+                args.add(mainClass);
             }
         }
         args.addAll(app);

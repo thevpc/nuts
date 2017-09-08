@@ -46,18 +46,19 @@ nuts [[[Nuts Options]]] [[[Nuts Command]]]
  [[--save]]
       saves workspace if newly created
  [[--version]]
-      shows version
+      show version
  [[--which]]
-      shows which versions, libraries and locations are used for booting [[nuts]]
+      show which versions, libraries and locations are used for booting [[nuts]]
  [[--perf]]
-      shows startup time in ms
+      show startup time in ms
  [[--help]]
-      shows this help and exit
+      show this help and exit
  [[--update]]
-      checks if a newer version of [[nuts]] is available in the current workspace and perform update
+      check if a newer version of [[nuts]] is available in the current workspace and perform update
  [[--check-updates]]
-      checks if a newer version of [[nuts]] is available in the current workspace without performing updates
+      check if a newer version of [[nuts]] is available in the current workspace without performing updates
  [[--verbose | [[--log-info]] | [[--log-fine]] | [[--log-finer]] | [[--log-severe]] | [[--log-warning]]
+      apply trace level
 
 ===Nuts Command:===
  commands are workspace specific, type 'help' (without '--') command for help
@@ -66,7 +67,7 @@ nuts [[[Nuts Options]]] [[[Nuts Command]]]
        nuts --help
             shows this help witch is the help to the nuts bootstrapper (not workspace aware)
        nuts help
-            shows this help and lists available commands in the current workspace
+            shows this help and lists available commands in the current workspace (actually help is a command)
        nuts --update --workspace /home/me/some-folder --archetype minimal --save
             updates [[nuts]] to the very latest version and restart using workspace location
             /home/me/some-folder location. A minimal ('minimal' archetype) workspace will be created

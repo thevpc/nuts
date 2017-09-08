@@ -257,4 +257,10 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     File getCwd();
 
     void setCwd(File file);
+
+    boolean switchUnsecureMode(String adminPassword) throws LoginException, IOException;
+
+    boolean switchSecureMode(String adminPassword) throws LoginException, IOException;
+
+    boolean isAdmin();
 }
