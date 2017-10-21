@@ -5,7 +5,7 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.3.3.2
+/_/ |_/\__,_/\__/____/   version 0.3.3.3
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote,
@@ -33,13 +33,16 @@ uninstall packages allowing multiple versions of the very same package to  be in
 
 ## Download
 
-[Latest stable version (jar)](https://github.com/thevpc/nuts/blob/cf38dff54d2d1d54fa9afe15e522178982415a49/nuts/deploy/nuts-0.3.3.2.zip
+[Latest stable version jar](https://github.com/thevpc/vpc-public-maven/blob/c9adda023b6e9b8d4e38210e0b77d620011b9b66/net/vpc/app/nuts/nuts/0.3.3.3/nuts-0.3.3.3.jar)
 
 ## Run
 ### Linux
+java -jar nuts-0.3.3.3.jar console
+or
 nuts console
+if you have the appropriate shell file "nuts"
 ### Windows
-java -jar nuts.jar console
+java -jar nuts-0.3.3.3.jar console
 
 
 
