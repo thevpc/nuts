@@ -58,8 +58,8 @@ import java.util.zip.ZipFile;
 public class DefaultNutsWorkspace implements NutsWorkspace {
 
     public static final Logger log = Logger.getLogger(DefaultNutsWorkspace.class.getName());
-    List<NutsFile> nutsComponentIdDependencies;
-    NutsFile nutsComponentId;
+    private List<NutsFile> nutsComponentIdDependencies;
+    private NutsFile nutsComponentId;
     private ObservableMap<String, Object> sharedObjects = new ObservableMap<>();
     private NutsWorkspaceConfig config = new NutsWorkspaceConfig();
     private Map<String, NutsRepository> repositories = new HashMap<String, NutsRepository>();

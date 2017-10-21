@@ -258,7 +258,9 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     @Override
     protected NutsFile fetchImpl(NutsId id, NutsSession session) throws IOException {
         NutsFile nutsDescFile = fetchComponentDesc(id, session);
-        id = getWorkspace().fetchEffectiveId(nutsDescFile.getDescriptor(), session);
+        if(!NutsUtils.isEffectiveId(id)) {
+            id = getWorkspace().fetchEffectiveId(nutsDescFile.getDescriptor(), session);
+        }
         File localFile = getLocalGroupAndArtifactAndVersionFile(id, false).getFile();
         if (localFile == null) {
             throw new NutsNotFoundException(id);

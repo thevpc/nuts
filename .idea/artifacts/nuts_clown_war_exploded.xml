@@ -1,17 +1,19 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="nuts-clown:war exploded">
-    <output-path>$PROJECT_DIR$/nuts-clown/target/nuts-clown-0.3.3.2</output-path>
+    <output-path>$PROJECT_DIR$/nuts-clown/target/nuts-clown-0.3.3.3</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="nuts-clown" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="Maven: net.vpc.app.nuts:nuts:0.3.3" />
+          <element id="archive" name="nuts-0.3.3.3.jar">
+            <element id="module-output" name="nuts" />
+          </element>
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/nuts-clown/target/nuts-clown-0.3.3.2/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/nuts-clown/target/nuts-clown-0.3.3.3/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="nuts-clown/web/Web" />
     </root>

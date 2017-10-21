@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="war" name="nuts-clown:war">
     <output-path>$PROJECT_DIR$/nuts-clown/target</output-path>
-    <root id="archive" name="nuts-clown-0.3.3.2.war">
+    <root id="archive" name="nuts-clown-0.3.3.3.war">
       <element id="artifact" artifact-name="nuts-clown:war exploded" />
     </root>
   </artifact>

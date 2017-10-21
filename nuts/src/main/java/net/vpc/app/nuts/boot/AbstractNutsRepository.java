@@ -596,7 +596,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new SecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
         if (!isAllowedFetch(session)) {
-            throw new NutsNotFoundException(id.toString());
+            throw new SecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
         log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " Fetch component (to local) " + id);
         return fetchImpl(id, session, localPath);

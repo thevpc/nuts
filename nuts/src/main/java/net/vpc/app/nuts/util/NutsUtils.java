@@ -132,6 +132,7 @@ public class NutsUtils {
 
 
     public static HttpConnectionFacade getHttpClientFacade(NutsWorkspace ws, String url) throws IOException {
+//        System.out.println("getHttpClientFacade "+url);
         NutsTransportComponent best = ws.getFactory().createSupported(NutsTransportComponent.class, url);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
