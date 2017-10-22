@@ -2018,6 +2018,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             throw new IllegalArgumentException("Missing Session");
         }
         id = resolveId(id, session);
+//        id = configureFetchEnv(id);
         Set<String> errors = new LinkedHashSet<>();
         NutsSession transitiveSession = session.copy().setTransitive(true);
         for (FetchMode mode : resolveFetchModes(session.getFetchMode())) {
@@ -2044,6 +2045,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         }
         log.log(Level.FINE, "fetch {0}", id);
         id = resolveId(id, session);
+//        id = configureFetchEnv(id);
         NutsFile found = null;
         LinkedHashSet<String> errors = new LinkedHashSet<>();
         for (FetchMode mode : resolveFetchModes(session.getFetchMode())) {
