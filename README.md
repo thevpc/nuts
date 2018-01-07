@@ -31,9 +31,12 @@ uninstall packages allowing multiple versions of the very same package to  be in
 + fetch,push        : download, upload to remote repositories
 + find              : searches for existing/installable packages
 
-## Download
+## Download Latest stable version
 
-[Latest stable version jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
++ Linux   :: [nuts linux bash script](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts)
++ Windows :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
++ iOS     :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
++ Java    :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
 
 ## Run
 ### Linux
