@@ -2,9 +2,7 @@
 base=$(dirname $0)
 nut_url="https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar"
 nut_file="$base/nuts.jar"
-rm -f "$nut_file"
 if ! [ -f "$nut_file" ] ; then
-    echo missing "$nut_file"
     wget -q --show-progress -O "$nut_file" "$nut_url"
     if [ "$?" -ne 0 ] ; then
         echo unable to download nuts.jar
