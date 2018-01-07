@@ -41,16 +41,16 @@ uninstall packages allowing multiple versions of the very same package to  be in
 ## Run
 ### Linux
 ```bash
-java -jar nuts.jar console
+nuts console
 ```
 or
 ```bash
-nuts console
+java -jar nuts.jar console
 ```
 if you have the appropriate shell file "nuts", but it under $HOME/bin or /local/bin
-### Windows
+### Any other platform (Windows, iOS, ...)
 ```bash
-nuts console
+java -jar nuts.jar console
 ```
 
 ### Running a local jar with external dependencies
