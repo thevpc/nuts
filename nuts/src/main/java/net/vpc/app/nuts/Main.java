@@ -35,6 +35,7 @@ import net.vpc.app.nuts.util.LogUtils;
 import net.vpc.app.nuts.util.MapStringMapper;
 import net.vpc.app.nuts.util.StringUtils;
 
+import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -50,201 +51,222 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            long startTime = System.currentTimeMillis();
-            int startAppArgs = 0;
-            String workspace = null;
-            String archetype = null;
-            String login = null;
-            String password = null;
-            String callerVersion = null;
-            String logFolder = null;
-            Level logLevel = null;
-            int logSize = 0;
-            int logCount = 0;
-            boolean save = true;
-            boolean version = false;
-            boolean doupdate = false;
-            boolean checkupdates = false;
-            boolean perf = false;
-            boolean showHelp = false;
-            List<String> showError = new ArrayList<>();
-            boolean which = false;
-            Set<String> excludedExtensions = new HashSet<>();
-            Set<String> excludedRepositories = new HashSet<>();
-            NutsSession session = new NutsSession();
+            uncheckedMain(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public static void uncheckedMain(String[] args) throws IOException, LoginException, InterruptedException {
+        long startTime = System.currentTimeMillis();
+        int startAppArgs = 0;
+        String workspaceRoot = null;
+        String workspace = null;
+        String archetype = null;
+        String login = null;
+        String password = null;
+        String callerVersion = null;
+        String logFolder = null;
+        Level logLevel = null;
+        int logSize = 0;
+        int logCount = 0;
+        boolean save = true;
+        boolean version = false;
+        boolean doupdate = false;
+        boolean checkupdates = false;
+        boolean perf = false;
+        boolean showHelp = false;
+        List<String> showError = new ArrayList<>();
+        boolean which = false;
+        Set<String> excludedExtensions = new HashSet<>();
+        Set<String> excludedRepositories = new HashSet<>();
+        NutsSession session = new NutsSession();
 
 
-            for (int i = 0; i < args.length; i++) {
-                String a = args[i];
-                if (a.startsWith("-")) {
-                    switch (a) {
-                        case "--workspace":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for workspace");
-                            }
-                            workspace = args[i];
-                            break;
-                        case "--archetype":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for archetype");
-                            }
-                            archetype = args[i];
-                            break;
-                        case "--login":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for login ");
-                            }
-                            login = args[i];
-                            break;
-                        case "--password":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for password");
-                            }
-                            password = args[i];
-                            break;
-                        case "--private-caller-version":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for private-caller-version");
-                            }
-                            callerVersion = args[i];
-                            break;
-                        case "--save":
-                            save = true;
-                            break;
-                        case "--nosave":
-                            save = false;
-                            break;
-                        case "--version":
-                            version = true;
-                            break;
-                        case "--update":
-                            doupdate = true;
-                            break;
-                        case "--check-updates":
-                            checkupdates = true;
-                            break;
-                        case "--verbose":
-                            logLevel = Level.FINEST;
-                            break;
-                        case "--info":
-                            logLevel = Level.INFO;
-                            break;
-                        case "--log-finest":
-                            logLevel = Level.FINEST;
-                            break;
-                        case "--log-fine":
-                            logLevel = Level.FINE;
-                            break;
-                        case "--log-info":
-                            logLevel = Level.INFO;
-                            break;
-                        case "--log-all":
-                            logLevel = Level.ALL;
-                            break;
-                        case "--log-off":
-                            logLevel = Level.OFF;
-                            break;
-                        case "--log-severe":
-                            logLevel = Level.SEVERE;
-                            break;
-                        case "--log-finer":
-                            logLevel = Level.FINER;
-                            break;
-                        case "--log-size":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for log-size");
-                            }
-                            logSize = Integer.parseInt(args[i]);
-                            break;
-                        case "--log-count":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for log-count");
-                            }
-                            logCount = Integer.parseInt(args[i]);
-                            break;
-                        case "--exclude-extensions":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for exclude-extensions");
-                            }
-                            excludedExtensions.addAll(StringUtils.split(args[i], " ,;"));
-                            break;
-                        case "--exclude-repositories":
-                            i++;
-                            if (i >= args.length) {
-                                throw new IllegalArgumentException("Missing argument for exclude-repositories");
-                            }
-                            excludedRepositories.addAll(StringUtils.split(args[i], " ,;"));
-                            break;
-                        case "--which":
-                            which = true;
-                            break;
-                        case "--help": {
-                            showHelp = true;
-                            break;
+        for (int i = 0; i < args.length; i++) {
+            String a = args[i];
+            if (a.startsWith("-")) {
+                switch (a) {
+                    case "--workspace-root":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for workspace");
                         }
-                        case "--perf": {
-                            perf = true;
-                            break;
+                        workspaceRoot = args[i];
+                        break;
+                    case "--workspace":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for workspace");
                         }
-                        default: {
-                            showError.add("nuts: invalid option [["+a+"]]");
-                            break;
+                        workspace = args[i];
+                        break;
+                    case "--archetype":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for archetype");
                         }
+                        archetype = args[i];
+                        break;
+                    case "--login":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for login ");
+                        }
+                        login = args[i];
+                        break;
+                    case "--password":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for password");
+                        }
+                        password = args[i];
+                        break;
+                    case "--private-caller-version":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for private-caller-version");
+                        }
+                        callerVersion = args[i];
+                        break;
+                    case "--save":
+                        save = true;
+                        break;
+                    case "--nosave":
+                        save = false;
+                        break;
+                    case "--version":
+                        version = true;
+                        break;
+                    case "--update":
+                        doupdate = true;
+                        break;
+                    case "--check-updates":
+                        checkupdates = true;
+                        break;
+                    case "--verbose":
+                        logLevel = Level.FINEST;
+                        break;
+                    case "--info":
+                        logLevel = Level.INFO;
+                        break;
+                    case "--log-finest":
+                        logLevel = Level.FINEST;
+                        break;
+                    case "--log-fine":
+                        logLevel = Level.FINE;
+                        break;
+                    case "--log-info":
+                        logLevel = Level.INFO;
+                        break;
+                    case "--log-all":
+                        logLevel = Level.ALL;
+                        break;
+                    case "--log-off":
+                        logLevel = Level.OFF;
+                        break;
+                    case "--log-severe":
+                        logLevel = Level.SEVERE;
+                        break;
+                    case "--log-finer":
+                        logLevel = Level.FINER;
+                        break;
+                    case "--log-size":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for log-size");
+                        }
+                        logSize = Integer.parseInt(args[i]);
+                        break;
+                    case "--log-count":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for log-count");
+                        }
+                        logCount = Integer.parseInt(args[i]);
+                        break;
+                    case "--exclude-extensions":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for exclude-extensions");
+                        }
+                        excludedExtensions.addAll(StringUtils.split(args[i], " ,;"));
+                        break;
+                    case "--exclude-repositories":
+                        i++;
+                        if (i >= args.length) {
+                            throw new IllegalArgumentException("Missing argument for exclude-repositories");
+                        }
+                        excludedRepositories.addAll(StringUtils.split(args[i], " ,;"));
+                        break;
+                    case "--which":
+                        which = true;
+                        break;
+                    case "--help": {
+                        showHelp = true;
+                        break;
                     }
-                    startAppArgs = i + 1;
-                } else {
-                    break;
-                }
-            }
-            NutsWorkspace bws = openBootstrapWorkspace();
-            NutsTerminal bootTerminal = null;
-            if(!showError.isEmpty()) {
-                for (String err : showError) {
-                    if (bootTerminal == null) {
-                        bootTerminal = bws.createTerminal(null, null, null);
+                    case "--perf": {
+                        perf = true;
+                        break;
                     }
-                    bootTerminal.getErr().drawln(err);
+                    default: {
+                        showError.add("nuts: invalid option [[" + a + "]]");
+                        break;
+                    }
                 }
-                bootTerminal.getErr().drawln("Try 'nuts --help' for more information.");
-                return;
+                startAppArgs = i + 1;
+            } else {
+                break;
             }
-            boolean someProcessing = false;
-            if (which) {
-                if(bootTerminal==null){
-                    bootTerminal=bws.createTerminal(null, null, null);
+        }
+        NutsWorkspace bws = openBootstrapWorkspace(workspaceRoot);
+        NutsTerminal bootTerminal = null;
+        if (!showError.isEmpty()) {
+            for (String err : showError) {
+                if (bootTerminal == null) {
+                    bootTerminal = bws.createTerminal();
                 }
-                perf = showPerf(startTime, perf, session);
-                Map<String, String> runtimeProperties = getRuntimeProperties(bws, session);
-                bootTerminal.getOut().drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
-                bootTerminal.getOut().drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
-                bootTerminal.getOut().drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
-                bootTerminal.getOut().drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
-                bootTerminal.getOut().drawln("target-workspace     : [[" + BootNutsWorkspace.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME) + "]]");
-                bootTerminal.getOut().drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-                bootTerminal.getOut().drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
-                someProcessing = true;
+                bootTerminal.getErr().drawln(err);
             }
-
-            if (showHelp) {
-                NutsTerminal nutsTerminal = bws.createTerminal(null, null, null);
-                perf = showPerf(startTime, perf, session);
-                help(nutsTerminal.getOut());
-                someProcessing = true;
+            bootTerminal.getErr().drawln("Try 'nuts --help' for more information.");
+            throw new IllegalArgumentException("Try 'nuts --help' for more information.");
+        }
+        boolean someProcessing = false;
+        if (which) {
+            if (bootTerminal == null) {
+                bootTerminal = bws.createTerminal();
             }
+            NutsPrintStream out = bootTerminal.getOut();
+            perf = showPerf(startTime, perf, session);
+            Map<String, String> runtimeProperties = getRuntimeProperties(bws, session);
+            out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
+            out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
+            out.drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
+            out.drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
+            out.drawln("target-workspace     : [[" + BootNutsWorkspace.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME,workspaceRoot) + "]]");
+            out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
+            out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+            someProcessing = true;
+        }
+
+        if (showHelp) {
+            if(bootTerminal==null) {
+                bootTerminal = bws.createTerminal();
+            }
+            perf = showPerf(startTime, perf, session);
+            help(bootTerminal.getOut());
+            someProcessing = true;
+        }
 
 
-            String[] args2 = new String[args.length - startAppArgs];
-            System.arraycopy(args, startAppArgs, args2, 0, args2.length);
-            LogUtils.prepare(logLevel, logFolder, logSize, logCount);
-            NutsWorkspace ws = bws.openWorkspace(workspace, new NutsWorkspaceCreateOptions()
+        String[] args2 = new String[args.length - startAppArgs];
+        System.arraycopy(args, startAppArgs, args2, 0, args2.length);
+        LogUtils.prepare(logLevel, logFolder, logSize, logCount);
+        NutsWorkspace ws = null;
+        try {
+            ws = bws.openWorkspace(workspace, new NutsWorkspaceCreateOptions()
                             .setArchetype(archetype)
                             .setCreateIfNotFound(true)
                             .setSaveIfCreated(save)
@@ -252,86 +274,94 @@ public class Main {
                             .setExcludedExtensions(excludedExtensions),
                     session
             );
-            if (login != null && login.trim().length() > 0) {
-                if (StringUtils.isEmpty(password)) {
-                    password = session.getTerminal().readPassword("Password : ");
-                }
-                ws.login(login, password);
+        } catch (net.vpc.app.nuts.NutsNotFoundException ex) {
+            if (bootTerminal == null) {
+                bootTerminal = bws.createTerminal();
             }
-            if (checkupdates) {
-                someProcessing = true;
-                NutsUpdate[] updates = ws.checkWorkspaceUpdates(session);
-                if (updates.length == 0) {
-                    session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
-                } else {
-                    session.getTerminal().getOut().drawln("Workspace has " + updates.length + " component" + (updates.length > 1 ? "s" : "") + " to update");
-                    for (NutsUpdate update : updates) {
-                        session.getTerminal().getOut().drawln(update.getBaseId() + "  : " + update.getLocalId() + " => [[" + update.getAvailableId() + "]]");
-                    }
-                    perf = showPerf(startTime, perf, session);
-                }
-            }
-
-
-            NutsFile bestVersion = null;
-
-            if (doupdate) {
-                someProcessing = true;
-                try {
-                    bestVersion = ws.updateWorkspace(session);
-                } catch (Exception ex) {
-                    //not found
-                }
-                if (bestVersion != null) {
-                    List<String> all = new ArrayList<>();
-                    all.add(System.getProperty("java.home") + "/bin/java");
-                    all.add("-jar");
-                    all.add(bestVersion.getFile().getPath());
-                    all.add("--private-caller-version");
-                    all.add(StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
-                    all.addAll(Arrays.asList(args));
-                    ProcessBuilder pb=new ProcessBuilder();
-                    pb.command(all);
-                    pb.inheritIO();
-                    Process process = pb.start();
-                    int x = process.waitFor();
-                    perf = showPerf(startTime, perf, session);
-                } else {
-                    if (!checkupdates) {
-                        session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
-                    }
-                }
-            }
-
-            if (version) {
-                String fullVersion = getBootVersion() + " -> " + (StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
-                session.getTerminal().getOut().println(fullVersion);
-                perf = showPerf(startTime, perf, session);
-                someProcessing = true;
-            }
-
-            if (someProcessing && args2.length == 0) {
-                return;
-            }
-            if (args2.length == 0) {
-                perf = showPerf(startTime, perf, session);
-                help(session.getTerminal().getOut());
-                return;
-            }
-            NutsCommandLineConsoleComponent commandLine = null;
-            try {
-                commandLine = ws.createCommandLineConsole(session);
-            } catch (NutsExtensionMissingException ex) {
-                perf = showPerf(startTime, perf, session);
-                session.getTerminal().getErr().println("Unable to create Console. Make sure nuts-core is installed properly.");
-                return;
-            }
-            perf = showPerf(startTime, perf, session);
-            commandLine.run(args2);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            NutsPrintStream err = bootTerminal.getErr();
+            err.drawln("Unable to locate nuts-core components.");
+            err.drawln("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...");
+            err.drawln("Exiting nuts, Bye!");
+            throw new IllegalArgumentException("Unable to locate nuts-core components", ex);
         }
+        if (login != null && login.trim().length() > 0) {
+            if (StringUtils.isEmpty(password)) {
+                password = session.getTerminal().readPassword("Password : ");
+            }
+            ws.login(login, password);
+        }
+        if (checkupdates) {
+            someProcessing = true;
+            NutsUpdate[] updates = ws.checkWorkspaceUpdates(session);
+            if (updates.length == 0) {
+                session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
+            } else {
+                session.getTerminal().getOut().drawln("Workspace has " + updates.length + " component" + (updates.length > 1 ? "s" : "") + " to update");
+                for (NutsUpdate update : updates) {
+                    session.getTerminal().getOut().drawln(update.getBaseId() + "  : " + update.getLocalId() + " => [[" + update.getAvailableId() + "]]");
+                }
+                perf = showPerf(startTime, perf, session);
+            }
+        }
+
+
+        NutsFile bestVersion = null;
+
+        if (doupdate) {
+            someProcessing = true;
+            try {
+                bestVersion = ws.updateWorkspace(session);
+            } catch (Exception ex) {
+                //not found
+            }
+            if (bestVersion != null) {
+                List<String> all = new ArrayList<>();
+                all.add(System.getProperty("java.home") + "/bin/java");
+                all.add("-jar");
+                all.add(bestVersion.getFile().getPath());
+                all.add("--private-caller-version");
+                all.add(StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
+                all.addAll(Arrays.asList(args));
+                ProcessBuilder pb = new ProcessBuilder();
+                pb.command(all);
+                pb.inheritIO();
+                Process process = pb.start();
+                int x = process.waitFor();
+                perf = showPerf(startTime, perf, session);
+            } else {
+                if (!checkupdates) {
+                    session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
+                }
+            }
+        }
+
+        if (version) {
+            String fullVersion = getBootVersion() + " -> " + (StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
+            session.getTerminal().getOut().println(fullVersion);
+            perf = showPerf(startTime, perf, session);
+            someProcessing = true;
+        }
+
+        if (someProcessing && args2.length == 0) {
+            return;
+        }
+        if (args2.length == 0) {
+            perf = showPerf(startTime, perf, session);
+            help(session.getTerminal().getOut());
+            return;
+        }
+        NutsCommandLineConsoleComponent commandLine = null;
+        try {
+            commandLine = ws.createCommandLineConsole(session);
+        } catch (NutsExtensionMissingException ex) {
+            perf = showPerf(startTime, perf, session);
+            session.getTerminal().getErr().println("Unable to create Console. Make sure nuts-core is installed properly.");
+            return;
+        }
+        perf = showPerf(startTime, perf, session);
+        commandLine.run(args2);
+
+
     }
 
     private static boolean showPerf(long startTime, boolean perf, NutsSession session) {
@@ -347,9 +377,10 @@ public class Main {
                         .getProperty("project.version", "0.0.0");
     }
 
-    public static NutsWorkspace openBootstrapWorkspace() throws IOException {
+    public static NutsWorkspace openBootstrapWorkspace(String workspaceRoot) throws IOException {
         NutsWorkspace w = new BootNutsWorkspace();
-        w.initializeWorkspace(null, null, null, null, new NutsSession());
+        w.initializeWorkspace(workspaceRoot,null, null, null, null, new NutsSession());
+        w.save();
         return w;
     }
 

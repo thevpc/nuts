@@ -54,7 +54,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         defaultRepo.getConfig().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
 
-        workspace.addRepository("maven-local", "~/.m2/repository", "maven", true);
+        workspace.addRepository("maven-local", System.getProperty("maven-local","~/.m2/repository"), "maven", true);
 
         workspace.addProxiedRepository("maven-central", "http://repo.maven.apache.org/maven2/", "maven", true);
 

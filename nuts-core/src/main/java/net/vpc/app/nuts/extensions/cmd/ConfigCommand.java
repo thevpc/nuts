@@ -283,7 +283,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                     }
                     Map<String, RepoPattern> repoPatterns = new HashMap<String, RepoPattern>();
                     for (RepoPattern repoPattern : new RepoPattern[]{
-                            new RepoPattern("maven-local", "~/.m2/repository", "maven"),
+                            new RepoPattern("maven-local", System.getProperty("maven-local","~/.m2/repository"), "maven"),
                             new RepoPattern("maven-central", "http://repo.maven.apache.org/maven2/", "maven"),
                             new RepoPattern("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven")}) {
                         repoPatterns.put(repoPattern.id, repoPattern);
@@ -785,6 +785,23 @@ public class ConfigCommand extends AbstractNutsCommand {
                         context.getTerminal().getOut().println(extension.getId() + " (" + extension.getWiredId() + ")" + extDesc);
                     } else {
                         context.getTerminal().getOut().println(extension.getId() + extDesc);
+                    }
+                }
+            }
+            return true;
+        } else if (cmdLine.acceptAndRemove("list extension points", "lxp")) {
+            if (cmdLine.isExecMode()) {
+                for (Class extension : context.getValidWorkspace().getFactory().getExtensionPoints()) {
+                    context.getTerminal().getOut().drawln("[["+extension.getName()+"]]:");
+                    for (Class impl : context.getValidWorkspace().getFactory().getExtensionTypes(extension)) {
+                        context.getTerminal().getOut().drawln("\t"+impl.getName());
+                    }
+                    for (Object impl : context.getValidWorkspace().getFactory().getExtensionObjects(extension)) {
+                        if(impl!=null) {
+                            context.getTerminal().getOut().drawln("\t" + impl.getClass().getName() + " :: " + impl);
+                        }else{
+                            context.getTerminal().getOut().drawln("\tnull");
+                        }
                     }
                 }
             }

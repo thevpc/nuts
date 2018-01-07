@@ -59,6 +59,7 @@ public class NutsHttpServlet extends HttpServlet {
     private NutsHttpServletFacade facade;
     private String serverId = "";
     private String workspaceLocation = null;
+    private String workspaceRootLocation = null;
     private int adminServerPort = -1;
     private Map<String, String> workspaces = new HashMap<>();
     private boolean adminServer = true;
@@ -73,7 +74,7 @@ public class NutsHttpServlet extends HttpServlet {
         NutsSession session = new NutsSession();
         NutsWorkspace bws = null;
         try {
-            bws = Main.openBootstrapWorkspace();
+            bws = Main.openBootstrapWorkspace(workspaceRootLocation);
             workspace = bws.openWorkspace(workspaceLocation, new NutsWorkspaceCreateOptions()
                             .setCreateIfNotFound(true)
                             .setSaveIfCreated(true)
@@ -148,6 +149,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
         adminServerPort = CoreStringUtils.parseInt(config.getInitParameter("admin-server.port"), -1);
         workspaceLocation = config.getInitParameter("workspace");
+        workspaceRootLocation = config.getInitParameter("workspaceRoot");
         adminServer = Boolean.valueOf(config.getInitParameter("admin"));
         try {
             workspaces = JsonUtils.deserializeStringsMap(JsonUtils.loadJsonStructure(config.getInitParameter("workspaces")), new LinkedHashMap<String, String>());

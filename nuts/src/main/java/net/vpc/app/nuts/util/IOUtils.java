@@ -175,7 +175,10 @@ public class IOUtils {
         }
     }
 
-    public static File resolvePath(String path, File baseFolder) {
+    public static File resolvePath(String path, File baseFolder,String workspaceRoot) {
+        if(StringUtils.isEmpty(workspaceRoot)){
+            workspaceRoot=NutsConstants.DEFAULT_WORKSPACE_ROOT;
+        }
         if (path != null && path.length() > 0) {
             String firstItem = "";
             if ('\\' == File.separatorChar) {
@@ -190,7 +193,7 @@ public class IOUtils {
                 }
             }
             if (firstItem.equals("~~")) {
-                return resolvePath(NutsConstants.DEFAULT_WORKSPACE_ROOT + "/" + path.substring(2), null);
+                return resolvePath(workspaceRoot + "/" + path.substring(2), null,workspaceRoot);
             } else if (firstItem.equals("~")) {
                 return new File(System.getProperty("user.home"), path.substring(1));
             } else if (isAbsolutePath(path)) {

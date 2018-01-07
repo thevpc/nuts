@@ -324,7 +324,17 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     @Override
     protected InputStream openStream(String path) throws IOException {
-        return NutsUtils.getHttpClientFacade(getWorkspace(), path).open();
+        InputStream stream = NutsUtils.getHttpClientFacade(getWorkspace(), path).open();
+        if (stream != null) {
+            if (!path.toLowerCase().startsWith("file://")) {
+                log.log(Level.INFO, "downloading url {0}", new Object[]{path});
+            } else {
+                log.log(Level.FINEST, "downloading url {0}", new Object[]{path});
+            }
+        } else {
+            log.log(Level.FINEST, "downloading url failed : {0}", new Object[]{path});
+        }
+        return stream;
     }
 
     @Override

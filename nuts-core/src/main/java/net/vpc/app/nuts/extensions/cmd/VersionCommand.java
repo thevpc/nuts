@@ -48,7 +48,7 @@ public class VersionCommand extends AbstractNutsCommand {
     }
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
-        NutsWorkspace bws=Main.openBootstrapWorkspace();
+        NutsWorkspace bws=Main.openBootstrapWorkspace(context.getWorkspace().getWorkspaceRootLocation());
         Map<String, String> runtimeProperties = Main.getRuntimeProperties(bws, context.getSession());
         NutsPrintStream out = context.getTerminal().getOut();
         out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");

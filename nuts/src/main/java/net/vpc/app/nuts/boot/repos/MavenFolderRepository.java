@@ -76,7 +76,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     private File getStoreRoot() {
-        return IOUtils.resolvePath(getConfig().getLocation(), getRoot());
+        return IOUtils.resolvePath(getConfig().getLocation(), getRoot(),getWorkspace().getWorkspaceRootLocation());
     }
 
     @Override

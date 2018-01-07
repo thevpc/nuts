@@ -374,6 +374,10 @@ public class MavenUtils {
                 properties.put("parent.groupId", parentId.getGroup());
                 properties.put("parent.artifactId", parentId.getName());
                 properties.put("parent.version", parentId.getVersion().getValue());
+
+                properties.put("project.parent.groupId", parentId.getGroup());
+                properties.put("project.parent.artifactId", parentId.getName());
+                properties.put("project.parent.version", parentId.getVersion().getValue());
                 nutsDescriptor = nutsDescriptor.setProperties(properties, true).applyProperties(properties);
             }
             NutsId thisId = nutsDescriptor.getId();

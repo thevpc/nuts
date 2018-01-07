@@ -206,9 +206,9 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         String versionString = id.getVersion().getValue();
         if (VersionUtils.isStaticVersionPattern(versionString)) {
             NutsFile idAndFile = getLocalGroupAndArtifactAndVersionFile(id, false);
-            File localFile = idAndFile == null ? null : idAndFile.getFile();
+            File localDescFile = idAndFile == null ? null : idAndFile.getFile();
             if (session.getFetchMode() != FetchMode.REMOTE) {
-                if (localFile != null && localFile.exists()) {
+                if (localDescFile != null && localDescFile.exists()) {
                     return id.setFace(idAndFile.getId().getFace())
                             .setNamespace(getRepositoryId());
                 }
@@ -225,9 +225,25 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     }
 
                     if (sup > 0) {
+//                        NutsId id1 = null;
+//                        try {
+//                            NutsDescriptor desc = repo.fetchDescriptor(id, session);
+//                            desc.write(localDescFile);
+//                            id1=id;
+//                        } catch (Exception ex) {
+//                            errors.append(ex).append("\n");
+//                        }
+//                        if (id1 != null) {
+//                            return id1;
+//                        }
+
                         NutsId id1 = null;
                         try {
                             id1 = repo.resolveId(id, session);
+                            if(id1!=null){
+                                NutsDescriptor desc = repo.fetchDescriptor(id1, session);
+                                desc.write(localDescFile);
+                            }
                         } catch (Exception ex) {
                             errors.append(ex).append("\n");
                         }

@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -31,10 +31,10 @@ package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.boot.AbstractNutsRepository;
+import net.vpc.app.nuts.boot.NutsIdPatternFilter;
 import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
 import net.vpc.app.nuts.extensions.util.IteratorFilter;
 import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.boot.NutsIdPatternFilter;
 import net.vpc.app.nuts.extensions.util.VersionFilterToNutsIdFilterAdapter;
 import net.vpc.app.nuts.util.*;
 
@@ -83,7 +83,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession session) throws IOException {
-        if (session.getFetchMode()==FetchMode.OFFLINE) {
+        if (session.getFetchMode() == FetchMode.OFFLINE) {
             throw new IllegalArgumentException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
@@ -123,17 +123,26 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         throw new IOException("Unable to load file " + id);
     }
 
-    private void httpDownloadToFile(String url, File file, boolean mkdirs) throws IOException {
-        log.log(Level.FINEST, "downloading url {0} To {1}", new Object[]{url, file});
-        IOUtils.copy(NutsUtils.getHttpClientFacade(getWorkspace(), url).open(), file, mkdirs, true);
+    private void httpDownloadToFile(String path, File file, boolean mkdirs) throws IOException {
+        InputStream stream = NutsUtils.getHttpClientFacade(getWorkspace(), path).open();
+        if (stream != null) {
+            if (!path.toLowerCase().startsWith("file://")) {
+                log.log(Level.INFO, "downloading url {0} to file {1}", new Object[]{path, file});
+            } else {
+                log.log(Level.FINEST, "downloading url {0} to file {1}", new Object[]{path, file});
+            }
+        } else {
+            log.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
+        }
+        IOUtils.copy(stream, file, mkdirs, true);
     }
 
     @Override
     protected File fetchImpl(NutsId id, NutsSession session, File localPath) throws IOException {
         boolean transitive = session.isTransitive();
-        if(localPath.isDirectory()){
+        if (localPath.isDirectory()) {
             NutsDescriptor desc = fetchDescriptor(id, session);
-            localPath=new File(localPath,NutsUtils.getNutsFileName(id,IOUtils.getFileExtension(desc.getExt())));
+            localPath = new File(localPath, NutsUtils.getNutsFileName(id, IOUtils.getFileExtension(desc.getExt())));
         }
 
         httpDownloadToFile(getUrl("/fetch?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
@@ -205,7 +214,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
                 @Override
                 public boolean accept(NutsId id) {
                     try {
-                        return versionFilter.accept(fetchDescriptor(id,session));
+                        return versionFilter.accept(fetchDescriptor(id, session));
                     } catch (IOException e) {
                         return false;
                     }
@@ -250,7 +259,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         return new NamedNutIdFromStreamIterator(ret);
     }
 
-//    @Override
+    //    @Override
 //    public int getSupportLevel(NutsId id, boolean transitive) throws IOException {
 //        int val = super.getSupportLevel(id, transitive);
 //        if (val > 1) {
@@ -269,48 +278,13 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     private String httpGetString(String url) throws IOException {
-        log.log(Level.FINEST, "downloading url {0}", url);
+        log.log(Level.FINEST, "call url {0}", url);
         return IOUtils.readStreamAsString(NutsUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
     }
 
     private InputStream httpUpload(String url, TransportParamPart... parts) throws IOException {
         log.log(Level.FINEST, "uploading url {0}", url);
         return NutsUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
-    }
-
-    private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
-
-        private BufferedReader br;
-        private String line;
-
-        public NamedNutIdFromStreamIterator(InputStream ret) {
-            br = new BufferedReader(new InputStreamReader(ret));
-            line = null;
-        }
-
-        @Override
-        public boolean hasNext() {
-            while (true) {
-                try {
-                    line = br.readLine();
-                } catch (IOException e) {
-                    return false;
-                }
-                if (line == null) {
-                    return false;
-                }
-                line = line.trim();
-                if (line.length() > 0) {
-                    return true;
-                }
-            }
-        }
-
-        @Override
-        public NutsId next() {
-            NutsId nutsId = NutsId.parseOrError(line);
-            return nutsId.setNamespace(getRepositoryId());
-        }
     }
 
     @Override
@@ -361,6 +335,41 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
     @Override
     public boolean isAllowedFetch(NutsSession session) {
-        return super.isAllowedFetch(session) && session.getFetchMode()!=FetchMode.OFFLINE;
+        return super.isAllowedFetch(session) && session.getFetchMode() != FetchMode.OFFLINE;
+    }
+
+    private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
+
+        private BufferedReader br;
+        private String line;
+
+        public NamedNutIdFromStreamIterator(InputStream ret) {
+            br = new BufferedReader(new InputStreamReader(ret));
+            line = null;
+        }
+
+        @Override
+        public boolean hasNext() {
+            while (true) {
+                try {
+                    line = br.readLine();
+                } catch (IOException e) {
+                    return false;
+                }
+                if (line == null) {
+                    return false;
+                }
+                line = line.trim();
+                if (line.length() > 0) {
+                    return true;
+                }
+            }
+        }
+
+        @Override
+        public NutsId next() {
+            NutsId nutsId = NutsId.parseOrError(line);
+            return nutsId.setNamespace(getRepositoryId());
+        }
     }
 }

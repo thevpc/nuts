@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vpc on 1/5/17.
@@ -42,5 +43,12 @@ public interface NutsWorkspaceFactory {
 
     <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria);
 
-    <T> List<T> createAll(Class<T> type) ;
+    <T> List<T> createAll(Class<T> type);
+
+    Set<Class> getExtensionPoints();
+
+    Set<Class> getExtensionTypes(Class extensionPoint);
+
+    List<Object> getExtensionObjects(Class extensionPoint);
+
 }

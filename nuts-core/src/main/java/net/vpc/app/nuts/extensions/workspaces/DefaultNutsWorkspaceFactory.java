@@ -86,6 +86,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         instances.add(extensionPoint, implementation);
     }
 
+    public Set<Class> getExtensionPoints() {
+        return new HashSet<>(classes.keySet());
+    }
+
+    public Set<Class> getExtensionTypes(Class extensionPoint) {
+        return new HashSet<>(classes.getAll(extensionPoint));
+    }
+
+    public List<Object> getExtensionObjects(Class extensionPoint) {
+        return new ArrayList<>(instances.getAll(extensionPoint));
+    }
+
     public void registerType(Class extensionPoint, Class implementation) {
         if (isRegisteredType(extensionPoint, implementation.getName())) {
             throw new IllegalArgumentException("Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());

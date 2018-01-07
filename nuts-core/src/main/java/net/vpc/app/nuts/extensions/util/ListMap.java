@@ -77,7 +77,7 @@ public class ListMap<K, V> {
         }
     }
 
-    public Set<K> keySize() {
+    public Set<K> keySet() {
         return Collections.unmodifiableSet(base.keySet());
     }
 

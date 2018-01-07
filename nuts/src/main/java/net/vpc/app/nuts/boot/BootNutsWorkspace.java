@@ -75,9 +75,25 @@ public class BootNutsWorkspace implements NutsWorkspace {
         public <T> List<T> createAll(Class<T> type) {
             return Collections.EMPTY_LIST;
         }
+
+        @Override
+        public Set<Class> getExtensionPoints() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<Class> getExtensionTypes(Class extensionPoint) {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public List<Object> getExtensionObjects(Class extensionPoint) {
+            return Collections.emptyList();
+        }
     };
-    List<NutsFile> nutsComponentIdDependencies;
-    NutsFile nutsComponentId;
+    private List<NutsFile> nutsComponentIdDependencies;
+    private NutsFile nutsComponentId;
+    private String workspaceRoot;
     private ObservableMap<String, Object> sharedObjects = new ObservableMap<>();
     private NutsWorkspaceConfig config = new NutsWorkspaceConfig();
     private Map<String, NutsRepository> repositories = new HashMap<String, NutsRepository>();
@@ -295,7 +311,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
         }
         NutsWorkspace nutsWorkspace = (NutsWorkspace) a[0];
         ClassLoader workspaceClassLoader = (ClassLoader) a[1];
-        nutsWorkspace.initializeWorkspace(workspace, this, workspaceClassLoader, options.copy().setIgnoreIfFound(true), session);
+        nutsWorkspace.initializeWorkspace(workspaceRoot,workspace, this, workspaceClassLoader, options.copy().setIgnoreIfFound(true), session);
         return nutsWorkspace;
     }
 
@@ -345,11 +361,12 @@ public class BootNutsWorkspace implements NutsWorkspace {
      * @throws IOException
      */
     @Override
-    public boolean initializeWorkspace(String workspace, NutsWorkspace bootstrapWorkspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException {
+    public boolean initializeWorkspace(String workspaceRoot, String workspace, NutsWorkspace bootstrapWorkspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException {
         if (options == null) {
             options = new NutsWorkspaceCreateOptions();
         }
 
+        this.workspaceRoot = StringUtils.isEmpty(workspaceRoot)?NutsConstants.DEFAULT_WORKSPACE_ROOT:workspaceRoot;
         //now will iterate over Extension classes to wire them ...
         if (session.getTerminal() == null) {
             DefaultNutsTerminal terminal = new DefaultNutsTerminal();
@@ -366,7 +383,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
         NutsRepository defaultRepo = this.addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
         defaultRepo.getConfig().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
         if(!excludedRepositories.contains("maven-local")) {
-            this.addRepository("maven-local", "~/.m2/repository", "maven", true);
+            this.addRepository("maven-local", System.getProperty("maven-local","~/.m2/repository"), "maven", true);
         }
         if (!excludedRepositories.contains("maven-central")) {
             this.addProxiedRepository("maven-central", "http://repo.maven.apache.org/maven2/", "maven", true);
@@ -1134,6 +1151,11 @@ public class BootNutsWorkspace implements NutsWorkspace {
 
     @Override
     public void save() throws IOException {
+        File file = IOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_FILE);
+        JsonUtils.storeJson(config, file, JsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
+        for (NutsRepository repo : getEnabledRepositories()) {
+            repo.save();
+        }
     }
 
 
@@ -1236,6 +1258,11 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
+    public NutsTerminal createTerminal() throws IOException {
+        return createTerminal(null,null,null);
+    }
+
+    @Override
     public NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException {
         NutsTerminal nutsTerminal = new DefaultNutsTerminal();
         nutsTerminal.install(this,in, out, err);
@@ -1285,20 +1312,20 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
 
-    public static String resolveImmediateWorkspacePath(String workspace,String defaultName) throws IOException {
+    public static String resolveImmediateWorkspacePath(String workspace,String defaultName,String workspaceRoot) throws IOException {
         if (StringUtils.isEmpty(workspace)) {
-            workspace = IOUtils.resolvePath(NutsConstants.DEFAULT_WORKSPACE_ROOT + "/" + defaultName, null).getPath();
+            workspace = IOUtils.resolvePath(workspaceRoot + "/" + defaultName, null,workspaceRoot).getPath();
         } else {
-            workspace = IOUtils.resolvePath(workspace, null).getPath();
+            workspace = IOUtils.resolvePath(workspace, null,workspaceRoot).getPath();
         }
         return workspace;
     }
 
-    public static String resolveWorkspacePath(String workspace,String defaultName) throws IOException {
+    public String resolveWorkspacePath(String workspace,String defaultName) throws IOException {
         if (StringUtils.isEmpty(workspace)) {
-            workspace = IOUtils.resolvePath(NutsConstants.DEFAULT_WORKSPACE_ROOT + "/" + defaultName, null).getPath();
+            workspace = IOUtils.resolvePath(workspaceRoot + "/" + defaultName, null,workspaceRoot).getPath();
         } else {
-            workspace = IOUtils.resolvePath(workspace, null).getPath();
+            workspace = IOUtils.resolvePath(workspace, null,workspaceRoot).getPath();
         }
 
         Set<String> visited = new HashSet<String>();
@@ -1403,5 +1430,10 @@ public class BootNutsWorkspace implements NutsWorkspace {
     @Override
     public boolean isAdmin() {
         return true;
+    }
+
+    @Override
+    public String getWorkspaceRootLocation() {
+        return workspaceRoot;
     }
 }

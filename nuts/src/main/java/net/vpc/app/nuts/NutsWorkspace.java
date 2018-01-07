@@ -52,6 +52,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     String getWorkspaceLocation();
 
+    String getWorkspaceRootLocation();
+
     NutsWorkspaceConfig getConfig();
 
     NutsServer getServer(String serverId);
@@ -64,7 +66,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     Set<String> getAvailableArchetypes();
 
-    boolean initializeWorkspace(String workspace, NutsWorkspace bootstrapWorkspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException;
+    boolean initializeWorkspace(String workspaceRoot, String workspace, NutsWorkspace bootstrapWorkspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException;
 
     NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException;
 
@@ -249,6 +251,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsRepositoryListener[] getRepositoryListeners();
 
     NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) throws IOException;
+
+    NutsTerminal createTerminal() throws IOException;
 
     NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException;
 

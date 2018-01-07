@@ -60,11 +60,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
         checkNutsRepositoryConfig(config);
         if (root == null) {
-            root = IOUtils.resolvePath(config.getId(), IOUtils.createFile(workspace.getWorkspaceLocation(), NutsConstants.DEFAULT_REPOSITORIES_ROOT));
+            root = IOUtils.resolvePath(config.getId(), IOUtils.createFile(workspace.getWorkspaceLocation(), NutsConstants.DEFAULT_REPOSITORIES_ROOT),workspace.getWorkspaceRootLocation());
         } else {
-            root = IOUtils.resolvePath(root.getPath(), null);
+            root = IOUtils.resolvePath(root.getPath(), null,workspace.getWorkspaceRootLocation());
         }
-        if (root.exists() && !root.isDirectory()) {
+        if (root==null || (root.exists() && !root.isDirectory())) {
             throw new NutsRepositoryInvalidException(String.valueOf(root));
         }
         this.root = root;
