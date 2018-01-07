@@ -73,8 +73,18 @@
         <dependency>
             <groupId>org.jline</groupId>
             <artifactId>jline</artifactId>
-            <version>3.1.3</version>
+            <version>3.5.2</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.jline</groupId>-->
+            <!--<artifactId>jline-terminal</artifactId>-->
+            <!--<version>3.5.2</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.jline</groupId>-->
+            <!--<artifactId>jline-reader</artifactId>-->
+            <!--<version>3.5.2</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
@@ -117,6 +127,21 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.vpc.common.maven</groupId>
+                <artifactId>writer-maven-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties</outputFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>write-properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

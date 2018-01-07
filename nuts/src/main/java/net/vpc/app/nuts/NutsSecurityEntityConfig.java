@@ -32,7 +32,6 @@ package net.vpc.app.nuts;
 import net.vpc.app.nuts.util.JsonTransient;
 import net.vpc.app.nuts.util.StringUtils;
 
-import java.beans.Transient;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

@@ -90,7 +90,7 @@ class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
             throw new RuntimeException("Field inaccessible : no getter found for field " + getName());
         }
         try {
-            return getter.invoke(o, new Object[0]);
+            return getter.invoke(o);
         } catch (Exception e) {
             if (e instanceof InvocationTargetException) {
                 e = (Exception) ((InvocationTargetException) e).getTargetException();
@@ -108,7 +108,7 @@ class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
             throw new RuntimeException("Field readonly : no setter found for " + getName() + " in class " + o.getClass());
         }
         try {
-            setter.invoke(o, new Object[]{value});
+            setter.invoke(o, value);
         } catch (Exception e) {
             //throw new IllegalArgumentException("Unable to set value " + (value == null ? "null" : value.getClass()) + " for property " + getName() + ". Expected Type is " + getPlatformType(), e);
             if (e instanceof InvocationTargetException) {

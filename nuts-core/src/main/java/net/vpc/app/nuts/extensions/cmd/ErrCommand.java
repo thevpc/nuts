@@ -33,7 +33,6 @@ import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

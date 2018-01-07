@@ -28,10 +28,12 @@ public class CoreNutsUtils {
         }
         return null;
     }
+
     public static boolean isSameGroupAndName(NutsId a, NutsId b) {
         return a.setVersion("").unsetQuery().setNamespace("")
                 .equals(b.setVersion("").unsetQuery().setNamespace(""));
     }
+
     public static void validateNutName(String name) {
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
             throw new IllegalArgumentException("Invalid nuts name " + name);
@@ -86,29 +88,29 @@ public class CoreNutsUtils {
         }
         File versionFolder = new File(artifactFolder, id.getVersion().getValue());
         String face = id.getFace();
-        if(StringUtils.isEmpty(face)){
-            face= NutsConstants.QUERY_FACE_DEFAULT_VALUE;
+        if (StringUtils.isEmpty(face)) {
+            face = NutsConstants.QUERY_FACE_DEFAULT_VALUE;
         }
         return new File(versionFolder, face);
     }
 
     public static String[][] splitEnvAndAppArgs(String[] args) {
-        List<String> env=new ArrayList<>();
-        List<String> app=new ArrayList<>();
-        boolean expectEnv=true;
+        List<String> env = new ArrayList<>();
+        List<String> app = new ArrayList<>();
+        boolean expectEnv = true;
         for (String s : args) {
-            if(expectEnv) {
+            if (expectEnv) {
                 if (s.startsWith("--nuts-")) {
                     if (s.startsWith("--nuts-arg-")) {
-                        app.add("--nuts-"+s.substring(0,"--nuts-arg-".length()));
-                    }else {
+                        app.add("--nuts-" + s.substring(0, "--nuts-arg-".length()));
+                    } else {
                         env.add(s.substring("--nuts".length()));
                     }
-                }else{
+                } else {
                     app.add(s);
-                    expectEnv=false;
+                    expectEnv = false;
                 }
-            }else{
+            } else {
                 app.add(s);
             }
         }
@@ -117,7 +119,5 @@ public class CoreNutsUtils {
                 app.toArray(new String[app.size()]),
         };
     }
-
-
 
 }

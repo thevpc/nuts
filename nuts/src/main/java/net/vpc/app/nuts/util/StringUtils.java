@@ -348,8 +348,6 @@ public class StringUtils {
                     if (r == -1) {
                         break;
                     }
-                } else {
-                    //
                 }
             }
         }
@@ -407,18 +405,6 @@ public class StringUtils {
                 result.append(cr);
             }
         }
-    }
-    public static String[] toArraySet(String[] values){
-        LinkedHashSet<String> set = new LinkedHashSet<>();
-        if (values != null) {
-            for (String a : values) {
-                a = StringUtils.trim(a);
-                if (!StringUtils.isEmpty(a) && !set.contains(a)) {
-                    set.add(a);
-                }
-            }
-        }
-        return set.toArray(new String[set.size()]);
     }
 
 }

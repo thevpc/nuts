@@ -103,7 +103,7 @@
                 <artifactId>writer-maven-plugin</artifactId>
                 <version>1.0.3</version>
                 <configuration>
-                    <outputFile>${project.build.outputDirectory}/META-INF/nuts-version.properties</outputFile>
+                    <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties</outputFile>
                 </configuration>
                 <executions>
                     <execution>

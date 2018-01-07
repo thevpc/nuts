@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.util;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 /**

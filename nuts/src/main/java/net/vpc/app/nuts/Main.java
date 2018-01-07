@@ -36,10 +36,9 @@ import net.vpc.app.nuts.util.MapStringMapper;
 import net.vpc.app.nuts.util.StringUtils;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,6 +58,7 @@ public class Main {
     }
 
     public static void uncheckedMain(String[] args) throws IOException, LoginException, InterruptedException {
+//        System.out.println(">>"+getBootVersion()+" :: "+Arrays.asList(args));
         long startTime = System.currentTimeMillis();
         int startAppArgs = 0;
         String workspaceRoot = null;
@@ -66,7 +66,6 @@ public class Main {
         String archetype = null;
         String login = null;
         String password = null;
-        String callerVersion = null;
         String logFolder = null;
         Level logLevel = null;
         int logSize = 0;
@@ -75,6 +74,7 @@ public class Main {
         boolean version = false;
         boolean doupdate = false;
         boolean checkupdates = false;
+        String applyUpdatesFile = null;
         boolean perf = false;
         boolean showHelp = false;
         List<String> showError = new ArrayList<>();
@@ -123,12 +123,12 @@ public class Main {
                         }
                         password = args[i];
                         break;
-                    case "--private-caller-version":
+                    case "--apply-updates":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for private-caller-version");
+                            throw new IllegalArgumentException("Missing argument for apply-updates");
                         }
-                        callerVersion = args[i];
+                        applyUpdatesFile = args[i];
                         break;
                     case "--save":
                         save = true;
@@ -234,25 +234,9 @@ public class Main {
             throw new IllegalArgumentException("Try 'nuts --help' for more information.");
         }
         boolean someProcessing = false;
-        if (which) {
-            if (bootTerminal == null) {
-                bootTerminal = bws.createTerminal();
-            }
-            NutsPrintStream out = bootTerminal.getOut();
-            perf = showPerf(startTime, perf, session);
-            Map<String, String> runtimeProperties = getRuntimeProperties(bws, session);
-            out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
-            out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
-            out.drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
-            out.drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
-            out.drawln("target-workspace     : [[" + BootNutsWorkspace.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME,workspaceRoot) + "]]");
-            out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-            out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
-            someProcessing = true;
-        }
 
         if (showHelp) {
-            if(bootTerminal==null) {
+            if (bootTerminal == null) {
                 bootTerminal = bws.createTerminal();
             }
             perf = showPerf(startTime, perf, session);
@@ -260,11 +244,10 @@ public class Main {
             someProcessing = true;
         }
 
-
         String[] args2 = new String[args.length - startAppArgs];
         System.arraycopy(args, startAppArgs, args2, 0, args2.length);
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
-        NutsWorkspace ws = null;
+        NutsWorkspace ws;
         try {
             ws = bws.openWorkspace(workspace, new NutsWorkspaceCreateOptions()
                             .setArchetype(archetype)
@@ -275,6 +258,7 @@ public class Main {
                     session
             );
         } catch (net.vpc.app.nuts.NutsNotFoundException ex) {
+
             if (bootTerminal == null) {
                 bootTerminal = bws.createTerminal();
             }
@@ -284,59 +268,46 @@ public class Main {
             err.drawln("Exiting nuts, Bye!");
             throw new IllegalArgumentException("Unable to locate nuts-core components", ex);
         }
+
+        if (which) {
+            if (bootTerminal == null) {
+                bootTerminal = bws.createTerminal();
+            }
+            NutsPrintStream out = bootTerminal.getOut();
+            perf = showPerf(startTime, perf, session);
+            Map<String, String> runtimeProperties = ws.getRuntimeProperties(session);
+            out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
+            out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
+            out.drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
+            out.drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
+            out.drawln("target-workspace     : [[" + runtimeProperties.get("nuts.boot.target-workspace") + "]]");
+            out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
+            out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+            someProcessing = true;
+        }
+
+
         if (login != null && login.trim().length() > 0) {
             if (StringUtils.isEmpty(password)) {
                 password = session.getTerminal().readPassword("Password : ");
             }
             ws.login(login, password);
         }
-        if (checkupdates) {
-            someProcessing = true;
-            NutsUpdate[] updates = ws.checkWorkspaceUpdates(session);
-            if (updates.length == 0) {
-                session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
-            } else {
-                session.getTerminal().getOut().drawln("Workspace has " + updates.length + " component" + (updates.length > 1 ? "s" : "") + " to update");
-                for (NutsUpdate update : updates) {
-                    session.getTerminal().getOut().drawln(update.getBaseId() + "  : " + update.getLocalId() + " => [[" + update.getAvailableId() + "]]");
-                }
-                perf = showPerf(startTime, perf, session);
-            }
+
+        if (applyUpdatesFile != null) {
+            ws.execExternalNuts(session, new File(applyUpdatesFile), args, false, false);
+            return;
         }
 
-
-        NutsFile bestVersion = null;
-
-        if (doupdate) {
+        if (checkupdates || doupdate) {
+            if (ws.checkWorkspaceUpdates(session, doupdate, args).length > 0) {
+                return;
+            }
             someProcessing = true;
-            try {
-                bestVersion = ws.updateWorkspace(session);
-            } catch (Exception ex) {
-                //not found
-            }
-            if (bestVersion != null) {
-                List<String> all = new ArrayList<>();
-                all.add(System.getProperty("java.home") + "/bin/java");
-                all.add("-jar");
-                all.add(bestVersion.getFile().getPath());
-                all.add("--private-caller-version");
-                all.add(StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
-                all.addAll(Arrays.asList(args));
-                ProcessBuilder pb = new ProcessBuilder();
-                pb.command(all);
-                pb.inheritIO();
-                Process process = pb.start();
-                int x = process.waitFor();
-                perf = showPerf(startTime, perf, session);
-            } else {
-                if (!checkupdates) {
-                    session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
-                }
-            }
         }
 
         if (version) {
-            String fullVersion = getBootVersion() + " -> " + (StringUtils.isEmpty(callerVersion) ? ws.getWorkspaceVersion() : (callerVersion + "/" + ws.getWorkspaceVersion()));
+            String fullVersion = getBootVersion() + " -> " + ws.getWorkspaceVersion();
             session.getTerminal().getOut().println(fullVersion);
             perf = showPerf(startTime, perf, session);
             someProcessing = true;
@@ -373,13 +344,13 @@ public class Main {
 
     public static String getBootVersion() {
         return
-                IOUtils.loadProperties(Main.class.getResource("/META-INF/nuts-version.properties"))
+                IOUtils.loadProperties(Main.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"))
                         .getProperty("project.version", "0.0.0");
     }
 
     public static NutsWorkspace openBootstrapWorkspace(String workspaceRoot) throws IOException {
         NutsWorkspace w = new BootNutsWorkspace();
-        w.initializeWorkspace(workspaceRoot,null, null, null, null, new NutsSession());
+        w.initializeWorkspace(workspaceRoot, null, null, null, null, new NutsSession());
         w.save();
         return w;
     }
@@ -389,61 +360,6 @@ public class Main {
         term.drawln(help);
     }
 
-    public static Map<String, String> getRuntimeProperties(NutsWorkspace boot, NutsSession session) {
-        Map<String, String> map = new HashMap<>();
-        String cp_nutsFile = "<unknown>";
-        String cp_nutsCoreFile = "<unknown>";
-        String cp = System.getProperty("java.class.path");
-        if (cp != null) {
-            String[] splits = cp.split(System.getProperty("path.separator"));
-            for (String split : splits) {
-                String uniformPath = split.replace('\\', '/');
-                if (uniformPath.matches("(.*/)?nuts-\\d.*\\.jar")) {
-                    cp_nutsFile = split;
-                } else if (uniformPath.matches("(.*/)?nuts-core-\\d.*\\.jar")) {
-                    cp_nutsCoreFile = split;
-                } else if (uniformPath.endsWith("/nuts/target/classes")) {
-                    cp_nutsFile = split;
-                } else if (uniformPath.endsWith("/nuts-core/target/classes")) {
-                    cp_nutsCoreFile = split;
-                }
-            }
-        }
-        ClassLoader classLoader = Main.class.getClassLoader();
-        if (classLoader instanceof URLClassLoader) {
-            for (URL url : ((URLClassLoader) classLoader).getURLs()) {
-                String split = url.toString();
-                String uniformPath = split.replace('\\', '/');
-                if (uniformPath.matches("(.*/)?nuts-\\d.*\\.jar")) {
-                    cp_nutsFile = split;
-                } else if (uniformPath.matches("(.*/)?nuts-core-\\d.*\\.jar")) {
-                    cp_nutsCoreFile = split;
-                } else if (uniformPath.endsWith("/nuts/target/classes")) {
-                    cp_nutsFile = split;
-                } else if (uniformPath.endsWith("/nuts-core/target/classes")) {
-                    cp_nutsCoreFile = split;
-                }
-            }
-        }
-        NutsFile core = null;
-        try {
-            core = boot.fetch(NutsConstants.NUTS_COMPONENT_CORE_ID, false, session.copy().setFetchMode(FetchMode.OFFLINE));
-        } catch (Exception e) {
-            //ignore
-        }
-        if (cp_nutsCoreFile.equals("<unknown>")) {
-            if (core == null) {
-                cp_nutsCoreFile = "not found, will be downloaded on need";
-            } else {
-                cp_nutsCoreFile = core.getFile().getPath();
-            }
-        }
-        map.put("nuts.boot.version", getBootVersion());
-        map.put("nuts.boot.api-component", cp_nutsFile);
-        map.put("nuts.boot.core-component", cp_nutsCoreFile);
-        map.put("nuts.boot.workspace", boot.getWorkspaceLocation());
-        return map;
-    }
 
     public static String getHelpString() {
         String help = null;

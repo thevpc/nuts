@@ -85,12 +85,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected String getStreamSHA1(NutsId id, String extension) throws IOException {
         String hash = getStreamAsString(id, extension + ".sha1").toUpperCase();
-        for (String s : hash.split(" |\n|\r")) {
+        for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
             }
         }
-        return hash.split(" |\n|\r")[0];
+        return hash.split("[ \n\r]")[0];
     }
 
     protected abstract InputStream openStream(String path) throws IOException;

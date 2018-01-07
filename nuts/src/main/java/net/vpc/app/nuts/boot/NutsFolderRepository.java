@@ -302,7 +302,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                         if (toFile!=null) {
                             Boolean executableJar = PlatformUtils.getExecutableJar(toFile);
                             NutsDescriptor desc = nutsDescFile.getDescriptor();
-                            if(executableJar!=null && desc.isExecutable()!=executableJar.booleanValue()){
+                            if(executableJar!=null && desc.isExecutable()!= executableJar){
                                 NutsFile localGroupAndArtifactAndVersionFile = getLocalGroupAndArtifactAndVersionFile(id, true);
                                 File dlocalFile = localGroupAndArtifactAndVersionFile.getFile();
                                 desc=desc.setExecutable(executableJar);

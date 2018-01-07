@@ -29,24 +29,32 @@
  */
 package net.vpc.app.nuts;
 
+import net.vpc.app.nuts.util.StringUtils;
+
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsRepositoryInvalidException extends IllegalArgumentException {
+public class NutsResolutionPendingException extends RuntimeException {
 
-    private String repository;
+    private final String nuts;
 
-    public NutsRepositoryInvalidException(String repository) {
-        super("Invalid repository " + (repository == null ? "<null>" : repository));
-        this.repository = repository;
+    public NutsResolutionPendingException(NutsId nuts) {
+        this(nuts == null ? null : nuts.toString());
     }
 
-    public NutsRepositoryInvalidException(String repository, Throwable err) {
-        super("Invalid repository " + (repository == null ? "<null>" : repository), err);
-        this.repository = repository;
+    public NutsResolutionPendingException(String nuts) {
+        super("nuts resolution pending " + (nuts == null ? "<null>" : nuts));
+        this.nuts = nuts;
     }
 
-    public String getRepository() {
-        return repository;
+    public NutsResolutionPendingException(String nuts, String msg, Exception ex) {
+        super(
+                StringUtils.isEmpty(msg) ? "nuts resolution pending " + (nuts == null ? "<null>" : nuts) : msg,
+                ex);
+        this.nuts = nuts;
+    }
+
+    public String getNuts() {
+        return nuts;
     }
 }

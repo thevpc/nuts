@@ -83,11 +83,12 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
 
     @Override
     public V remove(Object key) {
-        boolean found = base.containsKey(key);
+        K kkey = (K) key;
+        boolean found = base.containsKey(kkey);
         V r = base.remove(key);
         if (found && listeners != null) {
             for (MapListener<K, V> listener : listeners) {
-                listener.elementRemoved((K) key, r);
+                listener.elementRemoved(kkey, r);
             }
         }
         return r;

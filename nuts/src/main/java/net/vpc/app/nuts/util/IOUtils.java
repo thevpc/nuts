@@ -182,7 +182,7 @@ public class IOUtils {
         if (path != null && path.length() > 0) {
             String firstItem = "";
             if ('\\' == File.separatorChar) {
-                String[] split = path.split("(/|\\\\)");
+                String[] split = path.split("([/\\\\])");
                 if (split.length > 0) {
                     firstItem = split[0];
                 }

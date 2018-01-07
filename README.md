@@ -8,7 +8,7 @@ Network Updatable Things Services
 /_/ |_/\__,_/\__/____/   version 0.3.4.0
 </pre>
 
-nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote,
+nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
 packages, installing these  packages to the current machine and executing such  packages on need.
 Each managed package  is also called a **nuts** which  is a **Network Updatable Thing Service** .
 Nuts packages are  stored  into repositories. A  *repository*  may be local for  storing local Nuts

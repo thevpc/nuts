@@ -95,10 +95,7 @@ public class NutsVersion {
 
     public boolean isSingleValue() {
         NutsVersionInterval[] nutsVersionIntervals = toIntervals();
-        if (nutsVersionIntervals.length == 0 || nutsVersionIntervals.length > 1) {
-            return false;
-        }
-        return nutsVersionIntervals[0].isFixedValue();
+        return nutsVersionIntervals.length != 0 && nutsVersionIntervals.length <= 1 && nutsVersionIntervals[0].isFixedValue();
     }
 
     @Override

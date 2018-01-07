@@ -92,30 +92,6 @@ public class HelpCommand extends AbstractNutsCommand {
     }
 
     public String getHelpContent() {
-        String help = null;
-        try {
-            InputStream s = null;
-            try {
-                s = Main.class.getResourceAsStream("/net/vpc/app/nuts/help.help");
-                if (s != null) {
-                    help = IOUtils.readStreamAsString(s, true);
-                }
-            } finally {
-                if (s != null) {
-                    s.close();
-                }
-            }
-        } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
-        }
-        if (help == null) {
-            help = "no help found";
-        }
-
-        HashMap<String, String> props = new HashMap<>();
-        props.putAll((Map) System.getProperties());
-        props.put("nuts.boot-version", Main.getBootVersion());
-        help = StringUtils.replaceVars(help, new MapStringMapper(props));
-        return help;
+        return Main.getHelpString();
     }
 }

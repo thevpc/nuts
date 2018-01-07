@@ -2,7 +2,6 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.NutsTerminalDelegate;
-import net.vpc.app.nuts.extensions.workspaces.DefaultNutsCommandContext;
 import net.vpc.apps.javashell.cmds.JavaShellInternalCmd;
 import net.vpc.apps.javashell.parser.JavaShellEvalContext;
 

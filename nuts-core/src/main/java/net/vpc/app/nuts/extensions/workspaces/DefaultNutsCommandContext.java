@@ -2,11 +2,15 @@ package net.vpc.app.nuts.extensions.workspaces;
 
 import net.vpc.app.nuts.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DefaultNutsCommandContext implements NutsCommandContext{
     private String serviceName;
     private NutsWorkspace workspace;
     private NutsCommandLineConsoleComponent commandLine;
     private NutsSession session;
+    private Map<String,Object> userProperties=new HashMap<>();
 
     public DefaultNutsCommandContext() {
     }
@@ -18,6 +22,10 @@ public class DefaultNutsCommandContext implements NutsCommandContext{
         c.commandLine = commandLine;
         c.session = session.copy();
         return c;
+    }
+
+    public Map<String, Object> getUserProperties() {
+        return userProperties;
     }
 
     public String getServiceName() {

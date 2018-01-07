@@ -891,8 +891,10 @@ public class CoreIOUtils {
             pipes.add(pipe("pipe-in-proc-"+proc.toString(), termIn, proc.getOutputStream()));
         }
         while(proc.isAlive()){
-            if(!termIn.hasMoreBytes() && termIn.available()==0){
-                termIn.close();
+            if(termIn!=null) {
+                if (!termIn.hasMoreBytes() && termIn.available() == 0) {
+                    termIn.close();
+                }
             }
             boolean allFinished=true;
             for (PipeThread pipe : pipes) {

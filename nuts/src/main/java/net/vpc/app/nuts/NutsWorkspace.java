@@ -78,7 +78,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     // NUTS MANAGEMENTS
     NutsFile updateWorkspace(NutsSession session) throws IOException;
 
-    NutsUpdate[] checkWorkspaceUpdates(NutsSession session) throws IOException;
+    NutsUpdate[] checkWorkspaceUpdates(NutsSession session, boolean applyUpdates, String[] args) throws IOException;
 
     NutsUpdate checkUpdates(String id, NutsSession session) throws IOException;
 
@@ -192,6 +192,20 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     void exec(String id, String[] args, NutsSession session) throws IOException;
 
+    /**
+     * exec another instance of nuts
+     *
+     * @param session
+     * @param nutsJarFile
+     * @param args
+     * @param copyCurrentToFile
+     * @param waitFor
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    int execExternalNuts(NutsSession session, File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor) throws IOException, InterruptedException;
+
     /////////////////////////////////////////////////////////////////
     // EXTENSION MANAGEMENT
     NutsWorkspaceFactory getFactory();
@@ -267,4 +281,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     boolean switchSecureMode(String adminPassword) throws LoginException, IOException;
 
     boolean isAdmin();
+
+    Map<String, String> getRuntimeProperties(NutsSession session);
+
+    File resolveNutsJarFile();
 }

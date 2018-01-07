@@ -31,18 +31,41 @@ git/svn <<source version tools>> to support package (re)-building and deploying.
 ===SYNOPSYS:===
 nuts [[[Nuts Options]]] <<<command>>> <<<args>>> ...
 
+===Boot Version:=== ${nuts.boot-version}
+===Java Version:=== ${java.version} (${java.vm.name})
+
 ===USAGE:===
 nuts [[[Nuts Options]]] [[[Nuts Command]]]
-===Boot Version:=== ${nuts.boot-version}
 ===Nuts Options:===
+ [[--workspace-root]] <<<WORKSPACE_ROOT_LOCATION>>>
+      root location containing all workspaces.
+      This defaults to ~/.nuts where ~ refers to the users\'s home directory.
  [[--workspace]] <<<WORKSPACE_LOCATION>>>
-      workspace location to open
+      workspace location to open.
+      This defaults to default-workspace. Typically this refers to ~/.nuts/default-workspace
+      (when --workspace-root is not specified). workspace location contains both config and component data (from
+      repositories).
  [[--archetype]] <<<ARCHETYPE_NAME>>>
-      workspace archetype to create (if workspace not found)
+      workspace archetype to create (if workspace not found).
+      When opening a non existing workspace, nuts will create it
+      using the default archetype. Supported archetypes are :
+          default : should handle most cases. Will create 4 repositories
+                    nuts local       : containing local nuts java and non java nuts
+                    maven-local      : containing a reference to ~/.m2/repository local maven repository
+                    maven-central    : referencing http://repo.maven.apache.org/maven2/ (with cache support)
+                    maven-vpc-public : referencing https://.../vpc-public-maven/master author\'s github maven repo (with
+                                       cache support)
+          minimal : will create an almost empty workspace with a single nuts local repository
+          server  : will create an almost empty workspace with a couple of users guest (read support) and contributor
+                    (write support)
  [[--login]]     <<<LOGIN>>>
       workspace login
+      if not specified, all access to nuts will be with anonymous credentials. so to promote user privileges, one may
+      specify user credentials (see --password)
  [[--password]]  <<<PASSWORD>>>
       workspace password
+      if not specified, all access to nuts will be with anonymous credentials. so to promote user privileges, one may
+      specify user credentials (see --login)
  [[--save]]
       saves workspace if newly created
  [[--version]]

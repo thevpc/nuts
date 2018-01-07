@@ -50,7 +50,7 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public JavaShellEvalContext createContext(JavaShellEvalContext parentContext) {
-        return new NutsJavaShellEvalContext((NutsJavaShellEvalContext)parentContext);
+        return new NutsJavaShellEvalContext(parentContext);
     }
 
     public JavaShellEvalContext createContext(NutsCommandContext commandContext, Node root, Node parent, Env env, String[] args) {

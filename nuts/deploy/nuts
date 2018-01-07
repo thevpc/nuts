@@ -1,3 +1,12 @@
-!#/bin/bash 
+#!/bin/bash
 base=$(dirname $0)
+if ! [ -f "$base/nuts.jar" ] ; then
+    echo missing "$base/nuts.jar"
+    wget -O "$base" "https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar"
+    if [ $? ne 0 ] ; then
+        echo unable to download nuts.jar.
+        exit 1
+    fi
+fi
+
 java -jar $base/nuts.jar $*

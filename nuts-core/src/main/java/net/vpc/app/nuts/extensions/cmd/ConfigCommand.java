@@ -52,12 +52,15 @@ public class ConfigCommand extends AbstractNutsCommand {
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws IOException, LoginException {
         Boolean autoSave=null;
         CmdLine cmdLine = new CmdLine(autoComplete, args);
+        boolean empty=true;
         do {
             if (cmdLine.acceptAndRemoveNoDuplicates("--save")) {
                 autoSave = true;
+                empty=false;
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("-h", "-?", "--help")) {
+                empty=false;
                 if (cmdLine.isExecMode()) {
                     NutsPrintStream out = context.getTerminal().getOut();
                     out.println("update");
@@ -90,24 +93,19 @@ public class ConfigCommand extends AbstractNutsCommand {
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("show location")) {
+                empty=false;
                 NutsSession session = context.getSession();
                 session.getTerminal().getOut().drawln(context.getValidWorkspace().getWorkspaceLocation());
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("check-updates")) {
+                empty=false;
                 NutsSession session = context.getSession();
-                NutsUpdate[] updates = context.getValidWorkspace().checkWorkspaceUpdates(session);
-                if (updates.length==0) {
-                    session.getTerminal().getOut().drawln("Workspace is [[up-to-date]]");
-                }else{
-                    session.getTerminal().getOut().drawln("Workspace has "+updates.length+" component"+(updates.length>1?"s":"")+" to update");
-                    for (NutsUpdate update : updates) {
-                        session.getTerminal().getOut().drawln(update.getBaseId()+"  : "+update.getLocalId()+" => [["+update.getAvailableId()+"]]");
-                    }
-                }
+                context.getValidWorkspace().checkWorkspaceUpdates(session,false,null);
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("update")) {
+                empty=false;
                 NutsSession session = context.getSession();
                 NutsFile newVersion=null;
                 try {
@@ -121,24 +119,31 @@ public class ConfigCommand extends AbstractNutsCommand {
                 continue;
             }
             if (processWorkspaceCommands(cmdLine, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (processRepositoryCommands(cmdLine, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (processExtensionCommands(cmdLine, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (processImportCommands(cmdLine, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (processUserCommands(cmdLine, null, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (processArchetypeCommands(cmdLine, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (processLogLevelCommands(cmdLine, autoSave, context)) {
+                empty=false;
                 continue;
             }
             if (!cmdLine.isExecMode()) {
@@ -152,7 +157,11 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             break;
         } while (!cmdLine.isEmpty());
-
+        if(empty){
+            NutsPrintStream out = context.getTerminal().getErr();
+            out.println("Missing config command");
+            out.println("type for more help : config -h");
+        }
     }
 
     private void showRepo(NutsCommandContext context, NutsRepository repository, String prefix) throws IOException {

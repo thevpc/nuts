@@ -326,8 +326,7 @@ public class MavenUtils {
         }
         info.latest = latest.toString();
         info.release = release.toString();
-        for (Iterator<String> iterator = versions.iterator(); iterator.hasNext(); ) {
-            String version = iterator.next();
+        for (String version : versions) {
             if (latest.length() > 0 && VersionUtils.compareVersions(version, latest.toString()) > 0) {
                 //do not add
             } else {

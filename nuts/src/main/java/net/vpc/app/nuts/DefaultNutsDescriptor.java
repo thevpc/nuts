@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import net.vpc.app.nuts.util.CollectionUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.util.*;
@@ -83,10 +84,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.executor = executor;
         this.installer = installer;
         this.ext = StringUtils.trim(ext);
-        this.arch = StringUtils.toArraySet(arch);
-        this.os = StringUtils.toArraySet(os);
-        this.osdist = StringUtils.toArraySet(osdist);
-        this.platform = StringUtils.toArraySet(platform);
+        this.arch = CollectionUtils.toArraySet(arch);
+        this.os = CollectionUtils.toArraySet(os);
+        this.osdist = CollectionUtils.toArraySet(osdist);
+        this.platform = CollectionUtils.toArraySet(platform);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
             if (dependencies[i] == null) {

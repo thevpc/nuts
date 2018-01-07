@@ -211,12 +211,5 @@ public class PlatformUtils {
         }
     }
 
-    public static <T> List<T> toList(Iterator<T> it) {
-        List<T> list = new ArrayList<>();
-        while (it.hasNext()) {
-            list.add(it.next());
-        }
-        return list;
-    }
 
 }

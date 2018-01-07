@@ -29,11 +29,8 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.JsonUtils;
 import net.vpc.app.nuts.util.NutsUtils;
-import net.vpc.app.nuts.util.StringUtils;
 
-import javax.json.*;
 import java.io.*;
 import java.util.*;
 

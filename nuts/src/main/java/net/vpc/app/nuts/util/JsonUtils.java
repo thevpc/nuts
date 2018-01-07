@@ -122,8 +122,8 @@ public class JsonUtils {
         } else if (Set.class.isAssignableFrom(t)) {
             JsonArray a = (JsonArray) obj;
             LinkedHashSet arr = new LinkedHashSet();
-            for (int i = 0; i < a.size(); i++) {
-                arr.add(deserialize(a.get(i), null));
+            for (JsonValue anA : a) {
+                arr.add(deserialize(anA, null));
             }
             return (T) arr;
         } else if (Properties.class.isAssignableFrom(t)) {

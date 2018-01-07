@@ -20,6 +20,7 @@ class NutsJavaShellEvalContext extends DefaultJavaShellEvalContext {
         if(parentContext instanceof NutsJavaShellEvalContext){
             this.commandContext = ((NutsJavaShellEvalContext) parentContext).commandContext;
             this.workspace = ((NutsJavaShellEvalContext) parentContext).workspace;
+            this.commandContext.getUserProperties().put(JavaShellEvalContext.class.getName(),this);
         }
     }
     public NutsJavaShellEvalContext(NutsJavaShell shell, String[] args, Node root, Node parent, NutsCommandContext commandContext, NutsWorkspace workspace, Env env) {

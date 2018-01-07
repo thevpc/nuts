@@ -1,8 +1,13 @@
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.Main;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -290,4 +295,77 @@ public class CorePlatformUtils {
         System.arraycopy(source, beginIndex, arr, 0, endIndex - beginIndex);
         return arr;
     }
+    public static void main(String[] args) {
+//        try {
+//            System.out.println(resolveLocalFileFromResource(Main.class,"/META-INF/nuts-version.properties"));
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+        try {
+            System.out.println(resolveLocalFileFromResource(Main.class,"/java/lang/Object.class"));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File resolveLocalFileFromResource(Class cls,String url) throws MalformedURLException {
+        return resolveLocalFileFromURL(resolveURLFromResource(cls,url));
+    }
+
+
+    public static File resolveLocalFileFromURL(URL url){
+        try {
+            return new File(url.toURI());
+        } catch(URISyntaxException e) {
+            return new File(url.getPath());
+        }
+    }
+
+    public static URL resolveURLFromResource(Class cls,String urlPath) throws MalformedURLException {
+        if(!urlPath.startsWith("/")){
+            throw new IllegalArgumentException("Unable to resolve url from "+urlPath);
+        }
+        URL url=cls.getResource(urlPath);
+        String urlFile = url.getFile();
+        int separatorIndex = urlFile.indexOf("!/");
+        if (separatorIndex != -1) {
+            String jarFile = urlFile.substring(0, separatorIndex);
+            try {
+                return new URL(jarFile);
+            } catch (MalformedURLException ex) {
+                // Probably no protocol in original jar URL, like "jar:C:/mypath/myjar.jar".
+                // This usually indicates that the jar file resides in the file system.
+                if (!jarFile.startsWith("/")) {
+                    jarFile = "/" + jarFile;
+                }
+                return new URL("file:" + jarFile);
+            }
+        } else {
+            String encoded =encodePath(urlPath);
+            String url_tostring = url.toString();
+            if(url_tostring.endsWith(encoded)){
+                return new URL(url_tostring.substring(0,url_tostring.length()-encoded.length()));
+            }
+            throw new IllegalArgumentException("Unable to resolve url from "+urlPath);
+        }
+    }
+
+    private static String encodePath(String path){
+        StringTokenizer st=new StringTokenizer(path,"/",true);
+        StringBuilder encoded=new StringBuilder();
+        while(st.hasMoreTokens()){
+            String t = st.nextToken();
+            if(t.equals("/")){
+                encoded.append(t);
+            }else{
+                try {
+                    encoded.append(URLEncoder.encode(t, "UTF-8"));
+                } catch (UnsupportedEncodingException ex) {
+                    throw new IllegalArgumentException("Unable to encode "+t,ex);
+                }
+            }
+        }
+        return encoded.toString();
+    }
+
 }

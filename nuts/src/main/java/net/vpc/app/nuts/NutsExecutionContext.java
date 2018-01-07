@@ -99,11 +99,6 @@ public class NutsExecutionContext {
         this.executorDescriptor = executorDescriptor;
         this.execArgs = execArgs;
         this.execProperties = execProperties;
-        if (nutsFile != null && nutsFile.getDescriptor() != null && nutsFile.getDescriptor().getInstaller() != null) {
-            if (args == null) {
-
-            }
-        }
     }
 
     public String[] getExecArgs() {

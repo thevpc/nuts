@@ -67,9 +67,11 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException{
+        System.out.println("Install NutsJLineTerminal");
         if(in!=null || out!=null || err!=null || System.console() == null){
             fallback = new DefaultNutsTerminal();
             fallback.install(workspace,in,out,err);
+            System.out.println("Fallback Temrinal");
         } else {
             TerminalBuilder builder = TerminalBuilder.builder();
             builder.streams(System.in, System.out);
@@ -77,6 +79,7 @@ public class NutsJLineTerminal implements NutsTerminal {
             try {
                 terminal = builder.build();
             } catch (Throwable ex) {
+                System.out.println("Fallback Temrinal");
                 //unable to create system terminal
             }
             if (terminal == null) {
@@ -84,6 +87,7 @@ public class NutsJLineTerminal implements NutsTerminal {
                 try {
                     terminal = builder.build();
                 } catch (IOException ex) {
+                    System.out.println("Fallback Temrinal");
                     Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
                     throw new RuntimeException(ex);
                 }

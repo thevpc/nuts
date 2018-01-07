@@ -47,7 +47,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         NutsId _os = NutsId.parseNullableOrError(os);
         NutsId _dist = NutsId.parseNullableOrError(dist);
         NutsId _platform = NutsId.parseNullableOrError(platform);
-        boolean ok = false;
+        boolean ok;
         if(_arch!=null && getArch().length>0) {
             ok = false;
             for (String x : getArch()) {

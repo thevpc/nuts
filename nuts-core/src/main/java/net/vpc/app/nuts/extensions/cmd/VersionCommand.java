@@ -30,12 +30,7 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.boot.BootNutsWorkspace;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.util.StringUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Map;
 
 /**
@@ -48,8 +43,7 @@ public class VersionCommand extends AbstractNutsCommand {
     }
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
-        NutsWorkspace bws=Main.openBootstrapWorkspace(context.getWorkspace().getWorkspaceRootLocation());
-        Map<String, String> runtimeProperties = Main.getRuntimeProperties(bws, context.getSession());
+        Map<String, String> runtimeProperties = context.getWorkspace().getRuntimeProperties(context.getSession());
         NutsPrintStream out = context.getTerminal().getOut();
         out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
         out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");

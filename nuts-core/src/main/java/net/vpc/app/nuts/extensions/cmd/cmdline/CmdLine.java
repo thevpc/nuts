@@ -43,7 +43,7 @@ import net.vpc.app.nuts.util.StringUtils;
  */
 public class CmdLine {
 
-    private List<String> args = new ArrayList<>();
+    private List<String> args;
     private int wordIndex = 0;
     private NutsCommandAutoComplete autoComplete;
     private HashSet<String> visitedSequences = new HashSet<>();
@@ -257,8 +257,8 @@ public class CmdLine {
     }
 
     public String getOptionValueNonEmpty(String... option) {
-        for (int i = 0; i < option.length; i++) {
-            String s = getOptionValueNonEmpty(option[i]);
+        for (String anOption : option) {
+            String s = getOptionValueNonEmpty(anOption);
             if (s != null) {
                 return s;
             }

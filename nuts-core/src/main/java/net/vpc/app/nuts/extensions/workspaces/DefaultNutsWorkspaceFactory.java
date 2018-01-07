@@ -296,8 +296,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         List<T> list = createAll(type, argTypes, args);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
-        for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
-            T t = iterator.next();
+        for (T t : list) {
             int supportLevel = t.getSupportLevel(supportCriteria);
             if (supportLevel > 0) {
                 if (bestObj == null || supportLevel > bestSupportLevel) {
@@ -314,8 +313,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         List<T> list = createAll(type);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
-        for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
-            T t = iterator.next();
+        for (T t : list) {
             int supportLevel = t.getSupportLevel(supportCriteria);
             if (supportLevel > 0) {
                 if (bestObj == null || supportLevel > bestSupportLevel) {

@@ -35,7 +35,6 @@ import net.vpc.app.nuts.boot.DefaultHttpTransportComponent;
 import javax.json.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,8 +169,6 @@ public class NutsUtils {
         try (FileInputStream os = new FileInputStream(file)) {
             try {
                 return parseNutsDescriptor(os);
-            } catch (IOException ex) {
-                throw ex;
             } catch (RuntimeException ex) {
                 throw new IOException("Unable to parse file " + file, ex);
             }

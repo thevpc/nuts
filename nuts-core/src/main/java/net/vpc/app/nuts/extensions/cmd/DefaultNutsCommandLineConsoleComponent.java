@@ -31,6 +31,7 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.workspaces.DefaultNutsCommandContext;
+import net.vpc.apps.javashell.cmds.*;
 import net.vpc.apps.javashell.parser.Env;
 import net.vpc.apps.javashell.parser.JavaShellEvalContext;
 
@@ -65,9 +66,24 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
     public void init(NutsWorkspace workspace, NutsSession session) throws IOException {
         context.setWorkspace(workspace);
         context.setSession(session);
+        //add default commands
+        installCommand(new ShellToNutsCommand(new EnvCmd()));
+        installCommand(new ShellToNutsCommand(new AliasCmd()));
+        installCommand(new ShellToNutsCommand(new ExitCmd()));
+        installCommand(new ShellToNutsCommand(new PropsCmd()));
+        installCommand(new ShellToNutsCommand(new SetCmd()));
+        installCommand(new ShellToNutsCommand(new SetPropCmd()));
+        installCommand(new ShellToNutsCommand(new ShowerrCmd()));
+        installCommand(new ShellToNutsCommand(new UnsetCmd()));
+        installCommand(new ShellToNutsCommand(new UnaliasCmd()));
+        installCommand(new ShellToNutsCommand(new UnexportCmd()));
+        installCommand(new ShellToNutsCommand(new TypeCmd()));
+        installCommand(new ShellToNutsCommand(new SourceCmd()));
+        installCommand(new ShellToNutsCommand(new PwdCmd()));
+
         for (NutsCommand command : workspace.getFactory().createAllSupported(NutsCommand.class, this)) {
             NutsCommand old = findCommand(command.getName());
-            if (old != null && old.getSupportLevel(this) > command.getSupportLevel(this)) {
+            if (old != null && old.getSupportLevel(this) >= command.getSupportLevel(this)) {
                 continue;
             }
             installCommand(command);
@@ -75,6 +91,7 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
         context.setCommandLine(this);
         sh=new NutsJavaShell(this,workspace);
         javaShellContext = sh.createContext(this.context, null, null, new Env(), new String[0]);
+        context.getUserProperties().put(JavaShellEvalContext.class.getName(),javaShellContext);
     }
 
     public void setServiceName(String serviceName) {
@@ -156,5 +173,43 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
     @Override
     public String getLastErrorMessage() {
         return sh.getLastErrorMessage();
+    }
+
+    private static class ShellToNutsCommand implements NutsCommand {
+        private final JavaShellInternalCmd ec;
+
+        public ShellToNutsCommand(JavaShellInternalCmd ec) {
+            this.ec = ec;
+        }
+
+        @Override
+        public String getName() {
+            return ec.getName();
+        }
+
+        @Override
+        public void exec(String[] args, NutsCommandContext context) throws Exception {
+            ec.exec(args,(JavaShellEvalContext) context.getUserProperties().get(JavaShellEvalContext.class.getName()));
+        }
+
+        @Override
+        public String getHelp() {
+            return ec.getHelp();
+        }
+
+        @Override
+        public String getHelpHeader() {
+            return ec.getHelpHeader();
+        }
+
+        @Override
+        public void autoComplete(NutsCommandAutoComplete autoComplete) {
+
+        }
+
+        @Override
+        public int getSupportLevel(Object criteria) {
+            return CORE_SUPPORT;
+        }
     }
 }

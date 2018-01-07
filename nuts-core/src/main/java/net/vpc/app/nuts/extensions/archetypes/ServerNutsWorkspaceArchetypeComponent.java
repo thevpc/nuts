@@ -62,7 +62,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         guest.addRight(NutsConstants.RIGHT_FETCH_CONTENT);
         guest.addRight(NutsConstants.RIGHT_DEPLOY);
 
-        //has read rights
+        //has write rights
         workspace.addUser("contributor");
         workspace.setUserCredentials("contributor", "user");
         NutsSecurityEntityConfig contributor = workspace.getConfig().getSecurity("contributor");

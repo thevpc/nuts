@@ -31,7 +31,6 @@ package net.vpc.app.nuts.util;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.NutsVersionFilter;
 
 import java.util.Map;
 

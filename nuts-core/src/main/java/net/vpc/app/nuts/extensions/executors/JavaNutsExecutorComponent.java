@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.util.NutsUtils;
-import net.vpc.app.nuts.util.PlatformUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.File;

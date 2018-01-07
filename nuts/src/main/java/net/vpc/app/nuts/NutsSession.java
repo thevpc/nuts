@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by vpc on 2/1/17.
  */
@@ -37,6 +40,7 @@ public class NutsSession implements Cloneable {
     private boolean transitive = true;
     private FetchMode fetchMode=FetchMode.ONLINE;
     private NutsTerminal terminal;
+    private Map<String,Object> properties=new HashMap<>();
 
     public NutsSession() {
     }
@@ -61,13 +65,23 @@ public class NutsSession implements Cloneable {
 
     public NutsSession copy() {
         try {
-            return (NutsSession) clone();
+            NutsSession cloned = (NutsSession) clone();
+            cloned.properties=new HashMap<>(properties);
+            return cloned;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
 
-//    public InputStream getIn() {
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
+    //    public InputStream getIn() {
 //        return in;
 //    }
 //
