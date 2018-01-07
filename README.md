@@ -47,7 +47,7 @@ or
 ```bash
 java -jar nuts.jar console
 ```
-if you have the appropriate shell file "nuts", but it under $HOME/bin or /local/bin
+if you have the appropriate shell file "nuts", just put it under $HOME/bin or /local/bin
 ### Any other platform (Windows, iOS, ...)
 ```bash
 java -jar nuts.jar console

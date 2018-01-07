@@ -37,8 +37,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="463">
-                <caret line="53" column="0" lean-forward="false" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+              <first_editor relative-caret-position="395">
+                <caret line="49" column="53" lean-forward="false" selection-start-line="49" selection-start-column="53" selection-end-line="49" selection-end-column="53" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -546,7 +546,7 @@
       <workItem from="1513838578454" duration="26000" />
       <workItem from="1515286509465" duration="14185000" />
       <workItem from="1515317467886" duration="32600000" />
-      <workItem from="1515359706365" duration="232000" />
+      <workItem from="1515359706365" duration="276000" />
     </task>
     <task id="LOCAL-00001" summary="added version command">
       <created>1504116893614</created>
@@ -611,11 +611,18 @@
       <option name="project" value="LOCAL" />
       <updated>1515359844611</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="v0.3.4.0&#10;+ fixed cache issue that prevents nuts from caching descriptor in some cases&#10;+ added command &quot;config list extension points&quot; to help listing available extension points&#10;+ added main arg option &quot;--workspace-root&quot; that defaults to ~/.nuts&#10;+ bootstrap repository defaults to save">
+      <created>1515359942749</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1515359942749</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="177007000" />
+    <option name="totallyTimeSpent" value="177051000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="399" y="0" width="1920" height="1044" extended-state="6" />
@@ -1322,8 +1329,8 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="463">
-            <caret line="53" column="0" lean-forward="false" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+          <first_editor relative-caret-position="395">
+            <caret line="49" column="53" lean-forward="false" selection-start-line="49" selection-start-column="53" selection-end-line="49" selection-end-column="53" />
             <folding />
           </first_editor>
           <second_editor />
