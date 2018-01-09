@@ -65,7 +65,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected String getPath(NutsId id, String extension) throws IOException {
+    protected String getPath(NutsId id, String extension) {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
@@ -218,7 +218,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        return new File(versionFolder, getQueryFilename(fid, d));
 //    }
 
-    protected File getLocalGroupAndArtifactFile(NutsId id) throws IOException {
+    protected File getLocalGroupAndArtifactFile(NutsId id) {
         if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
@@ -230,7 +230,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) throws IOException {
+    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) {
         Iterator<NutsId> namedNutIdIterator = null;
         StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != FetchMode.REMOTE) {
@@ -275,7 +275,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected Iterator<NutsId> findImpl(final NutsDescriptorFilter filter, NutsSession session) throws IOException {
+    protected Iterator<NutsId> findImpl(final NutsDescriptorFilter filter, NutsSession session) {
         if (session.getFetchMode() != FetchMode.REMOTE) {
             File locationFolder = getStoreRoot();
             return findInFolder(locationFolder, filter, session);
@@ -284,7 +284,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) throws IOException {
+    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
         InputStream stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;//parsePomXml(getStream(id, ".pom"), session);

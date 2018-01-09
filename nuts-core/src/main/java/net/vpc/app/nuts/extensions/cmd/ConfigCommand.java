@@ -31,10 +31,13 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.*;
-import net.vpc.app.nuts.util.LogUtils;
+import net.vpc.app.nuts.extensions.util.CoreLogUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.Ref;
 import net.vpc.app.nuts.util.StringUtils;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -50,17 +53,17 @@ public class ConfigCommand extends AbstractNutsCommand {
     }
 
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws IOException, LoginException {
-        Boolean autoSave=null;
+        Boolean autoSave = null;
         CmdLine cmdLine = new CmdLine(autoComplete, args);
-        boolean empty=true;
+        boolean empty = true;
         do {
             if (cmdLine.acceptAndRemoveNoDuplicates("--save")) {
                 autoSave = true;
-                empty=false;
+                empty = false;
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("-h", "-?", "--help")) {
-                empty=false;
+                empty = false;
                 if (cmdLine.isExecMode()) {
                     NutsPrintStream out = context.getTerminal().getOut();
                     out.println("update");
@@ -93,57 +96,61 @@ public class ConfigCommand extends AbstractNutsCommand {
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("show location")) {
-                empty=false;
+                empty = false;
                 NutsSession session = context.getSession();
                 session.getTerminal().getOut().drawln(context.getValidWorkspace().getWorkspaceLocation());
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("check-updates")) {
-                empty=false;
+                empty = false;
                 NutsSession session = context.getSession();
-                context.getValidWorkspace().checkWorkspaceUpdates(session,false,null);
+                context.getValidWorkspace().checkWorkspaceUpdates(session, false, null);
                 continue;
             }
             if (cmdLine.acceptAndRemoveNoDuplicates("update")) {
-                empty=false;
+                empty = false;
                 NutsSession session = context.getSession();
-                NutsFile newVersion=null;
+                NutsFile newVersion = null;
                 try {
                     newVersion = context.getValidWorkspace().updateWorkspace(session);
                 } catch (Exception ex) {
                     //not found
                 }
                 if (newVersion != null) {
-                    session.getTerminal().getOut().drawln("Workspace updated to [["+newVersion.getId()+"]]");
+                    session.getTerminal().getOut().drawln("Workspace updated to [[" + newVersion.getId() + "]]");
                 }
                 continue;
             }
             if (processWorkspaceCommands(cmdLine, autoSave, context)) {
-                empty=false;
+                empty = false;
                 continue;
             }
             if (processRepositoryCommands(cmdLine, autoSave, context)) {
-                empty=false;
+                empty = false;
                 continue;
             }
             if (processExtensionCommands(cmdLine, autoSave, context)) {
-                empty=false;
+                empty = false;
                 continue;
             }
             if (processImportCommands(cmdLine, autoSave, context)) {
-                empty=false;
+                empty = false;
                 continue;
             }
             if (processUserCommands(cmdLine, null, autoSave, context)) {
-                empty=false;
+                empty = false;
                 continue;
             }
             if (processArchetypeCommands(cmdLine, autoSave, context)) {
-                empty=false;
+                empty = false;
                 continue;
             }
             if (processLogLevelCommands(cmdLine, autoSave, context)) {
-                empty=false;
+                empty = false;
+                continue;
+            }
+            if (processDescCommands(cmdLine, autoSave, context)) {
+                empty = false;
                 continue;
             }
             if (!cmdLine.isExecMode()) {
@@ -151,13 +158,13 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             if (!cmdLine.isEmpty()) {
                 NutsPrintStream out = context.getTerminal().getErr();
-                out.println("Unexpected "+cmdLine.get(0));
+                out.println("Unexpected " + cmdLine.get(0));
                 out.println("type for more help : config -h");
                 return;
             }
             break;
         } while (!cmdLine.isEmpty());
-        if(empty){
+        if (empty) {
             NutsPrintStream out = context.getTerminal().getErr();
             out.println("Missing config command");
             out.println("type for more help : config -h");
@@ -194,43 +201,161 @@ public class ConfigCommand extends AbstractNutsCommand {
         return false;
     }
 
+    private boolean processDescCommands(CmdLine cmdLine, Boolean autoSave, NutsCommandContext context) throws IOException {
+        boolean newDesc=false;
+        String file=null;
+        boolean save=false;
+        Ref<NutsDescriptor> desc=new Ref<>();
+        if (cmdLine.acceptAndRemove("new descriptor", "nd")) {
+            newDesc=true;
+        } else if (cmdLine.acceptAndRemove("update descriptor", "ud")) {
+            newDesc=false;
+        }else{
+            return false;
+        }
+
+        List<Runnable> all=new ArrayList<>();
+        while(!cmdLine.isEmpty()) {
+            if (cmdLine.acceptAndRemove("-executable")) {
+                boolean value = cmdLine.readNonOptionOrError(new ValueNonOption("executable", null, "true", "false")).getBoolean();
+                all.add(() -> desc.set(desc.get().setExecutable(value)));
+            } else if (cmdLine.acceptAndRemove("-ext")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("ext", null, "jar")).getString();
+                all.add(() -> desc.set(desc.get().setExt(value)));
+            } else if (cmdLine.acceptAndRemove("-packaging")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("packaging", null, "jar")).getString();
+                all.add(() -> desc.set(desc.get().setPackaging(value)));
+            } else if (cmdLine.acceptAndRemove("-name")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("name", null, "my-name")).getString();
+                all.add(() -> desc.set(desc.get().setId(desc.get().getId().setName(value))));
+            } else if (cmdLine.acceptAndRemove("-group")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("group", null, "my-group")).getString();
+                all.add(() -> desc.set(desc.get().setId(desc.get().getId().setGroup(value))));
+            } else if (cmdLine.acceptAndRemove("-id")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("id", null, "my-group:my-name#1.0")).getString();
+                all.add(() -> desc.set(desc.get().setId(NutsId.parse(value))));
+
+            } else if (cmdLine.acceptAndRemove("-add-os")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().addOs(value)));
+            } else if (cmdLine.acceptAndRemove("-remove-os")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().removeOs(value)));
+
+            } else if (cmdLine.acceptAndRemove("-add-osdist")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().addOsdist(value)));
+            } else if (cmdLine.acceptAndRemove("-remove-osdist")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().removeOsdist(value)));
+
+            } else if (cmdLine.acceptAndRemove("-add-platform")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().addPlatform(value)));
+            } else if (cmdLine.acceptAndRemove("-remove-platform")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().removePlatform(value)));
+
+            } else if (cmdLine.acceptAndRemove("-add-arch")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().addArch(value)));
+            } else if (cmdLine.acceptAndRemove("-remove-arch")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().removeArch(value)));
+            } else if (cmdLine.acceptAndRemove("-add-property")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                String[] nv = CoreNutsUtils.splitNameAndValue(value);
+                if(nv!=null) {
+                    all.add(() -> desc.set(desc.get().addProperty(nv[0],nv[1])));
+                }
+            } else if (cmdLine.acceptAndRemove("-remove-property")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(() -> desc.set(desc.get().removeProperty(value)));
+
+            } else if (cmdLine.acceptAndRemove("-add-dependency")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
+                all.add(() -> desc.set(desc.get().addDependency(NutsDependency.parse(value))));
+            } else if (cmdLine.acceptAndRemove("-remove-dependency")) {
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
+                all.add(() -> desc.set(desc.get().removeDependency(NutsDependency.parse(value))));
+            } else if (cmdLine.acceptAndRemove("-file")) {
+                file = cmdLine.readNonOptionOrError(new FileNonOption("file")).getString();
+            } else if (cmdLine.acceptAndRemove("-save")) {
+                save = cmdLine.readNonOptionOrError(new ValueNonOption("save", null, "true", "false")).getBoolean();
+            } else {
+                if (!cmdLine.isExecMode()) {
+                    throw new IllegalArgumentException("Unsupported");
+                }
+            }
+        }
+        if (cmdLine.isExecMode()) {
+            if(newDesc){
+                desc.set(CoreNutsUtils.createNutsDescriptor());
+            }else{
+                if (file != null) {
+                    desc.set(NutsDescriptor.parse(new File(file)));
+                } else {
+                    if (cmdLine.isExecMode()) {
+                        throw new IllegalArgumentException("-file missing");
+                    }
+                }
+            }
+
+            for (Runnable r : all) {
+                r.run();
+            }
+            if(save) {
+                if (file != null) {
+                    desc.get().write(new File(file));
+                } else {
+                    if (cmdLine.isExecMode()) {
+                        throw new IllegalArgumentException("-file missing");
+                    }
+                }
+            }else{
+                context.getTerminal().getOut().println(desc.get().toString(true));
+            }
+        }
+        return true;
+    }
+
     private boolean processLogLevelCommands(CmdLine cmdLine, Boolean autoSave, NutsCommandContext context) throws IOException, LoginException {
         if (cmdLine.acceptAndRemove("set loglevel", "sll")) {
             if (cmdLine.acceptAndRemove("verbose", "finest")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.FINEST);
+                    CoreLogUtils.setLevel(Level.FINEST);
                 }
             } else if (cmdLine.acceptAndRemove("fine")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.FINE);
+                    CoreLogUtils.setLevel(Level.FINE);
                 }
             } else if (cmdLine.acceptAndRemove("finer")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.FINER);
+                    CoreLogUtils.setLevel(Level.FINER);
                 }
             } else if (cmdLine.acceptAndRemove("info")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.INFO);
+                    CoreLogUtils.setLevel(Level.INFO);
                 }
             } else if (cmdLine.acceptAndRemove("warning")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.WARNING);
+                    CoreLogUtils.setLevel(Level.WARNING);
                 }
             } else if (cmdLine.acceptAndRemove("severe", "error")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.SEVERE);
+                    CoreLogUtils.setLevel(Level.SEVERE);
                 }
             } else if (cmdLine.acceptAndRemove("config")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.CONFIG);
+                    CoreLogUtils.setLevel(Level.CONFIG);
                 }
             } else if (cmdLine.acceptAndRemove("off")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.OFF);
+                    CoreLogUtils.setLevel(Level.OFF);
                 }
             } else if (cmdLine.acceptAndRemove("all")) {
                 if (cmdLine.isExecMode()) {
-                    LogUtils.setLevel(Level.ALL);
+                    CoreLogUtils.setLevel(Level.ALL);
                 }
             } else {
                 if (cmdLine.isExecMode()) {
@@ -254,18 +379,18 @@ public class ConfigCommand extends AbstractNutsCommand {
             String repositoryId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                trySave(context,validWorkspace,validWorkspace.findRepository(repositoryId),true,null);
+                trySave(context, validWorkspace, validWorkspace.findRepository(repositoryId), true, null);
             }
             return true;
 
         } else if (cmdLine.acceptAndRemove("create repo", "cr")) {
             String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
-            String location = cmdLine.removeNonOption(new DefaultNonOption("RepositoryLocation")).getString();
-            String repoType = cmdLine.removeNonOption(new RepositoryNonOption("RepositoryType", context.getValidWorkspace())).getString();
+            String location = cmdLine.readNonOption(new DefaultNonOption("RepositoryLocation")).getString();
+            String repoType = cmdLine.readNonOption(new RepositoryNonOption("RepositoryType", context.getValidWorkspace())).getString();
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                NutsRepository repository = validWorkspace.openRepository(repositoryId, null,location, repoType, true);
-                trySave(context,validWorkspace,repository,autoSave,null);
+                NutsRepository repository = validWorkspace.openRepository(repositoryId, null, location, repoType, true);
+                trySave(context, validWorkspace, repository, autoSave, null);
             }
             return true;
 
@@ -292,7 +417,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                     }
                     Map<String, RepoPattern> repoPatterns = new HashMap<String, RepoPattern>();
                     for (RepoPattern repoPattern : new RepoPattern[]{
-                            new RepoPattern("maven-local", System.getProperty("maven-local","~/.m2/repository"), "maven"),
+                            new RepoPattern("maven-local", System.getProperty("maven-local", "~/.m2/repository"), "maven"),
                             new RepoPattern("maven-central", "http://repo.maven.apache.org/maven2/", "maven"),
                             new RepoPattern("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven")}) {
                         repoPatterns.put(repoPattern.id, repoPattern);
@@ -330,8 +455,8 @@ public class ConfigCommand extends AbstractNutsCommand {
                             repo = validWorkspace.addRepository(repositoryId, location, repoType, true);
                         }
                         context.getTerminal().getOut().println("Repository added successfully");
-                        trySave(context,validWorkspace,repo,autoSave,null);
-                        trySave(context,validWorkspace,null,autoSave,null);
+                        trySave(context, validWorkspace, repo, autoSave, null);
+                        trySave(context, validWorkspace, null, autoSave, null);
                     }
                     cmdLine.requireEmpty();
                 }
@@ -342,7 +467,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             String locationOrRepositoryId = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             if (cmdLine.isExecMode()) {
                 validWorkspace.removeRepository(locationOrRepositoryId);
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
 
@@ -369,7 +494,7 @@ public class ConfigCommand extends AbstractNutsCommand {
 
                 NutsRepository editedRepo = validWorkspace.findRepository(localId);
                 editedRepo.getWorkspace().getConfig().getRepository(editedRepo.getRepositoryId()).setEnabled(true);
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         } else if (cmdLine.acceptAndRemove("disable repo", "rr")) {
@@ -377,7 +502,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 NutsRepository editedRepo = validWorkspace.findRepository(localId);
                 editedRepo.getWorkspace().getConfig().getRepository(editedRepo.getRepositoryId()).setEnabled(false);
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         } else if (cmdLine.acceptAndRemove("edit repo", "er")) {
@@ -385,28 +510,28 @@ public class ConfigCommand extends AbstractNutsCommand {
             if (cmdLine.acceptAndRemove("add repo", "ar")) {
                 String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
                 String location = cmdLine.readNonOptionOrError(new FolderNonOption("RepositoryLocation")).getString();
-                String repoType = cmdLine.removeNonOption(new RepositoryTypeNonOption("RepositoryType", context)).getString();
+                String repoType = cmdLine.readNonOption(new RepositoryTypeNonOption("RepositoryType", context)).getString();
 
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
                 NutsRepository repo = editedRepo.addMirror(repositoryId, location, repoType, true);
-                trySave(context,validWorkspace,editedRepo,autoSave,null);
-                trySave(context,validWorkspace,repo,autoSave,null);
+                trySave(context, validWorkspace, editedRepo, autoSave, null);
+                trySave(context, validWorkspace, repo, autoSave, null);
 
             } else if (cmdLine.acceptAndRemove("remove repo", "rr")) {
                 String location = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
                 editedRepo.removeMirror(location);
-                trySave(context,validWorkspace,editedRepo,autoSave,null);
+                trySave(context, validWorkspace, editedRepo, autoSave, null);
 
             } else if (cmdLine.acceptAndRemove("enable", "rr")) {
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
                 editedRepo.getWorkspace().getConfig().getRepository(editedRepo.getRepositoryId()).setEnabled(true);
-                trySave(context,validWorkspace,editedRepo,autoSave,null);
+                trySave(context, validWorkspace, editedRepo, autoSave, null);
 
             } else if (cmdLine.acceptAndRemove("disable", "rr")) {
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
                 editedRepo.getWorkspace().getConfig().getRepository(editedRepo.getRepositoryId()).setEnabled(true);
-                trySave(context,validWorkspace,editedRepo,autoSave,null);
+                trySave(context, validWorkspace, editedRepo, autoSave, null);
             } else if (cmdLine.acceptAndRemove("list repos", "lr")) {
                 NutsRepository editedRepo = validWorkspace.findRepository(repoId);
                 NutsRepository[] linkRepositories = editedRepo.getMirrors();
@@ -444,7 +569,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             if (repository == null) {
                 NutsSecurityEntityConfig u = new NutsSecurityEntityConfig();
                 String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
-                String password = cmdLine.removeNonOption(new DefaultNonOption("Password")).getString();
+                String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
                     u.setUser(user);
                     context.getValidWorkspace().getConfig().setSecurity(u);
@@ -453,8 +578,8 @@ public class ConfigCommand extends AbstractNutsCommand {
             } else {
                 NutsSecurityEntityConfig u = new NutsSecurityEntityConfig();
                 String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
-                String mappedUser = cmdLine.removeNonOption(new DefaultNonOption("MappedUser")).getString();
-                String password = cmdLine.removeNonOption(new DefaultNonOption("Password")).getString();
+                String mappedUser = cmdLine.readNonOption(new DefaultNonOption("MappedUser")).getString();
+                String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
                     u.setUser(user);
                     u.setMappedUser(mappedUser);
@@ -463,7 +588,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                trySave(context, context.getValidWorkspace(),repository, autoSave, null);
+                trySave(context, context.getValidWorkspace(), repository, autoSave, null);
             }
             return true;
         } else if (cmdLine.acceptAndRemove("list users", "lu")) {
@@ -630,7 +755,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 } else {
                     repository.getConfig().setSecurity(u);
                 }
-                trySave(context, context.getValidWorkspace(),repository, autoSave, null);
+                trySave(context, context.getValidWorkspace(), repository, autoSave, null);
             }
             return true;
 
@@ -645,21 +770,21 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             //unsecure-box
             if (cmdLine.isExecMode()) {
-                String adminPassword=null;
-                if(!context.getWorkspace().isAdmin()){
+                String adminPassword = null;
+                if (!context.getWorkspace().isAdmin()) {
                     adminPassword = context.getTerminal().readPassword("Enter password : ");
                 }
-                if(context.getValidWorkspace().switchUnsecureMode(adminPassword)){
+                if (context.getValidWorkspace().switchUnsecureMode(adminPassword)) {
                     context.getTerminal().getOut().drawln("<<unsecure box activated.Anonymous has all rights.>>");
-                }else{
+                } else {
                     context.getTerminal().getOut().drawln("<<unsecure box is already activated.>>");
                 }
             }
-            trySave(context, context.getValidWorkspace(),repository, autoSave, cmdLine);
+            trySave(context, context.getValidWorkspace(), repository, autoSave, cmdLine);
             return true;
         } else if (cmdLine.acceptAndRemove("secure")) {
-            String adminPassword=null;
-            if(!context.getWorkspace().isAdmin()){
+            String adminPassword = null;
+            if (!context.getWorkspace().isAdmin()) {
                 adminPassword = context.getTerminal().readPassword("Enter password : ");
             }
             NutsRepository repository = null;
@@ -672,31 +797,31 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             //secure-box
             if (cmdLine.isExecMode()) {
-                if(context.getValidWorkspace().switchSecureMode(adminPassword)){
+                if (context.getValidWorkspace().switchSecureMode(adminPassword)) {
                     context.getTerminal().getOut().drawln("\"\"secure box activated.\"\"");
-                }else{
+                } else {
                     context.getTerminal().getOut().drawln("\"\"secure box already activated.\"\"");
                 }
             }
-            trySave(context, context.getValidWorkspace(),repository, autoSave,cmdLine);
+            trySave(context, context.getValidWorkspace(), repository, autoSave, cmdLine);
             return true;
         }
         return false;
     }
 
     private boolean trySave(NutsCommandContext context, NutsWorkspace workspace, NutsRepository repository, Boolean save, CmdLine cmdLine) throws IOException {
-        if(save==null) {
+        if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository != null) {
                     save = Boolean.parseBoolean(repository.getEnv("autosave", "false", true));
                 } else {
                     save = Boolean.parseBoolean(context.getValidWorkspace().getConfig().getEnv("autosave", "false"));
                 }
-            }else {
+            } else {
                 save = false;
             }
-        }else{
-            save=false;
+        } else {
+            save = false;
         }
         if (cmdLine != null) {
             while (!cmdLine.isEmpty()) {
@@ -713,7 +838,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                     workspace.save();
                     context.getTerminal().getOut().drawln("<<workspace saved.>>");
                 } else {
-                    context.getTerminal().getOut().drawln("<<repository "+repository.getRepositoryId()+" saved.>>");
+                    context.getTerminal().getOut().drawln("<<repository " + repository.getRepositoryId() + " saved.>>");
                     repository.save();
                 }
             }
@@ -734,7 +859,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
                 context.getValidWorkspace().getConfig().removeAllImports();
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         } else if (cmdLine.acceptAndRemove("import", "ia")) {
@@ -745,7 +870,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
             } while (!cmdLine.isEmpty());
             if (cmdLine.isExecMode()) {
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         } else if (cmdLine.acceptAndRemove("unimport", "ir")) {
@@ -756,7 +881,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         }
@@ -764,8 +889,8 @@ public class ConfigCommand extends AbstractNutsCommand {
     }
 
     private boolean processExtensionCommands(CmdLine cmdLine, Boolean autoSave, NutsCommandContext context) throws IOException, LoginException {
-        if(autoSave==null){
-            autoSave=false;
+        if (autoSave == null) {
+            autoSave = false;
         }
         if (cmdLine.acceptAndRemove("add extension", "ax")) {
             String extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
@@ -779,7 +904,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         } else if (cmdLine.acceptAndRemove("list extensions", "lx")) {
@@ -801,14 +926,14 @@ public class ConfigCommand extends AbstractNutsCommand {
         } else if (cmdLine.acceptAndRemove("list extension points", "lxp")) {
             if (cmdLine.isExecMode()) {
                 for (Class extension : context.getValidWorkspace().getFactory().getExtensionPoints()) {
-                    context.getTerminal().getOut().drawln("[["+extension.getName()+"]]:");
+                    context.getTerminal().getOut().drawln("[[" + extension.getName() + "]]:");
                     for (Class impl : context.getValidWorkspace().getFactory().getExtensionTypes(extension)) {
-                        context.getTerminal().getOut().drawln("\t"+impl.getName());
+                        context.getTerminal().getOut().drawln("\t" + impl.getName());
                     }
                     for (Object impl : context.getValidWorkspace().getFactory().getExtensionObjects(extension)) {
-                        if(impl!=null) {
+                        if (impl != null) {
                             context.getTerminal().getOut().drawln("\t" + impl.getClass().getName() + " :: " + impl);
-                        }else{
+                        } else {
                             context.getTerminal().getOut().drawln("\tnull");
                         }
                     }
@@ -851,7 +976,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                     if (!StringUtils.isEmpty(login)) {
                         workspace.login(login, password);
                     }
-                    trySave(context,workspace,null,autoSave,cmdLine);
+                    trySave(context, workspace, null, autoSave, cmdLine);
                     cmdLine.requireEmpty();
 
                 }
@@ -893,7 +1018,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                             workspace.login(login, password);
                         }
                         context.setWorkspace(workspace);
-                        trySave(context,workspace,null,autoSave,cmdLine);
+                        trySave(context, workspace, null, autoSave, cmdLine);
                     }
                 }
             }
@@ -902,7 +1027,7 @@ public class ConfigCommand extends AbstractNutsCommand {
         } else if (cmdLine.acceptAndRemove("save workspace", "save", "sw")) {
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                trySave(context,context.getValidWorkspace(),null,autoSave,cmdLine);
+                trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
         }

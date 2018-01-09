@@ -35,7 +35,6 @@ import net.vpc.app.nuts.boot.repos.MavenRemoteRepository;
 import net.vpc.app.nuts.util.*;
 
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -180,21 +179,14 @@ public class BootNutsWorkspace implements NutsWorkspace {
         return id;
     }
 
-    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) throws IOException {
-        if (StringUtils.isEmpty(workspace)) {
-            workspace = IOUtils.resolvePath(workspaceRoot + "/" + defaultName, null, workspaceRoot).getPath();
-        } else {
-            workspace = IOUtils.resolvePath(workspace, null, workspaceRoot).getPath();
-        }
-        return workspace;
-    }
+
 
     @Override
     public String getCurrentLogin() {
         return NutsConstants.USER_ANONYMOUS;
     }
 
-    public String login(CallbackHandler handler) throws LoginException {
+    public String login(CallbackHandler handler) {
         return getCurrentLogin();
     }
 
@@ -335,9 +327,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
                     break;
                 }
             }
-            if (!coreFound) {
-                return true;
-            }
+            return !coreFound;
         }
         return false;
     }
@@ -474,7 +464,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsRepository findRepository(String repositoryIdPath) throws IOException {
+    public NutsRepository findRepository(String repositoryIdPath) {
         if (!StringUtils.isEmpty(repositoryIdPath)) {
             while (repositoryIdPath.startsWith("/")) {
                 repositoryIdPath = repositoryIdPath.substring(1);
@@ -501,7 +491,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public void removeRepository(String repositoryId) throws IOException {
+    public void removeRepository(String repositoryId) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
@@ -547,7 +537,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public boolean isInstalled(String id, boolean checkDependencies, NutsSession session) throws IOException {
+    public boolean isInstalled(String id, boolean checkDependencies, NutsSession session) {
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }
@@ -559,11 +549,11 @@ public class BootNutsWorkspace implements NutsWorkspace {
         return true;
     }
 
-    protected NutsInstallerComponent getInstaller(NutsFile nutToInstall, NutsSession session) throws IOException {
+    protected NutsInstallerComponent getInstaller(NutsFile nutToInstall, NutsSession session) {
         return null;
     }
 
-    public boolean uninstall(String id, NutsSession session) throws IOException {
+    public boolean uninstall(String id, NutsSession session) {
         return true;
     }
 
@@ -597,7 +587,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
         return isFetched(NutsId.parseOrError(id), session);
     }
 
-    public boolean isFetched(NutsId id, NutsSession session) throws IOException {
+    public boolean isFetched(NutsId id, NutsSession session) {
         NutsSession offlineSession = session.copy().setFetchMode(FetchMode.OFFLINE);
         try {
             NutsFile found = fetch(id, offlineSession, false);
@@ -719,7 +709,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
         return all;
     }
 
-    public Iterator<NutsId> findIterator(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException {
+    public Iterator<NutsId> findIterator(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) {
         if (session == null) {
             throw new IllegalArgumentException("Missing Session");
         }
@@ -1100,7 +1090,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public boolean isSupportedRepositoryType(String repositoryType) throws IOException {
+    public boolean isSupportedRepositoryType(String repositoryType) {
         if (StringUtils.isEmpty(repositoryType)) {
             repositoryType = NutsConstants.DEFAULT_REPOSITORY_TYPE;
         }
@@ -1108,11 +1098,8 @@ public class BootNutsWorkspace implements NutsWorkspace {
         if (NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
             return true;
         }
-        if ("maven".equals(repositoryType)) {
-            return true;
-        }
+        return "maven".equals(repositoryType);
 
-        return false;
     }
 
     @Override
@@ -1201,49 +1188,49 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public void setUserCredentials(String user, String credentials) throws IOException {
+    public void setUserCredentials(String user, String credentials) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public void exec(String[] cmd, NutsSession session) throws IOException {
+    public void exec(String[] cmd, Properties env, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public void exec(String id, String[] args, NutsSession session) throws IOException {
+    public void exec(String id, String[] args, Properties env, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public void push(NutsId id, String repositoryId, NutsSession session) throws IOException {
+    public void push(NutsId id, String repositoryId, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
-    public NutsFile createBundle(File contentFolder, File destFile, NutsSession session) throws IOException {
-        throwSecurityException(NutsConstants.RIGHT_ADMIN);
-        return null;
-    }
-
-    public NutsId deploy(File contentFile, String contentFileSHA1, File descFile, String descSHA1, String repositoryId, NutsSession session) throws IOException {
+    public NutsFile createBundle(File contentFolder, File destFile, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
-    public NutsId deploy(String contentURL, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) throws IOException {
+    public NutsId deploy(File contentFile, String contentFileSHA1, File descFile, String descSHA1, String repositoryId, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
-    public NutsId deploy(String contentURL, String sha1, String descriptorURL, String descSHA1, String repositoryId, NutsSession session) throws IOException {
+    public NutsId deploy(String contentURL, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
-    public NutsId deploy(File contentFile, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) throws IOException {
+    public NutsId deploy(String contentURL, String sha1, String descriptorURL, String descSHA1, String repositoryId, NutsSession session) {
+        throwSecurityException(NutsConstants.RIGHT_ADMIN);
+        return null;
+    }
+
+    public NutsId deploy(File contentFile, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public NutsWorkspaceExtension addExtension(String id, NutsSession session) throws IOException {
+    public NutsWorkspaceExtension addExtension(String id, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
@@ -1255,7 +1242,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsServer startServer(ServerConfig serverConfig) throws IOException {
+    public NutsServer startServer(ServerConfig serverConfig) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
@@ -1266,12 +1253,12 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public void stopServer(String serverId) throws IOException {
+    public void stopServer(String serverId) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
     @Override
-    public NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) throws IOException {
+    public NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
@@ -1319,7 +1306,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsPrintStream createEnhancedPrintStream(OutputStream out) throws IOException {
+    public NutsPrintStream createEnhancedPrintStream(OutputStream out) {
         if (out == null) {
             return null;
         }
@@ -1332,9 +1319,11 @@ public class BootNutsWorkspace implements NutsWorkspace {
 
     public String resolveWorkspacePath(String workspace, String defaultName) throws IOException {
         if (StringUtils.isEmpty(workspace)) {
-            workspace = IOUtils.resolvePath(workspaceRoot + "/" + defaultName, null, workspaceRoot).getPath();
+            File file = IOUtils.resolvePath(workspaceRoot + "/" + defaultName, null, workspaceRoot);
+            workspace = file==null?null:file.getPath();
         } else {
-            workspace = IOUtils.resolvePath(workspace, null, workspaceRoot).getPath();
+            File file = IOUtils.resolvePath(workspace, null, workspaceRoot);
+            workspace = file==null?null:file.getPath();
         }
 
         Set<String> visited = new HashSet<String>();
@@ -1360,60 +1349,60 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public NutsFile install(String id, NutsSession session) throws IOException {
+    public NutsFile install(String id, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public NutsId commit(File folder, NutsSession session) throws IOException {
+    public NutsId commit(File folder, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public NutsFile checkout(String id, File folder, NutsSession session) throws IOException {
+    public NutsFile checkout(String id, File folder, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public NutsFile updateWorkspace(NutsSession session) throws IOException {
+    public NutsFile updateWorkspace(NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public NutsFile update(String id, NutsSession session) throws IOException {
+    public NutsFile update(String id, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public List<NutsFile> update(Set<String> toUpdateIds, Set<String> toRetainDependencies, NutsSession session) throws IOException {
+    public List<NutsFile> update(Set<String> toUpdateIds, Set<String> toRetainDependencies, NutsSession session) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
         return null;
     }
 
     @Override
-    public void login(String login, String password) throws LoginException {
+    public void login(String login, String password) {
     }
 
-    public void logout() throws LoginException {
+    public void logout() {
     }
 
     @Override
-    public void setUserCredentials(String login, String password, String oldPassword) throws IOException {
+    public void setUserCredentials(String login, String password, String oldPassword) {
         throwSecurityException(NutsConstants.RIGHT_ADMIN);
     }
 
     @Override
-    public NutsUpdate[] checkWorkspaceUpdates(NutsSession session, boolean applyUpdates, String[] args) throws IOException {
+    public NutsUpdate[] checkWorkspaceUpdates(NutsSession session, boolean applyUpdates, String[] args) {
         return new NutsUpdate[0];
     }
 
     @Override
-    public NutsUpdate checkUpdates(String id, NutsSession session) throws IOException {
+    public NutsUpdate checkUpdates(String id, NutsSession session) {
         return null;
     }
 
@@ -1428,12 +1417,12 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public boolean switchUnsecureMode(String adminPassword) throws LoginException, IOException {
+    public boolean switchUnsecureMode(String adminPassword) {
         return false;
     }
 
     @Override
-    public boolean switchSecureMode(String adminPassword) throws LoginException, IOException {
+    public boolean switchSecureMode(String adminPassword) {
         return false;
     }
 
@@ -1458,7 +1447,7 @@ public class BootNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public int execExternalNuts(NutsSession session, File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor) throws IOException, InterruptedException {
+    public int execExternalNuts(NutsSession session, File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor) {
         throw new IllegalArgumentException("Unsupported");
     }
 }

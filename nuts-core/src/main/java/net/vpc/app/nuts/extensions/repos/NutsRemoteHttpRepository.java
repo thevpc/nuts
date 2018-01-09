@@ -32,10 +32,7 @@ package net.vpc.app.nuts.extensions.repos;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.boot.AbstractNutsRepository;
 import net.vpc.app.nuts.boot.NutsIdPatternFilter;
-import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
-import net.vpc.app.nuts.extensions.util.IteratorFilter;
-import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.extensions.util.VersionFilterToNutsIdFilterAdapter;
+import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.app.nuts.util.*;
 
 import java.io.*;
@@ -239,7 +236,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             );
         } else if (filter instanceof NutsIdPatternFilter) {
             NutsIdPatternFilter filter1 = (NutsIdPatternFilter) filter;
-            String sb = JsonUtils.serializeObj(filter, new JsonUtils.SerializeOptions().setPretty(true)).build().toString();
+            String sb = JsonUtils.serializeObj(filter, new SerializeOptions().setPretty(true)).build().toString();
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
                     new TransportParamParamPart("root", "/"),
                     new TransportParamParamPart("ul", ulp[0]),
@@ -315,7 +312,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             credentials = security.getCredentials();
             //credentials are already encrypted with default passphrase!
             if (!StringUtils.isEmpty(credentials)) {
-                credentials = new String(SecurityUtils.httpDecrypt(credentials, NutsConstants.DEFAULT_PASSPHRASE));
+                credentials = new String(CoreSecurityUtils.httpDecrypt(credentials, NutsConstants.DEFAULT_PASSPHRASE));
             }
         }
         newLogin = SecurityUtils.httpEncrypt(StringUtils.trim(newLogin).getBytes(), passphrase);

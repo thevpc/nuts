@@ -49,6 +49,7 @@ public class ExecCommand extends AbstractNutsCommand {
             return;
         }
         String[] finalArgs = cmdLine.toArray();
-        context.getValidWorkspace().exec(finalArgs, context.getSession());
+
+        context.getValidWorkspace().exec(finalArgs, context.getEnv(), context.getSession());
     }
 }

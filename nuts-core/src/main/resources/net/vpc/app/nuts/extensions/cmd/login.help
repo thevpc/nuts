@@ -1,4 +1,4 @@
-[[login]]        : logs in as a given user
+logs in as a given user
 
 ===SYNOPSYS===
 login <username> [user-password]

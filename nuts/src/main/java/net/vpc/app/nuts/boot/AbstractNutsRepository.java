@@ -228,7 +228,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public void removeMirror(String repositoryId) throws IOException {
+    public void removeMirror(String repositoryId) {
         if (!isSupportedMirroring()) {
             throw new UnsupportedOperationException();
         }

@@ -1,4 +1,4 @@
-[[exec]]         : invokes a <<nuts>> command
+invokes a <<nuts>> command
 
 ===SYNOPSYS:===
 exec <command arguments>

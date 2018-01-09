@@ -1,4 +1,4 @@
-[[install]]      : installs one or more <<nuts>> from remote repositories
+installs one or more <<nuts>> from remote repositories
 
 ===SYNOPSYS===
 install [nuts-id] ...

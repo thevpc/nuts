@@ -1,4 +1,4 @@
-[[find]]         : searches for installed and available <<nuts>>
+searches for installed and available <<nuts>>
 
 ===SYNOPSYS:===
 find <options> [-js <JAVASCRIPT EXPRESSION>]  [ [-e] <LIKE EXPRESSION> ...]

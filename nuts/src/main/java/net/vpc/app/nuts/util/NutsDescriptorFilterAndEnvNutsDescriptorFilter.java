@@ -60,9 +60,6 @@ public class NutsDescriptorFilterAndEnvNutsDescriptorFilter implements NutsDescr
         if (!(versionFilter == null || versionFilter.accept(id))) {
             return false;
         }
-        if (!id.matchesEnv(arch, os, osdist, platform)) {
-            return false;
-        }
-        return true;
+        return id.matchesEnv(arch, os, osdist, platform);
     }
 }

@@ -1,4 +1,4 @@
-[[echo]]         : display a line of text
+display a line of text
 
 ===SYNOPSYS:===
 echo [-n|-p] <messages>

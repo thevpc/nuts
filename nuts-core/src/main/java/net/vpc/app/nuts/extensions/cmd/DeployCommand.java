@@ -52,8 +52,8 @@ public class DeployCommand extends AbstractNutsCommand {
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-        String descriptorFile = cmdLine.removeNonOption(new FileNonOption("DescriptorFile")).getString();
-        String repository = cmdLine.removeNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+        String descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
+        String repository = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
         if (autoComplete != null) {
             return;
         }

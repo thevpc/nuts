@@ -49,7 +49,7 @@ public class LoginCommand extends AbstractNutsCommand {
     public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String login = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
-        String password = cmdLine.removeNonOption(new DefaultNonOption("Password")).getString();
+        String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
         cmdLine.requireEmpty();
         if (cmdLine.isExecMode()) {
             if (StringUtils.isEmpty(password)) {

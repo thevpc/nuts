@@ -74,16 +74,6 @@ public class LogUtils {
         }
     }
 
-    public static void setLevel(Level level) throws IOException {
-        Logger rootLogger = Logger.getLogger("");
-        if (level == null) {
-            level = Level.WARNING;
-        }
-        rootLogger.setLevel(level);
-        for (Handler handler : rootLogger.getHandlers()) {
-            handler.setLevel(level);
-        }
-    }
 
     private static final class LogFormatter extends Formatter {
 

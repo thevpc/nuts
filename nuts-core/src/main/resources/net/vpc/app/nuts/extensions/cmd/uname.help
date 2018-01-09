@@ -1,4 +1,4 @@
-[[uname]]        : print system information
+print system information
 
 ===SYNOPSYS:===
 uname <options>

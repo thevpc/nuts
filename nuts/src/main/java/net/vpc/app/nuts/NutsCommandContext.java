@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by vpc on 1/13/17.
@@ -56,5 +57,9 @@ public interface NutsCommandContext {
 
     void setWorkspace(NutsWorkspace workspace);
 
-    Map<String, Object> getUserProperties() ;
+    Map<String, Object> getUserProperties();
+
+    Properties getEnv();
+
+    NutsCommandContext setEnv(Properties env);
 }

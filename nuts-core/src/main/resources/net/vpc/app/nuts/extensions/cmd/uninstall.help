@@ -1,4 +1,4 @@
-[[uninstall]]    : uninstalls one or more <<nuts>> from repositories
+uninstalls one or more <<nuts>> from repositories
 
 ===SYNOPSYS:===
 uninstall [nuts-id] ...

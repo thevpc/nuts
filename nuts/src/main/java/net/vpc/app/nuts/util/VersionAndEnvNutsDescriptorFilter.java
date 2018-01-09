@@ -61,9 +61,6 @@ public class VersionAndEnvNutsDescriptorFilter implements NutsDescriptorFilter {
         if (!(versionFilter == null || versionFilter.accept(id.getId().getVersion()))) {
             return false;
         }
-        if (!id.matchesEnv(arch, os, osdist, platform)) {
-            return false;
-        }
-        return true;
+        return id.matchesEnv(arch, os, osdist, platform);
     }
 }

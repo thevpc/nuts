@@ -115,7 +115,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (nutDescFile == null) {
             throw new IllegalArgumentException("Invalid descriptor");
         }
-        boolean allowOverride = true || isAllowedOverrideNut(id);
+        boolean allowOverride = true ;//|| isAllowedOverrideNut(id);
         if (allowOverride || !nutDescFile.exists()) {
             descriptor.write(nutDescFile);
             IOUtils.copy(descriptor.getSHA1(), IOUtils.createFile(nutDescFile.getParent(), nutDescFile.getName() + ".sha1"), true);
@@ -173,7 +173,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    protected Iterator<NutsId> findImpl(final NutsDescriptorFilter filter, NutsSession session) throws IOException {
+    protected Iterator<NutsId> findImpl(final NutsDescriptorFilter filter, NutsSession session) {
         if (!session.isTransitive()) {
             if (session.getFetchMode() != FetchMode.REMOTE) {
                 return findInFolder(getStoreRoot(), filter, session);
@@ -440,7 +440,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         );
     }
 
-    protected File getLocalGroupAndArtifactFile(NutsId id) throws IOException {
+    protected File getLocalGroupAndArtifactFile(NutsId id) {
         if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
@@ -527,7 +527,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) throws IOException {
+    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) {
         Iterator<NutsId> namedNutIdIterator = null;
         StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != FetchMode.REMOTE) {

@@ -1,4 +1,4 @@
-[[commit]]       : commits (re-deploys) an already checked out folder
+commits (re-deploys) an already checked out folder
 
 ===SYNOPSYS:===
 commit folder

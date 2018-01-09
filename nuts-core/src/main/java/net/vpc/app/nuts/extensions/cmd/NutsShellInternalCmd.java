@@ -27,7 +27,7 @@ class NutsShellInternalCmd implements JavaShellInternalCmd {
 
         ));
         commandContext.setSession(session);
-
+        commandContext.setEnv(shell.getEnv().getEnv());
         ncommand.exec(command, commandContext);
         return 0;
     }

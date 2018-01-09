@@ -30,7 +30,9 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.cmd.cmdline.ArchitectureNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
+import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -65,9 +67,9 @@ public class EchoCommand extends AbstractNutsCommand {
                         out.print(" ");
                     }
                     if(plain){
-                        out.print(cmd.readNonOptionOrError("value").getString());
+                        out.print(cmd.readNonOptionOrError(new ValueNonOption("value",context)).getString());
                     }else{
-                        out.draw(cmd.readNonOptionOrError("value").getString());
+                        out.draw(cmd.readNonOptionOrError(new ValueNonOption("value",context)).getString());
                     }
                 }
             }

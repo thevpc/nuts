@@ -144,9 +144,7 @@ public class NutsIdPatternFilter implements NutsDescriptorFilter {
                     break;
                 }
             }
-            if (!found) {
-                return false;
-            }
+            return found;
         }
         return true;
     }

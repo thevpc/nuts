@@ -69,20 +69,6 @@ public class SecurityUtils {
         }
     }
 
-    public static byte[] httpDecrypt(String data, String passphrase) throws IOException {
-        try {
-            byte[] key = evalMD5(passphrase);
-            Cipher c = Cipher.getInstance("AES");
-            SecretKeySpec k = new SecretKeySpec(key, "AES");
-            c.init(Cipher.DECRYPT_MODE, k);
-            byte[] decoded = Base64.getDecoder().decode(data);
-
-            return c.doFinal(decoded);
-        } catch (GeneralSecurityException e) {
-            throw new IOException(e);
-        }
-    }
-
     public static String evalSHA1(File file) throws IOException {
         InputStream input = null;
         try {

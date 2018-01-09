@@ -59,11 +59,11 @@ public class InstallCommand extends AbstractNutsCommand {
             if (cmdLine.acceptAndRemoveNoDuplicates("-f", "--force")) {
                 force = true;
             } else if (cmdLine.acceptAndRemoveNoDuplicates("-r", "--repository")) {
-                repositoryId = cmdLine.removeNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+                repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else if (cmdLine.acceptAndRemoveNoDuplicates("-s", "--descriptor")) {
-                descriptorFile = cmdLine.removeNonOption(new FileNonOption("DescriptorFile")).getString();
+                descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
             } else if (cmdLine.acceptAndRemoveNoDuplicates("-t", "--target")) {
-                descriptorFile = cmdLine.removeNonOption(new FileNonOption("Target")).getString();
+                descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getString();
             } else if (cmdLine.acceptAndRemoveNoDuplicates("-y", "--deploy", "--no-install")) {
                 deployOnly = true;
                 bundleOnly = false;

@@ -78,10 +78,10 @@ public class Main {
         boolean perf = false;
         boolean showHelp = false;
         List<String> showError = new ArrayList<>();
-        boolean which = false;
         Set<String> excludedExtensions = new HashSet<>();
         Set<String> excludedRepositories = new HashSet<>();
         NutsSession session = new NutsSession();
+        List<String> extraEnv = new ArrayList<>();
 
 
         for (int i = 0; i < args.length; i++) {
@@ -200,9 +200,6 @@ public class Main {
                         }
                         excludedRepositories.addAll(StringUtils.split(args[i], " ,;"));
                         break;
-                    case "--which":
-                        which = true;
-                        break;
                     case "--help": {
                         showHelp = true;
                         break;
@@ -212,6 +209,9 @@ public class Main {
                         break;
                     }
                     default: {
+                        if (a.startsWith("-J") || a.startsWith("--nuts")) {
+                            extraEnv.add(a);
+                        }
                         showError.add("nuts: invalid option [[" + a + "]]");
                         break;
                     }
@@ -244,8 +244,10 @@ public class Main {
             someProcessing = true;
         }
 
-        String[] args2 = new String[args.length - startAppArgs];
-        System.arraycopy(args, startAppArgs, args2, 0, args2.length);
+        List<String> argsList=new ArrayList<>(extraEnv);
+        argsList.addAll(Arrays.asList(args).subList(startAppArgs, args.length - startAppArgs+1));
+        String[] args2=argsList.toArray(new String[argsList.size()]);
+
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
         NutsWorkspace ws;
         try {
@@ -269,24 +271,6 @@ public class Main {
             throw new IllegalArgumentException("Unable to locate nuts-core components", ex);
         }
 
-        if (which) {
-            if (bootTerminal == null) {
-                bootTerminal = bws.createTerminal();
-            }
-            NutsPrintStream out = bootTerminal.getOut();
-            perf = showPerf(startTime, perf, session);
-            Map<String, String> runtimeProperties = ws.getRuntimeProperties(session);
-            out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
-            out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
-            out.drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
-            out.drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
-            out.drawln("target-workspace     : [[" + runtimeProperties.get("nuts.boot.target-workspace") + "]]");
-            out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-            out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
-            someProcessing = true;
-        }
-
-
         if (login != null && login.trim().length() > 0) {
             if (StringUtils.isEmpty(password)) {
                 password = session.getTerminal().readPassword("Password : ");
@@ -307,8 +291,19 @@ public class Main {
         }
 
         if (version) {
-            String fullVersion = getBootVersion() + " -> " + ws.getWorkspaceVersion();
-            session.getTerminal().getOut().println(fullVersion);
+            NutsPrintStream out = session.getTerminal().getOut();
+
+            Map<String, String> runtimeProperties = ws.getRuntimeProperties(session);
+            out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
+            out.drawln("workspace-version    : [[" + runtimeProperties.get("nuts.workspace.version") + "]]");
+            out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
+            out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
+            out.drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
+            out.drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
+            out.drawln("target-workspace     : [[" + runtimeProperties.get("nuts.boot.target-workspace") + "]]");
+            out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
+            out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+
             perf = showPerf(startTime, perf, session);
             someProcessing = true;
         }
@@ -381,8 +376,7 @@ public class Main {
         if (help == null) {
             help = "no help found";
         }
-        HashMap<String, String> props = new HashMap<>();
-        props.putAll((Map) System.getProperties());
+        HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
         props.put("nuts.boot-version", getBootVersion());
         help = StringUtils.replaceVars(help, new MapStringMapper(props));
         return help;

@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -32,7 +32,10 @@ package net.vpc.app.nuts;
 import net.vpc.app.nuts.util.CollectionUtils;
 import net.vpc.app.nuts.util.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by vpc on 1/5/17.
@@ -98,8 +101,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         if (properties == null || properties.isEmpty()) {
             this.properties = null;
         } else {
-            HashMap<String, String> p = new HashMap<>();
-            p.putAll(properties);
+            HashMap<String, String> p = new HashMap<>(properties);
             this.properties = Collections.unmodifiableMap(p);
         }
     }
@@ -123,162 +125,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return parents;
     }
 
-    @Override
-    public NutsDescriptor setExt(String ext) {
-        if(StringUtils.trim(ext).equals(getExt())){
-            return this;
-        }
-        return new DefaultNutsDescriptor(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                ext,
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
-    }
-
-    @Override
-    public NutsDescriptor setPackaging(String packaging) {
-        if(StringUtils.trim(packaging).equals(getPackaging())){
-            return this;
-        }
-        return new DefaultNutsDescriptor(
-                getId(),
-                getFace(),
-                getParents(),
-                packaging,
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
-    }
-
-    @Override
-    public NutsDescriptor setExecutable(boolean executable) {
-        if(executable==isExecutable()){
-            return this;
-        }
-        return new DefaultNutsDescriptor(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                executable,
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
-    }
-
-    @Override
-    public NutsDescriptor setExecutor(NutsExecutorDescriptor executor) {
-        if(Objects.equals(executor,getExecutor())){
-            return this;
-        }
-        return new DefaultNutsDescriptor(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                executor,
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
-    }
-
-    @Override
-    public NutsDescriptor setId(NutsId id) {
-        if(Objects.equals(id,getId())){
-            return this;
-        }
-        return new DefaultNutsDescriptor(
-                id,
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
-    }
-
-    @Override
-    public NutsDescriptor setProperties(Map<String, String> map, boolean append) {
-        Map<String, String> l_properties = new HashMap<>();
-        if (append) {
-            l_properties.putAll(getProperties());
-        }
-        if (map != null) {
-            l_properties.putAll(map);
-        }
-        if(Objects.equals(l_properties,getProperties())){
-            return this;
-        }
-        return new DefaultNutsDescriptor(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                l_properties
-        );
-    }
 
     @Override
     public String getName() {
@@ -338,6 +184,28 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public NutsDescriptor setDependencies(NutsDependency[] dependencies) {
+        return createInstance(
+                getId(),
+                getFace(),
+                getParents(),
+                getPackaging(),
+                isExecutable(),
+                getExt(),
+                getExecutor(),
+                getInstaller(),
+                getName(),
+                getDescription(),
+                getArch(),
+                getOs(),
+                getOsdist(),
+                getPlatform(),
+                dependencies,
+                getProperties()
+        );
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -387,5 +255,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         result = 31 * result + Arrays.hashCode(dependencies);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    protected NutsDescriptor createInstance(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description, String[] arch, String[] os, String[] osdist, String[] platform, NutsDependency[] dependencies, Map<String, String> properties) {
+        return new DefaultNutsDescriptor(
+                id, face, parents, packaging, executable, ext, executor, installer, name, description, arch, os, osdist, platform, dependencies, properties
+        );
     }
 }

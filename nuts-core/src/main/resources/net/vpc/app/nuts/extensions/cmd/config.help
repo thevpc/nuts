@@ -1,4 +1,4 @@
-[[config]]       : displays or modifies workspace configuration.
+displays or modifies workspace configuration.
 
 ===SYNOPSYS:===
 [[config]] <<<workspace action verb>>> <<<arguments>>> ...

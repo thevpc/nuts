@@ -1,16 +1,11 @@
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdInvalidFormatException;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by vpc on 5/16/17.
@@ -94,6 +89,17 @@ public class CoreNutsUtils {
         return new File(versionFolder, face);
     }
 
+    public static String[] splitNameAndValue(String arg) {
+        int i = arg.indexOf('=');
+        if(i>=0){
+            return new String[]{
+                    i==0?"":arg.substring(0,i),
+                    i==arg.length()-1?"":arg.substring(i+1),
+            };
+        }
+        return null;
+    }
+
     public static String[][] splitEnvAndAppArgs(String[] args) {
         List<String> env = new ArrayList<>();
         List<String> app = new ArrayList<>();
@@ -118,6 +124,40 @@ public class CoreNutsUtils {
                 env.toArray(new String[env.size()]),
                 app.toArray(new String[app.size()]),
         };
+    }
+
+    public static NutsDescriptor createNutsDescriptor() throws IOException {
+        return createNutsDescriptor(
+                NutsId.parse("my-group:my-id#1.0"),
+                null,
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static NutsDescriptor createNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description, String[] arch, String[] os, String[] osdist, String[] platform, NutsDependency[] dependencies, Map<String, String> properties) {
+        return new DefaultNutsDescriptor(
+                id, face, parents, packaging, executable, ext, executor, installer, name, description, arch, os, osdist, platform, dependencies, properties
+        );
+    }
+    public static NutsDescriptor createNutsDescriptor(NutsDescriptor other) {
+        return createNutsDescriptor(
+                other.getId(), other.getFace(), other.getParents(), other.getPackaging(), other.isExecutable(),
+                other.getExt(), other.getExecutor(), other.getInstaller(), other.getName(), other.getDescription(),
+                other.getArch(), other.getOs(), other.getOsdist(), other.getPlatform(), other.getDependencies(), other.getProperties()
+        );
     }
 
 }

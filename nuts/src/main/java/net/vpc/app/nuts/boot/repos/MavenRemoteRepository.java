@@ -43,10 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,7 +54,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     private static final Logger log = Logger.getLogger(MavenRemoteRepository.class.getName());
 
-    public MavenRemoteRepository(String repositoryId, String url, NutsWorkspace workspace, File root) throws IOException {
+    public MavenRemoteRepository(String repositoryId, String url, NutsWorkspace workspace, File root) {
         super(new NutsRepositoryConfig(repositoryId, url, "maven"), workspace, root, SPEED_SLOW);
     }
 
@@ -161,6 +158,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                         public String getFace() {
                             return NutsConstants.QUERY_FACE_DEFAULT_VALUE;
                         }
+
                     };
                     if (versionFilter == null || versionFilter.accept(descriptor)) {
                         ret.add(
@@ -314,7 +312,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected String getPath(NutsId id, String extension) throws IOException {
+    protected String getPath(NutsId id, String extension) {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();

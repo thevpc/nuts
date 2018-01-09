@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class NutsTerminalDelegate implements NutsTerminal {
+
     private NutsTerminal base;
     private InputStream inReplace;
     private BufferedReader inReplaceReader;
@@ -18,12 +19,15 @@ public class NutsTerminalDelegate implements NutsTerminal {
     private NutsPrintStream errReplace;
 
     public NutsTerminalDelegate(NutsTerminal base, InputStream inReplace, NutsPrintStream outReplace, NutsPrintStream errReplace) {
-        if(base instanceof NutsTerminalDelegate){
-            base=((NutsTerminalDelegate) base).base;
+        if (base instanceof NutsTerminalDelegate) {
+            base = ((NutsTerminalDelegate) base).base;
         }
         this.base = base;
-        this.inReplace = inReplace;
-        this.inReplaceReader = inReplace==null?null:new BufferedReader(new InputStreamReader(inReplace));
+        InputStream in0 = base.getIn();
+        if (inReplace!=null && in0 != inReplace) {
+            this.inReplace = inReplace;
+            this.inReplaceReader = inReplace == null ? null : new BufferedReader(new InputStreamReader(inReplace));
+        }
         this.outReplace = outReplace;
         this.errReplace = errReplace;
     }
@@ -35,12 +39,12 @@ public class NutsTerminalDelegate implements NutsTerminal {
 
     @Override
     public void setCommandContext(NutsCommandContext context) {
-
+        base.setCommandContext(context);
     }
 
     @Override
     public String readLine(String prompt) throws IOException {
-        if(inReplaceReader!=null){
+        if (inReplaceReader != null) {
             getOut().print(prompt);
             return inReplaceReader.readLine();
         }
@@ -49,7 +53,7 @@ public class NutsTerminalDelegate implements NutsTerminal {
 
     @Override
     public String readPassword(String prompt) throws IOException {
-        if(inReplaceReader!=null){
+        if (inReplaceReader != null) {
             getOut().print(prompt);
             return inReplaceReader.readLine();
         }
@@ -58,7 +62,7 @@ public class NutsTerminalDelegate implements NutsTerminal {
 
     @Override
     public InputStream getIn() {
-        if(inReplace!=null){
+        if (inReplace != null) {
             return inReplace;
         }
         return base.getIn();
@@ -66,12 +70,12 @@ public class NutsTerminalDelegate implements NutsTerminal {
 
     @Override
     public void setIn(InputStream in) {
-        inReplace=in;
+        inReplace = in;
     }
 
     @Override
     public NutsPrintStream getOut() {
-        if(outReplace!=null){
+        if (outReplace != null) {
             return outReplace;
         }
         return base.getOut();
@@ -79,12 +83,12 @@ public class NutsTerminalDelegate implements NutsTerminal {
 
     @Override
     public void setOut(NutsPrintStream out) {
-        outReplace=out;
+        outReplace = out;
     }
 
     @Override
     public NutsPrintStream getErr() {
-        if(errReplace!=null){
+        if (errReplace != null) {
             return errReplace;
         }
         return base.getErr();
@@ -92,7 +96,7 @@ public class NutsTerminalDelegate implements NutsTerminal {
 
     @Override
     public void setErr(NutsPrintStream err) {
-        errReplace=err;
+        errReplace = err;
     }
 
     @Override

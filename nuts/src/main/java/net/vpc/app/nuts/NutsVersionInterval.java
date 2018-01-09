@@ -57,15 +57,13 @@ public class NutsVersionInterval {
         }
         if (!StringUtils.isEmpty(max)) {
             int t = version.compareTo(max);
-            if ((inclusiveUpperBoundary && t > 0) || (!inclusiveUpperBoundary && t >= 0)) {
-                return false;
-            }
+            return (!inclusiveUpperBoundary || t <= 0) && (inclusiveUpperBoundary || t < 0);
         }
         return true;
     }
 
     public boolean isFixedValue() {
-        return inclusiveLowerBoundary == true && inclusiveUpperBoundary && true && StringUtils.trim(min).equals(StringUtils.trim(max))
+        return inclusiveLowerBoundary && inclusiveUpperBoundary && StringUtils.trim(min).equals(StringUtils.trim(max))
                 && !"LATEST".endsWith(min) && !"RELEASE".endsWith(min);
     }
 }

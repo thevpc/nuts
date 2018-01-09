@@ -189,7 +189,7 @@ public class PlatformUtils {
         return getMainClass(file) != null;
     }
 
-    public static String getMainClass(File file) throws IOException {
+    public static String getMainClass(File file) {
         if (file == null || !file.isFile()) {
             return null;
         }

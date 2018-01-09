@@ -37,6 +37,7 @@ import java.util.Properties;
 public class NutsExecutionContext {
 
     private NutsFile nutsFile;
+    private Properties env;
     private String[] execArgs;
     private Properties execProperties;
     private String[] args;
@@ -64,7 +65,7 @@ public class NutsExecutionContext {
         }
     }
 
-    public NutsExecutionContext(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties execProperties, NutsSession session, NutsWorkspace workspace) {
+    public NutsExecutionContext(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env,Properties execProperties, NutsSession session, NutsWorkspace workspace) {
         if (appArgs == null) {
             appArgs = new String[0];
         }
@@ -80,9 +81,13 @@ public class NutsExecutionContext {
         this.execProperties = execProperties;
         this.workspace = workspace;
         this.session = session;
+        if (env == null) {
+            env = new Properties();
+        }
+        this.env = env;
     }
 
-    public NutsExecutionContext(NutsFile nutsFile, String[] args, String[] execArgs, Properties execProperties, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor) {
+    public NutsExecutionContext(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor) {
         if (args == null) {
             args = new String[0];
         }
@@ -99,6 +104,10 @@ public class NutsExecutionContext {
         this.executorDescriptor = executorDescriptor;
         this.execArgs = execArgs;
         this.execProperties = execProperties;
+        if (env == null) {
+            env = new Properties();
+        }
+        this.env = env;
     }
 
     public String[] getExecArgs() {
@@ -131,5 +140,9 @@ public class NutsExecutionContext {
 
     public NutsTerminal getTerminal() {
         return session.getTerminal();
+    }
+
+    public Properties getEnv() {
+        return env;
     }
 }

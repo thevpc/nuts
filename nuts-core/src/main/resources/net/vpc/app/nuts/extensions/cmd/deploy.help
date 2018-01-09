@@ -1,4 +1,4 @@
-[[deploy]]       : deploys a <<nuts>>
+deploys a <<nuts>>
 
 ===SYNOPSYS:===
 deploy file [desc-file [repositoryId]]

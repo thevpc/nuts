@@ -43,23 +43,23 @@ import java.util.logging.Logger;
 public class IOUtils {
     public static final OutputStream NULL_OUTPUT_STREAM = new OutputStream() {
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(byte[] b) {
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) {
         }
 
         @Override
-        public void flush() throws IOException {
+        public void flush() {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
         }
     };
     private static final Logger log = Logger.getLogger(IOUtils.class.getName());

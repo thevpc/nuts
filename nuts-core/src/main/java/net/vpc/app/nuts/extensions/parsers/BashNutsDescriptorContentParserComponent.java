@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.util.JsonUtils;
+import net.vpc.app.nuts.extensions.util.JsonStringBuffer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -88,7 +88,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
             String name = null;
             List<NutsDependency> deps = new ArrayList<NutsDependency>();
             List<NutsId> arch = new ArrayList<NutsId>();
-            JsonUtils.JsonStringBuffer comment = new JsonUtils.JsonStringBuffer();
+            JsonStringBuffer comment = new JsonStringBuffer();
             String sheban = "";
             boolean start = false;
             while ((line = r.readLine()) != null) {

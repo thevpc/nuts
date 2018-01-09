@@ -42,13 +42,13 @@ import java.util.*;
  */
 public class JsonUtils {
 
-    public static final JsonUtils.SerializeOptions IGNORE_EMPTY_OPTIONS = new JsonUtils.SerializeOptions()
+    public static final SerializeOptions IGNORE_EMPTY_OPTIONS = new SerializeOptions()
             .setIgnoreNulls(true)
             .setIgnoreEmptyStrings(true)
             .setIgnoreEmptyCollections(true)
             .setIgnoreEmptyMaps(true)
             .setIgnoreEmptyArrays(true);
-    public static final JsonUtils.SerializeOptions PRETTY_IGNORE_EMPTY_OPTIONS = new JsonUtils.SerializeOptions()
+    public static final SerializeOptions PRETTY_IGNORE_EMPTY_OPTIONS = new SerializeOptions()
             .setIgnoreNulls(true)
             .setIgnoreEmptyStrings(true)
             .setIgnoreEmptyCollections(true)
@@ -69,18 +69,9 @@ public class JsonUtils {
         }
         JsonObject a = (JsonObject) obj;
         for (Map.Entry<String, JsonValue> entry : a.entrySet()) {
-            t.put(entry.getKey(), (String) deserialize(entry.getValue(), String.class));
+            t.put(entry.getKey(), deserialize(entry.getValue(), String.class));
         }
         return t;
-    }
-
-    public static <T> T deserialize(String s, Class<T> t) {
-        return deserialize(new ByteArrayInputStream(s.getBytes()), t);
-    }
-
-    public static <T> T deserialize(InputStream s, Class<T> t) {
-        JsonStructure jsonObject = Json.createReader(s).read();
-        return deserialize(jsonObject, t);
     }
 
     public static <T> T deserialize(JsonValue obj, Class<T> t) {
@@ -130,7 +121,7 @@ public class JsonUtils {
             JsonObject a = (JsonObject) obj;
             Properties arr = new Properties();
             for (Map.Entry<String, JsonValue> entry : a.entrySet()) {
-                arr.setProperty(entry.getKey(), (String) deserialize(entry.getValue(), String.class));
+                arr.setProperty(entry.getKey(), deserialize(entry.getValue(), String.class));
             }
             return (T) arr;
         } else {
@@ -182,7 +173,7 @@ public class JsonUtils {
             if (!props.isEmpty() || !options.ignoreEmptyMaps) {
                 JsonObjectBuilder propBuilder = Json.createObjectBuilder();
                 for (Map.Entry<Object, Object> entry : props.entrySet()) {
-                    serializeObjProp((String) entry.getKey(), (String) entry.getValue(), String.class, propBuilder, options);
+                    serializeObjProp((String) entry.getKey(), entry.getValue(), String.class, propBuilder, options);
                 }
                 return propBuilder;
             }
@@ -285,7 +276,7 @@ public class JsonUtils {
                 if (!props.isEmpty() || !options.ignoreEmptyMaps) {
                     JsonObjectBuilder propBuilder = Json.createObjectBuilder();
                     for (Map.Entry<Object, Object> entry : props.entrySet()) {
-                        serializeObjProp((String) entry.getKey(), (String) entry.getValue(), String.class, propBuilder, options);
+                        serializeObjProp((String) entry.getKey(), entry.getValue(), String.class, propBuilder, options);
                     }
                     builder.add(prop, propBuilder);
                 }
@@ -339,7 +330,7 @@ public class JsonUtils {
                 Properties maps = (Properties) value;
                 if (!maps.isEmpty() || !options.ignoreEmptyMaps) {
                     for (Map.Entry<Object, Object> entry : maps.entrySet()) {
-                        serializeObjProp((String) entry.getKey(), (String) entry.getValue(), String.class, propBuilder, options);
+                        serializeObjProp((String) entry.getKey(), entry.getValue(), String.class, propBuilder, options);
                     }
                     builder.add(propBuilder);
                 }
@@ -362,44 +353,6 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T loadJson(String jsonText, Class<T> cls) throws IOException {
-        try {
-            if (jsonText == null) {
-                jsonText = "";
-            }
-            Reader reader = null;
-            try {
-                reader = new StringReader(jsonText);
-                return (T) deserialize(Json.createReader(reader).read(), cls);
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-            }
-        } catch (Exception ex) {
-            throw new IOException("Error Parsing file " + jsonText, ex);
-        }
-    }
-
-    public static JsonStructure loadJsonStructure(String jsonText) throws IOException {
-        try {
-            if (jsonText == null) {
-                jsonText = "";
-            }
-            Reader reader = null;
-            try {
-                reader = new StringReader(jsonText);
-                return Json.createReader(reader).read();
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-            }
-        } catch (Exception ex) {
-            throw new IOException("Error Parsing string " + jsonText, ex);
-        }
-    }
-
     public static <T> T loadJson(File file, Class<T> cls) throws IOException {
         if (!file.exists()) {
             return null;
@@ -408,7 +361,7 @@ public class JsonUtils {
             FileReader reader = null;
             try {
                 reader = new FileReader(file);
-                return (T) deserialize(Json.createReader(reader).read(), cls);
+                return deserialize(Json.createReader(reader).read(), cls);
             } finally {
                 if (reader != null) {
                     reader.close();
@@ -435,7 +388,7 @@ public class JsonUtils {
         }
     }
 
-    public static void storeJson(JsonStructure structure, Writer writer, boolean pretty) throws IOException {
+    public static void storeJson(JsonStructure structure, Writer writer, boolean pretty) {
         if (pretty) {
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(JsonGenerator.PRETTY_PRINTING, true);
@@ -454,62 +407,11 @@ public class JsonUtils {
     public static <T> void storeJson(T obj, File file, SerializeOptions options) throws IOException {
         try {
             JsonObjectBuilder b = serializeObj(obj, options);
-            storeJson(b.build(), file, options.isPretty());
+            if(b!=null) {
+                storeJson(b.build(), file, options.isPretty());
+            }
         } catch (Exception ex) {
             throw new IOException(ex);
-        }
-    }
-
-    public static void readJsonPartialString(String str, JsonStatus s) {
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (s.openSimpleQuotes) {
-                if (s.openAntiSlash) {
-                    s.openAntiSlash = false;
-                } else if (c == '\'') {
-                    s.openSimpleQuotes = false;
-                }
-            } else if (s.openDoubleQuotes) {
-                if (s.openAntiSlash) {
-                    s.openAntiSlash = false;
-                } else if (c == '\"') {
-                    s.openDoubleQuotes = false;
-                }
-            } else if (s.openAntiSlash) {
-                s.openAntiSlash = false;
-            } else {
-                switch (c) {
-                    case '\\': {
-                        s.openAntiSlash = true;
-                        break;
-                    }
-                    case '\'': {
-                        s.openSimpleQuotes = true;
-                        break;
-                    }
-                    case '\"': {
-                        s.openDoubleQuotes = true;
-                        break;
-                    }
-                    case '{': {
-                        s.openBraces++;
-                        s.countBraces++;
-                        break;
-                    }
-                    case '}': {
-                        s.openBraces--;
-                        break;
-                    }
-                    case '[': {
-                        s.openBrackets++;
-                        break;
-                    }
-                    case ']': {
-                        s.openBrackets--;
-                        break;
-                    }
-                }
-            }
         }
     }
 
@@ -524,161 +426,4 @@ public class JsonUtils {
         return arch.toArray(new String[arch.size()]);
     }
 
-    public static class SerializeOptions {
-
-        boolean pretty;
-        boolean ignoreNulls;
-        boolean ignoreEmptyStrings;
-        boolean ignoreEmptyMaps;
-        boolean ignoreEmptyCollections;
-        boolean ignoreEmptyArrays;
-
-        public boolean isPretty() {
-            return pretty;
-        }
-
-        public SerializeOptions setPretty(boolean pretty) {
-            this.pretty = pretty;
-            return this;
-        }
-
-        public boolean isIgnoreNulls() {
-            return ignoreNulls;
-        }
-
-        public SerializeOptions setIgnoreNulls(boolean ignoreNulls) {
-            this.ignoreNulls = ignoreNulls;
-            return this;
-        }
-
-        public boolean isIgnoreEmptyStrings() {
-            return ignoreEmptyStrings;
-        }
-
-        public SerializeOptions setIgnoreEmptyStrings(boolean ignoreEmptyStrings) {
-            this.ignoreEmptyStrings = ignoreEmptyStrings;
-            return this;
-        }
-
-        public boolean isIgnoreEmptyMaps() {
-            return ignoreEmptyMaps;
-        }
-
-        public SerializeOptions setIgnoreEmptyMaps(boolean ignoreEmptyMaps) {
-            this.ignoreEmptyMaps = ignoreEmptyMaps;
-            return this;
-        }
-
-        public boolean isIgnoreEmptyCollections() {
-            return ignoreEmptyCollections;
-        }
-
-        public SerializeOptions setIgnoreEmptyCollections(boolean ignoreEmptyCollections) {
-            this.ignoreEmptyCollections = ignoreEmptyCollections;
-            return this;
-        }
-
-        public boolean isIgnoreEmptyArrays() {
-            return ignoreEmptyArrays;
-        }
-
-        public SerializeOptions setIgnoreEmptyArrays(boolean ignoreEmptyArrays) {
-            this.ignoreEmptyArrays = ignoreEmptyArrays;
-            return this;
-        }
-    }
-
-    public static class JsonStringBuffer {
-
-        private StringBuilder sb = new StringBuilder();
-        private JsonStatus status = new JsonStatus();
-
-        public boolean append(String line) {
-            JsonUtils.readJsonPartialString(line, status);
-            status.checkPartialValid(true);
-            sb.append(line);
-            if (status.countBraces > 0 && status.checkValid(false)) {
-                return true;
-            }
-            return true;
-        }
-
-        public String getValidString() {
-            status.checkValid(true);
-            return sb.toString();
-        }
-
-        @Override
-        public String toString() {
-            return sb.toString();
-        }
-    }
-
-    public static class JsonStatus {
-
-        public int countBraces;
-        public int openBraces;
-        public int openBrackets;
-        public boolean openAntiSlash;
-        public boolean openSimpleQuotes;
-        public boolean openDoubleQuotes;
-
-        boolean checkValid(boolean throwError) {
-            if (!checkPartialValid(throwError)) {
-                return false;
-            }
-            if (countBraces == 0) {
-                if (throwError) {
-                    throw new RuntimeException("not an object");
-                }
-                return false;
-            }
-            if (openBrackets > 0) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced brackets");
-                }
-                return false;
-            }
-            if (openBraces > 0) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced braces");
-                }
-                return false;
-            }
-            if (openAntiSlash) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced anti-slash");
-                }
-            }
-            if (openSimpleQuotes) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced simple quotes");
-                }
-                return false;
-            }
-            if (openDoubleQuotes) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced double quotes");
-                }
-                return false;
-            }
-            return true;
-        }
-
-        boolean checkPartialValid(boolean throwError) {
-            if (openBrackets < 0) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced brackets");
-                }
-                return false;
-            }
-            if (openBraces < 0) {
-                if (throwError) {
-                    throw new RuntimeException("Unbalanced braces");
-                }
-                return false;
-            }
-            return true;
-        }
-    }
 }

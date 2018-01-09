@@ -43,7 +43,8 @@ import java.util.regex.Pattern;
  * Created by vpc on 1/5/17.
  */
 public class NutsUtils {
-    private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
+
+    //    private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static NutsDependencyFilter EXEC_DEPENDENCIES_FILTER =
             d -> !d.isOptional() &&
@@ -114,7 +115,7 @@ public class NutsUtils {
     }
 
     public static boolean containsVars(String value) {
-        return value.contains("${");
+        return value!=null && value.contains("${");
     }
 
     public static boolean isEffectiveId(NutsId id) {
@@ -139,8 +140,7 @@ public class NutsUtils {
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
-        HttpConnectionFacade cnx = best.open(url);
-        return cnx;
+        return best.open(url);
     }
 
 

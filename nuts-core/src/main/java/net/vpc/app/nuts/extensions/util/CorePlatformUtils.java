@@ -368,4 +368,20 @@ public class CorePlatformUtils {
         return encoded.toString();
     }
 
+    public static <K,V> Map<K,V> mergeMaps(Map<K,V> source,Map<K,V> dest){
+        if(dest==null){
+            dest=new HashMap<>();
+        }
+        if(source!=null) {
+            for (Map.Entry<K, V> e : source.entrySet()) {
+                if (e.getValue() != null) {
+                    dest.put(e.getKey(), e.getValue());
+                } else {
+                    dest.remove(e.getKey());
+                }
+            }
+        }
+        return dest;
+    }
+
 }

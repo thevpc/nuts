@@ -58,7 +58,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) throws IOException {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) {
         if (NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
             NutsWorkspace workspace = NutsEnvironmentContext.WORKSPACE.get();
             if (!location.contains("://")) {

@@ -1,4 +1,4 @@
-[[err]]          : shows the error message of the last command if was erroneous.
+shows the error message of the last command if was erroneous.
 
 ===SYNOPSYS:===
 err [--trace]

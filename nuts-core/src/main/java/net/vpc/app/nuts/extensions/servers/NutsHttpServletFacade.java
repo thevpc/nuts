@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.servers;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.ListMap;
 import net.vpc.app.nuts.util.*;
 import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
@@ -203,7 +204,7 @@ public class NutsHttpServletFacade {
                 if (js != null) {
                     filter = new NutsDescriptorJavascriptFilter(js);
                 } else if (pattern != null) {
-                    filter = JsonUtils.deserialize(pattern,NutsIdPatternFilter.class);
+                    filter = CoreJsonUtils.deserialize(pattern,NutsIdPatternFilter.class);
                 }
                 if (filter != null) {
                     Iterator<NutsId> it = context.getWorkspace().findIterator(null, filter, context.getSession().copy().setTransitive(transitive));

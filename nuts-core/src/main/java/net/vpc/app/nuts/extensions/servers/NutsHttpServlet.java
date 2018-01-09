@@ -31,6 +31,7 @@ package net.vpc.app.nuts.extensions.servers;
 
 import net.vpc.app.nuts.extensions.cmd.AdminServerConfig;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.util.JsonUtils;
 import net.vpc.app.nuts.extensions.util.ListMap;
@@ -152,7 +153,7 @@ public class NutsHttpServlet extends HttpServlet {
         workspaceRootLocation = config.getInitParameter("workspaceRoot");
         adminServer = Boolean.valueOf(config.getInitParameter("admin"));
         try {
-            workspaces = JsonUtils.deserializeStringsMap(JsonUtils.loadJsonStructure(config.getInitParameter("workspaces")), new LinkedHashMap<String, String>());
+            workspaces = JsonUtils.deserializeStringsMap(CoreJsonUtils.loadJsonStructure(config.getInitParameter("workspaces")), new LinkedHashMap<String, String>());
         } catch (IOException e) {
             //
         }

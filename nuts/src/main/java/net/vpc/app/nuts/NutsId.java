@@ -91,10 +91,7 @@ public class NutsId {
         if (StringUtils.trim(version.getValue()).contains(value)) {
             return true;
         }
-        if (StringUtils.trim(query).contains(value)) {
-            return true;
-        }
-        return false;
+        return StringUtils.trim(query).contains(value);
     }
 
     public boolean anyMatches(String pattern) {
@@ -110,10 +107,7 @@ public class NutsId {
         if (StringUtils.trim(version.getValue()).matches(pattern)) {
             return true;
         }
-        if (StringUtils.trim(query).matches(pattern)) {
-            return true;
-        }
-        return false;
+        return StringUtils.trim(query).matches(pattern);
     }
 
     public boolean anyLike(String pattern) {
@@ -208,6 +202,16 @@ public class NutsId {
         );
     }
 
+    public NutsId setName(String newName) {
+        return new NutsId(
+                namespace,
+                group,
+                newName,
+                version.getValue(),
+                query
+        );
+    }
+
     public String getFace() {
         String s = getQueryMap().get(NutsConstants.QUERY_FACE);
         return StringUtils.trimToNull(s);
@@ -218,6 +222,7 @@ public class NutsId {
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true)
                 ;
     }
+
     public NutsId setQueryProperty(String property, String value) {
         Map<String, String> m = getQueryMap();
         if(value==null){

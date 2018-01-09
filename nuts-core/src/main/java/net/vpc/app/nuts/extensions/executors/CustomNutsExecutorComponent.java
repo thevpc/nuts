@@ -64,7 +64,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         executionContext.getWorkspace().exec(
                 id.toString(),
                 args.toArray(new String[args.size()]),
-                executionContext.getSession()
+                executionContext.getEnv(), executionContext.getSession()
         );
     }
 

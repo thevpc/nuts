@@ -101,16 +101,16 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsSession session) throws IOException {
+    public void pushImpl(NutsId id, String repoId, NutsSession session) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession context) throws IOException {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession context) {
         throw new UnsupportedOperationException();
     }
 
-    protected void undeployImpl(NutsId id, NutsSession session) throws IOException {
+    protected void undeployImpl(NutsId id, NutsSession session) {
         throw new UnsupportedOperationException();
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected File fetchImpl(NutsId id, NutsSession session, File localPath) throws IOException {
+    protected File fetchImpl(NutsId id, NutsSession session, File localPath) {
         try {
             NutsDescriptor d = getWorkspace().fetchDescriptor(id.toString(), true, session);
             String ext = resolveExtension(d);

@@ -31,8 +31,11 @@ package net.vpc.app.nuts;
 
 import net.vpc.app.nuts.util.NutsUtils;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * Created by vpc on 2/19/17.
@@ -63,16 +66,6 @@ public interface NutsDescriptor {
 
     NutsId[] getParents();
 
-    NutsDescriptor setExt(String ext);
-
-    NutsDescriptor setPackaging(String packaging);
-
-    NutsDescriptor setExecutable(boolean executable);
-
-    NutsDescriptor setExecutor(NutsExecutorDescriptor executor);
-
-    NutsDescriptor setId(NutsId id);
-
     NutsDescriptor setProperties(Map<String, String> map, boolean append);
 
     String getName();
@@ -80,6 +73,8 @@ public interface NutsDescriptor {
     String getDescription();
 
     boolean isExecutable();
+
+    NutsDescriptor setExecutable(boolean executable);
 
     String getSHA1() throws IOException;
 
@@ -89,21 +84,59 @@ public interface NutsDescriptor {
 
     void write(File file, boolean pretty) throws IOException;
 
+    String toString(boolean pretty);
+
     String toString();
 
     void write(OutputStream os, boolean pretty) throws IOException;
 
     NutsExecutorDescriptor getExecutor();
 
+    NutsDescriptor setExecutor(NutsExecutorDescriptor executor);
+
     String getExt();
+
+    NutsDescriptor setExt(String ext);
+
+    NutsDescriptor addProperty(String name,String value);
+
+    NutsDescriptor removeProperty(String name);
+
+    NutsDescriptor addOs(String os);
+
+    NutsDescriptor addOsdist(String osdist);
+
+    NutsDescriptor addArch(String arch);
+
+    NutsDescriptor addPlatform(String platform);
+
+    NutsDescriptor removeOs(String os);
+
+    NutsDescriptor removeOsdist(String osdist);
+
+    NutsDescriptor removeArch(String arch);
+
+    NutsDescriptor removePlatform(String platform);
 
     String getPackaging();
 
+    NutsDescriptor setPackaging(String packaging);
+
     NutsId getId();
+
+    NutsDescriptor setId(NutsId id);
 
     String getFace();
 
+    NutsDescriptor removeDependency(NutsDependency dependency);
+
+    NutsDescriptor addDependency(NutsDependency dependency);
+
+    NutsDescriptor addDependencies(NutsDependency[] dependencies);
+
     NutsDependency[] getDependencies();
+
+    NutsDescriptor setDependencies(NutsDependency[] dependencies);
 
     String[] getArch();
 

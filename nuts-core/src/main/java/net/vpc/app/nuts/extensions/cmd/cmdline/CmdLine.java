@@ -87,7 +87,8 @@ public class CmdLine {
 //            return new Val(defaultValue);
 //        }
 //    }
-    public Val removeOptionOrError(String name) {
+
+    public Val readOptionOrError(String name) {
         if (args.size() > 0 && isOption()) {
             String r = args.get(0);
             readHead(1);
@@ -97,11 +98,15 @@ public class CmdLine {
         }
     }
 
-    public Val readNonOptionOrError(String name) {
-        return readNonOptionOrError(new DefaultNonOption(name));
+    public Val readNonOptionOrError(NonOption name) {
+        return readNonOption(name,true);
     }
 
-    public Val readNonOptionOrError(NonOption name) {
+    public Val readNonOption(NonOption name) {
+        return readNonOption(name,false);
+    }
+
+    public Val readNonOption(NonOption name, boolean error) {
         if (args.size() > 0 && !isOption()) {
             if (isAutoComplete()) {
                 List<ArgumentCandidate> values = name.getValues();
@@ -130,39 +135,10 @@ public class CmdLine {
                 }
                 return new Val("");
             }
+            if(error){
+                return new Val("");
+            }
             throw new IllegalArgumentException("Missing argument " + name);
-        }
-    }
-
-    public Val removeNonOption(NonOption name) {
-        if (args.size() > 0 && !isOption()) {
-            if (isAutoComplete()) {
-                List<ArgumentCandidate> values = name.getValues();
-                if (values == null || values.isEmpty()) {
-                    autoComplete.addExpectedTypedValue(null, name.getName());
-                } else {
-                    for (ArgumentCandidate value : name.getValues()) {
-                        autoComplete.addCandidate(value);
-                    }
-                }
-            }
-            String r = args.get(0);
-            readHead(1);
-            return new Val(r);
-        } else {
-            if (autoComplete!=null) {
-                if (isAutoComplete()) {
-                    List<ArgumentCandidate> values = name.getValues();
-                    if (values == null || values.isEmpty()) {
-                        autoComplete.addExpectedTypedValue(null, name.getName());
-                    } else {
-                        for (ArgumentCandidate value : name.getValues()) {
-                            autoComplete.addCandidate(value);
-                        }
-                    }
-                }
-            }
-            return new Val("");
         }
     }
 
@@ -415,6 +391,18 @@ public class CmdLine {
         public int getInt(int value) {
             try {
                 return Integer.parseInt(getString(String.valueOf(value)));
+            } catch (NumberFormatException e) {
+                return value;
+            }
+        }
+
+        public boolean getBoolean() {
+            return getBoolean(false);
+        }
+
+        public boolean getBoolean(boolean value) {
+            try {
+                return Boolean.parseBoolean(getString(String.valueOf(value)));
             } catch (NumberFormatException e) {
                 return value;
             }

@@ -37,10 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by vpc on 1/5/17.
@@ -188,9 +185,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     /////////////////////////////////////////////////////////////////
     // EXEC SUPPORT
-    void exec(String[] cmd, NutsSession session) throws IOException;
+    void exec(String[] cmd, Properties env, NutsSession session) throws IOException;
 
-    void exec(String id, String[] args, NutsSession session) throws IOException;
+    void exec(String id, String[] args, Properties env, NutsSession session) throws IOException;
 
     /**
      * exec another instance of nuts

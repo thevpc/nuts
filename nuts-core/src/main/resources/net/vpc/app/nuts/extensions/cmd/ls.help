@@ -1,4 +1,4 @@
-[[ls]]           : lists directory
+lists directory
 
 ===SYNOPSYS:===
 ls [options] <directory>
