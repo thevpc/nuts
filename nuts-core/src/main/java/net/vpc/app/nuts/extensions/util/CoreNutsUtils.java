@@ -52,12 +52,17 @@ public class CoreNutsUtils {
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     private static Set<String> DEPENDENCY_SUPPORTED_PARAMS = new HashSet<>(Arrays.asList("scope", "optional"));
     public static NutsDependencyFilter EXEC_DEPENDENCIES_FILTER =
-            d -> !d.isOptional() &&
-                    (CoreStringUtils.isEmpty(d.getScope())
-                            || "compile".equals(d.getScope())
-                            || "runtime".equals(d.getScope())
-                            || "provided ".equals(d.getScope())
-                    );
+            new NutsDependencyFilter() {
+                @Override
+                public boolean accept(NutsDependency d) {
+                    return !d.isOptional() &&
+                            (CoreStringUtils.isEmpty(d.getScope())
+                                    || "compile".equals(d.getScope())
+                                    || "runtime".equals(d.getScope())
+                                    || "provided ".equals(d.getScope())
+                            );
+                }
+            };
     public static Comparator<NutsDescriptor> NUTS_DESC_ENV_SPEC_COMPARATOR = new Comparator<NutsDescriptor>() {
         @Override
         public int compare(NutsDescriptor o1, NutsDescriptor o2) {
@@ -376,7 +381,7 @@ public class CoreNutsUtils {
             String packaging = CoreJsonUtils.get().deserialize(jsonObject.get("packaging"), String.class);
             String ext = CoreJsonUtils.get().deserialize(jsonObject.get("ext"), String.class);
             String[] parentStrings = CoreJsonUtils.get().deserialize(jsonObject.get("parents"), String[].class);
-            Map<String, String> props = CoreJsonUtils.get().deserializeStringsMap(jsonObject.get("properties"), new HashMap<>());
+            Map<String, String> props = CoreJsonUtils.get().deserializeStringsMap(jsonObject.get("properties"), new HashMap());
             NutsId[] parents = new NutsId[parentStrings == null ? 0 : parentStrings.length];
             for (int i = 0; i < parents.length; i++) {
                 parents[i] = CoreNutsUtils.parseOrErrorNutsId(parentStrings[i]);

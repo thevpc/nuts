@@ -29,10 +29,26 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.ObjectFilter;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CoreCollectionUtils {
+
+    public static <T> T[] filterArray(Class<T> cls,T[] array, ObjectFilter<T> t) {
+        List<T> all=new ArrayList<>();
+        for (T v : array) {
+            if(t==null || t.accept(v)){
+                all.add(v);
+            }
+        }
+        return all.toArray((T[]) Array.newInstance(cls));
+    }
+
     public static String[] toArraySet(String[] values0, String[]... values) {
         Set<String> set = toSet(values0);
         if (values != null) {

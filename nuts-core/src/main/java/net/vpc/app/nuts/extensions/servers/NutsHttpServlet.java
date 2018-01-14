@@ -187,7 +187,7 @@ public class NutsHttpServlet extends HttpServlet {
         doService(req, resp);
     }
 
-    protected void doService(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doService(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         facade.execute(new AbstractNutsHttpServletFacadeContext() {
             public URI getRequestURI() throws IOException {
                 try {

@@ -203,7 +203,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) throws IOException {
+    public Iterator<NutsId> findVersionsImpl(NutsId id, final NutsDescriptorFilter versionFilter, final NutsSession session) throws IOException {
         boolean transitive = session.isTransitive();
         InputStream ret = CoreNutsUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-all-versions?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);

@@ -137,9 +137,12 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         return this;
     }
 
-    public NutsPrintStream print(Color c, String s) {
-        doWithColor(c, () -> {
-            NutsPrintStream.super.print(s);
+    public NutsPrintStream print(Color c, final String s) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                NutsPrintStream.super.print(s);
+            }
         });
         return this;
     }
@@ -159,9 +162,12 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         return this;
     }
 
-    public NutsPrintStream println(Color c, int x) {
-        doWithColor(c, () -> {
-            NutsPrintStream.super.println(x);
+    public NutsPrintStream println(Color c, final int x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                NutsPrintStream.super.println(x);
+            }
         });
         return this;
     }

@@ -106,7 +106,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        HttpServer server = httpConfig.isSsh() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
+        final HttpServer server = httpConfig.isSsh() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
         if (executor == null) {
             executor = new ThreadPoolExecutor(4, 100, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
         }
@@ -217,7 +217,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
             System.out.println("\t/" + entry.getKey() + " : " + entry.getValue().getWorkspaceLocation());
         }
-        String finalServerId = serverId;
+        final String finalServerId = serverId;
         return new NutsServer() {
             boolean running = true;
 

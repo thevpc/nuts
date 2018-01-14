@@ -93,7 +93,7 @@ public class NutsJLineTerminal implements NutsTerminal {
             reader = LineReaderBuilder.builder()
                     .completer(new Completer() {
                         @Override
-                        public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
+                        public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
                             if (nutsCommandContext != null) {
                                 if (line.wordIndex() == 0) {
                                     for (NutsCommand command : nutsCommandContext.getCommandLine().getCommands()) {

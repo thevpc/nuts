@@ -57,15 +57,15 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
     }
 
     @Override
-    public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) throws IOException {
+    public NutsDescriptor parse(final NutsDescriptorContentParserContext parserContext) throws IOException {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        NutsId JAVA = CoreNutsUtils.parseNutsId("java");
-        Ref<NutsDescriptor> nutsjson = new Ref<>();
-        Ref<NutsDescriptor> metainf = new Ref<>();
-        Ref<NutsDescriptor> maven = new Ref<>();
-        Ref<String> mainClass = new Ref<>();
+        final NutsId JAVA = CoreNutsUtils.parseNutsId("java");
+        final Ref<NutsDescriptor> nutsjson = new Ref<>();
+        final Ref<NutsDescriptor> metainf = new Ref<>();
+        final Ref<NutsDescriptor> maven = new Ref<>();
+        final Ref<String> mainClass = new Ref<>();
         CoreIOUtils.visitZipFile(parserContext.getFullStream(), new ObjectFilter<String>() {
             @Override
             public boolean accept(String path) {

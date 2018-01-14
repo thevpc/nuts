@@ -386,7 +386,7 @@ public class CoreStringUtils {
     }
 
     public static String replaceVars(String format, StringMapper map) {
-        return replaceVars(format, map, new HashSet<>());
+        return replaceVars(format, map, new HashSet());
     }
 
     private static String replaceVars(String format, StringMapper map, Set<String> visited) {

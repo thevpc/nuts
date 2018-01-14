@@ -224,7 +224,7 @@ public class FindCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private List<NutsId> find(FindWhat findWhat, FindContext findContext) throws IOException {
+    private List<NutsId> find(FindWhat findWhat, final FindContext findContext) throws IOException {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }

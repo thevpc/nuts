@@ -208,7 +208,7 @@ public class ConfigCommand extends AbstractNutsCommand {
         boolean newDesc=false;
         String file=null;
         boolean save=false;
-        Ref<NutsDescriptor> desc=new Ref<>();
+        final Ref<NutsDescriptor> desc=new Ref<>();
         if (cmdLine.acceptAndRemove("new descriptor", "nd")) {
             newDesc=true;
         } else if (cmdLine.acceptAndRemove("update descriptor", "ud")) {
@@ -220,67 +220,157 @@ public class ConfigCommand extends AbstractNutsCommand {
         List<Runnable> all=new ArrayList<>();
         while(!cmdLine.isEmpty()) {
             if (cmdLine.acceptAndRemove("-executable")) {
-                boolean value = cmdLine.readNonOptionOrError(new ValueNonOption("executable", null, "true", "false")).getBoolean();
-                all.add(() -> desc.set(desc.get().setExecutable(value)));
+                final boolean value = cmdLine.readNonOptionOrError(new ValueNonOption("executable", null, "true", "false")).getBoolean();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().setExecutable(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-ext")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("ext", null, "jar")).getString();
-                all.add(() -> desc.set(desc.get().setExt(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("ext", null, "jar")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().setExt(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-packaging")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("packaging", null, "jar")).getString();
-                all.add(() -> desc.set(desc.get().setPackaging(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("packaging", null, "jar")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().setPackaging(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-name")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("name", null, "my-name")).getString();
-                all.add(() -> desc.set(desc.get().setId(desc.get().getId().setName(value))));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("name", null, "my-name")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().setId(desc.get().getId().setName(value)));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-group")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("group", null, "my-group")).getString();
-                all.add(() -> desc.set(desc.get().setId(desc.get().getId().setGroup(value))));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("group", null, "my-group")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().setId(desc.get().getId().setGroup(value)));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-id")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("id", null, "my-group:my-name#1.0")).getString();
-                all.add(() -> desc.set(desc.get().setId(CoreNutsUtils.parseNutsId(value))));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("id", null, "my-group:my-name#1.0")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().setId(CoreNutsUtils.parseNutsId(value)));
+                    }
+                });
 
             } else if (cmdLine.acceptAndRemove("-add-os")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().addOs(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().addOs(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-remove-os")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().removeOs(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().removeOs(value));
+                    }
+                });
 
             } else if (cmdLine.acceptAndRemove("-add-osdist")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().addOsdist(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().addOsdist(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-remove-osdist")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().removeOsdist(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().removeOsdist(value));
+                    }
+                });
 
             } else if (cmdLine.acceptAndRemove("-add-platform")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().addPlatform(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().addPlatform(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-remove-platform")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().removePlatform(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().removePlatform(value));
+                    }
+                });
 
             } else if (cmdLine.acceptAndRemove("-add-arch")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().addArch(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().addArch(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-remove-arch")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().removeArch(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().removeArch(value));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-add-property")) {
                 String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                String[] nv = CoreNutsUtils.splitNameAndValue(value);
+                final String[] nv = CoreNutsUtils.splitNameAndValue(value);
                 if(nv!=null) {
-                    all.add(() -> desc.set(desc.get().addProperty(nv[0],nv[1])));
+                    all.add(new Runnable() {
+                        @Override
+                        public void run() {
+                            desc.set(desc.get().addProperty(nv[0], nv[1]));
+                        }
+                    });
                 }
             } else if (cmdLine.acceptAndRemove("-remove-property")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                all.add(() -> desc.set(desc.get().removeProperty(value)));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().removeProperty(value));
+                    }
+                });
 
             } else if (cmdLine.acceptAndRemove("-add-dependency")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
-                all.add(() -> desc.set(desc.get().addDependency(CoreNutsUtils.parseNutsDependency(value))));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().addDependency(CoreNutsUtils.parseNutsDependency(value)));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-remove-dependency")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
-                all.add(() -> desc.set(desc.get().removeDependency(CoreNutsUtils.parseNutsDependency(value))));
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.set(desc.get().removeDependency(CoreNutsUtils.parseNutsDependency(value)));
+                    }
+                });
             } else if (cmdLine.acceptAndRemove("-file")) {
                 file = cmdLine.readNonOptionOrError(new FileNonOption("file")).getString();
             } else if (cmdLine.acceptAndRemove("-save")) {
@@ -418,7 +508,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                             this.type = type;
                         }
                     }
-                    Map<String, RepoPattern> repoPatterns = new HashMap<String, RepoPattern>();
+                    final Map<String, RepoPattern> repoPatterns = new HashMap<String, RepoPattern>();
                     for (RepoPattern repoPattern : new RepoPattern[]{
                             new RepoPattern("maven-local", System.getProperty("maven-local", "~/.m2/repository"), "maven"),
                             new RepoPattern("maven-central", "http://repo.maven.apache.org/maven2/", "maven"),

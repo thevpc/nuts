@@ -107,7 +107,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) throws IOException {
+    public Iterator<NutsId> findVersionsImpl(final NutsId id, NutsDescriptorFilter versionFilter, final NutsSession session) throws IOException {
         //maven-metadata.xml
 
         String groupId = id.getGroup();
@@ -125,7 +125,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             MavenUtils.MavenMetadataInfo info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
                 for (String version : info.getVersions()) {
-                    NutsId nutsId = id.setVersion(version);
+                    final NutsId nutsId = id.setVersion(version);
                     DelegateNutsDescriptor descriptor = new DelegateNutsDescriptor() {
                         @Override
                         protected NutsDescriptor getBase() {
@@ -202,7 +202,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         return new NutsFile(ed.getId(), descriptor, tempFile, false, true);
     }
 
-    private Iterator<NutsId> parseArchetypeCatalog(final InputStream stream, NutsDescriptorFilter filter0) {
+    private Iterator<NutsId> parseArchetypeCatalog(final InputStream stream, final NutsDescriptorFilter filter0) {
         return new Iterator<NutsId>() {
             NutsId last;
             NutsDescriptorFilter filter = filter0;
@@ -301,6 +301,11 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             @Override
             public NutsId next() {
                 return last;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("remove");
             }
 
             @Override

@@ -67,7 +67,7 @@ public class CoreIOUtils {
             zis = new ZipInputStream(zipFile);
             //get the zipped file list entry
             ZipEntry ze = zis.getNextEntry();
-            ZipInputStream finalZis = zis;
+            final ZipInputStream finalZis = zis;
             InputStream entryInputStream = new InputStream() {
                 @Override
                 public int read() throws IOException {
@@ -150,7 +150,7 @@ public class CoreIOUtils {
     }
 
     public static void zip(final File _folder, final File _zipFilePath) throws IOException {
-        Path folder = _folder.toPath();
+        final Path folder = _folder.toPath();
         Path zipFilePath = _zipFilePath.toPath();
         try (
                 FileOutputStream fos = new FileOutputStream(zipFilePath.toFile());
@@ -225,7 +225,7 @@ public class CoreIOUtils {
         zis.close();
     }
 
-    public static int execAndWait(NutsFile nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsTerminal terminal,boolean showCommand) throws NutsExecutionError, IOException {
+    public static int execAndWait(NutsFile nutMainFile, final NutsWorkspace workspace, final NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand) throws NutsExecutionError, IOException {
         NutsId id = nutMainFile.getId();
         File installerFile = nutMainFile.getFile();
         File storeFolder = nutMainFile.getInstallFolder();
@@ -476,7 +476,7 @@ public class CoreIOUtils {
     }
 
     public static int[] delete(File file) throws IOException {
-        int[] deleted = new int[]{0, 0};
+        final int[] deleted = new int[]{0, 0};
         Files.walkFileTree(file.toPath(), new FileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -542,7 +542,7 @@ public class CoreIOUtils {
      * @throws IOException
      */
     public static boolean isMainClass(InputStream stream) throws IOException {
-        List<Boolean> ref=new ArrayList<>(1);
+        final List<Boolean> ref=new ArrayList<>(1);
         ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
 
             /**
@@ -637,7 +637,7 @@ public class CoreIOUtils {
     }
 
     public static List<String> resolveMainClasses(InputStream jarStream) throws IOException {
-        List<String> classes=new ArrayList<>();
+        final List<String> classes=new ArrayList<>();
         visitZipFile(jarStream, new ObjectFilter<String>() {
             @Override
             public boolean accept(String value) {
@@ -710,7 +710,7 @@ public class CoreIOUtils {
             return all.toArray(new File[all.size()]);
         } else {
             if (path.contains("*") || path.contains("?")) {
-                Pattern s = Pattern.compile(CoreStringUtils.simpexpToRegexp(path, false));
+                final Pattern s = Pattern.compile(CoreStringUtils.simpexpToRegexp(path, false));
                 File[] files = createFileByCwd(base,cwd).listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {

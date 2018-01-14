@@ -33,21 +33,22 @@ uninstall packages allowing multiple versions of the very same package to  be in
 
 ## Download Latest stable version
 
-+ Linux   :: [nuts linux bash script](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts)
-+ Windows :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
-+ iOS     :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
-+ Java    :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts/deploy/nuts.jar)
++ Linux Installer (sh)  :: [nuts.sh](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts)
++ Linux Bundle    :: [nuts-bundle.tar.gz](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts-bundle.tar.gz)
++ Java or any Java enabled OS : Windows,iOS, ... :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts.jar)
 
+## Requirements
+Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8
 ## Run
 ### Linux
+if you have the appropriate shell file "nuts", just put it under $HOME/bin or /local/bin
 ```bash
 nuts console
 ```
-or
+or, just run the java jar file :
 ```bash
 java -jar nuts.jar console
 ```
-if you have the appropriate shell file "nuts", just put it under $HOME/bin or /local/bin
 ### Any other platform (Windows, iOS, ...)
 ```bash
 java -jar nuts.jar console

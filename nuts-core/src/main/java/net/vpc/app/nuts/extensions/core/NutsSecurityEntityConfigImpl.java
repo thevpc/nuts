@@ -107,7 +107,7 @@ public class NutsSecurityEntityConfigImpl implements NutsSecurityEntityConfig {
 
     @Override
     public void setRights(String[] rights) {
-        this.rights = rights == null ? new HashSet<>() : new HashSet<>(Arrays.asList(rights));
+        this.rights = rights == null ? new HashSet() : new HashSet(Arrays.asList(rights));
     }
 
     @Override
@@ -145,7 +145,7 @@ public class NutsSecurityEntityConfigImpl implements NutsSecurityEntityConfig {
 
     @Override
     public void setGroups(String[] groups) {
-        this.groups = groups == null ? new HashSet<>() : new HashSet<>(Arrays.asList(groups));
+        this.groups = groups == null ? new HashSet() : new HashSet(Arrays.asList(groups));
     }
 
     @Override

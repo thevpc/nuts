@@ -50,7 +50,9 @@ class NutsWorkspaceSecurityConfiguration extends Configuration {
         if (old == null) {
             return new AppConfigurationEntry[]{
                 new AppConfigurationEntry(
-                NutsWorkspaceLoginModule.class.getName(), AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, new HashMap<>()
+                NutsWorkspaceLoginModule.class.getName(),
+                        AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
+                        new HashMap()
                 )
             };
         }

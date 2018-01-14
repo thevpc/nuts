@@ -123,11 +123,11 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> baseEntries = base.entrySet();
+        final Set<Entry<K, V>> baseEntries = base.entrySet();
         return new AbstractSet<Entry<K, V>>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
-                Iterator<Entry<K, V>> baseIterator = baseEntries.iterator();
+                final Iterator<Entry<K, V>> baseIterator = baseEntries.iterator();
                 return new Iterator<Entry<K, V>>() {
                     Entry<K, V> curr;
 

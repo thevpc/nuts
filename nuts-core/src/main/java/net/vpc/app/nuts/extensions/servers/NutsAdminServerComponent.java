@@ -160,8 +160,8 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                             running = false;
                             break;
                         }
-                        ServerSocket finalServerSocket = serverSocket;
-                        Socket finalAccept = accept;
+                        final ServerSocket finalServerSocket = serverSocket;
+                        final Socket finalAccept = accept;
                         finalExecutor.execute(new Runnable() {
                             @Override
                             public void run() {

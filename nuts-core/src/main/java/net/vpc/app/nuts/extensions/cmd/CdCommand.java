@@ -32,12 +32,15 @@ package net.vpc.app.nuts.extensions.cmd;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.ObjectFilter;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FolderNonOption;
+import net.vpc.app.nuts.extensions.util.CoreCollectionUtils;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * Created by vpc on 1/7/17.
@@ -52,9 +55,13 @@ public class CdCommand extends AbstractNutsCommand {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         cmdLine.requireNonEmpty();
         String folder = cmdLine.readNonOptionOrError(new FolderNonOption("Folder")).getString();
-        File[] validFiles = Arrays.stream(CoreIOUtils.findFilesOrError(folder, new File(context.getCommandLine().getCwd()))).filter(
-                x -> x.isDirectory()
-        ).toArray(File[]::new);
+        File[] validFiles = CoreCollectionUtils.filterArray(File.class, CoreIOUtils.findFilesOrError(folder, new File(context.getCommandLine().getCwd())),
+                new ObjectFilter<File>() {
+                    @Override
+                    public boolean accept(File value) {
+                        return value.isDirectory();
+                    }
+                });
         NutsPrintStream out = context.getTerminal().getOut();
         int result=0;
         switch (validFiles.length) {

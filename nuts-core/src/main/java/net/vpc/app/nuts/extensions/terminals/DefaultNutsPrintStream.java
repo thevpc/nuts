@@ -116,7 +116,7 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         }
     }
 
-    public DefaultNutsPrintStream write(Color c, int b) {
+    public DefaultNutsPrintStream write(Color c, final int b) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -126,7 +126,7 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream write(Color c, byte[] buf, int off, int len) {
+    public DefaultNutsPrintStream write(Color c, final byte[] buf, final int off, final int len) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -136,7 +136,7 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, boolean b) {
+    public DefaultNutsPrintStream print(Color c, final boolean b) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -146,7 +146,7 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color color, char c) {
+    public DefaultNutsPrintStream print(Color color, final char c) {
         doWithColor(color, new Runnable() {
 
             public void run() {
@@ -156,7 +156,7 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, int i) {
+    public DefaultNutsPrintStream print(Color c, final int i) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -166,7 +166,7 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, long l) {
+    public DefaultNutsPrintStream print(Color c, final long l) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -176,71 +176,98 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, float f) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.print(f);
+    public DefaultNutsPrintStream print(Color c, final float f) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.print(f);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, double d) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.print(d);
+    public DefaultNutsPrintStream print(Color c, final double d) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.print(d);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, char[] s) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.print(s);
+    public DefaultNutsPrintStream print(Color c, final char[] s) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.print(s);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, String s) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.print(s);
+    public DefaultNutsPrintStream print(Color c, final String s) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.print(s);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream print(Color c, Object obj) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.print(obj);
+    public DefaultNutsPrintStream print(Color c, final Object obj) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.print(obj);
+            }
         });
         return this;
     }
 
 
-    public DefaultNutsPrintStream println(Color c, boolean x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final boolean x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream println(Color c, char x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final char x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream println(Color c, int x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final int x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream println(Color c, long x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final long x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public void println(Color c, float x) {
+    public void println(Color c, final float x) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -249,63 +276,87 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         });
     }
 
-    public DefaultNutsPrintStream println(Color c, double x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final double x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream println(Color c, char[] x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final char[] x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream println(Color c, String x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final String x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream println(Color c, Object x) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.println(x);
+    public DefaultNutsPrintStream println(Color c, final Object x) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.println(x);
+            }
         });
         return this;
     }
 
-    public PrintStream printf(Color c, String format, Object... args) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.printf(format, args);
+    public PrintStream printf(Color c, final String format, final Object... args) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.printf(format, args);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream printf(Color c, Locale l, String format, Object... args) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.printf(l, format, args);
+    public DefaultNutsPrintStream printf(Color c, final Locale l, final String format, final Object... args) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.printf(l, format, args);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream format(Color c, String format, Object... args) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.format(format, args);
+    public DefaultNutsPrintStream format(Color c, final String format, final Object... args) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.format(format, args);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream format(Color c, Locale l, String format, Object... args) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.format(l, format, args);
+    public DefaultNutsPrintStream format(Color c, final Locale l, final String format, final Object... args) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.format(l, format, args);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream append(Color c, CharSequence csq) {
+    public DefaultNutsPrintStream append(Color c, final CharSequence csq) {
         doWithColor(c, new Runnable() {
 
             public void run() {
@@ -315,16 +366,22 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public DefaultNutsPrintStream append(Color c, CharSequence csq, int start, int end) {
-        doWithColor(c, () -> {
-            DefaultNutsPrintStream.super.append(csq, start, end);
+    public DefaultNutsPrintStream append(Color c, final CharSequence csq, final int start, final int end) {
+        doWithColor(c, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.append(csq, start, end);
+            }
         });
         return this;
     }
 
-    public DefaultNutsPrintStream append(Color color, char c) {
-        doWithColor(color, () -> {
-            DefaultNutsPrintStream.super.append(c);
+    public DefaultNutsPrintStream append(Color color, final char c) {
+        doWithColor(color, new Runnable() {
+            @Override
+            public void run() {
+                DefaultNutsPrintStream.super.append(c);
+            }
         });
         return this;
     }

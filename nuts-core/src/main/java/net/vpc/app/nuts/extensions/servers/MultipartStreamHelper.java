@@ -86,11 +86,16 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
                     throw new RuntimeException(e);
                 }
             }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("remove");
+            }
         };
     }
 
     private ItemStreamInfo newInputStreamSplitted() throws IOException {
-        InputStream itemInputStream = stream.newInputStream();
+        final InputStream itemInputStream = stream.newInputStream();
         ByteArrayOutputStream headers = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         while (true) {

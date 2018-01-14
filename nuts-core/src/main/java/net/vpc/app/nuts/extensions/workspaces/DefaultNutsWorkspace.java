@@ -30,14 +30,11 @@
 package net.vpc.app.nuts.extensions.workspaces;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.BootNutsWorkspace;
 import net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent;
 import net.vpc.app.nuts.extensions.core.*;
 import net.vpc.app.nuts.extensions.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.extensions.repos.NutsFolderRepository;
 import net.vpc.app.nuts.extensions.util.*;
-import net.vpc.app.nuts.MapListener;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -54,7 +51,6 @@ import java.security.Principal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -114,7 +110,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         return filterRepositories(repos, id, session, false, null);
     }
 
-    private static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsSession session, boolean sortByLevelDesc, Comparator<NutsRepository> postComp) {
+    private static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp) {
         class RepoAndLevel {
 
             NutsRepository r;
@@ -140,18 +136,25 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             }
         }
         if (sortByLevelDesc) {
-            Collections.sort(repos2, (o1, o2) -> {
-                int x = Integer.compare(o2.level, o1.level);
-                if (x != 0) {
-                    return x;
+            Collections.sort(repos2, new Comparator<RepoAndLevel>() {
+                @Override
+                public int compare(RepoAndLevel o1, RepoAndLevel o2) {
+                    int x = Integer.compare(o2.level, o1.level);
+                    if (x != 0) {
+                        return x;
+                    }
+                    if (postComp != null) {
+                        return postComp.compare(o1.r, o2.r);
+                    }
+                    return 0;
                 }
-                if (postComp != null) {
-                    return postComp.compare(o1.r, o2.r);
-                }
-                return 0;
             });
         }
-        return repos2.stream().map(x -> x.r).collect(Collectors.toList());
+        List<NutsRepository> ret = new ArrayList<>();
+        for (RepoAndLevel repoAndLevel : repos2) {
+            ret.add(repoAndLevel.r);
+        }
+        return ret;
     }
 
     public static NutsId configureFetchEnv(NutsId id) {
@@ -202,7 +205,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
     }
 
     @Override
-    public void login(String login, String password) throws LoginException {
+    public void login(final String login, final String password) throws LoginException {
         login(new CallbackHandler() {
             @Override
             public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -404,7 +407,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         this.workspaceBoot = workspaceBoot;
 
         String root = workspaceBoot.getRoot();
-        this.workspaceRoot=CoreStringUtils.isEmpty(root) ? NutsConstants.DEFAULT_WORKSPACE_ROOT : root;
+        this.workspaceRoot = CoreStringUtils.isEmpty(root) ? NutsConstants.DEFAULT_WORKSPACE_ROOT : root;
 
 
         this.workspaceBootId = workspaceBootId;
@@ -1313,7 +1316,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
             }
             final NutsExecutionContext executionContext = new NutsExecutionContextImpl(nutToRun, appArgs, executrorArgs, env, execProps, session, this, nutToRun.getDescriptor().getExecutor());
             if (nowait) {
-                NutsExecutorComponent finalExecComponent = execComponent;
+                final NutsExecutorComponent finalExecComponent = execComponent;
                 Thread thread = new Thread("Exec-" + nutToRun.getId().toString()) {
                     @Override
                     public void run() {
@@ -1339,7 +1342,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace {
         return isFetched(CoreNutsUtils.parseOrErrorNutsId(id), session);
     }
 
-    public boolean isFetched(NutsId id, NutsSession session) throws IOException {
+    public boolean isFetched(NutsId id, NutsSession session) {
         NutsSession offlineSession = session.copy().setFetchMode(FetchMode.OFFLINE);
 //        NutsId nutsId = null;
 //        try {
