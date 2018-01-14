@@ -1,7 +1,2 @@
-net.vpc.app.nuts.boot.DefaultHttpTransportComponent
-net.vpc.app.nuts.boot.DefaultNutsTerminal
-
-net.vpc.app.nuts.boot.repos.MavenNutsRepositoryFactoryComponent
-net.vpc.app.nuts.boot.repos.DefaultNutsRepositoryFactoryComponent
 net.vpc.app.nuts.NutsPrintStream
 

@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.util.ObjectFilter;
+import net.vpc.app.nuts.ObjectFilter;
 
 import java.util.Iterator;
 

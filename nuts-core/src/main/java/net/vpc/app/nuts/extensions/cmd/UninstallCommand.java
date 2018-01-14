@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 
@@ -45,7 +44,7 @@ public class UninstallCommand extends AbstractNutsCommand {
         super("uninstall", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         do {
             String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId",context)).getString();
@@ -58,5 +57,6 @@ public class UninstallCommand extends AbstractNutsCommand {
                 }
             }
         } while (!cmdLine.isEmpty());
+        return 0;
     }
 }

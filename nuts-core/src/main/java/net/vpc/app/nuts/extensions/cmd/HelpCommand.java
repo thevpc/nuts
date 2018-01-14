@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.cmd;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CommandNonOption;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,12 +46,12 @@ public class HelpCommand extends AbstractNutsCommand {
         super("help", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         NutsPrintStream out = context.getTerminal().getOut();
         if (cmdLine.isEmpty()) {
             if (cmdLine.isExecMode()) {
-                out.drawln(getHelpContent());
+                out.drawln(context.getValidWorkspace().getHelpString());
                 out.drawln("===AVAILABLE COMMANDS ARE:===");
                 NutsCommand[] commands = context.getCommandLine().getCommands();
                 Arrays.sort(commands, new Comparator<NutsCommand>() {
@@ -61,10 +61,10 @@ public class HelpCommand extends AbstractNutsCommand {
                     }
                 });
                 for (NutsCommand cmd : commands) {
-                    out.drawln("[[" + StringUtils.alignLeft(cmd.getName(),15) + "]] : " + cmd.getHelpHeader());
+                    out.drawln("[[" + CoreStringUtils.alignLeft(cmd.getName(),15) + "]] : " + cmd.getHelpHeader());
                 }
             }
-            return;
+            return 0;
         }
 
         while (!cmdLine.isEmpty()) {
@@ -80,9 +80,6 @@ public class HelpCommand extends AbstractNutsCommand {
                 }
             }
         }
-    }
-
-    public String getHelpContent() {
-        return Main.getHelpString();
+        return 0;
     }
 }

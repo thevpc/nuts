@@ -37,28 +37,28 @@ import java.util.*;
 public class TableFormatter {
     List<Row> rows = new ArrayList<>();
 
-    public static void main(String[] args) {
-        TableFormatter t = new TableFormatter();
-        t.addCell("AA AA").setColspan(2).setRowspan(2);
-        t.addCell("B B");
-        t.newRow();
-        t.addCell("C");
-        t.addCell("D");
-        t.rebuild();
-
-
-        for (Row row : t.rows) {
-            for (Cell cell : row.cells) {
-                System.out.print(cell.rendered);
-            }
-            System.out.println();
-        }
-
-//        RenderedCell r1 = new RenderedCell("AA\nAA");
-//        RenderedCell r2 = new RenderedCell("C\nB");
-//        RenderedCell resized2 = r1.replaceContent(r2, 1, 1);
-//        System.out.println();
-    }
+//    public static void main(String[] args) {
+//        TableFormatter t = new TableFormatter();
+//        t.addCell("AA AA").setColspan(2).setRowspan(2);
+//        t.addCell("B B");
+//        t.newRow();
+//        t.addCell("C");
+//        t.addCell("D");
+//        t.rebuild();
+//
+//
+//        for (Row row : t.rows) {
+//            for (Cell cell : row.cells) {
+//                System.out.print(cell.rendered);
+//            }
+//            System.out.println();
+//        }
+//
+////        RenderedCell r1 = new RenderedCell("AA\nAA");
+////        RenderedCell r2 = new RenderedCell("C\nB");
+////        RenderedCell resized2 = r1.replaceContent(r2, 1, 1);
+////        System.out.println();
+//    }
 
     private static class Row {
         CellFormatter formatter;

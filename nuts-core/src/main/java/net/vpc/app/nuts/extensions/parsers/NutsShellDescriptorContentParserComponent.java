@@ -30,6 +30,8 @@
 package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.JsonStringBuffer;
 
 import java.io.BufferedReader;
@@ -43,7 +45,7 @@ import java.util.*;
  */
 public class NutsShellDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final NutsId NSH = NutsId.parse("nuts");
+    public static final NutsId NSH = CoreNutsUtils.parseNutsId("nuts");
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh","nuts"));
 
     @Override
@@ -120,14 +122,14 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
             }
             if(comment.toString().trim().isEmpty()){
                 return new DefaultNutsDescriptor(
-                        NutsId.parse("temp:nsh#1.0"),
+                        CoreNutsUtils.parseNutsId("temp:nsh#1.0"),
                         null,
                         null,
                         "nsh",
                         true, "nsh", new NutsExecutorDescriptor(NSH, new String[0], null), null, null, null, null, null, null, null, null, null
                 );
             }
-            return NutsDescriptor.parse(comment.getValidString());
+            return CoreNutsUtils.parseNutsDescriptor(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

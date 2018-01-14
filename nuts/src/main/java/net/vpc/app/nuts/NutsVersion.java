@@ -29,97 +29,30 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.DefaultNutsVersionFilter;
-import net.vpc.app.nuts.util.StringUtils;
-import net.vpc.app.nuts.util.VersionUtils;
+public interface NutsVersion {
+    String getValue();
 
-/**
- * Created by vpc on 1/15/17.
- */
-public class NutsVersion {
+    boolean isEmpty();
 
-    private final String value;
+    int compareTo(String other);
 
-    public String getValue() {
-        return value;
-    }
+    int compareTo(NutsVersion other);
 
-    public boolean isEmpty() {
-        return StringUtils.isEmpty(value);
-    }
+    boolean ge(String other);
 
-    public NutsVersion(String value) {
-        this.value = StringUtils.trim(value);
-    }
+    boolean gt(String other);
 
-    public int compareTo(String other) {
-        return VersionUtils.compareVersions(value, other);
-    }
+    boolean le(String other);
 
-    public int compareTo(NutsVersion other) {
-        return compareTo(other == null ? null : other.value);
-    }
+    boolean lt(String other);
 
-    public boolean ge(String other) {
-        return compareTo(other) >= 0;
-    }
+    boolean eq(String other);
 
-    public boolean gt(String other) {
-        return compareTo(other) > 0;
-    }
+    boolean ne(String other);
 
-    public boolean le(String other) {
-        return compareTo(other) <= 0;
-    }
+    NutsVersionFilter toFilter();
 
-    public boolean lt(String other) {
-        return compareTo(other) < 0;
-    }
+    NutsVersionInterval[] toIntervals();
 
-    public boolean eq(String other) {
-        return compareTo(other) == 0;
-    }
-
-    public boolean ne(String other) {
-        return compareTo(other) != 0;
-    }
-
-    public NutsVersionFilter toFilter() {
-        return DefaultNutsVersionFilter.parse(value);
-    }
-
-    public NutsVersionInterval[] toIntervals() {
-        DefaultNutsVersionFilter s = DefaultNutsVersionFilter.parse(value);
-        return s.getIntervals();
-    }
-
-    public boolean isSingleValue() {
-        NutsVersionInterval[] nutsVersionIntervals = toIntervals();
-        return nutsVersionIntervals.length != 0 && nutsVersionIntervals.length <= 1 && nutsVersionIntervals[0].isFixedValue();
-    }
-
-    @Override
-    public String toString() {
-        return value == null ? "" : String.valueOf(value);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        NutsVersion version = (NutsVersion) o;
-
-        return value != null ? value.equals(version.value) : version.value == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return value != null ? value.hashCode() : 0;
-    }
+    boolean isSingleValue();
 }

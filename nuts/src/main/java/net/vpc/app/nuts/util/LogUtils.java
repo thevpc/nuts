@@ -47,7 +47,7 @@ public class LogUtils {
             level = Level.WARNING;
         }
         int MEGA = 1024 * 1024;
-        if (StringUtils.trimToNull(pattern) == null) {
+        if (pattern == null || StringUtils.isEmpty(pattern)) {
             pattern = "nuts-%g.log";
         }
         if (maxSize <= 0) {

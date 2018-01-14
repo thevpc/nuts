@@ -29,13 +29,12 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
+import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,7 +45,7 @@ public class UnameCommand extends AbstractNutsCommand {
         super("uname", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean farch = false;
         boolean fos = false;
@@ -66,7 +65,7 @@ public class UnameCommand extends AbstractNutsCommand {
                 cmdLine.requireEmpty();
             }
         }
-        if(cmdLine.isExecMode()) {
+        if (cmdLine.isExecMode()) {
             String osdist = CorePlatformUtils.getOsdist();
             String os = CorePlatformUtils.getOs();
             String arch = CorePlatformUtils.getArch();
@@ -74,22 +73,22 @@ public class UnameCommand extends AbstractNutsCommand {
             NutsPrintStream out = context.getTerminal().getOut();
             StringBuilder sb = new StringBuilder();
             if (!farch && !fos && !fdist) {
-                if (!StringUtils.isEmpty(osdist)) {
+                if (!CoreStringUtils.isEmpty(osdist)) {
                     sb.append(osdist);
-                } else if (!StringUtils.isEmpty(os)) {
+                } else if (!CoreStringUtils.isEmpty(os)) {
                     sb.append(os);
-                } else if (!StringUtils.isEmpty(arch)) {
+                } else if (!CoreStringUtils.isEmpty(arch)) {
                     sb.append(arch);
                 }
 
             } else {
                 if (farch) {
-                    if (!StringUtils.isEmpty(arch)) {
+                    if (!CoreStringUtils.isEmpty(arch)) {
                         sb.append(arch);
                     }
                 }
                 if (fos) {
-                    if (!StringUtils.isEmpty(os)) {
+                    if (!CoreStringUtils.isEmpty(os)) {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
@@ -97,7 +96,7 @@ public class UnameCommand extends AbstractNutsCommand {
                     }
                 }
                 if (fdist) {
-                    if (!StringUtils.isEmpty(osdist)) {
+                    if (!CoreStringUtils.isEmpty(osdist)) {
                         if (sb.length() > 0) {
                             sb.append(" ");
                         }
@@ -110,5 +109,6 @@ public class UnameCommand extends AbstractNutsCommand {
             }
             out.println(sb);
         }
+        return 0;
     }
 }

@@ -29,351 +29,62 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.NutsUtils;
-import net.vpc.app.nuts.util.StringMapper;
-import net.vpc.app.nuts.util.StringUtils;
-
 import java.util.Map;
 
-/**
- * Created by vpc on 1/5/17.
- */
-public class NutsId {
+public interface NutsId {
+    boolean isSameFullName(NutsId other);
 
-    private final String namespace;
-    private final String group;
-    private final String name;
-    private final NutsVersion version;
-    private final String query;
+    boolean anyContains(String value);
 
-    public NutsId(String namespace, String group, String name, String version, Map<String,String> query) {
-        StringBuilder sb=new StringBuilder();
-        if(query !=null) {
-            for (Map.Entry<String, String> entry : query.entrySet()) {
-                if (sb.length() > 0) {
-                    sb.append("&");
-                }
-                sb.append(entry.getKey()).append("=").append(entry.getValue());
-            }
-        }
-        this.namespace = StringUtils.trimToNull(namespace);
-        this.group = StringUtils.trimToNull(group);
-        this.name = StringUtils.trimToNull(name);
-        this.version = new NutsVersion(StringUtils.trimToNull(version));
-        this.query = StringUtils.trimToNull(sb.toString());
-    }
-    public NutsId(String namespace, String group, String name, String version, String query) {
-        this.namespace = StringUtils.trimToNull(namespace);
-        this.group = StringUtils.trimToNull(group);
-        this.name = StringUtils.trimToNull(name);
-        this.version = new NutsVersion(StringUtils.trimToNull(version));
-        this.query = StringUtils.trimToNull(query);
-    }
+    boolean anyMatches(String pattern);
 
-    public boolean isSameFullName(NutsId other) {
-        if (other == null) {
-            return false;
-        }
-        return StringUtils.trim(name).equals(StringUtils.trim(other.name))
-                && StringUtils.trim(group).equals(StringUtils.trim(other.group));
-    }
+    boolean anyLike(String pattern);
 
-    public boolean anyContains(String value) {
-        if (value == null) {
-            return true;
-        }
-        if (StringUtils.trim(namespace).contains(value)) {
-            return true;
-        }
-        if (StringUtils.trim(name).contains(value)) {
-            return true;
-        }
-        if (StringUtils.trim(version.getValue()).contains(value)) {
-            return true;
-        }
-        return StringUtils.trim(query).contains(value);
-    }
+    boolean like(String pattern);
 
-    public boolean anyMatches(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        if (StringUtils.trim(namespace).matches(pattern)) {
-            return true;
-        }
-        if (StringUtils.trim(name).matches(pattern)) {
-            return true;
-        }
-        if (StringUtils.trim(version.getValue()).matches(pattern)) {
-            return true;
-        }
-        return StringUtils.trim(query).matches(pattern);
-    }
+    boolean namespaceLike(String pattern);
 
-    public boolean anyLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return anyMatches(StringUtils.simpexpToRegexp(pattern, false));
-    }
+    boolean nameLike(String pattern);
 
-    public boolean like(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return toString().matches(StringUtils.simpexpToRegexp(pattern, false));
-    }
+    boolean versionLike(String pattern);
 
-    public boolean namespaceLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return StringUtils.trim(namespace).matches(StringUtils.simpexpToRegexp(pattern, false));
-    }
+    boolean queryLike(String pattern);
 
-    public boolean nameLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return StringUtils.trim(name).matches(StringUtils.simpexpToRegexp(pattern, false));
-    }
+    NutsId setGroup(String newGroupId);
 
-    public boolean versionLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return StringUtils.trim(version.getValue()).matches(StringUtils.simpexpToRegexp(pattern, false));
-    }
+    NutsId setNamespace(String newNamespace);
 
-    public boolean queryLike(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return StringUtils.trim(query).matches(StringUtils.simpexpToRegexp(pattern, false));
-    }
+    NutsId setVersion(String newVersion);
 
-    /**
-     * examples : script://groupId:artifactId/version?query
-     * script://groupId:artifactId/version script://groupId:artifactId
-     * script://artifactId artifactId
-     *
-     * @param nutFormat
-     * @return
-     */
-    public static NutsId parse(String nutFormat) {
-        return NutsUtils.parseNutsId(nutFormat);
-    }
+    NutsId setName(String newName);
 
-    public static NutsId parseOrError(String nutFormat) {
-        return NutsUtils.parseOrErrorNutsId(nutFormat);
-    }
+    String getFace();
 
-    public static NutsId parseNullableOrError(String nutFormat) {
-        return NutsUtils.parseNullableOrErrorNutsId(nutFormat);
-    }
+    NutsId setFace(String value);
 
-    public NutsId setGroup(String newGroupId) {
-        return new NutsId(
-                namespace,
-                newGroupId,
-                name,
-                version.getValue(),
-                query
-        );
-    }
+    NutsId setQueryProperty(String property, String value);
 
-    public NutsId setNamespace(String newNamespace) {
-        return new NutsId(
-                newNamespace,
-                group,
-                name,
-                version.getValue(),
-                query
-        );
-    }
+    NutsId setQuery(Map<String, String> queryMap, boolean merge);
 
-    public NutsId setVersion(String newVersion) {
-        return new NutsId(
-                namespace,
-                group,
-                name,
-                newVersion,
-                query
-        );
-    }
+    NutsId setQuery(Map<String, String> queryMap);
 
-    public NutsId setName(String newName) {
-        return new NutsId(
-                namespace,
-                group,
-                newName,
-                version.getValue(),
-                query
-        );
-    }
+    NutsId unsetQuery();
 
-    public String getFace() {
-        String s = getQueryMap().get(NutsConstants.QUERY_FACE);
-        return StringUtils.trimToNull(s);
-    }
+    NutsId setQuery(String query);
 
-    public NutsId setFace(String value) {
-        return setQueryProperty(NutsConstants.QUERY_FACE,StringUtils.trimToNull(value))
-                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true)
-                ;
-    }
+    String getQuery();
 
-    public NutsId setQueryProperty(String property, String value) {
-        Map<String, String> m = getQueryMap();
-        if(value==null){
-            m.remove(property);
-        }else{
-            m.put(property,value);
-        }
-        return setQuery(m);
-    }
+    Map<String, String> getQueryMap();
 
-    public NutsId setQuery(Map<String, String> queryMap, boolean merge) {
-        if(merge) {
-            Map<String, String> m = getQueryMap();
-            if (queryMap != null) {
-                for (Map.Entry<String, String> e : queryMap.entrySet()) {
-                    String property = e.getKey();
-                    String value = e.getValue();
-                    if (value == null) {
-                        m.remove(property);
-                    } else {
-                        m.put(property, value);
-                    }
-                }
-            }
-            return setQuery(m);
-        }else{
-            return new NutsId(
-                    namespace,
-                    group,
-                    name,
-                    version.getValue(),
-                    queryMap
-            );
-        }
-    }
+    String getNamespace();
 
-    public NutsId setQuery(Map<String,String> queryMap) {
-        return setQuery(queryMap,false);
-    }
+    String getGroup();
 
-    public NutsId unsetQuery() {
-        return setQuery("");
-    }
+    String getFullName();
 
-    public NutsId setQuery(String query) {
-        return new NutsId(
-                namespace,
-                group,
-                name,
-                version.getValue(),
-                query
-        );
-    }
+    String getName();
 
-    public String getQuery() {
-        return query;
-    }
+    NutsVersion getVersion();
 
-    public Map<String, String> getQueryMap() {
-        return StringUtils.parseMap(getQuery(), "&");
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public String getFullName() {
-        if(StringUtils.isEmpty(group)){
-            return StringUtils.trim(name);
-        }
-        return StringUtils.trim(group)+":"+StringUtils.trim(name);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public NutsVersion getVersion() {
-        return version;
-    }
-
-    
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (!StringUtils.isEmpty(namespace)) {
-            sb.append(namespace).append("://");
-        }
-        if (!StringUtils.isEmpty(group)) {
-            sb.append(group).append(":");
-        }
-        sb.append(name);
-        if (!StringUtils.isEmpty(version.getValue())) {
-            sb.append("#").append(version);
-        }
-        if (!StringUtils.isEmpty(query)) {
-            sb.append("?");
-            sb.append(query);
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        NutsId nutsId = (NutsId) o;
-
-        if (namespace != null ? !namespace.equals(nutsId.namespace) : nutsId.namespace != null) {
-            return false;
-        }
-        if (group != null ? !group.equals(nutsId.group) : nutsId.group != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(nutsId.name) : nutsId.name != null) {
-            return false;
-        }
-        if (version != null ? !version.equals(nutsId.version) : nutsId.version != null) {
-            return false;
-        }
-        return query != null ? query.equals(nutsId.query) : nutsId.query == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = namespace != null ? namespace.hashCode() : 0;
-        result = 31 * result + (group != null ? group.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (query != null ? query.hashCode() : 0);
-        return result;
-    }
-
-    public NutsId apply(StringMapper properties) {
-        return new NutsId(
-                NutsUtils.applyStringProperties(this.getNamespace(), properties),
-                NutsUtils.applyStringProperties(this.getGroup(), properties),
-                NutsUtils.applyStringProperties(this.getName(), properties),
-                NutsUtils.applyStringProperties(this.getVersion().getValue(), properties),
-                NutsUtils.applyMapProperties(this.getQueryMap(), properties)
-        );
-    }
-
+    NutsId apply(StringMapper properties);
 }

@@ -44,3 +44,8 @@ net.vpc.app.nuts.extensions.cmd.DefaultNutsCommandLineConsoleComponent
 net.vpc.app.nuts.extensions.repos.DefaultNutsRemoteRepositoryFactoryComponent
 net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.extensions.workspaces.DefaultNutsWorkspace
+net.vpc.app.nuts.extensions.core.DefaultNutsTerminal
+
+net.vpc.app.nuts.extensions.repos.MavenNutsRepositoryFactoryComponent
+net.vpc.app.nuts.extensions.repos.DefaultNutsRepositoryFactoryComponent
+net.vpc.app.nuts.extensions.core.DefaultHttpTransportComponent

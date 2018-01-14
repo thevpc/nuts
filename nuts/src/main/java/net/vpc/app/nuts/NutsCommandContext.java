@@ -62,4 +62,6 @@ public interface NutsCommandContext {
     Properties getEnv();
 
     NutsCommandContext setEnv(Properties env);
+
+    String getCurrentDirectory();
 }

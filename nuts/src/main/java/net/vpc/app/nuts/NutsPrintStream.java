@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.EnhancedTextChunck;
 import net.vpc.app.nuts.util.EnhancedTextParser;
 import net.vpc.app.nuts.util.IOUtils;
 

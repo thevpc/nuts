@@ -30,8 +30,9 @@
 package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.util.StringUtils;
-import net.vpc.app.nuts.util.VersionUtils;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
+import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -43,7 +44,7 @@ import java.util.regex.Pattern;
  * Created by vpc on 1/7/17.
  */
 public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter {
-    private static NutsId SAMPLE_NUTS_ID = new NutsId("sample", "sample", "sample", "sample", "sample");
+    private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
     private static DefaultNutsDescriptor SAMPLE_NUTS_DESCRIPTOR = new DefaultNutsDescriptor(
             SAMPLE_NUTS_ID,"default",
             new NutsId[]{SAMPLE_NUTS_ID},
@@ -97,7 +98,7 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter {
         } else {
             for (String s : blacklist) {
                 if (s.contains("*")) {
-                    blacklistClassNamePatterns.add(Pattern.compile(StringUtils.simpexpToRegexp(s, false)));
+                    blacklistClassNamePatterns.add(Pattern.compile(CoreStringUtils.simpexpToRegexp(s, false)));
                 } else {
                     blacklistClassNames.add(s);
                 }
@@ -172,15 +173,15 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter {
             if (value == null) {
                 value = "";
             }
-            return value.matches(StringUtils.simpexpToRegexp(pattern, true));
+            return value.matches(CoreStringUtils.simpexpToRegexp(pattern, true));
         }
 
         public String trim(String s) {
-            return StringUtils.trim(s);
+            return CoreStringUtils.trim(s);
         }
 
         public int compareVersions(String v1, String v2) {
-            return VersionUtils.compareVersions(v1, v2);
+            return CoreVersionUtils.compareVersions(v1, v2);
         }
 
     }

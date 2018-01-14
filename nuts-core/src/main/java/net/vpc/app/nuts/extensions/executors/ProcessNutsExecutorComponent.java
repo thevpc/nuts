@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     private static final Logger log = Logger.getLogger(ProcessNutsExecutorComponent.class.getName());
-    public static final NutsId ID = NutsId.parse("exec");
+    public static final NutsId ID = CoreNutsUtils.parseNutsId("exec");
 
     @Override
     public NutsId getId() throws IOException {
@@ -55,7 +55,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         return CORE_SUPPORT;
     }
 
-    public void exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext) throws IOException {
         NutsFile nutMainFile = executionContext.getNutsFile();
         File storeFolder = nutMainFile.getInstallFolder();
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
@@ -98,7 +98,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 showCommand = true;
             }
         }
-        CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
+        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 app.toArray(new String[app.size()]),
                 envMap, dir, executionContext.getTerminal(),showCommand
         );

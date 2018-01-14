@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,14 +30,17 @@
 package net.vpc.app.nuts.extensions.servers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
-import net.vpc.app.nuts.extensions.util.ListMap;
-import net.vpc.app.nuts.util.*;
-import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.boot.NutsIdPatternFilter;
+import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.util.IOUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,7 +60,7 @@ public class NutsHttpServletFacade {
         register(new AbstractFacadeCommand("version") {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
-                context.sendResponseText(200, new NutsId(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getWorkspaceVersion(), "").toString());
+                context.sendResponseText(200, new NutsIdImpl(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getWorkspaceVersion(), "").toString());
             }
         });
         register(new AbstractFacadeCommand("fetch") {
@@ -87,7 +90,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDescriptor fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetchDescriptor(id, false,context.getSession().copy().setTransitive(transitive));
+                    fetch = context.getWorkspace().fetchDescriptor(id, false, context.getSession().copy().setTransitive(transitive));
                 } catch (Exception exc) {
                     //
                 }
@@ -179,8 +182,8 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 //Content-type
                 String boundary = context.getRequestHeaderFirstValue("Content-type");
-                if(StringUtils.isEmpty(boundary)){
-                    context.sendError(400, "Invalid Command Arguments : "+getName()+" . Invalid format.");
+                if (CoreStringUtils.isEmpty(boundary)) {
+                    context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
                     return;
                 }
                 MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
@@ -190,28 +193,33 @@ public class NutsHttpServletFacade {
                 String js = null;
                 for (ItemStreamInfo info : stream) {
                     String name = info.resolveVarInHeader("Content-Disposition", "name");
-                    if ("root".equals(name)) {
-                        root = IOUtils.readStreamAsString(info.getContent(), true).trim();
-                    } else if ("transitive".equals(name)) {
-                        transitive = Boolean.parseBoolean(IOUtils.readStreamAsString(info.getContent(), true).trim());
-                    } else if ("pattern".equals(name)) {
-                        pattern = IOUtils.readStreamAsString(info.getContent(), true).trim();
-                    } else if ("js".equals(name)) {
-                        js = IOUtils.readStreamAsString(info.getContent(), true).trim();
+                    switch (name) {
+                        case "root":
+                            root = CoreIOUtils.readStreamAsString(info.getContent(), true).trim();
+                            break;
+                        case "transitive":
+                            transitive = Boolean.parseBoolean(CoreIOUtils.readStreamAsString(info.getContent(), true).trim());
+                            break;
+                        case "pattern":
+                            pattern = CoreIOUtils.readStreamAsString(info.getContent(), true).trim();
+                            break;
+                        case "js":
+                            js = CoreIOUtils.readStreamAsString(info.getContent(), true).trim();
+                            break;
                     }
                 }
-                NutsDescriptorFilter filter =null;
+                NutsDescriptorFilter filter = null;
                 if (js != null) {
                     filter = new NutsDescriptorJavascriptFilter(js);
                 } else if (pattern != null) {
-                    filter = CoreJsonUtils.deserialize(pattern,NutsIdPatternFilter.class);
+                    filter = CoreJsonUtils.get().deserialize(pattern, NutsIdPatternFilter.class);
                 }
                 if (filter != null) {
                     Iterator<NutsId> it = context.getWorkspace().findIterator(null, filter, context.getSession().copy().setTransitive(transitive));
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                     context.sendResponseText(200, iteratorNamedNutIdToString(it));
                 } else {
-                    context.sendError(400, "Invalid Command Arguments : "+getName()+" : Missing query.");
+                    context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing query.");
                 }
             }
         });
@@ -224,36 +232,62 @@ public class NutsHttpServletFacade {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 String boundary = context.getRequestHeaderFirstValue("Content-type");
-                if(StringUtils.isEmpty(boundary)){
-                    context.sendError(400, "Invalid Command Arguments : "+getName()+" . Invalid format.");
+                if (CoreStringUtils.isEmpty(boundary)) {
+                    context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
                     return;
                 }
                 MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
                 NutsDescriptor descriptor = null;
                 String receivedContentHash = null;
                 InputStream content = null;
-                File contentFile=null;
+                File contentFile = null;
                 for (ItemStreamInfo info : stream) {
                     String name = info.resolveVarInHeader("Content-Disposition", "name");
-                    if ("descriptor".equals(name)) {
-                        descriptor = NutsDescriptor.parse(info.getContent());
-                    } else if ("content-hash".equals(name)) {
-                        receivedContentHash = SecurityUtils.evalSHA1(info.getContent());
-                    } else if ("content".equals(name)) {
-                        contentFile = IOUtils.createTempFile(descriptor);
-                        IOUtils.copy(info.getContent(),contentFile,true,true);
+                    switch (name) {
+                        case "descriptor":
+                            descriptor = CoreNutsUtils.parseNutsDescriptor(info.getContent());
+                            break;
+                        case "content-hash":
+                            receivedContentHash = CoreSecurityUtils.evalSHA1(info.getContent());
+                            break;
+                        case "content":
+                            contentFile = CoreIOUtils.createTempFile(descriptor);
+                            CoreIOUtils.copy(info.getContent(), contentFile, true, true);
+                            break;
                     }
                 }
-                if(contentFile==null){
-                    context.sendError(400, "Invalid Command Arguments : "+getName()+" : Missing File");
+                if (contentFile == null) {
+                    context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
                 }
-                NutsId id = context.getWorkspace().deploy(contentFile,receivedContentHash, descriptor, null,context.getSession().copy());
+                NutsId id = context.getWorkspace().deploy(contentFile, receivedContentHash, descriptor, null, context.getSession().copy());
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
             }
         });
     }
 
+    private static String[] extractFirstToken(String requestURI) {
+        int s1 = requestURI.indexOf('/');
+        String firstToken = "";
+        String theRest = "";
+        if (s1 == 0) {
+            s1 = requestURI.indexOf('/', 1);
+            if (s1 < 0) {
+                firstToken = requestURI.substring(1);
+                theRest = "";
+            } else {
+                firstToken = requestURI.substring(1, s1);
+                theRest = requestURI.substring(s1);
+            }
+        } else if (s1 < 0) {
+            firstToken = requestURI;
+            theRest = "";
+        } else {
+            firstToken = requestURI.substring(0, s1);
+            theRest = requestURI.substring(s1);
+        }
+        return new String[]{firstToken, theRest};
+    }
 
     public Map<String, NutsWorkspace> getWorkspaces() {
         return workspaces;
@@ -297,21 +331,15 @@ public class NutsHttpServletFacade {
         commands.put(cmd.getName(), cmd);
     }
 
-    private static class URLInfo{
-        String context;
-        String command;
-        String path;
-    }
-
-    private URLInfo parse(String requestURI,boolean root){
-        URLInfo ii=new URLInfo();
+    private URLInfo parse(String requestURI, boolean root) {
+        URLInfo ii = new URLInfo();
         String[] tokens = extractFirstToken(requestURI);
 
-        if(root) {
+        if (root) {
             ii.context = "";
             ii.command = tokens[0];
             ii.path = tokens[1];
-        }else{
+        } else {
             ii.context = tokens[0];
             tokens = extractFirstToken(tokens[1]);
             ii.command = tokens[0];
@@ -320,40 +348,17 @@ public class NutsHttpServletFacade {
         return ii;
     }
 
-    private static String[] extractFirstToken(String requestURI) {
-        int s1 = requestURI.indexOf('/');
-        String firstToken = "";
-        String theRest = "";
-        if (s1 == 0) {
-            s1 = requestURI.indexOf('/', 1);
-            if (s1 < 0) {
-                firstToken = requestURI.substring(1);
-                theRest="";
-            } else {
-                firstToken = requestURI.substring(1, s1);
-                theRest=requestURI.substring(s1);
-            }
-        } else if (s1 < 0) {
-            firstToken = requestURI;
-            theRest = "";
-        } else {
-            firstToken = requestURI.substring(0, s1);
-            theRest = requestURI.substring(s1);
-        }
-        return new String[]{firstToken,theRest};
-    }
-
     public void execute(NutsHttpServletFacadeContext context) throws IOException {
         String requestPath = context.getRequestURI().getPath();
-        URLInfo ii=parse(requestPath,false);
+        URLInfo ii = parse(requestPath, false);
         NutsWorkspace ws = workspaces.get(ii.context);
-        if(ws==null){
+        if (ws == null) {
             ws = workspaces.get("");
-            if(ws!=null) {
+            if (ws != null) {
                 ii = parse(requestPath, true);
             }
         }
-        if(ws==null){
+        if (ws == null) {
             context.sendError(404, "Workspace not found");
             return;
         }
@@ -363,13 +368,13 @@ public class NutsHttpServletFacade {
         } else {
             try {
                 try {
-                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command,ii.path,new NutsSession()));
+                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.createSession()));
                 } catch (SecurityException ex) {
-                    log.log(Level.SEVERE, "SERVER ERROR : " + ex,ex);
+                    log.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();
                     context.sendError(403, ex.toString());
                 } catch (Exception ex) {
-                    log.log(Level.SEVERE, "SERVER ERROR : " + ex,ex);
+                    log.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();
                     context.sendError(500, ex.toString());
                 }
@@ -381,6 +386,12 @@ public class NutsHttpServletFacade {
                 }
             }
         }
+    }
+
+    private static class URLInfo {
+        String context;
+        String command;
+        String path;
     }
 
 

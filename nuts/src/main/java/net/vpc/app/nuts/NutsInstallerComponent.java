@@ -46,9 +46,5 @@ public interface NutsInstallerComponent extends NutsComponent<NutsFile> {
 
     boolean isInstalled(NutsExecutionContext executionContext) throws IOException;
 
-    default boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session) throws IOException {
-        NutsExecutorDescriptor installer = nutToInstall.getDescriptor().getInstaller();
-        NutsExecutionContext executionContext = new NutsExecutionContext(nutToInstall, new String[0], installer == null ? null : installer.getArgs(), null,installer == null ? null : installer.getProperties(), session, workspace);
-        return isInstalled(executionContext);
-    }
+    boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session) throws IOException;
 }

@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.util.IteratorList;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

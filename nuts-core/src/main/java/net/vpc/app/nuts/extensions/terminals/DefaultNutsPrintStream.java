@@ -31,7 +31,7 @@ package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsPrintColors;
 import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.util.EnhancedTextChunck;
+import net.vpc.app.nuts.EnhancedTextChunck;
 
 import java.awt.*;
 import java.io.*;

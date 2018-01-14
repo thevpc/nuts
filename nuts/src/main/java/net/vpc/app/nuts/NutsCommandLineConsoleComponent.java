@@ -44,11 +44,13 @@ public interface NutsCommandLineConsoleComponent extends NutsComponent<Object> {
 
     void setWorkspace(NutsWorkspace workspace);
 
-    void runFile(File file, String[] args) throws IOException;
+    int runFile(File file, String[] args) throws IOException;
 
-    void runLine(String line);
+    int runLine(String line);
 
-    void run(String[] args);
+    int run(String[] args);
+
+    int getLastResult();
 
     NutsCommand[] getCommands();
 

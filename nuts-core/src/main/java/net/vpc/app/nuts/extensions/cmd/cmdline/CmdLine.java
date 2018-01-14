@@ -36,7 +36,7 @@ import java.util.List;
 
 import net.vpc.app.nuts.ArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  * Created by vpc on 12/7/16.
@@ -169,7 +169,7 @@ public class CmdLine {
     public boolean acceptAndRemove(boolean acceptDuplicates, String... vals) {
         String[][] vals2 = new String[vals.length][];
         for (int i = 0; i < vals2.length; i++) {
-            List<String> split = StringUtils.split(vals[i], " ");
+            List<String> split = CoreStringUtils.split(vals[i], " ");
             vals2[i] = split.toArray(new String[split.size()]);
         }
         return acceptAndRemove(acceptDuplicates, vals2);

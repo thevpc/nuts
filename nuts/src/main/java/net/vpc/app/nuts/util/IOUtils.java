@@ -62,7 +62,6 @@ public class IOUtils {
         public void close() {
         }
     };
-    private static final Logger log = Logger.getLogger(IOUtils.class.getName());
 
     public static File createFile(String path) {
         return new File(getAbsolutePath(path));
@@ -93,39 +92,6 @@ public class IOUtils {
         } catch (IOException e) {
             return path.getAbsoluteFile();
         }
-    }
-
-    public static String getFileExtension(File f) {
-        return getFileExtension(f.getName());
-    }
-
-    public static String getFileExtension(String n) {
-        int i = n.lastIndexOf('.');
-        if (i >= 0) {
-            return n.substring(i + 1);
-        }
-        return "";
-    }
-
-    public static String readStreamAsString(InputStream stream, boolean close) throws IOException {
-        return new String(readStreamAsBytes(stream, close));
-    }
-
-    public static byte[] readStreamAsBytes(InputStream stream, boolean close) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        copy(stream, os, close, true);
-        return os.toByteArray();
-    }
-
-    public static void copy(File from, File to, boolean mkdirs) throws IOException {
-        copy(new FileInputStream(from), to, mkdirs, true);
-    }
-
-    public static void copy(String from, File to, boolean mkdirs) throws IOException {
-        if (from == null) {
-            from = "";
-        }
-        copy(new ByteArrayInputStream(from.getBytes()), to, mkdirs, true);
     }
 
     public static void copy(InputStream from, File to, boolean mkdirs, boolean closeInput) throws IOException {
@@ -207,57 +173,6 @@ public class IOUtils {
         return null;
     }
 
-    public static String readPassword(String prompt, InputStream in, PrintStream out) {
-        Console cons = null;
-        char[] passwd = null;
-        if (in == null) {
-            in = System.in;
-        }
-        if (out == null) {
-            out = System.out;
-        }
-        if (in == System.in && ((cons = System.console()) != null)) {
-            if ((passwd = cons.readPassword("[%s]", prompt)) != null) {
-                String pwd = new String(passwd);
-                java.util.Arrays.fill(passwd, ' ');
-                return pwd;
-            } else {
-                return null;
-            }
-        } else {
-            out.print(prompt);
-            out.flush();
-            Scanner s = new Scanner(in);
-            return s.nextLine();
-        }
-
-    }
-
-    public static File createTempFile(NutsDescriptor descriptor, File directory) throws IOException {
-        String prefix = "temp-";
-        String ext = null;
-        if (descriptor != null) {
-            ext = StringUtils.trim(descriptor.getExt());
-            prefix = StringUtils.trim(descriptor.getId().getGroup()) + "-" + StringUtils.trim(descriptor.getId().getName()) + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
-            if (prefix.length() < 3) {
-                prefix = prefix + "tmp";
-            }
-            if (!ext.isEmpty()) {
-                ext = "." + ext;
-                if (ext.length() < 3) {
-                    ext = ".tmp" + ext;
-                }
-            } else {
-                ext = "-nuts";
-            }
-        }
-        return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), directory);
-    }
-
-    public static File createTempFile(NutsDescriptor descriptor) throws IOException {
-        return createTempFile(descriptor, null);
-    }
-
     public static Properties loadProperties(URL url) {
         Properties props = new Properties();
         InputStream inputStream = null;
@@ -277,21 +192,4 @@ public class IOUtils {
         }
         return props;
     }
-
-    public static String buildUrl(String url, String path) {
-        if (!url.endsWith("/")) {
-            if (path.startsWith("/")) {
-                return url + path;
-            } else {
-                return url + "/" + path;
-            }
-        } else {
-            if (path.startsWith("/")) {
-                return url + path.substring(1);
-            } else {
-                return url + path;
-            }
-        }
-    }
-
 }

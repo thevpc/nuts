@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.util.IOUtils;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public abstract class AbstractNutsHttpServletFacadeContext implements NutsHttpSe
     public void sendResponseFile(int code, File file) throws IOException {
         if (file != null && file.exists() && file.isFile()) {
             sendResponseHeaders(code, file.length());
-            IOUtils.copy(new FileInputStream(file), getResponseBody(),true,false);
+            CoreIOUtils.copy(new FileInputStream(file), getResponseBody(),true,false);
         } else {
             sendError(404, "File not found");
         }

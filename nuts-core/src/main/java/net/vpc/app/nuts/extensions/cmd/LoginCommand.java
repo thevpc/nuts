@@ -29,10 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
@@ -46,16 +45,17 @@ public class LoginCommand extends AbstractNutsCommand {
         super("login", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String login = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
         String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
         cmdLine.requireEmpty();
         if (cmdLine.isExecMode()) {
-            if (StringUtils.isEmpty(password)) {
+            if (CoreStringUtils.isEmpty(password)) {
                 password = context.getTerminal().readPassword("Password:");
             }
             context.getValidWorkspace().login(login, password);
         }
+        return 0;
     }
 }

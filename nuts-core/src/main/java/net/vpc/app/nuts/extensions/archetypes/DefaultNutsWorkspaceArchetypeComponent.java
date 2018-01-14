@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.archetypes;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
 import java.io.IOException;
 
@@ -62,7 +63,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
         workspace.getConfig().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
         workspace.getConfig().addImport("net.vpc");
-        workspace.getConfig().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, NutsConstants.DEFAULT_PASSPHRASE);
+        workspace.getConfig().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         NutsSecurityEntityConfig anonymous = workspace.getConfig().getSecurity(NutsConstants.USER_ANONYMOUS);
         anonymous.addRight(NutsConstants.RIGHT_FETCH_DESC);

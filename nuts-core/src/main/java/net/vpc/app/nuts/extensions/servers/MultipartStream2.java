@@ -46,6 +46,7 @@ package net.vpc.app.nuts.extensions.servers;
  * limitations under the License.
  */
 
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.util.IOUtils;
 
 import java.io.*;
@@ -1027,7 +1028,7 @@ public class MultipartStream2 {
 
     private long Streamscopy(ItemInputStream itemInputStream, OutputStream output, boolean b) throws IOException {
         try{
-           return IOUtils.copy(itemInputStream,output,b,false);
+           return CoreIOUtils.copy(itemInputStream,output,b,false);
         }finally{
             itemInputStream.close();
         }

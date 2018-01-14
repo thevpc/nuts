@@ -31,10 +31,11 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.*;
+import net.vpc.app.nuts.extensions.core.NutsSecurityEntityConfigImpl;
 import net.vpc.app.nuts.extensions.util.CoreLogUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Ref;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
@@ -52,7 +53,7 @@ public class ConfigCommand extends AbstractNutsCommand {
         super("config", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws IOException, LoginException {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws IOException, LoginException {
         Boolean autoSave = null;
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean empty = true;
@@ -154,13 +155,13 @@ public class ConfigCommand extends AbstractNutsCommand {
                 continue;
             }
             if (!cmdLine.isExecMode()) {
-                return;
+                return -1;
             }
             if (!cmdLine.isEmpty()) {
                 NutsPrintStream out = context.getTerminal().getErr();
                 out.println("Unexpected " + cmdLine.get(0));
                 out.println("type for more help : config -h");
-                return;
+                return 1;
             }
             break;
         } while (!cmdLine.isEmpty());
@@ -168,7 +169,9 @@ public class ConfigCommand extends AbstractNutsCommand {
             NutsPrintStream out = context.getTerminal().getErr();
             out.println("Missing config command");
             out.println("type for more help : config -h");
+            return 1;
         }
+        return 0;
     }
 
     private void showRepo(NutsCommandContext context, NutsRepository repository, String prefix) throws IOException {
@@ -233,7 +236,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 all.add(() -> desc.set(desc.get().setId(desc.get().getId().setGroup(value))));
             } else if (cmdLine.acceptAndRemove("-id")) {
                 String value = cmdLine.readNonOptionOrError(new ValueNonOption("id", null, "my-group:my-name#1.0")).getString();
-                all.add(() -> desc.set(desc.get().setId(NutsId.parse(value))));
+                all.add(() -> desc.set(desc.get().setId(CoreNutsUtils.parseNutsId(value))));
 
             } else if (cmdLine.acceptAndRemove("-add-os")) {
                 String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
@@ -274,10 +277,10 @@ public class ConfigCommand extends AbstractNutsCommand {
 
             } else if (cmdLine.acceptAndRemove("-add-dependency")) {
                 String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
-                all.add(() -> desc.set(desc.get().addDependency(NutsDependency.parse(value))));
+                all.add(() -> desc.set(desc.get().addDependency(CoreNutsUtils.parseNutsDependency(value))));
             } else if (cmdLine.acceptAndRemove("-remove-dependency")) {
                 String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
-                all.add(() -> desc.set(desc.get().removeDependency(NutsDependency.parse(value))));
+                all.add(() -> desc.set(desc.get().removeDependency(CoreNutsUtils.parseNutsDependency(value))));
             } else if (cmdLine.acceptAndRemove("-file")) {
                 file = cmdLine.readNonOptionOrError(new FileNonOption("file")).getString();
             } else if (cmdLine.acceptAndRemove("-save")) {
@@ -293,7 +296,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 desc.set(CoreNutsUtils.createNutsDescriptor());
             }else{
                 if (file != null) {
-                    desc.set(NutsDescriptor.parse(new File(file)));
+                    desc.set(CoreNutsUtils.parseNutsDescriptor(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new IllegalArgumentException("-file missing");
@@ -567,7 +570,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
             }
             if (repository == null) {
-                NutsSecurityEntityConfig u = new NutsSecurityEntityConfig();
+                NutsSecurityEntityConfig u = new NutsSecurityEntityConfigImpl();
                 String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
@@ -576,7 +579,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                     context.getValidWorkspace().setUserCredentials(u.getUser(), password);
                 }
             } else {
-                NutsSecurityEntityConfig u = new NutsSecurityEntityConfig();
+                NutsSecurityEntityConfig u = new NutsSecurityEntityConfigImpl();
                 String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 String mappedUser = cmdLine.readNonOption(new DefaultNonOption("MappedUser")).getString();
                 String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
@@ -609,10 +612,10 @@ public class ConfigCommand extends AbstractNutsCommand {
                 }
                 for (NutsSecurityEntityConfig u : security) {
                     context.getTerminal().getOut().println("User: " + u.getUser());
-                    if (!StringUtils.isEmpty(u.getMappedUser())) {
+                    if (!CoreStringUtils.isEmpty(u.getMappedUser())) {
                         context.getTerminal().getOut().println("   Mapper to  : " + u.getMappedUser());
                     }
-                    if (StringUtils.isEmpty(u.getCredentials())) {
+                    if (CoreStringUtils.isEmpty(u.getCredentials())) {
                         context.getTerminal().getOut().println("   Password   : None");
                     } else {
                         context.getTerminal().getOut().println("   Password   : Set");
@@ -708,44 +711,57 @@ public class ConfigCommand extends AbstractNutsCommand {
                 } else if (cmdLine.acceptAndRemoveNoDuplicates("--password")) {
                     lastOption = "--password";
                 } else {
-                    if (lastOption.equals("--add-group")) {
-                        String a = cmdLine.readNonOptionOrError(new DefaultNonOption("Group")).getString();
-                        if (u != null && cmdLine.isExecMode()) {
-                            u.addGroup(a);
-                        }
-                    } else if (lastOption.equals("--remove-group")) {
-                        String a = cmdLine.readNonOptionOrError(new GroupNonOption("Group", u)).getString();
-                        if (u != null && cmdLine.isExecMode()) {
-                            u.removeGroup(a);
-                        }
-                    } else if (lastOption.equals("--add-right")) {
-                        String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", u, false)).getString();
-                        if (u != null && cmdLine.isExecMode()) {
-                            u.addRight(a);
-                        }
-                    } else if (lastOption.equals("--remove-right")) {
-                        String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", u, true)).getString();
-                        if (u != null && cmdLine.isExecMode()) {
-                            u.removeRight(a);
-                        }
-                    } else if (lastOption.equals("--mapped-user")) {
-                        String a = cmdLine.readNonOptionOrError(new DefaultNonOption("MappedUser")).getString();
-                        if (u != null && cmdLine.isExecMode()) {
-                            u.setMappedUser(a);
-                        }
-                    } else if (lastOption.equals("--password")) {
-                        String pwd = (cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getString());
-                        if (cmdLine.isExecMode()) {
-                            if (repository == null) {
-                                context.getValidWorkspace().getConfig().setSecurity(u);
-                                context.getValidWorkspace().setUserCredentials(user, pwd);
-                            } else {
-                                repository.getConfig().setSecurity(u);
-                                repository.setUserCredentials(user, pwd);
+                    switch (lastOption) {
+                        case "--add-group": {
+                            String a = cmdLine.readNonOptionOrError(new DefaultNonOption("Group")).getString();
+                            if (u != null && cmdLine.isExecMode()) {
+                                u.addGroup(a);
                             }
+                            break;
                         }
-                    } else {
-                        cmdLine.requireEmpty();
+                        case "--remove-group": {
+                            String a = cmdLine.readNonOptionOrError(new GroupNonOption("Group", u)).getString();
+                            if (u != null && cmdLine.isExecMode()) {
+                                u.removeGroup(a);
+                            }
+                            break;
+                        }
+                        case "--add-right": {
+                            String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", u, false)).getString();
+                            if (u != null && cmdLine.isExecMode()) {
+                                u.addRight(a);
+                            }
+                            break;
+                        }
+                        case "--remove-right": {
+                            String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", u, true)).getString();
+                            if (u != null && cmdLine.isExecMode()) {
+                                u.removeRight(a);
+                            }
+                            break;
+                        }
+                        case "--mapped-user": {
+                            String a = cmdLine.readNonOptionOrError(new DefaultNonOption("MappedUser")).getString();
+                            if (u != null && cmdLine.isExecMode()) {
+                                u.setMappedUser(a);
+                            }
+                            break;
+                        }
+                        case "--password":
+                            String pwd = (cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getString());
+                            if (cmdLine.isExecMode()) {
+                                if (repository == null) {
+                                    context.getValidWorkspace().getConfig().setSecurity(u);
+                                    context.getValidWorkspace().setUserCredentials(user, pwd);
+                                } else {
+                                    repository.getConfig().setSecurity(u);
+                                    repository.setUserCredentials(user, pwd);
+                                }
+                            }
+                            break;
+                        default:
+                            cmdLine.requireEmpty();
+                            break;
                     }
                 }
             }
@@ -911,7 +927,7 @@ public class ConfigCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensions()) {
                     NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getWiredId().toString(), false, context.getSession());
-                    String extDesc = StringUtils.trim(desc.getName());
+                    String extDesc = CoreStringUtils.trim(desc.getName());
                     if (!extDesc.isEmpty()) {
                         extDesc = " : " + extDesc;
                     }
@@ -970,10 +986,9 @@ public class ConfigCommand extends AbstractNutsCommand {
                                     .setArchetype(archetype)
                                     .setCreateIfNotFound(true)
                                     .setSaveIfCreated(save)
-                                    .setCreateIfNotFound(ignoreIdFound),
-                            context.getSession()
+                                    .setCreateIfNotFound(ignoreIdFound)
                     );
-                    if (!StringUtils.isEmpty(login)) {
+                    if (!CoreStringUtils.isEmpty(login)) {
                         workspace.login(login, password);
                     }
                     trySave(context, workspace, null, autoSave, cmdLine);
@@ -1011,10 +1026,9 @@ public class ConfigCommand extends AbstractNutsCommand {
                                 new NutsWorkspaceCreateOptions()
                                         .setArchetype(archetype)
                                         .setSaveIfCreated(save)
-                                        .setCreateIfNotFound(createIfNotFound),
-                                context.getSession()
+                                        .setCreateIfNotFound(createIfNotFound)
                         );
-                        if (!StringUtils.isEmpty(login)) {
+                        if (!CoreStringUtils.isEmpty(login)) {
                             workspace.login(login, password);
                         }
                         context.setWorkspace(workspace);

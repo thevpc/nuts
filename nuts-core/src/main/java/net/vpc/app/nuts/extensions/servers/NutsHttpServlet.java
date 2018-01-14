@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,13 +29,11 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
-import net.vpc.app.nuts.extensions.cmd.AdminServerConfig;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.cmd.AdminServerConfig;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.util.JsonUtils;
 import net.vpc.app.nuts.extensions.util.ListMap;
-import net.vpc.app.nuts.util.StringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -61,6 +59,9 @@ public class NutsHttpServlet extends HttpServlet {
     private String serverId = "";
     private String workspaceLocation = null;
     private String workspaceRootLocation = null;
+    private String workspaceBootId = null;
+    private String workspaceBootVersion = null;
+    private String workspaceRootURL = null;
     private int adminServerPort = -1;
     private Map<String, String> workspaces = new HashMap<>();
     private boolean adminServer = true;
@@ -72,15 +73,13 @@ public class NutsHttpServlet extends HttpServlet {
         Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
         NutsWorkspace workspace = null;
-        NutsSession session = new NutsSession();
-        NutsWorkspace bws = null;
+        DefaultBootNutsWorkspace bws = null;
         try {
-            bws = Main.openBootstrapWorkspace(workspaceRootLocation);
+            bws = new DefaultBootNutsWorkspace(workspaceRootLocation, workspaceBootId, workspaceBootVersion, workspaceRootURL);
             workspace = bws.openWorkspace(workspaceLocation, new NutsWorkspaceCreateOptions()
-                            .setCreateIfNotFound(true)
-                            .setSaveIfCreated(true)
-                            .setArchetype("server"),
-                    session
+                    .setCreateIfNotFound(true)
+                    .setSaveIfCreated(true)
+                    .setArchetype("server")
             );
         } catch (IOException e) {
             throw new ServletException("Unable to start Workspace " + workspaceLocation);
@@ -100,10 +99,9 @@ public class NutsHttpServlet extends HttpServlet {
             if (ws == null) {
                 try {
                     ws = bws.openWorkspace(location, new NutsWorkspaceCreateOptions()
-                                    .setCreateIfNotFound(true)
-                                    .setSaveIfCreated(true)
-                                    .setArchetype("server"),
-                            session
+                            .setCreateIfNotFound(true)
+                            .setSaveIfCreated(true)
+                            .setArchetype("server")
                     );
                 } catch (IOException e) {
                     throw new ServletException("Unable to start Workspace " + workspaceLocation);
@@ -113,7 +111,7 @@ public class NutsHttpServlet extends HttpServlet {
             workspacesByWebContextPath.put(webContext, ws);
         }
 
-        if (StringUtils.isEmpty(serverId)) {
+        if (CoreStringUtils.isEmpty(serverId)) {
             String serverName = NutsConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -150,11 +148,14 @@ public class NutsHttpServlet extends HttpServlet {
         }
         adminServerPort = CoreStringUtils.parseInt(config.getInitParameter("admin-server.port"), -1);
         workspaceLocation = config.getInitParameter("workspace");
-        workspaceRootLocation = config.getInitParameter("workspaceRoot");
+        workspaceRootLocation = config.getInitParameter("workspace-root");
+        workspaceBootId = config.getInitParameter("boot-id");
+        workspaceBootVersion = config.getInitParameter("boot-version");
+        workspaceRootURL = config.getInitParameter("boot-url");
         adminServer = Boolean.valueOf(config.getInitParameter("admin"));
         try {
-            workspaces = JsonUtils.deserializeStringsMap(CoreJsonUtils.loadJsonStructure(config.getInitParameter("workspaces")), new LinkedHashMap<String, String>());
-        } catch (IOException e) {
+            workspaces = CoreJsonUtils.get().deserializeStringsMap(CoreJsonUtils.get().loadJsonStructure(config.getInitParameter("workspaces")), new LinkedHashMap<String, String>());
+        } catch (Exception e) {
             //
         }
         if (workspaces == null) {

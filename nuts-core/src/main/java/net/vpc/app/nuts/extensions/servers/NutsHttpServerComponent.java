@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -32,8 +32,8 @@ package net.vpc.app.nuts.extensions.servers;
 import com.sun.net.httpserver.*;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.ListMap;
-import net.vpc.app.nuts.util.StringUtils;
 
 import javax.net.ssl.*;
 import java.io.ByteArrayInputStream;
@@ -81,7 +81,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         int port = httpConfig.getPort();
         int backlog = httpConfig.getBacklog();
         Executor executor = httpConfig.getExecutor();
-        if (StringUtils.isEmpty(serverId)) {
+        if (CoreStringUtils.isEmpty(serverId)) {
             String serverName = NutsConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -172,9 +172,9 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                         return httpExchange.getResponseBody();
                     }
 
-                    public void sendError(int code, String msg) throws IOException{
-                        if(msg==null){
-                            msg="Error";
+                    public void sendError(int code, String msg) throws IOException {
+                        if (msg == null) {
+                            msg = "Error";
                         }
                         byte[] bytes = msg.getBytes();
                         httpExchange.sendResponseHeaders(code, bytes.length);
@@ -219,7 +219,8 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
         String finalServerId = serverId;
         return new NutsServer() {
-            boolean running=true;
+            boolean running = true;
+
             @Override
             public String getServerId() {
                 return finalServerId;
@@ -232,11 +233,11 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             @Override
             public boolean stop() throws IOException {
-                if(running) {
-                    running=false;
+                if (running) {
+                    running = false;
                     server.stop(0);
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             }

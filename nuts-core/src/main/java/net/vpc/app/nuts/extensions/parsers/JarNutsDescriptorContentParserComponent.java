@@ -30,18 +30,17 @@
 package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Ref;
 import net.vpc.app.nuts.extensions.util.StreamVisitor;
-import net.vpc.app.nuts.util.MavenUtils;
-import net.vpc.app.nuts.util.ObjectFilter;
+import net.vpc.app.nuts.extensions.repos.MavenUtils;
+import net.vpc.app.nuts.ObjectFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -50,7 +49,7 @@ import java.util.jar.Manifest;
  */
 public class JarNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("jar"));//, "war", "ear"
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
 
     @Override
     public int getSupportLevel(Object criteria) {
@@ -62,7 +61,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        NutsId JAVA = NutsId.parse("java");
+        NutsId JAVA = CoreNutsUtils.parseNutsId("java");
         Ref<NutsDescriptor> nutsjson = new Ref<>();
         Ref<NutsDescriptor> metainf = new Ref<>();
         Ref<NutsDescriptor> maven = new Ref<>();
@@ -81,33 +80,37 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         }, new StreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) throws IOException {
-                if ("META-INF/MANIFEST.MF".equals(path)) {
-                    Manifest manifest = new Manifest(inputStream);
-                    Attributes attrs = manifest.getMainAttributes();
-                    for (Object o : attrs.keySet()) {
-                        Attributes.Name attrName = (Attributes.Name) o;
-                        if ("Main-Class".equals(attrName.toString())) {
-                            mainClass.set(attrs.getValue(attrName));
+                switch (path) {
+                    case "META-INF/MANIFEST.MF":
+                        Manifest manifest = new Manifest(inputStream);
+                        Attributes attrs = manifest.getMainAttributes();
+                        for (Object o : attrs.keySet()) {
+                            Attributes.Name attrName = (Attributes.Name) o;
+                            if ("Main-Class".equals(attrName.toString())) {
+                                mainClass.set(attrs.getValue(attrName));
+                            }
                         }
-                    }
-                    NutsDescriptor d = new DefaultNutsDescriptor(
-                            NutsId.parse("temp:jar#1.0"),
-                            null,
-                            null,
-                            "jar",
-                            mainClass.isSet(), "jar", new NutsExecutorDescriptor(JAVA, new String[]{
-                            "--nuts-jar"
-                    }, null), null, null, null, null, null, null, null, null, null
-                    );
-                    metainf.set(d);
-                } else if ("META-INF/nuts.json".equals(path)) {
-                    nutsjson.set(NutsDescriptor.parse(inputStream));
-                } else {
-                    try {
-                        maven.set(MavenUtils.parsePomXml(inputStream,parserContext.getWorkspace(),parserContext.getSession()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        NutsDescriptor d = new DefaultNutsDescriptor(
+                                CoreNutsUtils.parseNutsId("temp:jar#1.0"),
+                                null,
+                                null,
+                                "jar",
+                                mainClass.isSet(), "jar", new NutsExecutorDescriptor(JAVA, new String[]{
+                                "--nuts-jar"
+                        }, null), null, null, null, null, null, null, null, null, null
+                        );
+                        metainf.set(d);
+                        break;
+                    case "META-INF/nuts.json":
+                        nutsjson.set(CoreNutsUtils.parseNutsDescriptor(inputStream));
+                        break;
+                    default:
+                        try {
+                            maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), parserContext.getSession()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
                 }
                 //continue
                 return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
@@ -129,7 +132,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         }
         if (baseNutsDescriptor == null) {
             baseNutsDescriptor = new DefaultNutsDescriptor(
-                    NutsId.parse("temp:jar#1.0"),
+                    CoreNutsUtils.parseNutsId("temp:jar#1.0"),
                     null,
                     null,
                     "jar",

@@ -31,7 +31,7 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +46,7 @@ public class WhoCommand extends AbstractNutsCommand {
         super("who", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean verbose = false;
         boolean argVisitedVerbose = false;
@@ -64,12 +64,12 @@ public class WhoCommand extends AbstractNutsCommand {
             }
         }
         if (!cmdLine.isExecMode()) {
-            return;
+            return -1;
         }
         NutsWorkspace validWorkspace = context.getValidWorkspace();
         String login = validWorkspace.getCurrentLogin();
         NutsPrintStream out = context.getTerminal().getOut();
-        if (StringUtils.isEmpty(login)) {
+        if (CoreStringUtils.isEmpty(login)) {
             out.println(NutsConstants.USER_ANONYMOUS);
         } else {
             out.println(login);
@@ -111,6 +111,6 @@ public class WhoCommand extends AbstractNutsCommand {
                 }
             }
         }
-
+        return 0;
     }
 }

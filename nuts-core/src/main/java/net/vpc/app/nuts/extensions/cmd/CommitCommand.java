@@ -45,11 +45,11 @@ public class CommitCommand extends AbstractNutsCommand {
         super("commit", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         if (autoComplete != null) {
-            return;
+            return -1;
         }
         for (String s : CoreIOUtils.expandPath(contentFile,new File(context.getCommandLine().getCwd()))) {
             NutsId nf = context.getValidWorkspace().commit(
@@ -58,5 +58,6 @@ public class CommitCommand extends AbstractNutsCommand {
             );
             context.getTerminal().getOut().println("Folder " + s + " commited successfully as " + nf);
         }
+        return 0;
     }
 }

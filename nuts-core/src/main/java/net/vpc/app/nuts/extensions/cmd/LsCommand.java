@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsTerminal;
@@ -54,7 +53,7 @@ public class LsCommand extends AbstractNutsCommand {
         boolean d=false;
         boolean l=false;
     }
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean any=false;
         Options options=new Options();
@@ -97,6 +96,7 @@ public class LsCommand extends AbstractNutsCommand {
         if(invalids.size()+files.size()+folders.size()==0){
             ls(new File(context.getCommandLine().getCwd()),options,context,context.getTerminal(),false);
         }
+        return 0;
     }
 
     private void ls(File path, Options options,NutsCommandContext context,NutsTerminal terminal,boolean addPrefix){
@@ -105,11 +105,11 @@ public class LsCommand extends AbstractNutsCommand {
         }else if(path.isDirectory()){
             if(addPrefix){
                 terminal.getOut().println(path.getName()+":");
-                for (File file1 : path.listFiles()) {
+                for (File file1 : CoreIOUtils.nonNullArray(path.listFiles())) {
                     ls0(file1,options,terminal);
                 }
             }else{
-                for (File file1 : path.listFiles()) {
+                for (File file1 : CoreIOUtils.nonNullArray(path.listFiles())) {
                     ls0(file1,options,terminal);
                 }
             }

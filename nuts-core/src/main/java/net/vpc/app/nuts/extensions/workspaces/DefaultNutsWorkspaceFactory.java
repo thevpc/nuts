@@ -82,7 +82,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         if (isRegisteredInstance(extensionPoint, implementation)) {
             throw new IllegalArgumentException("Already Registered Extension " + implementation + " for " + extensionPoint.getName());
         }
-        log.log(Level.FINE, "Registering {0} for impl instance {1}", new Object[]{extensionPoint, implementation.getClass().getName()});
+        log.log(Level.FINER, "Registering {0} for impl instance {1}", new Object[]{extensionPoint, implementation.getClass().getName()});
         instances.add(extensionPoint, implementation);
     }
 
@@ -102,14 +102,14 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         if (isRegisteredType(extensionPoint, implementation.getName())) {
             throw new IllegalArgumentException("Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
         }
-        log.log(Level.FINE, "Registering {0} for impl type {1}", new Object[]{extensionPoint, implementation.getName()});
+        log.log(Level.FINER, "Registering {0} for impl type {1}", new Object[]{extensionPoint, implementation.getName()});
         classes.add(extensionPoint, implementation);
     }
 
     public void unregisterType(Class extensionPoint, Class implementation) {
         Class registered = findRegisteredType(extensionPoint, implementation.getName());
         if (registered != null) {
-            log.log(Level.FINE, "Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
+            log.log(Level.FINER, "Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
             classes.remove(extensionPoint, registered);
         }
     }
@@ -117,7 +117,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public void unregisterType(Class extensionPoint, String implementation) {
         Class registered = findRegisteredType(extensionPoint, implementation);
         if (registered != null) {
-            log.log(Level.FINE, "Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
+            log.log(Level.FINER, "Unregistering {0} for impl type {1}", new Object[]{extensionPoint, registered.getName()});
             classes.remove(extensionPoint, registered);
         }
     }
@@ -191,12 +191,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (o == null) {
                 o = instantiate0(type);
                 singletons.put(type, o);
-                log.log(Level.FINE, "Resolve {0} to singleton instance {1}", new Object[]{baseType, o.getClass().getName()});
+                log.log(Level.FINER, "Resolve {0} to singleton instance {1}", new Object[]{baseType, o.getClass().getName()});
             }
             return (T) o;
         } else {
             T o = instantiate0(type);
-            log.log(Level.FINE, "Resolve {0} to prototype instance {1}", new Object[]{baseType, o.getClass().getName()});
+            log.log(Level.FINER, "Resolve {0} to prototype instance {1}", new Object[]{baseType, o.getClass().getName()});
             return o;
         }
     }
@@ -227,12 +227,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (o == null) {
                 o = instantiate0(type);
                 singletons.put(type, o);
-                log.log(Level.FINE, "Resolve {0} to singleton instance {1}", new Object[]{baseType, o.getClass().getName()});
+                log.log(Level.FINER, "Resolve {0} to singleton instance {1}", new Object[]{baseType, o.getClass().getName()});
             }
             return (T) o;
         } else {
             T o = instantiate0(type, argTypes, args);
-            log.log(Level.FINE, "Resolve {0} to prototype instance {1}", new Object[]{baseType, o.getClass().getName()});
+            log.log(Level.FINER, "Resolve {0} to prototype instance {1}", new Object[]{baseType, o.getClass().getName()});
             return o;
         }
     }
@@ -242,7 +242,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         Object one = instances.getOne(type);
         if (one != null) {
             //if static instance found, always return it!
-            log.log(Level.FINE, "Resolve {0} to static instance {1}", new Object[]{type, one.getClass().getName()});
+            log.log(Level.FINER, "Resolve {0} to static instance {1}", new Object[]{type, one.getClass().getName()});
             return (T) one;
         }
         return (T) resolveInstance(classes.getOne(type), type);

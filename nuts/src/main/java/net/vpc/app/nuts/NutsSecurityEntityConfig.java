@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,110 +29,38 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.JsonTransient;
-import net.vpc.app.nuts.util.StringUtils;
+public interface NutsSecurityEntityConfig {
+    long getInstanceSerialVersionUID();
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+    void setInstanceSerialVersionUID(long instanceSerialVersionUID);
 
-/**
- * Created by vpc on 1/8/17.
- */
-public class NutsSecurityEntityConfig {
+    String getMappedUser();
 
-    @JsonTransient
-    private static transient final long serialVersionUID=1;
-    private String user;
-    private String mappedUser;
-    private String credentials;
-    private Set<String> groups = new HashSet<>();
-    private Set<String> rights = new HashSet<>();
-    private long instanceSerialVersionUID = serialVersionUID;
+    void setMappedUser(String mappedUser);
 
-    public NutsSecurityEntityConfig() {
-    }
+    String getUser();
 
-    public NutsSecurityEntityConfig(String user, String credentials, String[] groups, String[] rights) {
-        setUser(user);
-        setCredentials(credentials);
-        setGroups(groups);
-        setRights(rights);
-    }
+    void setUser(String user);
 
+    String getCredentials();
 
-    public long getInstanceSerialVersionUID() {
-        return instanceSerialVersionUID;
-    }
+    void setCredentials(String credentials);
 
-    public void setInstanceSerialVersionUID(long instanceSerialVersionUID) {
-        this.instanceSerialVersionUID = instanceSerialVersionUID;
-    }
-    public String getMappedUser() {
-        return mappedUser;
-    }
+    String[] getRights();
 
-    public void setMappedUser(String mappedUser) {
-        this.mappedUser = mappedUser;
-    }
+    void setRights(String[] rights);
 
-    public String getUser() {
-        return user;
-    }
+    void addGroup(String grp);
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+    void removeGroup(String grp);
 
-    public String getCredentials() {
-        return credentials;
-    }
+    void addRight(String right);
 
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
-    }
+    void removeRight(String right);
 
-    public String[] getRights() {
-        return rights.toArray(new String[rights.size()]);
-    }
+    String[] getGroups();
 
-    public void setRights(String[] rights) {
-        this.rights = rights == null ? new HashSet<>() : new HashSet<>(Arrays.asList(rights));
-    }
+    void setGroups(String[] groups);
 
-    public void addGroup(String grp) {
-        if (!StringUtils.isEmpty(grp)) {
-            groups.add(grp);
-        }
-    }
-
-    public void removeGroup(String grp) {
-        if (!StringUtils.isEmpty(grp)) {
-            groups.remove(grp);
-        }
-    }
-
-    public void addRight(String right) {
-        if (!StringUtils.isEmpty(right)) {
-            rights.add(right);
-        }
-    }
-
-    public void removeRight(String right) {
-        if (!StringUtils.isEmpty(right)) {
-            rights.remove(right);
-        }
-    }
-
-    public String[] getGroups() {
-        return groups.toArray(new String[groups.size()]);
-    }
-
-    public void setGroups(String[] groups) {
-        this.groups = groups == null ? new HashSet<>() : new HashSet<>(Arrays.asList(groups));
-    }
-
-    public boolean containsRight(String right) {
-        return rights.contains(right);
-    }
+    boolean containsRight(String right);
 }

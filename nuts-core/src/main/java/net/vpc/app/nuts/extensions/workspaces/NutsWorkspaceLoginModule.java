@@ -33,8 +33,9 @@ import com.sun.security.auth.UserPrincipal;
 import net.vpc.app.nuts.NutsEnvironmentContext;
 import net.vpc.app.nuts.NutsSecurityEntityConfig;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.util.SecurityUtils;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -97,10 +98,10 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             }
 
             NutsSecurityEntityConfig registeredUser = workspace.getConfig().getSecurity(name);
-            if (registeredUser != null && !StringUtils.isEmpty(registeredUser.getCredentials())) {
-                if ((StringUtils.isEmpty(password) && StringUtils.isEmpty(registeredUser.getCredentials()))
-                        || (!StringUtils.isEmpty(password) && !StringUtils.isEmpty(registeredUser.getCredentials())
-                        && registeredUser.getCredentials().equals(SecurityUtils.evalSHA1(password)))) {
+            if (registeredUser != null && !CoreStringUtils.isEmpty(registeredUser.getCredentials())) {
+                if ((CoreStringUtils.isEmpty(password) && CoreStringUtils.isEmpty(registeredUser.getCredentials()))
+                        || (!CoreStringUtils.isEmpty(password) && !CoreStringUtils.isEmpty(registeredUser.getCredentials())
+                        && registeredUser.getCredentials().equals(CoreSecurityUtils.evalSHA1(password)))) {
                     this.login = name;
                     return true;
                 }
@@ -110,9 +111,9 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             throw new LoginException("Authentication failed");
 
         } catch (IOException e) {
-            throw new LoginException(StringUtils.exceptionToString(e));
+            throw new LoginException(CoreStringUtils.exceptionToString(e));
         } catch (UnsupportedCallbackException e) {
-            throw new LoginException(StringUtils.exceptionToString(e));
+            throw new LoginException(CoreStringUtils.exceptionToString(e));
         }
 
     }

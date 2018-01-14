@@ -59,9 +59,9 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public void exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext) throws IOException {
         List<String> args = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
-        executionContext.getWorkspace().exec(
+        return executionContext.getWorkspace().exec(
                 id.toString(),
                 args.toArray(new String[args.size()]),
                 executionContext.getEnv(), executionContext.getSession()

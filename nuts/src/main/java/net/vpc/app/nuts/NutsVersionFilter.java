@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.ObjectFilter;
-
 /**
  * Created by vpc on 1/8/17.
  */

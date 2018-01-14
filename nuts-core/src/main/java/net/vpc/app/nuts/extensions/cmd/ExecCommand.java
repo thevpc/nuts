@@ -31,6 +31,14 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by vpc on 1/7/17.
@@ -42,14 +50,42 @@ public class ExecCommand extends AbstractNutsCommand {
     }
 
     @Override
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
 
         if(autoComplete!=null){
-            return;
+            return -1;
         }
         String[] finalArgs = cmdLine.toArray();
-
-        context.getValidWorkspace().exec(finalArgs, context.getEnv(), context.getSession());
+        if(finalArgs.length>0 && finalArgs[0].equals("-c")){
+            int from=1;
+            if(finalArgs.length>1 && finalArgs[1].equals("-d")){
+                from++;
+            }
+            List<String> commands=new ArrayList<>();
+            Map<String,String> env=new HashMap<>();
+            boolean expectEnv=true;
+            for (int i = from; i < finalArgs.length; i++) {
+                String command = finalArgs[i];
+                if (expectEnv) {
+                    String[] s = CoreNutsUtils.splitNameAndValue(command);
+                    if (s != null) {
+                        env.put(s[0], s[1]);
+                    } else {
+                        expectEnv = false;
+                        commands.add(command);
+                    }
+                } else {
+                    commands.add(command);
+                }
+            }
+            if(commands.isEmpty()){
+                throw new IllegalArgumentException("Missing command");
+            }
+            String[] commandsArray = commands.toArray(new String[commands.size()]);
+            String currentDirectory = context.getCurrentDirectory();
+            return CoreIOUtils.execAndWait(commandsArray,env, currentDirectory==null?null:new File(currentDirectory),context.getTerminal(),true);
+        }
+        return context.getValidWorkspace().exec(finalArgs, context.getEnv(), context.getSession());
     }
 }

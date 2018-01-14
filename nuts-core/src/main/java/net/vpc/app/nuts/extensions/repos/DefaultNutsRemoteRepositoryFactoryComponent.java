@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class DefaultNutsRemoteRepositoryFactoryComponent implements NutsReposito
         if (!NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
             return NO_SUPPORT;
         }
-        if (StringUtils.isEmpty(location)) {
+        if (CoreStringUtils.isEmpty(location)) {
             return CORE_SUPPORT;
         }
         if (location.startsWith("http://") || location.startsWith("https://")) {

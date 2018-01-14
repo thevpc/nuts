@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-core</artifactId>
-    <version>0.3.4.1</version>
+    <version>0.3.5.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.3.4.1</version>
+            <version>0.3.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
@@ -93,9 +93,13 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>java-shell</artifactId>
-            <version>0.3</version>
+            <version>0.4</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.apache.maven</groupId>-->
             <!--<artifactId>maven-aether-provider</artifactId>-->
@@ -131,14 +135,18 @@
             <plugin>
                 <groupId>net.vpc.common.maven</groupId>
                 <artifactId>writer-maven-plugin</artifactId>
-                <version>1.0.3</version>
+                <version>1.0.4</version>
                 <configuration>
                     <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties</outputFile>
+                    <text>
+                        out.printProjectProperties();
+                        out.printlnf("project.repositories=%s","~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
+                    </text>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>write-properties</goal>
+                            <goal>write-bsh</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -188,7 +196,7 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->

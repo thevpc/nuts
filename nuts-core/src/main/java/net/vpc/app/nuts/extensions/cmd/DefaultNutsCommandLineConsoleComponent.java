@@ -35,7 +35,8 @@ import net.vpc.apps.javashell.cmds.*;
 import net.vpc.apps.javashell.parser.Env;
 import net.vpc.apps.javashell.parser.JavaShellEvalContext;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -50,6 +51,7 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
     private NutsCommandContext context = new DefaultNutsCommandContext();
     private NutsJavaShell sh;
     private JavaShellEvalContext javaShellContext;
+
     public DefaultNutsCommandLineConsoleComponent() {
 
     }
@@ -89,9 +91,9 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
             installCommand(command);
         }
         context.setCommandLine(this);
-        sh=new NutsJavaShell(this,workspace);
+        sh = new NutsJavaShell(this, workspace);
         javaShellContext = sh.createContext(this.context, null, null, new Env(), new String[0]);
-        context.getUserProperties().put(JavaShellEvalContext.class.getName(),javaShellContext);
+        context.getUserProperties().put(JavaShellEvalContext.class.getName(), javaShellContext);
     }
 
     public void setServiceName(String serviceName) {
@@ -103,28 +105,31 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
     }
 
     @Override
-    public void runFile(File file,String[] args) throws IOException {
-        sh.executeFile(file.getPath(),sh.createContext(javaShellContext).setArgs(args),false);
+    public int runFile(File file, String[] args) throws IOException {
+        return sh.executeFile(file.getPath(), sh.createContext(javaShellContext).setArgs(args), false);
     }
 
     @Override
-    public void runLine(String line) {
-        sh.executeLine(line,javaShellContext);
+    public int runLine(String line) {
+        return sh.executeLine(line, javaShellContext);
     }
 
     @Override
-    public void run(String[] args) {
-        sh.executeArguments(args, sh.createContext(javaShellContext).setArgs(args));
+    public int run(String[] args) {
+        return sh.executeArguments(args, sh.createContext(javaShellContext).setArgs(args));
     }
 
-    public void setCwd(String path){
-        sh.setCwd(path);
+    public int getLastResult() {
+        return sh.getLastResult();
     }
 
-    public String getCwd(){
+    public String getCwd() {
         return sh.getCwd();
     }
 
+    public void setCwd(String path) {
+        sh.setCwd(path);
+    }
 
     @Override
     public NutsCommand[] getCommands() {
@@ -188,8 +193,8 @@ public class DefaultNutsCommandLineConsoleComponent implements NutsCommandLineCo
         }
 
         @Override
-        public void exec(String[] args, NutsCommandContext context) throws Exception {
-            ec.exec(args,(JavaShellEvalContext) context.getUserProperties().get(JavaShellEvalContext.class.getName()));
+        public int exec(String[] args, NutsCommandContext context) throws Exception {
+            return ec.exec(args, (JavaShellEvalContext) context.getUserProperties().get(JavaShellEvalContext.class.getName()));
         }
 
         @Override

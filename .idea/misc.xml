@@ -8,6 +8,7 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../../common/java-shell/pom.xml" />
+        <option value="$PROJECT_DIR$/../../common/maven/writer-maven-plugin/pom.xml" />
       </list>
     </option>
   </component>

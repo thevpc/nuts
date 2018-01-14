@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.MapListener;
-
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import java.io.File;
@@ -44,6 +42,8 @@ import java.util.*;
  */
 @Prototype
 public interface NutsWorkspace extends NutsComponent<Object> {
+
+    String getWorkspaceBootVersion();
 
     String getWorkspaceVersion();
 
@@ -63,9 +63,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     Set<String> getAvailableArchetypes();
 
-    boolean initializeWorkspace(String workspaceRoot, String workspace, NutsWorkspace bootstrapWorkspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException;
+    boolean initializeWorkspace(BootNutsWorkspace workspaceBoot, String workspaceImplId, String workspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options) throws IOException;
 
-    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options, NutsSession session) throws IOException;
+    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options) throws IOException;
 
     NutsFile[] fetchNutsIdWithDependencies(NutsSession session);
 
@@ -185,9 +185,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     /////////////////////////////////////////////////////////////////
     // EXEC SUPPORT
-    void exec(String[] cmd, Properties env, NutsSession session) throws IOException;
+    int exec(String[] cmd, Properties env, NutsSession session) throws IOException;
 
-    void exec(String id, String[] args, Properties env, NutsSession session) throws IOException;
+    int exec(String id, String[] args, Properties env, NutsSession session) throws IOException;
 
     /**
      * exec another instance of nuts
@@ -282,4 +282,10 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     Map<String, String> getRuntimeProperties(NutsSession session);
 
     File resolveNutsJarFile();
+
+    String getHelpString() ;
+
+    NutsSession createSession();
+
+    BootNutsWorkspace getBoot();
 }

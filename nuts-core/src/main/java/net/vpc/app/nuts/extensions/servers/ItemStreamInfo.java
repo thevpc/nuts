@@ -40,34 +40,6 @@ import java.util.Map;
  */
 public class ItemStreamInfo {
 
-//    public static void main(String[] args) {
-//        try {
-//            String header = "multipart/form-data; boundary=159cc89fdfc";
-//
-////            File ref = new File("/home/vpc/bin/to-nuts/feenoo.jar");
-//            File ref = new File("/home/vpc/.nuts/default-workspace/default-repository/net/vpc/feenoo/1.0/feenoo-1.0.jar");
-//            byte[] refBytes = IOUtils.readStreamAsBytes(ref);
-//            System.out.println(refBytes.length);
-//
-//
-//            File file = new File("/home/vpc/http-flux-01.bin");
-//            MultipartStreamHelper stream = new MultipartStreamHelper(new FileInputStream(file), header);
-//            for (ItemStreamInfo info : stream) {
-//                String name = info.resolveVarInHeader("Content-Disposition", "name");
-//                System.out.println(name);
-//                if("content".equals(name)){
-//                    InputStream ss = info.getContent();
-//                    byte[] bytes = IOUtils.readStreamAsBytes(new ErrInputStream(ss, refBytes), true);
-//                    System.out.println(bytes.length);
-//                    IOUtils.copy(new ByteArrayInputStream(bytes),new File("/home/vpc/bin/to-nuts/feenoo-bad.jar"),true,true);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
     private Map<String, List<String>> headers = new HashMap<>();
     private InputStream content;
 

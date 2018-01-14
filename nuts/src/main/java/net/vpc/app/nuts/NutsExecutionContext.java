@@ -31,118 +31,22 @@ package net.vpc.app.nuts;
 
 import java.util.Properties;
 
-/**
- * Created by vpc on 1/15/17.
- */
-public class NutsExecutionContext {
+public interface NutsExecutionContext {
+    String[] getExecArgs();
 
-    private NutsFile nutsFile;
-    private Properties env;
-    private String[] execArgs;
-    private Properties execProperties;
-    private String[] args;
-    private NutsSession session;
-    private NutsWorkspace workspace;
-    private NutsExecutorDescriptor executorDescriptor;
+    Properties getExecProperties();
 
-    public NutsExecutionContext(NutsFile nutsFile, NutsSession session, NutsWorkspace workspace) {
-        this.nutsFile = nutsFile;
-        this.session = session;
-        if (nutsFile != null && nutsFile.getDescriptor() != null && nutsFile.getDescriptor().getInstaller() != null) {
-            NutsExecutorDescriptor ii = nutsFile.getDescriptor().getInstaller();
-            execArgs = ii.getArgs();
-            execProperties = ii.getProperties();
-        }
-        this.workspace = workspace;
-        if (args == null) {
-            args = new String[0];
-        }
-        if (execArgs == null) {
-            execArgs = new String[0];
-        }
-        if (execProperties == null) {
-            execProperties = new Properties();
-        }
-    }
+    NutsFile getNutsFile();
 
-    public NutsExecutionContext(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env,Properties execProperties, NutsSession session, NutsWorkspace workspace) {
-        if (appArgs == null) {
-            appArgs = new String[0];
-        }
-        if (executorArgs == null) {
-            executorArgs = new String[0];
-        }
-        if (execProperties == null) {
-            execProperties = new Properties();
-        }
-        this.nutsFile = nutsFile;
-        this.args = appArgs;
-        this.execArgs = executorArgs;
-        this.execProperties = execProperties;
-        this.workspace = workspace;
-        this.session = session;
-        if (env == null) {
-            env = new Properties();
-        }
-        this.env = env;
-    }
+    String[] getArgs();
 
-    public NutsExecutionContext(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor) {
-        if (args == null) {
-            args = new String[0];
-        }
-        if (execArgs == null) {
-            execArgs = new String[0];
-        }
-        if (execProperties == null) {
-            execProperties = new Properties();
-        }
-        this.nutsFile = nutsFile;
-        this.args = args;
-        this.session = session;
-        this.workspace = workspace;
-        this.executorDescriptor = executorDescriptor;
-        this.execArgs = execArgs;
-        this.execProperties = execProperties;
-        if (env == null) {
-            env = new Properties();
-        }
-        this.env = env;
-    }
+    NutsWorkspace getWorkspace();
 
-    public String[] getExecArgs() {
-        return execArgs;
-    }
+    NutsExecutorDescriptor getExecutorDescriptor();
 
-    public Properties getExecProperties() {
-        return execProperties;
-    }
+    NutsSession getSession();
 
-    public NutsFile getNutsFile() {
-        return nutsFile;
-    }
+    NutsTerminal getTerminal();
 
-    public String[] getArgs() {
-        return args;
-    }
-
-    public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
-
-    public NutsExecutorDescriptor getExecutorDescriptor() {
-        return executorDescriptor;
-    }
-
-    public NutsSession getSession() {
-        return session;
-    }
-
-    public NutsTerminal getTerminal() {
-        return session.getTerminal();
-    }
-
-    public Properties getEnv() {
-        return env;
-    }
+    Properties getEnv();
 }

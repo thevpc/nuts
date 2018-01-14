@@ -37,5 +37,5 @@ import java.io.IOException;
 @Singleton
 public interface NutsExecutorComponent extends NutsComponent<NutsFile> {
     NutsId getId() throws IOException;
-    void exec(NutsExecutionContext executionContext) throws IOException;
+    int exec(NutsExecutionContext executionContext) throws IOException;
 }

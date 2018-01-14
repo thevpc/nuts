@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.installers;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsFile;
-import net.vpc.app.nuts.NutsInstallerComponent;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.core.NutsExecutionContextImpl;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.util.IOUtils;
@@ -67,7 +65,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
     }
 
     private File getNutsFolder(NutsExecutionContext executionContext) {
-        File store = IOUtils.resolvePath(executionContext.getWorkspace().getConfig().getEnv(NutsConstants.ENV_STORE, NutsConstants.DEFAULT_STORE_ROOT),
+        File store = CoreIOUtils.resolvePath(executionContext.getWorkspace().getConfig().getEnv(NutsConstants.ENV_STORE, NutsConstants.DEFAULT_STORE_ROOT),
                 CoreIOUtils.createFileByCwd(executionContext.getWorkspace().getWorkspaceLocation(),(executionContext.getWorkspace().getCwd())),
                 executionContext.getWorkspace().getWorkspaceRootLocation());
         return CoreNutsUtils.getNutsFolder(executionContext.getNutsFile().getId(), store);
@@ -78,7 +76,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         File installFolder = getNutsFolder(executionContext);
         CoreIOUtils.unzip(executionContext.getNutsFile().getFile(), installFolder,executionContext.getWorkspace().getCwd());
         File log = new File(installFolder, ".nuts-install.log");
-        IOUtils.copy(new ByteArrayInputStream(String.valueOf(new Date()).getBytes()), log, true, true);
+        CoreIOUtils.copy(new ByteArrayInputStream(String.valueOf(new Date()).getBytes()), log, true, true);
         if (executionContext.getExecArgs() != null && executionContext.getExecArgs().length > 0) {
             executionContext.getNutsFile().setInstallFolder(installFolder);
             CoreIOUtils.execAndWait(executionContext.getNutsFile(), executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
@@ -101,5 +99,10 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         CoreIOUtils.delete(installFolder);
     }
 
+    public boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session) throws IOException {
+        NutsExecutorDescriptor installer = nutToInstall.getDescriptor().getInstaller();
+        NutsExecutionContext executionContext = new NutsExecutionContextImpl(nutToInstall, new String[0], installer == null ? null : installer.getArgs(), null,installer == null ? null : installer.getProperties(), session, workspace);
+        return isInstalled(executionContext);
+    }
 
 }

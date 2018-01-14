@@ -30,7 +30,8 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.boot.DefaultNutsTerminal;
+import net.vpc.app.nuts.extensions.core.DefaultNutsTerminal;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.util.IOUtils;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
@@ -44,7 +45,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.cmd.AbstractNutsCommandAutoComplete;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import org.jline.terminal.TerminalBuilder;
 
 /**
@@ -134,7 +135,7 @@ public class NutsJLineTerminal implements NutsTerminal {
                                                 if (cmdCandidate != null) {
                                                     String value = cmdCandidate.getValue();
                                                     String display = cmdCandidate.getDisplay();
-                                                    if (!StringUtils.isEmpty(value) || !StringUtils.isEmpty(display)) {
+                                                    if (!CoreStringUtils.isEmpty(value) || !CoreStringUtils.isEmpty(display)) {
                                                         candidates.add(new Candidate(
                                                                 value,
                                                                 display,
@@ -153,7 +154,7 @@ public class NutsJLineTerminal implements NutsTerminal {
                     //                .completer(completer)
                     //                .parser(parser)
                     .build();
-            reader.setVariable(LineReader.HISTORY_FILE, IOUtils.createFile(workspace.getWorkspaceLocation(), "history"));
+            reader.setVariable(LineReader.HISTORY_FILE, CoreIOUtils.createFile(workspace.getWorkspaceLocation(), "history"));
             this.out = workspace.createEnhancedPrintStream(reader.getTerminal().output());
             this.err = workspace.createEnhancedPrintStream(reader.getTerminal().output());//.setColor(NutsPrintStream.RED);
         }

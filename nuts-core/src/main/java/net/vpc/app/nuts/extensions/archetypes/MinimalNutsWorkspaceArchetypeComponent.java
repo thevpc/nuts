@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.archetypes;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
 import java.io.IOException;
 
@@ -51,7 +52,7 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     public void initialize(NutsWorkspace workspace, NutsSession session) throws IOException {
         NutsRepository defaultRepo = workspace.addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
         defaultRepo.getConfig().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
-        workspace.getConfig().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, NutsConstants.DEFAULT_PASSPHRASE);
+        workspace.getConfig().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //simple rights for minimal utilization
         NutsSecurityEntityConfig anonymous = workspace.getConfig().getSecurity(NutsConstants.USER_ANONYMOUS);

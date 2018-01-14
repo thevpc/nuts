@@ -29,57 +29,22 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by vpc on 2/1/17.
- */
-public class NutsSession implements Cloneable {
+public interface NutsSession {
+    boolean isTransitive();
 
-    private boolean transitive = true;
-    private FetchMode fetchMode=FetchMode.ONLINE;
-    private NutsTerminal terminal;
-    private Map<String,Object> properties=new HashMap<>();
+    NutsSession setTransitive(boolean transitive);
 
-    public NutsSession() {
-    }
+    FetchMode getFetchMode();
 
-    public boolean isTransitive() {
-        return transitive;
-    }
+    NutsSession setFetchMode(FetchMode fetchMode);
 
-    public NutsSession setTransitive(boolean transitive) {
-        this.transitive = transitive;
-        return this;
-    }
+    NutsSession copy();
 
-    public FetchMode getFetchMode() {
-        return fetchMode;
-    }
+    Map<String, Object> getProperties();
 
-    public NutsSession setFetchMode(FetchMode fetchMode) {
-        this.fetchMode = (fetchMode==null)?FetchMode.ONLINE : fetchMode;
-        return this;
-    }
-
-    public NutsSession copy() {
-        try {
-            NutsSession cloned = (NutsSession) clone();
-            cloned.properties=new HashMap<>(properties);
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
+    void setProperties(Map<String, Object> properties);
 
     //    public InputStream getIn() {
 //        return in;
@@ -107,12 +72,7 @@ public class NutsSession implements Cloneable {
 //        this.err = NutsPrintStream.create(err);
 //        return this;
 //    }
-    public NutsTerminal getTerminal() {
-        return terminal;
-    }
+    NutsTerminal getTerminal();
 
-    public NutsSession setTerminal(NutsTerminal terminal) {
-        this.terminal = terminal;
-        return this;
-    }
+    NutsSession setTerminal(NutsTerminal terminal);
 }

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.3.4.1</version>
+    <version>0.3.5.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -60,11 +60,7 @@
     </distributionManagement>
     <dependencies>
 
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.0.4</version>
-        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -158,7 +154,7 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->

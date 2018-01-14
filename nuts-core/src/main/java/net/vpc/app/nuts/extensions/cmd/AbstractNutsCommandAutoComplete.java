@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.cmd;
 import net.vpc.app.nuts.ArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultArgumentCandidate;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -52,13 +52,13 @@ public abstract class AbstractNutsCommandAutoComplete implements NutsCommandAuto
 
     @Override
     public void addCandidate(String value, String display) {
-        if (!StringUtils.isEmpty(value)) {
+        if (!CoreStringUtils.isEmpty(value)) {
             candidates.put(value, new DefaultArgumentCandidate(value));
         }
     }
 
     public void addCandidate(ArgumentCandidate value) {
-        if (!StringUtils.isEmpty(value.getValue())) {
+        if (!CoreStringUtils.isEmpty(value.getValue())) {
             candidates.put(value.getValue(), value);
         }
     }

@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsId;
@@ -49,13 +48,13 @@ public class DeployCommand extends AbstractNutsCommand {
         super("deploy", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         String descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
         String repository = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
         if (autoComplete != null) {
-            return;
+            return -1;
         }
         for (String s : CoreIOUtils.expandPath(contentFile,new File(context.getCommandLine().getCwd()))) {
             NutsId id = null;
@@ -69,5 +68,6 @@ public class DeployCommand extends AbstractNutsCommand {
             );
             context.getTerminal().getOut().println("File " + s + " deployed successfully as " + id);
         }
+        return 0;
     }
 }

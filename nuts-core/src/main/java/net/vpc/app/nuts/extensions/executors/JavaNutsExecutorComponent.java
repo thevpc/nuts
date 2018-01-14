@@ -33,8 +33,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.util.NutsUtils;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     public static final Logger log = Logger.getLogger(JavaNutsExecutorComponent.class.getName());
-    public static final NutsId ID = NutsId.parse("java");
+    public static final NutsId ID = CoreNutsUtils.parseNutsId("java");
 
     @Override
     public NutsId getId() throws IOException {
@@ -64,7 +64,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public void exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext) throws IOException {
         NutsFile nutMainFile = executionContext.getNutsFile();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
         String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
@@ -82,13 +82,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         if (executionContext.getExecutorDescriptor() != null) {
             runnerProps = (Properties) CorePlatformUtils.mergeMaps(executionContext.getExecutorDescriptor().getProperties(), runnerProps);
         }
-        for (Iterator<String> iterator = env.iterator(); iterator.hasNext(); ) {
-            String k = iterator.next();
+        for (String k : env) {
             String[] strings = CoreNutsUtils.splitNameAndValue(k);
             if (strings != null) {
                 runnerProps.put(strings[0], strings[1]);
-            }else{
-                runnerProps.put(k, null);
+            } else {
+                runnerProps.put(k, "");
             }
         }
 
@@ -109,7 +108,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             String k = (String) e.getKey();
             String value = (String) e.getValue();
             if (k.startsWith("-J")) {
-                jvmArgs.add(k.substring(2) + (value==null?"":("=" + value)));
+                jvmArgs.add(k.substring(2) + (value.isEmpty()?"":("=" + value)));
             } else if (k.startsWith("-D") || k.startsWith("-Xmx") || k.startsWith("-Xms")) {
                 jvmArgs.add(k + "=" + value);
             } else if (k.equals("-java-version") || k.equals("java-version")) {
@@ -130,7 +129,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
 
-        if (StringUtils.isEmpty(javaVersion)) {
+        if (CoreStringUtils.isEmpty(javaVersion)) {
             javaVersion = "java";
         }
 
@@ -140,7 +139,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         for (NutsDependency d : descriptor.getDependencies()) {
             nutsFiles.addAll(
                     executionContext.getWorkspace().fetchWithDependencies(d.toId().toString(), true,
-                            NutsUtils.EXEC_DEPENDENCIES_FILTER,
+                            CoreNutsUtils.EXEC_DEPENDENCIES_FILTER,
                             executionContext.getSession().copy().setTransitive(true))
             );
         }
@@ -175,38 +174,41 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
             args.add(sb.toString());
             if (mainClass.contains(":")) {
-                List<String> possibleClasses = StringUtils.split(mainClass, ":");
-                if (possibleClasses.size() == 0) {
-                    throw new IllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
-                } else if (possibleClasses.size() == 1) {
-                    args.add(mainClass);
-                } else {
-                    while (true) {
-                        executionContext.getTerminal().getOut().println("Multiple runnable classes detected  - actually <<<" + possibleClasses.size() + ">>> . Select one :");
-                        for (int i = 0; i < possibleClasses.size(); i++) {
-                            executionContext.getTerminal().getOut().drawln("==[" + (i + 1) + "]== <<<" + possibleClasses.get(i) + ">>>");
-                        }
-                        String line = executionContext.getTerminal().readLine("Enter class # or name to run it. Type 'cancel' to cancel : ");
-                        if (line != null) {
-                            if (line.equals("cancel")) {
-                                return;
+                List<String> possibleClasses = CoreStringUtils.split(mainClass, ":");
+                switch (possibleClasses.size()) {
+                    case 0:
+                        throw new IllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                    case 1:
+                        args.add(mainClass);
+                        break;
+                    default:
+                        while (true) {
+                            executionContext.getTerminal().getOut().println("Multiple runnable classes detected  - actually <<<" + possibleClasses.size() + ">>> . Select one :");
+                            for (int i = 0; i < possibleClasses.size(); i++) {
+                                executionContext.getTerminal().getOut().drawln("==[" + (i + 1) + "]== <<<" + possibleClasses.get(i) + ">>>");
                             }
-                            if (StringUtils.isInt(line)) {
-                                int i = Integer.parseInt(line);
-                                if (i >= 1 && i <= possibleClasses.size()) {
-                                    args.add(possibleClasses.get(i - 1));
-                                    break;
+                            String line = executionContext.getTerminal().readLine("Enter class # or name to run it. Type 'cancel' to cancel : ");
+                            if (line != null) {
+                                if (line.equals("cancel")) {
+                                    return -1;
                                 }
-                            } else {
-                                for (String possibleClass : possibleClasses) {
-                                    if (possibleClass.equals(line)) {
-                                        args.add(possibleClass);
+                                if (CoreStringUtils.isInt(line)) {
+                                    int i = Integer.parseInt(line);
+                                    if (i >= 1 && i <= possibleClasses.size()) {
+                                        args.add(possibleClasses.get(i - 1));
                                         break;
+                                    }
+                                } else {
+                                    for (String possibleClass : possibleClasses) {
+                                        if (possibleClass.equals(line)) {
+                                            args.add(possibleClass);
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
+                        break;
                 }
             } else {
                 args.add(mainClass);
@@ -215,7 +217,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         args.addAll(app);
 
 
-        CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
+        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 args.toArray(new String[args.size()]),
                 null, null, executionContext.getTerminal(), showCommand
         );

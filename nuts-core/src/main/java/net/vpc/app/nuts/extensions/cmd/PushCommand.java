@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 
@@ -46,7 +45,7 @@ public class PushCommand extends AbstractNutsCommand {
         super("push", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String repo = null;
         cmdLine.requireNonEmpty();
@@ -63,5 +62,6 @@ public class PushCommand extends AbstractNutsCommand {
                 }
             }
         }
+        return 0;
     }
 }

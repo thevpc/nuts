@@ -47,7 +47,7 @@ public class InstallCommand extends AbstractNutsCommand {
         super("install", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         cmdLine.requireNonEmpty();
         boolean force = false;
@@ -125,6 +125,7 @@ public class InstallCommand extends AbstractNutsCommand {
                 descriptorFile = null;
             }
         } while (!cmdLine.isEmpty());
+        return 0;
     }
 
     private void logInstallStatus(NutsFile file, NutsTerminal terminal) {

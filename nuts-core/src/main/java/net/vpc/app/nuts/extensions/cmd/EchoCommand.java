@@ -29,8 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.ArchitectureNonOption;
+import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsCommandContext;
+import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
 
@@ -43,41 +44,42 @@ public class EchoCommand extends AbstractNutsCommand {
         super("echo", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
-        CmdLine cmd=new CmdLine(autoComplete,args);
-        boolean noTrailingNewLine=false;
-        boolean plain=false;
-        boolean first=true;
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+        CmdLine cmd = new CmdLine(autoComplete, args);
+        boolean noTrailingNewLine = false;
+        boolean plain = false;
+        boolean first = true;
         NutsPrintStream out = context.getTerminal().getOut();
-        while(!cmd.isEmpty()){
-            if(cmd.isOption()){
+        while (!cmd.isEmpty()) {
+            if (cmd.isOption()) {
                 CmdLine.Val option = cmd.readHead();
-                if(option.isAny("-n")){
-                    noTrailingNewLine=true;
-                }else if(option.isAny("-p")){
-                    plain=true;
-                }else{
-                    throw new IllegalArgumentException("Unsupported option "+option);
+                if (option.isAny("-n")) {
+                    noTrailingNewLine = true;
+                } else if (option.isAny("-p")) {
+                    plain = true;
+                } else {
+                    throw new IllegalArgumentException("Unsupported option " + option);
                 }
-            }else{
-                if(cmd.isExecMode()){
-                    if(first){
-                        first=false;
-                    }else{
+            } else {
+                if (cmd.isExecMode()) {
+                    if (first) {
+                        first = false;
+                    } else {
                         out.print(" ");
                     }
-                    if(plain){
-                        out.print(cmd.readNonOptionOrError(new ValueNonOption("value",context)).getString());
-                    }else{
-                        out.draw(cmd.readNonOptionOrError(new ValueNonOption("value",context)).getString());
+                    if (plain) {
+                        out.print(cmd.readNonOptionOrError(new ValueNonOption("value", context)).getString());
+                    } else {
+                        out.draw(cmd.readNonOptionOrError(new ValueNonOption("value", context)).getString());
                     }
                 }
             }
         }
-        if(cmd.isExecMode()) {
+        if (cmd.isExecMode()) {
             if (!noTrailingNewLine) {
                 out.println();
             }
         }
+        return 0;
     }
 }

@@ -1,8 +1,37 @@
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
+ */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
 import org.objectweb.asm.*;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.util.*;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
@@ -25,131 +54,10 @@ import java.util.zip.ZipOutputStream;
  * Created by vpc on 5/16/17.
  */
 public class CoreIOUtils {
-    public static final PrintStream NULL_PRINT_STREAM = new PrintStream(IOUtils.NULL_OUTPUT_STREAM) {
-        @Override
-        public void flush() {
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public boolean checkError() {
-            return false;
-        }
-
-        @Override
-        public void write(int b) {
-
-        }
-
-        @Override
-        public void write(byte[] buf, int off, int len) {
-        }
-
-        @Override
-        public void print(boolean b) {
-        }
-
-        @Override
-        public void print(char c) {
-        }
-
-        @Override
-        public void print(int i) {
-        }
-
-        @Override
-        public void print(long l) {
-        }
-
-        @Override
-        public void print(float f) {
-        }
-
-        @Override
-        public void print(double d) {
-        }
-
-        @Override
-        public void print(char[] s) {
-        }
-
-        @Override
-        public void print(String s) {
-        }
-
-        @Override
-        public void print(Object obj) {
-        }
-
-        @Override
-        public void println() {
-        }
-
-        @Override
-        public void println(boolean x) {
-        }
-
-        @Override
-        public void println(char x) {
-        }
-
-        @Override
-        public void println(int x) {
-        }
-
-        @Override
-        public void println(long x) {
-        }
-
-        @Override
-        public void println(float x) {
-        }
-
-        @Override
-        public void println(double x) {
-        }
-
-        @Override
-        public void println(char[] x) {
-        }
-
-        @Override
-        public void println(String x) {
-        }
-
-        @Override
-        public void println(Object x) {
-        }
-
-        @Override
-        public PrintStream printf(String format, Object... args) {
-            return this;
-        }
-
-        @Override
-        public PrintStream printf(Locale l, String format, Object... args) {
-            return this;
-        }
-
-        @Override
-        public PrintStream append(CharSequence csq) {
-            return this;
-        }
-
-        @Override
-        public PrintStream append(CharSequence csq, int start, int end) {
-            return this;
-        }
-
-        @Override
-        public PrintStream append(char c) {
-            return this;
-        }
-    };
+    public static final OutputStream NULL_OUTPUT_STREAM = NullOutputStream.INSTANCE;
+    public static final PrintStream NULL_PRINT_STREAM = NullPrintStream.INSTANCE;
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
+
     public static boolean visitZipFile(InputStream zipFile, ObjectFilter<String> possiblePaths, StreamVisitor visitor) throws IOException {
         byte[] buffer = new byte[4 * 1024];
 
@@ -387,7 +295,7 @@ public class CoreIOUtils {
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = StringUtils.trim(StringUtils.replaceVars(arg, mapper));
+            String s = CoreStringUtils.trim(CoreStringUtils.replaceVars(arg, mapper));
             if (s.startsWith("<::expand::>")) {
                 Collections.addAll(args2, CoreStringUtils.parseCommandline(s));
             } else {
@@ -424,24 +332,24 @@ public class CoreIOUtils {
     }
 
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
-        requestedJavaVersion = StringUtils.trim(requestedJavaVersion);
-        NutsVersionFilter javaVersionFilter = VersionUtils.createFilter(requestedJavaVersion);
+        requestedJavaVersion = CoreStringUtils.trim(requestedJavaVersion);
+        NutsVersionFilter javaVersionFilter = CoreVersionUtils.createFilter(requestedJavaVersion);
         String bestJavaPath = null;
         String bestJavaVersion = null;
         for (Map.Entry<Object, Object> entry : workspace.getConfig().getEnv().entrySet()) {
             String key = (String) entry.getKey();
             if (key.startsWith("rt.java.")) {
                 String javaVersion = key.substring("rt.java.".length());
-                if (javaVersionFilter.accept(new NutsVersion(javaVersion))) {
-                    if (bestJavaVersion == null || VersionUtils.compareVersions(bestJavaVersion, javaVersion) < 0) {
+                if (javaVersionFilter.accept(new NutsVersionImpl(javaVersion))) {
+                    if (bestJavaVersion == null || CoreVersionUtils.compareVersions(bestJavaVersion, javaVersion) < 0) {
                         bestJavaVersion = javaVersion;
                         bestJavaPath = (String) entry.getValue();
                     }
                 }
             }
         }
-        if (StringUtils.isEmpty(bestJavaPath)) {
-            if (StringUtils.isEmpty(requestedJavaVersion)) {
+        if (CoreStringUtils.isEmpty(bestJavaPath)) {
+            if (CoreStringUtils.isEmpty(requestedJavaVersion)) {
                 log.log(Level.FINE, "No valid JRE found. recommended " + requestedJavaVersion + " . using default");
             } else {
                 log.log(Level.FINE, "No valid JRE found. using default.");
@@ -450,8 +358,8 @@ public class CoreIOUtils {
         }
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
             File file = createFileByCwd(bestJavaPath,workspace.getCwd());
-            if (file.isDirectory() && IOUtils.createFile(file, "bin").isDirectory()) {
-                bestJavaPath = IOUtils.createFile(bestJavaPath, "bin/java").getPath();
+            if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
+                bestJavaPath = CoreIOUtils.createFile(bestJavaPath, "bin/java").getPath();
             }
         }
         return bestJavaPath;
@@ -515,19 +423,24 @@ public class CoreIOUtils {
             connection.disconnect();
         }
         String name = getURLName(url);
-        String ext = IOUtils.getFileExtension(name);
+        String ext = getFileExtension(name);
         if (ext.isEmpty()) {
-            if (StringUtils.isEmpty(contentType)) {
+            if (CoreStringUtils.isEmpty(contentType)) {
                 ext = ".unknown";
             } else {
-                if (contentType.equals("application/zip")) {
-                    ext = ".zip";
-                } else if (contentType.equals("application/x-rar-compressed")) {//not supported yet
-                    ext = ".rar";
-                } else if (contentType.equals("application/java-archive")) {
-                    ext = ".jar";
-                } else {
-                    ext = ".unknown";
+                switch (contentType) {
+                    case "application/zip":
+                        ext = ".zip";
+                        break;
+                    case "application/x-rar-compressed": //not supported yet
+                        ext = ".rar";
+                        break;
+                    case "application/java-archive":
+                        ext = ".jar";
+                        break;
+                    default:
+                        ext = ".unknown";
+                        break;
                 }
             }
 
@@ -797,7 +710,7 @@ public class CoreIOUtils {
             return all.toArray(new File[all.size()]);
         } else {
             if (path.contains("*") || path.contains("?")) {
-                Pattern s = Pattern.compile(StringUtils.simpexpToRegexp(path, false));
+                Pattern s = Pattern.compile(CoreStringUtils.simpexpToRegexp(path, false));
                 File[] files = createFileByCwd(base,cwd).listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
@@ -809,7 +722,7 @@ public class CoreIOUtils {
                 }
                 return files;
             } else {
-                File f = IOUtils.createFile(base, path);
+                File f = CoreIOUtils.createFile(base, path);
                 if (f.exists()) {
                     return new File[]{f};
                 }
@@ -997,7 +910,7 @@ public class CoreIOUtils {
     }
 
     public static byte[] readStreamAsBytes(File stream) throws IOException {
-        return IOUtils.readStreamAsBytes(new FileInputStream(stream), true);
+        return readStreamAsBytes(new FileInputStream(stream), true);
     }
 
     public static byte[] readStreamAsBytes(InputStream stream, int maxSize, boolean close) throws IOException {
@@ -1026,11 +939,11 @@ public class CoreIOUtils {
     }
 
     public static void copy(URL from, File to, boolean mkdirs) throws IOException {
-        IOUtils.copy(from.openStream(), to, mkdirs, true);
+        CoreIOUtils.copy(from.openStream(), to, mkdirs, true);
     }
 
     public static void copy(File from, OutputStream to, boolean closeOutput) throws IOException {
-        IOUtils.copy(new FileInputStream(from), to, true, closeOutput);
+        CoreIOUtils.copy(new FileInputStream(from), to, true, closeOutput);
     }
 
     public static void copy(Reader from, OutputStream to, boolean closeInput, boolean closeOutput) throws IOException {
@@ -1056,14 +969,239 @@ public class CoreIOUtils {
         }
     }
 
-//    public static void main(String[] args) {
-//        String f="/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts/target/nuts-0.3.3.jar";
-//        try {
-//            try(InputStream is=new FileInputStream(f)){
-//                System.out.println(resolveMainClasses(is));
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static File[] nonNullArray(File[] array1) {
+        return array1==null?new File[0] : array1;
+    }
+
+    public static String readStreamAsString(InputStream stream, boolean close) throws IOException {
+        return new String(readStreamAsBytes(stream, close));
+    }
+
+    public static byte[] readStreamAsBytes(InputStream stream, boolean close) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        CoreIOUtils.copy(stream, os, close, true);
+        return os.toByteArray();
+    }
+
+    public static void copy(File from, File to, boolean mkdirs) throws IOException {
+        CoreIOUtils.copy(new FileInputStream(from), to, mkdirs, true);
+    }
+
+    public static String getFileExtension(File f) {
+        return getFileExtension(f.getName());
+    }
+
+    public static String getFileExtension(String n) {
+        int i = n.lastIndexOf('.');
+        if (i >= 0) {
+            return n.substring(i + 1);
+        }
+        return "";
+    }
+
+    public static void copy(String from, File to, boolean mkdirs) throws IOException {
+        if (from == null) {
+            from = "";
+        }
+        CoreIOUtils.copy(new ByteArrayInputStream(from.getBytes()), to, mkdirs, true);
+    }
+
+    public static String readPassword(String prompt, InputStream in, PrintStream out) {
+        Console cons = null;
+        char[] passwd = null;
+        if (in == null) {
+            in = System.in;
+        }
+        if (out == null) {
+            out = System.out;
+        }
+        if (in == System.in && ((cons = System.console()) != null)) {
+            if ((passwd = cons.readPassword("[%s]", prompt)) != null) {
+                String pwd = new String(passwd);
+                Arrays.fill(passwd, ' ');
+                return pwd;
+            } else {
+                return null;
+            }
+        } else {
+            out.print(prompt);
+            out.flush();
+            Scanner s = new Scanner(in);
+            return s.nextLine();
+        }
+
+    }
+
+
+    public static File createFile(String path) {
+        return new File(getAbsolutePath(path));
+    }
+
+    public static File createFile(File parent, String path) {
+        return new File(parent, path);
+    }
+
+    public static File createFile(String parent, String path) {
+        return new File(getAbsolutePath(parent), path);
+    }
+
+    public static String getAbsolutePath(String path) {
+        try {
+            return getAbsoluteFile(new File(path)).getCanonicalPath();
+        } catch (IOException e) {
+            return getAbsoluteFile(new File(path)).getAbsolutePath();
+        }
+    }
+
+    public static File getAbsoluteFile(File path) {
+        if (path.isAbsolute()) {
+            return path;
+        }
+        try {
+            return path.getCanonicalFile();
+        } catch (IOException e) {
+            return path.getAbsoluteFile();
+        }
+    }
+
+    public static void copy(InputStream from, File to, boolean mkdirs, boolean closeInput) throws IOException {
+        try {
+            File parentFile = to.getParentFile();
+            if (mkdirs && parentFile != null) {
+                parentFile.mkdirs();
+            }
+            File temp = new File(to.getPath() + "~");
+            try {
+                Files.copy(from, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.move(temp.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } finally {
+                temp.delete();
+            }
+        } finally {
+            if (closeInput) {
+                from.close();
+            }
+        }
+    }
+
+    public static boolean isAbsolutePath(String location) {
+        return new File(location).isAbsolute();
+    }
+
+    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) throws IOException {
+        byte[] bytes = new byte[10240];
+        int count;
+        long all = 0;
+        try {
+            try {
+                while ((count = from.read(bytes)) > 0) {
+                    to.write(bytes, 0, count);
+                    all += count;
+                }
+                return all;
+            } finally {
+                if (closeInput) {
+                    from.close();
+                }
+            }
+        } finally {
+            if (closeOutput) {
+                to.close();
+            }
+        }
+    }
+
+    public static File resolvePath(String path, File baseFolder,String workspaceRoot) {
+        if(CoreStringUtils.isEmpty(workspaceRoot)){
+            workspaceRoot=NutsConstants.DEFAULT_WORKSPACE_ROOT;
+        }
+        if (path != null && path.length() > 0) {
+            String firstItem = "";
+            if ('\\' == File.separatorChar) {
+                String[] split = path.split("([/\\\\])");
+                if (split.length > 0) {
+                    firstItem = split[0];
+                }
+            } else {
+                String[] split = path.split("(/|" + File.separatorChar + ")");
+                if (split.length > 0) {
+                    firstItem = split[0];
+                }
+            }
+            if (firstItem.equals("~~")) {
+                return resolvePath(workspaceRoot + "/" + path.substring(2), null,workspaceRoot);
+            } else if (firstItem.equals("~")) {
+                return new File(System.getProperty("user.home"), path.substring(1));
+            } else if (isAbsolutePath(path)) {
+                return new File(path);
+            } else if (baseFolder != null) {
+                return CoreIOUtils.createFile(baseFolder, path);
+            } else {
+                return CoreIOUtils.createFile(path);
+            }
+        }
+        return null;
+    }
+
+    public static File createTempFile(NutsDescriptor descriptor, File directory) throws IOException {
+        String prefix = "temp-";
+        String ext = null;
+        if (descriptor != null) {
+            ext = CoreStringUtils.trim(descriptor.getExt());
+            prefix = CoreStringUtils.trim(descriptor.getId().getGroup()) + "-" + CoreStringUtils.trim(descriptor.getId().getName()) + "-" + CoreStringUtils.trim(descriptor.getId().getVersion().getValue());
+            if (prefix.length() < 3) {
+                prefix = prefix + "tmp";
+            }
+            if (!ext.isEmpty()) {
+                ext = "." + ext;
+                if (ext.length() < 3) {
+                    ext = ".tmp" + ext;
+                }
+            } else {
+                ext = "-nuts";
+            }
+        }
+        return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), directory);
+    }
+
+    public static File createTempFile(NutsDescriptor descriptor) throws IOException {
+        return createTempFile(descriptor, null);
+    }
+
+    public static Properties loadProperties(URL url) {
+        Properties props = new Properties();
+        InputStream inputStream = null;
+        try {
+            try {
+                if (url != null) {
+                    inputStream = url.openStream();
+                    props.load(inputStream);
+                }
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return props;
+    }
+
+    public static String buildUrl(String url, String path) {
+        if (!url.endsWith("/")) {
+            if (path.startsWith("/")) {
+                return url + path;
+            } else {
+                return url + "/" + path;
+            }
+        } else {
+            if (path.startsWith("/")) {
+                return url + path.substring(1);
+            } else {
+                return url + path;
+            }
+        }
+    }
+
 }

@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.AbstractNutsCommand;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
@@ -46,7 +45,7 @@ public class ErrCommand extends AbstractNutsCommand {
         super("err", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean verbose = false;
         boolean visitedArgVerbose = false;
@@ -62,7 +61,7 @@ public class ErrCommand extends AbstractNutsCommand {
             String lastErrorMessage = context.getCommandLine().getLastErrorMessage();
             Throwable lastError = context.getCommandLine().getLastThrowable();
             if (lastError == null) {
-                return;
+                return 0;
             }
             if (verbose) {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -75,5 +74,6 @@ public class ErrCommand extends AbstractNutsCommand {
                 context.getTerminal().getErr().println(lastErrorMessage);
             }
         }
+        return 0;
     }
 }

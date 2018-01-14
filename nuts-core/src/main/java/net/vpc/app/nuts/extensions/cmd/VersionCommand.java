@@ -29,7 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsCommandContext;
+import net.vpc.app.nuts.NutsPrintStream;
 
 import java.util.Map;
 
@@ -42,16 +44,13 @@ public class VersionCommand extends AbstractNutsCommand {
         super("version", CORE_SUPPORT);
     }
 
-    public void run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
-        Map<String, String> runtimeProperties = context.getWorkspace().getRuntimeProperties(context.getSession());
+    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
         NutsPrintStream out = context.getTerminal().getOut();
-        out.drawln("boot-version         : [[" + runtimeProperties.get("nuts.boot.version") + "]]");
-        out.drawln("boot-location        : [[" + runtimeProperties.get("nuts.boot.workspace") + "]]");
-        out.drawln("boot-api             : [[" + runtimeProperties.get("nuts.boot.api-component") + "]]");
-        out.drawln("boot-core            : [[" + runtimeProperties.get("nuts.boot.core-component") + "]]");
+        out.drawln("boot-version         : [[" + context.getWorkspace().getWorkspaceBootVersion() + "]]");
         out.drawln("workspace-version    : [[" + context.getWorkspace().getWorkspaceVersion() + "]]");
         out.drawln("workspace-location   : [[" + context.getWorkspace().getWorkspaceLocation() + "]]");
         out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
         out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+        return 0;
     }
 }

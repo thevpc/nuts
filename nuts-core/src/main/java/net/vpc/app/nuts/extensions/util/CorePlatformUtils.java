@@ -1,14 +1,49 @@
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
+ */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.Main;
-import net.vpc.app.nuts.util.StringUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Created by vpc on 5/16/17.
@@ -108,7 +143,7 @@ public class CorePlatformUtils {
             }
         }
         if (osVersion.toString().trim().isEmpty()) {
-            StringUtils.clear(osVersion);
+            CoreStringUtils.clear(osVersion);
             try {
                 CoreIOUtils.execAndEcho(new String[]{"uname", "-r"}, null, null, osVersion, null, 50);
             } catch (Exception e) {
@@ -126,33 +161,39 @@ public class CorePlatformUtils {
                         int i = strLine.indexOf('=');
                         String n = strLine.substring(0, i);
                         String v = strLine.substring(i + 1);
-                        if (n.equals("ID")) {
-                            if (v.startsWith("\"")) {
-                                v = v.substring(1, v.length() - 1);
-                            }
-                            disId = v;
-                        } else if (n.equals("VERSION_ID")) {
-                            if (v.startsWith("\"")) {
-                                v = v.substring(1, v.length() - 1);
-                            }
-                            disVersion = v;
-                        } else if (n.equals("PRETTY_NAME")) {
-                            if (v.startsWith("\"")) {
-                                v = v.substring(1, v.length() - 1);
-                            }
-                            disName = v;
-                        } else if (n.equals("DISTRIB_ID")) {
-                            if (v.startsWith("\"")) {
-                                v = v.substring(1, v.length() - 1);
-                            }
-                            disName = v;
-                        } else if (n.equals("DISTRIB_RELEASE")) {
-                            if (v.startsWith("\"")) {
-                                v = v.substring(1, v.length() - 1);
-                            }
-                            disVersion = v;
+                        switch (n) {
+                            case "ID":
+                                if (v.startsWith("\"")) {
+                                    v = v.substring(1, v.length() - 1);
+                                }
+                                disId = v;
+                                break;
+                            case "VERSION_ID":
+                                if (v.startsWith("\"")) {
+                                    v = v.substring(1, v.length() - 1);
+                                }
+                                disVersion = v;
+                                break;
+                            case "PRETTY_NAME":
+                                if (v.startsWith("\"")) {
+                                    v = v.substring(1, v.length() - 1);
+                                }
+                                disName = v;
+                                break;
+                            case "DISTRIB_ID":
+                                if (v.startsWith("\"")) {
+                                    v = v.substring(1, v.length() - 1);
+                                }
+                                disName = v;
+                                break;
+                            case "DISTRIB_RELEASE":
+                                if (v.startsWith("\"")) {
+                                    v = v.substring(1, v.length() - 1);
+                                }
+                                disVersion = v;
+                                break;
                         }
-                        if (!StringUtils.isEmpty(disVersion) && !StringUtils.isEmpty(disName) && !StringUtils.isEmpty(disId)) {
+                        if (!CoreStringUtils.isEmpty(disVersion) && !CoreStringUtils.isEmpty(disName) && !CoreStringUtils.isEmpty(disId)) {
                             break;
                         }
 //                        System.out.println(f.getName() + " : " + strLine);
@@ -177,8 +218,8 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
-            if (!StringUtils.isEmpty(distId)) {
-                if (!StringUtils.isEmpty(distId)) {
+            if (!CoreStringUtils.isEmpty(distId)) {
+                if (!CoreStringUtils.isEmpty(distId)) {
                     return distId + "#" + distVersion;
                 } else {
                     return distId;
@@ -199,7 +240,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (StringUtils.isEmpty(v)) {
+            if (CoreStringUtils.isEmpty(v)) {
                 return "linux";
             }
             return "linux#" + v;
@@ -238,7 +279,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (StringUtils.isEmpty(v)) {
+            if (CoreStringUtils.isEmpty(v)) {
                 return "sunos";
             }
             return "sunos#" + v;
@@ -247,7 +288,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (StringUtils.isEmpty(v)) {
+            if (CoreStringUtils.isEmpty(v)) {
                 return "freebsd";
             }
             return "freebsd#" + v;
@@ -256,7 +297,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedArch(String arch) {
-        if (StringUtils.isEmpty(arch)) {
+        if (CoreStringUtils.isEmpty(arch)) {
             return true;
         }
         if (SUPPORTED_ARCH.contains(arch)) {
@@ -266,7 +307,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedOs(String os) {
-        if (StringUtils.isEmpty(os)) {
+        if (CoreStringUtils.isEmpty(os)) {
             return true;
         }
         if (SUPPORTED_OS.contains(os)) {
@@ -294,18 +335,6 @@ public class CorePlatformUtils {
         String[] arr = new String[endIndex - beginIndex];
         System.arraycopy(source, beginIndex, arr, 0, endIndex - beginIndex);
         return arr;
-    }
-    public static void main(String[] args) {
-//        try {
-//            System.out.println(resolveLocalFileFromResource(Main.class,"/META-INF/nuts-version.properties"));
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-        try {
-            System.out.println(resolveLocalFileFromResource(Main.class,"/java/lang/Object.class"));
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
     }
 
     public static File resolveLocalFileFromResource(Class cls,String url) throws MalformedURLException {
@@ -384,4 +413,216 @@ public class CorePlatformUtils {
         return dest;
     }
 
+    public static String getterName(String name, Class type) {
+        if (Boolean.TYPE.equals(type)) {
+            return "is" + suffix(name);
+        }
+        return "get" + suffix(name);
+    }
+
+    public static String setterName(String name) {
+        //Class<?> type = field.getDataType();
+        return "set" + suffix(name);
+    }
+
+    private static String suffix(String s) {
+        char[] chars = s.toCharArray();
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
+    }
+
+    public static PlatformBeanProperty[] findPlatformBeanProperties(Class platformType) {
+        LinkedHashMap<String, PlatformBeanProperty> visited = new LinkedHashMap<>();
+        Class curr = platformType;
+        while (curr != null && !curr.equals(Object.class)) {
+            for (Method method : curr.getDeclaredMethods()) {
+                String n = method.getName();
+                String field = null;
+                if (method.getParameterTypes().length == 0 && method.getReturnType().equals(Boolean.TYPE) && n.startsWith("is") && n.length() > 2 && Character.isUpperCase(n.charAt(2))) {
+                    field = n.substring(2);
+                } else if (method.getParameterTypes().length == 0 && !method.getReturnType().equals(Boolean.TYPE) && n.startsWith("get") && n.length() > 3 && Character.isUpperCase(n.charAt(3))) {
+                    field = n.substring(3);
+                } else if (method.getParameterTypes().length == 1 && method.getReturnType().equals(Void.TYPE) && n.startsWith("set") && n.length() > 3 && Character.isUpperCase(n.charAt(3))) {
+                    field = n.substring(3);
+                }
+                if (field != null) {
+                    char[] chars = field.toCharArray();
+                    chars[0] = Character.toLowerCase(chars[0]);
+                    field = new String(chars);
+                    if (!visited.containsKey(field)) {
+                        PlatformBeanProperty platformBeanProperty = findPlatformBeanProperty(field, platformType);
+                        if (platformBeanProperty != null) {
+                            visited.put(field, platformBeanProperty);
+                        }
+                    }
+                }
+            }
+            curr = curr.getSuperclass();
+        }
+        return visited.values().toArray(new PlatformBeanProperty[visited.size()]);
+    }
+
+    public static PlatformBeanProperty findPlatformBeanProperty(String field, Class platformType) {
+        Field jfield = null;
+        try {
+            jfield = platformType.getDeclaredField(field);
+        } catch (NoSuchFieldException e) {
+            //ignore
+        }
+        String g1 = getterName(field, Object.class);
+        String g2 = getterName(field, Boolean.TYPE);
+        String s = setterName(field);
+        Class<?> x = platformType;
+        Method getter = null;
+        Method setter = null;
+        Class propertyType = null;
+        LinkedHashMap<Class, Method> setters = new LinkedHashMap<Class, Method>();
+        while (x != null) {
+            for (Method m : x.getDeclaredMethods()) {
+                if (!Modifier.isStatic(m.getModifiers())) {
+                    String mn = m.getName();
+                    if (getter == null) {
+                        if (g1.equals(mn) || g2.equals(mn)) {
+                            if (m.getParameterTypes().length == 0 && !Void.TYPE.equals(m.getReturnType())) {
+                                getter = m;
+                                Class<?> ftype = getter.getReturnType();
+                                for (Class key : new HashSet<Class>(setters.keySet())) {
+                                    if (!key.equals(ftype)) {
+                                        setters.remove(key);
+                                    }
+                                }
+                                if (setter == null) {
+                                    setter = setters.get(ftype);
+                                }
+                            }
+                        }
+                    }
+                    if (setter == null) {
+                        if (s.equals(mn)) {
+                            if (m.getParameterTypes().length == 1) {
+                                Class<?> stype = m.getParameterTypes()[0];
+                                if (getter != null) {
+                                    Class<?> gtype = getter.getReturnType();
+                                    if (gtype.equals(stype)) {
+                                        if (!setters.containsKey(stype)) {
+                                            setters.put(stype, m);
+                                        }
+                                        if (setter == null) {
+                                            setter = m;
+                                        }
+                                    }
+                                } else {
+                                    if (!setters.containsKey(stype)) {
+                                        setters.put(stype, m);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (getter != null && setter != null) {
+                        break;
+                    }
+                }
+            }
+            if (getter != null && setter != null) {
+                break;
+            }
+            x = x.getSuperclass();
+        }
+        if (getter != null) {
+            propertyType = getter.getReturnType();
+        }
+        if (getter == null && setter == null && setters.size() > 0) {
+            Method[] settersArray = setters.values().toArray(new Method[setters.size()]);
+            setter = settersArray[0];
+            if (settersArray.length > 1) {
+                //TODO log?
+            }
+        }
+        if (getter == null && setter != null && propertyType == null) {
+            propertyType = setter.getParameterTypes()[0];
+        }
+        if (getter != null || setter != null) {
+            return new DefaultPlatformBeanProperty(field, propertyType, jfield, getter, setter);
+        }
+        return null;
+    }
+
+    public static Boolean getExecutableJar(File file) throws IOException {
+        if (file == null || !file.isFile()) {
+            return null;
+        }
+        return getMainClass(file) != null;
+    }
+
+    public static boolean isExecutableJar(File file) throws IOException {
+        return getMainClass(file) != null;
+    }
+
+    public static String getMainClass(File file) {
+        if (file == null || !file.isFile()) {
+            return null;
+        }
+        try {
+            try (JarFile f = new JarFile(file)) {
+                Manifest manifest = f.getManifest();
+                if (manifest == null) {
+                    return null;
+                }
+                String mainClass = manifest.getMainAttributes().getValue("Main-Class");
+//            if(!CoreStringUtils.isEmpty(mainClass)) {
+//                System.out.println(">> " + mainClass + " : " + file);
+//            }
+                return !CoreStringUtils.isEmpty(mainClass) ? mainClass : null;
+            }
+        } catch (Exception ex) {
+            //invalid file
+            return null;
+        }
+    }
+
+
+    public static boolean isLoadedClassPath(File file,ClassLoader classLoader) {
+//    private boolean isLoadedClassPath(NutsFile nutsFile) {
+//        if (file.getId().isSameFullName(NutsId.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
+//            return true;
+//        }
+        try {
+//            File file = nutsFile.getFile();
+            if (file != null) {
+                ZipFile zipFile = null;
+                try {
+                    zipFile = new ZipFile(file);
+                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                    while (entries.hasMoreElements()) {
+                        ZipEntry zipEntry = entries.nextElement();
+                        String zname = zipEntry.getName();
+                        if (!zname.endsWith("/") && zname.endsWith(".class")) {
+                            String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
+                            try {
+                                Class<?> aClass = (classLoader==null?Thread.currentThread().getContextClassLoader():classLoader).loadClass(clz);
+                                System.out.println("Loaded "+aClass+" from "+file);
+                                return true;
+                            } catch (ClassNotFoundException e) {
+                                return false;
+                            }
+                        }
+                    }
+                } finally {
+                    if (zipFile != null) {
+                        try {
+                            zipFile.close();
+                        } catch (IOException e) {
+                            //ignorereturn false;
+                        }
+                    }
+                }
+
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return false;
+    }
 }

@@ -29,11 +29,8 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.NutsUtils;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -41,22 +38,6 @@ import java.util.Map;
  * Created by vpc on 2/19/17.
  */
 public interface NutsDescriptor {
-
-    static NutsDescriptor parseOrNull(File file) {
-        return NutsUtils.parseOrNullNutsDescriptor(file);
-    }
-
-    static NutsDescriptor parse(File file) throws IOException {
-        return NutsUtils.parseNutsDescriptor(file);
-    }
-
-    static NutsDescriptor parse(String str) throws IOException {
-        return NutsUtils.parseNutsDescriptor(str);
-    }
-
-    static NutsDescriptor parse(InputStream in) throws IOException {
-        return NutsUtils.parseNutsDescriptor(in);
-    }
 
     boolean matchesEnv(String arch, String os, String dist, String platform);
 
