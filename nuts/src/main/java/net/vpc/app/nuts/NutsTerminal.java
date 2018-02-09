@@ -38,13 +38,13 @@ import java.io.InputStream;
 @Prototype
 public interface NutsTerminal extends NutsComponent<Object> {
 
-    void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException;
+    void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) ;
 
     void setCommandContext(NutsCommandContext context);
 
-    String readLine(String prompt) throws IOException;
+    String readLine(String prompt) ;
 
-    String readPassword(String prompt) throws IOException;
+    String readPassword(String prompt) ;
 
     InputStream getIn();
 

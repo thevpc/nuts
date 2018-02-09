@@ -44,12 +44,24 @@ public class NutsFile {
     private boolean installed;
     private File installFolder;
 
-    public NutsFile(NutsId id, NutsDescriptor descriptor, File file, boolean cached, boolean temporary) {
+    public NutsFile(NutsId id, NutsDescriptor descriptor, File file, boolean cached, boolean temporary,File installFolder) {
         this.descriptor = descriptor;
         this.file = file;
         this.id = id;
         this.cached = cached;
         this.temporary = temporary;
+        this.installFolder = installFolder;
+    }
+
+    public NutsFile(NutsFile other) {
+        if(other!=null) {
+            this.descriptor = other.descriptor;
+            this.file = other.file;
+            this.id = other.id;
+            this.cached = other.cached;
+            this.temporary = other.temporary;
+            this.installFolder = other.installFolder;
+        }
     }
 
     public File getInstallFolder() {
@@ -100,5 +112,9 @@ public class NutsFile {
                 " id=" + id +
                 ", file=" + file +
                 '}';
+    }
+
+    public NutsFile copy(){
+        return new NutsFile(this);
     }
 }

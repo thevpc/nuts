@@ -3,38 +3,33 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.LogUtils;
-import net.vpc.app.nuts.util.StringUtils;
-
-import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -52,7 +47,8 @@ public class Main {
         }
     }
 
-    public static void uncheckedMain(String[] args) throws IOException, LoginException, InterruptedException {
+    public static void uncheckedMain(String[] args) {
+//        DiagSignalHandler.install("INT");
 //        System.out.println(">>"+getBootVersion()+" :: "+Arrays.asList(args));
         long startTime = System.currentTimeMillis();
         int startAppArgs = 0;
@@ -80,7 +76,6 @@ public class Main {
         Set<String> excludedRepositories = new HashSet<>();
         List<String> extraEnv = new ArrayList<>();
 
-
         for (int i = 0; i < args.length; i++) {
             startAppArgs = i;
             String a = args[i];
@@ -89,63 +84,63 @@ public class Main {
                     case "--workspace-root":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for workspace");
+                            throw new NutsIllegalArgumentsException("Missing argument for workspace");
                         }
                         workspaceRoot = args[i];
                         break;
                     case "--workspace":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for workspace");
+                            throw new NutsIllegalArgumentsException("Missing argument for workspace");
                         }
                         workspace = args[i];
                         break;
                     case "--archetype":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for archetype");
+                            throw new NutsIllegalArgumentsException("Missing argument for archetype");
                         }
                         archetype = args[i];
                         break;
                     case "--login":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for login ");
+                            throw new NutsIllegalArgumentsException("Missing argument for login ");
                         }
                         login = args[i];
                         break;
                     case "--password":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for password");
+                            throw new NutsIllegalArgumentsException("Missing argument for password");
                         }
                         password = args[i];
                         break;
                     case "--apply-updates":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for apply-updates");
+                            throw new NutsIllegalArgumentsException("Missing argument for apply-updates");
                         }
                         applyUpdatesFile = args[i];
                         break;
                     case "--boot-version":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for boot-version");
+                            throw new NutsIllegalArgumentsException("Missing argument for boot-version");
                         }
                         bootVersion = args[i];
                         break;
                     case "--boot-id":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for boot-id");
+                            throw new NutsIllegalArgumentsException("Missing argument for boot-id");
                         }
                         bootId = args[i];
                         break;
                     case "--boot-url":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for boot-url");
+                            throw new NutsIllegalArgumentsException("Missing argument for boot-url");
                         }
                         bootURL = args[i];
                         break;
@@ -194,28 +189,28 @@ public class Main {
                     case "--log-size":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for log-size");
+                            throw new NutsIllegalArgumentsException("Missing argument for log-size");
                         }
                         logSize = Integer.parseInt(args[i]);
                         break;
                     case "--log-count":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for log-count");
+                            throw new NutsIllegalArgumentsException("Missing argument for log-count");
                         }
                         logCount = Integer.parseInt(args[i]);
                         break;
                     case "--exclude-extensions":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for exclude-extensions");
+                            throw new NutsIllegalArgumentsException("Missing argument for exclude-extensions");
                         }
                         excludedExtensions.addAll(StringUtils.split(args[i], " ,;"));
                         break;
                     case "--exclude-repositories":
                         i++;
                         if (i >= args.length) {
-                            throw new IllegalArgumentException("Missing argument for exclude-repositories");
+                            throw new NutsIllegalArgumentsException("Missing argument for exclude-repositories");
                         }
                         excludedRepositories.addAll(StringUtils.split(args[i], " ,;"));
                         break;
@@ -241,18 +236,19 @@ public class Main {
         }
 
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
-        DefaultBootNutsWorkspace bws = new DefaultBootNutsWorkspace(workspaceRoot,bootId,bootVersion,bootURL);
+        DefaultNutsBootWorkspace bws = new DefaultNutsBootWorkspace(workspaceRoot, bootId, bootVersion, bootURL, null);
         if (!showError.isEmpty()) {
+            for (String s : showError) {
+                System.err.println(s);
+            }
             System.err.println("Try 'nuts --help' for more information.");
-            throw new IllegalArgumentException("Try 'nuts --help' for more information.");
+            throw new NutsIllegalArgumentsException("Try 'nuts --help' for more information.");
         }
         boolean someProcessing = false;
-
 
         List<String> argsList = new ArrayList<>(extraEnv);
         argsList.addAll(Arrays.asList(args).subList(startAppArgs, args.length));
         String[] args2 = argsList.toArray(new String[argsList.size()]);
-
 
         NutsWorkspace ws;
         try {
@@ -268,7 +264,7 @@ public class Main {
             System.err.println("Unable to locate nuts-core components.");
             System.err.println("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...");
             System.err.println("Exiting nuts, Bye!");
-            throw new IllegalArgumentException("Unable to locate nuts-core components", ex);
+            throw new NutsIllegalArgumentsException("Unable to locate nuts-core components", ex);
         }
         NutsSession session = ws.createSession();
 
@@ -287,12 +283,12 @@ public class Main {
         }
 
         if (applyUpdatesFile != null) {
-            ws.execExternalNuts(session, new File(applyUpdatesFile), args, false, false);
+            ws.execExternalNuts(new File(applyUpdatesFile), args, false, false, session);
             return;
         }
 
         if (checkupdates || doupdate) {
-            if (ws.checkWorkspaceUpdates(session, doupdate, args).length > 0) {
+            if (ws.checkWorkspaceUpdates(doupdate, args, session).length > 0) {
                 return;
             }
             someProcessing = true;
@@ -301,11 +297,11 @@ public class Main {
         if (version) {
             NutsPrintStream out = session.getTerminal().getOut();
 
-            Map<String, String> runtimeProperties = ws.getRuntimeProperties(session);
-            out.drawln("boot-version         : [[" + ws.getWorkspaceBootVersion() + "]]");
-            out.drawln("workspace-version    : [[" + ws.getWorkspaceVersion() + "]]");
+            Map<String, String> runtimeProperties = ws.getRuntimeProperties();
+            out.drawln("workspace-boot       : [[" + ws.getWorkspaceBootId() + "]]");
+            out.drawln("workspace-runtime    : [[" + ws.getWorkspaceRuntimeId() + "]]");
             out.drawln("workspace-location   : [[" + ws.getWorkspaceLocation() + "]]");
-            out.drawln("target-workspace     : [[" + runtimeProperties.get("nuts.boot.target-workspace") + "]]");
+            out.drawln("target-workspace     : [[" + runtimeProperties.get("nuts.workspace-boot.version") + "]]");
             out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
             out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
 
@@ -321,9 +317,9 @@ public class Main {
             help(ws, session.getTerminal().getOut());
             return;
         }
-        NutsCommandLineConsoleComponent commandLine = null;
+        NutsConsole commandLine = null;
         try {
-            commandLine = ws.createCommandLineConsole(session);
+            commandLine = ws.createConsole(session);
         } catch (NutsExtensionMissingException ex) {
             perf = showPerf(startTime, perf, session);
             session.getTerminal().getErr().println("Unable to create Console. Make sure nuts-core is installed properly.");
@@ -331,7 +327,6 @@ public class Main {
         }
         perf = showPerf(startTime, perf, session);
         commandLine.run(args2);
-
 
     }
 

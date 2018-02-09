@@ -41,7 +41,8 @@ public class LogoutCommand extends AbstractNutsCommand {
         super("logout", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         cmdLine.requireEmpty();
         if (!cmdLine.isExecMode()) {

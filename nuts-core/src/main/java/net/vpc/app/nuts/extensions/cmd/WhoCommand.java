@@ -46,17 +46,18 @@ public class WhoCommand extends AbstractNutsCommand {
         super("who", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean verbose = false;
         boolean argVisitedVerbose = false;
         boolean argAll = false;
         boolean argAllRights = false;
         while (!cmdLine.isEmpty()) {
-            if (!argVisitedVerbose && cmdLine.acceptAndRemove("--verbose", "-v")) {
+            if (!argVisitedVerbose && cmdLine.read("--verbose", "-v")) {
                 argVisitedVerbose = true;
                 verbose = true;
-            } else if (!argAllRights && cmdLine.acceptAndRemove("--all", "-a")) {
+            } else if (!argAllRights && cmdLine.read("--all", "-a")) {
                 argAllRights = true;
                 argAll = true;
             } else {

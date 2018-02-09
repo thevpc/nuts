@@ -40,16 +40,14 @@ public interface NutsCommandAutoComplete {
 
     List<String> getWords();
 
-    List<ArgumentCandidate> getCandidates();
+    List<NutsArgumentCandidate> getCandidates();
 
     int getCurrentWordIndex();
-
-    NutsCommandContext getCommandContext();
 
     void addCandidate(String value, String display);
 
     void addExpectedTypedValue(String type, String name);
 
-    void addCandidate(ArgumentCandidate value);
+    void addCandidate(NutsArgumentCandidate value);
 
 }

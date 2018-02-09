@@ -30,15 +30,15 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.NutsTerminalDelegate;
+import net.vpc.app.nuts.extensions.terminals.NutsTerminalDelegate;
 import net.vpc.apps.javashell.cmds.JavaShellInternalCmd;
 import net.vpc.apps.javashell.parser.JavaShellEvalContext;
 
 class NutsShellInternalCmd implements JavaShellInternalCmd {
     private final NutsCommand ncommand;
-    private final  DefaultNutsCommandLineConsoleComponent component;
+    private final DefaultNutsConsole component;
 
-    public NutsShellInternalCmd(NutsCommand ncommand, DefaultNutsCommandLineConsoleComponent component) {
+    public NutsShellInternalCmd(NutsCommand ncommand, DefaultNutsConsole component) {
         this.ncommand = ncommand;
         this.component = component;
     }

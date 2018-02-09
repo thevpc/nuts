@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -50,9 +50,9 @@ public class ExtensionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultArgumentCandidate(NutsConstants.NUTS_COMPONENT_CORE_ID));
+    public List<NutsArgumentCandidate> getValues() {
+        List<NutsArgumentCandidate> all = new ArrayList<>();
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.NUTS_COMPONENT_CORE_ID));
         //should find all nuts with packaging "nuts-extension"
         return all;
     }

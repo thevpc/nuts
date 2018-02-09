@@ -30,9 +30,7 @@
 package net.vpc.app.nuts;
 
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
@@ -41,11 +39,16 @@ import java.util.*;
  * Created by vpc on 1/5/17.
  */
 @Prototype
-public interface NutsWorkspace extends NutsComponent<Object> {
+public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
-    String getWorkspaceBootVersion();
+    /////////////////////////////////////////////////////////////////
+    // CONFIG
 
-    String getWorkspaceVersion();
+    NutsBootWorkspace getBoot();
+
+    NutsId getWorkspaceBootId();
+
+    NutsId getWorkspaceRuntimeId();
 
     String getWorkspaceLocation();
 
@@ -53,51 +56,64 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsWorkspaceConfig getConfig();
 
-    NutsServer getServer(String serverId);
-
-    void stopServer(String serverId) throws IOException;
-
-    boolean isRunningServer(String serverId);
-
-    List<NutsServer> getServers();
-
     Set<String> getAvailableArchetypes();
 
-    boolean initializeWorkspace(BootNutsWorkspace workspaceBoot, String workspaceImplId, String workspace, ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options) throws IOException;
+    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
 
-    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options) throws IOException;
 
-    NutsFile[] fetchNutsIdWithDependencies(NutsSession session);
+    /////////////////////////////////////////////////////////////////
+    // NUTS RETRIEVAL
 
-    NutsFile fetchNutsId(NutsSession session) throws IOException;
+    Iterator<NutsId> findIterator(NutsSearch search, NutsSession session);
+
+    List<NutsId> find(NutsSearch search, NutsSession session);
+
+    File copyTo(String id, File localPath, NutsSession session);
+
+    NutsFile fetch(String id, NutsSession session);
+
+    NutsFile[] fetchDependencies(NutsDependencySearch search, NutsSession session);
+
+    NutsFile fetchWithDependencies(String id, NutsSession session);
+
+    NutsDescriptor fetchDescriptor(String id, boolean effective, NutsSession session);
+
+    String fetchHash(String id, NutsSession session);
+
+    String fetchDescriptorHash(String id, NutsSession session);
+
+    boolean isFetched(String id, NutsSession session);
+
+    NutsId resolveId(String id, NutsSession session);
+
+    NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession session);
+
+    NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
+
 
     /////////////////////////////////////////////////////////////////
     // NUTS MANAGEMENTS
-    NutsFile updateWorkspace(NutsSession session) throws IOException;
+    NutsFile updateWorkspace(NutsSession session);
 
-    NutsUpdate[] checkWorkspaceUpdates(NutsSession session, boolean applyUpdates, String[] args) throws IOException;
+    NutsUpdate[] checkWorkspaceUpdates(boolean applyUpdates, String[] args, NutsSession session);
 
-    NutsUpdate checkUpdates(String id, NutsSession session) throws IOException;
+    NutsUpdate checkUpdates(String id, NutsSession session);
 
-    NutsFile update(String id, NutsSession session) throws IOException;
+    NutsFile update(String id, NutsSession session);
 
-    List<NutsFile> update(Set<String> toUpdateIds, Set<String> toRetainDependencies, NutsSession session) throws IOException;
+    NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsSession session);
 
-    NutsFile fetch(String id, NutsSession session) throws IOException;
+    NutsFile install(String id, NutsSession session);
 
-    boolean isFetched(String id, NutsSession session) throws IOException;
+    NutsFile checkout(String id, File folder, NutsSession session);
 
-    NutsFile install(String id, NutsSession session) throws IOException;
+    NutsId commit(File folder, NutsSession session);
 
-    NutsFile checkout(String id, File folder, NutsSession session) throws IOException;
+    boolean isInstalled(String id, boolean checkDependencies, NutsSession session);
 
-    NutsId commit(File folder, NutsSession session) throws IOException;
+    boolean uninstall(String id, NutsSession session);
 
-    boolean isInstalled(String id, boolean checkDependencies, NutsSession session) throws IOException;
-
-    boolean uninstall(String id, NutsSession session) throws IOException;
-
-    void push(String id, String repoId, NutsSession session) throws IOException;
+    void push(String id, String repoId, NutsSession session);
 
     /**
      * creates a zip file based on the folder.
@@ -107,142 +123,106 @@ public interface NutsWorkspace extends NutsComponent<Object> {
      * @param destFile      created bundle file or null to create a file with the very same name as the folder
      * @param session       current session
      * @return bundled nuts file, the nuts is neither deployed nor installed!
-     * @throws IOException on I/O error
      */
-    NutsFile createBundle(File contentFolder, File destFile, NutsSession session) throws IOException;
+    NutsFile createBundle(File contentFolder, File destFile, NutsSession session);
 
-    /**
-     * @param contentInputStream content stream to be deployed
-     * @param sha1               if available, stream hash will be evaluated and compared
-     *                           against this SHA1 hash
-     * @param descriptor         stream descriptor, if null, default descriptor will be
-     *                           looked for
-     * @param repositoryId
-     * @return
-     * @throws IOException
-     */
-    NutsId deploy(InputStream contentInputStream, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) throws IOException;
+    NutsId deploy(NutsDeployment deployment, NutsSession session);
 
-    NutsId deploy(File contentFile, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) throws IOException;
-
-    NutsId deploy(File contentFile, String contentFileSHA1, File descriptor, String descSHA1, String repositoryId, NutsSession session) throws IOException;
-
-    NutsId deploy(String contentFile, String sha1, NutsDescriptor descriptor, String repositoryId, NutsSession session) throws IOException;
-
-    NutsId deploy(String contentURL, String sha1, String descriptorURL, String descSHA1, String repositoryId, NutsSession session) throws IOException;
-
-    NutsId resolveId(String id, NutsSession session) throws IOException;
-
-    Iterator<NutsId> findIterator(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException;
-
-    List<NutsId> find(NutsRepositoryFilter repositoryFilter, NutsDescriptorFilter filter, NutsSession session) throws IOException;
-
-    /**
-     * finds all Ids for the group and name (aka finds all versions)
-     *
-     * @param id
-     * @param versionFilter
-     * @param repositoryFilter
-     * @param session
-     * @return
-     * @throws IOException
-     */
-    Iterator<NutsId> findVersions(String id, NutsVersionFilter versionFilter, NutsRepositoryFilter repositoryFilter, NutsSession session) throws IOException;
-
-    NutsFile fetch(String id, boolean dependencies, NutsSession session) throws IOException;
-
-    List<NutsFile> fetchWithDependencies(String id, boolean includeMain, NutsDependencyFilter dependencyFilter, NutsSession session) throws IOException;
-
-    File fetch(String id, File localPath, NutsSession session) throws IOException;
-
-    NutsDescriptor fetchDescriptor(String id, boolean effective, NutsSession session) throws IOException;
-
-    String fetchHash(String id, NutsSession session) throws IOException;
-
-    String fetchDescriptorHash(String id, NutsSession session) throws IOException;
-
-    NutsId fetchEffectiveId(NutsId id, NutsSession session) throws IOException;
-
-    NutsId fetchEffectiveId(NutsDescriptor descriptor, NutsSession session) throws IOException;
-
-    NutsDescriptor fetchEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) throws IOException;
 
     /////////////////////////////////////////////////////////////////
     // REPOSITORY MANAGEMENT
-    boolean isSupportedRepositoryType(String repositoryType) throws IOException;
+    boolean isSupportedRepositoryType(String repositoryType);
 
-    NutsRepository addRepository(String repositoryId, String location, String type, boolean autoCreate) throws IOException;
+    NutsRepository addRepository(String repositoryId, String location, String type, boolean autoCreate);
 
-    NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate) throws IOException;
+    NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate);
 
-    NutsRepository openRepository(String repositoryId, File repositoryRoot, String location, String type, boolean autoCreate) throws IOException;
+    NutsRepository openRepository(String repositoryId, File repositoryRoot, String location, String type, boolean autoCreate);
 
-    NutsRepository findRepository(String repositoryIdPath) throws IOException;
+    NutsRepository findRepository(String repositoryIdPath);
 
-    void removeRepository(String locationOrRepositoryId) throws IOException;
+    void removeRepository(String locationOrRepositoryId);
 
     NutsRepository[] getRepositories();
 
+    NutsRepositoryDefinition[] getDefaultRepositories();
+
     /////////////////////////////////////////////////////////////////
     // EXEC SUPPORT
-    int exec(String[] cmd, Properties env, NutsSession session) throws IOException;
+    int exec(String[] cmd, Properties env, NutsSession session);
 
-    int exec(String id, String[] args, Properties env, NutsSession session) throws IOException;
+    int exec(String id, String[] args, Properties env, NutsSession session);
 
     /**
      * exec another instance of nuts
      *
-     * @param session
      * @param nutsJarFile
      * @param args
      * @param copyCurrentToFile
      * @param waitFor
+     * @param session
      * @return
-     * @throws IOException
      * @throws InterruptedException
      */
-    int execExternalNuts(NutsSession session, File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor) throws IOException, InterruptedException;
+    int execExternalNuts(File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session);
 
     /////////////////////////////////////////////////////////////////
     // EXTENSION MANAGEMENT
     NutsWorkspaceFactory getFactory();
 
-    NutsWorkspaceExtension addExtension(String id, NutsSession session) throws IOException;
+    NutsWorkspaceExtension addExtension(String id, NutsSession session);
 
-    boolean installExtensionComponent(Class extensionPointType, Object extensionImpl) throws IOException;
+    boolean installExtensionComponent(Class extensionPointType, Object extensionImpl);
 
-    NutsWorkspaceExtension[] getExtensions() throws IOException;
+    NutsWorkspaceExtension[] getExtensions();
 
     /////////////////////////////////////////////////////////////////
-    // CONFIG MANAGEMENT
+    // SECURITY MANAGEMENT
     String getCurrentLogin();
 
-    void login(String login, String password) throws LoginException;
+    void login(String login, String password);
 
-    String login(CallbackHandler handler) throws LoginException;
+    String login(CallbackHandler handler);
 
-    void logout() throws LoginException;
+    void logout();
 
-    void setUserCredentials(String login, String password, String oldPassword) throws IOException;
+    void setUserCredentials(String login, String password, String oldPassword);
 
     void addUser(String user);
 
-    void setUserCredentials(String user, String credentials) throws IOException;
+    void setUserCredentials(String user, String credentials);
 
     boolean isAllowed(String right);
 
+    boolean switchUnsecureMode(String adminPassword);
+
+    boolean switchSecureMode(String adminPassword);
+
+    boolean isAdmin();
+
+
     /////////////////////////////////////////////////////////////////
     // SERVER MANAGEMENT
-    NutsServer startServer(ServerConfig serverConfig) throws IOException;
+    NutsServer startServer(ServerConfig serverConfig);
+
+    NutsServer getServer(String serverId);
+
+    void stopServer(String serverId);
+
+    boolean isServerRunning(String serverId);
+
+    List<NutsServer> getServers();
 
     /////////////////////////////////////////////////////////////////
     // CONFIG MANAGEMENT
-    void save() throws IOException;
+
+    void save();
 
     Map<String, Object> getSharedObjects();
 
     /////////////////////////////////////////////////////////////////
     // OBSERVERS
+
     void addSharedObjectsListener(MapListener<String, Object> listener);
 
     void removeSharedObjectsListener(MapListener<String, Object> listener);
@@ -261,31 +241,37 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsRepositoryListener[] getRepositoryListeners();
 
-    NutsCommandLineConsoleComponent createCommandLineConsole(NutsSession session) throws IOException;
 
-    NutsTerminal createTerminal() throws IOException;
+    /////////////////////////////////////////////////////////////////
+    // RUNTIME INFO
 
-    NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException;
+    NutsFile fetchBoot(NutsSession session);
 
-    NutsPrintStream createEnhancedPrintStream(OutputStream out) throws IOException;
+    File resolveNutsJarFile();
+
+    Map<String, String> getRuntimeProperties();
+
+    /////////////////////////////////////////////////////////////////
+    // UTILITIES
+
+    NutsSession createSession();
+
+    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
+
+    NutsConsole createConsole(NutsSession session);
+
+    NutsTerminal createTerminal();
+
+    NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
+
+    NutsPrintStream createEnhancedPrintStream(OutputStream out);
 
     File getCwd();
 
     void setCwd(File file);
 
-    boolean switchUnsecureMode(String adminPassword) throws LoginException, IOException;
+    String getHelpString();
 
-    boolean switchSecureMode(String adminPassword) throws LoginException, IOException;
+    NutsId parseNutsId(String nutsId);
 
-    boolean isAdmin();
-
-    Map<String, String> getRuntimeProperties(NutsSession session);
-
-    File resolveNutsJarFile();
-
-    String getHelpString() ;
-
-    NutsSession createSession();
-
-    BootNutsWorkspace getBoot();
 }

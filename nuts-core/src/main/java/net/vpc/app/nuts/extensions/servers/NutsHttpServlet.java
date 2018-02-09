@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.servers;
@@ -54,6 +54,7 @@ import java.util.logging.Logger;
  * Created by vpc on 1/7/17.
  */
 public class NutsHttpServlet extends HttpServlet {
+
     private static final Logger log = Logger.getLogger(NutsHttpServlet.class.getName());
     private NutsHttpServletFacade facade;
     private String serverId = "";
@@ -73,17 +74,13 @@ public class NutsHttpServlet extends HttpServlet {
         Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
         NutsWorkspace workspace = null;
-        DefaultBootNutsWorkspace bws = null;
-        try {
-            bws = new DefaultBootNutsWorkspace(workspaceRootLocation, workspaceBootId, workspaceBootVersion, workspaceRootURL);
-            workspace = bws.openWorkspace(workspaceLocation, new NutsWorkspaceCreateOptions()
-                    .setCreateIfNotFound(true)
-                    .setSaveIfCreated(true)
-                    .setArchetype("server")
-            );
-        } catch (IOException e) {
-            throw new ServletException("Unable to start Workspace " + workspaceLocation);
-        }
+        DefaultNutsBootWorkspace bws = null;
+        bws = new DefaultNutsBootWorkspace(workspaceRootLocation, workspaceBootId, workspaceBootVersion, workspaceRootURL, null);
+        workspace = bws.openWorkspace(workspaceLocation, new NutsWorkspaceCreateOptions()
+                .setCreateIfNotFound(true)
+                .setSaveIfCreated(true)
+                .setArchetype("server")
+        );
         if (workspaces.isEmpty()) {
             String wl = workspaceLocation == null ? "" : workspaceLocation;
             workspaces.put("", wl);
@@ -97,15 +94,11 @@ public class NutsHttpServlet extends HttpServlet {
             }
             NutsWorkspace ws = workspacesByLocation.get(location);
             if (ws == null) {
-                try {
-                    ws = bws.openWorkspace(location, new NutsWorkspaceCreateOptions()
-                            .setCreateIfNotFound(true)
-                            .setSaveIfCreated(true)
-                            .setArchetype("server")
-                    );
-                } catch (IOException e) {
-                    throw new ServletException("Unable to start Workspace " + workspaceLocation);
-                }
+                ws = bws.openWorkspace(location, new NutsWorkspaceCreateOptions()
+                        .setCreateIfNotFound(true)
+                        .setSaveIfCreated(true)
+                        .setArchetype("server")
+                );
                 workspacesByLocation.put(location, ws);
             }
             workspacesByWebContextPath.put(webContext, ws);
@@ -171,7 +164,7 @@ public class NutsHttpServlet extends HttpServlet {
         if (adminServerRef != null) {
             try {
                 adminServerRef.stop();
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 log.log(Level.SEVERE, "Unable to stop admin server", ex);
             }
         }
@@ -189,6 +182,7 @@ public class NutsHttpServlet extends HttpServlet {
 
     protected void doService(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         facade.execute(new AbstractNutsHttpServletFacadeContext() {
+            @Override
             public URI getRequestURI() throws IOException {
                 try {
                     String cp = req.getContextPath();
@@ -205,14 +199,17 @@ public class NutsHttpServlet extends HttpServlet {
                 }
             }
 
+            @Override
             public OutputStream getResponseBody() throws IOException {
                 return resp.getOutputStream();
             }
 
+            @Override
             public void sendError(int code, String msg) throws IOException {
                 resp.sendError(code, msg);
             }
 
+            @Override
             public void sendResponseHeaders(int code, long length) throws IOException {
                 if (length > 0) {
 
@@ -228,7 +225,7 @@ public class NutsHttpServlet extends HttpServlet {
 
             @Override
             public Set<String> getRequestHeaderKeys(String header) throws IOException {
-                return new HashSet<String>(Collections.list(req.getHeaderNames()));
+                return new HashSet<>(Collections.list(req.getHeaderNames()));
             }
 
             @Override
@@ -241,6 +238,7 @@ public class NutsHttpServlet extends HttpServlet {
                 return req.getInputStream();
             }
 
+            @Override
             public ListMap<String, String> getParameters() throws IOException {
                 ListMap<String, String> m = new ListMap<String, String>();
                 for (String s : Collections.list(req.getParameterNames())) {
@@ -253,4 +251,3 @@ public class NutsHttpServlet extends HttpServlet {
         });
     }
 }
-

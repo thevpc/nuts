@@ -39,9 +39,9 @@ import java.io.InputStream;
  */
 public interface NutsDescriptorContentParserContext {
 
-    InputStream getHeadStream() throws IOException;
+    InputStream getHeadStream() ;
 
-    InputStream getFullStream() throws FileNotFoundException;
+    InputStream getFullStream() ;
 
     String getFileExtension();
 
@@ -49,7 +49,7 @@ public interface NutsDescriptorContentParserContext {
 
     String getMimeType();
 
-    File getFile();
+    String getName();
 
     NutsWorkspace getWorkspace();
 

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsConstants;
@@ -51,12 +52,13 @@ public class ConnectCommand extends AbstractNutsCommand {
         super("connect", 1);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String password = null;
         String server = null;
         while (!cmdLine.isEmpty()) {
-            if (cmdLine.acceptAndRemoveNoDuplicates("--password")) {
+            if (cmdLine.readOnce("--password")) {
                 password = cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
             } else {
                 server = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerAddress")).getStringOrError();
@@ -69,7 +71,7 @@ public class ConnectCommand extends AbstractNutsCommand {
         String login = null;
         int port = -1;
         if (server == null) {
-            throw new IllegalArgumentException("Missing address");
+            throw new NutsIllegalArgumentsException("Missing address");
         }
         if (server.contains("@")) {
             login = server.substring(0, server.indexOf("@"));

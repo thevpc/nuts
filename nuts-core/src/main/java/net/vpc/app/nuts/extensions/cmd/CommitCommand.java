@@ -45,7 +45,8 @@ public class CommitCommand extends AbstractNutsCommand {
         super("commit", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         if (autoComplete != null) {

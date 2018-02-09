@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by vpc on 1/15/17.
@@ -38,6 +37,8 @@ import java.io.IOException;
 @Singleton
 public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepoInfo> {
 
-    NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) throws IOException;
+    NutsRepositoryDefinition[] getDefaultRepositories();
+
+    NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) ;
 
 }

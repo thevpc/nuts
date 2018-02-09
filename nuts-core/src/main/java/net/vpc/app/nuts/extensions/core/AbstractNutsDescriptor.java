@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.core;
@@ -37,6 +37,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import java.io.*;
 import java.util.*;
+import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.parseNutsId;
 
 /**
  * Created by vpc on 2/19/17.
@@ -113,46 +114,142 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public String getSHA1() throws IOException {
+    public boolean matchesPackaging(String packaging) {
+        NutsId _v = CoreNutsUtils.parseNutsId(packaging);
+        NutsId _v2 = CoreNutsUtils.parseNutsId(getPackaging());
+        if (_v == null || _v2 == null) {
+            return _v == _v2;
+        }
+        if (_v.isSameFullName(_v2)) {
+            if (_v.getVersion().toFilter().accept(_v2.getVersion())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean matchesArch(String arch) {
+        NutsId _v = CoreNutsUtils.parseNutsId(arch);
+        String[] all = getArch();
+        if (all != null) {
+            for (String v : all) {
+                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                if (y.isSameFullName(_v)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return _v == null;
+        }
+    }
+
+    @Override
+    public boolean matchesOs(String os) {
+        NutsId _v = CoreNutsUtils.parseNutsId(os);
+        String[] all = getOs();
+        if (all != null) {
+            for (String v : all) {
+                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                if (y.isSameFullName(_v)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return _v == null;
+        }
+    }
+
+    @Override
+    public boolean matchesOsdist(String osdist) {
+        NutsId _v = CoreNutsUtils.parseNutsId(osdist);
+        String[] all = getOsdist();
+        if (all != null) {
+            for (String v : all) {
+                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                if (y.isSameFullName(_v)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return _v == null;
+        }
+
+    }
+
+    @Override
+    public boolean matchesPlatform(String platform) {
+        NutsId _v = CoreNutsUtils.parseNutsId(platform);
+        String[] all = getPlatform();
+        if (all != null) {
+            for (String v : all) {
+                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                if (y.isSameFullName(_v)) {
+                    if (y.getVersion().toFilter().accept(_v.getVersion())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return _v == null;
+        }
+    }
+
+    @Override
+    public String getSHA1() throws NutsIOException {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         write(o, false);
-        return CoreSecurityUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()));
+        return CoreSecurityUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()), true);
     }
 
     @Override
-    public void write(File file) throws IOException {
+    public void write(File file) throws NutsIOException {
         write(file, false);
     }
 
     @Override
-    public void write(OutputStream file) throws IOException {
+    public void write(OutputStream file) throws NutsIOException {
         write(file, false);
     }
 
     @Override
-    public void write(File file, boolean pretty) throws IOException {
+    public void write(File file, boolean pretty) throws NutsIOException {
         File parent = file.getParentFile();
         if (parent != null) {
             parent.mkdirs();
         }
         FileOutputStream os = null;
         try {
-            os = new FileOutputStream(file);
+            try {
+                os = new FileOutputStream(file);
+            } catch (IOException e) {
+                throw new NutsIOException(e);
+            }
             write(os, pretty);
         } finally {
             if (os != null) {
-                os.close();
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    throw new NutsIOException(e);
+                }
             }
         }
     }
 
     public String toString(boolean pretty) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try {
-            write(b, pretty);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        write(b, pretty);
         return new String(b.toByteArray());
     }
 
@@ -162,7 +259,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public void write(OutputStream os, boolean pretty) throws IOException {
+    public void write(OutputStream os, boolean pretty) throws NutsIOException {
         NutsDescriptor desc = this;
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         objectBuilder.add("nuts-version", "1.0");
@@ -278,7 +375,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor applyProperties() throws IOException {
+    public NutsDescriptor applyProperties() {
         return applyProperties(getProperties());
     }
 
@@ -400,13 +497,18 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringMapper properties) {
+        NutsId[] exclusions = child.getExclusions();
+        for (int i = 0; i < exclusions.length; i++) {
+            exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
+        }
         return new NutsDependencyImpl(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
                 CoreNutsUtils.applyStringProperties(child.getName(), properties),
                 CoreNutsUtils.applyStringProperties(child.getVersion().getValue(), properties),
                 CoreNutsUtils.applyStringProperties(child.getScope(), properties),
-                CoreNutsUtils.applyStringProperties(child.getOptional(), properties)
+                CoreNutsUtils.applyStringProperties(child.getOptional(), properties),
+                exclusions
         );
     }
 
@@ -452,7 +554,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         return child;
     }
 
-
     @Override
     public NutsDescriptor addDependency(NutsDependency dependency) {
         if (dependency == null) {
@@ -472,9 +573,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         ArrayList<NutsDependency> dependenciesList = new ArrayList<>();
         for (NutsDependency d : dependencies) {
             if (d.getFullName().equals(dependency.getFullName())
-                    &&
-                    Objects.equals(d.getScope(), dependency.getScope())
-                    ) {
+                    && Objects.equals(d.getScope(), dependency.getScope())) {
                 //do not add
             } else {
                 dependenciesList.add(d);
@@ -702,7 +801,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     @Override
     public NutsDescriptor addProperty(String name, String value) {
         Map<String, String> properties = new HashMap<>(getProperties());
-        properties.put(name,value);
+        properties.put(name, value);
         return createInstance(
                 getId(),
                 getFace(),
@@ -905,8 +1004,8 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     protected NutsDescriptor createInstance(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-                                            String[] arch, String[] os, String[] osdist, String[] platform,
-                                            NutsDependency[] dependencies, Map<String, String> properties) {
-        throw new IllegalArgumentException("Unmodifiable instance");
+            String[] arch, String[] os, String[] osdist, String[] platform,
+            NutsDependency[] dependencies, Map<String, String> properties) {
+        throw new NutsIllegalArgumentsException("Unmodifiable instance");
     }
 }

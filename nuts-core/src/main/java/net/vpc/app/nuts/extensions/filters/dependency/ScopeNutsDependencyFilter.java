@@ -1,0 +1,44 @@
+package net.vpc.app.nuts.extensions.filters.dependency;
+
+import net.vpc.app.nuts.NutsDependency;
+import net.vpc.app.nuts.NutsDependencyFilter;
+import net.vpc.app.nuts.extensions.util.Simplifiable;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+
+    private Set<String> scopes = new HashSet<>();
+
+    public ScopeNutsDependencyFilter(String scope) {
+        for (String s : scope.split("[ ,]")) {
+            s = s.trim();
+            if (!s.isEmpty()) {
+                scopes.add(s.toLowerCase());
+            }
+        }
+    }
+
+    @Override
+    public boolean accept(NutsDependency value) {
+        String scope = value.getScope();
+        if (scope == null) {
+            scope = "";
+        }
+        scope = scope.toLowerCase();
+        if (scope.isEmpty()) {
+            scope = "compile";
+        }
+        if (!(scopes.contains(scope))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public NutsDependencyFilter simplify() {
+        return this;
+    }
+
+}

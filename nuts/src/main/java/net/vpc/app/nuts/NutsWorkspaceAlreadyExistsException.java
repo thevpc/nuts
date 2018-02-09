@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsWorkspaceAlreadyExistsException extends IllegalArgumentException {
+public class NutsWorkspaceAlreadyExistsException extends NutsElementAlreadyDefinedException {
 
     private final String workspace;
 

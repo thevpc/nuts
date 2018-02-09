@@ -29,11 +29,146 @@
  */
 package net.vpc.app.nuts;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.Stack;
+import java.util.concurrent.Callable;
+
 /**
  * Created by vpc on 1/15/17.
  */
 public class NutsEnvironmentContext {
 
-    public static ThreadLocal<NutsWorkspace> WORKSPACE = new ThreadLocal<>();
-    public static ThreadLocal<NutsRepository> REPOSITORY = new ThreadLocal<>();
+    private static ThreadLocal<Stack<NutsWorkspace>> WORKSPACE = new ThreadLocal<>();
+    private static ThreadLocal<Stack<NutsRepository>> REPOSITORY = new ThreadLocal<>();
+
+    public static InvocationHandler createHandler(NutsWorkspace workspace) {
+        return new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                Stack<NutsWorkspace> s = WORKSPACE.get();
+                if (s == null) {
+                    s = new Stack<>();
+                    WORKSPACE.set(s);
+                }
+                boolean pushed = false;
+                try {
+                    if (!s.isEmpty() && s.peek() == workspace) {
+                        //do nothing already in the context!!
+                    } else {
+                        s.push(workspace);
+                        pushed = true;
+                    }
+                    return method.invoke(workspace, args);
+                } finally {
+                    if (pushed) {
+                        s.pop();
+                    }
+                }
+            }
+        };
+    }
+
+    public static InvocationHandler createHandler(NutsRepository repository) {
+        return new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                Stack<NutsRepository> s = REPOSITORY.get();
+                if (s == null) {
+                    s = new Stack<>();
+                    REPOSITORY.set(s);
+                }
+                boolean pushed = false;
+                try {
+                    if (!s.isEmpty() && s.peek() == repository) {
+                        //do nothing already in the context!!
+                    } else {
+                        s.push(repository);
+                        pushed = true;
+                    }
+                    return method.invoke(repository, args);
+                } finally {
+                    if (pushed) {
+                        s.pop();
+                    }
+                }
+            }
+        };
+    }
+
+    public static <T> T run(NutsWorkspace workspace, Callable<T> callable) {
+        Stack<NutsWorkspace> s = WORKSPACE.get();
+        if (s == null) {
+            s = new Stack<>();
+            WORKSPACE.set(s);
+        }
+        boolean pushed = false;
+        try {
+            if (!s.isEmpty() && s.peek() == workspace) {
+                //do nothing already in the context!!
+            } else {
+                s.push(workspace);
+                pushed = true;
+            }
+            T v;
+            try {
+                v = callable.call();
+            } catch (RuntimeException ex) {
+                throw new NutsException(ex);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            return v;
+        } finally {
+            if (pushed) {
+                s.pop();
+            }
+        }
+    }
+
+    public static <T> T run(NutsRepository repository, Callable<T> callable) {
+        Stack<NutsRepository> s = REPOSITORY.get();
+        if (s == null) {
+            s = new Stack<>();
+            REPOSITORY.set(s);
+        }
+        boolean pushed = false;
+        try {
+            if (!s.isEmpty() && s.peek() == repository) {
+                //do nothing already in the context!!
+            } else {
+                s.push(repository);
+                pushed = true;
+            }
+            T v;
+            try {
+                v = callable.call();
+            } catch (RuntimeException ex) {
+                throw new NutsException(ex);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            return v;
+        } finally {
+            if (pushed) {
+                s.pop();
+            }
+        }
+    }
+
+    public static NutsWorkspace getNutsWorkspace() {
+        Stack<NutsWorkspace> s = WORKSPACE.get();
+        if (s == null || s.isEmpty()) {
+            throw new NutsException("Missing Workspace in the context");
+        }
+        return s.peek();
+    }
+
+    public static NutsRepository getNutsRepository() {
+        Stack<NutsRepository> s = REPOSITORY.get();
+        if (s == null || s.isEmpty()) {
+            throw new NutsException("Missing Repository in the context");
+        }
+        return s.peek();
+    }
 }

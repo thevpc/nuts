@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +93,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new IllegalArgumentException("Invalid boundary");
+        throw new NutsIllegalArgumentsException("Invalid boundary");
     }
 
     private static class ErrInputStream extends InputStream {

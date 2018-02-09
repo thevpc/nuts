@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsSecurityEntityConfig;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -59,25 +59,25 @@ public class RightNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_ADD_REPOSITORY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_ADMIN));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_DEPLOY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_EXEC));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_FETCH_CONTENT));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_FETCH_DESC));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_INSTALL));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_PUSH));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_REMOVE_REPOSITORY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SAVE_REPOSITORY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SAVE_WORKSPACE));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SET_PASSWORD));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_UNDEPLOY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_UNINSTALL));
-        Iterator<ArgumentCandidate> i = all.iterator();
+    public List<NutsArgumentCandidate> getValues() {
+        List<NutsArgumentCandidate> all = new ArrayList<>();
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_ADD_REPOSITORY));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_ADMIN));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_DEPLOY));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_EXEC));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_FETCH_CONTENT));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_FETCH_DESC));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_INSTALL));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_PUSH));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_REMOVE_REPOSITORY));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_SAVE_REPOSITORY));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_SAVE_WORKSPACE));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_SET_PASSWORD));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNDEPLOY));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNINSTALL));
+        Iterator<NutsArgumentCandidate> i = all.iterator();
         while (i.hasNext()) {
-            ArgumentCandidate right = i.next();
+            NutsArgumentCandidate right = i.next();
             if (existing) {
                 if (securityEntityConfig != null) {
                     if (!securityEntityConfig.containsRight(right.getValue())) {

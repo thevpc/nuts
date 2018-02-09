@@ -29,9 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.EnhancedTextParser;
-import net.vpc.app.nuts.util.IOUtils;
-
 import java.awt.*;
 import java.io.*;
 import java.util.Locale;
@@ -42,7 +39,7 @@ import java.util.Locale;
 public class NutsPrintStream extends PrintStream implements NutsComponent<Object> {
 
     public NutsPrintStream() {
-        super(IOUtils.NULL_OUTPUT_STREAM);
+        super(NullOutputStream.INSTANCE);
     }
 
     public NutsPrintStream(OutputStream out) {
@@ -291,14 +288,15 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         if (text == null) {
             text = "<<<null>>>";
         }
-        for (EnhancedTextChunck e : EnhancedTextParser.INSTANCE.parse(text)) {
+        java.util.List<NutsTextChunck> chunks = NutsTextParser.INSTANCE.parse(text);
+        for (NutsTextChunck e : chunks) {
             draw(e);
         }
     }
 
-    public void draw(EnhancedTextChunck chunk) {
+    public void draw(NutsTextChunck chunk) {
         if (chunk == null) {
-            chunk = EnhancedTextChunck.NULL;
+            chunk = NutsTextChunck.NULL;
         }
         String s = chunk.getValue();
         if (s == null) {

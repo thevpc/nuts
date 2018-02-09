@@ -8,8 +8,7 @@ searches for installed and available <<nuts>>. Found <<nuts>> are displayed as n
 When no expressions and no options are provided, all available <<nuts>> (in all registered repositories)
 will be listed.
 
-options :
--l          : display long format
+===Options :===
 -i          : only installed <<nuts>> will be displayed.
 -!i         : only non installed <<nuts>> will be displayed.
 -u          : only updatable <<nuts>> will be displayed.
@@ -22,12 +21,53 @@ options :
               When using SLE expressions (with or without the -e option), multiple expressions are interpreted as an OR expression.
 -js         : the filter expression is interpreted as javascript expression which MUST contain a return clause.
               The expression should filter against the predefined 'id' variable.
-When using both javascript and SLE expressions, an error will be thrown.
---display-id        : (default) display <<nuts>> ids
---display-packaging : display packaging instead of ids
---display-arch      : display architectures instead of ids
+              When using both javascript and SLE expressions, an error will be thrown.
 
--r  <REPOSITORY>    : accept only listed repository
+===Find Expressions : ===
+-x    --expression        : non js expression
+-p    --pkg   <PKG>       : accept packagings
+-a    --arch  <ARCH>      : accept architectures ("x86", "ia64", "amd64", "ppc", "sparc")
+-r    --repo  <REPO>      : accept only listed repository
+-e    --exec              : accept executable nuts
+-!e   --lib               : accept non executable (libs) nuts
+-u    --updatable         : accept updatable nuts
+-!u   --non-updatable     : accept non updatable nuts
+-i    --installed         : accept installed nuts
+-!i   --non-installed     : accept non installed nuts
+-v    --last-version      : accept latest versions only
+
+
+===Fetch Mode :=== 
+-F    --offline           : search in local repos only
+-O    --online            : search in local and remote repos
+-R    --remote            : search in remote repos only
+-M    --commitable        : search for nuts that are newer than remote
+-U    --updatable         : search for nuts that are older than remote
+-T    --status            : search for nuts that are newer or older than remote
+
+
+-l    --long              : display long format
+
+-f    --file              : display nuts file path
+-c    --class             : display nuts Main class
+-s    --descriptor        : display nuts descriptor
+-b    --effective-descriptor
+                          : display nuts effective descriptor
+-g    --installed-dependencies
+                          : display nuts installed dependencies
+-d    --dependencies      : display nuts all dependencies
+
+
+-I    --display-id        : (default) display <<nuts>> ids
+-N    --display-name      : display <<nuts>> name
+-P    --display-packaging : display packaging instead of ids
+-A    --display-arch      : display architectures instead of ids
+-L    --display-file      : display files instead of ids
+-C    --display-class     : display classes instead of ids
+-Y    --summary           : display a summary line with list count and perf stats
+
+
+-h -? --help              : show this help
 
 ===EXAMPLES:===
 
@@ -40,7 +80,7 @@ find -i
 find -i ab* *yz
    searches for and displays installed <<nuts>> that starts with 'ab' or ends with 'yz'
 
-find -js "return id.version.ge('1.2') && id.version.le('1.8')"
+find -js \"return id.version.ge(\'1.2\') && id.version.le(\'1.8\')\"
    searches for and displays installed <<nuts>> with version between 1.2 and 1.8 (exclusively)
 
 find -r maven-vpc-public -R net.vpc.app.nuts:nuts net.vpc.app.nuts:nuts-core

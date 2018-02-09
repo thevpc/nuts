@@ -35,5 +35,5 @@ package net.vpc.app.nuts;
 @Singleton
 public interface NutsCommandAutoCompleteComponent extends NutsComponent<NutsCommand> {
 
-    void autoComplete(NutsCommand command, NutsCommandAutoComplete autoComplete);
+    void autoComplete(NutsCommand command, NutsCommandContext context);
 }

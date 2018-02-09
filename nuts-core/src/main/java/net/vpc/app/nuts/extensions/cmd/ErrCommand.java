@@ -45,12 +45,13 @@ public class ErrCommand extends AbstractNutsCommand {
         super("err", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean verbose = false;
         boolean visitedArgVerbose = false;
         while (!cmdLine.isEmpty()) {
-            if (!visitedArgVerbose && cmdLine.acceptAndRemove("--trace", "--stacktrace", "-v")) {
+            if (!visitedArgVerbose && cmdLine.read("--trace", "--stacktrace", "-v")) {
                 visitedArgVerbose = true;
                 verbose = true;
             } else {

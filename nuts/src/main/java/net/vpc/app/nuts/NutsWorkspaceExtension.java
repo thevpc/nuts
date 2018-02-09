@@ -36,12 +36,14 @@ public interface NutsWorkspaceExtension {
 
     /**
      * extension id pattern (configured)
+     *
      * @return extension id pattern (configured)
      */
     NutsId getId();
 
     /**
      * extension id resolved and wired
+     *
      * @return extension id resolved and wired
      */
     NutsId getWiredId();

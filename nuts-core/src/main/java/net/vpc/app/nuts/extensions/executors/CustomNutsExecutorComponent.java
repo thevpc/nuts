@@ -50,7 +50,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public NutsId getId() throws IOException {
+    public NutsId getId()  {
         return id;
     }
 
@@ -59,7 +59,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext) {
         List<String> args = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
         return executionContext.getWorkspace().exec(
                 id.toString(),

@@ -46,7 +46,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     public static final NutsId ID = CoreNutsUtils.parseNutsId("exec");
 
     @Override
-    public NutsId getId() throws IOException {
+    public NutsId getId() {
         return ID;
     }
 
@@ -55,7 +55,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         return CORE_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext) {
         NutsFile nutMainFile = executionContext.getNutsFile();
         File storeFolder = nutMainFile.getInstallFolder();
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());

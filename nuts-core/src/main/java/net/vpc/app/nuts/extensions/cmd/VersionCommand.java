@@ -29,11 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
 
-import java.util.Map;
 
 /**
  * Created by vpc on 1/7/17.
@@ -44,10 +42,10 @@ public class VersionCommand extends AbstractNutsCommand {
         super("version", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsPrintStream out = context.getTerminal().getOut();
-        out.drawln("boot-version         : [[" + context.getWorkspace().getWorkspaceBootVersion() + "]]");
-        out.drawln("workspace-version    : [[" + context.getWorkspace().getWorkspaceVersion() + "]]");
+        out.drawln("workspace-boot       : [[" + context.getWorkspace().getWorkspaceBootId() + "]]");
+        out.drawln("workspace-runtime    : [[" + context.getWorkspace().getWorkspaceRuntimeId() + "]]");
         out.drawln("workspace-location   : [[" + context.getWorkspace().getWorkspaceLocation() + "]]");
         out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
         out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");

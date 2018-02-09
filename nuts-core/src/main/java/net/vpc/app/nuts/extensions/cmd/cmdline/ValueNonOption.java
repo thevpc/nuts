@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class ValueNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
+    public List<NutsArgumentCandidate> getValues() {
         return new ArrayList(Arrays.asList(values));
     }
 

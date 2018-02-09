@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/nuts" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nuts-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/nuts-tomcat-classloader" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../../common/java-shell" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../../common/maven/writer-maven-plugin" charset="UTF-8" />
   </component>

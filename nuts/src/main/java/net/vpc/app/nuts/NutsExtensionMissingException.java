@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsExtensionMissingException extends IllegalArgumentException {
+public class NutsExtensionMissingException extends NutsElementNotFoundException {
     private final Class missingType;
 
     public NutsExtensionMissingException(Class missingType, String extensionName) {

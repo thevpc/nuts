@@ -32,6 +32,7 @@ package net.vpc.app.nuts.extensions.parsers;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
+import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
@@ -57,13 +58,17 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
     }
 
     @Override
-    public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) throws IOException {
+    public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        if (CoreIOUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
-            return CoreNutsUtils.parseNutsDescriptor(new ByteArrayInputStream(buffer.toByteArray()));
+        try {
+            if (CoreIOUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
+                return CoreNutsUtils.parseNutsDescriptor(buffer.toByteArray());
+            }
+        } catch (IOException e) {
+            throw new NutsIOException(e);
         }
         return null;
     }

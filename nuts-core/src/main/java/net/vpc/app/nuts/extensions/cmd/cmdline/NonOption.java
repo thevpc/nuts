@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
 
 import java.util.List;
 
@@ -41,5 +41,5 @@ public interface NonOption {
 
     String getName();
 
-    List<ArgumentCandidate> getValues();
+    List<NutsArgumentCandidate> getValues();
 }

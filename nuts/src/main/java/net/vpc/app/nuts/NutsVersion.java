@@ -37,7 +37,9 @@ public interface NutsVersion {
     int compareTo(String other);
 
     int compareTo(NutsVersion other);
-
+    
+    boolean matches(String expression);
+    
     boolean ge(String other);
 
     boolean gt(String other);

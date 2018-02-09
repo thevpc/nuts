@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -46,14 +45,14 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private String repositoryId;
     private NutsId last;
     private Stack<File> stack = new Stack<File>();
-    private NutsDescriptorFilter filter;
+    private NutsIdFilter filter;
     private NutsSession session;
     private NutsWorkspace workspace;
     private FolderNutIdIteratorModel model;
-    private long visitedFolders;
-    private long visitedFiles;
+    private long visitedFoldersCount;
+    private long visitedFilesCount;
 
-    public FolderNutIdIterator(NutsWorkspace workspace, String repositoryId, File folder, NutsDescriptorFilter filter, NutsSession session, FolderNutIdIteratorModel model) {
+    public FolderNutIdIterator(NutsWorkspace workspace, String repositoryId, File folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model) {
         this.repositoryId = repositoryId;
         this.session = session;
         this.filter = filter;
@@ -70,7 +69,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             File file = stack.pop();
             if (file.isDirectory()) {
-                visitedFolders++;
+                visitedFoldersCount++;
                 File[] listFiles = file.listFiles(new FileFilter() {
                     public boolean accept(File pathname) {
                         try {
@@ -87,7 +86,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     }
                 }
             } else {
-                visitedFiles++;
+                visitedFilesCount++;
                 NutsDescriptor t = null;
                 try {
                     t = model.parseDescriptor(file, session);
@@ -98,13 +97,13 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = workspace.fetchEffectiveDescriptor(t, session);
-                        } catch (IOException e) {
+                            nutsDescriptor = workspace.resolveEffectiveDescriptor(t, session);
+                        } catch (Exception e) {
                             //throw new RuntimeException(e);
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.accept(t))) {
+                    if (t != null && (filter == null || filter.accept(t.getId()))) {
                         NutsId nutsId = t.getId().setNamespace(repositoryId);
                         nutsId=nutsId.setFace(CoreStringUtils.isEmpty(t.getFace())?NutsConstants.QUERY_FACE_DEFAULT_VALUE :t.getFace());
                         last = nutsId;
@@ -124,18 +123,22 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
 
     public void remove() {
         if (last != null) {
-            try {
-                model.undeploy(last, session);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            model.undeploy(last, session);
         }
-        throw new IllegalArgumentException("Unsupported Remove");
+        throw new NutsExecutionException("Unsupported Remove",1);
+    }
+
+    public long getVisitedFoldersCount() {
+        return visitedFoldersCount;
+    }
+
+    public long getVisitedFilesCount() {
+        return visitedFilesCount;
     }
 
     public interface FolderNutIdIteratorModel {
 
-        void undeploy(NutsId id, NutsSession session) throws IOException;
+        void undeploy(NutsId id, NutsSession session) throws NutsExecutionException;
 
         boolean isDescFile(File pathname);
 

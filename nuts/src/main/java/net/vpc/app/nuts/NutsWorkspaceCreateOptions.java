@@ -85,7 +85,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         try {
             return clone();
         } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Should never Happen");
+            throw new NutsUnsupportedOperationException("Should never Happen",e);
         }
     }
 

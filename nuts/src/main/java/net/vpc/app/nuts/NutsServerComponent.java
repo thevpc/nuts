@@ -43,7 +43,6 @@ public interface NutsServerComponent extends NutsComponent<ServerConfig> {
      * server on another workspace (because server implementation may be
      * workspace dependent
      * @param config server configuration
-     * @throws IOException
      */
-    NutsServer start(NutsWorkspace workspace, ServerConfig config) throws IOException;
+    NutsServer start(NutsWorkspace workspace, ServerConfig config) ;
 }

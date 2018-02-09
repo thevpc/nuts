@@ -32,10 +32,7 @@ package net.vpc.app.nuts.extensions.util;
 import net.vpc.app.nuts.ObjectFilter;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CoreCollectionUtils {
 
@@ -70,5 +67,13 @@ public class CoreCollectionUtils {
             }
         }
         return set;
+    }
+
+    public static <T> List<T> toList(Iterator<T> it) {
+        List<T> list = new ArrayList<>();
+        while (it.hasNext()) {
+            list.add(it.next());
+        }
+        return list;
     }
 }

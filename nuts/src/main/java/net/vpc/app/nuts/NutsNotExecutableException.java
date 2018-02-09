@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsNotExecutableException extends IllegalArgumentException {
+public class NutsNotExecutableException extends NutsExecutionException {
 
     private final String nuts;
 
@@ -41,7 +41,7 @@ public class NutsNotExecutableException extends IllegalArgumentException {
     }
 
     public NutsNotExecutableException(String nuts) {
-        super("Not executable " + (nuts == null ? "<null>" : nuts));
+        super("Not executable " + (nuts == null ? "<null>" : nuts),-1);
         this.nuts = nuts;
     }
 

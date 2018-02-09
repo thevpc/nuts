@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.cmd.cmdline;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsWorkspace;
 
@@ -50,12 +50,12 @@ public class ArchitectureNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultArgumentCandidate("\"linux x86\""));
-        all.add(new DefaultArgumentCandidate("\"linux x64\""));
-        all.add(new DefaultArgumentCandidate("\"win x86\""));
-        all.add(new DefaultArgumentCandidate("\"win x64\""));
+    public List<NutsArgumentCandidate> getValues() {
+        List<NutsArgumentCandidate> all = new ArrayList<>();
+        all.add(new DefaultNutsArgumentCandidate("\"linux x86\""));
+        all.add(new DefaultNutsArgumentCandidate("\"linux x64\""));
+        all.add(new DefaultNutsArgumentCandidate("\"win x86\""));
+        all.add(new DefaultNutsArgumentCandidate("\"win x64\""));
         return all;
     }
 

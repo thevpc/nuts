@@ -50,7 +50,8 @@ public class ExecCommand extends AbstractNutsCommand {
     }
 
     @Override
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
 
         if(autoComplete!=null){
@@ -80,7 +81,7 @@ public class ExecCommand extends AbstractNutsCommand {
                 }
             }
             if(commands.isEmpty()){
-                throw new IllegalArgumentException("Missing command");
+                throw new NutsIllegalArgumentsException("Missing command");
             }
             String[] commandsArray = commands.toArray(new String[commands.size()]);
             String currentDirectory = context.getCurrentDirectory();

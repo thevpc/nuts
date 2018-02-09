@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsTerminal;
@@ -53,7 +54,8 @@ public class LsCommand extends AbstractNutsCommand {
         boolean d=false;
         boolean l=false;
     }
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean any=false;
         Options options=new Options();
@@ -61,9 +63,9 @@ public class LsCommand extends AbstractNutsCommand {
         List<File> files=new ArrayList<>();
         List<File> invalids=new ArrayList<>();
         while (!cmdLine.isEmpty()) {
-            if(cmdLine.acceptAndRemove("-d")) {
+            if(cmdLine.read("-d")) {
                 options.d = true;
-            }else if(cmdLine.acceptAndRemove("-l")){
+            }else if(cmdLine.read("-l")){
                 options.l=true;
             }else {
                 String path = cmdLine.readNonOptionOrError(new FileNonOption("FileOrFolder")).getString();
@@ -101,7 +103,7 @@ public class LsCommand extends AbstractNutsCommand {
 
     private void ls(File path, Options options,NutsCommandContext context,NutsTerminal terminal,boolean addPrefix){
         if(!path.exists()){
-            throw new IllegalArgumentException("ls: cannot access '"+path.getPath()+"': No such file or directory");
+            throw new NutsIllegalArgumentsException("ls: cannot access '"+path.getPath()+"': No such file or directory");
         }else if(path.isDirectory()){
             if(addPrefix){
                 terminal.getOut().println(path.getName()+":");

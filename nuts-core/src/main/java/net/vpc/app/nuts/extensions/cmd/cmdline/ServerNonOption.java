@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.cmd.cmdline;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsServer;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -51,10 +51,10 @@ public class ServerNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
+    public List<NutsArgumentCandidate> getValues() {
+        List<NutsArgumentCandidate> all = new ArrayList<>();
         for (NutsServer server : workspace.getServers()) {
-            all.add(new DefaultArgumentCandidate(server.getServerId()));
+            all.add(new DefaultNutsArgumentCandidate(server.getServerId()));
         }
         return all;
     }

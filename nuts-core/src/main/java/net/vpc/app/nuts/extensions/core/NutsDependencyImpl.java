@@ -34,6 +34,7 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -48,8 +49,9 @@ public class NutsDependencyImpl implements NutsDependency {
     private final NutsVersion version;
     private final String scope;
     private final String optional;
+    private final NutsId[] exclusions;
 
-    public NutsDependencyImpl(String namespace, String group, String name, String version, String scope, String optional) {
+    public NutsDependencyImpl(String namespace, String group, String name, String version, String scope, String optional,NutsId[] exclusions) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.group = CoreStringUtils.trimToNull(group);
         this.name = CoreStringUtils.trimToNull(name);
@@ -57,6 +59,7 @@ public class NutsDependencyImpl implements NutsDependency {
         String s = CoreStringUtils.trimToNull(scope);
         this.scope = CoreStringUtils.isEmpty(s) ? "compile" : s;
         this.optional = CoreStringUtils.isEmpty(optional) ? "false" : CoreStringUtils.trim(optional);
+        this.exclusions= exclusions==null?new NutsId[0] : Arrays.copyOf(exclusions,exclusions.length);
     }
 
     @Override
@@ -169,4 +172,8 @@ public class NutsDependencyImpl implements NutsDependency {
         return sb.toString();
     }
 
+    @Override
+    public NutsId[] getExclusions() {
+        return Arrays.copyOf(exclusions,exclusions.length);
+    }
 }

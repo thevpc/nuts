@@ -45,5 +45,5 @@ public interface NutsCommand extends NutsComponent<Object> {
 
     String getHelpHeader();
 
-    void autoComplete(NutsCommandAutoComplete autoComplete);
+    void autoComplete(NutsCommandContext context,NutsCommandAutoComplete autoComplete);
 }

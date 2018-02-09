@@ -36,9 +36,9 @@ public interface NutsSession {
 
     NutsSession setTransitive(boolean transitive);
 
-    FetchMode getFetchMode();
+    NutsFetchMode getFetchMode();
 
-    NutsSession setFetchMode(FetchMode fetchMode);
+    NutsSession setFetchMode(NutsFetchMode fetchMode);
 
     NutsSession copy();
 

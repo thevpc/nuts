@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 
 /**
@@ -59,31 +58,28 @@ public interface NutsRepository {
      * @param descriptor
      * @param file
      * @return
-     * @throws IOException
      */
-    NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, NutsSession context) throws IOException;
+    NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, NutsSession context);
 
-    void push(NutsId id, String repoId, NutsSession session) throws IOException;
+    void push(NutsId id, String repoId, NutsSession session) ;
 
-    File fetch(NutsId id, NutsSession session, File localPath) throws IOException;
+    NutsFile fetch(NutsId id, NutsSession session) ;
 
-    NutsFile fetch(NutsId id, NutsSession session) throws IOException;
+    NutsDescriptor fetchDescriptor(NutsId id, NutsSession session) ;
 
-    NutsDescriptor fetchDescriptor(NutsId id, NutsSession session) throws IOException;
+    File copyTo(NutsId id, NutsSession session, File localPath) ;
 
-    boolean fetchDescriptor(NutsId id, NutsSession session, File localPath) throws IOException;
+    File copyDescriptorTo(NutsId id, NutsSession session, File localPath) ;
 
-    String fetchHash(NutsId id, NutsSession session) throws IOException;
+    String fetchHash(NutsId id, NutsSession session) ;
 
-    String fetchDescriptorHash(NutsId id, NutsSession session) throws IOException;
+    String fetchDescriptorHash(NutsId id, NutsSession session) ;
 
-    NutsId resolveId(NutsId id, NutsSession session) throws IOException;
+    NutsId resolveId(NutsId id, NutsSession session) ;
 
-    Iterator<NutsId> find(NutsDescriptorFilter filter, NutsSession session) throws IOException;
+    Iterator<NutsId> find(NutsIdFilter filter, NutsSession session) ;
 
-    Iterator<NutsId> findVersions(NutsId id, NutsDescriptorFilter versionFilter, NutsSession session) throws IOException;
-
-    Iterator<NutsId> findVersions(NutsId id, NutsVersionFilter versionFilter, NutsSession session) throws IOException;
+    Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session);
 
     int getSupportLevel(NutsId id, NutsSession session);
 
@@ -93,19 +89,19 @@ public interface NutsRepository {
 
     NutsRepository getMirror(String repositoryIdPath);
 
-    NutsRepository addMirror(String repositoryId, String location, String type, boolean autoCreate) throws IOException;
+    NutsRepository addMirror(String repositoryId, String location, String type, boolean autoCreate) ;
 
-    void removeMirror(String repositoryId) throws IOException;
+    void removeMirror(String repositoryId) ;
 
-    void save() throws IOException;
+    void save() ;
 
-    void open(boolean autoCreate) throws IOException;
+    void open(boolean autoCreate) ;
 
     boolean isAllowed(String right);
 
-    void setUserCredentials(String user, String credentials) throws IOException;
+    void setUserCredentials(String user, String credentials) ;
 
-    void setUserCredentials(String login, String password, String oldPassword) throws IOException;
+    void setUserCredentials(String login, String password, String oldPassword) ;
 
     void removeRepositoryListener(NutsRepositoryListener listener);
 

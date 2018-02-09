@@ -2,7 +2,7 @@
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\\__,_/\\__/____/  ]] version [[${nuts.boot-version}]]
+/_/ |_/\\__,_/\\__/____/  ]] version [[${nuts.workspace-runtime.version}]]
 
 
 [[nuts]] stands for <<Network Updatable Things Services>> tool. It is a simple tool  for ===managing=== remote,
@@ -31,8 +31,9 @@ git/svn <<source version tools>> to support package (re)-building and deploying.
 ===SYNOPSYS:===
 nuts [[[Nuts Options]]] <<<command>>> <<<args>>> ...
 
-===Boot Version:=== ${nuts.boot-version}
-===Java Version:=== ${java.version} (${java.vm.name})
+===Boot    Version:=== ${nuts.workspace-boot.version}
+===Runtime Version:=== ${nuts.workspace-runtime.version}
+===Java    Version:=== ${java.version} (${java.vm.name})
 
 ===USAGE:===
 nuts [[[Nuts Options]]] [[[Nuts Command]]]

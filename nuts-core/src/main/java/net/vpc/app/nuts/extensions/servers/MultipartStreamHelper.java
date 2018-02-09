@@ -29,6 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.NutsIOException;
+
 import java.io.*;
 import java.util.*;
 
@@ -53,7 +57,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new IllegalArgumentException("Invalid boundary");
+        throw new NutsIllegalArgumentsException("Invalid boundary");
     }
 
 
@@ -73,8 +77,10 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
                         nextPart = stream.readBoundary();
                     }
                     return nextPart;
+                } catch (RuntimeException e) {
+                    throw (RuntimeException) e;
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new NutsException(e);
                 }
             }
 
@@ -83,7 +89,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
                 try {
                     return newInputStreamSplitted();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new NutsIOException(e);
                 }
             }
 

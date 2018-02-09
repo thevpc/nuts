@@ -44,7 +44,8 @@ public class UninstallCommand extends AbstractNutsCommand {
         super("uninstall", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         do {
             String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId",context)).getString();

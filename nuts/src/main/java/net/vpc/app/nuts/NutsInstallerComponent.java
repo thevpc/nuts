@@ -38,13 +38,13 @@ import java.io.IOException;
 @Singleton
 public interface NutsInstallerComponent extends NutsComponent<NutsFile> {
 
-    File getInstallFolder(NutsExecutionContext executionContext) throws IOException;
+    File getInstallFolder(NutsExecutionContext executionContext);
 
-    void install(NutsExecutionContext executionContext) throws IOException;
+    void install(NutsExecutionContext executionContext) ;
 
-    void uninstall(NutsExecutionContext executionContext) throws IOException;
+    void uninstall(NutsExecutionContext executionContext);
 
-    boolean isInstalled(NutsExecutionContext executionContext) throws IOException;
+    boolean isInstalled(NutsExecutionContext executionContext) ;
 
-    boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session) throws IOException;
+    boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session) ;
 }

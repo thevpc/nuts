@@ -48,4 +48,6 @@ public interface NutsDependency {
     String getFullName();
 
     NutsVersion getVersion();
+
+    NutsId[] getExclusions();
 }

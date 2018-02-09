@@ -47,7 +47,8 @@ public class InstallCommand extends AbstractNutsCommand {
         super("install", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         cmdLine.requireNonEmpty();
         boolean force = false;
@@ -56,55 +57,53 @@ public class InstallCommand extends AbstractNutsCommand {
         String repositoryId = null;
         String descriptorFile = null;
         do {
-            if (cmdLine.acceptAndRemoveNoDuplicates("-f", "--force")) {
+            if (cmdLine.readOnce("-f", "--force")) {
                 force = true;
-            } else if (cmdLine.acceptAndRemoveNoDuplicates("-r", "--repository")) {
+            } else if (cmdLine.readOnce("-r", "--repository")) {
                 repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
-            } else if (cmdLine.acceptAndRemoveNoDuplicates("-s", "--descriptor")) {
+            } else if (cmdLine.readOnce("-s", "--descriptor")) {
                 descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
-            } else if (cmdLine.acceptAndRemoveNoDuplicates("-t", "--target")) {
+            } else if (cmdLine.readOnce("-t", "--target")) {
                 descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getString();
-            } else if (cmdLine.acceptAndRemoveNoDuplicates("-y", "--deploy", "--no-install")) {
+            } else if (cmdLine.readOnce("-y", "--deploy", "--no-install")) {
                 deployOnly = true;
                 bundleOnly = false;
-            } else if (cmdLine.acceptAndRemoveNoDuplicates("-b", "--bundle")) {
+            } else if (cmdLine.readOnce("-b", "--bundle")) {
                 deployOnly = false;
                 bundleOnly = true;
             } else {
                 String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
                     if (deployOnly) {
-                        for (String s : CoreIOUtils.expandPath(id,new File(context.getCommandLine().getCwd()))) {
+                        for (String s : CoreIOUtils.expandPath(id, new File(context.getCommandLine().getCwd()))) {
                             NutsId deployedId = context.getValidWorkspace().deploy(
-                                    s,
-                                    null,
-                                    descriptorFile,
-                                    null,
-                                    repositoryId,
+                                    new NutsDeployment()
+                                            .setContentPath(s)
+                                            .setDescriptorPath(descriptorFile)
+                                    .setRepositoryId(repositoryId),
                                     context.getSession()
                             );
                             context.getTerminal().getOut().println("File " + s + " deployed successfully as " + deployedId);
                         }
                     } else if (bundleOnly) {
-                        for (String s : CoreIOUtils.expandPath(id,new File(context.getCommandLine().getCwd()))) {
+                        for (String s : CoreIOUtils.expandPath(id, new File(context.getCommandLine().getCwd()))) {
                             NutsFile deployedId = context.getValidWorkspace().createBundle(
-                                    CoreIOUtils.createFileByCwd(s,new File(context.getCommandLine().getCwd())),
-                                    descriptorFile == null ? null : CoreIOUtils.createFileByCwd(descriptorFile,new File(context.getCommandLine().getCwd())),
+                                    CoreIOUtils.createFileByCwd(s, new File(context.getCommandLine().getCwd())),
+                                    descriptorFile == null ? null : CoreIOUtils.createFileByCwd(descriptorFile, new File(context.getCommandLine().getCwd())),
                                     context.getSession()
                             );
                             context.getTerminal().getOut().println("File " + s + " bundled successfully as " + deployedId.getId() + " to " + deployedId.getFile());
                         }
                     } else {
 
-                        for (String s : CoreIOUtils.expandPath(id,new File(context.getCommandLine().getCwd()))) {
+                        for (String s : CoreIOUtils.expandPath(id, new File(context.getCommandLine().getCwd()))) {
                             if (CoreIOUtils.isFilePath(s)) {
                                 //this is a file to deploy first
                                 NutsId deployedId = context.getValidWorkspace().deploy(
-                                        s,
-                                        null,
-                                        descriptorFile,
-                                        null,
-                                        repositoryId,
+                                        new NutsDeployment()
+                                                .setContentPath(s)
+                                                .setDescriptorPath(descriptorFile)
+                                        .setRepositoryId(repositoryId),
                                         context.getSession()
                                 );
                                 context.getTerminal().getOut().println("File " + s + " deployed successfully as " + deployedId);

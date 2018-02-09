@@ -34,5 +34,6 @@ package net.vpc.app.nuts;
  */
 public interface NutsVersionFilter extends ObjectFilter<NutsVersion>{
 
+    @Override
     boolean accept(NutsVersion version);
 }

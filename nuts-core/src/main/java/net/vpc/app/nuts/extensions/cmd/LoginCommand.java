@@ -45,7 +45,8 @@ public class LoginCommand extends AbstractNutsCommand {
         super("login", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String login = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
         String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();

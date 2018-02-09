@@ -29,12 +29,10 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.NoSuchElementException;
-
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsRepositoryAmbiguousException extends NoSuchElementException {
+public class NutsRepositoryAmbiguousException extends NutsElementAlreadyDefinedException {
 
     public NutsRepositoryAmbiguousException(String s) {
         super(s);

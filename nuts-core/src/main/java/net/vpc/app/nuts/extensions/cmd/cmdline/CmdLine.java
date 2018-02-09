@@ -30,11 +30,11 @@
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import net.vpc.app.nuts.ArgumentCandidate;
+import net.vpc.app.nuts.NutsArgumentCandidate;
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
@@ -49,7 +49,24 @@ public class CmdLine {
     private HashSet<String> visitedSequences = new HashSet<>();
 
     public CmdLine(NutsCommandAutoComplete autoComplete, String[] args) {
-        this.args = new ArrayList<>(Arrays.asList(args));
+        this.args = new ArrayList<>();
+        for (String arg : args) {
+            if(arg.startsWith("--")){
+                this.args.add(arg);
+            }else if(arg.startsWith("-!")){
+                char[] chars = arg.toCharArray();
+                for (int i = 2; i < chars.length; i++) {
+                    this.args.add("-!"+chars[i]);
+                }
+            }else if(arg.startsWith("-")){
+                char[] chars = arg.toCharArray();
+                for (int i = 1; i < chars.length; i++) {
+                    this.args.add("-"+chars[i]);
+                }
+            }else{
+                this.args.add(arg);
+            }
+        }
         this.autoComplete = autoComplete;
     }
 
@@ -81,7 +98,7 @@ public class CmdLine {
 //    public Val tryRemoveNonOptionOrError(String name, String defaultValue) {
 //        if (args.size() > 0 && !isOption()) {
 //            String r = args.get(0);
-//            readHead(1);
+//            read(1);
 //            return new Val(r);
 //        } else {
 //            return new Val(defaultValue);
@@ -91,10 +108,10 @@ public class CmdLine {
     public Val readOptionOrError(String name) {
         if (args.size() > 0 && isOption()) {
             String r = args.get(0);
-            readHead(1);
+            read(1);
             return new Val(r);
         } else {
-            throw new IllegalArgumentException("Missing argument " + name);
+            throw new NutsIllegalArgumentsException("Missing argument " + name);
         }
     }
 
@@ -109,46 +126,49 @@ public class CmdLine {
     public Val readNonOption(NonOption name, boolean error) {
         if (args.size() > 0 && !isOption()) {
             if (isAutoComplete()) {
-                List<ArgumentCandidate> values = name.getValues();
+                List<NutsArgumentCandidate> values = name.getValues();
                 if (values == null || values.isEmpty()) {
                     autoComplete.addExpectedTypedValue(null, name.getName());
                 } else {
-                    for (ArgumentCandidate value : name.getValues()) {
+                    for (NutsArgumentCandidate value : name.getValues()) {
                         autoComplete.addCandidate(value);
                     }
                 }
             }
             String r = args.get(0);
-            readHead(1);
+            read(1);
             return new Val(r);
         } else {
             if (autoComplete!=null) {
                 if (isAutoComplete()) {
-                    List<ArgumentCandidate> values = name.getValues();
+                    List<NutsArgumentCandidate> values = name.getValues();
                     if (values == null || values.isEmpty()) {
                         autoComplete.addExpectedTypedValue(null, name.getName());
                     } else {
-                        for (ArgumentCandidate value : name.getValues()) {
+                        for (NutsArgumentCandidate value : name.getValues()) {
                             autoComplete.addCandidate(value);
                         }
                     }
                 }
                 return new Val("");
             }
-            if(error){
+            if(!error){
                 return new Val("");
             }
-            throw new IllegalArgumentException("Missing argument " + name);
+            if(args.size() > 0 && isOption()){
+                throw new NutsIllegalArgumentsException("Unexpected option " + getVal(0));
+            }
+            throw new NutsIllegalArgumentsException("Missing argument " + name);
         }
     }
 
-    public Val readHead() {
+    public Val read() {
         Val val = getVal(0);
-        readHead(1);
+        read(1);
         return val;
     }
 
-    public void readHead(int count) {
+    public void read(int count) {
         for (int i = 0; i < count; i++) {
             args.remove(0);
             wordIndex++;
@@ -166,45 +186,45 @@ public class CmdLine {
         return false;
     }
 
-    public boolean acceptAndRemove(boolean acceptDuplicates, String... vals) {
+    public boolean read(boolean acceptDuplicates, String... vals) {
         String[][] vals2 = new String[vals.length][];
         for (int i = 0; i < vals2.length; i++) {
             List<String> split = CoreStringUtils.split(vals[i], " ");
             vals2[i] = split.toArray(new String[split.size()]);
         }
-        return acceptAndRemove(acceptDuplicates, vals2);
+        return read(acceptDuplicates, vals2);
     }
 
-    public boolean acceptAndRemove(String... vals) {
-        return acceptAndRemove(true, vals);
+    public boolean read(String... vals) {
+        return read(true, vals);
     }
 
-    public boolean acceptAndRemoveNoDuplicates(String... vals) {
-        return acceptAndRemove(false, vals);
+    public boolean readOnce(String... vals) {
+        return read(false, vals);
     }
 
-//    public boolean acceptAndRemove(String[]... vals) {
-//        return acceptAndRemove(true, vals);
+//    public boolean read(String[]... vals) {
+//        return read(true, vals);
 //    }
 //
-//    public boolean acceptAndRemoveNoDuplicates(String[]... vals) {
-//        return acceptAndRemove(false, vals);
+//    public boolean readOnce(String[]... vals) {
+//        return read(false, vals);
 //    }
 
-    private boolean acceptAndRemove(boolean acceptDuplicates, String[]... vals) {
+    private boolean read(boolean acceptDuplicates, String[]... vals) {
         if (autoComplete != null) {
             for (String[] val : vals) {
                 if ((acceptDuplicates || !isVisitedSequence(val))) {
                     if (acceptSequence(0, val)) {
                         setVisitedSequence(val);
-                        readHead(val.length);
+                        read(val.length);
                         return true;
                     } else {
                         setVisitedSequence(val);
                         for (int i = 0; i < val.length; i++) {
                             String v = val[i];
                             if (getWordIndex() + i == autoComplete.getCurrentWordIndex()) {
-                                autoComplete.addCandidate(new DefaultArgumentCandidate(v));
+                                autoComplete.addCandidate(new DefaultNutsArgumentCandidate(v));
                             } else if (!getVal(i).getString("").equals(v)) {
                                 break;
                             }
@@ -216,7 +236,7 @@ public class CmdLine {
         for (String[] val : vals) {
             if ((acceptDuplicates || !isVisitedSequence(val)) && acceptSequence(0, val)) {
                 setVisitedSequence(val);
-                readHead(val.length);
+                read(val.length);
                 return true;
             }
         }
@@ -300,7 +320,7 @@ public class CmdLine {
                 }
             }
         } else {
-            throw new IllegalArgumentException("Not an option " + name);
+            throw new NutsIllegalArgumentsException("Not an option " + name);
         }
         return -1;
     }
@@ -315,7 +335,7 @@ public class CmdLine {
                 args.clear();
                 return;
             }
-            throw new IllegalArgumentException("Too Many arguments");
+            throw new NutsIllegalArgumentsException("Too Many arguments");
         }
     }
 
@@ -325,7 +345,7 @@ public class CmdLine {
                 args.clear();
                 return;
             }
-            throw new IllegalArgumentException("Missing Arguments");
+            throw new NutsIllegalArgumentsException("Missing Arguments");
         }
     }
 

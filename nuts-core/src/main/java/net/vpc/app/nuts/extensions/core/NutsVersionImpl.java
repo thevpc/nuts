@@ -33,7 +33,7 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
-import net.vpc.app.nuts.extensions.util.DefaultNutsVersionFilter;
+import net.vpc.app.nuts.extensions.filters.version.DefaultNutsVersionFilter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
@@ -138,4 +138,13 @@ public class NutsVersionImpl implements NutsVersion {
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
     }
+
+    @Override
+    public boolean matches(String expression) {
+        if (CoreStringUtils.isEmpty(expression)) {
+            return true;
+        }
+        return DefaultNutsVersionFilter.parse(expression).accept(this);
+    }
+
 }

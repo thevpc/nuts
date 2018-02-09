@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.HttpConnectionFacade;
+import net.vpc.app.nuts.NutsHttpConnectionFacade;
 import net.vpc.app.nuts.NutsTransportComponent;
-import net.vpc.app.nuts.TransportParamPart;
+import net.vpc.app.nuts.NutsTransportParamPart;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,15 +51,15 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
     }
 
     @Override
-    public HttpConnectionFacade open(String url) throws IOException {
-        return new DefaultHttpConnectionFacade(new URL(url));
+    public NutsHttpConnectionFacade open(String url) throws IOException {
+        return new DefaultNutsHttpConnectionFacade(new URL(url));
     }
 
-    private static class DefaultHttpConnectionFacade implements HttpConnectionFacade {
+    private static class DefaultNutsHttpConnectionFacade implements NutsHttpConnectionFacade {
 
         private URL url;
 
-        public DefaultHttpConnectionFacade(URL url) {
+        public DefaultNutsHttpConnectionFacade(URL url) {
             this.url = url;
         }
 
@@ -68,7 +68,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
             return url.openStream();
         }
 
-        public InputStream upload(TransportParamPart... parts) throws IOException {
+        public InputStream upload(NutsTransportParamPart... parts) throws IOException {
             throw new IOException("Upload unsupported");
         }
     }

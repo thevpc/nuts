@@ -4,7 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-core</artifactId>
-    <version>0.3.5.0</version>
+    <name>net.vpc.app.nuts.nuts-core</name>
+    <version>0.3.6.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -68,7 +69,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.3.5.0</version>
+            <version>0.3.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>

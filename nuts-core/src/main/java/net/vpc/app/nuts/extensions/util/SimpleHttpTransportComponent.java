@@ -49,15 +49,15 @@
 //    }
 //
 //    @Override
-//    public HttpConnectionFacade open(String url) throws IOException {
-//        return new DefaultHttpConnectionFacade(new URL(url));
+//    public NutsHttpConnectionFacade open(String url) throws IOException {
+//        return new DefaultNutsHttpConnectionFacade(new URL(url));
 //    }
 //
-//    private static class DefaultHttpConnectionFacade implements HttpConnectionFacade {
+//    private static class DefaultNutsHttpConnectionFacade implements NutsHttpConnectionFacade {
 //
 //        private URL url;
 //
-//        public DefaultHttpConnectionFacade(URL url) {
+//        public DefaultNutsHttpConnectionFacade(URL url) {
 //            this.url = url;
 //        }
 //
@@ -67,7 +67,7 @@
 //            return stream;
 //        }
 //
-//        public InputStream upload(TransportParamPart... parts) throws IOException {
+//        public InputStream upload(NutsTransportParamPart... parts) throws IOException {
 ////        String url = "http://example.com/upload";
 //            String charset = "UTF-8";
 //
@@ -85,49 +85,49 @@
 //                output = connection.getOutputStream();
 //                PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true);
 //                try {
-//                    for (TransportParamPart part : parts) {
-//                        if (part instanceof TransportParamParamPart) {
+//                    for (NutsTransportParamPart part : parts) {
+//                        if (part instanceof NutsTransportParamParamPart) {
 //                            // Send normal param.
 //                            writer.append("--" + boundary).append(CRLF);
-//                            writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamParamPart) part).getName() + "\"").append(CRLF);
+//                            writer.append("Content-Disposition: form-data; name=\"" + ((NutsTransportParamParamPart) part).getName() + "\"").append(CRLF);
 //                            writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF);
-//                            writer.append(CRLF).append(((TransportParamParamPart) part).getValue()).append(CRLF).flush();
-//                        } else if (part instanceof TransportParamTextFilePart) {
+//                            writer.append(CRLF).append(((NutsTransportParamParamPart) part).getValue()).append(CRLF).flush();
+//                        } else if (part instanceof NutsTransportParamTextFilePart) {
 //                            // Send text file.
 //                            writer.append("--" + boundary).append(CRLF);
-//                            writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamTextFilePart) part).getName() + "\"; filename=\"" + ((TransportParamTextFilePart) part).getFileName() + "\"").append(CRLF);
+//                            writer.append("Content-Disposition: form-data; name=\"" + ((NutsTransportParamTextFilePart) part).getName() + "\"; filename=\"" + ((NutsTransportParamTextFilePart) part).getFileName() + "\"").append(CRLF);
 //                            writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF); // Text file itself must be saved in this charset!
 //                            writer.append(CRLF).flush();
-//                            CoreIOUtils.copy(((TransportParamTextFilePart) part).getValue(), output, false);
+//                            CoreIOUtils.copy(((NutsTransportParamTextFilePart) part).getValue(), output, false);
 //                            output.flush(); // Important before continuing with writer!
 //                            writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
-//                        } else if (part instanceof TransportParamTextReaderPart) {
+//                        } else if (part instanceof NutsTransportParamTextReaderPart) {
 //                            // Send text file.
 //                            writer.append("--" + boundary).append(CRLF);
-//                            writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamTextReaderPart) part).getName() + "\"; filename=\"" + ((TransportParamTextReaderPart) part).getFileName() + "\"").append(CRLF);
+//                            writer.append("Content-Disposition: form-data; name=\"" + ((NutsTransportParamTextReaderPart) part).getName() + "\"; filename=\"" + ((NutsTransportParamTextReaderPart) part).getFileName() + "\"").append(CRLF);
 //                            writer.append("Content-Type: text/plain; charset=" + charset).append(CRLF); // Text file itself must be saved in this charset!
 //                            writer.append(CRLF).flush();
-//                            CoreIOUtils.copy(((TransportParamTextReaderPart) part).getValue(), output, true, false);
+//                            CoreIOUtils.copy(((NutsTransportParamTextReaderPart) part).getValue(), output, true, false);
 //                            output.flush(); // Important before continuing with writer!
 //                            writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
-//                        } else if (part instanceof TransportParamBinaryFilePart) {
+//                        } else if (part instanceof NutsTransportParamBinaryFilePart) {
 //                            // Send binary file.
 //                            writer.append("--" + boundary).append(CRLF);
-//                            writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamBinaryFilePart) part).getName() + "\"; filename=\"" + ((TransportParamBinaryFilePart) part).getFileName() + "\"").append(CRLF);
-//                            writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(((TransportParamBinaryFilePart) part).getName())).append(CRLF);
+//                            writer.append("Content-Disposition: form-data; name=\"" + ((NutsTransportParamBinaryFilePart) part).getName() + "\"; filename=\"" + ((NutsTransportParamBinaryFilePart) part).getFileName() + "\"").append(CRLF);
+//                            writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(((NutsTransportParamBinaryFilePart) part).getName())).append(CRLF);
 //                            writer.append("Content-Transfer-Encoding: binary").append(CRLF);
 //                            writer.append(CRLF).flush();
-//                            CoreIOUtils.copy(((TransportParamBinaryFilePart) part).getValue(), output, false);
+//                            CoreIOUtils.copy(((NutsTransportParamBinaryFilePart) part).getValue(), output, false);
 //                            output.flush(); // Important before continuing with writer!
 //                            writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
-//                        } else if (part instanceof TransportParamBinaryStreamPart) {
+//                        } else if (part instanceof NutsTransportParamBinaryStreamPart) {
 //                            // Send binary file.
 //                            writer.append("--" + boundary).append(CRLF);
-//                            writer.append("Content-Disposition: form-data; name=\"" + ((TransportParamBinaryStreamPart) part).getName() + "\"; filename=\"" + ((TransportParamBinaryStreamPart) part).getFileName() + "\"").append(CRLF);
-//                            writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(((TransportParamBinaryStreamPart) part).getName())).append(CRLF);
+//                            writer.append("Content-Disposition: form-data; name=\"" + ((NutsTransportParamBinaryStreamPart) part).getName() + "\"; filename=\"" + ((NutsTransportParamBinaryStreamPart) part).getFileName() + "\"").append(CRLF);
+//                            writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(((NutsTransportParamBinaryStreamPart) part).getName())).append(CRLF);
 //                            writer.append("Content-Transfer-Encoding: binary").append(CRLF);
 //                            writer.append(CRLF).flush();
-//                            IOUtils.copy(((TransportParamBinaryStreamPart) part).getValue(), output, true, false);
+//                            IOUtils.copy(((NutsTransportParamBinaryStreamPart) part).getValue(), output, true, false);
 //                            output.flush(); // Important before continuing with writer!
 //                            writer.append(CRLF).flush(); // CRLF is important! It indicates end of boundary.
 //                        } else {

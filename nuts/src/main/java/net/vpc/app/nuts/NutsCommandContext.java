@@ -47,9 +47,9 @@ public interface NutsCommandContext {
 
     NutsTerminal getTerminal();
 
-    NutsCommandLineConsoleComponent getCommandLine();
+    NutsConsole getCommandLine();
 
-    void setCommandLine(NutsCommandLineConsoleComponent commandLine);
+    void setCommandLine(NutsConsole commandLine);
 
     NutsWorkspace getValidWorkspace();
 
@@ -64,4 +64,8 @@ public interface NutsCommandContext {
     NutsCommandContext setEnv(Properties env);
 
     String getCurrentDirectory();
+
+    NutsCommandAutoComplete getAutoComplete();
+
+    void setAutoComplete(NutsCommandAutoComplete value);
 }

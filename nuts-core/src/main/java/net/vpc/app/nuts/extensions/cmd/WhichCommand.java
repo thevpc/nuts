@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.DefaultBootNutsWorkspace;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
 
@@ -87,7 +86,7 @@ public class WhichCommand extends AbstractNutsCommand {
 
         NutsFile core = null;
         try {
-            core = workspace.fetch(NutsConstants.NUTS_COMPONENT_CORE_ID, false, session.copy().setFetchMode(FetchMode.OFFLINE));
+            core = workspace.fetch(NutsConstants.NUTS_COMPONENT_CORE_ID, session.copy().setFetchMode(NutsFetchMode.OFFLINE));
         } catch (Exception e) {
             //ignore
         }
@@ -98,14 +97,15 @@ public class WhichCommand extends AbstractNutsCommand {
                 cp_nutsCoreFile = core.getFile().getPath();
             }
         }
-        map.put("nuts.workspace.version", workspace.getBoot().getBootVersion());
+        map.put("nuts.workspace.version", workspace.getBoot().getWorkspaceRuntimeVersion());
         map.put("nuts.workspace.api-component", cp_nutsFile);
         map.put("nuts.workspace.core-component", cp_nutsCoreFile);
         map.put("nuts.workspace.location", workspace.getWorkspaceLocation());
         return map;
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         NutsWorkspace validWorkspace = context.getValidWorkspace();
         NutsPrintStream out = context.getTerminal().getOut();

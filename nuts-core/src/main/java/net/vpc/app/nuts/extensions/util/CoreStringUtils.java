@@ -33,10 +33,14 @@ import net.vpc.app.nuts.StringMapper;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.NutsIOException;
 
 /**
  * Created by vpc on 5/16/17.
@@ -48,7 +52,6 @@ public class CoreStringUtils {
     public static String[] nonNullArray(String[] array1) {
         return array1 == null ? new String[0] : array1;
     }
-
 
     public static String[] concat(String[] array1, String[] array2) {
         String[] r = new String[array1.length + array2.length];
@@ -332,6 +335,10 @@ public class CoreStringUtils {
         return ex.getMessage();
     }
 
+    public static String simpexpToRegexp(String pattern) {
+        return simpexpToRegexp(pattern,false);
+    }
+    
     /**
      * *
      * **
@@ -413,6 +420,24 @@ public class CoreStringUtils {
         return sb.toString();
     }
 
+    public static String escapeCoteStrings(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            switch (c) {
+                case '\\':
+                case '\'': {
+                    sb.append("\\");
+                    sb.append(c);
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
     public static String escapeReplacementStrings(String s) {
         StringBuilder sb = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
@@ -435,7 +460,7 @@ public class CoreStringUtils {
 
     /**
      * @param text
-     * @param compact         if true, quotes will not be used unless necessary
+     * @param compact if true, quotes will not be used unless necessary
      * @param entrySeparators
      * @return
      */
@@ -515,5 +540,31 @@ public class CoreStringUtils {
             result.add(st.nextToken());
         }
         return result;
+    }
+
+    public static boolean containsVars(String value) {
+        return value != null && value.contains("${");
+    }
+
+    public static boolean containsTopWord(String word, String line) {
+        StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(line));
+        int last_ttype = -1;
+        try {
+            while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
+                switch (tokenizer.ttype) {
+                    case StreamTokenizer.TT_WORD: {
+                        if (word.equals(tokenizer.sval)) {
+                            if (last_ttype != '.') {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                last_ttype = tokenizer.ttype;
+            }
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
+        }
+        return false;
     }
 }

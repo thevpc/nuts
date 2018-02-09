@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.extensions.core.JsonTransient;
 
 import java.beans.Transient;
@@ -118,7 +120,7 @@ class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
     @Override
     public Object getValue(Object o) {
         if (getter == null) {
-            throw new RuntimeException("Field inaccessible : no getter found for field " + getName());
+            throw new NutsIllegalArgumentsException("Field inaccessible : no getter found for field " + getName());
         }
         try {
             return getter.invoke(o);
@@ -129,26 +131,25 @@ class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new RuntimeException(e);
+            throw new NutsException(e);
         }
     }
 
     @Override
     public void setValue(Object o, Object value) {
         if (setter == null) {
-            throw new RuntimeException("Field readonly : no setter found for " + getName() + " in class " + o.getClass());
+            throw new NutsException("Field readonly : no setter found for " + getName() + " in class " + o.getClass());
         }
         try {
             setter.invoke(o, value);
         } catch (Exception e) {
-            //throw new IllegalArgumentException("Unable to set value " + (value == null ? "null" : value.getClass()) + " for property " + getName() + ". Expected Type is " + getPlatformType(), e);
             if (e instanceof InvocationTargetException) {
                 e = (Exception) ((InvocationTargetException) e).getTargetException();
             }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new RuntimeException(e);
+            throw new NutsIllegalArgumentsException(e);
         }
     }
 

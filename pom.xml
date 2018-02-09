@@ -5,12 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-root</artifactId>
-    <version>0.3.5.0</version>
+    <name>net.vpc.app.nuts.nuts-root</name>
+    <version>0.3.6.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
         <module>nuts-clown</module>
+        <module>nuts-tomcat-classloader</module>
     </modules>
     <properties>
     </properties>

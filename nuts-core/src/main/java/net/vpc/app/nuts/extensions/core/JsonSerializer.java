@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
+import net.vpc.app.nuts.NutsParseException;
 import net.vpc.app.nuts.extensions.util.JsonStatus;
 import net.vpc.app.nuts.extensions.util.SerializeOptions;
 
@@ -47,13 +48,13 @@ public interface JsonSerializer {
 
     void serializeArrProp(Object value, Class t, JsonArrayBuilder builder, SerializeOptions options);
 
-    <T> T loadJson(File file, Class<T> cls) throws IOException;
+    <T> T loadJson(File file, Class<T> cls);
 
-    void storeJson(JsonStructure structure, File file, boolean pretty) throws IOException;
+    void storeJson(JsonStructure structure, File file, boolean pretty);
 
     void storeJson(JsonStructure structure, Writer writer, boolean pretty);
 
-    <T> void storeJson(T obj, File file, SerializeOptions options) throws IOException;
+    <T> void storeJson(T obj, File file, SerializeOptions options) ;
 
     String[] getJsonObjectStringArray(JsonObject jsonObject, String param);
 

@@ -31,6 +31,7 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
+import net.vpc.app.nuts.NutsDeployment;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
@@ -48,7 +49,8 @@ public class DeployCommand extends AbstractNutsCommand {
         super("deploy", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         String descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
@@ -59,11 +61,10 @@ public class DeployCommand extends AbstractNutsCommand {
         for (String s : CoreIOUtils.expandPath(contentFile,new File(context.getCommandLine().getCwd()))) {
             NutsId id = null;
             id = context.getValidWorkspace().deploy(
-                    s,
-                    null,
-                    descriptorFile,
-                    null,
-                    repository,
+                    new NutsDeployment()
+                            .setContentPath(s)
+                            .setDescriptorPath(descriptorFile)
+                    .setRepositoryId(repository),
                     context.getSession()
             );
             context.getTerminal().getOut().println("File " + s + " deployed successfully as " + id);

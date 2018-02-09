@@ -34,5 +34,6 @@ package net.vpc.app.nuts;
  */
 public interface NutsIdFilter extends ObjectFilter<NutsId>{
 
+    @Override
     boolean accept(NutsId id);
 }

@@ -30,9 +30,7 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsTerminal;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.util.IOUtils;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 
@@ -40,13 +38,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.cmd.AbstractNutsCommandAutoComplete;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.apps.javashell.interpreter.InterrupShellException;
+import org.jline.terminal.Attributes;
+import org.jline.terminal.Cursor;
+import org.jline.terminal.MouseEvent;
+import org.jline.terminal.Size;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.InfoCmp;
+import org.jline.utils.NonBlockingReader;
 
 /**
  * Created by vpc on 2/20/17.
@@ -64,13 +76,13 @@ public class NutsJLineTerminal implements NutsTerminal {
     private InputStream inReplace;
     private BufferedReader inReplaceReader;
 
-    public NutsJLineTerminal()  {
+    public NutsJLineTerminal() {
     }
 
-    public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) throws IOException{
-        if(in!=null || out!=null || err!=null || System.console() == null){
+    public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
+        if (in != null || out != null || err != null || System.console() == null) {
             fallback = new DefaultNutsTerminal();
-            fallback.install(workspace,in,out,err);
+            fallback.install(workspace, in, out, err);
         } else {
             TerminalBuilder builder = TerminalBuilder.builder();
             builder.streams(System.in, System.out);
@@ -122,16 +134,10 @@ public class NutsJLineTerminal implements NutsTerminal {
                                             public int getCurrentWordIndex() {
                                                 return line.wordIndex() - 1;
                                             }
-
-                                            @Override
-                                            public NutsCommandContext getCommandContext() {
-                                                return nutsCommandContext;
-                                            }
-
                                         };
-                                        command.autoComplete(autoComplete);
+                                        command.autoComplete(nutsCommandContext, autoComplete);
                                         if (autoComplete.getCandidates() != null) {
-                                            for (ArgumentCandidate cmdCandidate : autoComplete.getCandidates()) {
+                                            for (NutsArgumentCandidate cmdCandidate : autoComplete.getCandidates()) {
                                                 if (cmdCandidate != null) {
                                                     String value = cmdCandidate.getValue();
                                                     String display = cmdCandidate.getDisplay();
@@ -170,42 +176,61 @@ public class NutsJLineTerminal implements NutsTerminal {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT +1;
+        return CORE_SUPPORT + 1;
     }
 
     @Override
-    public String readLine(String prompt) throws IOException {
-        if(inReplace!=null){
-            if(outReplace!=null){
+    public String readLine(String prompt) {
+        if (inReplace != null) {
+            if (outReplace != null) {
                 outReplace.print(prompt);
             }
-            if(inReplaceReader==null){
-                inReplaceReader=new BufferedReader(new InputStreamReader(inReplace));
+            if (inReplaceReader == null) {
+                inReplaceReader = new BufferedReader(new InputStreamReader(inReplace));
             }
-            return inReplaceReader.readLine();
+            try {
+                return inReplaceReader.readLine();
+            } catch (UserInterruptException e) {
+                throw new InterrupShellException();
+            } catch (IOException e) {
+                throw new NutsIOException(e);
+            }
         }
         if (fallback != null) {
             return fallback.readLine(prompt);
         }
-        String readLine = reader.readLine(prompt);
-        reader.getHistory().save();
+        String readLine=null;
+        try {
+            readLine = reader.readLine(prompt);
+        } catch (UserInterruptException e) {
+            throw new InterrupShellException();
+        }
+        try {
+            reader.getHistory().save();
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
         return readLine;
     }
 
     @Override
-    public String readPassword(String prompt) throws IOException {
-        if(inReplace!=null){
-            if(inReplaceReader==null){
-                inReplaceReader=new BufferedReader(new InputStreamReader(inReplace));
+    public String readPassword(String prompt) {
+        if (inReplace != null) {
+            if (inReplaceReader == null) {
+                inReplaceReader = new BufferedReader(new InputStreamReader(inReplace));
             }
-            return inReplaceReader.readLine();
+            try {
+                return inReplaceReader.readLine();
+            } catch (IOException e) {
+                throw new NutsIOException(e);
+            }
         }
         return reader.readLine(prompt, '*');
     }
 
     @Override
     public InputStream getIn() {
-        if(inReplace!=null){
+        if (inReplace != null) {
             return inReplace;
         }
         if (fallback != null) {
@@ -216,22 +241,22 @@ public class NutsJLineTerminal implements NutsTerminal {
 
     @Override
     public void setOut(NutsPrintStream out) {
-        outReplace=out;
+        outReplace = out;
     }
 
     @Override
     public void setIn(InputStream in) {
-        inReplace=in;
+        inReplace = in;
     }
 
     @Override
     public void setErr(NutsPrintStream err) {
-        errReplace=err;
+        errReplace = err;
     }
 
     @Override
     public NutsPrintStream getOut() {
-        if(outReplace!=null){
+        if (outReplace != null) {
             return outReplace;
         }
         if (fallback != null) {
@@ -242,7 +267,7 @@ public class NutsJLineTerminal implements NutsTerminal {
 
     @Override
     public NutsPrintStream getErr() {
-        if(errReplace!=null){
+        if (errReplace != null) {
             return errReplace;
         }
         if (fallback != null) {
@@ -250,4 +275,153 @@ public class NutsJLineTerminal implements NutsTerminal {
         }
         return err;
     }
+    
+//    private static class AdapterTerminal implements Terminal{
+//        private Terminal base;
+//        private Map<Signal,SignalHandler> sig=new HashMap<Signal, SignalHandler>();
+//        private Map<Signal,SignalHandler> raisable=new HashMap<Signal, SignalHandler>();
+//
+//        public AdapterTerminal(Terminal base) {
+//            this.base = base;
+//            for (Signal value : Signal.values()) {
+//                base.handle(value, new )
+//            }
+//        }
+//        
+//        @Override
+//        public String getName() {
+//            return base.getName();
+//        }
+//
+//        @Override
+//        public SignalHandler handle(Signal signal, SignalHandler handler) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public void raise(Signal signal) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public NonBlockingReader reader() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public PrintWriter writer() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public Charset encoding() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public InputStream input() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public OutputStream output() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public Attributes enterRawMode() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public boolean echo() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public boolean echo(boolean echo) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public Attributes getAttributes() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public void setAttributes(Attributes attr) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public Size getSize() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public void setSize(Size size) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public void flush() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public String getType() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public boolean puts(InfoCmp.Capability capability, Object... params) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public boolean getBooleanCapability(InfoCmp.Capability capability) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public Integer getNumericCapability(InfoCmp.Capability capability) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public String getStringCapability(InfoCmp.Capability capability) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public Cursor getCursorPosition(IntConsumer discarded) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public boolean hasMouseSupport() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public boolean trackMouse(MouseTracking tracking) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public MouseEvent readMouseEvent() {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public MouseEvent readMouseEvent(IntSupplier reader) {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public void close() throws IOException {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//        
+//    }
 }

@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsRepositoryAlreadyRegisteredException extends IllegalArgumentException {
+public class NutsRepositoryAlreadyRegisteredException extends NutsElementAlreadyDefinedException {
 
     private final String repository;
 

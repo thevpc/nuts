@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsWorkspaceExtensionAlreadyRegisteredException extends IllegalArgumentException {
+public class NutsWorkspaceExtensionAlreadyRegisteredException extends NutsElementAlreadyDefinedException {
 
     private final String id;
     private final String installed;

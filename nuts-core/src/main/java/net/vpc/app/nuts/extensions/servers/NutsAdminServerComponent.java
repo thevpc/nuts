@@ -58,10 +58,10 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         return (config == null || config instanceof AdminServerConfig) ? CORE_SUPPORT : NO_SUPPORT;
     }
 
-    public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) throws IOException {
+    public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
         if (invokerWorkspace == null) {
-            throw new IllegalArgumentException("Missing Workspace");
+            throw new NutsIllegalArgumentsException("Missing Workspace");
         }
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
@@ -134,9 +134,13 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         }
 
         @Override
-        public boolean stop() throws IOException {
+        public boolean stop() {
             if (running) {
-                serverSocket.close();
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    throw new NutsIOException(e);
+                }
                 return true;
             }
             return false;
@@ -166,12 +170,12 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                             @Override
                             public void run() {
                                 String[] args = {"console"};
-                                NutsCommandLineConsoleComponent cli = null;
+                                NutsConsole cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     NutsPrintStream eout = invokerWorkspace.createEnhancedPrintStream(out);
                                     NutsSession session = invokerWorkspace.createSession();
-                                    cli = invokerWorkspace.createCommandLineConsole(session
+                                    cli = invokerWorkspace.createConsole(session
                                             .setTerminal(invokerWorkspace.createTerminal(finalAccept.getInputStream(),
                                                     eout, eout)));
 //                                    cli.uninstallCommand("server");
@@ -179,7 +183,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     cli.setServiceName(serverId);
                                     cli.installCommand(new AbstractNutsCommand("stop-server", CORE_SUPPORT) {
                                         @Override
-                                        public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+                                        public int exec(String[] args, NutsCommandContext context) throws Exception {
                                             System.out.println("Stopping Server ...");
                                             finalServerSocket.close();
                                             return 0;

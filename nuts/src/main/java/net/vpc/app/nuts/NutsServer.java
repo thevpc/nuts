@@ -40,5 +40,5 @@ public interface NutsServer {
 
     boolean isRunning();
 
-    boolean stop() throws IOException;
+    boolean stop();
 }

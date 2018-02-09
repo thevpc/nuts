@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -44,11 +44,14 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.NutsIOException;
 
 /**
  * Created by vpc on 5/16/17.
  */
 public class CorePlatformUtils {
+
     public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86", "ia64", "amd64", "ppc", "sparc"));
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "mac", "sunos", "freebsd"));
@@ -56,14 +59,6 @@ public class CorePlatformUtils {
 
     static {
         SUPPORTED_ARCH_ALIASES.put("i386", "x86");
-    }
-
-    public static <T> List<T> toList(Iterator<T> it) {
-        List<T> list = new ArrayList<>();
-        while (it.hasNext()) {
-            list.add(it.next());
-        }
-        return list;
     }
 
     public static Map<String, String> getOsDistMap() {
@@ -103,7 +98,7 @@ public class CorePlatformUtils {
      * @return
      */
     public static Map<String, String> getOsDistMapLinux() {
-        File dir = CoreIOUtils.createFileByCwd("/etc/",null);
+        File dir = CoreIOUtils.createFileByCwd("/etc/", null);
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
             File[] a = dir.listFiles(new FilenameFilter() {
@@ -115,14 +110,14 @@ public class CorePlatformUtils {
                 fileList.addAll(Arrays.asList(a));
             }
         }
-        File fileVersion = CoreIOUtils.createFileByCwd("/proc/version",null);
+        File fileVersion = CoreIOUtils.createFileByCwd("/proc/version", null);
         if (fileVersion.exists()) {
             fileList.add(fileVersion);
         }
         String disId = null;
         String disName = null;
         String disVersion = null;
-        File linuxOsrelease = CoreIOUtils.createFileByCwd("/proc/sys/kernel/osrelease",null);
+        File linuxOsrelease = CoreIOUtils.createFileByCwd("/proc/sys/kernel/osrelease", null);
         StringBuilder osVersion = new StringBuilder();
         if (linuxOsrelease.isFile()) {
             BufferedReader myReader = null;
@@ -134,7 +129,7 @@ public class CorePlatformUtils {
                         osVersion.append(strLine).append("\n");
                     }
                 } finally {
-                    if(myReader!=null) {
+                    if (myReader != null) {
                         myReader.close();
                     }
                 }
@@ -303,7 +298,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_ARCH.contains(arch)) {
             return true;
         }
-        throw new IllegalArgumentException("Unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
+        throw new NutsIllegalArgumentsException("Unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
     }
 
     public static boolean checkSupportedOs(String os) {
@@ -313,7 +308,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_OS.contains(os)) {
             return true;
         }
-        throw new IllegalArgumentException("Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
+        throw new NutsIllegalArgumentsException("Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
     }
 
     public static String getArch() {
@@ -337,24 +332,23 @@ public class CorePlatformUtils {
         return arr;
     }
 
-    public static File resolveLocalFileFromResource(Class cls,String url) throws MalformedURLException {
-        return resolveLocalFileFromURL(resolveURLFromResource(cls,url));
+    public static File resolveLocalFileFromResource(Class cls, String url) throws MalformedURLException {
+        return resolveLocalFileFromURL(resolveURLFromResource(cls, url));
     }
 
-
-    public static File resolveLocalFileFromURL(URL url){
+    public static File resolveLocalFileFromURL(URL url) {
         try {
             return new File(url.toURI());
-        } catch(URISyntaxException e) {
+        } catch (URISyntaxException e) {
             return new File(url.getPath());
         }
     }
 
-    public static URL resolveURLFromResource(Class cls,String urlPath) throws MalformedURLException {
-        if(!urlPath.startsWith("/")){
-            throw new IllegalArgumentException("Unable to resolve url from "+urlPath);
+    public static URL resolveURLFromResource(Class cls, String urlPath) throws MalformedURLException {
+        if (!urlPath.startsWith("/")) {
+            throw new NutsIllegalArgumentsException("Unable to resolve url from " + urlPath);
         }
-        URL url=cls.getResource(urlPath);
+        URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
         int separatorIndex = urlFile.indexOf("!/");
         if (separatorIndex != -1) {
@@ -370,38 +364,38 @@ public class CorePlatformUtils {
                 return new URL("file:" + jarFile);
             }
         } else {
-            String encoded =encodePath(urlPath);
+            String encoded = encodePath(urlPath);
             String url_tostring = url.toString();
-            if(url_tostring.endsWith(encoded)){
-                return new URL(url_tostring.substring(0,url_tostring.length()-encoded.length()));
+            if (url_tostring.endsWith(encoded)) {
+                return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
             }
-            throw new IllegalArgumentException("Unable to resolve url from "+urlPath);
+            throw new NutsIllegalArgumentsException("Unable to resolve url from " + urlPath);
         }
     }
 
-    private static String encodePath(String path){
-        StringTokenizer st=new StringTokenizer(path,"/",true);
-        StringBuilder encoded=new StringBuilder();
-        while(st.hasMoreTokens()){
+    private static String encodePath(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/", true);
+        StringBuilder encoded = new StringBuilder();
+        while (st.hasMoreTokens()) {
             String t = st.nextToken();
-            if(t.equals("/")){
+            if (t.equals("/")) {
                 encoded.append(t);
-            }else{
+            } else {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new IllegalArgumentException("Unable to encode "+t,ex);
+                    throw new NutsIllegalArgumentsException("Unable to encode " + t, ex);
                 }
             }
         }
         return encoded.toString();
     }
 
-    public static <K,V> Map<K,V> mergeMaps(Map<K,V> source,Map<K,V> dest){
-        if(dest==null){
-            dest=new HashMap<>();
+    public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
+        if (dest == null) {
+            dest = new HashMap<>();
         }
-        if(source!=null) {
+        if (source != null) {
             for (Map.Entry<K, V> e : source.entrySet()) {
                 if (e.getValue() != null) {
                     dest.put(e.getKey(), e.getValue());
@@ -548,15 +542,15 @@ public class CorePlatformUtils {
         return null;
     }
 
-    public static Boolean getExecutableJar(File file) throws IOException {
+    public static Boolean getExecutableJar(File file) {
         if (file == null || !file.isFile()) {
             return null;
         }
         return getMainClass(file) != null;
     }
 
-    public static boolean isExecutableJar(File file) throws IOException {
-        return getMainClass(file) != null;
+    public static boolean isExecutableJar(File file) {
+        return file.getName().toLowerCase().endsWith(".jar") && getMainClass(file) != null;
     }
 
     public static String getMainClass(File file) {
@@ -581,8 +575,72 @@ public class CorePlatformUtils {
         }
     }
 
+    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
+        String fullName = "META-INF/services/" + service.getName();
+        Enumeration<URL> configs;
+        LinkedHashSet<String> names = new LinkedHashSet<>();
+        try {
+            if (classLoader == null) {
+                configs = ClassLoader.getSystemResources(fullName);
+            } else {
+                configs = classLoader.getResources(fullName);
+            }
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
+        }
+        while (configs.hasMoreElements()) {
+            names.addAll(loadServiceClasses(service, configs.nextElement()));
+        }
+        List<Class> classes = new ArrayList<>();
+        for (String n : names) {
+            Class<?> c = null;
+            try {
+                c = Class.forName(n, false, classLoader);
+            } catch (ClassNotFoundException x) {
+                throw new NutsException(x);
+            }
+            if (!service.isAssignableFrom(c)) {
+                throw new NutsException("Not a valid type " + c + " <> " + service);
+            }
+            classes.add(c);
+        }
+        return classes;
+    }
 
-    public static boolean isLoadedClassPath(File file,ClassLoader classLoader) {
+    public static List<String> loadServiceClasses(Class<?> service, URL u)
+            throws ServiceConfigurationError {
+        InputStream in = null;
+        BufferedReader r = null;
+        List<String> names = new ArrayList<>();
+        try {
+            in = u.openStream();
+            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
+            int lc = 1;
+            String line = null;
+            while ((line = r.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty() && line.charAt(0) != '#') {
+                    names.add(line);
+                }
+            }
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
+        } finally {
+            try {
+                if (r != null) {
+                    r.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex2) {
+                throw new NutsIOException(ex2);
+            }
+        }
+        return names;
+    }
+
+    public static boolean isLoadedClassPath(File file, ClassLoader classLoader) {
 //    private boolean isLoadedClassPath(NutsFile nutsFile) {
 //        if (file.getId().isSameFullName(NutsId.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
 //            return true;
@@ -601,8 +659,8 @@ public class CorePlatformUtils {
                         if (!zname.endsWith("/") && zname.endsWith(".class")) {
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             try {
-                                Class<?> aClass = (classLoader==null?Thread.currentThread().getContextClassLoader():classLoader).loadClass(clz);
-                                System.out.println("Loaded "+aClass+" from "+file);
+                                Class<?> aClass = (classLoader == null ? Thread.currentThread().getContextClassLoader() : classLoader).loadClass(clz);
+                                System.out.println("Loaded " + aClass + " from " + file);
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;

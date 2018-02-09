@@ -29,13 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.repos;
 
+import net.vpc.app.nuts.extensions.filters.id.JsNutsIdFilter;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsRepositoryConfigImpl;
-import net.vpc.app.nuts.extensions.util.NutsIdPatternFilter;
 import net.vpc.app.nuts.extensions.util.*;
-import net.vpc.app.nuts.util.*;
-
-import javax.json.JsonObjectBuilder;
 import java.io.*;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -46,7 +43,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     private static final Logger log = Logger.getLogger(NutsRemoteHttpRepository.class.getName());
     private NutsId remoteId;
 
-    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, File root) throws IOException {
+    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, File root) {
         super(new NutsRepositoryConfigImpl(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, root, SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(url + "/version"));
@@ -56,8 +53,8 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsSession session) throws IOException {
-        throw new UnsupportedOperationException();
+    public void pushImpl(NutsId id, String repoId, NutsSession session) {
+        throw new NutsUnsupportedOperationException();
     }
 
     @Override
@@ -80,30 +77,30 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         return remoteId;
     }
 
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession session) throws IOException {
-        if (session.getFetchMode() == FetchMode.OFFLINE) {
-            throw new IllegalArgumentException("Offline");
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession session) {
+        if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
+            throw new NutsIllegalArgumentsException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         descriptor.write(descStream);
         httpUpload(CoreIOUtils.buildUrl(getConfig().getLocation(), "/deploy?" + resolveAuthURLPart()),
-                new TransportParamBinaryStreamPart("descriptor", "Project.nuts", new ByteArrayInputStream(descStream.toByteArray())),
-                new TransportParamBinaryFilePart("content", file.getName(), file),
-                new TransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
-                new TransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(file))
+                new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts", new ByteArrayInputStream(descStream.toByteArray())),
+                new NutsTransportParamBinaryFilePart("content", file.getName(), file),
+                new NutsTransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
+                new NutsTransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(file))
         );
         //TODO should read the id
         return id;
     }
 
     @Override
-    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) throws IOException {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
         boolean transitive = session.isTransitive();
         InputStream stream = null;
         try {
             try {
-                stream = CoreNutsUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
-                NutsDescriptor descriptor = CoreNutsUtils.parseNutsDescriptor(stream);
+                stream = CoreHttpUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
+                NutsDescriptor descriptor = CoreNutsUtils.parseNutsDescriptor(stream, true);
                 if (descriptor != null) {
                     String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                     if (hash.equals(descriptor.toString())) {
@@ -115,14 +112,18 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             }
         } finally {
             if (stream != null) {
-                stream.close();
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    throw new NutsIOException(e);
+                }
             }
         }
-        throw new IOException("Unable to load file " + id);
+        throw new NutsNotFoundException(id);
     }
 
     private void httpDownloadToFile(String path, File file, boolean mkdirs) throws IOException {
-        InputStream stream = CoreNutsUtils.getHttpClientFacade(getWorkspace(), path).open();
+        InputStream stream = CoreHttpUtils.getHttpClientFacade(getWorkspace(), path).open();
         if (stream != null) {
             if (!path.toLowerCase().startsWith("file://")) {
                 log.log(Level.INFO, "downloading url {0} to file {1}", new Object[]{path, file});
@@ -136,48 +137,57 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected File fetchImpl(NutsId id, NutsSession session, File localPath) throws IOException {
+    protected File copyToImpl(NutsId id, NutsSession session, File localPath) {
         boolean transitive = session.isTransitive();
         if (localPath.isDirectory()) {
             NutsDescriptor desc = fetchDescriptor(id, session);
             localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, CoreIOUtils.getFileExtension(desc.getExt())));
         }
 
-        httpDownloadToFile(getUrl("/fetch?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
-        String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-        String lhash = CoreSecurityUtils.evalSHA1(localPath);
-        if (rhash.equals(lhash)) {
-            return localPath;
+        try {
+            httpDownloadToFile(getUrl("/fetch?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
+            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
+            String lhash = CoreSecurityUtils.evalSHA1(localPath);
+            if (rhash.equals(lhash)) {
+                return localPath;
+            }
+        } catch (IOException e) {
+            throw new NutsIOException(e);
         }
         throw new NutsNotFoundException(id.toString());
     }
 
     @Override
-    public boolean fetchDescriptorImpl(NutsId id, NutsSession session, File localPath) throws IOException {
+    public File copyDescriptorToImpl(NutsId id, NutsSession session, File localPath) {
         boolean transitive = session.isTransitive();
-        httpDownloadToFile(getUrl("/fetch-descriptor?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
-        String rhash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-        String lhash = CoreSecurityUtils.evalSHA1(localPath);
-        if (rhash.equals(lhash)) {
-            return true;
+        try {
+            httpDownloadToFile(getUrl("/fetch-descriptor?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
+            String rhash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
+            String lhash = CoreSecurityUtils.evalSHA1(localPath);
+
+            if (rhash.equals(lhash)) {
+                return localPath;
+            }
+        } catch (IOException e) {
+            throw new NutsIOException(e);
         }
-        return false;
+        throw new NutsNotFoundException(id);
     }
 
     @Override
-    protected String fetchHashImpl(NutsId id, NutsSession session) throws IOException {
+    protected String fetchHashImpl(NutsId id, NutsSession session) {
         boolean transitive = session.isTransitive();
         return httpGetString(getUrl("/fetch-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
     }
 
     @Override
-    public String fetchDescriptorHashImpl(NutsId id, NutsSession session) throws IOException {
+    public String fetchDescriptorHashImpl(NutsId id, NutsSession session) {
         boolean transitive = session.isTransitive();
         return httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
     }
 
     @Override
-    public NutsId resolveIdImpl(NutsId id, NutsSession session) throws IOException {
+    public NutsId resolveIdImpl(NutsId id, NutsSession session) {
         boolean transitive = session.isTransitive();
         String s = null;
         try {
@@ -192,70 +202,50 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsVersionFilter versionFilter, NutsSession session) throws IOException {
+    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         boolean transitive = session.isTransitive();
-        InputStream ret = CoreNutsUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-all-versions?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
+        InputStream ret = null;
+        try {
+            ret = CoreHttpUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-all-versions?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
-        if (versionFilter != null) {
-            it = new IteratorFilter<NutsId>(it, new VersionFilterToNutsIdFilterAdapter(versionFilter));
+        if (idFilter!=null) {
+            it = new IteratorFilter<NutsId>(it, idFilter);
         }
         return it;
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, final NutsDescriptorFilter versionFilter, final NutsSession session) throws IOException {
-        boolean transitive = session.isTransitive();
-        InputStream ret = CoreNutsUtils.getHttpClientFacade(getWorkspace(), getUrl("/find-all-versions?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
-        Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
-        if (versionFilter != null) {
-            it = new IteratorFilter<NutsId>(it, new NutsIdFilter() {
-                @Override
-                public boolean accept(NutsId id) {
-                    try {
-                        return versionFilter.accept(fetchDescriptor(id, session));
-                    } catch (IOException e) {
-                        return false;
-                    }
-                }
-            });
-        }
-        return it;
-    }
-
-    @Override
-    public Iterator<NutsId> findImpl(final NutsDescriptorFilter filter, NutsSession session) throws IOException {
+    public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveAuth();
-        if (filter == null) {
-            ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
-                    new TransportParamParamPart("root", "/"),
-                    new TransportParamParamPart("ul", ulp[0]),
-                    new TransportParamParamPart("up", ulp[1]),
-                    new TransportParamParamPart("pattern", ("*")),
-                    new TransportParamParamPart("transitive", String.valueOf(transitive))
-            );
-        } else if (filter instanceof NutsIdPatternFilter) {
-            NutsIdPatternFilter filter1 = (NutsIdPatternFilter) filter;
-            JsonObjectBuilder jsonObjectBuilder = CoreJsonUtils.get(getWorkspace()).serializeObj(filter, new SerializeOptions().setPretty(true));
-            String sb = jsonObjectBuilder==null?"":jsonObjectBuilder.build().toString();
-            ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
-                    new TransportParamParamPart("root", "/"),
-                    new TransportParamParamPart("ul", ulp[0]),
-                    new TransportParamParamPart("up", ulp[1]),
-                    new TransportParamParamPart("pattern", sb)
-            );
-        } else if (filter instanceof NutsDescriptorJavascriptFilter) {
-            ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
-                    new TransportParamParamPart("root", "/"),
-                    new TransportParamParamPart("ul", ulp[0]),
-                    new TransportParamParamPart("up", ulp[1]),
-                    new TransportParamTextReaderPart("js", "search.js", new StringReader(((NutsDescriptorJavascriptFilter) filter).getCode()))
-            );
+        if (filter instanceof JsNutsIdFilter) {
+            String js = ((JsNutsIdFilter) filter).toJsNutsIdFilterExpr();
+            if(js !=null) {
+                ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
+                        new NutsTransportParamParamPart("root", "/"),
+                        new NutsTransportParamParamPart("ul", ulp[0]),
+                        new NutsTransportParamParamPart("up", ulp[1]),
+                        new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
+                );
+                return new IteratorFilter<>(new NamedNutIdFromStreamIterator(ret),filter);
+            }
         } else {
-            throw new UnsupportedOperationException();
+            ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
+                    new NutsTransportParamParamPart("root", "/"),
+                    new NutsTransportParamParamPart("ul", ulp[0]),
+                    new NutsTransportParamParamPart("up", ulp[1]),
+                    new NutsTransportParamParamPart("pattern", ("*")),
+                    new NutsTransportParamParamPart("transitive", String.valueOf(transitive))
+            );
         }
-        return new NamedNutIdFromStreamIterator(ret);
+        if(filter==null){
+            return new NamedNutIdFromStreamIterator(ret);
+        }
+        return new IteratorFilter<>(new NamedNutIdFromStreamIterator(ret),filter);
     }
 
     //    @Override
@@ -268,22 +258,30 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 //        return s == null ? -1 : Integer.parseInt(s);
 //    }
     @Override
-    public NutsFile fetchImpl(NutsId id, NutsSession session) throws IOException {
+    public NutsFile fetchImpl(NutsId id, NutsSession session) {
         NutsDescriptor descriptor = fetchDescriptor(id, session);
-        File tempFile = CoreIOUtils.createTempFile(descriptor);
-        fetch(id, session, tempFile);
-        NutsDescriptor ed = getWorkspace().fetchEffectiveDescriptor(descriptor, session);
-        return new NutsFile(ed.getId(), descriptor, tempFile, false, true);
+        File tempFile = CoreIOUtils.createTempFile(descriptor, false);
+        copyTo(id, session, tempFile);
+        NutsDescriptor ed = getWorkspace().resolveEffectiveDescriptor(descriptor, session);
+        return new NutsFile(ed.getId(), descriptor, tempFile, false, true, null);
     }
 
-    private String httpGetString(String url) throws IOException {
+    private String httpGetString(String url) {
         log.log(Level.FINEST, "call url {0}", url);
-        return CoreIOUtils.readStreamAsString(CoreNutsUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
+        try {
+            return CoreIOUtils.readStreamAsString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
     }
 
-    private InputStream httpUpload(String url, TransportParamPart... parts) throws IOException {
+    private InputStream httpUpload(String url, NutsTransportParamPart... parts) {
         log.log(Level.FINEST, "uploading url {0}", url);
-        return CoreNutsUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
+        try {
+            return CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
     }
 
     @Override
@@ -291,50 +289,54 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         return super.toString() + ((this.remoteId == null ? "" : " ; desc=" + this.remoteId));
     }
 
-    private String[] resolveAuth() throws IOException {
+    private String[] resolveAuth() {
         String login = getWorkspace().getCurrentLogin();
         NutsSecurityEntityConfig security = getConfig().getSecurity(login);
         String newLogin = "";
         String credentials = "";
         String passphrase = getConfig().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
-        if (security == null) {
-            newLogin = "anonymous";
-            credentials = "anonymous";
-        } else {
-            newLogin = security.getMappedUser();
-            if (CoreStringUtils.isEmpty(newLogin)) {
-                NutsSecurityEntityConfig security2 = getWorkspace().getConfig().getSecurity(login);
-                if (security2 != null) {
-                    newLogin = security2.getMappedUser();
+        try {
+            if (security == null) {
+                newLogin = "anonymous";
+                credentials = "anonymous";
+            } else {
+                newLogin = security.getMappedUser();
+                if (CoreStringUtils.isEmpty(newLogin)) {
+                    NutsSecurityEntityConfig security2 = getWorkspace().getConfig().getSecurity(login);
+                    if (security2 != null) {
+                        newLogin = security2.getMappedUser();
+                    }
+                }
+                if (CoreStringUtils.isEmpty(newLogin)) {
+                    newLogin = login;
+                }
+                credentials = security.getCredentials();
+                //credentials are already encrypted with default passphrase!
+                if (!CoreStringUtils.isEmpty(credentials)) {
+                    credentials = new String(CoreSecurityUtils.httpDecrypt(credentials, CoreNutsUtils.DEFAULT_PASSPHRASE));
                 }
             }
-            if (CoreStringUtils.isEmpty(newLogin)) {
-                newLogin = login;
-            }
-            credentials = security.getCredentials();
-            //credentials are already encrypted with default passphrase!
-            if (!CoreStringUtils.isEmpty(credentials)) {
-                credentials = new String(CoreSecurityUtils.httpDecrypt(credentials, CoreNutsUtils.DEFAULT_PASSPHRASE));
-            }
+            newLogin = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase);
+            credentials = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase);
+        } catch (IOException e) {
+            throw new NutsParseException(e);
         }
-        newLogin = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase);
-        credentials = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase);
         return new String[]{newLogin, credentials};
     }
 
-    private String resolveAuthURLPart() throws IOException {
+    private String resolveAuthURLPart() {
         String[] auth = resolveAuth();
         return "ul=" + CoreHttpUtils.urlEncodeString(auth[0]) + "&up=" + CoreHttpUtils.urlEncodeString(auth[0]);
     }
 
     @Override
-    protected void undeployImpl(NutsId id, NutsSession session) throws IOException {
-        throw new UnsupportedOperationException();
+    protected void undeployImpl(NutsId id, NutsSession session) {
+        throw new NutsUnsupportedOperationException();
     }
 
     @Override
     public boolean isAllowedFetch(NutsSession session) {
-        return super.isAllowedFetch(session) && session.getFetchMode() != FetchMode.OFFLINE;
+        return super.isAllowedFetch(session) && session.getFetchMode() != NutsFetchMode.OFFLINE;
     }
 
     private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {

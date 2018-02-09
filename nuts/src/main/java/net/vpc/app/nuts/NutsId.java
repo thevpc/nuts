@@ -44,6 +44,7 @@ public interface NutsId {
 
     boolean namespaceLike(String pattern);
 
+    boolean groupLike(String pattern);
     boolean nameLike(String pattern);
 
     boolean versionLike(String pattern);

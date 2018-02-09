@@ -10,6 +10,7 @@
         <module name="nuts" />
         <module name="nuts-clown" />
         <module name="nuts-core" />
+        <module name="nuts-tomcat-classloader" />
         <module name="writer-maven-plugin" />
       </profile>
     </annotationProcessing>
@@ -19,6 +20,7 @@
       <module name="nuts-clown" target="1.5" />
       <module name="nuts-core" target="1.8" />
       <module name="nuts-root" target="1.5" />
+      <module name="nuts-tomcat-classloader" target="1.8" />
       <module name="writer-maven-plugin" target="1.8" />
     </bytecodeTargetLevel>
   </component>

@@ -60,21 +60,21 @@ public class GroupNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
+    public List<NutsArgumentCandidate> getValues() {
+        List<NutsArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
             for (NutsSecurityEntityConfig nutsSecurityEntityConfig : workspace.getConfig().getSecurity()) {
-                all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         if (repository != null) {
             for (NutsSecurityEntityConfig nutsSecurityEntityConfig : repository.getConfig().getSecurity()) {
-                all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(new DefaultArgumentCandidate(n));
+                all.add(new DefaultNutsArgumentCandidate(n));
             }
         }
         return all;

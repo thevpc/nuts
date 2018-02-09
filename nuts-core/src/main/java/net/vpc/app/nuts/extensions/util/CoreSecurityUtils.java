@@ -1,33 +1,35 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.util;
+
+import net.vpc.app.nuts.NutsIOException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -82,20 +84,16 @@ public class CoreSecurityUtils {
         }
     }
 
-    public static String evalSHA1(File file) throws IOException {
-        InputStream input = null;
+    public static String evalSHA1(File file) {
         try {
-            input = new FileInputStream(file);
-            return evalSHA1(input);
-        } finally {
-            if (input != null) {
-                input.close();
-            }
+            return evalSHA1(new FileInputStream(file),true);
+        } catch (FileNotFoundException e) {
+            throw new NutsIOException(e);
         }
     }
 
-    public static String evalSHA1(String input) throws IOException {
-        return evalSHA1(new ByteArrayInputStream(input.getBytes()));
+    public static String evalSHA1(String input) {
+        return evalSHA1(new ByteArrayInputStream(input.getBytes()),true);
     }
 
     public static byte[] evalMD5(String input) throws IOException {
@@ -110,22 +108,27 @@ public class CoreSecurityUtils {
         }
     }
 
-    public static String evalSHA1(InputStream input) throws IOException {
+    public static String evalSHA1(InputStream input, boolean closeStream) throws NutsIOException {
 
         MessageDigest sha1 = null;
 
         try {
             sha1 = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException ex) {
-            throw new IOException(ex);
+            throw new NutsIOException(ex);
         }
 
         byte[] buffer = new byte[8192];
-        int len = input.read(buffer);
-
-        while (len != -1) {
-            sha1.update(buffer, 0, len);
+        int len = 0;
+        try {
             len = input.read(buffer);
+
+            while (len != -1) {
+                sha1.update(buffer, 0, len);
+                len = input.read(buffer);
+            }
+        } catch (IOException e) {
+            throw new NutsIOException(e);
         }
 
         return new HexBinaryAdapter().marshal(sha1.digest());

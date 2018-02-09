@@ -64,14 +64,14 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
     @Override
     public int getSupportLevel(ServerConfig config) {
-        return (config == null || config instanceof HttpServerConfig) ? CORE_SUPPORT : NO_SUPPORT;
+        return (config == null || config instanceof NutsHttpServerConfig) ? CORE_SUPPORT : NO_SUPPORT;
     }
 
-    public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) throws IOException {
-        HttpServerConfig httpConfig = (HttpServerConfig) config;
+    public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
+        NutsHttpServerConfig httpConfig = (NutsHttpServerConfig) config;
         Map<String, NutsWorkspace> workspaces = httpConfig.getWorkspaces();
         if (invokerWorkspace == null) {
-            throw new IllegalArgumentException("Missing Workspace");
+            throw new NutsIllegalArgumentsException("Missing Workspace");
         }
         if (workspaces.isEmpty()) {
             workspaces.put("", invokerWorkspace);
@@ -106,17 +106,22 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        final HttpServer server = httpConfig.isSsh() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
+        final HttpServer server;
+        try {
+            server = httpConfig.isSsh() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
         if (executor == null) {
             executor = new ThreadPoolExecutor(4, 100, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
         }
         server.setExecutor(executor);
         if (httpConfig.isSsh()) {
             if (httpConfig.getSslKeystorePassphrase() == null) {
-                throw new IllegalArgumentException("Missing SslKeystorePassphrase");
+                throw new NutsIllegalArgumentsException("Missing SslKeystorePassphrase");
             }
             if (httpConfig.getSslKeystoreCertificate() == null) {
-                throw new IllegalArgumentException("Missing SslKeystoreCertificate");
+                throw new NutsIllegalArgumentsException("Missing SslKeystoreCertificate");
             }
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -124,7 +129,11 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                 // initialise the keystore
                 char[] password = httpConfig.getSslKeystorePassphrase();
                 KeyStore ks = KeyStore.getInstance("JKS");
-                ks.load(new ByteArrayInputStream(httpConfig.getSslKeystoreCertificate()), password);
+                try {
+                    ks.load(new ByteArrayInputStream(httpConfig.getSslKeystoreCertificate()), password);
+                } catch (IOException e) {
+                    throw new NutsIOException(e);
+                }
 
                 // setup the key manager factory
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
@@ -155,7 +164,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     }
                 });
             } catch (GeneralSecurityException e) {
-                throw new IllegalArgumentException(e);
+                throw new NutsIllegalArgumentsException(e);
             }
         }
 
@@ -232,7 +241,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
 
             @Override
-            public boolean stop() throws IOException {
+            public boolean stop() {
                 if (running) {
                     running = false;
                     server.stop(0);

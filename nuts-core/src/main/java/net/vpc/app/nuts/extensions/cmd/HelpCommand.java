@@ -46,7 +46,8 @@ public class HelpCommand extends AbstractNutsCommand {
         super("help", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         NutsPrintStream out = context.getTerminal().getOut();
         if (cmdLine.isEmpty()) {

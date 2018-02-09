@@ -45,19 +45,20 @@ public class UnameCommand extends AbstractNutsCommand {
         super("uname", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean farch = false;
         boolean fos = false;
         boolean fdist = false;
         while (!cmdLine.isEmpty()) {
-            if (cmdLine.acceptAndRemove("-m")) {
+            if (cmdLine.read("-m")) {
                 farch = true;
-            } else if (cmdLine.acceptAndRemove("-r")) {
+            } else if (cmdLine.read("-r")) {
                 fos = true;
-            } else if (cmdLine.acceptAndRemove("-d")) {
+            } else if (cmdLine.read("-d")) {
                 fdist = true;
-            } else if (cmdLine.acceptAndRemove("-a")) {
+            } else if (cmdLine.read("-a")) {
                 fdist = true;
                 fos = true;
                 farch = true;

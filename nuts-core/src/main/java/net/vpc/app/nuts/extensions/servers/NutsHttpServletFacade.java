@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.servers;
@@ -32,14 +32,13 @@ package net.vpc.app.nuts.extensions.servers;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
 import net.vpc.app.nuts.extensions.util.*;
-import net.vpc.app.nuts.util.IOUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,11 +47,11 @@ import java.util.logging.Logger;
  * Created by vpc on 1/7/17.
  */
 public class NutsHttpServletFacade {
+
     private static final Logger log = Logger.getLogger(NutsHttpServletFacade.class.getName());
     private Map<String, NutsWorkspace> workspaces;
     private String serverId;
     private Map<String, FacadeCommand> commands = new HashMap<>();
-
 
     public NutsHttpServletFacade(String serverId, Map<String, NutsWorkspace> workspaces) {
         this.workspaces = workspaces;
@@ -60,7 +59,7 @@ public class NutsHttpServletFacade {
         register(new AbstractFacadeCommand("version") {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
-                context.sendResponseText(200, new NutsIdImpl(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getWorkspaceVersion(), "").toString());
+                context.sendResponseText(200, new NutsIdImpl(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getWorkspaceRuntimeId().getVersion().toString(), "").toString());
             }
         });
         register(new AbstractFacadeCommand("fetch") {
@@ -71,7 +70,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsFile fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id, false, context.getSession().copy().setTransitive(transitive));
+                    fetch = context.getWorkspace().fetch(id, context.getSession().copy().setTransitive(transitive));
                 } catch (Exception exc) {
                     //
                 }
@@ -145,14 +144,14 @@ public class NutsHttpServletFacade {
                 ListMap<String, String> parameters = context.getParameters();
                 String id = parameters.getOne("id");
                 boolean transitive = parameters.containsKey("transitive");
-                Iterator<NutsId> fetch = null;
+                List<NutsId> fetch = null;
                 try {
-                    fetch = context.getWorkspace().findVersions(id, null, null, context.getSession().copy().setTransitive(transitive));
+                    fetch = context.getWorkspace().find(new NutsSearch(id), context.getSession().copy().setTransitive(transitive));
                 } catch (Exception exc) {
                     //
                 }
                 if (fetch != null) {
-                    context.sendResponseText(200, iteratorNamedNutIdToString(fetch));
+                    context.sendResponseText(200, iteratorNutsIdToString(fetch.iterator()));
                 } else {
                     context.sendError(404, "Nuts not Found");
                 }
@@ -208,19 +207,11 @@ public class NutsHttpServletFacade {
                             break;
                     }
                 }
-                NutsDescriptorFilter filter = null;
-                if (js != null) {
-                    filter = new NutsDescriptorJavascriptFilter(js);
-                } else if (pattern != null) {
-                    filter = CoreJsonUtils.get().deserialize(pattern, NutsIdPatternFilter.class);
-                }
-                if (filter != null) {
-                    Iterator<NutsId> it = context.getWorkspace().findIterator(null, filter, context.getSession().copy().setTransitive(transitive));
+                Iterator<NutsId> it = context.getWorkspace().findIterator(
+                        new NutsSearchBuilder().addJs(js).addId(pattern).build(),
+                        context.getSession().copy().setTransitive(transitive));
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
-                    context.sendResponseText(200, iteratorNamedNutIdToString(it));
-                } else {
-                    context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing query.");
-                }
+                context.sendResponseText(200, iteratorNutsIdToString(it));
             }
         });
         register(new AbstractFacadeCommand("deploy") {
@@ -245,13 +236,13 @@ public class NutsHttpServletFacade {
                     String name = info.resolveVarInHeader("Content-Disposition", "name");
                     switch (name) {
                         case "descriptor":
-                            descriptor = CoreNutsUtils.parseNutsDescriptor(info.getContent());
+                            descriptor = CoreNutsUtils.parseNutsDescriptor(info.getContent(), true);
                             break;
                         case "content-hash":
-                            receivedContentHash = CoreSecurityUtils.evalSHA1(info.getContent());
+                            receivedContentHash = CoreSecurityUtils.evalSHA1(info.getContent(), true);
                             break;
                         case "content":
-                            contentFile = CoreIOUtils.createTempFile(descriptor);
+                            contentFile = CoreIOUtils.createTempFile(descriptor, false);
                             CoreIOUtils.copy(info.getContent(), contentFile, true, true);
                             break;
                     }
@@ -259,7 +250,11 @@ public class NutsHttpServletFacade {
                 if (contentFile == null) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
                 }
-                NutsId id = context.getWorkspace().deploy(contentFile, receivedContentHash, descriptor, null, context.getSession().copy());
+                NutsId id = context.getWorkspace().deploy(
+                        new NutsDeployment().setContent(contentFile)
+                                .setSha1(receivedContentHash)
+                                .setDescriptor(descriptor),
+                        context.getSession().copy());
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
             }
@@ -316,7 +311,7 @@ public class NutsHttpServletFacade {
         return this;
     }
 
-    private String iteratorNamedNutIdToString(Iterator<NutsId> it) {
+    private String iteratorNutsIdToString(Iterator<NutsId> it) {
         StringBuilder sb = new StringBuilder();
         while (it.hasNext()) {
             NutsId next = it.next();
@@ -389,11 +384,11 @@ public class NutsHttpServletFacade {
     }
 
     private static class URLInfo {
+
         String context;
         String command;
         String path;
     }
-
 
 //    private List<String> parsePath(String requestURI) {
 //        List<String> list = new ArrayList<String>(Arrays.asList(requestURI.split("/")));
@@ -411,5 +406,4 @@ public class NutsHttpServletFacade {
 //        }
 //        return list;
 //    }
-
 }

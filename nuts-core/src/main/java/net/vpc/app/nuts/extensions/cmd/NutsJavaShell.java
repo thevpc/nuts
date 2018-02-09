@@ -42,10 +42,10 @@ import net.vpc.apps.javashell.parser.nodes.Node;
 import java.io.File;
 
 public class NutsJavaShell extends JavaShell {
-    private DefaultNutsCommandLineConsoleComponent component;
+    private DefaultNutsConsole component;
     private NutsWorkspace workspace;
 
-    public NutsJavaShell(DefaultNutsCommandLineConsoleComponent component, NutsWorkspace workspace) {
+    public NutsJavaShell(DefaultNutsConsole component, NutsWorkspace workspace) {
         this.component = component;
         this.workspace = workspace;
         super.setCwd(workspace.getCwd().getPath());

@@ -47,7 +47,8 @@ public class CheckoutCommand extends AbstractNutsCommand {
         super("checkout", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("Nuts", context)).getString();
         String contentFile = cmdLine.readNonOptionOrError(new FolderNonOption("folder")).getString();

@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
+
 import java.util.Iterator;
 
 /**
@@ -71,7 +73,7 @@ public class PushBackIterator<T> implements Iterator<T> {
     @Override
     public void remove() {
         if (lastHasNext == null) {
-            throw new IllegalArgumentException("Unsupported");
+            throw new NutsIllegalArgumentsException("Unsupported");
         }
         base.remove();
     }
@@ -80,7 +82,7 @@ public class PushBackIterator<T> implements Iterator<T> {
         if(lastHasNext==null || !lastValConsumed) {
             lastHasNext = true;
         }else{
-            throw new IllegalArgumentException("Unsupported");
+            throw new NutsIllegalArgumentsException("Unsupported");
         }
     }
 }

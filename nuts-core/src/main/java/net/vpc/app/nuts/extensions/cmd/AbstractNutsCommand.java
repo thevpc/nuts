@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsCommand;
-import net.vpc.app.nuts.NutsCommandAutoComplete;
-import net.vpc.app.nuts.NutsCommandAutoCompleteComponent;
-import net.vpc.app.nuts.NutsCommandContext;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
@@ -91,14 +88,14 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     public String getHelp() {
         if (help == null) {
             try {
-                InputStream s=null;
+                InputStream s = null;
                 try {
                     s = getClass().getResourceAsStream("/net/vpc/app/nuts/extensions/cmd/" + getName() + ".help");
                     if (s != null) {
                         help = CoreIOUtils.readStreamAsString(s, true);
                     }
-                }finally {
-                    if(s!=null){
+                } finally {
+                    if (s != null) {
                         s.close();
                     }
                 }
@@ -113,23 +110,29 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     }
 
     @Override
-    public void autoComplete(NutsCommandAutoComplete autoComplete) {
-        NutsCommandAutoCompleteComponent best = autoComplete.getCommandContext().getWorkspace().getFactory().createSupported(NutsCommandAutoCompleteComponent.class,this);
-        if (best != null) {
-            best.autoComplete(this, autoComplete);
-        } else {
-            String[] args = autoComplete.getWords().toArray(new String[autoComplete.getWords().size()]);
-            try {
-                run(args, autoComplete.getCommandContext(), autoComplete);
-            } catch (Exception ex) {
-                //ignore
+    public void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete) {
+        NutsCommandAutoComplete oldAutoComplete = context.getAutoComplete();
+        context.setAutoComplete(autoComplete);
+        try {
+            if (autoComplete == null) {
+                throw new NutsIllegalArgumentsException("Missing Auto Complete");
             }
+            NutsCommandAutoCompleteComponent best = context.getWorkspace().getFactory().createSupported(NutsCommandAutoCompleteComponent.class, this);
+            if (best != null) {
+                best.autoComplete(this, context);
+            } else {
+                String[] args = autoComplete.getWords().toArray(new String[autoComplete.getWords().size()]);
+                try {
+                    exec(args, context);
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+        } finally {
+            context.setAutoComplete(oldAutoComplete);
         }
     }
 
-    public int exec(String[] args, NutsCommandContext context) throws Exception {
-        return run(args, context, null);
-    }
+    public abstract int exec(String[] args, NutsCommandContext context) throws Exception;
 
-    public abstract int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception;
 }

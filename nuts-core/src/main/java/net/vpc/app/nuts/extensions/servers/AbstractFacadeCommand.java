@@ -68,11 +68,7 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
                 executeImpl(context);
             } finally {
                 if (loggedId) {
-                    try {
-                        context.getWorkspace().logout();
-                    } catch (LoginException e) {
-                        e.printStackTrace();
-                    }
+                    context.getWorkspace().logout();
                 }
             }
         } else {

@@ -37,5 +37,5 @@ import java.io.IOException;
 @Singleton
 public interface NutsDescriptorContentParserComponent extends NutsComponent<Object> {
 
-    NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) throws IOException;
+    NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) ;
 }

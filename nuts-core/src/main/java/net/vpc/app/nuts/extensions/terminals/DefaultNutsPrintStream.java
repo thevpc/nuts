@@ -31,7 +31,7 @@ package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsPrintColors;
 import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.EnhancedTextChunck;
+import net.vpc.app.nuts.NutsTextChunck;
 
 import java.awt.*;
 import java.io.*;
@@ -699,9 +699,9 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         println();
     }
 
-    public void draw(EnhancedTextChunck chunk) {
+    public void draw(NutsTextChunck chunk) {
         if (chunk == null) {
-            chunk = EnhancedTextChunck.NULL;
+            chunk = NutsTextChunck.NULL;
         }
         String text = chunk.getValue();
         if (text == null || text.length() == 0) {
@@ -721,6 +721,14 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
                     }
                     case "[[": {
                         this.print(NutsPrintColors.PURPLE, text);
+                        break;
+                    }
+                    case "<<<": {
+                        this.print(NutsPrintColors.RED, "<" + text + ">");
+                        break;
+                    }
+                    case "<<": {
+                        this.print(NutsPrintColors.RED, text);
                         break;
                     }
                     case "(((": {
@@ -743,6 +751,10 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
                         this.print(NutsPrintColors.GREEN, text);
                         break;
                     }
+                    case "\"\"\"": {
+                        this.print(NutsPrintColors.GREEN, "\""+text+"\"");
+                        break;
+                    }
                     case "===": {
                         this.print(NutsPrintColors.DARK_GRAY, text);
                         break;
@@ -751,8 +763,28 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
                         this.print(NutsPrintColors.LIGHT_GRAY, text);
                         break;
                     }
+                    case "{{{": {
+                        this.print(NutsPrintColors.YELLOW, "{" + text + "}");
+                        break;
+                    }
+                    case "{{": {
+                        this.print(NutsPrintColors.YELLOW, text);
+                        break;
+                    }
+                    case "***": {
+                        this.print(NutsPrintColors.BLUE, "*" + text + "*");
+                        break;
+                    }
+                    case "**": {
+                        this.print(NutsPrintColors.BLUE, text);
+                        break;
+                    }
+                    case "@@@": {
+                        this.print(NutsPrintColors.CYAN, "@"+text+"@");
+                        break;
+                    }
                     case "@@": {
-                        this.print(NutsPrintColors.DARK_GRAY, text);
+                        this.print(NutsPrintColors.CYAN, text);
                         break;
                     }
                     default: {

@@ -3,38 +3,35 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.*;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.extensions.util.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.extensions.util.NutsIdPatternFilter;
+import net.vpc.app.nuts.extensions.util.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,15 +46,18 @@ public class FindCommand extends AbstractNutsCommand {
         super("find", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    @Override
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();
         findContext.context = context;
         findContext.out = context.getTerminal().getOut();
+        findContext.err = context.getTerminal().getErr();
         while (!cmdLine.isEmpty()) {
-            if (cmdLine.acceptAndRemoveNoDuplicates("-js", "--javascript")) {
+            if (cmdLine.readOnce("-js", "--javascript")) {
                 if (currentFindWhat + 1 >= findWhats.size()) {
                     findWhats.add(new FindWhat());
                 }
@@ -65,79 +65,83 @@ public class FindCommand extends AbstractNutsCommand {
                     if (!cmdLine.isExecMode()) {
                         return -1;
                     }
-                    throw new IllegalArgumentException("Unsupported");
+                    throw new NutsIllegalArgumentsException("Unsupported");
                 }
                 findContext.jsflag = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-x", "--expression")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-x", "--expression")) {
                 findContext.jsflag = false;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-l", "--long")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-l", "--long")) {
                 findContext.longflag = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-f", "--file")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-f", "--file")) {
                 findContext.showFile = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-c", "--class")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-c", "--class")) {
                 findContext.showClass = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-off", "--offline")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-F", "--offline")) {
                 findContext.fecthMode = SearchMode.OFFLINE;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-on", "--online")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-O", "--online")) {
                 findContext.fecthMode = SearchMode.ONLINE;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-R", "--remote")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-R", "--remote")) {
                 findContext.fecthMode = SearchMode.REMOTE;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-C", "--commitable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-M", "--commitable")) {
                 findContext.fecthMode = SearchMode.COMMIT;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-U", "--updatable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-U", "--updatable")) {
                 findContext.fecthMode = SearchMode.UPDATE;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-S", "--status")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-T", "--status")) {
                 findContext.fecthMode = SearchMode.STATUS;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-e", "--exec")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-e", "--exec")) {
                 findContext.executable = true;
                 findContext.library = false;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-l", "--lib")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-!e", "--lib")) {
                 findContext.executable = false;
                 findContext.library = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-s", "--descriptor")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-s", "--descriptor")) {
                 findContext.desc = true;
                 findContext.eff = false;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-D", "--installed-dependencies")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-g", "--installed-dependencies")) {
                 findContext.installedDependencies = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-d", "--dependencies")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-d", "--dependencies")) {
                 findContext.display = "dependencies";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-i", "--installed")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-i", "--installed")) {
                 findContext.installed = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-!i", "--non-installed")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-!i", "--non-installed")) {
                 findContext.installed = false;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-u", "--updatable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-u", "--updatable")) {
                 findContext.updatable = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-!u", "--non-updatable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-!u", "--non-updatable")) {
                 findContext.updatable = false;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-S", "--effective-descriptor")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-b", "--effective-descriptor")) {
                 findContext.desc = true;
                 findContext.eff = true;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-I", "--display-id")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-I", "--display-id")) {
                 findContext.display = "id";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-N", "--display-name")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-N", "--display-name")) {
                 findContext.display = "name";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-P", "--display-packaging")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-P", "--display-packaging")) {
                 findContext.display = "packaging";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-A", "--display-arch")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-A", "--display-arch")) {
                 findContext.display = "arch";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-F", "--display-file")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-L", "--display-file")) {
                 findContext.display = "file";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-C", "--display-class")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-C", "--display-class")) {
                 findContext.display = "class";
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-h", "--help")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-h", "-?", "--help")) {
                 cmdLine.requireEmpty();
                 if (cmdLine.isExecMode()) {
                     String help = getHelp();
                     findContext.out.println("Command " + this);
-                    findContext.out.println(help);
+                    findContext.out.drawln(help);
                 }
                 return 0;
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-p", "--pkg")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-p", "--pkg")) {
                 findContext.pack.add(cmdLine.readNonOptionOrError(new PackagingNonOption("Packaging", context)).getString());
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-a", "--arch")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-a", "--arch")) {
                 findContext.arch.add(cmdLine.readNonOptionOrError(new ArchitectureNonOption("Architecture", context)).getString());
-            } else if (currentFindWhat == 0 && cmdLine.acceptAndRemoveNoDuplicates("-r", "--repo")) {
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-r", "--repo")) {
                 findContext.repos.add(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-v", "--last-version")) {
+                findContext.bestVersion = true;
+            } else if (currentFindWhat == 0 && cmdLine.readOnce("-Y", "--summary")) {
+                findContext.showSummary = true;
             } else {
                 CmdLine.Val val = cmdLine.readNonOptionOrError(new DefaultNonOption("Expression"));
                 if (currentFindWhat + 1 >= findWhats.size()) {
@@ -148,7 +152,7 @@ public class FindCommand extends AbstractNutsCommand {
                         if (findWhats.get(currentFindWhat).jsCode == null) {
                             findWhats.get(currentFindWhat).jsCode = val.getString();
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsIllegalArgumentsException("Unsupported");
                         }
                     } else {
                         String arg = val.getString();
@@ -161,7 +165,7 @@ public class FindCommand extends AbstractNutsCommand {
 //                            }
                             findWhats.get(currentFindWhat).nonjs.add(arg);
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsIllegalArgumentsException("Unsupported");
                         }
                     }
                 }
@@ -175,7 +179,11 @@ public class FindCommand extends AbstractNutsCommand {
         if (findContext.installedDependencies == null) {
             findContext.installedDependencies = false;
         }
-
+        if (findWhats.isEmpty()) {
+            FindWhat w = new FindWhat();
+            w.nonjs.add("*");
+            findWhats.add(w);
+        }
         if (findContext.fecthMode == SearchMode.STATUS) {
             findContext.fecthMode = SearchMode.COMMIT;
             boolean first = true;
@@ -217,7 +225,11 @@ public class FindCommand extends AbstractNutsCommand {
 //            }
         } else {
             for (FindWhat findWhat : findWhats) {
+                long from = System.nanoTime();
                 List<NutsId> it = find(findWhat, findContext);
+                long to = System.nanoTime();
+                findContext.executionTimeNano = to - from;
+                findContext.executionSearch = findWhat;
                 display(it, findContext);
             }
         }
@@ -228,52 +240,47 @@ public class FindCommand extends AbstractNutsCommand {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        NutsDescriptorFilter filter = null;
-        if (findWhat.jsCode != null) {
-            filter = new NutsDescriptorJavascriptFilter(findWhat.jsCode);
-        } else {
-            filter = new NutsIdPatternFilter(findWhat.nonjs.toArray(new String[findWhat.nonjs.size()]), findContext.pack.toArray(new String[findContext.pack.size()]), findContext.arch.toArray(new String[findContext.arch.size()]));
-        }
+        NutsSearch search = new NutsSearchBuilder().addJs(findWhat.jsCode)
+                .addId(findWhat.nonjs)
+                .addArch(findContext.arch)
+                .addPackaging(findContext.pack)
+                .addRepository(findContext.repos)
+                .build();
+
         NutsWorkspace ws = findContext.context.getValidWorkspace();
-        NutsRepositoryFilter repositoryFilter = new NutsRepositoryFilter() {
-            @Override
-            public boolean accept(NutsRepository repository) {
-                return findContext.repos.isEmpty() || findContext.repos.contains(repository.getRepositoryId());
-            }
-        };
         switch (findContext.fecthMode) {
             case ONLINE: {
-                return searchOnline(findContext, filter, ws, repositoryFilter);
+                return searchOnline(findContext, search, ws);
             }
             case OFFLINE: {
-                return searchOffline(findContext, filter, ws, repositoryFilter);
+                return searchOffline(findContext, search, ws);
             }
             case REMOTE: {
-                return searchRemote(findContext, filter, ws, repositoryFilter);
+                return searchRemote(findContext, search, ws);
             }
             case COMMIT: {
-                return searchCommit(findContext, filter, ws, repositoryFilter);
+                return searchCommit(findContext, search, ws);
             }
             case UPDATE: {
-                return searchUpdate(findContext, filter, ws, repositoryFilter);
+                return searchUpdate(findContext, search, ws);
             }
             case STATUS: {
-                throw new IllegalArgumentException("Unsupported");
+                throw new NutsIllegalArgumentsException("Unsupported");
             }
         }
         return Collections.emptyList();
     }
 
-    private List<NutsId> searchUpdate(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+    private List<NutsId> searchUpdate(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
         Map<String, NutsId> local = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE)))) {
+        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)))) {
             NutsId r = local.get(nutsId.getFullName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getFullName(), nutsId);
             }
         }
         Map<String, NutsId> remote = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.REMOTE)))) {
+        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
             NutsId r = remote.get(nutsId.getFullName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getFullName(), nutsId);
@@ -288,16 +295,16 @@ public class FindCommand extends AbstractNutsCommand {
         return new ArrayList<NutsId>(remote.values());
     }
 
-    private List<NutsId> searchCommit(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
+    private List<NutsId> searchCommit(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
         Map<String, NutsId> local = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE)))) {
+        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)))) {
             NutsId r = local.get(nutsId.getFullName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getFullName(), nutsId);
             }
         }
         Map<String, NutsId> remote = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.REMOTE)))) {
+        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
             NutsId r = remote.get(nutsId.getFullName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getFullName(), nutsId);
@@ -312,24 +319,41 @@ public class FindCommand extends AbstractNutsCommand {
         return new ArrayList<NutsId>(local.values());
     }
 
-    private List<NutsId> searchRemote(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
-        return ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.REMOTE));
+    private List<NutsId> searchRemote(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
+        return ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE));
     }
 
-    private List<NutsId> searchOffline(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
-        return ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE));
+    private List<NutsId> searchOffline(FindContext findContext, NutsSearch search, NutsWorkspace ws) {
+        return ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE));
     }
 
-    private List<NutsId> searchOnline(FindContext findContext, NutsDescriptorFilter filter, NutsWorkspace ws, NutsRepositoryFilter repositoryFilter) throws IOException {
-        return ws.find(repositoryFilter, filter, findContext.context.getSession().copy().setTransitive(true).setFetchMode(FetchMode.ONLINE));
+    private List<NutsId> searchOnline(FindContext findContext, NutsSearch search, NutsWorkspace ws) {
+        return ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE));
         //display(nutsIdIterator,findContext);
     }
 
     private void display(List<NutsId> nutsList, FindContext findContext) throws IOException {
+        if (nutsList.isEmpty()) {
+            findContext.err.println("Nuts not found " + findContext.executionSearch);
+            return;
+        }
         Set<String> visitedItems = new HashSet<>();
         NutsWorkspace ws = findContext.context.getValidWorkspace();
         Set<String> visitedPackaging = new HashSet<>();
         Set<String> visitedArchs = new HashSet<>();
+        if (findContext.bestVersion) {
+            Map<String, NutsId> mm = new LinkedHashMap<>();
+            for (NutsId nutsId : nutsList) {
+                String fullName = nutsId.getFullName();
+                NutsId old = mm.get(fullName);
+                if (old == null || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                    mm.put(fullName, nutsId);
+                }
+            }
+            nutsList = new ArrayList<>(mm.values());
+        }
+        Collections.sort(nutsList, CoreNutsUtils.NUTS_ID_COMPARATOR);
+
         for (NutsId nutsId : nutsList) {
             NutsInfo info = new NutsInfo(nutsId, findContext.context);
             if (findContext.installed != null) {
@@ -353,16 +377,23 @@ public class FindCommand extends AbstractNutsCommand {
                     Set<String> imports = new HashSet<String>(Arrays.asList(ws.getConfig().getImports()));
 
                     if (findContext.longflag) {
+                        NutsDescriptor descriptor = null;
+                        String descriptorError = null;
+                        try {
+                            descriptor = info.getDescriptor();
+                        } catch (Exception ex) {
+                            descriptorError = ex.getMessage();
+                        }
                         String status = (info.isInstalled(findContext.installedDependencies) ? "i"
                                 : info.isFetched() ? "f"
                                 : "r")
                                 + (info.isUpdatable() ? "u" : ".")
-                                + (info.getDescriptor().isExecutable() ? "x" : ".");
+                                + (descriptor == null ? "?" : (descriptor.isExecutable() ? "x" : "."));
                         findContext.out.print(status);
                         findContext.out.print(" ");
-                        findContext.out.print(info.getDescriptor().getPackaging());
+                        findContext.out.print(descriptor == null ? "?  " : descriptor.getPackaging());
                         findContext.out.print(" ");
-                        findContext.out.print(Arrays.asList(info.getDescriptor().getArch()));
+                        findContext.out.print(Arrays.asList(descriptor == null ? new String[0] : descriptor.getArch()));
                         findContext.out.print(" ");
                         if (CoreStringUtils.isEmpty(info.nuts.getNamespace())) {
                             findContext.out.print("?");
@@ -392,6 +423,9 @@ public class FindCommand extends AbstractNutsCommand {
                                 }
                             }
                         }
+                        if (!CoreStringUtils.isEmpty(descriptorError)) {
+                            findContext.out.print(" [[" + descriptorError + "]]");
+                        }
                     } else {
                         findContext.out.draw(format(info.nuts, imports));
                         if (findContext.showFile) {
@@ -418,36 +452,48 @@ public class FindCommand extends AbstractNutsCommand {
                     }
                     findContext.out.println();
                     if (findContext.desc) {
-                        findContext.out.println(info.getDescriptor().toString());
+                        NutsDescriptor descriptor = null;
+                        String descriptorError = null;
+                        try {
+                            descriptor = info.getDescriptor();
+                        } catch (Exception ex) {
+                            descriptorError = ex.getMessage();
+                        }
+                        findContext.out.println(descriptor == null ? ("Error Retrieving Descriptor : " + descriptor) : descriptor.toString());
                         findContext.out.println("");
                     }
                     if ("dependencies".equals(findContext.display)) {
-                        FetchMode m = null;
+                        NutsFetchMode m = null;
                         switch (findContext.fecthMode) {
                             case ONLINE: {
-                                m = FetchMode.ONLINE;
+                                m = NutsFetchMode.ONLINE;
                                 break;
                             }
                             case OFFLINE: {
-                                m = FetchMode.OFFLINE;
+                                m = NutsFetchMode.OFFLINE;
                                 break;
                             }
                             case REMOTE: {
-                                m = FetchMode.REMOTE;
+                                m = NutsFetchMode.REMOTE;
                                 break;
                             }
                             case COMMIT: {
-                                m = FetchMode.ONLINE;
+                                m = NutsFetchMode.ONLINE;
                                 break;
                             }
                             case UPDATE: {
-                                m = FetchMode.ONLINE;
+                                m = NutsFetchMode.ONLINE;
                                 break;
                             }
                         }
-                        List<NutsFile> depsFiles = ws.fetchWithDependencies(info.nuts.toString(), false, null, findContext.context.getSession().copy().setTransitive(true)
-                                .setFetchMode(m)
+                        NutsFile[] depsFiles = ws.fetchDependencies(
+                                new NutsDependencySearch(info.nuts)
+                                        .setIncludeMain(false)
+                                        .setScope(NutsDependencyScope.RUN),
+                                findContext.context.getSession().copy().setTransitive(true)
+                                        .setFetchMode(m)
                         );
+                        Arrays.sort(depsFiles, CoreNutsUtils.NUTS_FILE_COMPARATOR);
                         for (NutsFile dd : depsFiles) {
                             NutsInfo dinfo = new NutsInfo(dd.getId(), findContext.context);
                             dinfo.descriptor = dd.getDescriptor();
@@ -475,14 +521,20 @@ public class FindCommand extends AbstractNutsCommand {
                     if (!visitedItems.contains(fullName)) {
                         visitedItems.add(fullName);
                         if (findContext.longflag) {
+                            NutsDescriptor d = null;
+                            try {
+                                d = info.getDescriptor();
+                            } catch (NutsException ex) {
+                                //
+                            }
                             String status = (info.isInstalled(findContext.installedDependencies) ? "i"
                                     : info.isFetched() ? "f"
                                     : "r") + (info.isUpdatable() ? "u" : ".");
                             findContext.out.print(status);
                             findContext.out.print(" ");
-                            findContext.out.print(info.getDescriptor().getPackaging());
+                            findContext.out.print(d==null?"?":d.getPackaging());
                             findContext.out.print(" ");
-                            findContext.out.print(Arrays.asList(info.getDescriptor().getArch()));
+                            findContext.out.print(Arrays.asList(d==null?"?":d.getArch()));
                             findContext.out.print(" ");
                             findContext.out.println(info.nuts.getFullName());
                         } else {
@@ -493,10 +545,9 @@ public class FindCommand extends AbstractNutsCommand {
                 }
                 case "file": {
                     File fullName = info.getFile();
-                    //if(fullName!=null && !visitedItems.contains(fullName.getPath())) {
-                    //visitedItems.add(fullName.getPath());
-                    findContext.out.println(fullName.getPath());
-                    //}
+                    if (fullName != null) {
+                        findContext.out.println(fullName.getPath());
+                    }
                     break;
                 }
                 case "class": {
@@ -508,25 +559,43 @@ public class FindCommand extends AbstractNutsCommand {
                     break;
                 }
                 case "packaging": {
-                    NutsDescriptor d = info.getDescriptor();
-                    String p = d.getPackaging();
-                    if (!CoreStringUtils.isEmpty(p) && !visitedPackaging.contains(p)) {
-                        visitedPackaging.add(p);
-                        findContext.out.println(p);
+                    NutsDescriptor d = null;
+                    try {
+                        d = info.getDescriptor();
+                    } catch (NutsException ex) {
+                        //
                     }
-                    break;
-                }
-                case "arch": {
-                    NutsDescriptor d = info.getDescriptor();
-                    for (String p : d.getArch()) {
-                        if (!CoreStringUtils.isEmpty(p) && !visitedArchs.contains(p)) {
-                            visitedArchs.add(p);
+                    if (d != null) {
+                        String p = d.getPackaging();
+                        if (!CoreStringUtils.isEmpty(p) && !visitedPackaging.contains(p)) {
+                            visitedPackaging.add(p);
                             findContext.out.println(p);
                         }
                     }
                     break;
                 }
+                case "arch": {
+                    NutsDescriptor d = null;
+                    try {
+                        d = info.getDescriptor();
+                    } catch (NutsException ex) {
+                        //
+                    }
+                    if (d != null) {
+                        for (String p : d.getArch()) {
+                            if (!CoreStringUtils.isEmpty(p) && !visitedArchs.contains(p)) {
+                                visitedArchs.add(p);
+                                findContext.out.println(p);
+                            }
+                        }
+                    }
+                    break;
+                }
             }
+        }
+        if (findContext.showSummary) {
+            findContext.out.println();
+            findContext.out.drawln("===" + nutsList.size() + "=== nuts found in ===" + (findContext.executionTimeNano / 1000000 / 1000.0) + "===s");
         }
     }
 
@@ -592,22 +661,14 @@ public class FindCommand extends AbstractNutsCommand {
 
         public boolean isFetched() {
             if (this.fetched == null) {
-                try {
-                    this.fetched = ws.isFetched(nuts.toString(), session);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                this.fetched = ws.isFetched(nuts.toString(), session);
             }
             return this.fetched;
         }
 
         public boolean isInstalled(boolean checkDependencies) {
             if (this.is_installed == null) {
-                try {
-                    this.is_installed = isFetched() && ws.isInstalled(nuts.toString(), checkDependencies, session);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                this.is_installed = isFetched() && ws.isInstalled(nuts.toString(), checkDependencies, session);
             }
             return this.is_installed;
         }
@@ -619,7 +680,7 @@ public class FindCommand extends AbstractNutsCommand {
                     if (this.isFetched()) {
                         NutsId nut2 = null;
                         try {
-                            nut2 = ws.resolveId(nuts.setVersion(null).toString(), session.copy().setTransitive(true).setFetchMode(FetchMode.REMOTE));
+                            nut2 = ws.resolveId(nuts.setVersion(null).toString(), session.copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE));
                         } catch (Exception ex) {
                             //ignore
                         }
@@ -634,13 +695,12 @@ public class FindCommand extends AbstractNutsCommand {
             return this.is_updatable;
         }
 
-
         public File getFile() {
             if (_fetchedFile == null) {
                 try {
-                    _fetchedFile = ws.fetch(nuts.toString(), session.copy().setTransitive(true).setFetchMode(FetchMode.OFFLINE));
+                    _fetchedFile = ws.fetch(nuts.toString(), session.copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE));
                 } catch (Exception ex) {
-                    _fetchedFile = new NutsFile(null, null, null, false, false);
+                    _fetchedFile = new NutsFile(null, null, null, false, false, null);
                 }
             }
             return _fetchedFile.getFile();
@@ -648,15 +708,11 @@ public class FindCommand extends AbstractNutsCommand {
 
         public NutsDescriptor getDescriptor() {
             if (descriptor == null) {
-                try {
-//                    NutsDescriptor dd = ws.fetchDescriptor(nuts.toString(), true, session.copy().setTransitive(true).setFetchMode(FetchMode.ONLINE));
+//                    NutsDescriptor dd = ws.fetchDescriptor(nuts.toString(), true, session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE));
 //                    if(dd.isExecutable()){
 //                        System.out.println("");
 //                    }
-                    descriptor = ws.fetchDescriptor(nuts.toString(), true, session.copy().setTransitive(true).setFetchMode(FetchMode.ONLINE));
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                descriptor = ws.fetchDescriptor(nuts.toString(), true, session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE));
             }
             return descriptor;
         }
@@ -664,11 +720,30 @@ public class FindCommand extends AbstractNutsCommand {
     }
 
     class FindWhat {
+
         String jsCode = null;
         HashSet<String> nonjs = new HashSet<String>();
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            if (!CoreStringUtils.isEmpty(jsCode)) {
+                sb.append("js::'").append(jsCode).append('\'');
+            }
+            for (String v : nonjs) {
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append("'");
+                sb.append(v);
+                sb.append("'");
+            }
+            return sb.toString();
+        }
     }
 
-    class FindContext {
+    static class FindContext {
+
         HashSet<String> arch = new HashSet<String>();
         HashSet<String> pack = new HashSet<String>();
         HashSet<String> repos = new HashSet<String>();
@@ -684,8 +759,13 @@ public class FindCommand extends AbstractNutsCommand {
         Boolean installed = null;
         Boolean installedDependencies = null;
         Boolean updatable = null;
+        boolean bestVersion = false;
         NutsPrintStream out;
+        NutsPrintStream err;
         String display = "id";
+        boolean showSummary = false;
         NutsCommandContext context;
+        long executionTimeNano;
+        FindWhat executionSearch;
     }
 }

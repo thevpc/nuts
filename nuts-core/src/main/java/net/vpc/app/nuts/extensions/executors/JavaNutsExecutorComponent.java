@@ -30,14 +30,10 @@
 package net.vpc.app.nuts.extensions.executors;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -50,7 +46,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     public static final NutsId ID = CoreNutsUtils.parseNutsId("java");
 
     @Override
-    public NutsId getId() throws IOException {
+    public NutsId getId()  {
         return ID;
     }
 
@@ -64,7 +60,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext)  {
         NutsFile nutMainFile = executionContext.getNutsFile();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
         String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
@@ -135,12 +131,14 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
         List<NutsFile> nutsFiles = new ArrayList<>();
         NutsDescriptor descriptor = nutMainFile.getDescriptor();
-        descriptor = executionContext.getWorkspace().fetchEffectiveDescriptor(descriptor, executionContext.getSession());
+        descriptor = executionContext.getWorkspace().resolveEffectiveDescriptor(descriptor, executionContext.getSession());
         for (NutsDependency d : descriptor.getDependencies()) {
             nutsFiles.addAll(
-                    executionContext.getWorkspace().fetchWithDependencies(d.toId().toString(), true,
-                            CoreNutsUtils.EXEC_DEPENDENCIES_FILTER,
-                            executionContext.getSession().copy().setTransitive(true))
+                    Arrays.asList(executionContext.getWorkspace().fetchDependencies(
+                            new NutsDependencySearch(d.toId())
+                            .setIncludeMain(true)
+                            .setScope(NutsDependencyScope.RUN),
+                            executionContext.getSession().copy().setTransitive(true)))
             );
         }
         List<String> args = new ArrayList<String>();
@@ -157,7 +155,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             args.add(nutMainFile.getFile().getPath());
         } else {
             if (mainClass == null) {
-                throw new IllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                throw new NutsIllegalArgumentsException("Missing Main-Class in Manifest for " + nutMainFile.getId());
             }
             args.add("-classpath");
             StringBuilder sb = new StringBuilder();
@@ -177,7 +175,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 List<String> possibleClasses = CoreStringUtils.split(mainClass, ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new IllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                        throw new NutsIllegalArgumentsException("Missing Main-Class in Manifest for " + nutMainFile.getId());
                     case 1:
                         args.add(mainClass);
                         break;

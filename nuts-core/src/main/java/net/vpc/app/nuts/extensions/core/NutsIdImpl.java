@@ -120,7 +120,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return anyMatches(CoreStringUtils.simpexpToRegexp(pattern, false));
+        return anyMatches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return toString().matches(CoreStringUtils.simpexpToRegexp(pattern, false));
+        return toString().matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -136,7 +136,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(namespace).matches(CoreStringUtils.simpexpToRegexp(pattern, false));
+        return CoreStringUtils.trim(namespace).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -144,7 +144,15 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(name).matches(CoreStringUtils.simpexpToRegexp(pattern, false));
+        return CoreStringUtils.trim(name).matches(CoreStringUtils.simpexpToRegexp(pattern));
+    }
+
+    @Override
+    public boolean groupLike(String pattern) {
+        if (pattern == null) {
+            return true;
+        }
+        return CoreStringUtils.trim(group).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -152,7 +160,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(version.getValue()).matches(CoreStringUtils.simpexpToRegexp(pattern, false));
+        return CoreStringUtils.trim(version.getValue()).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -160,7 +168,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(query).matches(CoreStringUtils.simpexpToRegexp(pattern, false));
+        return CoreStringUtils.trim(query).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override

@@ -51,7 +51,8 @@ public class CdCommand extends AbstractNutsCommand {
         super("cd", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         cmdLine.requireNonEmpty();
         String folder = cmdLine.readNonOptionOrError(new FolderNonOption("Folder")).getString();

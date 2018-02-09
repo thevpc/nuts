@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.util.StringUtils;
-
 /**
  * Created by vpc on 2/1/17.
  */
@@ -66,4 +64,16 @@ public class NutsVersionInterval {
         return inclusiveLowerBoundary && inclusiveUpperBoundary && StringUtils.trim(min).equals(StringUtils.trim(max))
                 && !"LATEST".endsWith(min) && !"RELEASE".endsWith(min);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(inclusiveLowerBoundary?"[":"]");
+        sb.append(min==null?"":min);
+        sb.append(",");
+        sb.append(max==null?"":max);
+        sb.append(inclusiveUpperBoundary?"]":"[");
+        return sb.toString();
+    }
+
 }

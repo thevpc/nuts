@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,11 +30,7 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.extensions.util.JsonStatus;
-import net.vpc.app.nuts.extensions.util.PlatformBeanProperty;
-import net.vpc.app.nuts.extensions.util.SerializeOptions;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.*;
 
 import javax.json.*;
 import javax.json.stream.JsonGenerator;
@@ -85,7 +81,7 @@ public class JsonSerializerImpl implements JsonSerializer {
                 return null;
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsIllegalArgumentsException("Unsupported");
     }
 
 
@@ -210,7 +206,7 @@ public class JsonSerializerImpl implements JsonSerializer {
     }
 
     @Override
-    public <T> T loadJson(File file, Class<T> cls) throws IOException {
+    public <T> T loadJson(File file, Class<T> cls) {
         if (!file.exists()) {
             return null;
         }
@@ -224,25 +220,31 @@ public class JsonSerializerImpl implements JsonSerializer {
                     reader.close();
                 }
             }
-        } catch (Exception ex) {
-            throw new IOException("Error Parsing file " + file.getPath(), ex);
+        } catch (RuntimeException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw new NutsIOException("Error Parsing file " + file.getPath(), ex);
         }
     }
 
     @Override
-    public void storeJson(JsonStructure structure, File file, boolean pretty) throws IOException {
+    public void storeJson(JsonStructure structure, File file, boolean pretty) {
         File parentFile = file.getParentFile();
         if (parentFile != null) {
             parentFile.mkdirs();
         }
         FileWriter writer = null;
         try {
-            writer = new FileWriter(file);
-            storeJson(structure, writer, pretty);
-        } finally {
-            if (writer != null) {
-                writer.close();
+            try {
+                writer = new FileWriter(file);
+                storeJson(structure, writer, pretty);
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
             }
+        } catch (IOException e) {
+            throw new NutsIOException(e);
         }
     }
 
@@ -264,14 +266,16 @@ public class JsonSerializerImpl implements JsonSerializer {
     }
 
     @Override
-    public <T> void storeJson(T obj, File file, SerializeOptions options) throws IOException {
+    public <T> void storeJson(T obj, File file, SerializeOptions options) {
         try {
             JsonObjectBuilder b = serializeObj(obj, options);
             if (b != null) {
                 storeJson(b.build(), file, options.isPretty());
             }
+        } catch (RuntimeException ex) {
+            throw ex;
         } catch (Exception ex) {
-            throw new IOException(ex);
+            throw new NutsIOException(ex);
         }
     }
 
@@ -319,7 +323,7 @@ public class JsonSerializerImpl implements JsonSerializer {
             if (obj instanceof JsonString) {
                 t = (Class<T>) String.class;
             } else {
-                throw new IllegalArgumentException("Unable to resolve null type for " + obj);
+                throw new NutsIllegalArgumentsException("Unable to resolve null type for " + obj);
             }
         }
         if (t.equals(String.class)) {

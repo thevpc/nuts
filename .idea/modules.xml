@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/nuts-clown/nuts-clown.iml" filepath="$PROJECT_DIR$/nuts-clown/nuts-clown.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-core/nuts-core.iml" filepath="$PROJECT_DIR$/nuts-core/nuts-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-root.iml" filepath="$PROJECT_DIR$/nuts-root.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nuts-tomcat-classloader/nuts-tomcat-classloader.iml" filepath="$PROJECT_DIR$/nuts-tomcat-classloader/nuts-tomcat-classloader.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../common/maven/writer-maven-plugin/writer-maven-plugin.iml" filepath="$PROJECT_DIR$/../../common/maven/writer-maven-plugin/writer-maven-plugin.iml" />
     </modules>
   </component>

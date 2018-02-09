@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
@@ -44,7 +45,8 @@ public class EchoCommand extends AbstractNutsCommand {
         super("echo", CORE_SUPPORT);
     }
 
-    public int run(String[] args, NutsCommandContext context, NutsCommandAutoComplete autoComplete) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
         CmdLine cmd = new CmdLine(autoComplete, args);
         boolean noTrailingNewLine = false;
         boolean plain = false;
@@ -52,13 +54,13 @@ public class EchoCommand extends AbstractNutsCommand {
         NutsPrintStream out = context.getTerminal().getOut();
         while (!cmd.isEmpty()) {
             if (cmd.isOption()) {
-                CmdLine.Val option = cmd.readHead();
+                CmdLine.Val option = cmd.read();
                 if (option.isAny("-n")) {
                     noTrailingNewLine = true;
                 } else if (option.isAny("-p")) {
                     plain = true;
                 } else {
-                    throw new IllegalArgumentException("Unsupported option " + option);
+                    throw new NutsIllegalArgumentsException("Unsupported option " + option);
                 }
             } else {
                 if (cmd.isExecMode()) {

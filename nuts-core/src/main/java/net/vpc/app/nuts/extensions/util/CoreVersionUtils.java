@@ -29,8 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.extensions.filters.version.AllNutsVersionFilter;
+import net.vpc.app.nuts.extensions.filters.version.DefaultNutsVersionFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CoreVersionUtils {
-    public static final NutsVersionFilter ALL_VERSIONS = new NutsVersionFilter() {
-        @Override
-        public boolean accept(NutsVersion version) {
-            return true;
-        }
-    };
+    public static final NutsVersionFilter ALL_VERSIONS = new AllNutsVersionFilter();
 
     public static boolean versionMatches(String version, String pattern) {
         if (pattern == null || CoreStringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
@@ -155,10 +151,11 @@ public class CoreVersionUtils {
         } else return !"LATEST".equals(pattern);
     }
 
-    public static NutsVersionFilter createFilter(String pattern) {
+    public static NutsVersionFilter createNutsVersionFilter(String pattern) {
         if (pattern == null || CoreStringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
             return ALL_VERSIONS;
         }
         return DefaultNutsVersionFilter.parse(pattern);
     }
+
 }

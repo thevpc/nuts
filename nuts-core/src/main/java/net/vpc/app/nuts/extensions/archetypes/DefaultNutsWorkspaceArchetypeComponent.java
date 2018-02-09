@@ -32,8 +32,6 @@ package net.vpc.app.nuts.extensions.archetypes;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
-import java.io.IOException;
-
 /**
  * Created by vpc on 1/23/17.
  */
@@ -50,16 +48,18 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     }
 
     @Override
-    public void initialize(NutsWorkspace workspace, NutsSession session) throws IOException {
+    public void initialize(NutsWorkspace workspace, NutsSession session) {
         NutsRepository defaultRepo = workspace.addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
         defaultRepo.getConfig().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
 
-        workspace.addRepository("maven-local", System.getProperty("maven-local","~/.m2/repository"), "maven", true);
-
-        workspace.addProxiedRepository("maven-central", "http://repo.maven.apache.org/maven2/", "maven", true);
-
-        workspace.addProxiedRepository("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven", true);
+        for (NutsRepositoryDefinition nutsRepositoryDefinition : workspace.getDefaultRepositories()) {
+            if(nutsRepositoryDefinition.isProxied()){
+                workspace.addProxiedRepository(nutsRepositoryDefinition.getId(), nutsRepositoryDefinition.getLocation(), nutsRepositoryDefinition.getType(), true);
+            }else {
+                workspace.addRepository(nutsRepositoryDefinition.getId(), nutsRepositoryDefinition.getLocation(), nutsRepositoryDefinition.getType(), true);
+            }
+        }
 
         workspace.getConfig().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
         workspace.getConfig().addImport("net.vpc");

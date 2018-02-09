@@ -32,7 +32,6 @@ package net.vpc.app.nuts.extensions.executors;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +46,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
     public static final NutsId ID = CoreNutsUtils.parseNutsId("nuts");
 
     @Override
-    public NutsId getId() throws IOException {
+    public NutsId getId() {
         return ID;
     }
 
@@ -62,7 +61,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext) throws IOException {
+    public int exec(NutsExecutionContext executionContext) {
         NutsFile nutMainFile = executionContext.getNutsFile();
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
         String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
@@ -76,8 +75,8 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(envAndApp0[1]));
         app.addAll(Arrays.asList(envAndApp[1]));
 
-        NutsCommandLineConsoleComponent commandLine = null;
-        commandLine = executionContext.getWorkspace().createCommandLineConsole(executionContext.getSession());
+        NutsConsole commandLine = null;
+        commandLine = executionContext.getWorkspace().createConsole(executionContext.getSession());
         return commandLine.runFile(nutMainFile.getFile(), app.toArray(new String[app.size()]));
     }
 
