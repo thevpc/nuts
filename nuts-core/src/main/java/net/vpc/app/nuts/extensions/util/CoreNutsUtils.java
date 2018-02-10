@@ -89,7 +89,8 @@ public class CoreNutsUtils {
                 }
                 return 1;
             }
-            return o1.toString().compareTo(o2.toString());
+            int t = o1.toString().compareTo(o2.toString());
+            return t;
         }
     };
     public static Comparator<NutsFile> NUTS_FILE_COMPARATOR = new Comparator<NutsFile>() {

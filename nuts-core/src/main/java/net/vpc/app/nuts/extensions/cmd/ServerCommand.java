@@ -53,6 +53,7 @@ public class ServerCommand extends AbstractNutsCommand {
         super("server", CORE_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws IOException, LoginException {
         NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         boolean autoSave = false;
@@ -243,6 +244,8 @@ public class ServerCommand extends AbstractNutsCommand {
                     }
                 }
             }
+        } else {
+            throw new NutsCommandSyntaxError("Invalid syntax from command 'server");
         }
         cmdLine.requireEmpty();
         return 0;

@@ -20,9 +20,10 @@ public class NutsUserInfoImpl implements NutsUserInfo {
     private final String user;
     private final boolean credentials;
     private final String[] rights;
+    private final String[] inheritedRights;
     private final String[] groups;
 
-    public NutsUserInfoImpl(NutsSecurityEntityConfig config) {
+    public NutsUserInfoImpl(NutsSecurityEntityConfig config, String[] inheritedRights) {
         user = config.getUser();
         mappedUser = config.getMappedUser();
         credentials = !CoreStringUtils.isEmpty(config.getCredentials());
@@ -32,6 +33,12 @@ public class NutsUserInfoImpl implements NutsUserInfo {
 
         String[] groups0 = config.getGroups();
         groups = Arrays.copyOf(groups0, groups0.length);
+        this.inheritedRights = Arrays.copyOf(inheritedRights, inheritedRights.length);
+    }
+
+    @Override
+    public String[] getInheritedRights() {
+        return inheritedRights;
     }
 
     @Override

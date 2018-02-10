@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
+import java.util.Arrays;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
@@ -36,6 +37,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 /**
  * Created by vpc on 1/7/17.
@@ -70,53 +72,65 @@ public class WhoCommand extends AbstractNutsCommand {
         NutsWorkspace validWorkspace = context.getValidWorkspace();
         String login = validWorkspace.getCurrentLogin();
         NutsPrintStream out = context.getTerminal().getOut();
-        if (CoreStringUtils.isEmpty(login)) {
-            out.println(NutsConstants.USER_ANONYMOUS);
-        } else {
-            out.println(login);
-            Set<String> visitedGroups = new HashSet<>();
-            Set<String> visitedRights = new HashSet<>();
-            if (verbose) {
-                Stack<String> items = new Stack<>();
-                visitedGroups.add(login);
-                items.push(login);
-                while (items.isEmpty()) {
-                    String n = items.pop();
-                    NutsUserInfo s = validWorkspace.findUser(n);
-                    if (s != null) {
-                        for (String r : s.getRights()) {
-                            if (!visitedRights.contains(r)) {
-                                visitedRights.add(r);
-                            }
+
+        out.println(login);
+
+        if (argAll) {
+            NutsUserInfo user = validWorkspace.findUser(login);
+            Set<String> groups = new TreeSet<>(Arrays.asList(user.getGroups()));
+            Set<String> rights = new TreeSet<>(Arrays.asList(user.getRights()));
+            Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedRights()));
+            String[] currentLoginStack = validWorkspace.getCurrentLoginStack();
+            out.draw("===stack===      :");
+            for (String log : currentLoginStack) {
+                out.draw(" <<" + log + ">>");
+            }
+            out.println();
+            if (!groups.isEmpty()) {
+                out.drawln("===identities=== : " + groups.toString());
+            }
+            if (!NutsConstants.USER_ADMIN.equals(login)) {
+                if (!rights.isEmpty()) {
+                    out.drawln("===rights===     : " + rights.toString());
+                }
+                if (!inherited.isEmpty()) {
+                    out.drawln("===inherited===  : " + (inherited.isEmpty() ? "NONE" : inherited.toString()));
+                }
+            } else {
+                out.drawln("===rights===     : ALL");
+            }
+            if (user.getMappedUser() != null) {
+                out.drawln("===remote-id===  : " + (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
+            }
+            for (NutsRepository repository : context.getWorkspace().getRepositories()) {
+                NutsUserInfo ruser = repository.findUser(login);
+                if (ruser != null && (ruser.getGroups().length > 0
+                        || ruser.getRights().length > 0
+                        || !CoreStringUtils.isEmpty(ruser.getMappedUser()))) {
+                    out.drawln("[ [[" + repository.getRepositoryId() + "]] ]: ");
+                    Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
+                    Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
+                    Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));
+                    if (!rgroups.isEmpty()) {
+                        out.drawln("    ===identities=== : " + rgroups.toString());
+                    }
+                    if (!NutsConstants.USER_ADMIN.equals(login)) {
+                        if (!rrights.isEmpty()) {
+                            out.drawln("    ===rights===     : " + rrights.toString());
                         }
-                        for (String g : s.getGroups()) {
-                            if (!visitedGroups.contains(g)) {
-                                visitedGroups.add(g);
-                                items.push(g);
-                            }
+                        if (!rinherited.isEmpty()) {
+                            out.drawln("    ===inherited===  : " + rinherited.toString());
                         }
+                    } else {
+                        out.drawln("    ===rights===     : ALL");
+                    }
+                    if (ruser.getMappedUser() != null) {
+                        out.drawln("    ===remote-id===  : " + ruser.getMappedUser());
                     }
                 }
             }
-            if (argAll) {
-                String[] currentLoginStack = validWorkspace.getCurrentLoginStack();
-                out.draw("===stack===      :");
-                for (String log : currentLoginStack) {
-                    out.draw(" <<" + log + ">>");
-                }
-                out.println();
-                if (!visitedGroups.isEmpty()) {
-                    out.drawln("===identities=== : " + (visitedGroups.isEmpty() ? "NONE" : visitedGroups.toString()));
-                } else {
-                    out.drawln("===identities=== : NONE");
-                }
-                if (!NutsConstants.USER_ADMIN.equals(login)) {
-                    out.drawln("===rights===     : " + (visitedRights.isEmpty() ? "NONE" : visitedRights.toString()));
-                } else {
-                    out.drawln("===rights===     : ALL");
-                }
-            }
         }
+
         return 0;
     }
 }

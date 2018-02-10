@@ -502,14 +502,34 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public NutsUserInfo findUser(String username) {
         NutsSecurityEntityConfig security = getConfig().getSecurity(username);
-        return security == null ? null : new NutsUserInfoImpl(security);
+        Stack<String> inherited = new Stack<>();
+        if (security != null) {
+            Stack<String> visited = new Stack<>();
+            visited.push(username);
+            Stack<String> curr = new Stack<>();
+            curr.addAll(Arrays.asList(security.getGroups()));
+            while (!curr.empty()) {
+                String s = curr.pop();
+                visited.add(s);
+                NutsSecurityEntityConfig ss = getConfig().getSecurity(s);
+                if (ss != null) {
+                    inherited.addAll(Arrays.asList(ss.getRights()));
+                    for (String group : ss.getGroups()) {
+                        if (!visited.contains(group)) {
+                            curr.push(group);
+                        }
+                    }
+                }
+            }
+        }
+        return security == null ? null : new NutsUserInfoImpl(security, inherited.toArray(new String[inherited.size()]));
     }
 
     @Override
     public NutsUserInfo[] findUsers() {
         List<NutsUserInfo> all = new ArrayList<>();
         for (NutsSecurityEntityConfig secu : getConfig().getSecurity()) {
-            all.add(new NutsUserInfoImpl(secu));
+            all.add(findUser(secu.getUser()));
         }
         return all.toArray(new NutsUserInfo[all.size()]);
     }

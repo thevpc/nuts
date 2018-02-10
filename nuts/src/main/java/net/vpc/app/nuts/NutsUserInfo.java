@@ -39,5 +39,7 @@ public interface NutsUserInfo {
 
     String[] getRights();
 
+    String[] getInheritedRights();
+
     String[] getGroups();
 }

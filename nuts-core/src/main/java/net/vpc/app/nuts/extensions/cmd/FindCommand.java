@@ -341,8 +341,16 @@ public class FindCommand extends AbstractNutsCommand {
         NutsWorkspace ws = findContext.context.getValidWorkspace();
         Set<String> visitedPackaging = new HashSet<>();
         Set<String> visitedArchs = new HashSet<>();
+        if (!findContext.longflag) {
+            //if not long flag, should remove namespace and duplicates
+            Set<NutsId> mm = new HashSet<>();
+            for (NutsId nutsId : nutsList) {
+                mm.add(nutsId.setNamespace(null).setFace(null).setQuery(""));
+            }
+            nutsList = new ArrayList<>(mm);
+        }
         if (findContext.bestVersion) {
-            Map<String, NutsId> mm = new LinkedHashMap<>();
+            Map<String, NutsId> mm = new HashMap<>();
             for (NutsId nutsId : nutsList) {
                 String fullName = nutsId.getFullName();
                 NutsId old = mm.get(fullName);

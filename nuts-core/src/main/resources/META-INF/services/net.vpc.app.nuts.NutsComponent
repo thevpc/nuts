@@ -46,7 +46,6 @@ net.vpc.app.nuts.extensions.cmd.PushCommand
 net.vpc.app.nuts.extensions.cmd.UpdateCommand
 net.vpc.app.nuts.extensions.cmd.WhichCommand
 net.vpc.app.nuts.extensions.cmd.WhoCommand
-net.vpc.app.nuts.extensions.cmd.ErrCommand
 net.vpc.app.nuts.extensions.cmd.EchoCommand
 net.vpc.app.nuts.extensions.cmd.LsCommand
 net.vpc.app.nuts.extensions.cmd.CdCommand
