@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -59,7 +60,11 @@ public class NutsEnvironmentContext {
                         s.push(workspace);
                         pushed = true;
                     }
-                    return method.invoke(workspace, args);
+                    try {
+                        return method.invoke(workspace, args);
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
                 } finally {
                     if (pushed) {
                         s.pop();
@@ -86,7 +91,11 @@ public class NutsEnvironmentContext {
                         s.push(repository);
                         pushed = true;
                     }
-                    return method.invoke(repository, args);
+                    try {
+                        return method.invoke(repository, args);
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
                 } finally {
                     if (pushed) {
                         s.pop();
@@ -113,10 +122,12 @@ public class NutsEnvironmentContext {
             T v;
             try {
                 v = callable.call();
+            } catch (NutsException ex) {
+                throw ex;
             } catch (RuntimeException ex) {
                 throw new NutsException(ex);
             } catch (Exception ex) {
-                throw new RuntimeException(ex);
+                throw new NutsException(ex);
             }
             return v;
         } finally {
@@ -143,10 +154,12 @@ public class NutsEnvironmentContext {
             T v;
             try {
                 v = callable.call();
+            } catch (NutsException ex) {
+                throw ex;
             } catch (RuntimeException ex) {
                 throw new NutsException(ex);
             } catch (Exception ex) {
-                throw new RuntimeException(ex);
+                throw new NutsException(ex);
             }
             return v;
         } finally {

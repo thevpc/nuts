@@ -3,37 +3,37 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
 
-import javax.security.auth.callback.CallbackHandler;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
+import javax.security.auth.callback.CallbackHandler;
 
 /**
  * Created by vpc on 1/5/17.
@@ -43,7 +43,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     /////////////////////////////////////////////////////////////////
     // CONFIG
-
     NutsBootWorkspace getBoot();
 
     NutsId getWorkspaceBootId();
@@ -54,16 +53,30 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String getWorkspaceRootLocation();
 
+    Properties getEnv();
+    
+    String getEnv(String property, String defaultValue);
+    
+    void setEnv(String property, String value);
+
+    void addImports(String ... importExpression);
+
+    void removeAllImports();
+
+    void removeImports(String ... importExpression);
+
+    void setImports(String[] imports);
+
+    String[] getImports();
+
     NutsWorkspaceConfig getConfig();
 
     Set<String> getAvailableArchetypes();
 
     NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
 
-
     /////////////////////////////////////////////////////////////////
     // NUTS RETRIEVAL
-
     Iterator<NutsId> findIterator(NutsSearch search, NutsSession session);
 
     List<NutsId> find(NutsSearch search, NutsSession session);
@@ -90,7 +103,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
-
     /////////////////////////////////////////////////////////////////
     // NUTS MANAGEMENTS
     NutsFile updateWorkspace(NutsSession session);
@@ -116,18 +128,18 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     void push(String id, String repoId, NutsSession session);
 
     /**
-     * creates a zip file based on the folder.
-     * The folder should contain a descriptor file at its root
+     * creates a zip file based on the folder. The folder should contain a
+     * descriptor file at its root
      *
      * @param contentFolder folder to bundle
-     * @param destFile      created bundle file or null to create a file with the very same name as the folder
-     * @param session       current session
+     * @param destFile created bundle file or null to create a file with the
+     * very same name as the folder
+     * @param session current session
      * @return bundled nuts file, the nuts is neither deployed nor installed!
      */
     NutsFile createBundle(File contentFolder, File destFile, NutsSession session);
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
-
 
     /////////////////////////////////////////////////////////////////
     // REPOSITORY MANAGEMENT
@@ -179,6 +191,8 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     /////////////////////////////////////////////////////////////////
     // SECURITY MANAGEMENT
     String getCurrentLogin();
+    
+    String[] getCurrentLoginStack();
 
     void login(String login, String password);
 
@@ -188,9 +202,27 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     void setUserCredentials(String login, String password, String oldPassword);
 
-    void addUser(String user);
+    void addUser(String user, String password, String... rights);
+
+    void setUserRights(String user, String... rights);
+
+    void addUserRights(String user, String... rights);
+
+    void removeUserRights(String user, String... rights);
+
+    void setUserRemoteIdentity(String user, String mappedIdentity);
 
     void setUserCredentials(String user, String credentials);
+
+    void setUserGroups(String user, String... groups);
+
+    void addUserGroups(String user, String... groups);
+
+    void removeUserGroups(String user, String... groups);
+    
+    NutsUserInfo[] findUsers();
+    
+    NutsUserInfo findUser(String username);
 
     boolean isAllowed(String right);
 
@@ -199,7 +231,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     boolean switchSecureMode(String adminPassword);
 
     boolean isAdmin();
-
 
     /////////////////////////////////////////////////////////////////
     // SERVER MANAGEMENT
@@ -215,14 +246,12 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     /////////////////////////////////////////////////////////////////
     // CONFIG MANAGEMENT
-
     void save();
 
     Map<String, Object> getSharedObjects();
 
     /////////////////////////////////////////////////////////////////
     // OBSERVERS
-
     void addSharedObjectsListener(MapListener<String, Object> listener);
 
     void removeSharedObjectsListener(MapListener<String, Object> listener);
@@ -241,10 +270,8 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsRepositoryListener[] getRepositoryListeners();
 
-
     /////////////////////////////////////////////////////////////////
     // RUNTIME INFO
-
     NutsFile fetchBoot(NutsSession session);
 
     File resolveNutsJarFile();
@@ -253,7 +280,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     /////////////////////////////////////////////////////////////////
     // UTILITIES
-
     NutsSession createSession();
 
     ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);

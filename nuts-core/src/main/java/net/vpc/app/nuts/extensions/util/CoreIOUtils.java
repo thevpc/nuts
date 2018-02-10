@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.util;
@@ -55,6 +55,7 @@ import java.util.zip.ZipOutputStream;
  * Created by vpc on 5/16/17.
  */
 public class CoreIOUtils {
+
     public static final OutputStream NULL_OUTPUT_STREAM = NullOutputStream.INSTANCE;
     public static final PrintStream NULL_PRINT_STREAM = NullPrintStream.INSTANCE;
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
@@ -155,8 +156,7 @@ public class CoreIOUtils {
         Path zipFilePath = _zipFilePath.toPath();
         try (
                 FileOutputStream fos = new FileOutputStream(zipFilePath.toFile());
-                ZipOutputStream zos = new ZipOutputStream(fos)
-        ) {
+                ZipOutputStream zos = new ZipOutputStream(fos)) {
             Files.walkFileTree(folder, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     zos.putNextEntry(new ZipEntry(folder.relativize(file).toString()));
@@ -179,7 +179,7 @@ public class CoreIOUtils {
     /**
      * Unzip it
      *
-     * @param zipFile      input zip file
+     * @param zipFile input zip file
      * @param outputFolder zip file output folder
      */
     public static void unzip(File zipFile, File outputFolder, File cwd) throws IOException {
@@ -335,7 +335,7 @@ public class CoreIOUtils {
         NutsVersionFilter javaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
         String bestJavaPath = null;
         String bestJavaVersion = null;
-        for (Map.Entry<Object, Object> entry : workspace.getConfig().getEnv().entrySet()) {
+        for (Map.Entry<Object, Object> entry : workspace.getEnv().entrySet()) {
             String key = (String) entry.getKey();
             if (key.startsWith("rt.java.")) {
                 String javaVersion = key.substring("rt.java.".length());
@@ -549,7 +549,7 @@ public class CoreIOUtils {
              */
             @Override
             public void visit(int version, int access, String name,
-                              String signature, String superName, String[] interfaces) {
+                    String signature, String superName, String[] interfaces) {
 //                System.out.println("Visiting class: "+name);
 //                System.out.println("Class Major Version: "+version);
 //                System.out.println("Super class: "+superName);
@@ -565,11 +565,11 @@ public class CoreIOUtils {
             }
 
             /**
-             *Invoked when a class level annotation is encountered
+             * Invoked when a class level annotation is encountered
              */
             @Override
             public AnnotationVisitor visitAnnotation(String desc,
-                                                     boolean visible) {
+                    boolean visible) {
                 return super.visitAnnotation(desc, visible);
             }
 
@@ -582,11 +582,11 @@ public class CoreIOUtils {
             }
 
             /**
-             *When an inner class is encountered
+             * When an inner class is encountered
              */
             @Override
             public void visitInnerClass(String name, String outerName,
-                                        String innerName, int access) {
+                    String innerName, int access) {
                 super.visitInnerClass(name, outerName, innerName, access);
             }
 
@@ -595,10 +595,9 @@ public class CoreIOUtils {
              */
             @Override
             public FieldVisitor visitField(int access, String name,
-                                           String desc, String signature, Object value) {
+                    String desc, String signature, Object value) {
                 return super.visitField(access, name, desc, signature, value);
             }
-
 
             @Override
             public void visitEnd() {
@@ -610,11 +609,10 @@ public class CoreIOUtils {
              */
             @Override
             public MethodVisitor visitMethod(int access, String name,
-                                             String desc, String signature, String[] exceptions) {
+                    String desc, String signature, String[] exceptions) {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
-                        && Modifier.isStatic(access)
-                        ) {
+                        && Modifier.isStatic(access)) {
                     ref.add(true);
                 }
                 return super.visitMethod(access, name, desc, signature, exceptions);
@@ -627,7 +625,6 @@ public class CoreIOUtils {
             public void visitSource(String source, String debug) {
                 super.visitSource(source, debug);
             }
-
 
         };
         ClassReader classReader = new ClassReader(stream);
@@ -1042,7 +1039,6 @@ public class CoreIOUtils {
 
     }
 
-
     public static File createFile(String path) {
         return new File(getAbsolutePath(path));
     }
@@ -1261,16 +1257,15 @@ public class CoreIOUtils {
         return URL.class.isAssignableFrom(type)
                 || File.class.isAssignableFrom(type) || byte[].class.isAssignableFrom(type)
                 || InputStream.class.isAssignableFrom(type)
-                || String.class.isAssignableFrom(type)
-                ;
+                || String.class.isAssignableFrom(type);
     }
 
-    public static InputStreamSource createInputStreamSource(Object anyObject, String variant, String optionalName,File cwd) {
+    public static InputStreamSource createInputStreamSource(Object anyObject, String variant, String optionalName, File cwd) {
         if (anyObject instanceof URL) {
             return createInputStreamSource((URL) anyObject);
         }
         if (anyObject instanceof File) {
-            return createInputStreamSource((File) anyObject,cwd);
+            return createInputStreamSource((File) anyObject, cwd);
         }
         if (anyObject instanceof byte[]) {
             return createInputStreamSource((byte[]) anyObject, optionalName);
@@ -1279,7 +1274,7 @@ public class CoreIOUtils {
             return createInputStreamSource((InputStream) anyObject, optionalName);
         }
         if (anyObject instanceof String) {
-            return createInputStreamSource((String) anyObject, variant, optionalName,cwd);
+            return createInputStreamSource((String) anyObject, variant, optionalName, cwd);
         }
         throw new NutsException("Unexpected stream source");
     }
@@ -1312,7 +1307,7 @@ public class CoreIOUtils {
                     throw new NutsIOException();
                 }
             }
-            return createInputStreamSource(new File(path),cwd);
+            return createInputStreamSource(new File(path), cwd);
         }
         if ("url".equals(variant)) {
             try {

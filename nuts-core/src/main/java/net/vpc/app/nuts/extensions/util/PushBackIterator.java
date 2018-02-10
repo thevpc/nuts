@@ -37,6 +37,7 @@ import java.util.Iterator;
  * Created by vpc on 3/19/17.
  */
 public class PushBackIterator<T> implements Iterator<T> {
+
     private Iterator<T> base;
     private Boolean lastHasNext;
     private boolean lastValConsumed;
@@ -79,9 +80,9 @@ public class PushBackIterator<T> implements Iterator<T> {
     }
 
     public void pushBack() {
-        if(lastHasNext==null || !lastValConsumed) {
+        if (lastHasNext == null || !lastValConsumed) {
             lastHasNext = true;
-        }else{
+        } else {
             throw new NutsIllegalArgumentsException("Unsupported");
         }
     }

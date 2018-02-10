@@ -5,7 +5,8 @@ import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
-public class NutsDependencyFilterOr implements NutsDependencyFilter,Simplifiable<NutsDependencyFilter>{
+public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+
     private final NutsDependencyFilter[] all;
 
     public NutsDependencyFilterOr(NutsDependencyFilter... all) {
@@ -14,25 +15,25 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter,Simplifiable
 
     @Override
     public boolean accept(NutsDependency value) {
-        boolean one=false;
+        boolean one = false;
         for (NutsDependencyFilter nutsDependencyFilter : all) {
-            if(nutsDependencyFilter!=null){
-                one=true;
-                if(nutsDependencyFilter.accept(value)) {
+            if (nutsDependencyFilter != null) {
+                one = true;
+                if (nutsDependencyFilter.accept(value)) {
                     return true;
                 }
             }
         }
-        return one?false:true;
+        return one ? false : true;
     }
 
-    public NutsDependencyFilter simplify(){
-        NutsDependencyFilter[] newValues= CoreNutsUtils.simplifyAndShrink(NutsDependencyFilter.class,all);
-        if(newValues!=null){
-            if(newValues.length==0){
+    public NutsDependencyFilter simplify() {
+        NutsDependencyFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsDependencyFilter.class, all);
+        if (newValues != null) {
+            if (newValues.length == 0) {
                 return null;
             }
-            if(newValues.length==1){
+            if (newValues.length == 1) {
                 return newValues[0];
             }
             return new NutsDependencyFilterOr(newValues);

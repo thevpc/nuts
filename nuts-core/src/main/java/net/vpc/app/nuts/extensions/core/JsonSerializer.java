@@ -40,6 +40,7 @@ import java.io.Writer;
 import java.util.Map;
 
 public interface JsonSerializer {
+
     JsonArrayBuilder serializeArr(Object obj, SerializeOptions options);
 
     JsonObjectBuilder serializeStringsMap(Map<String, String> value, SerializeOptions options);
@@ -54,7 +55,7 @@ public interface JsonSerializer {
 
     void storeJson(JsonStructure structure, Writer writer, boolean pretty);
 
-    <T> void storeJson(T obj, File file, SerializeOptions options) ;
+    <T> void storeJson(T obj, File file, SerializeOptions options);
 
     String[] getJsonObjectStringArray(JsonObject jsonObject, String param);
 

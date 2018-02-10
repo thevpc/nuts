@@ -38,9 +38,9 @@ import java.util.Map;
 public class NutsSessionImpl implements Cloneable, NutsSession {
 
     private boolean transitive = true;
-    private NutsFetchMode fetchMode= NutsFetchMode.ONLINE;
+    private NutsFetchMode fetchMode = NutsFetchMode.ONLINE;
     private NutsTerminal terminal;
-    private Map<String,Object> properties=new HashMap<>();
+    private Map<String, Object> properties = new HashMap<>();
 
     public NutsSessionImpl() {
     }
@@ -63,7 +63,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
 
     @Override
     public NutsSession setFetchMode(NutsFetchMode fetchMode) {
-        this.fetchMode = (fetchMode==null)? NutsFetchMode.ONLINE : fetchMode;
+        this.fetchMode = (fetchMode == null) ? NutsFetchMode.ONLINE : fetchMode;
         return this;
     }
 
@@ -71,7 +71,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
     public NutsSession copy() {
         try {
             NutsSessionImpl cloned = (NutsSessionImpl) clone();
-            cloned.properties=new HashMap<>(properties);
+            cloned.properties = new HashMap<>(properties);
             return cloned;
         } catch (CloneNotSupportedException e) {
             throw new NutsUnsupportedOperationException(e);

@@ -32,8 +32,9 @@ package net.vpc.app.nuts.extensions.core;
 import net.vpc.app.nuts.NutsRepositoryLocation;
 
 public class NutsRepositoryLocationImpl implements NutsRepositoryLocation {
+
     @JsonTransient
-    private static final long serialVersionUID=1;
+    private static final long serialVersionUID = 1;
 
     private String id;
     private String type;
@@ -59,7 +60,6 @@ public class NutsRepositoryLocationImpl implements NutsRepositoryLocation {
     public void setInstanceSerialVersionUID(long instanceSerialVersionUID) {
         this.instanceSerialVersionUID = instanceSerialVersionUID;
     }
-
 
     @Override
     public boolean isEnabled() {

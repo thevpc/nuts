@@ -48,9 +48,9 @@ public class NutsIdImpl implements NutsId {
     private final NutsVersionImpl version;
     private final String query;
 
-    public NutsIdImpl(String namespace, String group, String name, String version, Map<String,String> query) {
-        StringBuilder sb=new StringBuilder();
-        if(query !=null) {
+    public NutsIdImpl(String namespace, String group, String name, String version, Map<String, String> query) {
+        StringBuilder sb = new StringBuilder();
+        if (query != null) {
             for (Map.Entry<String, String> entry : query.entrySet()) {
                 if (sb.length() > 0) {
                     sb.append("&");
@@ -64,6 +64,7 @@ public class NutsIdImpl implements NutsId {
         this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
         this.query = CoreStringUtils.trimToNull(sb.toString());
     }
+
     public NutsIdImpl(String namespace, String group, String name, String version, String query) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.group = CoreStringUtils.trimToNull(group);
@@ -224,24 +225,23 @@ public class NutsIdImpl implements NutsId {
     @Override
     public NutsId setFace(String value) {
         return setQueryProperty(NutsConstants.QUERY_FACE, CoreStringUtils.trimToNull(value))
-                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true)
-                ;
+                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NutsId setQueryProperty(String property, String value) {
         Map<String, String> m = getQueryMap();
-        if(value==null){
+        if (value == null) {
             m.remove(property);
-        }else{
-            m.put(property,value);
+        } else {
+            m.put(property, value);
         }
         return setQuery(m);
     }
 
     @Override
     public NutsId setQuery(Map<String, String> queryMap, boolean merge) {
-        if(merge) {
+        if (merge) {
             Map<String, String> m = getQueryMap();
             if (queryMap != null) {
                 for (Map.Entry<String, String> e : queryMap.entrySet()) {
@@ -255,7 +255,7 @@ public class NutsIdImpl implements NutsId {
                 }
             }
             return setQuery(m);
-        }else{
+        } else {
             return new NutsIdImpl(
                     namespace,
                     group,
@@ -268,7 +268,7 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId setQuery(Map<String, String> queryMap) {
-        return setQuery(queryMap,false);
+        return setQuery(queryMap, false);
     }
 
     @Override
@@ -309,10 +309,10 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public String getFullName() {
-        if(CoreStringUtils.isEmpty(group)){
+        if (CoreStringUtils.isEmpty(group)) {
             return CoreStringUtils.trim(name);
         }
-        return CoreStringUtils.trim(group)+":"+CoreStringUtils.trim(name);
+        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
     }
 
     @Override
@@ -325,7 +325,6 @@ public class NutsIdImpl implements NutsId {
         return version;
     }
 
-    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

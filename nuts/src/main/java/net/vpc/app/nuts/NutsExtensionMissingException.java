@@ -33,15 +33,16 @@ package net.vpc.app.nuts;
  * Created by vpc on 1/15/17.
  */
 public class NutsExtensionMissingException extends NutsElementNotFoundException {
+
     private final Class missingType;
 
     public NutsExtensionMissingException(Class missingType, String extensionName) {
         super("Extension " + extensionName + " could ot found. Type " + missingType.getName() + " could not be wired.");
-        this.missingType=missingType;
+        this.missingType = missingType;
     }
 
     public Class getMissingType() {
         return missingType;
     }
-    
+
 }

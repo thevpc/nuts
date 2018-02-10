@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
 
 public class NutsTomcatClassLoader extends WebappClassLoader {
 
@@ -305,7 +306,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 return new File(jarFile);
             }
         } else {
-            throw new IllegalArgumentException("Unable to resolve url from " + urlFile);
+            throw new NutsIllegalArgumentsException("Unable to resolve url from " + urlFile);
         }
     }
 

@@ -38,6 +38,7 @@ import java.io.IOException;
  * Created by vpc on 1/23/17.
  */
 public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArchetypeComponent {
+
     @Override
     public String getName() {
         return "server";
@@ -51,26 +52,22 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
         NutsRepository defaultRepo = workspace.addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
-        defaultRepo.getConfig().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
-        workspace.getConfig().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
-
+        defaultRepo.setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
+        workspace.setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //has read rights
-        workspace.addUser("guest");
-        workspace.setUserCredentials("guest", "user");
-        NutsSecurityEntityConfig guest = workspace.getConfig().getSecurity("guest");
-        guest.addRight(NutsConstants.RIGHT_FETCH_DESC);
-        guest.addRight(NutsConstants.RIGHT_FETCH_CONTENT);
-        guest.addRight(NutsConstants.RIGHT_DEPLOY);
+        workspace.addUser("guest", "user",
+                NutsConstants.RIGHT_FETCH_DESC,
+                NutsConstants.RIGHT_FETCH_CONTENT,
+                NutsConstants.RIGHT_DEPLOY
+        );
 
         //has write rights
-        workspace.addUser("contributor");
-        workspace.setUserCredentials("contributor", "user");
-        NutsSecurityEntityConfig contributor = workspace.getConfig().getSecurity("contributor");
-        contributor.addRight(NutsConstants.RIGHT_FETCH_DESC);
-        contributor.addRight(NutsConstants.RIGHT_FETCH_CONTENT);
-        contributor.addRight(NutsConstants.RIGHT_DEPLOY);
-        contributor.addRight(NutsConstants.RIGHT_UNDEPLOY);
-
+        workspace.addUser("contributor", "user",
+                NutsConstants.RIGHT_FETCH_DESC,
+                NutsConstants.RIGHT_FETCH_CONTENT,
+                NutsConstants.RIGHT_DEPLOY,
+                NutsConstants.RIGHT_UNDEPLOY
+        );
     }
 }

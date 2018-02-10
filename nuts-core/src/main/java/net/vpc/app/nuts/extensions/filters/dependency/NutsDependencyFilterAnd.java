@@ -6,6 +6,7 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 public class NutsDependencyFilterAnd implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+
     private final NutsDependencyFilter[] all;
 
     public NutsDependencyFilterAnd(NutsDependencyFilter... all) {

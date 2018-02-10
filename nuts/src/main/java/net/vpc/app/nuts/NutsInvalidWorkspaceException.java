@@ -37,7 +37,7 @@ public class NutsInvalidWorkspaceException extends NutsIllegalArgumentsException
     private final String workspace;
 
     public NutsInvalidWorkspaceException(String workspace, String errorMessage) {
-        super("Invalid workspace " + (workspace == null ? "<null>" : workspace)+" : "+errorMessage);
+        super("Invalid workspace " + (workspace == null ? "<null>" : workspace) + " : " + errorMessage);
         this.workspace = workspace;
     }
 

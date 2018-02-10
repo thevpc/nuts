@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 public interface NutsVersion {
+
     String getValue();
 
     boolean isEmpty();
@@ -37,9 +38,9 @@ public interface NutsVersion {
     int compareTo(String other);
 
     int compareTo(NutsVersion other);
-    
+
     boolean matches(String expression);
-    
+
     boolean ge(String other);
 
     boolean gt(String other);

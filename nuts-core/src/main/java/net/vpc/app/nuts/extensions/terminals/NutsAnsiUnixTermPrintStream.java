@@ -45,22 +45,22 @@ import java.util.Map;
 public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
 
     public static final Color[] ALL_SUPPORTED_COLORS = new Color[]{
-            NutsPrintColors.BLACK,
-            NutsPrintColors.RED,
-            NutsPrintColors.BLUE,
-            NutsPrintColors.GREEN,
-            NutsPrintColors.CYAN,
-            NutsPrintColors.LIGHT_GRAY,
-            NutsPrintColors.LIGHT_BLUE,
-            NutsPrintColors.LIGHT_GREEN,
-            NutsPrintColors.LIGHT_CYAN,
-            NutsPrintColors.LIGHT_RED,
-            NutsPrintColors.LIGHT_PURPLE,
-            NutsPrintColors.DARK_GRAY,
-            NutsPrintColors.PURPLE,
-            NutsPrintColors.BROWN,
-            NutsPrintColors.YELLOW,
-            NutsPrintColors.WHITE
+        NutsPrintColors.BLACK,
+        NutsPrintColors.RED,
+        NutsPrintColors.BLUE,
+        NutsPrintColors.GREEN,
+        NutsPrintColors.CYAN,
+        NutsPrintColors.LIGHT_GRAY,
+        NutsPrintColors.LIGHT_BLUE,
+        NutsPrintColors.LIGHT_GREEN,
+        NutsPrintColors.LIGHT_CYAN,
+        NutsPrintColors.LIGHT_RED,
+        NutsPrintColors.LIGHT_PURPLE,
+        NutsPrintColors.DARK_GRAY,
+        NutsPrintColors.PURPLE,
+        NutsPrintColors.BROWN,
+        NutsPrintColors.YELLOW,
+        NutsPrintColors.WHITE
     };
 
     private Map<Color, String> escapes = new HashMap<>();

@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.bridges.maven;
@@ -64,7 +64,6 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         super(new NutsRepositoryConfigImpl(repositoryId, url, "maven"), workspace, root, SPEED_SLOW);
     }
 
-
     @Override
     public Iterator<NutsId> findVersionsImpl(final NutsId id, NutsIdFilter idFilter, final NutsSession session) {
         //maven-metadata.xml
@@ -74,7 +73,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
-            String metadataURL = CoreIOUtils.buildUrl(getConfig().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
+            String metadataURL = CoreIOUtils.buildUrl(getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
             log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
             try {
                 metadataStream = openStream(metadataURL);
@@ -112,12 +111,14 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         return ret.iterator();
     }
 
+    @Override
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
-        String url = CoreIOUtils.buildUrl(getConfig().getLocation(), "/archetype-catalog.xml");
+        String url = CoreIOUtils.buildUrl(getLocation(), "/archetype-catalog.xml");
         log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'archetype-catalog\'", 20), url});
         return parseArchetypeCatalog(openStream(url), filter);
     }
 
+    @Override
     public NutsFile fetchImpl(NutsId id, NutsSession session) {
         NutsDescriptor descriptor = getWorkspace().fetchDescriptor(id.toString(), false, session);
         NutsDescriptor ed = getWorkspace().resolveEffectiveDescriptor(descriptor, session);
@@ -225,7 +226,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("remove");
+                throw new NutsUnsupportedOperationException("remove not supported");
             }
 
             @Override
@@ -248,7 +249,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (CoreIOUtils.buildUrl(getConfig().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + extension));
+        return (CoreIOUtils.buildUrl(getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + extension));
     }
 
     @Override
@@ -272,7 +273,10 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public boolean isAllowedFetch(NutsSession session) {
-        return super.isAllowedFetch(session) && session.getFetchMode() != NutsFetchMode.OFFLINE;
+    public void checkAllowedFetch(NutsSession session, NutsId id) {
+        super.checkAllowedFetch(session, id);
+        if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
+            throw new NutsNotFoundException(id.toString());
+        }
     }
 }

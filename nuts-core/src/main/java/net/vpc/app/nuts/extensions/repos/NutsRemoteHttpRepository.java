@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.repos;
@@ -63,7 +63,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     public String getUrl(String path) {
-        return CoreIOUtils.buildUrl(getConfig().getLocation(), path);
+        return CoreIOUtils.buildUrl(getLocation(), path);
     }
 
     public NutsId getRemoteId() {
@@ -71,7 +71,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             try {
                 remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(getUrl("/version")));
             } catch (Exception ex) {
-                log.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", getConfig().getLocation());
+                log.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", getLocation());
             }
         }
         return remoteId;
@@ -83,7 +83,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         descriptor.write(descStream);
-        httpUpload(CoreIOUtils.buildUrl(getConfig().getLocation(), "/deploy?" + resolveAuthURLPart()),
+        httpUpload(CoreIOUtils.buildUrl(getLocation(), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts", new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", file.getName(), file),
                 new NutsTransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
@@ -211,7 +211,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             throw new NutsIOException(e);
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
-        if (idFilter!=null) {
+        if (idFilter != null) {
             it = new IteratorFilter<NutsId>(it, idFilter);
         }
         return it;
@@ -224,14 +224,14 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         String[] ulp = resolveAuth();
         if (filter instanceof JsNutsIdFilter) {
             String js = ((JsNutsIdFilter) filter).toJsNutsIdFilterExpr();
-            if(js !=null) {
+            if (js != null) {
                 ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
                         new NutsTransportParamParamPart("root", "/"),
                         new NutsTransportParamParamPart("ul", ulp[0]),
                         new NutsTransportParamParamPart("up", ulp[1]),
                         new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
                 );
-                return new IteratorFilter<>(new NamedNutIdFromStreamIterator(ret),filter);
+                return new IteratorFilter<>(new NamedNutIdFromStreamIterator(ret), filter);
             }
         } else {
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
@@ -242,10 +242,10 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
                     new NutsTransportParamParamPart("transitive", String.valueOf(transitive))
             );
         }
-        if(filter==null){
+        if (filter == null) {
             return new NamedNutIdFromStreamIterator(ret);
         }
-        return new IteratorFilter<>(new NamedNutIdFromStreamIterator(ret),filter);
+        return new IteratorFilter<>(new NamedNutIdFromStreamIterator(ret), filter);
     }
 
     //    @Override
@@ -294,33 +294,29 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         NutsSecurityEntityConfig security = getConfig().getSecurity(login);
         String newLogin = "";
         String credentials = "";
-        String passphrase = getConfig().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
-        try {
-            if (security == null) {
-                newLogin = "anonymous";
-                credentials = "anonymous";
-            } else {
-                newLogin = security.getMappedUser();
-                if (CoreStringUtils.isEmpty(newLogin)) {
-                    NutsSecurityEntityConfig security2 = getWorkspace().getConfig().getSecurity(login);
-                    if (security2 != null) {
-                        newLogin = security2.getMappedUser();
-                    }
-                }
-                if (CoreStringUtils.isEmpty(newLogin)) {
-                    newLogin = login;
-                }
-                credentials = security.getCredentials();
-                //credentials are already encrypted with default passphrase!
-                if (!CoreStringUtils.isEmpty(credentials)) {
-                    credentials = new String(CoreSecurityUtils.httpDecrypt(credentials, CoreNutsUtils.DEFAULT_PASSPHRASE));
+        String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE, true);
+        if (security == null) {
+            newLogin = "anonymous";
+            credentials = "anonymous";
+        } else {
+            newLogin = security.getMappedUser();
+            if (CoreStringUtils.isEmpty(newLogin)) {
+                NutsUserInfo security2 = getWorkspace().findUser(login);
+                if (security2 != null) {
+                    newLogin = security2.getMappedUser();
                 }
             }
-            newLogin = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase);
-            credentials = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase);
-        } catch (IOException e) {
-            throw new NutsParseException(e);
+            if (CoreStringUtils.isEmpty(newLogin)) {
+                newLogin = login;
+            }
+            credentials = security.getCredentials();
+            //credentials are already encrypted with default passphrase!
+            if (!CoreStringUtils.isEmpty(credentials)) {
+                credentials = new String(CoreSecurityUtils.httpDecrypt(credentials, CoreNutsUtils.DEFAULT_PASSPHRASE));
+            }
         }
+        newLogin = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase);
+        credentials = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase);
         return new String[]{newLogin, credentials};
     }
 
@@ -335,13 +331,16 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public boolean isAllowedFetch(NutsSession session) {
-        return super.isAllowedFetch(session) && session.getFetchMode() != NutsFetchMode.OFFLINE;
+    public void checkAllowedFetch(NutsSession session, NutsId id) {
+        super.checkAllowedFetch(session, id);
+        if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
+            throw new NutsNotFoundException(id.toString());
+        }
     }
 
     private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
 
-        private BufferedReader br;
+        private final BufferedReader br;
         private String line;
 
         public NamedNutIdFromStreamIterator(InputStream ret) {

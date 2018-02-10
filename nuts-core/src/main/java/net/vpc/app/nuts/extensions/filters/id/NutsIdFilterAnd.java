@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>,JsNutsIdFilter {
+public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
 
     private NutsIdFilter[] all;
 

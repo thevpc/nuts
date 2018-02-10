@@ -71,9 +71,6 @@ public class ConsoleCommand extends AbstractNutsCommand {
             if (ws != null) {
                 login = ws.getCurrentLogin();
             }
-            if (login == null) {
-                login = NutsConstants.USER_ANONYMOUS;
-            }
             String prompt = login + "@" + wss;
             if (!CoreStringUtils.isEmpty(context.getServiceName())) {
                 prompt = prompt + "@" + context.getServiceName();
@@ -84,7 +81,7 @@ public class ConsoleCommand extends AbstractNutsCommand {
             try {
                 line = terminal.readLine(prompt);
             } catch (InterrupShellException ex) {
-                terminal.getErr().drawln("=="+ex.getMessage()+"==");
+                terminal.getErr().drawln("==" + ex.getMessage() + "==");
                 continue;
             }
             if (line == null) {

@@ -43,6 +43,7 @@ import java.util.Set;
  * Created by vpc on 1/7/17.
  */
 public interface NutsHttpServletFacadeContext {
+
     URI getRequestURI() throws IOException;
 
     OutputStream getResponseBody() throws IOException;

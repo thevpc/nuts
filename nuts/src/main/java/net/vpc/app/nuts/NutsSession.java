@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 public interface NutsSession {
+
     boolean isTransitive();
 
     NutsSession setTransitive(boolean transitive);
@@ -46,32 +47,6 @@ public interface NutsSession {
 
     void setProperties(Map<String, Object> properties);
 
-    //    public InputStream getIn() {
-//        return in;
-//    }
-//
-//    public NutsSession setIn(InputStream in) {
-//        this.in = in;
-//        return this;
-//    }
-//
-//    public NutsPrintStream getOut() {
-//        return out;
-//    }
-//
-//    public NutsSession setOut(PrintStream out) {
-//        this.out = NutsPrintStream.create(out);
-//        return this;
-//    }
-//
-//    public NutsPrintStream getErr() {
-//        return err;
-//    }
-//
-//    public NutsSession setErr(PrintStream err) {
-//        this.err = NutsPrintStream.create(err);
-//        return this;
-//    }
     NutsTerminal getTerminal();
 
     NutsSession setTerminal(NutsTerminal terminal);

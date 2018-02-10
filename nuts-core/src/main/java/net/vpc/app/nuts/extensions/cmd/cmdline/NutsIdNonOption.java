@@ -35,11 +35,12 @@ import net.vpc.app.nuts.NutsCommandContext;
  *
  * @author vpc
  */
-public class NutsIdNonOption extends DefaultNonOption{
+public class NutsIdNonOption extends DefaultNonOption {
+
     private NutsCommandContext context;
-    public NutsIdNonOption(String name,NutsCommandContext context) {
+
+    public NutsIdNonOption(String name, NutsCommandContext context) {
         super(name);
     }
-    
-    
+
 }

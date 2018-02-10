@@ -640,7 +640,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsRepositoryFilter.class)) {
             return (NutsRepositoryFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsRepositoryFilter Not yet supported from type "+object.getType().getName());
+        throw new NutsIllegalArgumentsException("createNutsRepositoryFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsDependencyFilter createNutsDependencyFilter(TypedObject object) {
@@ -650,7 +650,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsDependencyFilter.class)) {
             return (NutsDependencyFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsDependencyFilter Not yet supported from type "+object.getType().getName());
+        throw new NutsIllegalArgumentsException("createNutsDependencyFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsVersionFilter createNutsVersionFilter(TypedObject object) {
@@ -660,7 +660,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsVersionFilter.class)) {
             return (NutsVersionFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsVersionFilter Not yet supported from type "+object.getType().getName());
+        throw new NutsIllegalArgumentsException("createNutsVersionFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsDescriptorFilter And(NutsDescriptorFilter... all) {
@@ -709,7 +709,7 @@ public class CoreNutsUtils {
     public static NutsDescriptorFilter createNutsDescriptorFilter(NutsIdFilter id) {
         return new NutsDescriptorFilterById(id);
     }
-    
+
     public static NutsDescriptorFilter createNutsDescriptorFilter(TypedObject object) {
         if (object == null) {
             return null;
@@ -717,7 +717,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsDescriptorFilter.class)) {
             return (NutsDescriptorFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsDescriptorFilter Not yet supported from type "+object.getType().getName());
+        throw new NutsIllegalArgumentsException("createNutsDescriptorFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsIdFilter createNutsIdFilter(TypedObject object) {
@@ -727,7 +727,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsIdFilter.class)) {
             return (NutsIdFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsIdFilter Not yet supported from type "+object.getType().getName());
+        throw new NutsIllegalArgumentsException("createNutsIdFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsDependencyFilter And(NutsDependencyFilter... all) {

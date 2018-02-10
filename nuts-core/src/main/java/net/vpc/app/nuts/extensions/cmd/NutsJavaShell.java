@@ -42,6 +42,7 @@ import net.vpc.apps.javashell.parser.nodes.Node;
 import java.io.File;
 
 public class NutsJavaShell extends JavaShell {
+
     private DefaultNutsConsole component;
     private NutsWorkspace workspace;
 

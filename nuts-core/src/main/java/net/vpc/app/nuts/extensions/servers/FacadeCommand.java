@@ -36,6 +36,7 @@ import java.io.IOException;
  * Created by vpc on 1/24/17.
  */
 public interface FacadeCommand {
+
     void execute(FacadeCommandContext context) throws IOException, LoginException;
 
     String getName();

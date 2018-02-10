@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
-
 /**
  * Created by vpc on 1/23/17.
  */
@@ -39,5 +37,5 @@ public interface NutsWorkspaceArchetypeComponent extends NutsComponent<Object> {
 
     String getName();
 
-    void initialize(NutsWorkspace workspace, NutsSession session) ;
+    void initialize(NutsWorkspace workspace, NutsSession session);
 }

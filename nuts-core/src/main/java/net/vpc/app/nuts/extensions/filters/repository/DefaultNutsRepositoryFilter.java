@@ -6,7 +6,8 @@ import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.Set;
 
-public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter,Simplifiable<NutsRepositoryFilter> {
+public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+
     private final Set<String> repos;
 
     public DefaultNutsRepositoryFilter(Set<String> repos) {
@@ -20,7 +21,7 @@ public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter,Simplif
 
     @Override
     public NutsRepositoryFilter simplify() {
-        if(repos.isEmpty()){
+        if (repos.isEmpty()) {
             return null;
         }
         return this;

@@ -35,13 +35,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class DefaultNutsCommandContext implements NutsCommandContext{
+public class DefaultNutsCommandContext implements NutsCommandContext {
+
     private String serviceName;
     private NutsWorkspace workspace;
     private NutsConsole commandLine;
     private NutsSession session;
-    private Map<String,Object> userProperties=new HashMap<>();
-    private Properties env=new Properties();
+    private Map<String, Object> userProperties = new HashMap<>();
+    private Properties env = new Properties();
     private NutsCommandAutoComplete autoComplete;
 
     public DefaultNutsCommandContext() {
@@ -60,7 +61,8 @@ public class DefaultNutsCommandContext implements NutsCommandContext{
         return c;
     }
 
-    public String getCurrentDirectory(){
+    @Override
+    public String getCurrentDirectory() {
         return commandLine.getCwd();
     }
 
@@ -71,47 +73,56 @@ public class DefaultNutsCommandContext implements NutsCommandContext{
 
     @Override
     public NutsCommandContext setEnv(Properties env) {
-        this.env =new Properties();
-        if(env!=null){
+        this.env = new Properties();
+        if (env != null) {
             this.env.putAll(env);
         }
         return this;
     }
 
+    @Override
     public Map<String, Object> getUserProperties() {
         return userProperties;
     }
 
+    @Override
     public String getServiceName() {
         return serviceName;
     }
 
+    @Override
     public NutsCommandContext setServiceName(String serviceName) {
         this.serviceName = serviceName;
         return this;
     }
 
+    @Override
     public NutsSession getSession() {
         return session;
     }
 
+    @Override
     public NutsCommandContext setSession(NutsSession session) {
         this.session = session;
         return this;
     }
 
+    @Override
     public NutsTerminal getTerminal() {
         return session.getTerminal();
     }
 
+    @Override
     public NutsConsole getCommandLine() {
         return commandLine;
     }
 
+    @Override
     public void setCommandLine(NutsConsole commandLine) {
         this.commandLine = commandLine;
     }
 
+    @Override
     public NutsWorkspace getValidWorkspace() {
         if (workspace == null) {
             throw new NutsIllegalArgumentsException("No valid Workspace openWorkspace");
@@ -119,10 +130,12 @@ public class DefaultNutsCommandContext implements NutsCommandContext{
         return workspace;
     }
 
+    @Override
     public NutsWorkspace getWorkspace() {
         return workspace;
     }
 
+    @Override
     public void setWorkspace(NutsWorkspace workspace) {
         this.workspace = workspace;
     }

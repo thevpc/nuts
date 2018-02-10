@@ -35,6 +35,7 @@ import java.util.*;
  * Created by vpc on 2/17/17.
  */
 public class TableFormatter {
+
     List<Row> rows = new ArrayList<>();
 
 //    public static void main(String[] args) {
@@ -59,8 +60,8 @@ public class TableFormatter {
 ////        RenderedCell resized2 = r1.replaceContent(r2, 1, 1);
 ////        System.out.println();
 //    }
-
     private static class Row {
+
         CellFormatter formatter;
         List<Cell> cells = new ArrayList<>();
     }
@@ -83,6 +84,7 @@ public class TableFormatter {
     }
 
     private static class RenderedCell {
+
         char[][] rendered;
         int rows;
         int columns;
@@ -266,6 +268,7 @@ public class TableFormatter {
     }
 
     private static class Cell {
+
         int colspan = 1;
         int rowspan = 1;
         int x;
@@ -312,7 +315,6 @@ public class TableFormatter {
 //        public void setX(int x) {
 //            this.x = x;
 //        }
-
         public int getY() {
             return y;
         }
@@ -320,7 +322,6 @@ public class TableFormatter {
 //        public void setY(int y) {
 //            this.y = y;
 //        }
-
         public Object getValue() {
             return value;
         }
@@ -341,17 +342,18 @@ public class TableFormatter {
 
         @Override
         public String toString() {
-            return "Cell{" +
-                    "" + x + "->" + (x + colspan) +
-                    ", " + y + "->" + (y + rowspan) +
-                    ", " + value +
-                    (formatter == null ? "" : (", formatter=" + formatter)) +
-                    '}';
+            return "Cell{"
+                    + "" + x + "->" + (x + colspan)
+                    + ", " + y + "->" + (y + rowspan)
+                    + ", " + value
+                    + (formatter == null ? "" : (", formatter=" + formatter))
+                    + '}';
         }
     }
 
     private void rebuild() {
         class Widths {
+
             Map<Integer, Integer> colWidth = new HashMap<>();
             Map<Integer, Integer> rowHeight = new HashMap<>();
 
@@ -377,6 +379,7 @@ public class TableFormatter {
             }
         }
         class Interval {
+
             int from;
             int to;
 
@@ -387,12 +390,18 @@ public class TableFormatter {
 
             @Override
             public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
 
                 Interval interval = (Interval) o;
 
-                if (from != interval.from) return false;
+                if (from != interval.from) {
+                    return false;
+                }
                 return to == interval.to;
 
             }
@@ -406,20 +415,20 @@ public class TableFormatter {
 
             @Override
             public String toString() {
-                return "Interval{" +
-                        "from=" + from +
-                        ", to=" + to +
-                        '}';
+                return "Interval{"
+                        + "from=" + from
+                        + ", to=" + to
+                        + '}';
             }
         }
         class Bounds {
+
             List<Integer> columnSize = new ArrayList<>();
             List<Integer> rowSize = new ArrayList<>();
             Map<Interval, Integer> columnIntervalSize = new HashMap<Interval, Integer>();
             Map<Interval, Integer> rowIntervalSize = new HashMap<Interval, Integer>();
 
             Map<Integer, Set<Integer>> reservedColumnsByRow = new HashMap<>();
-
 
             public void discardRow(int row) {
                 reservedColumnsByRow.remove(row);
@@ -505,52 +514,52 @@ public class TableFormatter {
                 rowIntervalSize.put(key, Math.max(rowIntervalSize.getOrDefault(key, 0), size));
             }
 
-            public int evalColumnSize(int col,int colspan) {
-                if(colspan<=0){
+            public int evalColumnSize(int col, int colspan) {
+                if (colspan <= 0) {
                     return 0;
                 }
-                if(colspan==1){
+                if (colspan == 1) {
                     return columnSize.get(col);
                 }
 
-                int best=0;
+                int best = 0;
                 for (Map.Entry<Interval, Integer> e : columnIntervalSize.entrySet()) {
-                    Interval interval=e.getKey();
-                    if(interval.from>=col && interval.to<=col+colspan){
-                        int v=evalColumnSize(col,interval.from-col)+e.getValue()+evalColumnSize(interval.to,col+colspan-interval.to);
-                        if(v>best){
-                            best=v;
+                    Interval interval = e.getKey();
+                    if (interval.from >= col && interval.to <= col + colspan) {
+                        int v = evalColumnSize(col, interval.from - col) + e.getValue() + evalColumnSize(interval.to, col + colspan - interval.to);
+                        if (v > best) {
+                            best = v;
                         }
                     }
                 }
-                int v=evalColumnSize(col,1)+evalColumnSize(col+1,colspan-1);
-                if(v>best){
-                    best=v;
+                int v = evalColumnSize(col, 1) + evalColumnSize(col + 1, colspan - 1);
+                if (v > best) {
+                    best = v;
                 }
                 return best;
             }
 
-            public int evalRowSize(int row,int rowspan) {
-                if(rowspan<=0){
+            public int evalRowSize(int row, int rowspan) {
+                if (rowspan <= 0) {
                     return 0;
                 }
-                if(rowspan==1){
+                if (rowspan == 1) {
                     return rowSize.get(row);
                 }
 
-                int best=0;
+                int best = 0;
                 for (Map.Entry<Interval, Integer> e : rowIntervalSize.entrySet()) {
-                    Interval interval=e.getKey();
-                    if(interval.from>=row && interval.to<=row+rowspan){
-                        int v=evalRowSize(row,interval.from-row)+e.getValue()+evalRowSize(interval.to,row+rowspan-interval.to);
-                        if(v>best){
-                            best=v;
+                    Interval interval = e.getKey();
+                    if (interval.from >= row && interval.to <= row + rowspan) {
+                        int v = evalRowSize(row, interval.from - row) + e.getValue() + evalRowSize(interval.to, row + rowspan - interval.to);
+                        if (v > best) {
+                            best = v;
                         }
                     }
                 }
-                int v=evalRowSize(row,1)+evalRowSize(row+1,rowspan-1);
-                if(v>best){
-                    best=v;
+                int v = evalRowSize(row, 1) + evalRowSize(row + 1, rowspan - 1);
+                if (v > best) {
+                    best = v;
                 }
                 return best;
             }
@@ -614,21 +623,20 @@ public class TableFormatter {
         // second pass to update sizes
         for (Row row : rows) {
             for (Cell cell : row.cells) {
-                int rows = b.evalRowSize(cell.y,cell.rowspan);
-                int columns = b.evalColumnSize(cell.x,cell.rowspan);
+                int rows = b.evalRowSize(cell.y, cell.rowspan);
+                int columns = b.evalColumnSize(cell.x, cell.rowspan);
                 cell.rendered = cell.rendered.resize(rows, columns);
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;
             }
         }
 
-
     }
 
     private interface CellFormatter {
+
         String format(int row, int col, Object value);
     }
-
 
     public void newRow() {
         rows.add(new Row());

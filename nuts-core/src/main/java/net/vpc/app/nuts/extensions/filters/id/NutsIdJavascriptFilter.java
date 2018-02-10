@@ -68,7 +68,7 @@ public class NutsIdJavascriptFilter implements NutsIdFilter, Simplifiable<NutsId
     }
 
     public NutsIdJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist,null);
+        engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null);
         this.code = code;
         //check if valid
         accept(SAMPLE_NUTS_ID);

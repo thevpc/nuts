@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Created by vpc on 3/17/17.
  */
 public class NutsRepoInfo {
+
     private String type;
     private String location;
 

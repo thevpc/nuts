@@ -49,6 +49,12 @@ public class GroupNonOption extends DefaultNonOption {
         this.workspace = context.getValidWorkspace();
     }
 
+    public GroupNonOption(String name, NutsCommandContext context, NutsRepository repository) {
+        super(name);
+        this.workspace = context.getValidWorkspace();
+        this.repository = repository;
+    }
+
     public GroupNonOption(String name, NutsRepository repository) {
         super(name);
         this.repository = repository;
@@ -62,19 +68,17 @@ public class GroupNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getValues() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        if (workspace != null) {
-            for (NutsSecurityEntityConfig nutsSecurityEntityConfig : workspace.getConfig().getSecurity()) {
-                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
-            }
-        }
-        if (repository != null) {
-            for (NutsSecurityEntityConfig nutsSecurityEntityConfig : repository.getConfig().getSecurity()) {
-                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
-            }
-        }
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
                 all.add(new DefaultNutsArgumentCandidate(n));
+            }
+        }else if (repository != null) {
+            for (NutsUserInfo nutsSecurityEntityConfig : repository.findUsers()) {
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+            }
+        }else if (workspace != null) {
+            for (NutsUserInfo nutsSecurityEntityConfig : workspace.findUsers()) {
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;

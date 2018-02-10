@@ -152,7 +152,7 @@
 //                    throw new NoSuchElementException(((HttpURLConnection) connection).getResponseMessage());
 //                }
 //                if (responseCode == 401 || responseCode == 402 || responseCode == 403 || responseCode == 405) {
-//                    throw new SecurityException(((HttpURLConnection) connection).getResponseMessage());
+//                    throw new NutsSecurityException(((HttpURLConnection) connection).getResponseMessage());
 //                }
 //                throw new IOException(((HttpURLConnection) connection).getResponseMessage());
 //            }

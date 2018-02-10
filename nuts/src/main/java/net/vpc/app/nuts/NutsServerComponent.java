@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
-
 /**
  * Created by vpc on 1/24/17.
  */
@@ -44,5 +42,5 @@ public interface NutsServerComponent extends NutsComponent<ServerConfig> {
      * workspace dependent
      * @param config server configuration
      */
-    NutsServer start(NutsWorkspace workspace, ServerConfig config) ;
+    NutsServer start(NutsWorkspace workspace, ServerConfig config);
 }

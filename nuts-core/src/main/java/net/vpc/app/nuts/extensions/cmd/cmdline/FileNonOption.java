@@ -33,7 +33,7 @@ package net.vpc.app.nuts.extensions.cmd.cmdline;
  *
  * @author vpc
  */
-public class FileNonOption extends DefaultNonOption{
+public class FileNonOption extends DefaultNonOption {
 
     public FileNonOption(String name) {
         super(name);

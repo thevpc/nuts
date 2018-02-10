@@ -38,11 +38,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import net.vpc.app.nuts.NutsIOException;
 
 /**
  * Created by vpc on 5/16/17.
  */
 public class CoreHttpUtils {
+
     /**
      * returns the url parameters in a map
      *
@@ -71,7 +73,7 @@ public class CoreHttpUtils {
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new NutsIOException(e);
         }
     }
 
@@ -256,16 +258,16 @@ public class CoreHttpUtils {
     //        }
     //        return boundary;
     //    }
-        public static String urlDecodeString(String s) {
-            if (s == null || s.trim().length() == 0) {
-                return s;
-            }
-            try {
-                return URLDecoder.decode(s, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
+    public static String urlDecodeString(String s) {
+        if (s == null || s.trim().length() == 0) {
+            return s;
         }
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new NutsIOException(e);
+        }
+    }
 
     public static NutsHttpConnectionFacade getHttpClientFacade(NutsWorkspace ws, String url) throws IOException {
 //        System.out.println("getHttpClientFacade "+url);

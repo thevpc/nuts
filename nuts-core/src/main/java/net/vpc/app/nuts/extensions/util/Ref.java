@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.util;
 
 public class Ref<T> {
+
     private T value;
 
     public Ref() {
@@ -42,7 +43,8 @@ public class Ref<T> {
     public void set(T value) {
         this.value = value;
     }
-    public boolean isSet(){
-        return value!=null;
+
+    public boolean isSet() {
+        return value != null;
     }
 }

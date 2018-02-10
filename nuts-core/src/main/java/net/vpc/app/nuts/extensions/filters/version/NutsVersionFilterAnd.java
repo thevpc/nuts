@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<NutsVersionFilter> ,JsNutsIdFilter{
+public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsIdFilter {
+
     private NutsVersionFilter[] all;
 
     public NutsVersionFilterAnd(NutsVersionFilter... all) {
@@ -53,7 +54,7 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
         return this;
     }
 
-     @Override
+    @Override
     public String toJsNutsIdFilterExpr() {
         StringBuilder sb = new StringBuilder();
         if (all.length == 0) {

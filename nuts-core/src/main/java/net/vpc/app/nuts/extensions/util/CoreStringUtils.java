@@ -41,6 +41,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsParseException;
 
 /**
  * Created by vpc on 5/16/17.
@@ -80,7 +82,7 @@ public class CoreStringUtils {
     public static String checkNotEmpty(String str, String name) {
         str = CoreStringUtils.trim(str);
         if (CoreStringUtils.isEmpty(str)) {
-            throw new RuntimeException("Empty string not allowed for " + name);
+            throw new NutsIllegalArgumentsException("Empty string not allowed for " + name);
         }
         return str.trim();
     }
@@ -155,7 +157,7 @@ public class CoreStringUtils {
             result.add(current.toString());
         }
         if (state == inQuote || state == inDoubleQuote) {
-            throw new RuntimeException("unbalanced quotes in " + line);
+            throw new NutsParseException("unbalanced quotes in " + line);
         }
         return result.toArray(new String[result.size()]);
     }
@@ -176,7 +178,7 @@ public class CoreStringUtils {
             try {
                 r = readToken(reader, eqSeparators + entrySeparators, key);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new NutsIOException(e);
             }
             String t = key.toString();
             if (r == -1) {
@@ -191,7 +193,7 @@ public class CoreStringUtils {
                     try {
                         r = readToken(reader, entrySeparators, value);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new NutsIOException(e);
                     }
                     m.put(t, value.toString());
                     if (r == -1) {
@@ -214,7 +216,7 @@ public class CoreStringUtils {
                 while (true) {
                     r = reader.read();
                     if (r == -1) {
-                        throw new RuntimeException("Expected " + '\"');
+                        throw new NutsParseException("Expected " + '\"');
                     }
                     if (r == s) {
                         break;
@@ -222,7 +224,7 @@ public class CoreStringUtils {
                     if (r == '\\') {
                         r = reader.read();
                         if (r == -1) {
-                            throw new RuntimeException("Expected " + '\"');
+                            throw new NutsParseException("Expected " + '\"');
                         }
                         switch ((char) r) {
                             case 'n': {
@@ -336,9 +338,9 @@ public class CoreStringUtils {
     }
 
     public static String simpexpToRegexp(String pattern) {
-        return simpexpToRegexp(pattern,false);
+        return simpexpToRegexp(pattern, false);
     }
-    
+
     /**
      * *
      * **

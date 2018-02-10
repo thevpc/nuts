@@ -51,7 +51,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private String mimeType;
     private byte[] bytes;
 
-    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace,NutsSession session,InputStreamSource file, String fileExtension, String fileType, String mimeType) {
+    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputStreamSource file, String fileExtension, String fileType, String mimeType) {
         this.file = file;
         this.workspace = workspace;
         this.session = session;
@@ -72,7 +72,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     public InputStream getHeadStream() {
         if (bytes == null) {
             try {
-                bytes = CoreIOUtils.readStreamAsBytes(file.openStream(), 1024 * 1024 * 10,true);
+                bytes = CoreIOUtils.readStreamAsBytes(file.openStream(), 1024 * 1024 * 10, true);
             } catch (IOException e) {
                 throw new NutsIOException(e);
             }

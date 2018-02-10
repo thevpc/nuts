@@ -50,7 +50,7 @@ public class NutsTerminalDelegate implements NutsTerminal {
         }
         this.base = base;
         InputStream in0 = base.getIn();
-        if (inReplace!=null && in0 != inReplace) {
+        if (inReplace != null && in0 != inReplace) {
             this.inReplace = inReplace;
             this.inReplaceReader = inReplace == null ? null : new BufferedReader(new InputStreamReader(inReplace));
         }
@@ -69,7 +69,7 @@ public class NutsTerminalDelegate implements NutsTerminal {
     }
 
     @Override
-    public String readLine(String prompt)  {
+    public String readLine(String prompt) {
         if (inReplaceReader != null) {
             getOut().print(prompt);
             try {
@@ -82,7 +82,7 @@ public class NutsTerminalDelegate implements NutsTerminal {
     }
 
     @Override
-    public String readPassword(String prompt)  {
+    public String readPassword(String prompt) {
         if (inReplaceReader != null) {
             getOut().print(prompt);
             try {

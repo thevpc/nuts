@@ -35,6 +35,7 @@ import net.vpc.apps.javashell.cmds.JavaShellInternalCmd;
 import net.vpc.apps.javashell.parser.JavaShellEvalContext;
 
 class NutsShellInternalCmd implements JavaShellInternalCmd {
+
     private final NutsCommand ncommand;
     private final DefaultNutsConsole component;
 
@@ -45,7 +46,7 @@ class NutsShellInternalCmd implements JavaShellInternalCmd {
 
     @Override
     public int exec(String[] command, JavaShellEvalContext shell) throws Exception {
-        NutsJavaShellEvalContext ncontext=(NutsJavaShellEvalContext) shell;
+        NutsJavaShellEvalContext ncontext = (NutsJavaShellEvalContext) shell;
         NutsCommandContext commandContext = ncontext.getCommandContext();
         NutsSession session = component.getContext().getSession().copy();
         session.setTerminal(new NutsTerminalDelegate(
@@ -53,7 +54,6 @@ class NutsShellInternalCmd implements JavaShellInternalCmd {
                 shell.getStdIn(),
                 component.getContext().getWorkspace().createEnhancedPrintStream(shell.getStdOut()),
                 component.getContext().getWorkspace().createEnhancedPrintStream(shell.getStdErr())
-
         ));
         commandContext.setSession(session);
         commandContext.setEnv(shell.getEnv().getEnv());

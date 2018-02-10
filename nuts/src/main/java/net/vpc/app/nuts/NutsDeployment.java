@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class NutsDeployment {
+
     private TypedObject content;
     private TypedObject descriptor;
     private String sha1;

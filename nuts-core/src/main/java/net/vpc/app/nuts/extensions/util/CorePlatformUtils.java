@@ -40,12 +40,20 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.NutsLoginException;
+import net.vpc.app.nuts.extensions.core.NutsWorkspaceLoginModule;
 
 /**
  * Created by vpc on 5/16/17.
@@ -56,6 +64,7 @@ public class CorePlatformUtils {
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86", "ia64", "amd64", "ppc", "sparc"));
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "mac", "sunos", "freebsd"));
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
+    private static WeakHashMap<String, PlatformBeanProperty> cachedPlatformBeanProperties = new WeakHashMap<>();
 
     static {
         SUPPORTED_ARCH_ALIASES.put("i386", "x86");
@@ -317,21 +326,6 @@ public class CorePlatformUtils {
         return (aliased == null) ? property : aliased;
     }
 
-    public static String[] subArray(String[] source, int beginIndex, int endIndex) {
-        if (beginIndex < 0) {
-            beginIndex = 0;
-        }
-        if (endIndex > source.length) {
-            beginIndex = 0;
-        }
-        if (beginIndex >= endIndex) {
-            return new String[0];
-        }
-        String[] arr = new String[endIndex - beginIndex];
-        System.arraycopy(source, beginIndex, arr, 0, endIndex - beginIndex);
-        return arr;
-    }
-
     public static File resolveLocalFileFromResource(Class cls, String url) throws MalformedURLException {
         return resolveLocalFileFromURL(resolveURLFromResource(cls, url));
     }
@@ -391,22 +385,6 @@ public class CorePlatformUtils {
         return encoded.toString();
     }
 
-    public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
-        if (dest == null) {
-            dest = new HashMap<>();
-        }
-        if (source != null) {
-            for (Map.Entry<K, V> e : source.entrySet()) {
-                if (e.getValue() != null) {
-                    dest.put(e.getKey(), e.getValue());
-                } else {
-                    dest.remove(e.getKey());
-                }
-            }
-        }
-        return dest;
-    }
-
     public static String getterName(String name, Class type) {
         if (Boolean.TYPE.equals(type)) {
             return "is" + suffix(name);
@@ -457,89 +435,96 @@ public class CorePlatformUtils {
     }
 
     public static PlatformBeanProperty findPlatformBeanProperty(String field, Class platformType) {
-        Field jfield = null;
-        try {
-            jfield = platformType.getDeclaredField(field);
-        } catch (NoSuchFieldException e) {
-            //ignore
-        }
-        String g1 = getterName(field, Object.class);
-        String g2 = getterName(field, Boolean.TYPE);
-        String s = setterName(field);
-        Class<?> x = platformType;
-        Method getter = null;
-        Method setter = null;
-        Class propertyType = null;
-        LinkedHashMap<Class, Method> setters = new LinkedHashMap<Class, Method>();
-        while (x != null) {
-            for (Method m : x.getDeclaredMethods()) {
-                if (!Modifier.isStatic(m.getModifiers())) {
-                    String mn = m.getName();
-                    if (getter == null) {
-                        if (g1.equals(mn) || g2.equals(mn)) {
-                            if (m.getParameterTypes().length == 0 && !Void.TYPE.equals(m.getReturnType())) {
-                                getter = m;
-                                Class<?> ftype = getter.getReturnType();
-                                for (Class key : new HashSet<Class>(setters.keySet())) {
-                                    if (!key.equals(ftype)) {
-                                        setters.remove(key);
+        String ckey = platformType.getName() + "." + field;
+        PlatformBeanProperty old = cachedPlatformBeanProperties.get(ckey);
+        if (old == null) {
+            Field jfield = null;
+            try {
+                jfield = platformType.getDeclaredField(field);
+            } catch (NoSuchFieldException e) {
+                //ignore
+            }
+            String g1 = getterName(field, Object.class);
+            String g2 = getterName(field, Boolean.TYPE);
+            String s = setterName(field);
+            Class<?> x = platformType;
+            Method getter = null;
+            Method setter = null;
+            Class propertyType = null;
+            LinkedHashMap<Class, Method> setters = new LinkedHashMap<Class, Method>();
+            while (x != null) {
+                for (Method m : x.getDeclaredMethods()) {
+                    if (!Modifier.isStatic(m.getModifiers())) {
+                        String mn = m.getName();
+                        if (getter == null) {
+                            if (g1.equals(mn) || g2.equals(mn)) {
+                                if (m.getParameterTypes().length == 0 && !Void.TYPE.equals(m.getReturnType())) {
+                                    getter = m;
+                                    Class<?> ftype = getter.getReturnType();
+                                    for (Class key : new HashSet<Class>(setters.keySet())) {
+                                        if (!key.equals(ftype)) {
+                                            setters.remove(key);
+                                        }
                                     }
-                                }
-                                if (setter == null) {
-                                    setter = setters.get(ftype);
+                                    if (setter == null) {
+                                        setter = setters.get(ftype);
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (setter == null) {
-                        if (s.equals(mn)) {
-                            if (m.getParameterTypes().length == 1) {
-                                Class<?> stype = m.getParameterTypes()[0];
-                                if (getter != null) {
-                                    Class<?> gtype = getter.getReturnType();
-                                    if (gtype.equals(stype)) {
+                        if (setter == null) {
+                            if (s.equals(mn)) {
+                                if (m.getParameterTypes().length == 1) {
+                                    Class<?> stype = m.getParameterTypes()[0];
+                                    if (getter != null) {
+                                        Class<?> gtype = getter.getReturnType();
+                                        if (gtype.equals(stype)) {
+                                            if (!setters.containsKey(stype)) {
+                                                setters.put(stype, m);
+                                            }
+                                            if (setter == null) {
+                                                setter = m;
+                                            }
+                                        }
+                                    } else {
                                         if (!setters.containsKey(stype)) {
                                             setters.put(stype, m);
                                         }
-                                        if (setter == null) {
-                                            setter = m;
-                                        }
-                                    }
-                                } else {
-                                    if (!setters.containsKey(stype)) {
-                                        setters.put(stype, m);
                                     }
                                 }
                             }
                         }
-                    }
-                    if (getter != null && setter != null) {
-                        break;
+                        if (getter != null && setter != null) {
+                            break;
+                        }
                     }
                 }
+                if (getter != null && setter != null) {
+                    break;
+                }
+                x = x.getSuperclass();
             }
-            if (getter != null && setter != null) {
-                break;
+            if (getter != null) {
+                propertyType = getter.getReturnType();
             }
-            x = x.getSuperclass();
-        }
-        if (getter != null) {
-            propertyType = getter.getReturnType();
-        }
-        if (getter == null && setter == null && setters.size() > 0) {
-            Method[] settersArray = setters.values().toArray(new Method[setters.size()]);
-            setter = settersArray[0];
-            if (settersArray.length > 1) {
-                //TODO log?
+            if (getter == null && setter == null && setters.size() > 0) {
+                Method[] settersArray = setters.values().toArray(new Method[setters.size()]);
+                setter = settersArray[0];
+                if (settersArray.length > 1) {
+                    //TODO log?
+                }
             }
+            if (getter == null && setter != null && propertyType == null) {
+                propertyType = setter.getParameterTypes()[0];
+            }
+            if (getter != null || setter != null) {
+                old = new DefaultPlatformBeanProperty(field, propertyType, jfield, getter, setter);
+            } else {
+                old = null;
+            }
+            cachedPlatformBeanProperties.put(ckey, old);
         }
-        if (getter == null && setter != null && propertyType == null) {
-            propertyType = setter.getParameterTypes()[0];
-        }
-        if (getter != null || setter != null) {
-            return new DefaultPlatformBeanProperty(field, propertyType, jfield, getter, setter);
-        }
-        return null;
+        return old;
     }
 
     public static Boolean getExecutableJar(File file) {
@@ -682,5 +667,45 @@ public class CorePlatformUtils {
             return false;
         }
         return false;
+    }
+
+    public static RuntimeException toRuntimeException(Throwable ex) {
+        if (ex instanceof RuntimeException) {
+            return (RuntimeException) ex;
+        }
+        return new NutsException(ex);
+    }
+
+    public static NutsException toNutsException(Throwable ex) {
+        if (ex instanceof NutsException) {
+            return (NutsException) ex;
+        }
+        return new NutsException(ex);
+    }
+
+    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader) {
+        Ref<T> ref = new Ref<>();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ref.set(callable.call());
+                } catch (NutsException ex) {
+                    throw ex;
+                } catch (RuntimeException ex) {
+                    throw ex;
+                } catch (Exception ex) {
+                    throw new NutsException(ex);
+                }
+            }
+        },"RunWithinLoader");
+        thread.setContextClassLoader(loader);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException ex) {
+            throw new NutsException(ex);
+        }
+        return ref.get();
     }
 }

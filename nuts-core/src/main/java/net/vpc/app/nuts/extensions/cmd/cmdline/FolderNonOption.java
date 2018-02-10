@@ -33,11 +33,10 @@ package net.vpc.app.nuts.extensions.cmd.cmdline;
  *
  * @author vpc
  */
-public class FolderNonOption extends DefaultNonOption{
+public class FolderNonOption extends DefaultNonOption {
 
     public FolderNonOption(String name) {
         super(name);
     }
-    
-    
+
 }

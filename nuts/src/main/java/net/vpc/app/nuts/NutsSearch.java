@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NutsSearch {
-    private List<String> ids= new ArrayList<>();
+
+    private List<String> ids = new ArrayList<>();
 //    private boolean includeDependencies;
     private TypedObject idFilter;
     private TypedObject dependencyFilter;
@@ -16,6 +17,7 @@ public class NutsSearch {
     public NutsSearch() {
 
     }
+
     public NutsSearch(String... ids) {
         addIds(ids);
     }
@@ -62,7 +64,6 @@ public class NutsSearch {
         return this;
     }
 
-
     public NutsSearch setDependencyFilter(NutsDependencyFilter filter) {
         this.dependencyFilter = new TypedObject(NutsDependencyFilter.class, filter, null);
         return this;
@@ -104,7 +105,6 @@ public class NutsSearch {
         this.versionFilter = new TypedObject(String.class, filter, null);
         return this;
     }
-
 
     public NutsSearch setDescriptorFilter(NutsDescriptorFilter filter) {
         this.descriptorFilter = new TypedObject(NutsDescriptorFilter.class, filter, null);

@@ -41,7 +41,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
     }
 
     public NutsNotExecutableException(String nuts) {
-        super("Not executable " + (nuts == null ? "<null>" : nuts),-1);
+        super("Not executable " + (nuts == null ? "<null>" : nuts), -1);
         this.nuts = nuts;
     }
 

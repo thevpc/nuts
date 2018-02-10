@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.executors;
@@ -46,7 +46,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     public static final NutsId ID = CoreNutsUtils.parseNutsId("java");
 
     @Override
-    public NutsId getId()  {
+    public NutsId getId() {
         return ID;
     }
 
@@ -60,7 +60,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext)  {
+    public int exec(NutsExecutionContext executionContext) {
         NutsFile nutMainFile = executionContext.getNutsFile();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
         String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
@@ -73,10 +73,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(envAndApp0[1]));
         app.addAll(Arrays.asList(envAndApp[1]));
 
-
         Properties runnerProps = new Properties();
         if (executionContext.getExecutorDescriptor() != null) {
-            runnerProps = (Properties) CorePlatformUtils.mergeMaps(executionContext.getExecutorDescriptor().getProperties(), runnerProps);
+            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getExecutorDescriptor().getProperties(), runnerProps);
         }
         for (String k : env) {
             String[] strings = CoreNutsUtils.splitNameAndValue(k);
@@ -88,7 +87,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         if (executionContext.getEnv() != null) {
-            runnerProps = (Properties) CorePlatformUtils.mergeMaps(executionContext.getEnv(), runnerProps);
+            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getEnv(), runnerProps);
         }
         if (runnerProps == null) {
             runnerProps = new Properties();
@@ -104,7 +103,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             String k = (String) e.getKey();
             String value = (String) e.getValue();
             if (k.startsWith("-J")) {
-                jvmArgs.add(k.substring(2) + (value.isEmpty()?"":("=" + value)));
+                jvmArgs.add(k.substring(2) + (value.isEmpty() ? "" : ("=" + value)));
             } else if (k.startsWith("-D") || k.startsWith("-Xmx") || k.startsWith("-Xms")) {
                 jvmArgs.add(k + "=" + value);
             } else if (k.equals("-java-version") || k.equals("java-version")) {
@@ -116,14 +115,13 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             } else if (k.equals("-show-command")) {
                 showCommand = true;
             } else if (k.equals("-jar")) {
-                jar=true;
-            }else{
-                if(k.startsWith("-")) {
-                    executionContext.getTerminal().getErr().println("Ignored env param "+k + (value==null?"":("=" + value)));
+                jar = true;
+            } else {
+                if (k.startsWith("-")) {
+                    executionContext.getTerminal().getErr().println("Ignored env param " + k + (value == null ? "" : ("=" + value)));
                 }
             }
         }
-
 
         if (CoreStringUtils.isEmpty(javaVersion)) {
             javaVersion = "java";
@@ -136,8 +134,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             nutsFiles.addAll(
                     Arrays.asList(executionContext.getWorkspace().fetchDependencies(
                             new NutsDependencySearch(d.toId())
-                            .setIncludeMain(true)
-                            .setScope(NutsDependencyScope.RUN),
+                                    .setIncludeMain(true)
+                                    .setScope(NutsDependencyScope.RUN),
                             executionContext.getSession().copy().setTransitive(true)))
             );
         }
@@ -145,11 +143,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         args.add("${" + javaVersion + "}");
         args.addAll(jvmArgs);
         if (jar) {
-            if(mainClass!=null){
-                executionContext.getTerminal().getErr().println("Ignored main-class="+mainClass+" . running jar!");
+            if (mainClass != null) {
+                executionContext.getTerminal().getErr().println("Ignored main-class=" + mainClass + " . running jar!");
             }
-            if(!classPath.isEmpty()){
-                executionContext.getTerminal().getErr().println("Ignored class-path="+classPath+" . running jar!");
+            if (!classPath.isEmpty()) {
+                executionContext.getTerminal().getErr().println("Ignored class-path=" + classPath + " . running jar!");
             }
             args.add("-jar");
             args.add(nutMainFile.getFile().getPath());
@@ -214,12 +212,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         args.addAll(app);
 
-
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 args.toArray(new String[args.size()]),
                 null, null, executionContext.getTerminal(), showCommand
         );
-
 
     }
 

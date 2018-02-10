@@ -51,21 +51,21 @@ public class ExecCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
 
-        if(autoComplete!=null){
+        if (autoComplete != null) {
             return -1;
         }
         String[] finalArgs = cmdLine.toArray();
-        if(finalArgs.length>0 && finalArgs[0].equals("-c")){
-            int from=1;
-            if(finalArgs.length>1 && finalArgs[1].equals("-d")){
+        if (finalArgs.length > 0 && finalArgs[0].equals("-c")) {
+            int from = 1;
+            if (finalArgs.length > 1 && finalArgs[1].equals("-d")) {
                 from++;
             }
-            List<String> commands=new ArrayList<>();
-            Map<String,String> env=new HashMap<>();
-            boolean expectEnv=true;
+            List<String> commands = new ArrayList<>();
+            Map<String, String> env = new HashMap<>();
+            boolean expectEnv = true;
             for (int i = from; i < finalArgs.length; i++) {
                 String command = finalArgs[i];
                 if (expectEnv) {
@@ -80,12 +80,12 @@ public class ExecCommand extends AbstractNutsCommand {
                     commands.add(command);
                 }
             }
-            if(commands.isEmpty()){
+            if (commands.isEmpty()) {
                 throw new NutsIllegalArgumentsException("Missing command");
             }
             String[] commandsArray = commands.toArray(new String[commands.size()]);
             String currentDirectory = context.getCurrentDirectory();
-            return CoreIOUtils.execAndWait(commandsArray,env, currentDirectory==null?null:new File(currentDirectory),context.getTerminal(),true);
+            return CoreIOUtils.execAndWait(commandsArray, env, currentDirectory == null ? null : new File(currentDirectory), context.getTerminal(), true);
         }
         return context.getValidWorkspace().exec(finalArgs, context.getEnv(), context.getSession());
     }

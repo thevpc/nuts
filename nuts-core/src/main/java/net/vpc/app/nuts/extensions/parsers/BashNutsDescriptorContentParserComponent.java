@@ -46,7 +46,7 @@ import java.util.*;
 public class BashNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final NutsId SH = CoreNutsUtils.parseNutsId("sh");
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("sh","bash"));//, "war", "ear"
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("sh", "bash"));//, "war", "ear"
 
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
@@ -124,7 +124,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                     }
                 }
             }
-            if(comment.toString().trim().isEmpty()){
+            if (comment.toString().trim().isEmpty()) {
                 return new DefaultNutsDescriptor(
                         CoreNutsUtils.parseNutsId("temp:sh#1.0"),
                         null,

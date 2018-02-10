@@ -46,7 +46,7 @@ import java.util.*;
 public class NutsShellDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final NutsId NSH = CoreNutsUtils.parseNutsId("nuts");
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh","nuts"));
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "nuts"));
 
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
@@ -120,7 +120,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                     }
                 }
             }
-            if(comment.toString().trim().isEmpty()){
+            if (comment.toString().trim().isEmpty()) {
                 return new DefaultNutsDescriptor(
                         CoreNutsUtils.parseNutsId("temp:nsh#1.0"),
                         null,

@@ -39,6 +39,7 @@ import java.io.IOException;
  * Created by vpc on 1/7/17.
  */
 public abstract class AbstractNutsHttpServletFacadeContext implements NutsHttpServletFacadeContext {
+
     public void sendResponseText(int code, String text) throws IOException {
         byte[] bytes = text.getBytes();
         sendResponseHeaders(code, bytes.length);
@@ -48,7 +49,7 @@ public abstract class AbstractNutsHttpServletFacadeContext implements NutsHttpSe
     public void sendResponseFile(int code, File file) throws IOException {
         if (file != null && file.exists() && file.isFile()) {
             sendResponseHeaders(code, file.length());
-            CoreIOUtils.copy(new FileInputStream(file), getResponseBody(),true,false);
+            CoreIOUtils.copy(new FileInputStream(file), getResponseBody(), true, false);
         } else {
             sendError(404, "File not found");
         }

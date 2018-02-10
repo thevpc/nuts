@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.util.Properties;
 
 public interface NutsWorkspaceConfig {
+
     long getInstanceSerialVersionUID();
 
     void setInstanceSerialVersionUID(long instanceSerialVersionUID);
@@ -43,12 +44,6 @@ public interface NutsWorkspaceConfig {
     NutsRepositoryLocation[] getRepositories();
 
     void setRepositories(NutsRepositoryLocation[] repositories);
-
-    void addImport(String importExpression);
-
-    void removeAllImports();
-
-    void removeImport(String importExpression);
 
     void setImports(String[] imports);
 

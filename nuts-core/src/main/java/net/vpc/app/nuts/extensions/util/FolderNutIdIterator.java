@@ -91,7 +91,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                 try {
                     t = model.parseDescriptor(file, session);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
                 if (t != null) {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
@@ -99,13 +99,13 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                         try {
                             nutsDescriptor = workspace.resolveEffectiveDescriptor(t, session);
                         } catch (Exception e) {
-                            //throw new RuntimeException(e);
+                            //throw new NutsException(e);
                         }
                         t = nutsDescriptor;
                     }
                     if (t != null && (filter == null || filter.accept(t.getId()))) {
                         NutsId nutsId = t.getId().setNamespace(repositoryId);
-                        nutsId=nutsId.setFace(CoreStringUtils.isEmpty(t.getFace())?NutsConstants.QUERY_FACE_DEFAULT_VALUE :t.getFace());
+                        nutsId = nutsId.setFace(CoreStringUtils.isEmpty(t.getFace()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : t.getFace());
                         last = nutsId;
                         break;
                     }
@@ -115,17 +115,19 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         return last != null;
     }
 
+    @Override
     public NutsId next() {
         NutsId ret = last;
         last = null;
         return ret;
     }
 
+    @Override
     public void remove() {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsExecutionException("Unsupported Remove",1);
+        throw new NutsUnsupportedOperationException("Unsupported Remove");
     }
 
     public long getVisitedFoldersCount() {

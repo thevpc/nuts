@@ -35,6 +35,7 @@ import java.io.File;
  * Created by vpc on 6/23/17.
  */
 public class NutsUpdate {
+
     private File oldIdFile;
     private File availableIdFile;
     private NutsId baseId;
@@ -42,7 +43,7 @@ public class NutsUpdate {
     private NutsId availableId;
     private boolean runtime;
 
-    public NutsUpdate(NutsId baseId, NutsId localId, NutsId availableId,File oldIdFile,File availableIdFile,boolean runtime) {
+    public NutsUpdate(NutsId baseId, NutsId localId, NutsId availableId, File oldIdFile, File availableIdFile, boolean runtime) {
         this.baseId = baseId;
         this.localId = localId;
         this.availableId = availableId;

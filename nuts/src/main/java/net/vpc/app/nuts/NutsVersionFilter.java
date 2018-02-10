@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/8/17.
  */
-public interface NutsVersionFilter extends ObjectFilter<NutsVersion>{
+public interface NutsVersionFilter extends ObjectFilter<NutsVersion> {
 
     @Override
     boolean accept(NutsVersion version);

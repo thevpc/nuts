@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -65,9 +65,7 @@ public class NutsConstants {
 
     /**
      * default repositories root name. By default repositories are stored under
-     * ${workspace-location}/repositories
-     * or
-     * ${repository-location}/repositories
+     * ${workspace-location}/repositories or ${repository-location}/repositories
      */
     public static final String DEFAULT_REPOSITORIES_ROOT = "repositories";
 
@@ -78,11 +76,11 @@ public class NutsConstants {
     public static final String DEFAULT_COMPONENTS_ROOT = "components";
 
     /**
-     * default repository type. Nuts workspace can managed different repositories
-     * with different types. For instance, one can initialize a default (nuts)
-     * repository along with a maven repository. Repository Type expresses
-     * mainly manager subsystem type (nuts, maven, gradle, zypper, apt-get,
-     * etc...)
+     * default repository type. Nuts workspace can managed different
+     * repositories with different types. For instance, one can initialize a
+     * default (nuts) repository along with a maven repository. Repository Type
+     * expresses mainly manager subsystem type (nuts, maven, gradle, zypper,
+     * apt-get, etc...)
      */
     public static final String DEFAULT_REPOSITORY_TYPE = "nuts";
 
@@ -121,8 +119,8 @@ public class NutsConstants {
     public static final String RIGHT_SET_PASSWORD = "set-password";
     public static final String RIGHT_ADMIN = "admin";
     public static final String[] RIGHTS = {RIGHT_FETCH_DESC, RIGHT_FETCH_CONTENT, RIGHT_SAVE_REPOSITORY,
-            RIGHT_SAVE_WORKSPACE, RIGHT_INSTALL, RIGHT_UNINSTALL, RIGHT_EXEC, RIGHT_DEPLOY, RIGHT_UNDEPLOY,
-            RIGHT_PUSH, RIGHT_ADD_REPOSITORY, RIGHT_REMOVE_REPOSITORY, RIGHT_SET_PASSWORD, RIGHT_ADMIN};
+        RIGHT_SAVE_WORKSPACE, RIGHT_INSTALL, RIGHT_UNINSTALL, RIGHT_EXEC, RIGHT_DEPLOY, RIGHT_UNDEPLOY,
+        RIGHT_PUSH, RIGHT_ADD_REPOSITORY, RIGHT_REMOVE_REPOSITORY, RIGHT_SET_PASSWORD, RIGHT_ADMIN};
 
     public static final String ENV_KEY_EXCLUDE_CORE_EXTENSION = "exclude-core-extension";
     public static final String ENV_KEY_AUTOSAVE = "autosave";

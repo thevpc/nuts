@@ -30,12 +30,17 @@
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsSecurityEntityConfig;
+import net.vpc.app.nuts.NutsRepository;
+import net.vpc.app.nuts.NutsUserInfo;
 import net.vpc.app.nuts.NutsWorkspace;
 
 /**
@@ -44,18 +49,21 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class RightNonOption extends DefaultNonOption {
 
-    private NutsWorkspace workspace;
-    private NutsSecurityEntityConfig securityEntityConfig;
-    private boolean existing;
+    private final NutsWorkspace workspace;
+    private final NutsRepository repository;
+    private final boolean existing;
+    private final String user;
 
 //    public RightNonOption(String name, NutsCommandContext context) {
 //        super(name);
 //        this.workspace = context.getValidWorkspace();
 //    }
-    public RightNonOption(String name, NutsSecurityEntityConfig securityEntityConfig, boolean existing) {
+    public RightNonOption(String name, NutsWorkspace workspace, NutsRepository repository, String user, boolean existing) {
         super(name);
-        this.securityEntityConfig = securityEntityConfig;
+        this.workspace = workspace;
+        this.repository = repository;
         this.existing = existing;
+        this.user = user;
     }
 
     @Override
@@ -76,19 +84,17 @@ public class RightNonOption extends DefaultNonOption {
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNDEPLOY));
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNINSTALL));
         Iterator<NutsArgumentCandidate> i = all.iterator();
+        NutsUserInfo info = repository != null ? repository.findUser(user) : workspace != null ? workspace.findUser(user) : null;
+        Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getRights()));
         while (i.hasNext()) {
             NutsArgumentCandidate right = i.next();
             if (existing) {
-                if (securityEntityConfig != null) {
-                    if (!securityEntityConfig.containsRight(right.getValue())) {
-                        i.remove();
-                    }
+                if (!rights.contains(right.getValue())) {
+                    i.remove();
                 }
             } else {
-                if (securityEntityConfig != null) {
-                    if (securityEntityConfig.containsRight(right.getValue())) {
-                        i.remove();
-                    }
+                if (rights.contains(right.getValue())) {
+                    i.remove();
                 }
             }
         }

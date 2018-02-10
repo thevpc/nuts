@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.bridges.maven;
@@ -84,7 +84,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     private File getStoreRoot() {
-        return CoreIOUtils.resolvePath(getConfig().getLocation(), getRoot(), getWorkspace().getWorkspaceRootLocation());
+        return CoreIOUtils.resolvePath(getLocation(), getRoot(), getWorkspace().getWorkspaceRootLocation());
     }
 
     @Override
@@ -118,7 +118,6 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        }
 //        return nutsDescriptor;
 //    }
-
 //    protected File getLocalNutDescriptorFile(NutsId id, boolean nullIfInvalidName) {
 //        if (CoreStringUtils.isEmpty(id.getGroup())) {
 //            if (nullIfInvalidName) {
@@ -147,7 +146,6 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        String ext = ".pom";
 //        return new File(versionFolder, name + ext);
 //    }
-
     protected NutsFile getNutsFile(NutsId id, NutsSession session) {
         if (CoreStringUtils.isEmpty(id.getGroup())) {
             return null;
@@ -168,7 +166,6 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         String name = id.getName() + "-" + id.getVersion().getValue();
         String ext = ".pom";
         File descFile = new File(versionFolder, name + ext);
-
 
         if (descFile.isFile()) {
             NutsDescriptor nutsDescriptor = null;
@@ -234,7 +231,6 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //
 //        return new File(versionFolder, getQueryFilename(fid, d));
 //    }
-
     protected File getLocalGroupAndArtifactFile(NutsId id) {
         if (CoreStringUtils.isEmpty(id.getGroup())) {
             return null;
@@ -282,9 +278,9 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             public NutsDescriptor parseDescriptor(File pathname, NutsSession session) throws IOException {
 //                System.out.println("parse "+pathname);
                 NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
-                if(nutsDescriptor.getId().getName()==null){
+                if (nutsDescriptor.getId().getName() == null) {
                     //why?
-                    log.severe("Unable to fetch Valid Nuts from "+pathname+" : resolved id was "+nutsDescriptor.getId());
+                    log.severe("Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
                     return null;
                 }
                 if (pathname.getName().endsWith(".pom")) {
@@ -329,5 +325,4 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //            throw new NutsNotFoundException(id.toString(), null, ex);
 //        }
 //    }
-
 }

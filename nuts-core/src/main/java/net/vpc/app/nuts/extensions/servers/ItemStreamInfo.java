@@ -45,7 +45,6 @@ public class ItemStreamInfo {
     private Map<String, List<String>> headers = new HashMap<>();
     private InputStream content;
 
-
     public ItemStreamInfo(InputStream header, InputStream content) throws IOException {
         this.content = content;
         BufferedReader r = new BufferedReader(new InputStreamReader(header));
@@ -97,6 +96,7 @@ public class ItemStreamInfo {
     }
 
     private static class ErrInputStream extends InputStream {
+
         private final InputStream ss;
         private final byte[] refBytes;
         int index;
@@ -110,12 +110,12 @@ public class ItemStreamInfo {
         @Override
         public int read() throws IOException {
             int y = ss.read();
-            if(y<0){
+            if (y < 0) {
                 return y;
             }
             int expected = refBytes[index] & 0xff;
-            if(y!= expected){
-                System.out.println("Error at "+index);
+            if (y != expected) {
+                System.out.println("Error at " + index);
 //                throw new IOException("Error");
             }
             index++;

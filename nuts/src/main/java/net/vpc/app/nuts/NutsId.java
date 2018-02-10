@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.util.Map;
 
 public interface NutsId {
+
     boolean isSameFullName(NutsId other);
 
     boolean anyContains(String value);
@@ -45,6 +46,7 @@ public interface NutsId {
     boolean namespaceLike(String pattern);
 
     boolean groupLike(String pattern);
+
     boolean nameLike(String pattern);
 
     boolean versionLike(String pattern);

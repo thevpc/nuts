@@ -37,12 +37,13 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
  * Created by vpc on 1/7/17.
  */
 public class LogoutCommand extends AbstractNutsCommand {
+
     public LogoutCommand() {
         super("logout", CORE_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         cmdLine.requireEmpty();
         if (!cmdLine.isExecMode()) {

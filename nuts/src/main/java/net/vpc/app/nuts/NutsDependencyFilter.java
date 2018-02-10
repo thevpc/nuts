@@ -32,5 +32,5 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 3/19/17.
  */
-public interface NutsDependencyFilter extends ObjectFilter<NutsDependency>{
+public interface NutsDependencyFilter extends ObjectFilter<NutsDependency> {
 }

@@ -29,13 +29,11 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
-
 /**
  * Created by vpc on 1/15/17.
  */
 @Singleton
 public interface NutsDescriptorContentParserComponent extends NutsComponent<Object> {
 
-    NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) ;
+    NutsDescriptor parse(NutsDescriptorContentParserContext parserContext);
 }

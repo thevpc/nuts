@@ -35,17 +35,20 @@ import net.vpc.app.nuts.NutsIOException;
 
 import java.io.*;
 import java.util.*;
+import net.vpc.app.nuts.NutsUnsupportedOperationException;
 
 /**
  * Created by vpc on 1/23/17.
  */
-public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
+public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
+
     private MultipartStream2 stream;
+
     public MultipartStreamHelper(InputStream input,
-                          String contentType) {
-        stream=new MultipartStream2(
-                input, resolveBoundaryFromContentType(contentType), MultipartStream2.DEFAULT_BUFSIZE
-                ,null
+            String contentType) {
+        stream = new MultipartStream2(
+                input, resolveBoundaryFromContentType(contentType), MultipartStream2.DEFAULT_BUFSIZE,
+                null
         );
     }
 
@@ -59,8 +62,6 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
         }
         throw new NutsIllegalArgumentsException("Invalid boundary");
     }
-
-
 
     public Iterator<ItemStreamInfo> iterator() {
         return new Iterator<ItemStreamInfo>() {
@@ -95,7 +96,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("remove");
+                throw new NutsUnsupportedOperationException("remove not supported");
             }
         };
     }
@@ -121,17 +122,17 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo>{
                         return new ItemStreamInfo(
                                 new ByteArrayInputStream(headers.toByteArray()),
                                 new InputStream() {
-                                    int index = 0;
+                            int index = 0;
 
-                                    @Override
-                                    public int read() throws IOException {
-                                        if (index < start.length) {
-                                            index++;
-                                            return (start[index - 1] & 0xff);
-                                        }
-                                        return itemInputStream.read();
-                                    }
+                            @Override
+                            public int read() throws IOException {
+                                if (index < start.length) {
+                                    index++;
+                                    return (start[index - 1] & 0xff);
                                 }
+                                return itemInputStream.read();
+                            }
+                        }
                         );
                     }
                 }

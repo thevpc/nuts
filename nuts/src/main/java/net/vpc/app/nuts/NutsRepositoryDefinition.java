@@ -1,6 +1,7 @@
 package net.vpc.app.nuts;
 
 public class NutsRepositoryDefinition {
+
     private String id;
     private String location;
     private String type;

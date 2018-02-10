@@ -1,6 +1,7 @@
 package net.vpc.app.nuts;
 
 public class SimpleNutsClassLoaderProvider implements NutsClassLoaderProvider {
+
     private ClassLoader classLoader;
 
     public SimpleNutsClassLoaderProvider(ClassLoader classLoader) {

@@ -36,6 +36,7 @@ import java.util.List;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsIllegalArgumentsException;
 import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsElementNotFoundException;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
@@ -51,31 +52,31 @@ public class CmdLine {
     public CmdLine(NutsCommandAutoComplete autoComplete, String[] args) {
         this.args = new ArrayList<>();
         for (String arg : args) {
-            if(arg.startsWith("--")){
+            if (arg.startsWith("--")) {
                 this.args.add(arg);
-            }else if(arg.startsWith("-!")){
+            } else if (arg.startsWith("-!")) {
                 char[] chars = arg.toCharArray();
                 for (int i = 2; i < chars.length; i++) {
-                    this.args.add("-!"+chars[i]);
+                    this.args.add("-!" + chars[i]);
                 }
-            }else if(arg.startsWith("-")){
+            } else if (arg.startsWith("-")) {
                 char[] chars = arg.toCharArray();
                 for (int i = 1; i < chars.length; i++) {
-                    this.args.add("-"+chars[i]);
+                    this.args.add("-" + chars[i]);
                 }
-            }else{
+            } else {
                 this.args.add(arg);
             }
         }
         this.autoComplete = autoComplete;
     }
 
-    public boolean isExecMode(){
-        return autoComplete==null;
+    public boolean isExecMode() {
+        return autoComplete == null;
     }
 
-    public boolean isAutoCompleteMode(){
-        return autoComplete!=null;
+    public boolean isAutoCompleteMode() {
+        return autoComplete != null;
     }
 
 //    public CmdLine skip(int count){
@@ -104,7 +105,6 @@ public class CmdLine {
 //            return new Val(defaultValue);
 //        }
 //    }
-
     public Val readOptionOrError(String name) {
         if (args.size() > 0 && isOption()) {
             String r = args.get(0);
@@ -116,11 +116,11 @@ public class CmdLine {
     }
 
     public Val readNonOptionOrError(NonOption name) {
-        return readNonOption(name,true);
+        return readNonOption(name, true);
     }
 
     public Val readNonOption(NonOption name) {
-        return readNonOption(name,false);
+        return readNonOption(name, false);
     }
 
     public Val readNonOption(NonOption name, boolean error) {
@@ -139,7 +139,7 @@ public class CmdLine {
             read(1);
             return new Val(r);
         } else {
-            if (autoComplete!=null) {
+            if (autoComplete != null) {
                 if (isAutoComplete()) {
                     List<NutsArgumentCandidate> values = name.getValues();
                     if (values == null || values.isEmpty()) {
@@ -152,10 +152,10 @@ public class CmdLine {
                 }
                 return new Val("");
             }
-            if(!error){
+            if (!error) {
                 return new Val("");
             }
-            if(args.size() > 0 && isOption()){
+            if (args.size() > 0 && isOption()) {
                 throw new NutsIllegalArgumentsException("Unexpected option " + getVal(0));
             }
             throw new NutsIllegalArgumentsException("Missing argument " + name);
@@ -210,7 +210,6 @@ public class CmdLine {
 //    public boolean readOnce(String[]... vals) {
 //        return read(false, vals);
 //    }
-
     private boolean read(boolean acceptDuplicates, String[]... vals) {
         if (autoComplete != null) {
             for (String[] val : vals) {
@@ -331,7 +330,7 @@ public class CmdLine {
 
     public void requireEmpty() {
         if (!isEmpty()) {
-            if (autoComplete!=null) {
+            if (autoComplete != null) {
                 args.clear();
                 return;
             }
@@ -341,7 +340,7 @@ public class CmdLine {
 
     public void requireNonEmpty() {
         if (isEmpty()) {
-            if (autoComplete!=null) {
+            if (autoComplete != null) {
                 args.clear();
                 return;
             }
@@ -403,7 +402,7 @@ public class CmdLine {
 
         public String getStringOrError() {
             if (value == null) {
-                throw new RuntimeException("Not Found");
+                throw new NutsElementNotFoundException("Missing value");
             }
             return value;
         }

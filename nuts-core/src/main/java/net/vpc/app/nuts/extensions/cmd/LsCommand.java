@@ -50,92 +50,94 @@ public class LsCommand extends AbstractNutsCommand {
         super("ls", CORE_SUPPORT);
     }
 
-    private static class Options{
-        boolean d=false;
-        boolean l=false;
+    private static class Options {
+
+        boolean d = false;
+        boolean l = false;
     }
+
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
-        boolean any=false;
-        Options options=new Options();
-        List<File> folders=new ArrayList<>();
-        List<File> files=new ArrayList<>();
-        List<File> invalids=new ArrayList<>();
+        boolean any = false;
+        Options options = new Options();
+        List<File> folders = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        List<File> invalids = new ArrayList<>();
         while (!cmdLine.isEmpty()) {
-            if(cmdLine.read("-d")) {
+            if (cmdLine.read("-d")) {
                 options.d = true;
-            }else if(cmdLine.read("-l")){
-                options.l=true;
-            }else {
+            } else if (cmdLine.read("-l")) {
+                options.l = true;
+            } else {
                 String path = cmdLine.readNonOptionOrError(new FileNonOption("FileOrFolder")).getString();
                 File file = CoreIOUtils.createFileByCwd(path, new File(context.getCommandLine().getCwd()));
-                if(file.isDirectory()) {
+                if (file.isDirectory()) {
                     folders.add(file);
-                }else if(file.exists()){
+                } else if (file.exists()) {
                     files.add(file);
-                }else {
+                } else {
                     invalids.add(file);
                 }
             }
         }
-        boolean first=true;
+        boolean first = true;
         for (File f : invalids) {
-            ls(f, options,context,context.getTerminal(),false);
+            ls(f, options, context, context.getTerminal(), false);
         }
         for (File f : files) {
-            first=false;
-            ls(f, options,context,context.getTerminal(),false);
+            first = false;
+            ls(f, options, context, context.getTerminal(), false);
         }
         for (File f : folders) {
-            if(first){
-                first=false;
-            }else{
+            if (first) {
+                first = false;
+            } else {
                 context.getTerminal().getOut().println();
             }
-            ls(f, options,context,context.getTerminal(),folders.size()>0 ||files.size()>0);
+            ls(f, options, context, context.getTerminal(), folders.size() > 0 || files.size() > 0);
         }
-        if(invalids.size()+files.size()+folders.size()==0){
-            ls(new File(context.getCommandLine().getCwd()),options,context,context.getTerminal(),false);
+        if (invalids.size() + files.size() + folders.size() == 0) {
+            ls(new File(context.getCommandLine().getCwd()), options, context, context.getTerminal(), false);
         }
         return 0;
     }
 
-    private void ls(File path, Options options,NutsCommandContext context,NutsTerminal terminal,boolean addPrefix){
-        if(!path.exists()){
-            throw new NutsIllegalArgumentsException("ls: cannot access '"+path.getPath()+"': No such file or directory");
-        }else if(path.isDirectory()){
-            if(addPrefix){
-                terminal.getOut().println(path.getName()+":");
+    private void ls(File path, Options options, NutsCommandContext context, NutsTerminal terminal, boolean addPrefix) {
+        if (!path.exists()) {
+            throw new NutsIllegalArgumentsException("ls: cannot access '" + path.getPath() + "': No such file or directory");
+        } else if (path.isDirectory()) {
+            if (addPrefix) {
+                terminal.getOut().println(path.getName() + ":");
                 for (File file1 : CoreIOUtils.nonNullArray(path.listFiles())) {
-                    ls0(file1,options,terminal);
+                    ls0(file1, options, terminal);
                 }
-            }else{
+            } else {
                 for (File file1 : CoreIOUtils.nonNullArray(path.listFiles())) {
-                    ls0(file1,options,terminal);
+                    ls0(file1, options, terminal);
                 }
             }
-        }else{
-            ls0(path,options,terminal);
+        } else {
+            ls0(path, options, terminal);
         }
     }
 
-    private void ls0(File path, Options options,NutsTerminal terminal){
+    private void ls0(File path, Options options, NutsTerminal terminal) {
         String name = path.getName();
-        if(options.l){
-            terminal.getOut().print(path.isDirectory()?"d":path.isFile()?"-":"?");
+        if (options.l) {
+            terminal.getOut().print(path.isDirectory() ? "d" : path.isFile() ? "-" : "?");
             terminal.getOut().print(" ");
-            if(path.isDirectory()){
+            if (path.isDirectory()) {
                 name += "/";
                 terminal.getOut().println(name);
-            }else{
+            } else {
                 terminal.getOut().println(name);
             }
-        }else{
-            if(path.isDirectory()){
+        } else {
+            if (path.isDirectory()) {
                 name += "/";
                 terminal.getOut().println(name);
-            }else{
+            } else {
                 terminal.getOut().println(name);
             }
         }

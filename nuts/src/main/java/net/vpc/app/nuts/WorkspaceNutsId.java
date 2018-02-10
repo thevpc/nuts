@@ -1,6 +1,7 @@
 package net.vpc.app.nuts;
 
 class WorkspaceNutsId {
+
     String groupId;
     String artifactId;
     String version;
@@ -11,23 +12,23 @@ class WorkspaceNutsId {
         this.version = version;
     }
 
-    static WorkspaceNutsId parse(String id){
+    static WorkspaceNutsId parse(String id) {
         String[] splittedBootId = id.split("[:#]");
-        if(splittedBootId.length==3){
-            return new WorkspaceNutsId(splittedBootId[0],splittedBootId[1],splittedBootId[2]);
+        if (splittedBootId.length == 3) {
+            return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], splittedBootId[2]);
         }
-        if(splittedBootId.length==2){
-            return new WorkspaceNutsId(splittedBootId[0],splittedBootId[1],null);
+        if (splittedBootId.length == 2) {
+            return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], null);
         }
-        throw new NutsParseException("Unable to parse "+id);
+        throw new NutsParseException("Unable to parse " + id);
     }
 
     @Override
     public String toString() {
-        if(version==null){
-            return groupId+":"+artifactId;
+        if (version == null) {
+            return groupId + ":" + artifactId;
         }
-        return groupId+":"+artifactId +"#"+version;
+        return groupId + ":" + artifactId + "#" + version;
     }
 
     public String getVersion() {

@@ -53,8 +53,8 @@ public class DefaultNonOption implements NonOption {
 
     @Override
     public List<NutsArgumentCandidate> getValues() {
-        List<NutsArgumentCandidate> list=new ArrayList<>();
-        list.add(new DefaultNutsArgumentCandidate("<"+getName()+">"));
+        List<NutsArgumentCandidate> list = new ArrayList<>();
+        list.add(new DefaultNutsArgumentCandidate("<" + getName() + ">"));
         return list;
     }
 
@@ -62,6 +62,5 @@ public class DefaultNonOption implements NonOption {
     public String toString() {
         return String.valueOf(name);
     }
-    
 
 }

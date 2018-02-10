@@ -37,6 +37,7 @@ import net.vpc.app.nuts.ServerConfig;
  * Created by vpc on 1/23/17.
  */
 public final class AdminServerConfig extends ServerConfig {
+
     private String serverId;
     private InetAddress address;
     private int port;

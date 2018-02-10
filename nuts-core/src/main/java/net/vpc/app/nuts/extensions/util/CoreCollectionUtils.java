@@ -36,10 +36,10 @@ import java.util.*;
 
 public class CoreCollectionUtils {
 
-    public static <T> T[] filterArray(Class<T> cls,T[] array, ObjectFilter<T> t) {
-        List<T> all=new ArrayList<>();
+    public static <T> T[] filterArray(Class<T> cls, T[] array, ObjectFilter<T> t) {
+        List<T> all = new ArrayList<>();
         for (T v : array) {
-            if(t==null || t.accept(v)){
+            if (t == null || t.accept(v)) {
                 all.add(v);
             }
         }
@@ -75,5 +75,36 @@ public class CoreCollectionUtils {
             list.add(it.next());
         }
         return list;
+    }
+
+    public static String[] subArray(String[] source, int beginIndex, int endIndex) {
+        if (beginIndex < 0) {
+            beginIndex = 0;
+        }
+        if (endIndex > source.length) {
+            beginIndex = 0;
+        }
+        if (beginIndex >= endIndex) {
+            return new String[0];
+        }
+        String[] arr = new String[endIndex - beginIndex];
+        System.arraycopy(source, beginIndex, arr, 0, endIndex - beginIndex);
+        return arr;
+    }
+
+    public static <K, V> Map<K, V> mergeMaps(Map<K, V> source, Map<K, V> dest) {
+        if (dest == null) {
+            dest = new HashMap<>();
+        }
+        if (source != null) {
+            for (Map.Entry<K, V> e : source.entrySet()) {
+                if (e.getValue() != null) {
+                    dest.put(e.getKey(), e.getValue());
+                } else {
+                    dest.remove(e.getKey());
+                }
+            }
+        }
+        return dest;
     }
 }

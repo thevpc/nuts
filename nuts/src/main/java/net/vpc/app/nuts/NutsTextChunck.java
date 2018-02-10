@@ -33,7 +33,8 @@ package net.vpc.app.nuts;
  * Created by vpc on 5/23/17.
  */
 public class NutsTextChunck {
-    public static final NutsTextChunck NULL=new NutsTextChunck(null,null);
+
+    public static final NutsTextChunck NULL = new NutsTextChunck(null, null);
     private String pattern;
     private String value;
 
@@ -52,7 +53,7 @@ public class NutsTextChunck {
 
     @Override
     public String toString() {
-        return pattern == null ? ("\"" +value +'\"'):
-                (pattern + "\"" +value +'\"');
+        return pattern == null ? ("\"" + value + '\"')
+                : (pattern + "\"" + value + '\"');
     }
 }

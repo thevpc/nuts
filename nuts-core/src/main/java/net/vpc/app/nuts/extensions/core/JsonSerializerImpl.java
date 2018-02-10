@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.core;
@@ -41,6 +41,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class JsonSerializerImpl implements JsonSerializer {
+
     public static final JsonSerializer INSTANCE = new JsonSerializerImpl();
     private Map<Class, Class> interfaceToClass = new HashMap<>();
 
@@ -83,7 +84,6 @@ public class JsonSerializerImpl implements JsonSerializer {
         }
         throw new NutsIllegalArgumentsException("Unsupported");
     }
-
 
     @Override
     public JsonObjectBuilder serializeStringsMap(Map<String, String> value, SerializeOptions options) {
@@ -371,7 +371,7 @@ public class JsonSerializerImpl implements JsonSerializer {
             try {
                 ooo = createInstance(t);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new NutsException(e);
             }
             try {
                 Field instanceSerialVersionUID = null;
@@ -414,6 +414,8 @@ public class JsonSerializerImpl implements JsonSerializer {
      * cyclic ref is not supported !!!
      *
      * @param obj
+     * @param options
+     * @return 
      */
     @Override
     public JsonObjectBuilder serializeObj(Object obj, SerializeOptions options) {
@@ -436,8 +438,7 @@ public class JsonSerializerImpl implements JsonSerializer {
             if (serialVersionUID.getType().equals(Long.TYPE)
                     && Modifier.isStatic(serialVersionUID.getModifiers())
                     && !Modifier.isTransient(serialVersionUID.getModifiers())
-                    && serialVersionUID.getAnnotation(JsonTransient.class) == null
-                    ) {
+                    && serialVersionUID.getAnnotation(JsonTransient.class) == null) {
                 serialVersionUID.setAccessible(true);
                 serializeObjProp("serialVersionUID", serialVersionUID.get(null), Long.TYPE, objectBuilder, options);
             }
@@ -454,6 +455,7 @@ public class JsonSerializerImpl implements JsonSerializer {
         return objectBuilder;
     }
 
+    @Override
     public <T> T deserialize(String s, Class<T> t) {
         return deserialize(new ByteArrayInputStream(s.getBytes()), t);
     }
@@ -463,7 +465,7 @@ public class JsonSerializerImpl implements JsonSerializer {
         return deserialize(jsonObject, t);
     }
 
-    public <T> T loadJson(String jsonText, Class<T> cls) throws IOException {
+    public <T> T loadJson(String jsonText, Class<T> cls)  {
         try {
             if (jsonText == null) {
                 jsonText = "";
@@ -477,11 +479,12 @@ public class JsonSerializerImpl implements JsonSerializer {
                     reader.close();
                 }
             }
-        } catch (Exception ex) {
-            throw new IOException("Error Parsing file " + jsonText, ex);
+        } catch (IOException ex) {
+            throw new NutsIOException("Error Parsing file " + jsonText, ex);
         }
     }
 
+    @Override
     public JsonStructure loadJsonStructure(String jsonText) {
         try {
             if (jsonText == null) {
@@ -496,8 +499,8 @@ public class JsonSerializerImpl implements JsonSerializer {
                     reader.close();
                 }
             }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error Parsing string " + jsonText, ex);
+        } catch (IOException ex) {
+            throw new NutsException("Error Parsing string " + jsonText, ex);
         }
     }
 

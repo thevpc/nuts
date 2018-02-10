@@ -31,12 +31,15 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @param <T>
  */
 public interface NutsComponent<T> {
-    int BOOT_SUPPORT=1;
-    int CORE_SUPPORT =100;
-    int CUSTOM_SUPPORT=1000;
-    int NO_SUPPORT=-1;
+
+    int BOOT_SUPPORT = 1;
+    int CORE_SUPPORT = 100;
+    int CUSTOM_SUPPORT = 1000;
+    int NO_SUPPORT = -1;
+
     int getSupportLevel(T criteria);
 }

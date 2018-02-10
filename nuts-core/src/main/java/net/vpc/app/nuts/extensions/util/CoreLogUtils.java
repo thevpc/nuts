@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CoreLogUtils {
+
     public static void setLevel(Level level) {
         Logger rootLogger = Logger.getLogger("");
         if (level == null) {

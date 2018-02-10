@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 public interface NutsRepositoryLocation {
+
     long getInstanceSerialVersionUID();
 
     void setInstanceSerialVersionUID(long instanceSerialVersionUID);

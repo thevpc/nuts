@@ -68,11 +68,11 @@ public class NutsVersionInterval {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(inclusiveLowerBoundary?"[":"]");
-        sb.append(min==null?"":min);
+        sb.append(inclusiveLowerBoundary ? "[" : "]");
+        sb.append(min == null ? "" : min);
         sb.append(",");
-        sb.append(max==null?"":max);
-        sb.append(inclusiveUpperBoundary?"]":"[");
+        sb.append(max == null ? "" : max);
+        sb.append(inclusiveUpperBoundary ? "]" : "[");
         return sb.toString();
     }
 

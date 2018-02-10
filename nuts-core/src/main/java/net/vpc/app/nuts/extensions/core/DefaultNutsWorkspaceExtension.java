@@ -43,7 +43,7 @@ public class DefaultNutsWorkspaceExtension implements NutsWorkspaceExtension {
     private ClassLoader classLoader;
     private ListMap<String, String> wiredComponents = new ListMap<>();
 
-    public DefaultNutsWorkspaceExtension(NutsId id, NutsId wiredId,ClassLoader classLoader) {
+    public DefaultNutsWorkspaceExtension(NutsId id, NutsId wiredId, ClassLoader classLoader) {
         this.id = id;
         this.wiredId = wiredId;
         this.classLoader = classLoader;

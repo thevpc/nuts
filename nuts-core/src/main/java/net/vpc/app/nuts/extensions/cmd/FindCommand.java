@@ -374,7 +374,7 @@ public class FindCommand extends AbstractNutsCommand {
             switch (findContext.display) {
                 case "id":
                 case "dependencies":
-                    Set<String> imports = new HashSet<String>(Arrays.asList(ws.getConfig().getImports()));
+                    Set<String> imports = new HashSet<String>(Arrays.asList(ws.getImports()));
 
                     if (findContext.longflag) {
                         NutsDescriptor descriptor = null;
@@ -532,9 +532,9 @@ public class FindCommand extends AbstractNutsCommand {
                                     : "r") + (info.isUpdatable() ? "u" : ".");
                             findContext.out.print(status);
                             findContext.out.print(" ");
-                            findContext.out.print(d==null?"?":d.getPackaging());
+                            findContext.out.print(d == null ? "?" : d.getPackaging());
                             findContext.out.print(" ");
-                            findContext.out.print(Arrays.asList(d==null?"?":d.getArch()));
+                            findContext.out.print(Arrays.asList(d == null ? "?" : d.getArch()));
                             findContext.out.print(" ");
                             findContext.out.println(info.nuts.getFullName());
                         } else {
@@ -675,21 +675,17 @@ public class FindCommand extends AbstractNutsCommand {
 
         public boolean isUpdatable() {
             if (this.is_updatable == null) {
-                try {
-                    this.is_updatable = false;
-                    if (this.isFetched()) {
-                        NutsId nut2 = null;
-                        try {
-                            nut2 = ws.resolveId(nuts.setVersion(null).toString(), session.copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE));
-                        } catch (Exception ex) {
-                            //ignore
-                        }
-                        if (nut2 != null && nut2.getVersion().compareTo(nuts.getVersion()) > 0) {
-                            this.is_updatable = true;
-                        }
+                this.is_updatable = false;
+                if (this.isFetched()) {
+                    NutsId nut2 = null;
+                    try {
+                        nut2 = ws.resolveId(nuts.setVersion(null).toString(), session.copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE));
+                    } catch (Exception ex) {
+                        //ignore
                     }
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                    if (nut2 != null && nut2.getVersion().compareTo(nuts.getVersion()) > 0) {
+                        this.is_updatable = true;
+                    }
                 }
             }
             return this.is_updatable;

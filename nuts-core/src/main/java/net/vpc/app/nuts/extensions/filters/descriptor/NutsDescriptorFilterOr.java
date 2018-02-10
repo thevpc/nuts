@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-public class NutsDescriptorFilterOr implements NutsDescriptorFilter,Simplifiable<NutsDescriptorFilter>,JsNutsDescriptorFilter {
+public class NutsDescriptorFilterOr implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+
     private NutsDescriptorFilter[] all;
 
-    public NutsDescriptorFilterOr(NutsDescriptorFilter ... all) {
-        List<NutsDescriptorFilter> valid=new ArrayList<>();
-        if(all!=null){
+    public NutsDescriptorFilterOr(NutsDescriptorFilter... all) {
+        List<NutsDescriptorFilter> valid = new ArrayList<>();
+        if (all != null) {
             for (NutsDescriptorFilter filter : all) {
-                if(filter!=null){
+                if (filter != null) {
                     valid.add(filter);
                 }
             }
@@ -26,11 +27,11 @@ public class NutsDescriptorFilterOr implements NutsDescriptorFilter,Simplifiable
 
     @Override
     public boolean accept(NutsDescriptor id) {
-        if(all.length==0){
+        if (all.length == 0) {
             return true;
         }
         for (NutsDescriptorFilter filter : all) {
-            if(filter.accept(id)){
+            if (filter.accept(id)) {
                 return true;
             }
         }
@@ -52,7 +53,7 @@ public class NutsDescriptorFilterOr implements NutsDescriptorFilter,Simplifiable
         return this;
     }
 
-            @Override
+    @Override
     public String toJsNutsDescriptorFilterExpr() {
         StringBuilder sb = new StringBuilder();
         if (all.length == 0) {

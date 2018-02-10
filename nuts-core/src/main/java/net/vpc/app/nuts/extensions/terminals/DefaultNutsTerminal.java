@@ -40,8 +40,8 @@ import java.io.*;
 public class DefaultNutsTerminal implements NutsTerminal {
 
     private BufferedReader reader;
-    private InputStream in ;
-    private NutsPrintStream out ;
+    private InputStream in;
+    private NutsPrintStream out;
     private NutsPrintStream err;
     private NutsPrintStream outReplace;
     private NutsPrintStream errReplace;
@@ -54,17 +54,15 @@ public class DefaultNutsTerminal implements NutsTerminal {
     @Override
     public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
         this.in = in == null ? System.in : in;
-        this.out = out == null ? (workspace==null?new NutsPrintStream(System.out): workspace.createEnhancedPrintStream(System.out)) : out;
-        this.err = err == null ? (workspace==null?new NutsPrintStream(System.err): workspace.createEnhancedPrintStream(System.err)) : err;
+        this.out = out == null ? (workspace == null ? new NutsPrintStream(System.out) : workspace.createEnhancedPrintStream(System.out)) : out;
+        this.err = err == null ? (workspace == null ? new NutsPrintStream(System.err) : workspace.createEnhancedPrintStream(System.err)) : err;
         reader = new BufferedReader(new InputStreamReader(this.in));
     }
 
     @Override
-    public int getSupportLevel(Object criteria)  {
+    public int getSupportLevel(Object criteria) {
         return BOOT_SUPPORT;
     }
-
-
 
     @Override
     public void setCommandContext(NutsCommandContext context) {
@@ -75,7 +73,7 @@ public class DefaultNutsTerminal implements NutsTerminal {
     public String readLine(String prompt) {
         getOut().print(prompt);
         getIn();
-        if(inReplaceReader!=null){
+        if (inReplaceReader != null) {
             try {
                 return inReplaceReader.readLine();
             } catch (IOException e) {
@@ -95,7 +93,7 @@ public class DefaultNutsTerminal implements NutsTerminal {
     }
 
     public BufferedReader getReader() {
-        if(inReplaceReader!=null){
+        if (inReplaceReader != null) {
             return inReplaceReader;
         }
         return reader;
@@ -103,7 +101,7 @@ public class DefaultNutsTerminal implements NutsTerminal {
 
     @Override
     public InputStream getIn() {
-        if(inReplace!=null){
+        if (inReplace != null) {
             return inReplace;
         }
         return in;
@@ -111,7 +109,7 @@ public class DefaultNutsTerminal implements NutsTerminal {
 
     @Override
     public NutsPrintStream getOut() {
-        if(outReplace!=null){
+        if (outReplace != null) {
             return outReplace;
         }
         return out;
@@ -119,7 +117,7 @@ public class DefaultNutsTerminal implements NutsTerminal {
 
     @Override
     public NutsPrintStream getErr() {
-        if(errReplace!=null){
+        if (errReplace != null) {
             return errReplace;
         }
         return err;
@@ -127,22 +125,22 @@ public class DefaultNutsTerminal implements NutsTerminal {
 
     @Override
     public void setOut(NutsPrintStream out) {
-        outReplace=out;
+        outReplace = out;
     }
 
     @Override
     public void setIn(InputStream in) {
-        inReplace=in;
-        if(in==null){
-            inReplaceReader=null;
-        }else{
+        inReplace = in;
+        if (in == null) {
+            inReplaceReader = null;
+        } else {
             inReplaceReader = new BufferedReader(new InputStreamReader(inReplace));
         }
     }
 
     @Override
     public void setErr(NutsPrintStream err) {
-        errReplace=err;
+        errReplace = err;
     }
 
 }

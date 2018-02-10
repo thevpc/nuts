@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
-
 /**
  * Created by vpc on 1/7/17.
  */
 @Singleton
 public interface NutsExecutorComponent extends NutsComponent<NutsFile> {
+
     NutsId getId();
-    int exec(NutsExecutionContext executionContext) ;
+
+    int exec(NutsExecutionContext executionContext);
 }

@@ -42,7 +42,7 @@ import java.util.Set;
 public class NutsSecurityEntityConfigImpl implements NutsSecurityEntityConfig {
 
     @JsonTransient
-    private static transient final long serialVersionUID=1;
+    private static transient final long serialVersionUID = 1;
     private String user;
     private String mappedUser;
     private String credentials;
@@ -60,7 +60,6 @@ public class NutsSecurityEntityConfigImpl implements NutsSecurityEntityConfig {
         setRights(rights);
     }
 
-
     @Override
     public long getInstanceSerialVersionUID() {
         return instanceSerialVersionUID;
@@ -70,6 +69,7 @@ public class NutsSecurityEntityConfigImpl implements NutsSecurityEntityConfig {
     public void setInstanceSerialVersionUID(long instanceSerialVersionUID) {
         this.instanceSerialVersionUID = instanceSerialVersionUID;
     }
+
     @Override
     public String getMappedUser() {
         return mappedUser;

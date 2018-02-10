@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.util.Properties;
 
 public interface NutsExecutionContext {
+
     String[] getExecArgs();
 
     Properties getExecProperties();

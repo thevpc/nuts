@@ -44,7 +44,7 @@ public class NutsFile {
     private boolean installed;
     private File installFolder;
 
-    public NutsFile(NutsId id, NutsDescriptor descriptor, File file, boolean cached, boolean temporary,File installFolder) {
+    public NutsFile(NutsId id, NutsDescriptor descriptor, File file, boolean cached, boolean temporary, File installFolder) {
         this.descriptor = descriptor;
         this.file = file;
         this.id = id;
@@ -54,7 +54,7 @@ public class NutsFile {
     }
 
     public NutsFile(NutsFile other) {
-        if(other!=null) {
+        if (other != null) {
             this.descriptor = other.descriptor;
             this.file = other.file;
             this.id = other.id;
@@ -108,13 +108,13 @@ public class NutsFile {
 
     @Override
     public String toString() {
-        return "NutsFile{" +
-                " id=" + id +
-                ", file=" + file +
-                '}';
+        return "NutsFile{"
+                + " id=" + id
+                + ", file=" + file
+                + '}';
     }
 
-    public NutsFile copy(){
+    public NutsFile copy() {
         return new NutsFile(this);
     }
 }

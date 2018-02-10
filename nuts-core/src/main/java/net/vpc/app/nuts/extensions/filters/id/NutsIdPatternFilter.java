@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> ,JsNutsIdFilter{
+public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
 
     private boolean valid = false;
     private Pattern idPattern;
@@ -117,20 +117,20 @@ public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFil
 
     @Override
     public String toJsNutsIdFilterExpr() {
-        StringBuilder sb=new StringBuilder();
-        if(ids.length==0){
+        StringBuilder sb = new StringBuilder();
+        if (ids.length == 0) {
             return "true";
         }
-        if(ids.length>1){
+        if (ids.length > 1) {
             sb.append("(");
         }
         for (String id : ids) {
-            if(sb.length()>0){
+            if (sb.length() > 0) {
                 sb.append(" || ");
             }
             sb.append("id.matches('").append(CoreStringUtils.escapeCoteStrings(id)).append("')");
         }
-        if(ids.length>0){
+        if (ids.length > 0) {
             sb.append(")");
         }
         return sb.toString();
@@ -143,5 +143,5 @@ public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFil
         }
         return this;
     }
-    
+
 }

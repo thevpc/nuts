@@ -59,3 +59,12 @@ net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole
 
 net.vpc.app.nuts.bridges.maven.MavenNutsRepositoryFactoryComponent
 net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceFactory
+
+net.vpc.app.nuts.extensions.cmd.config.ArchietypeConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.DescriptorConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.ExtensionConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.ImportConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.LogConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.RepositoryConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.UserConfigSubCommand
+net.vpc.app.nuts.extensions.cmd.config.WorkspaceConfigSubCommand

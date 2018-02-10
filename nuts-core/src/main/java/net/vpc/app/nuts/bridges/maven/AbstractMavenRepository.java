@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.bridges.maven;
@@ -52,7 +52,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         extensions.put("pom", ".pom");
     }
 
-    protected abstract String getPath(NutsId id, String extension) ;
+    protected abstract String getPath(NutsId id, String extension);
 
     protected InputStream getStream(NutsId id, String extension) {
         String url = getPath(id, extension);
@@ -75,7 +75,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     protected void checkSHA1Hash(NutsId id, String extension, InputStream stream) throws IOException {
         try {
             String rhash = getStreamSHA1(id, extension);
-            String lhash = CoreSecurityUtils.evalSHA1(stream,true);
+            String lhash = CoreSecurityUtils.evalSHA1(stream, true);
             if (!rhash.equals(lhash)) {
                 throw new IOException("Invalid file hash " + id);
             }
@@ -94,7 +94,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputStream openStream(String path) ;
+    protected abstract InputStream openStream(String path);
 
     @Override
     public boolean isSupportedMirroring() {
@@ -115,7 +115,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         throw new NutsUnsupportedOperationException();
     }
 
-
     @Override
     protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
         InputStream stream = null;
@@ -125,7 +124,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             try {
                 stream = getStream(id, ".pom");
                 bytes = CoreIOUtils.readStreamAsBytes(stream, true);
-                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(),session,getPath(id,".pom"));
+                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -148,8 +147,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         try {
             NutsDescriptor d = getWorkspace().fetchDescriptor(id.toString(), true, session);
             String ext = resolveExtension(d);
-            if(localPath.isDirectory()){
-                localPath=new File(localPath, CoreNutsUtils.getNutsFileName(id,ext));
+            if (localPath.isDirectory()) {
+                localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext));
             }
             CoreIOUtils.copy(getStream(id, ext), localPath, true, true);
             checkSHA1Hash(id, ext, new FileInputStream(localPath));
@@ -187,8 +186,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     public File copyDescriptorToImpl(NutsId id, NutsSession session, File localPath) {
         NutsDescriptor nutsDescriptor = fetchDescriptor(id, session);
-        if(localPath.isDirectory()){
-            localPath=new File(localPath, CoreNutsUtils.getNutsFileName(id,"pom"));
+        if (localPath.isDirectory()) {
+            localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom"));
         }
         nutsDescriptor.write(localPath);
         return localPath;
@@ -238,7 +237,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 //            CoreNutsUtils.And(
 //                    CoreNutsUtils.createNutsDescriptorFilter(id.getQueryMap())
 //            )
-            DefaultNutsIdMultiFilter filter=new DefaultNutsIdMultiFilter(id.getQueryMap(),null,CoreVersionUtils.createNutsVersionFilter(versionString),null,this,session);
+            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
             Iterator<NutsId> allVersions = findVersions(id, filter, session);
             NutsId a = null;
             while (allVersions.hasNext()) {

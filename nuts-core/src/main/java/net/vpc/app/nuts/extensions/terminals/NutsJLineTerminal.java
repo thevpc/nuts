@@ -98,7 +98,7 @@ public class NutsJLineTerminal implements NutsTerminal {
                     terminal = builder.build();
                 } catch (IOException ex) {
                     Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new RuntimeException(ex);
+                    throw new NutsIOException(ex);
                 }
             }
 
@@ -199,7 +199,7 @@ public class NutsJLineTerminal implements NutsTerminal {
         if (fallback != null) {
             return fallback.readLine(prompt);
         }
-        String readLine=null;
+        String readLine = null;
         try {
             readLine = reader.readLine(prompt);
         } catch (UserInterruptException e) {
@@ -275,7 +275,7 @@ public class NutsJLineTerminal implements NutsTerminal {
         }
         return err;
     }
-    
+
 //    private static class AdapterTerminal implements Terminal{
 //        private Terminal base;
 //        private Map<Signal,SignalHandler> sig=new HashMap<Signal, SignalHandler>();

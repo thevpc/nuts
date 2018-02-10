@@ -6,7 +6,8 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
-public class NutsDependencyFilter2 implements NutsDependencyFilter,Simplifiable<NutsDependencyFilter> {
+public class NutsDependencyFilter2 implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+
     private NutsDependencyFilter base;
     private NutsId[] exclusions;
 
@@ -24,12 +25,9 @@ public class NutsDependencyFilter2 implements NutsDependencyFilter,Simplifiable<
         }
         for (NutsId exclusion : exclusions) {
             NutsId nutsId = value.toId();
-            if (
-                    nutsId.groupLike(exclusion.getGroup())
-                            && nutsId.nameLike(exclusion.getName())
-                            && exclusion.getVersion().toFilter().accept(nutsId.getVersion())
-
-                    ) {
+            if (nutsId.groupLike(exclusion.getGroup())
+                    && nutsId.nameLike(exclusion.getName())
+                    && exclusion.getVersion().toFilter().accept(nutsId.getVersion())) {
                 return false;
             }
         }
@@ -38,12 +36,12 @@ public class NutsDependencyFilter2 implements NutsDependencyFilter,Simplifiable<
 
     @Override
     public NutsDependencyFilter simplify() {
-        if(exclusions.length==0){
+        if (exclusions.length == 0) {
             return base;
         }
         NutsDependencyFilter base2 = CoreNutsUtils.simplify(base);
-        if(base2!=base){
-            return new NutsDependencyFilter2(base2,exclusions);
+        if (base2 != base) {
+            return new NutsDependencyFilter2(base2, exclusions);
         }
         return this;
     }

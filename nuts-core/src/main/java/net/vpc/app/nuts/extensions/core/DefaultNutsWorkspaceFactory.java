@@ -74,19 +74,17 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         List<Class> types = discoverTypes(type, bootClassLoader);
         List<T> valid = new ArrayList<>();
         for (Class t : types) {
-            try {
-                valid.add((T) t.newInstance());
-            } catch (Exception ex) {
-                throw new NutsException(ex);
-            }
+            valid.add((T) instantiate0(t));
         }
         return valid;
     }
 
+    @Override
     public boolean isRegisteredInstance(Class extensionPoint, Object implementation) {
         return instances.contains(extensionPoint, implementation);
     }
 
+    @Override
     public boolean isRegisteredType(Class extensionPoint, Class implementation) {
         return classes.contains(extensionPoint, implementation);
     }
@@ -100,10 +98,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return null;
     }
 
+    @Override
     public boolean isRegisteredType(Class extensionPoint, String implementation) {
         return findRegisteredType(extensionPoint, implementation) != null;
     }
 
+    @Override
     public <T> void registerInstance(Class<T> extensionPoint, T implementation) {
         if (isRegisteredInstance(extensionPoint, implementation)) {
             throw new NutsIllegalArgumentsException("Already Registered Extension " + implementation + " for " + extensionPoint.getName());
@@ -112,18 +112,22 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         instances.add(extensionPoint, implementation);
     }
 
+    @Override
     public Set<Class> getExtensionPoints() {
         return new HashSet<>(classes.keySet());
     }
 
+    @Override
     public Set<Class> getExtensionTypes(Class extensionPoint) {
         return new HashSet<>(classes.getAll(extensionPoint));
     }
 
+    @Override
     public List<Object> getExtensionObjects(Class extensionPoint) {
         return new ArrayList<>(instances.getAll(extensionPoint));
     }
 
+    @Override
     public void registerType(Class extensionPoint, Class implementation) {
         if (isRegisteredType(extensionPoint, implementation.getName())) {
             throw new NutsIllegalArgumentsException("Already Registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
@@ -161,17 +165,14 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new RuntimeException(cause);
+            throw new NutsFactoryException(cause);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new NutsFactoryException(e);
         }
         //initialize?
-        if (NutsWorkspace.class.equals(t)) {
-            return (T) Proxy.newProxyInstance(t.getClassLoader(), new Class[]{
-                NutsWorkspace.class,
-                NutsWorkspaceImpl.class
-            }, NutsEnvironmentContext.createHandler((NutsWorkspace) theInstance));
-        } else if (NutsRepository.class.equals(t)) {
+        if (NutsWorkspaceImpl.class.isAssignableFrom(t)) {
+            return (T) ((NutsWorkspaceImpl) theInstance).self();
+        } else if (NutsRepository.class.isAssignableFrom(t)) {
             return (T) Proxy.newProxyInstance(t.getClassLoader(), new Class[]{
                 NutsRepository.class
             }, NutsEnvironmentContext.createHandler((NutsRepository) theInstance));
@@ -193,13 +194,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new RuntimeException(cause);
+            throw new NutsFactoryException(cause);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Unable to instantiate " + t, e);
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new RuntimeException(e);
+            throw new NutsFactoryException(e);
         }
         //initialize?
         return t1;

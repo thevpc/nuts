@@ -41,7 +41,7 @@ import net.vpc.app.nuts.extensions.util.JavascriptHelper;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>,JsNutsDependencyFilter {
+public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>, JsNutsDependencyFilter {
 
     private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
     private static DefaultNutsDescriptor SAMPLE_NUTS_DESCRIPTOR = new DefaultNutsDescriptor(
@@ -94,7 +94,7 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     }
 
     public NutsDependencyJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.toId(); var version=id.getVersion();", blacklist,null);
+        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.toId(); var version=id.getVersion();", blacklist, null);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -119,5 +119,5 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
 //        return "util.matches(dependency,'" + CoreStringUtils.escapeCoteStrings(code) + "')";
         return getCode();
     }
-    
+
 }

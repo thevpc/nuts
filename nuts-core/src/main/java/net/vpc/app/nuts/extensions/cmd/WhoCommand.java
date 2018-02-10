@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.cmd;
@@ -47,7 +47,7 @@ public class WhoCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean verbose = false;
         boolean argVisitedVerbose = false;
@@ -80,10 +80,9 @@ public class WhoCommand extends AbstractNutsCommand {
                 Stack<String> items = new Stack<>();
                 visitedGroups.add(login);
                 items.push(login);
-                NutsWorkspaceConfig c = validWorkspace.getConfig();
                 while (items.isEmpty()) {
                     String n = items.pop();
-                    NutsSecurityEntityConfig s = c.getSecurity(n);
+                    NutsUserInfo s = validWorkspace.findUser(n);
                     if (s != null) {
                         for (String r : s.getRights()) {
                             if (!visitedRights.contains(r)) {
@@ -100,15 +99,21 @@ public class WhoCommand extends AbstractNutsCommand {
                 }
             }
             if (argAll) {
+                String[] currentLoginStack = validWorkspace.getCurrentLoginStack();
+                out.draw("===stack===      :");
+                for (String log : currentLoginStack) {
+                    out.draw(" <<" + log + ">>");
+                }
+                out.println();
                 if (!visitedGroups.isEmpty()) {
-                    out.println("identities : " + (visitedGroups.isEmpty() ? "NONE" : visitedGroups.toString()));
+                    out.drawln("===identities=== : " + (visitedGroups.isEmpty() ? "NONE" : visitedGroups.toString()));
                 } else {
-                    out.println("identities : NONE");
+                    out.drawln("===identities=== : NONE");
                 }
                 if (!NutsConstants.USER_ADMIN.equals(login)) {
-                    out.println("rights     : " + (visitedRights.isEmpty() ? "NONE" : visitedRights.toString()));
+                    out.drawln("===rights===     : " + (visitedRights.isEmpty() ? "NONE" : visitedRights.toString()));
                 } else {
-                    out.println("rights     : ALL");
+                    out.drawln("===rights===     : ALL");
                 }
             }
         }

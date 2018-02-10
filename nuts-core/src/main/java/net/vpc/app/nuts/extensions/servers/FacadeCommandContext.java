@@ -45,6 +45,7 @@ import java.util.Set;
  * Created by vpc on 1/24/17.
  */
 public class FacadeCommandContext implements NutsHttpServletFacadeContext {
+
     private NutsHttpServletFacadeContext base;
     private NutsWorkspace workspace;
     private String serverId;
@@ -52,7 +53,7 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
     private String path;
     private NutsSession session;
 
-    public FacadeCommandContext(NutsHttpServletFacadeContext base, NutsWorkspace workspace, String serverId, String command, String path,NutsSession session) {
+    public FacadeCommandContext(NutsHttpServletFacadeContext base, NutsWorkspace workspace, String serverId, String command, String path, NutsSession session) {
         this.base = base;
         this.workspace = workspace;
         this.serverId = serverId;

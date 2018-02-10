@@ -5,7 +5,8 @@ import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.extensions.filters.id.JsNutsIdFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
-public class AllNutsVersionFilter implements NutsVersionFilter,Simplifiable<NutsVersionFilter> ,JsNutsIdFilter{
+public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsIdFilter {
+
     @Override
     public boolean accept(NutsVersion version) {
         return true;
@@ -20,5 +21,5 @@ public class AllNutsVersionFilter implements NutsVersionFilter,Simplifiable<Nuts
     public String toJsNutsIdFilterExpr() {
         return "true";
     }
-    
+
 }

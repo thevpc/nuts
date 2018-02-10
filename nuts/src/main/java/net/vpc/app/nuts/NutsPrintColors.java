@@ -35,6 +35,7 @@ import java.awt.*;
  * Created by vpc on 6/22/17.
  */
 public final class NutsPrintColors {
+
     public static final Color BLACK = Color.BLACK;
     public static final Color RED = Color.RED;
     public static final Color BLUE = Color.BLUE;

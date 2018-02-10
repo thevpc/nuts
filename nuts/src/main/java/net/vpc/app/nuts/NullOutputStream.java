@@ -3,9 +3,10 @@ package net.vpc.app.nuts;
 import java.io.OutputStream;
 
 public final class NullOutputStream extends OutputStream {
+
     public static final OutputStream INSTANCE = new NullOutputStream();
 
-    private  NullOutputStream() {
+    private NullOutputStream() {
     }
 
     @Override

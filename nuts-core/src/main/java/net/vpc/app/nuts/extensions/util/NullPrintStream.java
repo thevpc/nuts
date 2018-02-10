@@ -34,7 +34,9 @@ import java.io.PrintStream;
 import java.util.Locale;
 
 public class NullPrintStream extends PrintStream {
-    public static final PrintStream INSTANCE=new NullPrintStream();
+
+    public static final PrintStream INSTANCE = new NullPrintStream();
+
     private NullPrintStream() {
         super(NullOutputStream.INSTANCE);
     }

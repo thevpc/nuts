@@ -38,6 +38,7 @@ import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 
 public class NutsURLClassLoader extends URLClassLoader {
+
     public NutsURLClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
@@ -54,7 +55,6 @@ public class NutsURLClassLoader extends URLClassLoader {
     public void addURL(URL url) {
         super.addURL(url);
     }
-
 
     public void addFile(File url) {
         try {

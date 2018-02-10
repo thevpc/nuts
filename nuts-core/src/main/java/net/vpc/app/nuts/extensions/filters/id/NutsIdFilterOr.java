@@ -10,7 +10,7 @@ import java.util.List;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,JsNutsIdFilter {
+public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
 
     private NutsIdFilter[] all;
 

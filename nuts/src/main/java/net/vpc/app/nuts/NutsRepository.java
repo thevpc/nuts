@@ -3,34 +3,35 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * Created by vpc on 1/5/17.
@@ -44,8 +45,14 @@ public interface NutsRepository {
 
     int getSpeed();
 
+    Properties getEnv(boolean inherit);
+
+    void setEnv(String property, String value) ;
+    
     String getEnv(String key, String defaultValue, boolean inherit);
 
+    String getLocation();
+    
     NutsRepositoryConfig getConfig();
 
     NutsWorkspace getWorkspace();
@@ -53,31 +60,31 @@ public interface NutsRepository {
     String getRepositoryId();
 
     /**
-     * @param id         descriptor Id, mandatory as descriptor may not being effective
-     *                   (id is variable or inherited)
+     * @param id descriptor Id, mandatory as descriptor may not being effective
+     * (id is variable or inherited)
      * @param descriptor
      * @param file
      * @return
      */
     NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, NutsSession context);
 
-    void push(NutsId id, String repoId, NutsSession session) ;
+    void push(NutsId id, String repoId, NutsSession session);
 
-    NutsFile fetch(NutsId id, NutsSession session) ;
+    NutsFile fetch(NutsId id, NutsSession session);
 
-    NutsDescriptor fetchDescriptor(NutsId id, NutsSession session) ;
+    NutsDescriptor fetchDescriptor(NutsId id, NutsSession session);
 
-    File copyTo(NutsId id, NutsSession session, File localPath) ;
+    File copyTo(NutsId id, NutsSession session, File localPath);
 
-    File copyDescriptorTo(NutsId id, NutsSession session, File localPath) ;
+    File copyDescriptorTo(NutsId id, NutsSession session, File localPath);
 
-    String fetchHash(NutsId id, NutsSession session) ;
+    String fetchHash(NutsId id, NutsSession session);
 
-    String fetchDescriptorHash(NutsId id, NutsSession session) ;
+    String fetchDescriptorHash(NutsId id, NutsSession session);
 
-    NutsId resolveId(NutsId id, NutsSession session) ;
+    NutsId resolveId(NutsId id, NutsSession session);
 
-    Iterator<NutsId> find(NutsIdFilter filter, NutsSession session) ;
+    Iterator<NutsId> find(NutsIdFilter filter, NutsSession session);
 
     Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session);
 
@@ -89,24 +96,46 @@ public interface NutsRepository {
 
     NutsRepository getMirror(String repositoryIdPath);
 
-    NutsRepository addMirror(String repositoryId, String location, String type, boolean autoCreate) ;
+    NutsRepository addMirror(String repositoryId, String location, String type, boolean autoCreate);
 
-    void removeMirror(String repositoryId) ;
+    void removeMirror(String repositoryId);
 
-    void save() ;
+    void save();
 
-    void open(boolean autoCreate) ;
+    void open(boolean autoCreate);
 
     boolean isAllowed(String right);
 
-    void setUserCredentials(String user, String credentials) ;
+    void addUser(String user, String password, String... rights);
 
-    void setUserCredentials(String login, String password, String oldPassword) ;
+    void setUserRights(String user, String... rights);
+
+    void addUserRights(String user, String... rights);
+
+    void removeUserRights(String user, String... rights);
+
+    void setUserRemoteIdentity(String user, String mappedIdentity);
+
+    void setUserGroups(String user, String... groups);
+
+    void addUserGroups(String user, String... groups);
+
+    void removeUserGroups(String user, String... groups);
+
+    void setUserCredentials(String login, String password, String oldPassword);
+
+    NutsUserInfo[] findUsers();
+
+    NutsUserInfo findUser(String username);
 
     void removeRepositoryListener(NutsRepositoryListener listener);
 
     void addRepositoryListener(NutsRepositoryListener listener);
 
     NutsRepositoryListener[] getRepositoryListeners();
+
+    void setEnabled(boolean enabled);
+
+    boolean isEnabled();
 
 }

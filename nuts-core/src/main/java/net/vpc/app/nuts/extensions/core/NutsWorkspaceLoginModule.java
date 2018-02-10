@@ -43,6 +43,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.util.Map;
+import net.vpc.app.nuts.NutsConstants;
 
 public class NutsWorkspaceLoginModule implements LoginModule {
 
@@ -94,6 +95,11 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             NutsWorkspace workspace = NutsEnvironmentContext.getNutsWorkspace();
             if (workspace == null) {
                 throw new LoginException("Authentication failed : No Workspace");
+            }
+
+            if (NutsConstants.USER_ANONYMOUS.equals(name)) {
+                this.login = name;
+                return true;
             }
 
             NutsSecurityEntityConfig registeredUser = workspace.getConfig().getSecurity(name);

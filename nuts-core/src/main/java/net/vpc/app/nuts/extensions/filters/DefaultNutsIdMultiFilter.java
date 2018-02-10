@@ -69,7 +69,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                     try {
                         nutsDescriptor = repository.getWorkspace().resolveEffectiveDescriptor(descriptor, session);
                     } catch (Exception e) {
-                        //throw new RuntimeException(e);
+                        //throw new NutsException(e);
                     }
                     descriptor = nutsDescriptor;
                 }

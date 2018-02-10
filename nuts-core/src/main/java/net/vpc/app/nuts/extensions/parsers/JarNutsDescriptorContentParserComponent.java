@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.parsers;
@@ -57,7 +57,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
     }
 
     @Override
-    public NutsDescriptor parse(final NutsDescriptorContentParserContext parserContext)  {
+    public NutsDescriptor parse(final NutsDescriptorContentParserContext parserContext) {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
@@ -97,17 +97,17 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                     null,
                                     "jar",
                                     mainClass.isSet(), "jar", new NutsExecutorDescriptor(JAVA, new String[]{
-                                    "--nuts-jar"
+                                "--nuts-jar"
                             }, null), null, null, null, null, null, null, null, null, null
                             );
                             metainf.set(d);
                             break;
                         case "META-INF/nuts.json":
-                            nutsjson.set(CoreNutsUtils.parseNutsDescriptor(inputStream,true));
+                            nutsjson.set(CoreNutsUtils.parseNutsDescriptor(inputStream, true));
                             break;
                         default:
                             try {
-                                maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), parserContext.getSession(),path));
+                                maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), parserContext.getSession(), path));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -128,8 +128,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             baseNutsDescriptor = maven.get();
             if (mainClass.isSet()) {
                 return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                        "--nuts-main-class", mainClass.get(),
-                }, null));
+                    "--nuts-main-class", mainClass.get(),}, null));
             }
         } else if (metainf.isSet()) {
             baseNutsDescriptor = metainf.get();
@@ -153,8 +152,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             return null;
         } else if (classes.size() == 1) {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                    "--nuts-main-class="+ classes.get(0),
-            }, null)).setExecutable(true);
+                "--nuts-main-class=" + classes.get(0),}, null)).setExecutable(true);
         } else {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < classes.size(); i++) {
@@ -164,8 +162,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                 sb.append(classes.get(i));
             }
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                    "--nuts-main-class="+ sb.toString(),
-            }, null)).setExecutable(true);
+                "--nuts-main-class=" + sb.toString(),}, null)).setExecutable(true);
         }
     }
 }

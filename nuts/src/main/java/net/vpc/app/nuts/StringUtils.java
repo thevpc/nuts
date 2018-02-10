@@ -29,12 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 1/15/17.
@@ -63,6 +58,5 @@ class StringUtils {
         }
         return result;
     }
-
 
 }

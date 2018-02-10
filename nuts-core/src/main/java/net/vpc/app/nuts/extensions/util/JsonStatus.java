@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.NutsParseException;
+
 public class JsonStatus {
 
     public int countBraces;
@@ -44,36 +46,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new RuntimeException("not an object");
+                throw new NutsParseException("not an object");
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced brackets");
+                throw new NutsParseException("Unbalanced brackets");
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced braces");
+                throw new NutsParseException("Unbalanced braces");
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced anti-slash");
+                throw new NutsParseException("Unbalanced anti-slash");
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced simple quotes");
+                throw new NutsParseException("Unbalanced simple quotes");
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced double quotes");
+                throw new NutsParseException("Unbalanced double quotes");
             }
             return false;
         }
@@ -83,13 +85,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced brackets");
+                throw new NutsParseException("Unbalanced brackets");
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new RuntimeException("Unbalanced braces");
+                throw new NutsParseException("Unbalanced braces");
             }
             return false;
         }

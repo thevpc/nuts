@@ -51,16 +51,16 @@ public class CoreJsonUtils {
             .setIgnoreEmptyArrays(true)
             .setPretty(true);
 
-    public static JsonSerializer get(){
+    public static JsonSerializer get() {
         return JsonSerializerImpl.INSTANCE;
     }
 
-    public static JsonSerializer get(NutsWorkspace ws){
+    public static JsonSerializer get(NutsWorkspace ws) {
         Map<String, Object> sharedObjects = ws.getSharedObjects();
         JsonSerializer o = (JsonSerializer) sharedObjects.get(JsonSerializer.class.getName());
-        if(o==null){
-            o= JsonSerializerImpl.INSTANCE;
-            sharedObjects.put(JsonSerializer.class.getName(),o);
+        if (o == null) {
+            o = JsonSerializerImpl.INSTANCE;
+            sharedObjects.put(JsonSerializer.class.getName(), o);
         }
         return o;
     }

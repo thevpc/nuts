@@ -73,7 +73,7 @@ public class PipeThread extends Thread implements StopMonitor {
 //                    //e.printStackTrace();
 //                }
 //            }
-//            throw new RuntimeException("Unable to stop");
+//            throw new NutsException("Unable to stop");
     }
 
     @Override
@@ -89,7 +89,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 }
                 if (in.hasMoreBytes()) {
                     count = in.readNonBlocking(bytes, 500);
-                    if(count>0) {
+                    if (count > 0) {
                         pipedBytesCount += count;
                         out.write(bytes, 0, count);
                     }

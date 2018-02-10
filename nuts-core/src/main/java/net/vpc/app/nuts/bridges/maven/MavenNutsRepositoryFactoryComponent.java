@@ -38,10 +38,11 @@ import java.io.File;
  * Created by vpc on 1/15/17.
  */
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
+
     private static final NutsRepositoryDefinition[] DEFAULTS = {
-            new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), "maven", false),
-            new NutsRepositoryDefinition("maven-central", "http://repo.maven.apache.org/maven2/", "maven", true),
-            new NutsRepositoryDefinition("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven", true)};
+        new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), "maven", false),
+        new NutsRepositoryDefinition("maven-central", "http://repo.maven.apache.org/maven2/", "maven", true),
+        new NutsRepositoryDefinition("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven", true)};
 
     public NutsRepositoryDefinition[] getDefaultRepositories() {
         return DEFAULTS;
@@ -49,7 +50,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
 
     @Override
     public int getSupportLevel(NutsRepoInfo criteria) {
-        if(criteria==null){
+        if (criteria == null) {
             return CORE_SUPPORT;
         }
         String repositoryType = criteria.getType();

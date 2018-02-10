@@ -36,47 +36,46 @@ import java.util.List;
  * Created by vpc on 5/23/17.
  */
 public class NutsTextParser {
+
     public static final NutsTextParser INSTANCE = new NutsTextParser();
     private static final char[][] startPattern = new char[][]{
-            "<<<".toCharArray(),
-            "<<".toCharArray(),
-            "{{{".toCharArray(),
-            "{{".toCharArray(),
-            "(((".toCharArray(),
-            "((".toCharArray(),
-            "[[[".toCharArray(),
-            "[[".toCharArray(),
-            "===".toCharArray(),
-            "==".toCharArray(),
-            "***".toCharArray(),
-            "**".toCharArray(),
-            "@@@".toCharArray(),
-            "@@".toCharArray(),
-            "\"\"\"".toCharArray(),
-            "\"\"".toCharArray(),
-            "\"".toCharArray(),
-            "\'".toCharArray(),
-    };
+        "<<<".toCharArray(),
+        "<<".toCharArray(),
+        "{{{".toCharArray(),
+        "{{".toCharArray(),
+        "(((".toCharArray(),
+        "((".toCharArray(),
+        "[[[".toCharArray(),
+        "[[".toCharArray(),
+        "===".toCharArray(),
+        "==".toCharArray(),
+        "***".toCharArray(),
+        "**".toCharArray(),
+        "@@@".toCharArray(),
+        "@@".toCharArray(),
+        "\"\"\"".toCharArray(),
+        "\"\"".toCharArray(),
+        "\"".toCharArray(),
+        "\'".toCharArray(),};
     private static final char[][] endPattern = new char[][]{
-            ">>>".toCharArray(),
-            ">>".toCharArray(),
-            "}}}".toCharArray(),
-            "}}".toCharArray(),
-            ")))".toCharArray(),
-            "))".toCharArray(),
-            "]]]".toCharArray(),
-            "]]".toCharArray(),
-            "===".toCharArray(),
-            "==".toCharArray(),
-            "***".toCharArray(),
-            "**".toCharArray(),
-            "@@@".toCharArray(),
-            "@@".toCharArray(),
-            "\"\"\"".toCharArray(),
-            "\"\"".toCharArray(),
-            "\"".toCharArray(),
-            "\'".toCharArray(),
-    };
+        ">>>".toCharArray(),
+        ">>".toCharArray(),
+        "}}}".toCharArray(),
+        "}}".toCharArray(),
+        ")))".toCharArray(),
+        "))".toCharArray(),
+        "]]]".toCharArray(),
+        "]]".toCharArray(),
+        "===".toCharArray(),
+        "==".toCharArray(),
+        "***".toCharArray(),
+        "**".toCharArray(),
+        "@@@".toCharArray(),
+        "@@".toCharArray(),
+        "\"\"\"".toCharArray(),
+        "\"\"".toCharArray(),
+        "\"".toCharArray(),
+        "\'".toCharArray(),};
 
     private static int[] findNext2(char[][] start, char[][] end, char[] source, int index) {
         int expectedIndex = 0;
@@ -153,6 +152,10 @@ public class NutsTextParser {
             }
         }
         return sb.toString();
+    }
+    public static void main(String[] args) {
+        List<NutsTextChunck> sss = new NutsTextParser().parse("==identities== : NONE");
+        System.out.println(sss);
     }
 
     public List<NutsTextChunck> parse(String text) {

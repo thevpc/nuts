@@ -27,7 +27,6 @@ config (add repo| ar) <repositoryId> <repoLocation> [<repoType>]
 
 config (remove repo| rr) <repoLocationOrId>
 
-
 config (list repos| rr)
 
 config (edit repo| er) <repositoryId> <workspace action verb and arguments>

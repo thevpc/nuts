@@ -46,13 +46,13 @@ public class PushCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete=context.getAutoComplete();
+        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         String repo = null;
         cmdLine.requireNonEmpty();
         boolean argVisitedRepo = false;
         while (!cmdLine.isEmpty()) {
-            if (!argVisitedRepo && cmdLine.read("--repo","-r")) {
+            if (!argVisitedRepo && cmdLine.read("--repo", "-r")) {
                 argVisitedRepo = true;
                 repo = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else {

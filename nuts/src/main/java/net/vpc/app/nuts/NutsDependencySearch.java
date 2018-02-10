@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public class NutsDependencySearch {
+
     private List<String> ids = new ArrayList<>();
     private boolean includeMain = false;
     private boolean trackNotFound = false;

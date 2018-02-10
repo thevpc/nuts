@@ -42,8 +42,8 @@ public class DefaultNutsRemoteRepositoryFactoryComponent implements NutsReposito
 
     @Override
     public int getSupportLevel(NutsRepoInfo criteria) {
-        String repositoryType=criteria.getType();
-        String location=criteria.getLocation();
+        String repositoryType = criteria.getType();
+        String location = criteria.getLocation();
         if (!NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
             return NO_SUPPORT;
         }
