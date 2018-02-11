@@ -2292,7 +2292,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (nutToRun != null && nutToRun.getFile() != null) {
             NutsDescriptor descriptor = nutToRun.getDescriptor();
             if (!descriptor.isExecutable()) {
-                throw new NutsNotExecutableException(descriptor.getId());
+//                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");
+//                throw new NutsNotExecutableException(descriptor.getId());
             }
             NutsExecutorDescriptor executor = descriptor.getExecutor();
             NutsExecutorComponent execComponent = null;

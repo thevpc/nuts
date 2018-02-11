@@ -60,6 +60,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
+    @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsFile nutMainFile = executionContext.getNutsFile();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
@@ -142,6 +143,14 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         List<String> args = new ArrayList<String>();
         args.add("${" + javaVersion + "}");
         args.addAll(jvmArgs);
+        if (mainClass == null) {
+            File file = nutMainFile.getFile();
+            if (file != null) {
+                List<String> classes = CorePlatformUtils.resolveMainClasses(file);
+                mainClass=CoreStringUtils.join(":", classes);
+            }
+        }
+
         if (jar) {
             if (mainClass != null) {
                 executionContext.getTerminal().getErr().println("Ignored main-class=" + mainClass + " . running jar!");

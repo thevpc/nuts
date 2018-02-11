@@ -60,54 +60,58 @@ public class CoreIOUtils {
     public static final PrintStream NULL_PRINT_STREAM = NullPrintStream.INSTANCE;
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
 
-    public static boolean visitZipFile(InputStream zipFile, ObjectFilter<String> possiblePaths, StreamVisitor visitor) throws IOException {
+    public static boolean visitZipFile(InputStream zipFile, ObjectFilter<String> possiblePaths, StreamVisitor visitor) throws NutsIOException {
         byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content
         ZipInputStream zis = null;
         try {
-            zis = new ZipInputStream(zipFile);
-            //get the zipped file list entry
-            ZipEntry ze = zis.getNextEntry();
-            final ZipInputStream finalZis = zis;
-            InputStream entryInputStream = new InputStream() {
-                @Override
-                public int read() throws IOException {
-                    return finalZis.read();
-                }
+            try {
+                zis = new ZipInputStream(zipFile);
+                //get the zipped file list entry
+                ZipEntry ze = zis.getNextEntry();
+                final ZipInputStream finalZis = zis;
+                InputStream entryInputStream = new InputStream() {
+                    @Override
+                    public int read() throws IOException {
+                        return finalZis.read();
+                    }
 
-                @Override
-                public int read(byte[] b) throws IOException {
-                    return finalZis.read(b);
-                }
+                    @Override
+                    public int read(byte[] b) throws IOException {
+                        return finalZis.read(b);
+                    }
 
-                @Override
-                public int read(byte[] b, int off, int len) throws IOException {
-                    return finalZis.read(b, off, len);
-                }
+                    @Override
+                    public int read(byte[] b, int off, int len) throws IOException {
+                        return finalZis.read(b, off, len);
+                    }
 
-                @Override
-                public void close() throws IOException {
-                    finalZis.closeEntry();
-                }
-            };
+                    @Override
+                    public void close() throws IOException {
+                        finalZis.closeEntry();
+                    }
+                };
 
-            while (ze != null) {
+                while (ze != null) {
 
-                String fileName = ze.getName();
-                if (!fileName.endsWith("/")) {
-                    if (possiblePaths.accept(fileName)) {
-                        if (!visitor.visit(fileName, entryInputStream)) {
-                            break;
+                    String fileName = ze.getName();
+                    if (!fileName.endsWith("/")) {
+                        if (possiblePaths.accept(fileName)) {
+                            if (!visitor.visit(fileName, entryInputStream)) {
+                                break;
+                            }
                         }
                     }
+                    ze = zis.getNextEntry();
                 }
-                ze = zis.getNextEntry();
+            } finally {
+                if (zis != null) {
+                    zis.close();
+                }
             }
-        } finally {
-            if (zis != null) {
-                zis.close();
-            }
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
         }
         return false;
     }
@@ -535,121 +539,6 @@ public class CoreIOUtils {
         }
         clsAndLibs.add(main);
         return clsAndLibs.toArray(new String[clsAndLibs.size()]);
-    }
-
-    /**
-     * @throws IOException
-     */
-    public static boolean isMainClass(InputStream stream) throws IOException {
-        final List<Boolean> ref = new ArrayList<>(1);
-        ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
-
-            /**
-             * Called when a class is visited. This is the method called first
-             */
-            @Override
-            public void visit(int version, int access, String name,
-                    String signature, String superName, String[] interfaces) {
-//                System.out.println("Visiting class: "+name);
-//                System.out.println("Class Major Version: "+version);
-//                System.out.println("Super class: "+superName);
-                super.visit(version, access, name, signature, superName, interfaces);
-            }
-
-            /**
-             * Invoked only when the class being visited is an inner class
-             */
-            @Override
-            public void visitOuterClass(String owner, String name, String desc) {
-                super.visitOuterClass(owner, name, desc);
-            }
-
-            /**
-             * Invoked when a class level annotation is encountered
-             */
-            @Override
-            public AnnotationVisitor visitAnnotation(String desc,
-                    boolean visible) {
-                return super.visitAnnotation(desc, visible);
-            }
-
-            /**
-             * When a class attribute is encountered
-             */
-            @Override
-            public void visitAttribute(Attribute attr) {
-                super.visitAttribute(attr);
-            }
-
-            /**
-             * When an inner class is encountered
-             */
-            @Override
-            public void visitInnerClass(String name, String outerName,
-                    String innerName, int access) {
-                super.visitInnerClass(name, outerName, innerName, access);
-            }
-
-            /**
-             * When a field is encountered
-             */
-            @Override
-            public FieldVisitor visitField(int access, String name,
-                    String desc, String signature, Object value) {
-                return super.visitField(access, name, desc, signature, value);
-            }
-
-            @Override
-            public void visitEnd() {
-                super.visitEnd();
-            }
-
-            /**
-             * When a method is encountered
-             */
-            @Override
-            public MethodVisitor visitMethod(int access, String name,
-                    String desc, String signature, String[] exceptions) {
-                if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
-                        && Modifier.isPublic(access)
-                        && Modifier.isStatic(access)) {
-                    ref.add(true);
-                }
-                return super.visitMethod(access, name, desc, signature, exceptions);
-            }
-
-            /**
-             * When the optional source is encountered
-             */
-            @Override
-            public void visitSource(String source, String debug) {
-                super.visitSource(source, debug);
-            }
-
-        };
-        ClassReader classReader = new ClassReader(stream);
-        classReader.accept(cl, 0);
-        return !ref.isEmpty();
-    }
-
-    public static List<String> resolveMainClasses(InputStream jarStream) throws IOException {
-        final List<String> classes = new ArrayList<>();
-        visitZipFile(jarStream, new ObjectFilter<String>() {
-            @Override
-            public boolean accept(String value) {
-                return value.endsWith(".class");
-            }
-        }, new StreamVisitor() {
-            @Override
-            public boolean visit(String path, InputStream inputStream) throws IOException {
-                boolean mainClass = isMainClass(inputStream);
-                if (mainClass) {
-                    classes.add(path.replace('/', '.').substring(0, path.length() - ".class".length()));
-                }
-                return true;
-            }
-        });
-        return classes;
     }
 
     public static String[] expandPath(String path, File cwd) {

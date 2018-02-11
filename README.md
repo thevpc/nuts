@@ -55,38 +55,38 @@ java -jar nuts.jar console
 ```
 
 ### Running a local jar with external dependencies
-Let's suppose that my-app.jar is maven created jar (contains META-INF/maven files) with a number of dependencies. Nuts 
+Let's suppose that my-app.jar is a maven created jar (contains META-INF/maven files) with a number of dependencies. Nuts 
 is able to download on the fly needed dependencies, detect the Main class (no need for MANIFEST.MF) and run the 
-application. If main classes have been detected with main method, nuts will ask for the current class to run.
+application. If more than one class have been detected with main method, nuts will ask for the current class to run.
 
 #### Running installed nuts
-Before running an application you have to install it. Il will be downloaded and all its dependencies. Then you can call the exec command.
+Before running an application you have to install it. It will be downloaded along with all of its dependencies. Then you can call the exec command.
 
 ```bash
-java -jar nuts.jar install my-app
-java -jar nuts.jar exec my-app some-argument-of-my-app
+nuts install my-app
+nuts exec my-app some-argument-of-my-app
 ```
 
 Alternatively, the 'exec' command can be omitted
 
 ```bash
-java -jar nuts.jar my-app some-argument-of-my-app
+nuts my-app some-argument-of-my-app
 ```
 
 #### Running local file
-You also may run a local file, nuts will behave as if the app is installed (in the given path). You just have to run it 
-directly. Dependencies will be downloaded as well (and cached in the workspace ~/.nuts/default-workspace)
+You also may run a local file, nuts will behave as if the app is installed (in the given path, an no need to invoke install command). 
+Dependencies will be downloaded as well (and cached in the workspace ~/.nuts/default-workspace)
 
 ```bash
-java -jar nuts.jar my-app.jar some-argument-of-my-app
+nuts my-app.jar some-argument-of-my-app
 ```
 
 #### Passing VM arguments
 If you need to pass JVM arguments you have to prefix them with "--nuts" so if you want to fix maximum heap size use 
---nuts-Xmx2G instead of -Xmx2G
+-J-Xmx2G instead of -Xmx2G
 
 ```bash
-java -jar nuts.jar my-app.jar  --nutsXms1G --nuts-Xmx2G --nuts-Dother-vm-arg=3 some-argument-of-my-app some-app-argument
+nuts -J-Xms1G -J-Xmx2G my-app.jar -Janother-vm-arg=3 some-argument-of-my-app some-app-argument
 ```
 
 

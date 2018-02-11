@@ -231,7 +231,7 @@ public class MavenUtils {
         } catch (XMLStreamException e) {
             throw new NutsParseException(e);
         }
-        boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+        boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
         return new DefaultNutsDescriptor(
                 new NutsIdImpl(
                         null, groupId.toString().trim(), artifactId.toString().trim(),
