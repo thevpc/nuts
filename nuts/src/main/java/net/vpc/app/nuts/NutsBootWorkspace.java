@@ -31,7 +31,11 @@ package net.vpc.app.nuts;
 
 public interface NutsBootWorkspace {
 
-    String getWorkspaceRuntimeVersion();
+    String getRuntimeId();
+
+    String getBootId();
 
     String getRoot();
+
+    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
 }

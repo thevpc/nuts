@@ -18,7 +18,7 @@ class WorkspaceNutsId {
             return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], splittedBootId[2]);
         }
         if (splittedBootId.length == 2) {
-            return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], null);
+            return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], "LATEST");
         }
         throw new NutsParseException("Unable to parse " + id);
     }
@@ -34,4 +34,13 @@ class WorkspaceNutsId {
     public String getVersion() {
         return version;
     }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+    
 }

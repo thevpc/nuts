@@ -36,7 +36,31 @@ import java.util.logging.Level;
 /**
  * Created by vpc on 1/5/17.
  */
-public class Main {
+public class Nuts {
+
+    public static NutsBootWorkspace openBootWorkspace() {
+        return new DefaultNutsBootWorkspace();
+    }
+
+    public static NutsBootWorkspace openBootWorkspace(NutsBootOptions bootOptions) {
+        return new DefaultNutsBootWorkspace(bootOptions);
+    }
+
+    public static NutsWorkspace openWorkspace() {
+        return openWorkspace(null, null, null);
+    }
+
+    public static NutsWorkspace openWorkspace(String workspace) {
+        return openWorkspace(workspace, null, null);
+    }
+
+    public static NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options) {
+        return openWorkspace(workspace, options, null);
+    }
+
+    public static NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options, NutsBootOptions bootOptions) {
+        return openBootWorkspace(bootOptions).openWorkspace(workspace, options);
+    }
 
     public static void main(String[] args) {
         try {
@@ -52,15 +76,14 @@ public class Main {
 //        System.out.println(">>"+getBootVersion()+" :: "+Arrays.asList(args));
         long startTime = System.currentTimeMillis();
         int startAppArgs = 0;
-        String workspaceRoot = null;
+        String root = null;
         String workspace = null;
         String archetype = null;
         String login = null;
         String password = null;
         String logFolder = null;
-        String bootVersion = null;
-        String bootId = null;
-        String bootURL = null;
+        String runtimeId = null;
+        String runtimeSourceURL = null;
         Level logLevel = null;
         int logSize = 0;
         int logCount = 0;
@@ -71,13 +94,12 @@ public class Main {
         String applyUpdatesFile = null;
         boolean perf = false;
         boolean showHelp = false;
+        boolean nocolors = false;
         List<String> showError = new ArrayList<>();
         Set<String> excludedExtensions = new HashSet<>();
         Set<String> excludedRepositories = new HashSet<>();
         List<String> extraEnv = new ArrayList<>();
-
         for (int i = 0; i < args.length; i++) {
-            startAppArgs = i;
             String a = args[i];
             if (a.startsWith("-")) {
                 switch (a) {
@@ -86,7 +108,7 @@ public class Main {
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentsException("Missing argument for workspace");
                         }
-                        workspaceRoot = args[i];
+                        root = args[i];
                         break;
                     case "--workspace":
                         i++;
@@ -123,29 +145,25 @@ public class Main {
                         }
                         applyUpdatesFile = args[i];
                         break;
-                    case "--boot-version":
+                    case "--runtime-id":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for boot-version");
+                            throw new NutsIllegalArgumentsException("Missing argument for runtime-id");
                         }
-                        bootVersion = args[i];
+                        runtimeId = args[i];
                         break;
-                    case "--boot-id":
-                        i++;
-                        if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for boot-id");
-                        }
-                        bootId = args[i];
-                        break;
-                    case "--boot-url":
+                    case "--runtime-source-url":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentsException("Missing argument for boot-url");
                         }
-                        bootURL = args[i];
+                        runtimeSourceURL = args[i];
                         break;
                     case "--save":
                         save = true;
+                        break;
+                    case "--no-colors":
+                        nocolors = true;
                         break;
                     case "--nosave":
                         save = false;
@@ -223,20 +241,29 @@ public class Main {
                         break;
                     }
                     default: {
-                        if (a.startsWith("-J") || a.startsWith("--nuts")) {
+                        if (a.startsWith("-J")) {
                             extraEnv.add(a);
+                        } else if (a.startsWith("--nuts")) {
+                            extraEnv.add(a);
+                        } else {
+                            showError.add("nuts: invalid option [[" + a + "]]");
                         }
-                        showError.add("nuts: invalid option [[" + a + "]]");
                         break;
                     }
                 }
+                startAppArgs = i + 1;
             } else {
                 break;
             }
         }
 
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
-        DefaultNutsBootWorkspace bws = new DefaultNutsBootWorkspace(workspaceRoot, bootId, bootVersion, bootURL, null);
+        NutsBootWorkspace bws = openBootWorkspace(
+                new NutsBootOptions()
+                        .setRoot(root)
+                        .setRuntimeId(runtimeId)
+                        .setRuntimeSourceURL(runtimeSourceURL)
+        );
         if (!showError.isEmpty()) {
             for (String s : showError) {
                 System.err.println(s);
@@ -259,15 +286,29 @@ public class Main {
                     .setExcludedRepositories(excludedRepositories)
                     .setExcludedExtensions(excludedExtensions)
             );
-        } catch (net.vpc.app.nuts.NutsNotFoundException ex) {
-
-            System.err.println("Unable to locate nuts-core components.");
+        } catch (Exception ex) {
+            if (version) {
+                System.err.println("workspace-boot       : " + bws.getBootId() + "" + "");
+                System.err.println("workspace-runtime    : " + bws.getRuntimeId() + "");
+                System.err.println("workspace-root       : " + bws.getRoot() + "" + "");
+                System.err.println("workspace-location   : " + (workspace == null ? "" : workspace) + "");
+                System.err.println("boot-java-version    : " + System.getProperty("java.version"));
+                System.err.println("boot-java-executable : " + System.getProperty("java.home") + "/bin/java" + "");
+                System.err.println("boot-java-classpath  : " + System.getProperty("java.class.path") + "");
+            }
+            if (showHelp) {
+                System.err.println("Unable to local help. No valid workspace was resolved");
+            }
+            System.err.println("Unable to local nuts-core components.");
             System.err.println("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...");
             System.err.println("Exiting nuts, Bye!");
             throw new NutsIllegalArgumentsException("Unable to locate nuts-core components", ex);
         }
         NutsSession session = ws.createSession();
-
+        if (nocolors) {
+            session.getTerminal().getOut().setColorEnabled(false);
+            session.getTerminal().getErr().setColorEnabled(false);
+        }
         if (showHelp) {
             NutsPrintStream out = session.getTerminal().getOut();
             perf = showPerf(startTime, perf, session);
@@ -297,13 +338,13 @@ public class Main {
         if (version) {
             NutsPrintStream out = session.getTerminal().getOut();
 
-            Map<String, String> runtimeProperties = ws.getRuntimeProperties();
             out.drawln("workspace-boot       : [[" + ws.getWorkspaceBootId() + "]]");
             out.drawln("workspace-runtime    : [[" + ws.getWorkspaceRuntimeId() + "]]");
+            out.drawln("workspace-root       : [[" + bws.getRoot() + "]]");
             out.drawln("workspace-location   : [[" + ws.getWorkspaceLocation() + "]]");
-            out.drawln("target-workspace     : [[" + runtimeProperties.get("nuts.workspace-boot.version") + "]]");
             out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
             out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+            out.drawln("boot-java-classpath  : [[" + System.getProperty("java.class.path") + "]]");
 
             perf = showPerf(startTime, perf, session);
             someProcessing = true;
@@ -313,7 +354,8 @@ public class Main {
             return;
         }
         if (args2.length == 0) {
-            perf = showPerf(startTime, perf, session);
+            /*perf = */
+            showPerf(startTime, perf, session);
             help(ws, session.getTerminal().getOut());
             return;
         }
@@ -321,11 +363,13 @@ public class Main {
         try {
             commandLine = ws.createConsole(session);
         } catch (NutsExtensionMissingException ex) {
-            perf = showPerf(startTime, perf, session);
+            /*perf = */
+            showPerf(startTime, perf, session);
             session.getTerminal().getErr().println("Unable to create Console. Make sure nuts-core is installed properly.");
             return;
         }
-        perf = showPerf(startTime, perf, session);
+        /*perf = */
+        showPerf(startTime, perf, session);
         commandLine.run(args2);
 
     }

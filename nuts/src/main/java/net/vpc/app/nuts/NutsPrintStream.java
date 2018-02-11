@@ -38,6 +38,8 @@ import java.util.Locale;
  */
 public class NutsPrintStream extends PrintStream implements NutsComponent<Object> {
 
+    private boolean colorEnabled = true;
+
     public NutsPrintStream() {
         super(NullOutputStream.INSTANCE);
     }
@@ -75,10 +77,6 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
     }
 
     public NutsPrintStream setColor(Color color) {
-        return this;
-    }
-
-    public NutsPrintStream setEnableColoring(boolean enableColoring) {
         return this;
     }
 
@@ -275,10 +273,6 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         return this;
     }
 
-    public void writeRaw(String s) {
-        super.print(s);
-    }
-
     public void drawln(String text) {
         draw(text);
         println();
@@ -310,4 +304,13 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
     public int getSupportLevel(Object criteria) {
         return BOOT_SUPPORT;
     }
+
+    public boolean isColorEnabled() {
+        return colorEnabled;
+    }
+
+    public void setColorEnabled(boolean colorEnabled) {
+        this.colorEnabled = colorEnabled;
+    }
+
 }

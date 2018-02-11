@@ -81,7 +81,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>net.vpc.app.nuts.Main</mainClass>
+                            <mainClass>net.vpc.app.nuts.Nuts</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -117,6 +117,7 @@
 
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <phase>process-sources</phase>

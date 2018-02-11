@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.tomcatclassloader;
 
-import net.vpc.app.nuts.DefaultNutsBootWorkspace;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCreateOptions;
 import net.vpc.app.nuts.SimpleNutsClassLoaderProvider;
@@ -32,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsBootOptions;
+import net.vpc.app.nuts.NutsBootWorkspace;
 import net.vpc.app.nuts.NutsIllegalArgumentsException;
 
 public class NutsTomcatClassLoader extends WebappClassLoader {
@@ -44,10 +46,9 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     protected ClassLoader nutsClassLoader;
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
-    protected String workspacePath;
-    protected String workspaceBootId;
-    protected String workspaceBootPath;
-    protected String workspaceBootVersion;
+    protected String workspaceLocation;
+    protected String workspaceRuntimeId;
+    protected String workspaceRoot;
     protected String workspaceBootURL;
     protected String workspaceExcludedRepositories;
     protected String workspaceExcludedExtensions;
@@ -144,11 +145,13 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 
     public synchronized NutsWorkspace resolveNutsWorkspace() {
         if (nutsWorkspace == null) {
-            DefaultNutsBootWorkspace bws = new DefaultNutsBootWorkspace(
-                    getWorkspaceBootPath(), getWorkspaceBootId(), getWorkspaceBootVersion(), getWorkspaceBootURL(),
-                    new SimpleNutsClassLoaderProvider(getParent())
-            );
-            nutsWorkspace = bws.openWorkspace(getWorkspacePath(),
+            NutsBootWorkspace bws = Nuts.openBootWorkspace(
+                    new NutsBootOptions()
+                            .setRoot(getWorkspaceRoot())
+                            .setRuntimeId(getWorkspaceRuntimeId())
+                            .setRuntimeSourceURL(getRuntimeSourceURL())
+                    .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent())));
+            nutsWorkspace = bws.openWorkspace(getWorkspaceLocation(),
                     new NutsWorkspaceCreateOptions()
                             .setArchetype(getWorkspaceArchetype())
                             .setCreateIfNotFound(true)
@@ -160,6 +163,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         return nutsWorkspace;
     }
 
+    @Override
     protected ResourceEntry findResourceInternal(final String name, final String path) {
         ResourceEntry r = super.findResourceInternal(name, path);
         if (r != null) {
@@ -346,31 +350,23 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
-    public String getWorkspacePath() {
-        return workspacePath;
+    public String getWorkspaceLocation() {
+        return workspaceLocation;
     }
 
-    public void setWorkspacePath(String workspacePath) {
-        this.workspacePath = workspacePath;
+    public void setWorkspaceLocation(String workspaceLocation) {
+        this.workspaceLocation = workspaceLocation;
     }
 
-    public String getWorkspaceBootId() {
-        return workspaceBootId;
+    public String getWorkspaceRuntimeId() {
+        return workspaceRuntimeId;
     }
 
-    public void setWorkspaceBootId(String workspaceBootId) {
-        this.workspaceBootId = workspaceBootId;
+    public void setWorkspaceRuntimeId(String workspaceRuntimeId) {
+        this.workspaceRuntimeId = workspaceRuntimeId;
     }
 
-    public String getWorkspaceBootVersion() {
-        return workspaceBootVersion;
-    }
-
-    public void setWorkspaceBootVersion(String workspaceBootVersion) {
-        this.workspaceBootVersion = workspaceBootVersion;
-    }
-
-    public String getWorkspaceBootURL() {
+    public String getRuntimeSourceURL() {
         return workspaceBootURL;
     }
 
@@ -378,12 +374,12 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         this.workspaceBootURL = workspaceBootURL;
     }
 
-    public String getWorkspaceBootPath() {
-        return workspaceBootPath;
+    public String getWorkspaceRoot() {
+        return workspaceRoot;
     }
 
-    public void setWorkspaceBootPath(String workspaceBootPath) {
-        this.workspaceBootPath = workspaceBootPath;
+    public void setWorkspaceRoot(String workspaceRoot) {
+        this.workspaceRoot = workspaceRoot;
     }
 
     public String getWorkspaceExcludedRepositories() {

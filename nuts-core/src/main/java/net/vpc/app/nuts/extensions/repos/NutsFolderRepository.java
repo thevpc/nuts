@@ -220,73 +220,43 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     @Override
     protected NutsId resolveIdImpl(NutsId id, NutsSession session) {
-        String versionString = id.getVersion().getValue();
-        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
-            NutsFile idAndFile = getLocalGroupAndArtifactAndVersionFile(id, false);
-            File localDescFile = idAndFile == null ? null : idAndFile.getFile();
-            if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                if (localDescFile != null && localDescFile.exists()) {
-                    return id.setFace(idAndFile.getId().getFace())
-                            .setNamespace(getRepositoryId());
-                }
+        NutsFile idAndFile = getLocalGroupAndArtifactAndVersionFile(id, false);
+        File localDescFile = idAndFile == null ? null : idAndFile.getFile();
+        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            if (localDescFile != null && localDescFile.exists()) {
+                return id.setFace(idAndFile.getId().getFace())
+                        .setNamespace(getRepositoryId());
             }
-            StringBuilder errors = new StringBuilder();
-            if (session.isTransitive()) {
-                NutsSession transitiveSession = session.copy().setTransitive(true);
-                for (NutsRepository repo : getMirrors()) {
-                    int sup = 0;
-                    try {
-                        sup = repo.getSupportLevel(id, transitiveSession);
-                    } catch (Exception ex) {
-                        errors.append(ex.toString()).append("\n");
-                    }
-
-                    if (sup > 0) {
-//                        NutsId id1 = null;
-//                        try {
-//                            NutsDescriptor desc = repo.fetchDescriptor(id, session);
-//                            desc.write(localDescFile);
-//                            id1=id;
-//                        } catch (Exception ex) {
-//                            errors.append(ex).append("\n");
-//                        }
-//                        if (id1 != null) {
-//                            return id1;
-//                        }
-
-                        NutsId id1 = null;
-                        try {
-                            id1 = repo.resolveId(id, session);
-                            if (id1 != null) {
-                                NutsDescriptor desc = repo.fetchDescriptor(id1, session);
-                                desc.write(localDescFile);
-                            }
-                        } catch (Exception ex) {
-                            errors.append(ex).append("\n");
-                        }
-                        if (id1 != null) {
-                            return id1;
-                        }
-                    }
-                }
-            }
-            throw new NutsNotFoundException(id.toString(), errors.toString(), null);
-        } else {
-            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
-            Iterator<NutsId> allVersions = findVersions(id, filter, session);
-
-            NutsId a = null;
-            while (allVersions.hasNext()) {
-                NutsId next = allVersions.next();
-                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
-                    a = next;
-                }
-            }
-            if (a == null) {
-                throw new NutsNotFoundException(id.toString());
-            }
-            return a;
         }
+        StringBuilder errors = new StringBuilder();
+        if (session.isTransitive()) {
+            NutsSession transitiveSession = session.copy().setTransitive(true);
+            for (NutsRepository repo : getMirrors()) {
+                int sup = 0;
+                try {
+                    sup = repo.getSupportLevel(id, transitiveSession);
+                } catch (Exception ex) {
+                    errors.append(ex.toString()).append("\n");
+                }
+
+                if (sup > 0) {
+                    NutsId id1 = null;
+                    try {
+                        id1 = repo.resolveId(id, session);
+                        if (id1 != null) {
+                            NutsDescriptor desc = repo.fetchDescriptor(id1, session);
+                            desc.write(localDescFile);
+                        }
+                    } catch (Exception ex) {
+                        errors.append(ex).append("\n");
+                    }
+                    if (id1 != null) {
+                        return id1;
+                    }
+                }
+            }
+        }
+        throw new NutsNotFoundException(id.toString(), errors.toString(), null);
     }
 
     @Override

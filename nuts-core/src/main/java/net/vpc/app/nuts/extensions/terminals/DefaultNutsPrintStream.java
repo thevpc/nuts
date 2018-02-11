@@ -42,7 +42,6 @@ import java.util.Locale;
  */
 public class DefaultNutsPrintStream extends NutsPrintStream {
 
-    private boolean enableColoring = true;
     private Color color;
 
     public DefaultNutsPrintStream() {
@@ -83,25 +82,26 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
 
     public DefaultNutsPrintStream setColor(Color color) {
         this.color = color;
-        if (enableColoring) {
+        if (isColorEnabled()) {
             applyColor(color);
         }
         return this;
     }
 
-    public DefaultNutsPrintStream setEnableColoring(boolean enableColoring) {
-        this.enableColoring = enableColoring;
-        if (enableColoring) {
+    @Override
+    public void setColorEnabled(boolean colorEnabled) {
+        super.setColorEnabled(colorEnabled);
+        if (colorEnabled) {
             applyColor(color);
         }
-        return this;
     }
 
+    @Override
     protected void applyColor(Color color) {
     }
 
     private void doWithColor(Color col, Runnable runnable) {
-        if (enableColoring && col != null) {
+        if (isColorEnabled() && col != null) {
             Color c = color;
             try {
                 setColor(col);
@@ -684,18 +684,12 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return this;
     }
 
-    public void writeRaw(String s) {
-        boolean c = enableColoring;
-        enableColoring = false;
-        super.print(s);
-        enableColoring = c;
-    }
-
     public void drawln(String text) {
         draw(text);
         println();
     }
 
+    @Override
     public void draw(NutsTextChunck chunk) {
         if (chunk == null) {
             chunk = NutsTextChunck.NULL;

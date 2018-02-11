@@ -123,7 +123,7 @@ public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
             s = escapes.get(null);
         }
         if (s != null) {
-            writeRaw(s);
+            super.print(s);
         }
     }
 

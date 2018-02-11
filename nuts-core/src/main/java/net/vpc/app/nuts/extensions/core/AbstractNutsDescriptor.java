@@ -37,84 +37,37 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import java.io.*;
 import java.util.*;
-import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.parseNutsId;
 
 /**
  * Created by vpc on 2/19/17.
  */
 public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
+    @Override
     public boolean matchesEnv(String arch, String os, String dist, String platform) {
-        NutsId _arch = CoreNutsUtils.parseNullableOrErrorNutsId(arch);
-        NutsId _os = CoreNutsUtils.parseNullableOrErrorNutsId(os);
-        NutsId _dist = CoreNutsUtils.parseNullableOrErrorNutsId(dist);
-        NutsId _platform = CoreNutsUtils.parseNullableOrErrorNutsId(platform);
-        boolean ok;
-        if (_arch != null && getArch().length > 0) {
-            ok = false;
-            for (String x : getArch()) {
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(x);
-                if (y.isSameFullName(_arch)) {
-                    if (y.getVersion().toFilter().accept(_arch.getVersion())) {
-                        ok = true;
-                        break;
-                    }
-                }
-            }
-            if (!ok) {
-                return false;
-            }
+        if (!matchesArch(arch)) {
+            return false;
         }
-        if (_os != null && getOs().length > 0) {
-            ok = false;
-            for (String x : getOs()) {
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(x);
-                if (y.isSameFullName(_os)) {
-                    if (y.getVersion().toFilter().accept(_os.getVersion())) {
-                        ok = true;
-                        break;
-                    }
-                }
-            }
-            if (!ok) {
-                return false;
-            }
+        if (!matchesOs(os)) {
+            return false;
         }
-
-        if (_dist != null && getOsdist().length > 0) {
-            ok = false;
-            for (String x : getOsdist()) {
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(x);
-                if (y.isSameFullName(_dist)) {
-                    if (y.getVersion().toFilter().accept(_dist.getVersion())) {
-                        ok = true;
-                        break;
-                    }
-                }
-            }
-            if (!ok) {
-                return false;
-            }
+        if (!matchesOsdist(dist)) {
+            return false;
         }
-
-        if (_platform != null && getPlatform().length > 0) {
-            ok = false;
-            for (String x : getPlatform()) {
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(x);
-                if (y.isSameFullName(_platform)) {
-                    if (y.getVersion().toFilter().accept(_platform.getVersion())) {
-                        ok = true;
-                        break;
-                    }
-                }
-            }
-            return ok;
+        if (!matchesPlatform(platform)) {
+            return false;
         }
         return true;
     }
 
     @Override
     public boolean matchesPackaging(String packaging) {
+        if (CoreStringUtils.isEmpty(packaging)) {
+            return true;
+        }
+        if (CoreStringUtils.isEmpty(getPackaging())) {
+            return true;
+        }
         NutsId _v = CoreNutsUtils.parseNutsId(packaging);
         NutsId _v2 = CoreNutsUtils.parseNutsId(getPackaging());
         if (_v == null || _v2 == null) {
@@ -130,10 +83,16 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesArch(String arch) {
+        if (CoreStringUtils.isEmpty(arch)) {
+            return true;
+        }
         NutsId _v = CoreNutsUtils.parseNutsId(arch);
         String[] all = getArch();
-        if (all != null) {
+        if (all != null && all.length > 0) {
             for (String v : all) {
+                if (CoreStringUtils.isEmpty(v)) {
+                    return true;
+                }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
@@ -143,16 +102,22 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             }
             return false;
         } else {
-            return _v == null;
+            return true;
         }
     }
 
     @Override
     public boolean matchesOs(String os) {
+        if (CoreStringUtils.isEmpty(os)) {
+            return true;
+        }
         NutsId _v = CoreNutsUtils.parseNutsId(os);
         String[] all = getOs();
-        if (all != null) {
+        if (all != null && all.length > 0) {
             for (String v : all) {
+                if (CoreStringUtils.isEmpty(v)) {
+                    return true;
+                }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
@@ -162,16 +127,22 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             }
             return false;
         } else {
-            return _v == null;
+            return true;
         }
     }
 
     @Override
     public boolean matchesOsdist(String osdist) {
+        if (CoreStringUtils.isEmpty(osdist)) {
+            return true;
+        }
         NutsId _v = CoreNutsUtils.parseNutsId(osdist);
         String[] all = getOsdist();
-        if (all != null) {
+        if (all != null && all.length > 0) {
             for (String v : all) {
+                if (CoreStringUtils.isEmpty(v)) {
+                    return true;
+                }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
@@ -181,18 +152,28 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             }
             return false;
         } else {
-            return _v == null;
+            return true;
         }
 
     }
 
     @Override
     public boolean matchesPlatform(String platform) {
+        if (CoreStringUtils.isEmpty(platform)) {
+            return true;
+        }
         NutsId _v = CoreNutsUtils.parseNutsId(platform);
         String[] all = getPlatform();
-        if (all != null) {
+        if (all != null && all.length > 0) {
             for (String v : all) {
+                if (CoreStringUtils.isEmpty(v)) {
+                    return true;
+                }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                if (y.getFullName().equals("java")) {
+                    //should accept any platform !!!
+                    return true;
+                }
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
@@ -201,7 +182,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             }
             return false;
         } else {
-            return _v == null;
+            return true;
         }
     }
 

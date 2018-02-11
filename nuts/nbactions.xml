@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
         <action>
+            <actionName>CUSTOM-Run Project External</actionName>
+            <displayName>Run Project External</displayName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-e /usr/java/latest/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Main console</exec.args>
+                <exec.executable>/usr/bin/konsole</exec.executable>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-Debug project external</actionName>
+            <displayName>Debug project external</displayName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-e -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName}</exec.args>
+                <exec.executable>/usr/bin/konsole</exec.executable>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-Profile Project external</actionName>
+            <displayName>Profile Project external</displayName>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --perf console</exec.args>
+                <exec.executable>java</exec.executable>
+            </properties>
+        </action>
+        <action>
             <actionName>debug</actionName>
             <packagings>
                 <packaging>jar</packaging>
@@ -10,8 +48,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-e java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Main --perf console</exec.args>
-                <exec.executable>konsole</exec.executable>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --version</exec.args>
+                <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
         </action>
@@ -25,7 +63,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Main --perf console</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --version</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -39,21 +77,9 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Main --perf console</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --version</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
-        <action>
-            <actionName>CUSTOM-Run Project External</actionName>
-            <displayName>Run Project External</displayName>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>-e /usr/java/latest/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Main console</exec.args>
-                <exec.executable>/usr/bin/konsole</exec.executable>
-                <jpda.listen>true</jpda.listen>
-            </properties>
-        </action>
+        
     </actions>

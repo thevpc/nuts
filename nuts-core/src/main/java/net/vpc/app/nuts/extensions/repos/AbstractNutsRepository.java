@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.core.NutsSecurityEntityConfigImpl;
 import net.vpc.app.nuts.extensions.core.NutsUserInfoImpl;
+import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
 
 /**
  * Created by vpc on 1/18/17.
@@ -634,13 +635,33 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
         checkAllowedFetch(session, id.setFace("content"));
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Resolve " + id);
-        NutsId id2 = resolveIdImpl(id, session);
-        if (id2 == null) {
-            throw new NutsNotFoundException(id);
+
+        String versionString = id.getVersion().getValue();
+        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
+            NutsId id2 = resolveIdImpl(id, session);
+            if (id2 == null) {
+                throw new NutsNotFoundException(id);
+            }
+            return id2;
+        } else {
+            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
+            Iterator<NutsId> allVersions = findVersions(id, filter, session);
+
+            NutsId a = null;
+            while (allVersions.hasNext()) {
+                NutsId next = allVersions.next();
+                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+                    a = next;
+                }
+            }
+            if (a == null) {
+                throw new NutsNotFoundException(id.toString());
+            }
+            return a;
         }
-        return id2;
     }
 
+    @Override
     public NutsFile fetch(NutsId id, NutsSession session) {
         checkSession(session);
         if (!isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
@@ -721,6 +742,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected abstract NutsFile fetchImpl(NutsId id, NutsSession session);
 
+    /**
+     * resolve static version id!!
+     * @param id
+     * @param session
+     * @return 
+     */
     protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
 
     protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session);

@@ -59,10 +59,9 @@ public class NutsHttpServlet extends HttpServlet {
     private NutsHttpServletFacade facade;
     private String serverId = "";
     private String workspaceLocation = null;
-    private String workspaceRootLocation = null;
-    private String workspaceBootId = null;
-    private String workspaceBootVersion = null;
-    private String workspaceRootURL = null;
+    private String root = null;
+    private String runtimeId = null;
+    private String runtimeSourceURL = null;
     private int adminServerPort = -1;
     private Map<String, String> workspaces = new HashMap<>();
     private boolean adminServer = true;
@@ -73,10 +72,12 @@ public class NutsHttpServlet extends HttpServlet {
         super.init();
         Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
-        NutsWorkspace workspace = null;
-        DefaultNutsBootWorkspace bws = null;
-        bws = new DefaultNutsBootWorkspace(workspaceRootLocation, workspaceBootId, workspaceBootVersion, workspaceRootURL, null);
-        workspace = bws.openWorkspace(workspaceLocation, new NutsWorkspaceCreateOptions()
+        NutsBootWorkspace bws = Nuts.openBootWorkspace(
+                new NutsBootOptions().setRoot(root)
+                        .setRuntimeId(runtimeId)
+                        .setRuntimeSourceURL(runtimeSourceURL)
+        );
+        NutsWorkspace workspace = bws.openWorkspace(workspaceLocation, new NutsWorkspaceCreateOptions()
                 .setCreateIfNotFound(true)
                 .setSaveIfCreated(true)
                 .setArchetype("server")
@@ -139,15 +140,14 @@ public class NutsHttpServlet extends HttpServlet {
         if (adminServer) {
             log.info("Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? NutsConstants.DEFAULT_HTTP_SERVER_PORT : adminServerPort));
         }
-        adminServerPort = CoreStringUtils.parseInt(config.getInitParameter("admin-server.port"), -1);
-        workspaceLocation = config.getInitParameter("workspace");
-        workspaceRootLocation = config.getInitParameter("workspace-root");
-        workspaceBootId = config.getInitParameter("boot-id");
-        workspaceBootVersion = config.getInitParameter("boot-version");
-        workspaceRootURL = config.getInitParameter("boot-url");
-        adminServer = Boolean.valueOf(config.getInitParameter("admin"));
+        adminServerPort = CoreStringUtils.parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
+        workspaceLocation = config.getInitParameter("nuts-workspace-location");
+        root = config.getInitParameter("nuts-workspace-root");
+        runtimeId = config.getInitParameter("nuts-runtime-id");
+        runtimeSourceURL = config.getInitParameter("nuts-source-url");
+        adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
-            workspaces = CoreJsonUtils.get().deserializeStringsMap(CoreJsonUtils.get().loadJsonStructure(config.getInitParameter("workspaces")), new LinkedHashMap<String, String>());
+            workspaces = CoreJsonUtils.get().deserializeStringsMap(CoreJsonUtils.get().loadJsonStructure(config.getInitParameter("nuts-workspaces-map")), new LinkedHashMap<String, String>());
         } catch (Exception e) {
             //
         }

@@ -153,10 +153,6 @@ public class NutsTextParser {
         }
         return sb.toString();
     }
-    public static void main(String[] args) {
-        List<NutsTextChunck> sss = new NutsTextParser().parse("==identities== : NONE");
-        System.out.println(sss);
-    }
 
     public List<NutsTextChunck> parse(String text) {
         List<NutsTextChunck> found = new ArrayList<>();

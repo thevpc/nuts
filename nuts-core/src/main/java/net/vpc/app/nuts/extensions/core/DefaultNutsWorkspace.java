@@ -752,9 +752,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         // check runtime value
         try {
             String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
-            URL resource = Main.class.getResource(urlPath);
+            URL resource = Nuts.class.getResource(urlPath);
             if (resource != null) {
-                runtimeURL = CorePlatformUtils.resolveURLFromResource(Main.class, urlPath);
+                runtimeURL = CorePlatformUtils.resolveURLFromResource(Nuts.class, urlPath);
                 oldId = baseId.setVersion(CoreIOUtils.loadProperties(resource).getProperty("version", "0.0.0"));
                 runtime = true;
             }
@@ -764,9 +764,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (oldId == null) {
             try {
                 String urlPath = "/META-INF/nuts/" + baseId.getGroup() + "/" + baseId.getName() + "/nuts.properties";
-                URL resource = Main.class.getResource(urlPath);
+                URL resource = Nuts.class.getResource(urlPath);
                 if (resource != null) {
-                    runtimeURL = CorePlatformUtils.resolveURLFromResource(Main.class, urlPath);
+                    runtimeURL = CorePlatformUtils.resolveURLFromResource(Nuts.class, urlPath);
                     oldId = baseId.setVersion(CoreIOUtils.loadProperties(resource).getProperty("project.version", "0.0.0"));
                     runtime = true;
                 }
@@ -1909,9 +1909,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         try {
             NutsId baseId = CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID);
             String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
-            URL resource = Main.class.getResource(urlPath);
+            URL resource = Nuts.class.getResource(urlPath);
             if (resource != null) {
-                URL runtimeURL = CorePlatformUtils.resolveURLFromResource(Main.class, urlPath);
+                URL runtimeURL = CorePlatformUtils.resolveURLFromResource(Nuts.class, urlPath);
                 return CorePlatformUtils.resolveLocalFileFromURL(runtimeURL);
             }
         } catch (Exception e) {
@@ -2035,7 +2035,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         map.put("nuts.workspace-boot.id", workspaceBootId.toString());
         map.put("nuts.workspace-runtime.id", getWorkspaceRuntimeId().toString());
         map.put("nuts.workspace-runtime.version", getWorkspaceRuntimeId().getVersion().toString());
-        map.put("nuts.boot.target-workspace", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, workspaceRoot));
+        map.put("nuts.workspace-location", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, workspaceRoot));
         return map;
     }
 
@@ -2055,7 +2055,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 }
             }
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
+            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
         }
         if (help == null) {
             help = "no help found";

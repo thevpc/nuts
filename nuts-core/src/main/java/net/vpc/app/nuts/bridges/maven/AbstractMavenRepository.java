@@ -30,12 +30,10 @@
 package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
 import net.vpc.app.nuts.extensions.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.extensions.util.*;
 
 import java.io.*;
-import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -221,36 +219,16 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     @Override
     public NutsId resolveIdImpl(NutsId id, NutsSession session) {
-        String versionString = id.getVersion().getValue();
-        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
-            try {
-                NutsSession transitiveSession = session.copy().setTransitive(true);
-                NutsDescriptor d = fetchDescriptor(id, transitiveSession);
-                if (d != null) {
-                    return id;
-                }
-            } catch (Exception ex) {
-                //not found
+        try {
+            NutsSession transitiveSession = session.copy().setTransitive(true);
+            NutsDescriptor d = fetchDescriptor(id, transitiveSession);
+            if (d != null) {
+                return id;
             }
-            throw new NutsNotFoundException(id);
-        } else {
-//            CoreNutsUtils.And(
-//                    CoreNutsUtils.createNutsDescriptorFilter(id.getQueryMap())
-//            )
-            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
-            Iterator<NutsId> allVersions = findVersions(id, filter, session);
-            NutsId a = null;
-            while (allVersions.hasNext()) {
-                NutsId next = allVersions.next();
-                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
-                    a = next;
-                }
-            }
-            if (a == null) {
-                throw new NutsNotFoundException(id);
-            }
-            return a;
+        } catch (Exception ex) {
+            //not found
         }
+        throw new NutsNotFoundException(id);
     }
 
 }
