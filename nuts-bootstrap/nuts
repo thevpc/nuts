@@ -117,7 +117,7 @@ if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
     JAVA_PREFIX="$NUTS_JAVA_HOME/bin/java";
 fi
 
-if [ x"$nuts_shell_verbose" != x"1" ] ; then
+if [ x"$nuts_shell_verbose" == x"1" ] ; then
     echo "Nuts Source  : $NUTS_FILE_SOURCE"
     echo "Nuts Command : $JAVA_CMD -jar $BOOT_NUTS_FILE $*"
 fi

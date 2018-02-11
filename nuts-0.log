@@ -1,4 +1,0 @@
-Sun Feb 11 23:24:27 CET 2018 SEVERE net.vpc.app.nuts.bridges.maven.MavenFolderRepository$1: Unable to fetch Valid Nuts from /home/vpc/.m2/repository/tn/tt/project/TOM/Smartt/Smartt-Light-Stub/1.0/Smartt-Light-Stub-1.0.pom : resolved id was null
-Sun Feb 11 23:24:27 CET 2018 SEVERE net.vpc.app.nuts.bridges.maven.MavenFolderRepository$1: Unable to fetch Valid Nuts from /home/vpc/.m2/repository/tn/tt/project/TOM/Smartt/1.0/Smartt-Light-Stub-1.0.pom : resolved id was null
-Sun Feb 11 23:24:54 CET 2018 SEVERE net.vpc.app.nuts.bridges.maven.MavenFolderRepository$1: Unable to fetch Valid Nuts from /home/vpc/.m2/repository/tn/tt/project/TOM/Smartt/Smartt-Light-Stub/1.0/Smartt-Light-Stub-1.0.pom : resolved id was null
-Sun Feb 11 23:24:54 CET 2018 SEVERE net.vpc.app.nuts.bridges.maven.MavenFolderRepository$1: Unable to fetch Valid Nuts from /home/vpc/.m2/repository/tn/tt/project/TOM/Smartt/1.0/Smartt-Light-Stub-1.0.pom : resolved id was null
