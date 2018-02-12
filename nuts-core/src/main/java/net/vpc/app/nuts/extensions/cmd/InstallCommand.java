@@ -109,15 +109,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                 context.getTerminal().getOut().println("File " + s + " deployed successfully as " + deployedId);
                                 s = deployedId.toString();
                             }
-                            NutsFile file = context.getValidWorkspace().install(s, context.getSession());
-                            logInstallStatus(file, context.getTerminal());
-                            if (file.isInstalled()) {
-                                if (force) {
-                                    context.getValidWorkspace().uninstall(s, context.getSession());
-                                    file = context.getValidWorkspace().install(s, context.getSession());
-                                    logInstallStatus(file, context.getTerminal());
-                                }
-                            }
+                            logInstallStatus(s, context, force);
                         }
                     }
                 }
@@ -127,7 +119,18 @@ public class InstallCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private void logInstallStatus(NutsFile file, NutsTerminal terminal) {
+    private NutsFile logInstallStatus(String s, NutsCommandContext context, boolean force) {
+        NutsTerminal terminal = context.getTerminal();
+        NutsFile file = null;
+        try {
+            file = context.getValidWorkspace().install(s, force, context.getSession());
+        } catch (NutsAlreadytInstalledException ex) {
+            terminal.getOut().println(s + " already installed");
+            return null;
+        } catch (NutsNotInstallableException ex) {
+            terminal.getOut().println(s + " requires no installation. It should be usable as is.");
+            return null;
+        }
         if (!file.isInstalled()) {
             if (!file.isCached()) {
                 if (file.isTemporary()) {
@@ -143,7 +146,8 @@ public class InstallCommand extends AbstractNutsCommand {
                 }
             }
         } else {
-            terminal.getOut().println(file.getId() + " already installed");
+            terminal.getOut().println(file.getId() + " installed successfully");
         }
+        return file;
     }
 }

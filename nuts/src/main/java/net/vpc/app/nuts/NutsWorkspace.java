@@ -115,7 +115,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsSession session);
 
-    NutsFile install(String id, NutsSession session);
+    NutsFile install(String id,boolean force, NutsSession session);
 
     NutsFile checkout(String id, File folder, NutsSession session);
 

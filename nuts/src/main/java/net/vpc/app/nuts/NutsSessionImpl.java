@@ -124,4 +124,10 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
         this.terminal = terminal;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "NutsSession(" + "transitive=" + transitive + ", fetchMode=" + fetchMode + ", properties=" + properties + '}';
+    }
+
 }

@@ -652,13 +652,23 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsFile install(String id, NutsSession session) {
+    public NutsFile install(String id, boolean force, NutsSession session) {
         session = validateSession(session);
         if (!isAllowed(NutsConstants.RIGHT_INSTALL)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_INSTALL);
         }
         NutsFile nutToInstall = fetchWithDependencies(id, session);
-        if (nutToInstall != null && nutToInstall.getFile() != null && !nutToInstall.isInstalled()) {
+        if (nutToInstall != null && nutToInstall.getFile() != null) {
+            if (nutToInstall.isInstalled()) {
+                if (!force) {
+                    throw new NutsAlreadytInstalledException(nutToInstall.getId());
+                }
+            }
+            if (!isInstallable(nutToInstall, session)) {
+                if (!force) {
+                    throw new NutsNotInstallableException(nutToInstall.getId());
+                }
+            }
             postInstall(nutToInstall, session);
         }
         return nutToInstall;
@@ -2723,6 +2733,20 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         workspace = resolveWorkspacePath(workspace);
         File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_FILE);
         if (file.isFile() && file.exists()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isInstallable(NutsFile nutToInstall, NutsSession session) {
+        session = validateSession(session);
+        if (nutToInstall != null && nutToInstall.getFile() != null) {
+            NutsDescriptor descriptor = nutToInstall.getDescriptor();
+            NutsExecutorDescriptor installer = descriptor.getInstaller();
+            NutsInstallerComponent nutsInstallerComponent = getInstaller(nutToInstall, session);
+            if (nutsInstallerComponent == null) {
+                return false;
+            }
             return true;
         }
         return false;

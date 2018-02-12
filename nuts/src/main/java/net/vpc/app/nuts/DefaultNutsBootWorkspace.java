@@ -118,7 +118,11 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
         if (nutsWorkspace == null) {
             //should never happen
-            throw new NutsInvalidWorkspaceException(workspace, "Unable to load Workspace Component from ClassPath");
+            System.err.println("Unable to load Workspace Component from ClassPath : ");
+            for (URL url : urls) {
+                System.err.println("\t" + url);
+            }
+            throw new NutsInvalidWorkspaceException(workspace, "Unable to load Workspace Component from ClassPath : " + Arrays.asList(urls));
         }
         nutsWorkspaceImpl.initializeWorkspace(this, factoryInstance, getBootId(), workspaceClassPath.getId().toString(), workspace, workspaceClassLoader, options.copy().setIgnoreIfFound(true));
         return nutsWorkspace;
@@ -157,7 +161,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     }
 
     private WorkspaceClassPath loadWorkspaceClassPath(boolean first) {
-        WorkspaceNutsId _runtimeId = WorkspaceNutsId.parse( getRuntimeId());
+        WorkspaceNutsId _runtimeId = WorkspaceNutsId.parse(getRuntimeId());
         File localCurrent = getBootFile(_runtimeId.getGroupId(), _runtimeId.getArtifactId(), _runtimeId.getVersion(), "properties");
         List<WorkspaceClassPath> all = new ArrayList<>();
         if (localCurrent != null && localCurrent.exists()) {
@@ -371,8 +375,8 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     private File getBootFile(String groupId, String artifactId, String version, String ext, String repository, File cacheFolder, boolean useCache) {
         repository = repository.trim();
-        if(version==null || version.length()==0){
-            version="LATEST";
+        if (version == null || version.length() == 0) {
+            version = "LATEST";
         }
         String path = groupId.replace('.', '/') + '/' + artifactId + '/' + version + "/" + artifactId + "-" + version + "." + ext;
         if (useCache && cacheFolder != null) {
@@ -408,7 +412,10 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 }
             }
             if (repoFolder.isDirectory()) {
-                return new File(repoFolder, path.replace('/', File.separatorChar));
+                File file = new File(repoFolder, path.replace('/', File.separatorChar));
+                if (file.isFile()) {
+                    return file;
+                }
             } else {
                 log.log(Level.SEVERE, "repository is not a valid folder : " + repoFolder);
             }

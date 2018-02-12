@@ -89,7 +89,7 @@
             <plugin>
                 <groupId>net.vpc.common.maven</groupId>
                 <artifactId>writer-maven-plugin</artifactId>
-                <version>1.0.3</version>
+                <version>1.0.4</version>
                 <configuration>
                     <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties</outputFile>
                 </configuration>

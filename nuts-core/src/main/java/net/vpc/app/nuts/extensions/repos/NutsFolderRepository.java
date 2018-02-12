@@ -639,12 +639,12 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
             throw new NutsNotFoundException(id.toString(), errors.toString(), null);
         } else {
-            if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            //if (session.getFetchMode() != NutsFetchMode.REMOTE) {
                 NutsDescriptor desc = CoreNutsUtils.parseNutsDescriptor(localFile);
                 NutsId ed = getWorkspace().resolveEffectiveId(desc, session);
                 return new NutsFile(ed, desc, localFile, true, false, null);
-            }
-            throw new NutsNotFoundException(id.toString());
+            //
+            //throw new NutsNotFoundException(id.toString());
         }
     }
 
