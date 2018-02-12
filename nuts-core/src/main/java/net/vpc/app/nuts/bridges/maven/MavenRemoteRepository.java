@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.DefaultInputStreamMonitor;
 
 /**
  * Created by vpc on 1/15/17.
@@ -76,7 +78,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             String metadataURL = CoreIOUtils.buildUrl(getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
             log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
             try {
-                metadataStream = openStream(metadataURL);
+                metadataStream = openStream(metadataURL, id.setFace("maven-metadata"), session);
             } catch (Exception ex) {
                 throw new NutsNotFoundException(id);
             }
@@ -115,7 +117,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         String url = CoreIOUtils.buildUrl(getLocation(), "/archetype-catalog.xml");
         log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'archetype-catalog\'", 20), url});
-        return parseArchetypeCatalog(openStream(url), filter);
+        return parseArchetypeCatalog(openStream(url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getLocation()).setFace("archetype-catalog"), session), filter);
     }
 
     @Override
@@ -253,10 +255,17 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected InputStream openStream(String path) {
+    protected InputStream openStream(String path, Object source, NutsSession session) {
         InputStream stream = null;
+        long size = -1;
         try {
-            stream = CoreHttpUtils.getHttpClientFacade(getWorkspace(), path).open();
+            NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(getWorkspace(), path);
+            try {
+                size = f.length();
+            } catch (Exception ex) {
+                //ignore error
+            }
+            stream = f.open();
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
@@ -269,7 +278,30 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         } else {
             log.log(Level.FINEST, "downloading url failed : {0}", new Object[]{path});
         }
-        return stream;
+        boolean monitorable = true;
+        if (source instanceof NutsId) {
+            NutsId d = (NutsId) source;
+            if ("maven-metadata".equals(d.getFace())) {
+                monitorable = false;
+            }
+            if ("archetype-catalog".equals(d.getFace())) {
+                monitorable = false;
+            }
+            if ("descriptor".equals(d.getFace())) {
+                monitorable = false;
+            }
+            if ("main-sha1".equals(d.getFace())) {
+                monitorable = false;
+            }
+            if ("descriptor-sha1".equals(d.getFace())) {
+                monitorable = false;
+            }
+        }
+        NutsPrintStream out = session.getTerminal().getOut();
+        if (!monitorable) {
+            return stream;
+        }
+        return CoreIOUtils.monitor(stream, source, String.valueOf(source), size, new DefaultInputStreamMonitor(out));
     }
 
     @Override

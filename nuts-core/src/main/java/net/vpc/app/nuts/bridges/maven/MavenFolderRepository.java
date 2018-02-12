@@ -50,7 +50,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected InputStream openStream(String path) {
+    protected InputStream openStream(String path, Object source, NutsSession session) {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
@@ -59,12 +59,12 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected String getStreamSHA1(NutsId id, String extension) {
-        return CoreSecurityUtils.evalSHA1(getStream(id, extension), true);
+    protected String getStreamSHA1(NutsId id, String extension, String face, NutsSession session) {
+        return CoreSecurityUtils.evalSHA1(getStream(id, extension, "package-sha1", session), true);
     }
 
     @Override
-    protected void checkSHA1Hash(NutsId id, String extension, InputStream stream) {
+    protected void checkSHA1Hash(NutsId id, String extension, String face, InputStream stream, NutsSession session) {
         try {
             stream.close();
         } catch (IOException e) {

@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 /**
  * Created by vpc on 1/21/17.
@@ -68,6 +69,11 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         @Override
         public InputStream open() throws IOException {
             return url.openStream();
+        }
+        
+        @Override
+        public long length() throws IOException {
+            return CoreIOUtils.getURLSize(url);
         }
 
         public InputStream upload(NutsTransportParamPart... parts) throws IOException {

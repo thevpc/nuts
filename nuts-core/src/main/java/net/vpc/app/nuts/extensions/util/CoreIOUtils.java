@@ -31,13 +31,12 @@ package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
-import org.objectweb.asm.*;
 
 import java.io.*;
-import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -957,6 +956,41 @@ public class CoreIOUtils {
         } catch (IOException e) {
             return path.getAbsoluteFile();
         }
+    }
+
+    public static void main(String[] args) {
+        try {
+            copy(
+                    monitor(new FileInputStream("/home/vpc/data-vpc/VM/horton-works/HDP_2.5_virtualbox.ova"), null, null, -1, null),
+                    new FileOutputStream("/home/vpc/data-vpc/VM/horton-works/HDP_2.5_virtualbox.ova.2"),
+                    true,
+                    true
+            );
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CoreIOUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static int getURLSize(URL url) {
+        URLConnection conn = null;
+        try {
+            conn = url.openConnection();
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).setRequestMethod("HEAD");
+            }
+            conn.getInputStream();
+            return conn.getContentLength();
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        } finally {
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).disconnect();
+            }
+        }
+    }
+
+    public static InputStream monitor(InputStream from, Object source, String sourceName, long length, InputStreamMonitor monitor) {
+        return new MonitoredInputStream(from, source, sourceName, length, monitor);
     }
 
     public static void copy(InputStream from, File to, boolean mkdirs, boolean closeInput) {

@@ -52,27 +52,27 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected abstract String getPath(NutsId id, String extension);
 
-    protected InputStream getStream(NutsId id, String extension) {
+    protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
 //        if (url.startsWith("http")) {
 //            System.out.printf("Why");
 //        }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " downloading maven " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
-        return openStream(url);
+        return openStream(url, id.setFace(face), session);
     }
 
-    protected String getStreamAsString(NutsId id, String extension) {
+    protected String getStreamAsString(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
 //        if (url.startsWith("http")) {
 //            System.out.printf("Why");
 //        }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " downloading maven " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
-        return CoreIOUtils.readStreamAsString(openStream(url), true);
+        return CoreIOUtils.readStreamAsString(openStream(url, id.setFace(face), session), true);
     }
 
-    protected void checkSHA1Hash(NutsId id, String extension, InputStream stream) throws IOException {
+    protected void checkSHA1Hash(NutsId id, String extension, String face, InputStream stream, NutsSession session) throws IOException {
         try {
-            String rhash = getStreamSHA1(id, extension);
+            String rhash = getStreamSHA1(id, extension, face, session);
             String lhash = CoreSecurityUtils.evalSHA1(stream, true);
             if (!rhash.equals(lhash)) {
                 throw new IOException("Invalid file hash " + id);
@@ -82,8 +82,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
     }
 
-    protected String getStreamSHA1(NutsId id, String extension) {
-        String hash = getStreamAsString(id, extension + ".sha1").toUpperCase();
+    protected String getStreamSHA1(NutsId id, String extension, String face, NutsSession session) {
+        String hash = getStreamAsString(id, extension + ".sha1", face, session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
@@ -92,7 +92,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputStream openStream(String path);
+    protected abstract InputStream openStream(String path, Object source, NutsSession session);
 
     @Override
     public boolean isSupportedMirroring() {
@@ -120,7 +120,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             NutsDescriptor nutsDescriptor = null;//parsePomXml(getStream(id, ".pom"), session);
             byte[] bytes = null;
             try {
-                stream = getStream(id, ".pom");
+                stream = getStream(id, ".pom", "descriptor", session);
                 bytes = CoreIOUtils.readStreamAsBytes(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
@@ -128,7 +128,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id, ".pom", new ByteArrayInputStream(bytes));
+            checkSHA1Hash(id, ".pom", null, new ByteArrayInputStream(bytes), session);
             String ext = resolveExtension(nutsDescriptor);
             File jar = new File(getPath(id, ext));
             nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(jar));
@@ -148,8 +148,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             if (localPath.isDirectory()) {
                 localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext));
             }
-            CoreIOUtils.copy(getStream(id, ext), localPath, true, true);
-            checkSHA1Hash(id, ext, new FileInputStream(localPath));
+            CoreIOUtils.copy(getStream(id, ext, "package", session), localPath, true, true);
+            checkSHA1Hash(id, ext, null, new FileInputStream(localPath), session);
             return localPath;
         } catch (NutsIOException ex) {
             throw new NutsNotFoundException(id.toString(), null, ex);
@@ -182,6 +182,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return ext;
     }
 
+    @Override
     public File copyDescriptorToImpl(NutsId id, NutsSession session, File localPath) {
         NutsDescriptor nutsDescriptor = fetchDescriptor(id, session);
         if (localPath.isDirectory()) {
@@ -193,7 +194,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     @Override
     public String fetchHashImpl(NutsId id, NutsSession session) {
-        return getStreamSHA1(id, ".jar");
+        return getStreamSHA1(id, ".jar", null, null);
     }
 
     @Override
@@ -202,7 +203,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         NutsDescriptor nutsDescriptor = null;
         try {
             try {
-                stream = getStream(id, ".pom");
+                stream = getStream(id, ".pom", "descriptor", session);
                 nutsDescriptor = MavenUtils.parsePomXml(stream);
             } finally {
                 if (stream != null) {
