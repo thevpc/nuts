@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.awt.*;
 import java.io.*;
 import java.util.Locale;
 
@@ -38,7 +37,7 @@ import java.util.Locale;
  */
 public class NutsPrintStream extends PrintStream implements NutsComponent<Object> {
 
-    private boolean colorEnabled = true;
+    private boolean formatEnabled = true;
 
     public NutsPrintStream() {
         super(NullOutputStream.INSTANCE);
@@ -72,68 +71,63 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         super(file, csn);
     }
 
-    public Color getColor() {
-        return null;
+    protected void startFormat(NutsTextFormat format) {
     }
 
-    public NutsPrintStream setColor(Color color) {
-        return this;
+    protected void endFormat(NutsTextFormat format) {
     }
 
-    protected void applyColor(Color color) {
-    }
-
-    private void doWithColor(Color col, Runnable runnable) {
+    private void doWithFormat(NutsTextFormat format, Runnable runnable) {
         runnable.run();
     }
 
-    public NutsPrintStream write(Color c, int b) {
+    public NutsPrintStream write(NutsTextFormat c, int b) {
         super.write(b);
         return this;
     }
 
-    public NutsPrintStream write(Color c, byte[] buf, int off, int len) {
+    public NutsPrintStream write(NutsTextFormat c, byte[] buf, int off, int len) {
         super.write(buf, off, len);
         return this;
     }
 
-    public NutsPrintStream print(Color c, boolean b) {
+    public NutsPrintStream print(NutsTextFormat c, boolean b) {
         super.print(b);
         return this;
     }
 
-    public NutsPrintStream print(Color color, char c) {
+    public NutsPrintStream print(NutsTextFormat format, char c) {
         super.print(c);
         return this;
     }
 
-    public NutsPrintStream print(Color c, int i) {
+    public NutsPrintStream print(NutsTextFormat c, int i) {
         super.print(i);
         return this;
     }
 
-    public NutsPrintStream print(Color c, long l) {
+    public NutsPrintStream print(NutsTextFormat c, long l) {
         super.print(l);
         return this;
     }
 
-    public NutsPrintStream print(Color c, float f) {
+    public NutsPrintStream print(NutsTextFormat c, float f) {
         super.print(f);
         return this;
     }
 
-    public NutsPrintStream print(Color c, double d) {
+    public NutsPrintStream print(NutsTextFormat c, double d) {
         super.print(d);
         return this;
     }
 
-    public NutsPrintStream print(Color c, char[] s) {
+    public NutsPrintStream print(NutsTextFormat c, char[] s) {
         super.print(s);
         return this;
     }
 
-    public NutsPrintStream print(Color c, final String s) {
-        doWithColor(c, new Runnable() {
+    public NutsPrintStream print(NutsTextFormat c, final String s) {
+        doWithFormat(c, new Runnable() {
             @Override
             public void run() {
                 NutsPrintStream.super.print(s);
@@ -142,23 +136,23 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         return this;
     }
 
-    public NutsPrintStream print(Color c, Object obj) {
+    public NutsPrintStream print(NutsTextFormat c, Object obj) {
         super.print(obj);
         return this;
     }
 
-    public NutsPrintStream println(Color c, boolean x) {
+    public NutsPrintStream println(NutsTextFormat c, boolean x) {
         super.println(x);
         return this;
     }
 
-    public NutsPrintStream println(Color c, char x) {
+    public NutsPrintStream println(NutsTextFormat c, char x) {
         super.println(x);
         return this;
     }
 
-    public NutsPrintStream println(Color c, final int x) {
-        doWithColor(c, new Runnable() {
+    public NutsPrintStream println(NutsTextFormat c, final int x) {
+        doWithFormat(c, new Runnable() {
             @Override
             public void run() {
                 NutsPrintStream.super.println(x);
@@ -167,66 +161,66 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         return this;
     }
 
-    public NutsPrintStream println(Color c, long x) {
+    public NutsPrintStream println(NutsTextFormat c, long x) {
         super.println(x);
         return this;
     }
 
-    public void println(Color c, float x) {
+    public void println(NutsTextFormat c, float x) {
         super.println(x);
     }
 
-    public NutsPrintStream println(Color c, double x) {
-        super.println(x);
-        return this;
-    }
-
-    public NutsPrintStream println(Color c, char[] x) {
+    public NutsPrintStream println(NutsTextFormat c, double x) {
         super.println(x);
         return this;
     }
 
-    public NutsPrintStream println(Color c, String x) {
+    public NutsPrintStream println(NutsTextFormat c, char[] x) {
         super.println(x);
         return this;
     }
 
-    public NutsPrintStream println(Color c, Object x) {
+    public NutsPrintStream println(NutsTextFormat c, String x) {
         super.println(x);
         return this;
     }
 
-    public PrintStream printf(Color c, String format, Object... args) {
+    public NutsPrintStream println(NutsTextFormat c, Object x) {
+        super.println(x);
+        return this;
+    }
+
+    public PrintStream printf(NutsTextFormat c, String format, Object... args) {
         super.printf(format, args);
         return this;
     }
 
-    public NutsPrintStream printf(Color c, Locale l, String format, Object... args) {
+    public NutsPrintStream printf(NutsTextFormat c, Locale l, String format, Object... args) {
         super.printf(l, format, args);
         return this;
     }
 
-    public NutsPrintStream format(Color c, String format, Object... args) {
+    public NutsPrintStream format(NutsTextFormat c, String format, Object... args) {
         super.format(format, args);
         return this;
     }
 
-    public NutsPrintStream format(Color c, Locale l, String format, Object... args) {
+    public NutsPrintStream format(NutsTextFormat c, Locale l, String format, Object... args) {
         super.format(l, format, args);
         return this;
     }
 
-    public NutsPrintStream append(Color c, CharSequence csq) {
+    public NutsPrintStream append(NutsTextFormat c, CharSequence csq) {
         super.append(csq);
         return this;
     }
 
-    public NutsPrintStream append(Color c, CharSequence csq, int start, int end) {
+    public NutsPrintStream append(NutsTextFormat c, CharSequence csq, int start, int end) {
         super.append(csq, start, end);
         return this;
     }
 
-    public NutsPrintStream append(Color color, char c) {
+    public NutsPrintStream append(NutsTextFormat format, char c) {
         super.append(c);
         return this;
     }
@@ -279,25 +273,7 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
     }
 
     public void draw(String text) {
-        if (text == null) {
-            text = "<<<null>>>";
-        }
-        java.util.List<NutsTextChunck> chunks = NutsTextParser.INSTANCE.parse(text);
-        for (NutsTextChunck e : chunks) {
-            draw(e);
-        }
-    }
-
-    public void draw(NutsTextChunck chunk) {
-        if (chunk == null) {
-            chunk = NutsTextChunck.NULL;
-        }
-        String s = chunk.getValue();
-        if (s == null) {
-            super.print("");
-        } else {
-            super.print(s);
-        }
+        print(text);
     }
 
     @Override
@@ -305,12 +281,12 @@ public class NutsPrintStream extends PrintStream implements NutsComponent<Object
         return BOOT_SUPPORT;
     }
 
-    public boolean isColorEnabled() {
-        return colorEnabled;
+    public boolean isFormatEnabled() {
+        return formatEnabled;
     }
 
-    public void setColorEnabled(boolean colorEnabled) {
-        this.colorEnabled = colorEnabled;
+    public void setFormatEnabled(boolean formatEnabled) {
+        this.formatEnabled = formatEnabled;
     }
 
 }

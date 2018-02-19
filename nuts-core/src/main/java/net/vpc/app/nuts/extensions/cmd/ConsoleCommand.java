@@ -52,12 +52,11 @@ public class ConsoleCommand extends AbstractNutsCommand {
             return -1;
         }
         NutsTerminal terminal = context.getTerminal();
-        terminal.getOut()
-                .append(NutsPrintColors.BLUE, "Nuts")
-                .append(" console (").append(NutsPrintColors.BLUE, "Network Updatable Things Services").append("), v")
-                .append(NutsPrintColors.BLUE, context.getValidWorkspace().getWorkspaceRuntimeId().getVersion().toString()).append(" (c) vpc 2017")
-                .println();
-
+        NutsPrintStream out = terminal.getOut();
+        out.drawln("**Nuts** console \\(**Network Updatable Things Services**\\) **v"
+                +context.getValidWorkspace().getWorkspaceRuntimeId().getVersion().toString()
+                +"** \\(c\\) vpc 2017");
+        
         NutsConsole commandLine = null;
         commandLine = context.getWorkspace().createConsole(context.getSession());
 

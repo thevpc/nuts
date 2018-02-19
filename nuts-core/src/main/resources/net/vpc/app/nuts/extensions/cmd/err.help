@@ -1,12 +1,12 @@
 shows the error message of the last command if was erroneous.
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 err [--trace]
 
 shows the error message of the last command if was erroneous
 when the --trace option is present will display the full stacktrace
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 err
    show the last error message

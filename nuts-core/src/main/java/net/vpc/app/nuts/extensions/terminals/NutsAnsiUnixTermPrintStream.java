@@ -29,60 +29,188 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import net.vpc.app.nuts.NutsPrintColors;
-
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import net.vpc.app.nuts.NutsTextFormat;
+import net.vpc.app.nuts.NutsTextFormats;
+import net.vpc.app.nuts.NutsTextFormatList;
 
 /**
  * Created by vpc on 2/20/17.
  */
 public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
 
-    public static final Color[] ALL_SUPPORTED_COLORS = new Color[]{
-        NutsPrintColors.BLACK,
-        NutsPrintColors.RED,
-        NutsPrintColors.BLUE,
-        NutsPrintColors.GREEN,
-        NutsPrintColors.CYAN,
-        NutsPrintColors.LIGHT_GRAY,
-        NutsPrintColors.LIGHT_BLUE,
-        NutsPrintColors.LIGHT_GREEN,
-        NutsPrintColors.LIGHT_CYAN,
-        NutsPrintColors.LIGHT_RED,
-        NutsPrintColors.LIGHT_PURPLE,
-        NutsPrintColors.DARK_GRAY,
-        NutsPrintColors.PURPLE,
-        NutsPrintColors.BROWN,
-        NutsPrintColors.YELLOW,
-        NutsPrintColors.WHITE
-    };
-
-    private Map<Color, String> escapes = new HashMap<>();
+//    public static final NutsTextFormat[] ALL_SUPPORTED_COLORS = new NutsTextFormat[]{
+//        NutsTextFormats.FG_BLACK,
+//        NutsTextFormats.FG_RED,
+//        NutsTextFormats.FG_BLUE,
+//        NutsTextFormats.FG_GREEN,
+//        NutsTextFormats.FG_CYAN,
+//        NutsTextFormats.FG_LIGHT_GRAY,
+//        NutsTextFormats.FG_LIGHT_BLUE,
+//        NutsTextFormats.FG_LIGHT_GREEN,
+//        NutsTextFormats.FG_LIGHT_CYAN,
+//        NutsTextFormats.FG_LIGHT_RED,
+//        NutsTextFormats.FG_LIGHT_PURPLE,
+//        NutsTextFormats.FG_DARK_GRAY,
+//        NutsTextFormats.FG_MAGENTA,
+//        NutsTextFormats.FG_BROWN,
+//        NutsTextFormats.FG_YELLOW,
+//        NutsTextFormats.FG_WHITE
+//    };
+    private final Map<NutsTextFormat, AnsiStyleStyleApplier> stylesAppliers = new HashMap<>();
 
     {
-        escapes.put(null, "\u001B[0m");
-        escapes.put(NutsPrintColors.BLACK, "\u001B[0;30m");
-        escapes.put(NutsPrintColors.BLUE, "\u001B[0;34m");
-        escapes.put(NutsPrintColors.GREEN, "\u001B[0;32m");
-        escapes.put(NutsPrintColors.CYAN, "\u001B[0;36m");
-        escapes.put(NutsPrintColors.RED, "\u001B[0;31m");
-        escapes.put(NutsPrintColors.PURPLE, "\u001B[0;35m");
-        escapes.put(NutsPrintColors.BROWN, "\u001B[0;35m");
-        escapes.put(NutsPrintColors.LIGHT_GRAY, "\u001B[0;37m");
-        escapes.put(NutsPrintColors.DARK_GRAY, "\u001B[1;30m");
-        escapes.put(NutsPrintColors.LIGHT_BLUE, "\u001B[1;34m");
-        escapes.put(NutsPrintColors.LIGHT_GREEN, "\u001B[1;32m");
-        escapes.put(NutsPrintColors.LIGHT_CYAN, "\u001B[1;36m");
-        escapes.put(NutsPrintColors.LIGHT_RED, "\u001B[1;31m");
-        escapes.put(NutsPrintColors.LIGHT_PURPLE, "\u001B[1;35m");
-        escapes.put(NutsPrintColors.YELLOW, "\u001B[1;35m");
-        escapes.put(NutsPrintColors.WHITE, "\u001B[1;35m");
+//        defineEscape(NutsTextFormats.FG_BLACK, "\u001B[0;30m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_RED, "\u001B[0;31m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_GREEN, "\u001B[0;32m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_BLUE, "\u001B[0;34m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_BROWN,  "\u001B[0;35m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_CYAN, "\u001B[0;36m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_LIGHT_GRAY, "\u001B[0;37m", "\u001B[0m");
+
+//        defineEscape(NutsTextFormats.FG_DARK_GRAY, "\u001B[1;30m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_LIGHT_BLUE, "\u001B[1;34m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_LIGHT_GREEN, "\u001B[1;32m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_LIGHT_RED, "\u001B[1;31m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_LIGHT_PURPLE, "\u001B[1;35m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_YELLOW, "\u001B[1;35m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.FG_WHITE, "\u001B[1;35m", "\u001B[0m");
+//        
+//        defineEscape(NutsTextFormats.BG_BLACK, "\u001B[0;30;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_BLUE, "\u001B[0;34;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_GREEN, "\u001B[0;32;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_CYAN, "\u001B[0;36;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_RED, "\u001B[0;31;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_MAGENTA, "\u001B[0;35;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_BROWN, "\u001B[0;35;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_LIGHT_GRAY, "\u001B[0;37;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_DARK_GRAY, "\u001B[1;30;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_LIGHT_BLUE, "\u001B[1;34;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_LIGHT_GREEN, "\u001B[1;32;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_LIGHT_CYAN, "\u001B[1;36;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_LIGHT_RED, "\u001B[1;31;1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.BG_LIGHT_PURPLE, "\u001B[1;35;1m", "\u001B[0m");
+        defineEscape(NutsTextFormats.FG_BLACK, new ForegroundStyleApplier("30", 0));
+        defineEscape(NutsTextFormats.FG_RED, new ForegroundStyleApplier("31", 0));
+        defineEscape(NutsTextFormats.FG_GREEN, new ForegroundStyleApplier("32", 0));
+        defineEscape(NutsTextFormats.FG_YELLOW, new ForegroundStyleApplier("33", 0));
+        defineEscape(NutsTextFormats.FG_BLUE, new ForegroundStyleApplier("34", 0));
+        defineEscape(NutsTextFormats.FG_MAGENTA, new ForegroundStyleApplier("35", 0));
+        defineEscape(NutsTextFormats.FG_CYAN, new ForegroundStyleApplier("36", 0));
+        defineEscape(NutsTextFormats.FG_WHITE, new ForegroundStyleApplier("37", 0));
+
+        defineEscape(NutsTextFormats.BG_BLACK, new BackgroundStyleApplier("40"));
+        defineEscape(NutsTextFormats.BG_RED, new BackgroundStyleApplier("41"));
+        defineEscape(NutsTextFormats.BG_GREEN, new BackgroundStyleApplier("42"));
+        defineEscape(NutsTextFormats.BG_YELLOW, new BackgroundStyleApplier("43"));
+        defineEscape(NutsTextFormats.BG_BLUE, new BackgroundStyleApplier("44"));
+        defineEscape(NutsTextFormats.BG_MAGENTA, new BackgroundStyleApplier("35"));
+        defineEscape(NutsTextFormats.BG_CYAN, new BackgroundStyleApplier("36"));
+        defineEscape(NutsTextFormats.BG_WHITE, new BackgroundStyleApplier("37"));
+        defineEscape(NutsTextFormats.UNDERLINED, new AnsiStyleStyleApplier() {
+            @Override
+            public AnsiStyle apply(AnsiStyle old) {
+                return old.setUnderlined(true);
+            }
+        });
+        defineEscape(NutsTextFormats.REVERSED, new AnsiStyleStyleApplier() {
+            @Override
+            public AnsiStyle apply(AnsiStyle old) {
+                return old.setReversed(true);
+            }
+        });
+        defineEscape(NutsTextFormats.MOVE_LINE_START, new AnsiStyleStyleApplier() {
+            @Override
+            public AnsiStyle apply(AnsiStyle old) {
+                return old.addCommand("\u001b[1000D");
+            }
+        });
+        defineEscape(NutsTextFormats.MOVE_UP, new AnsiStyleStyleApplier() {
+            @Override
+            public AnsiStyle apply(AnsiStyle old) {
+                return old.addCommand("\u001b[1A");
+            }
+        });
+
+//        defineEscape(NutsTextFormats.MOVE_LINE_START, "\u001B[1000D", "");
+//        defineEscape(NutsTextFormats.BOLD, "\u001b[1m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.UNDERLINED, "\u001b[4m", "\u001B[0m");
+//        defineEscape(NutsTextFormats.REVERSED, "\u001b[7m", "\u001B[0m");
+    }
+
+    public static void main(String[] args) {
+        System.out.println("\u001b[38;2;255;100;0mTRUECOLOR\u001b[0m\n");
+        NutsAnsiUnixTermPrintStream out = new NutsAnsiUnixTermPrintStream(System.out);
+        for (int i = 0; i < 200; i++) {
+
+            System.out.print("\u001b[" + i + ";0m");
+            System.out.print("      " + i + "      ");
+            System.out.print("\u001B[0m");
+            System.out.print("  ");
+
+            System.out.print("\u001b[" + i + ";1m");
+            System.out.print("      " + i + "      ");
+            System.out.print("\u001B[0m");
+            System.out.print("  ");
+
+            System.out.print("\u001b[" + i + "m");
+            System.out.print("      " + i + "      ");
+            System.out.print("\u001B[0m");
+            System.out.print("  ");
+            System.out.print("\u001b[" + i + ";2m");
+            System.out.print("      " + i + "      ");
+            System.out.print("\u001B[0m");
+            System.out.print("\u001b[4;" + i + "m");
+            System.out.print("      " + i + "      ");
+            System.out.print("\u001B[0m");
+            System.out.println();
+        }
+        Scanner s = new Scanner(System.in);
+        s.nextLine();
+//        out.print(NutsTextFormats.BG_YELLOW,"Hello");
+//        System.out.println("\u001b[44mAA\u001B[0m");
+//        for (NutsTextFormat k : out.escapesStart.keySet()) {
+////            System.out.println(k);
+//            System.out.print(out.escapesStart.get(k));
+//            System.out.println("  "+k+"  ");
+//            System.out.print(out.escapesStop.get(k));
+//            System.out.println();
+//        }
+    }
+
+    private AnsiStyleStyleApplier createAnsiStyleStyleApplier(NutsTextFormatList list) {
+        List<AnsiStyleStyleApplier> suppliers = new ArrayList<AnsiStyleStyleApplier>();
+        for (NutsTextFormat item : list) {
+            suppliers.add(resolveStyleApplyer(item));
+        }
+        return new ListAnsiStyleStyleApplier(suppliers);
+    }
+
+    private AnsiStyleStyleApplier resolveStyleApplyer(NutsTextFormat format) {
+        if (format instanceof NutsTextFormatList) {
+            return createAnsiStyleStyleApplier((NutsTextFormatList) format);
+        }
+        AnsiStyleStyleApplier s = stylesAppliers.get(format);
+        if (s != null) {
+            return s;
+        }
+        return DoNothingAnsiStyleStyleApplier.INSTANCE;
+    }
+
+//    private AnsiStyle resolveStyle(NutsTextFormat format, AnsiStyle old) {
+//        AnsiStyleStyleApplier s = resolveStyleApplyer(format);
+//        return s.apply(old);
+//    }
+    private void defineEscape(NutsTextFormat a, AnsiStyleStyleApplier style) {
+        stylesAppliers.put(a, style);
     }
 
     public NutsAnsiUnixTermPrintStream() {
@@ -117,19 +245,59 @@ public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
     }
 
     @Override
-    protected void applyColor(Color color) {
-        String s = escapes.get(color);
-        if (s == null) {
-            s = escapes.get(null);
+    protected void startFormat(NutsTextFormat format) {
+        AnsiStyleStyleApplier applier = resolveStyleApplyer(format);
+        AnsiStyle style = applier.apply(new AnsiStyle());
+        for (String command : style.getCommands()) {
+            super.print(command);
         }
-        if (s != null) {
-            super.print(s);
-        }
+        String escaped = style.resolveEscapeString();
+//        super.print("\u001B[0m");
+        super.print(escaped);
+    }
+
+    @Override
+    protected void endFormat(NutsTextFormat color) {
+        super.print("\u001B[0m");
+        //String s = escapesStop.get(color);
+        //if (s != null) {
+        //    super.print(s);
+        //}
     }
 
     @Override
     public int getSupportLevel(Object criteria) {
         return CORE_SUPPORT + 2;
+    }
+
+    private static class ForegroundStyleApplier implements AnsiStyleStyleApplier {
+
+        String id;
+        int intensity;
+
+        public ForegroundStyleApplier(String id, int intensity) {
+            this.id = id;
+            this.intensity = intensity;
+        }
+
+        @Override
+        public AnsiStyle apply(AnsiStyle old) {
+            return old.setForeground(id).setIntensity(intensity);
+        }
+    }
+
+    private static class BackgroundStyleApplier implements AnsiStyleStyleApplier {
+
+        String id;
+
+        public BackgroundStyleApplier(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public AnsiStyle apply(AnsiStyle old) {
+            return old.setBackground(id);
+        }
     }
 
 }

@@ -2055,7 +2055,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         try {
             InputStream s = null;
             try {
-                s = DefaultNutsWorkspace.class.getResourceAsStream("/net/vpc/app/nuts/help.help");
+                s = DefaultNutsWorkspace.class.getResourceAsStream("/net/vpc/app/nuts/nuts-help.help");
                 if (s != null) {
                     help = CoreIOUtils.readStreamAsString(s, true);
                 }

@@ -1,14 +1,14 @@
-pushes a <<nuts>>
+pushes a **nuts**
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 push id
 
-pushes a <<nuts>> to remote server
+pushes a **nuts** to remote server
 
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 push my-group:my-name
-   pushes the <<nuts>>
+   pushes the **nuts**
 
 

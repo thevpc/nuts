@@ -1,11 +1,11 @@
-invokes a <<nuts>> command
+invokes a **nuts** command
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 exec <command arguments>
 
-invokes a <<nuts>> command
+invokes a **nuts** command
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 exec my-nuts-group:my-nuts#12.3
    executes the version 12.3 of my-nuts-group:my-nuts

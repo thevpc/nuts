@@ -306,8 +306,8 @@ public class Nuts {
         }
         NutsSession session = ws.createSession();
         if (nocolors) {
-            session.getTerminal().getOut().setColorEnabled(false);
-            session.getTerminal().getErr().setColorEnabled(false);
+            session.getTerminal().getOut().setFormatEnabled(false);
+            session.getTerminal().getErr().setFormatEnabled(false);
         }
         if (showHelp) {
             NutsPrintStream out = session.getTerminal().getOut();

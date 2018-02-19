@@ -1,6 +1,6 @@
 lists directory
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 ls [options] <directory>
 
 -l : long format
@@ -8,7 +8,7 @@ ls [options] <directory>
 
 lists directory content
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 cd /another/path
    changes to another path

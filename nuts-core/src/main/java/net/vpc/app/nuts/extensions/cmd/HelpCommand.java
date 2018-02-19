@@ -53,7 +53,7 @@ public class HelpCommand extends AbstractNutsCommand {
         if (cmdLine.isEmpty()) {
             if (cmdLine.isExecMode()) {
                 out.drawln(context.getValidWorkspace().getHelpString());
-                out.drawln("===AVAILABLE COMMANDS ARE:===");
+                out.drawln("@@AVAILABLE COMMANDS ARE:@@");
                 NutsCommand[] commands = context.getCommandLine().getCommands();
                 Arrays.sort(commands, new Comparator<NutsCommand>() {
                     @Override
@@ -62,7 +62,7 @@ public class HelpCommand extends AbstractNutsCommand {
                     }
                 });
                 for (NutsCommand cmd : commands) {
-                    out.drawln("[[" + CoreStringUtils.alignLeft(cmd.getName(), 15) + "]] : " + cmd.getHelpHeader());
+                    out.drawln("##" + CoreStringUtils.alignLeft(cmd.getName(), 15) + "## : " + cmd.getHelpHeader());
                 }
             }
             return 0;

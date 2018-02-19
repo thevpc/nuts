@@ -1,12 +1,12 @@
-deploys a <<nuts>>
+deploys a **nuts**
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 deploy file [desc-file [repositoryId]]
 
 deploys a new file to the given repository
 
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 deploy myjar.jar
    deploy the myjar.jar file

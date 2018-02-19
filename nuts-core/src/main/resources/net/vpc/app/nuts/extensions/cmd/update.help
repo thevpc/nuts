@@ -1,14 +1,14 @@
-updates a <<nuts>>
+updates a **nuts**
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 update id
 
-updates a <<nuts>> from remote servers
+updates a **nuts** from remote servers
 
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 update my-group:my-name
-   update the <<nuts>>
+   update the **nuts**
 
 

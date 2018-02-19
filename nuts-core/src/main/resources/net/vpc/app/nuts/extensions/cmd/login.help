@@ -1,12 +1,12 @@
 logs in as a given user
 
-===SYNOPSYS===
+@@SYNOPSYS:@@
 login <username> [user-password]
 
 logs in as <username>. If user-password is not specified, will be asked for
 
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 login admin admin
    connects as admin with default credentials admin

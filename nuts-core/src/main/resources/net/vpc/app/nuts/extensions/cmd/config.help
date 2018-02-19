@@ -1,13 +1,13 @@
 displays or modifies workspace configuration.
 
-===SYNOPSYS:===
-[[config]] <<<workspace action verb>>> <<<arguments>>> ...
+@@SYNOPSYS:@@
+[[config]] {{workspace action verb}} {{arguments}} ...
 
 displays or modifies workspace configuration.
 
 VARIATIONS:
 
-[[config]] ( create workspace | cw ) [ -i | --ignore ] <<<workspace>>>
+[[config]] ( create workspace | cw ) [ -i | --ignore ] {{workspace}}
   creates a new workspace at location <workspace> or throws error if the location
   already can be resolved to an existing workspace, unless "-i" is armed
 
@@ -41,7 +41,7 @@ config (add extension| ax) [<extensionId>]...
 
 config (list extensions| lx)
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 config create -i workspace ~~/example
    create a workspace at the following location ${HOME}/.nuts/example

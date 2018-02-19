@@ -567,4 +567,120 @@ public class CoreStringUtils {
         }
         return false;
     }
+
+    public static int[] searchRabinKarp(String phrase, String[] words) {
+        char[] cphrase=phrase.toCharArray();
+        char[][] cwords=new char[words.length][];
+        for (int i = 0; i < words.length; i++) {
+            cwords[i]=words[i].toCharArray();
+        }
+        return searchRabinKarp(cphrase, cwords);
+    }
+    
+    public static int[] searchRabinKarp(char[] phrase, char[][] words) {
+        int[] wordhash = new int[words.length];
+        int[] wordLengths = new int[words.length];
+        for (int w = 0; w < wordhash.length; w++) {
+            wordhash[w] = _rkhash(words[w], 0, words[w].length, 0);
+            wordLengths[w] = words[w].length;
+        }
+        int[] shash = new int[words.length];
+        for (int i = 0; i < phrase.length; i++) {
+            for (int j = 0; j < words.length; j++) {
+                char[] word = words[j];
+                if (i <= phrase.length - word.length) {
+
+                }
+            }
+            shash = _rkhash(phrase, i, wordLengths, shash);
+            for (int w = 0; w < words.length; w++) {
+                if (shash[w] == wordhash[w]) {
+                    // compare actual characters to be sure
+                    boolean ok = true;
+                    int k2, j2;
+                    for (k2 = i, j2 = 0; k2 < words[w].length && ok; k2++, j2++) {
+                        if (phrase[i] != words[w][j2]) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    if (ok) {
+                        return new int[]{i, w};
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static int searchRabinKarp(char[] phrase, char[] word) {
+        int wordhash = _rkhash(word, 0, word.length, 0);
+        int shash = 0;
+        for (int i = 0; i <= phrase.length - word.length; i++) {
+            shash = _rkhash(phrase, i, word.length, shash);
+            if (shash == wordhash) {
+                // compare actual characters to be sure
+                boolean ok = true;
+                int k, j;
+                for (k = i, j = 0; k < word.length && ok; k++, j++) {
+                    if (phrase[i] != word[j]) {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private static int _rkhash(char[] s, int i, int len, int hval) {
+        if (i == 0) {// first run, compute full hash
+            hval = 0;
+            for (int k = 0; k < len; k++) {
+                hval += s[k];
+            }
+            return hval;
+        }
+        if (hval != 0 && i != 0) {
+            hval -= s[i - 1];
+        }
+        if (i + len <= s.length) {
+            hval += s[i + len - 1];
+        } else // out of bounds
+        {
+            return -1;
+        }
+        return hval;
+    }
+
+    private static int[] _rkhash(char[] s, int i, int[] len, int[] hval) {
+        if (i == 0) {// first run, compute full hash
+            for (int j = 0; j < hval.length; j++) {
+                if (i <= s.length - len[j]) {
+                    hval[j] = 0;
+                    for (int k = 0; k < len[j]; k++) {
+                        hval[j] += s[k];
+                    }
+                } else {
+                    hval[j] = -1;
+                }
+            }
+        }
+        for (int j = 0; j < hval.length; j++) {
+            if (hval[j] != 0 && i != 0) {
+                hval[j] -= s[i - 1];
+            }
+            if (i + len[j] <= s.length) {
+                hval[j] += s[i + len[j] - 1];
+            } else // out of bounds
+            {
+                hval[j] = -1;
+            }
+        }
+        return hval;
+    }
+
 }

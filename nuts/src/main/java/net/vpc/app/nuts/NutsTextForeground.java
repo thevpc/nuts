@@ -29,31 +29,59 @@
  */
 package net.vpc.app.nuts;
 
+import java.awt.Color;
+import java.util.Objects;
+
 /**
- * Created by vpc on 5/23/17.
+ *
+ * @author vpc
  */
-public class NutsTextChunck {
+public class NutsTextForeground extends NutsTextFormat {
 
-    public static final NutsTextChunck NULL = new NutsTextChunck(null, null);
-    private String pattern;
-    private String value;
+    private Color color;
+    private String name;
 
-    public NutsTextChunck(String pattern, String value) {
-        this.pattern = pattern;
-        this.value = value;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public String getValue() {
-        return value;
+    public NutsTextForeground(String name, Color color) {
+        this.color = color;
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return pattern == null ? ("\"" + value + '\"')
-                : (pattern + "\"" + value + '\"');
+        return "Foreground(" + name + ')';
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + Objects.hashCode(this.color);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsTextForeground other = (NutsTextForeground) obj;
+        if (!Objects.equals(this.color, other.color)) {
+            return false;
+        }
+        return true;
+    }
+
 }

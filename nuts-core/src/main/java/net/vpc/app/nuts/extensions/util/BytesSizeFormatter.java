@@ -4,7 +4,7 @@ package net.vpc.app.nuts.extensions.util;
 /**
  * Created by vpc on 3/20/17.
  */
-public class MemorySizeFormatter {
+public class BytesSizeFormatter {
     boolean leadingZeros = false;
     boolean intermediateZeros = true;
     boolean trailingZeros = false;
@@ -14,7 +14,7 @@ public class MemorySizeFormatter {
     private long low = Units.BYTE;
     private int depth = Integer.MAX_VALUE;
 
-    public MemorySizeFormatter(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low,int depth) {
+    public BytesSizeFormatter(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low,int depth) {
         this.leadingZeros = leadingZeros;
         this.intermediateZeros = intermediateZeros;
         this.fixedLength = fixedLength;
@@ -30,12 +30,12 @@ public class MemorySizeFormatter {
 //                "0I0BEF0","00BEF0","B0TD1F","B0TD2F","B0TD3F","B0TD1FI","B0TD2FI","B0TD3FI","0I0BEF0","I0BEF","IBEF","0IBTF"
 //        }) {
 //            System.out.println("");
-//            System.out.println(">System.out.println(new MemorySizeFormatter(\""+s+"\").format("+value+"));");
-//            System.out.println(new MemorySizeFormatter(s).format(value));
+//            System.out.println(">System.out.println(new BytesSizeFormatter(\""+s+"\").format("+value+"));");
+//            System.out.println(new BytesSizeFormatter(s).format(value));
 //        }
 //    }
 
-    public MemorySizeFormatter() {
+    public BytesSizeFormatter() {
         this("B0EF");
     }
 
@@ -91,7 +91,7 @@ public class MemorySizeFormatter {
      *
      * @param format size format
      */
-    public MemorySizeFormatter(String format) {
+    public BytesSizeFormatter(String format) {
         leadingZeros = false;
         intermediateZeros = false;
         trailingZeros = false;

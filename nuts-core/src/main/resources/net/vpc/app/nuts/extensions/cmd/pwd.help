@@ -1,10 +1,10 @@
 prints working directory
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 pwd
 
 prints working directory
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 pwd
    prints working directory

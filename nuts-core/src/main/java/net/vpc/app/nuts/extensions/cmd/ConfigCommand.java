@@ -131,7 +131,7 @@ public class ConfigCommand extends AbstractNutsCommand {
         boolean enabled = repository.isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
         context.getTerminal().getOut().print(prefix);
-        context.getTerminal().getOut().print(enabled ? NutsPrintColors.BLUE : NutsPrintColors.RED, repository.getRepositoryId() + disabledString);
+        context.getTerminal().getOut().print(enabled ? NutsTextFormats.FG_BLUE : NutsTextFormats.FG_RED, repository.getRepositoryId() + disabledString);
         context.getTerminal().getOut().print(" : " + repository);
         context.getTerminal().getOut().println();
 

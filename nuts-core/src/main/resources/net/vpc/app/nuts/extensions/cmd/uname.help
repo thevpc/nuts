@@ -1,6 +1,6 @@
 print system information
 
-===SYNOPSYS:===
+@@SYNOPSYS:@@
 uname <options>
 
 print system information
@@ -11,7 +11,7 @@ print system information
 -d : os distribution
 
 
-===EXAMPLES:===
+@@EXAMPLES:@@
 
 uname -a
    print system information
