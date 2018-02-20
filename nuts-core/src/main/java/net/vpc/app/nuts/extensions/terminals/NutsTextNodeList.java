@@ -27,61 +27,43 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.extensions.terminals;
 
-import java.awt.Color;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- *
- * @author vpc
+ * Created by vpc on 5/23/17.
  */
-public class NutsTextForeground extends NutsTextFormat {
+public class NutsTextNodeList implements NutsTextNode, Iterable<NutsTextNode> {
+    private List<NutsTextNode> children = new ArrayList<NutsTextNode>();
 
-    private Color color;
-    private String name;
+    public NutsTextNodeList(NutsTextNode... children) {
+        for (NutsTextNode c : children) {
+            add(c);
+        }
+    }
 
-    public NutsTextForeground(String name, Color color) {
-        this.color = color;
-        this.name = name;
+    public void add(NutsTextNode item) {
+        children.add(item);
+    }
+
+    public NutsTextNode get(int index) {
+        return children.get(index);
+    }
+
+    public int size() {
+        return children.size();
+    }
+
+    @Override
+    public Iterator<NutsTextNode> iterator() {
+        return children.iterator();
     }
 
     @Override
     public String toString() {
-        return "Foreground(" + name + ')';
+        return children.toString();
     }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 41 * hash + Objects.hashCode(this.color);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NutsTextForeground other = (NutsTextForeground) obj;
-        if (!Objects.equals(this.color, other.color)) {
-            return false;
-        }
-        return true;
-    }
-
 }

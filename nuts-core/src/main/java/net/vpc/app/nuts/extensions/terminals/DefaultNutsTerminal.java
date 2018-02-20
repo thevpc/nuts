@@ -54,8 +54,8 @@ public class DefaultNutsTerminal implements NutsTerminal {
     @Override
     public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
         this.in = in == null ? System.in : in;
-        this.out = out == null ? (workspace == null ? new NutsPrintStream(System.out) : workspace.createEnhancedPrintStream(System.out)) : out;
-        this.err = err == null ? (workspace == null ? new NutsPrintStream(System.err) : workspace.createEnhancedPrintStream(System.err)) : err;
+        this.out = out == null ? (workspace == null ? new DefaultNutsPrintStream(System.out) : workspace.createEnhancedPrintStream(System.out)) : out;
+        this.err = err == null ? (workspace == null ? new DefaultNutsPrintStream(System.err) : workspace.createEnhancedPrintStream(System.err)) : err;
         reader = new BufferedReader(new InputStreamReader(this.in));
     }
 

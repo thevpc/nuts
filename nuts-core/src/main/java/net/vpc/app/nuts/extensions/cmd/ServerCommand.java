@@ -149,7 +149,7 @@ public class ServerCommand extends AbstractNutsCommand {
             }
             if (cmdLine.isExecMode()) {
                 if (servers.isEmpty()) {
-                    context.getTerminal().getErr().drawln("No Server config found.");
+                    context.getTerminal().getErr().println("No Server config found.");
                     return 1;
                 }
                 Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();
@@ -234,13 +234,13 @@ public class ServerCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 List<NutsServer> servers = context.getValidWorkspace().getServers();
                 if (servers.isEmpty()) {
-                    context.getTerminal().getOut().drawln("No Server is Running");
+                    context.getTerminal().getOut().println("No Server is Running");
                 }
                 for (NutsServer o : servers) {
                     if (o.isRunning()) {
-                        context.getTerminal().getOut().drawln("==Running== " + o.getServerId());
+                        context.getTerminal().getOut().println("==Running== " + o.getServerId());
                     } else {
-                        context.getTerminal().getOut().drawln("==Stopped== " + o.getServerId());
+                        context.getTerminal().getOut().println("==Stopped== " + o.getServerId());
                     }
                 }
             }

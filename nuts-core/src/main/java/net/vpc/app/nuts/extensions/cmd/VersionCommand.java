@@ -43,11 +43,11 @@ public class VersionCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsPrintStream out = context.getTerminal().getOut();
-        out.drawln("workspace-boot       : [[" + context.getWorkspace().getWorkspaceBootId() + "]]");
-        out.drawln("workspace-runtime    : [[" + context.getWorkspace().getWorkspaceRuntimeId() + "]]");
-        out.drawln("workspace-location   : [[" + context.getWorkspace().getWorkspaceLocation() + "]]");
-        out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-        out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+        out.println("workspace-boot       : [[" + context.getWorkspace().getWorkspaceBootId() + "]]");
+        out.println("workspace-runtime    : [[" + context.getWorkspace().getWorkspaceRuntimeId() + "]]");
+        out.println("workspace-location   : [[" + context.getWorkspace().getWorkspaceLocation() + "]]");
+        out.println("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
+        out.println("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
         return 0;
     }
 }

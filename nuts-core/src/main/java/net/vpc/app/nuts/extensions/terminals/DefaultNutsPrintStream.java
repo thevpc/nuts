@@ -29,26 +29,19 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.NutsTextFormatList;
-import net.vpc.app.nuts.extensions.core.NutsTextNode;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import net.vpc.app.nuts.NutsTextFormat;
-import net.vpc.app.nuts.NutsTextFormats;
-import net.vpc.app.nuts.extensions.core.NutsTextList;
-import net.vpc.app.nuts.extensions.core.NutsTextPlain;
-import net.vpc.app.nuts.extensions.core.NutsTextStyled;
-import net.vpc.app.nuts.extensions.textparsers.defaultparser.DefaultNutsTextParser;
+import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class DefaultNutsPrintStream extends NutsPrintStream {
+public class DefaultNutsPrintStream extends AbstractNutsPrintStream {
 
     public DefaultNutsPrintStream() {
         super();
@@ -117,296 +110,6 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
         return f;
     }
 
-    protected void doWithFormat(NutsTextFormat format, Runnable runnable) {
-        if (isFormatEnabled() && format != null) {
-            NutsTextFormat c = simplifyFormat(format);
-            try {
-                startFormat(c);
-                runnable.run();
-            } finally {
-                endFormat(c);
-            }
-        } else {
-            runnable.run();
-        }
-    }
-
-    @Override
-    public DefaultNutsPrintStream write(NutsTextFormat c, final int b) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.write(b);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream write(NutsTextFormat c, final byte[] buf, final int off, final int len) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.write(buf, off, len);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream print(NutsTextFormat c, final boolean b) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.print(b);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream print(NutsTextFormat format, final char c) {
-        doWithFormat(format, new Runnable() {
-
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.print(c);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream print(NutsTextFormat c, final int i) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.print(i);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream print(NutsTextFormat c, final long l) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.print(l);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream print(NutsTextFormat c, final float f) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.print(f);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream print(NutsTextFormat c, final double d) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.print(d);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream print(NutsTextFormat c, final char[] s) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.print(s);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream print(NutsTextFormat c, final String s) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.print(s);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream print(NutsTextFormat c, final Object obj) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.print(obj);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final boolean x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final char x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final int x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final long x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public void println(NutsTextFormat c, final float x) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final double x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final char[] x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final String x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream println(NutsTextFormat c, final Object x) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.println(x);
-            }
-        });
-        return this;
-    }
-
-    public PrintStream printf(NutsTextFormat c, final String format, final Object... args) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.printf(format, args);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream printf(NutsTextFormat c, final Locale l, final String format, final Object... args) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.printf(l, format, args);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream format(NutsTextFormat c, final String format, final Object... args) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.format(format, args);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream format(NutsTextFormat c, final Locale l, final String format, final Object... args) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.format(l, format, args);
-            }
-        });
-        return this;
-    }
-
-    public DefaultNutsPrintStream append(NutsTextFormat c, final CharSequence csq) {
-        doWithFormat(c, new Runnable() {
-
-            public void run() {
-                DefaultNutsPrintStream.super.append(csq);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream append(NutsTextFormat c, final CharSequence csq, final int start, final int end) {
-        doWithFormat(c, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.append(csq, start, end);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream append(NutsTextFormat format, final char c) {
-        doWithFormat(format, new Runnable() {
-            @Override
-            public void run() {
-                DefaultNutsPrintStream.super.append(c);
-            }
-        });
-        return this;
-    }
-
     @Override
     public DefaultNutsPrintStream printf(String format, Object... args) {
         DefaultNutsPrintStream.super.printf(format, args);
@@ -420,82 +123,62 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
     }
 
     @Override
-    public DefaultNutsPrintStream format(String format, Object... args) {
-        DefaultNutsPrintStream.super.format(format, args);
-        return this;
-    }
-
-    @Override
     public DefaultNutsPrintStream format(Locale l, String format, Object... args) {
         DefaultNutsPrintStream.super.format(l, format, args);
         return this;
     }
 
     @Override
-    public DefaultNutsPrintStream append(CharSequence csq) {
-        DefaultNutsPrintStream.super.append(csq);
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream append(CharSequence csq, int start, int end) {
-        DefaultNutsPrintStream.super.append(csq, start, end);
-        return this;
-    }
-
-    @Override
-    public DefaultNutsPrintStream append(char c) {
-        DefaultNutsPrintStream.super.append(c);
-        return this;
-    }
-
-    @Override
-    public void drawln(String text) {
-        draw(text);
+    public void println(String text) {
+        print(text);
         println();
     }
 
-    private NutsTextFormat[] append(NutsTextFormat[] old, NutsTextFormat v) {
-        List<NutsTextFormat> list = new ArrayList<NutsTextFormat>((old == null ? 0 : old.length) + 1);
-        if (old != null) {
-            list.addAll(Arrays.asList(old));
-        }
-        list.add(v);
-        return list.toArray(new NutsTextFormat[list.size()]);
-    }
-
-    private void draw(NutsTextFormat[] formats, NutsTextNode chunk) {
-        if (chunk instanceof NutsTextPlain) {
-            if (formats == null) {
-                formats = new NutsTextFormat[0];
+    protected DefaultNutsPrintStream writeRaw(NutsTextFormat format, String rawString) {
+        if (isFormatEnabled() && format != null) {
+            NutsTextFormat c = simplifyFormat(format);
+            try {
+                startFormat(c);
+                writeRaw(rawString);
+            } finally {
+                endFormat(c);
             }
-            NutsTextPlain p = (NutsTextPlain) chunk;
-            print(NutsTextFormats.list(formats), p.getValue());
-        } else if (chunk instanceof NutsTextList) {
-            if (formats == null) {
-                formats = new NutsTextFormat[0];
-            }
-            NutsTextList s = (NutsTextList) chunk;
-            for (NutsTextNode n : s) {
-                draw(formats, n);
-            }
-        } else if (chunk instanceof NutsTextStyled) {
-            NutsTextStyled s = (NutsTextStyled) chunk;
-            NutsTextFormat[] s2 = append(formats, s.getStyle());
-            draw(s2, s.getChild());
         } else {
-            if (formats == null) {
-                formats = new NutsTextFormat[0];
+            writeRaw(rawString);
+        }
+        return this;
+    }
+
+    private void print(NutsTextFormat[] formats, NutsTextNode node) {
+        if (formats == null) {
+            formats = new NutsTextFormat[0];
+        }
+        if (node instanceof NutsTextNodePlain) {
+            NutsTextNodePlain p = (NutsTextNodePlain) node;
+            writeRaw(NutsTextFormats.list(formats), p.getValue());
+        } else if (node instanceof NutsTextNodeList) {
+            NutsTextNodeList s = (NutsTextNodeList) node;
+            for (NutsTextNode n : s) {
+                print(formats, n);
             }
-            print(NutsTextFormats.list(formats), String.valueOf(chunk));
+        } else if (node instanceof NutsTextNodeStyled) {
+            NutsTextNodeStyled s = (NutsTextNodeStyled) node;
+            NutsTextFormat[] s2 = _appendFormats(formats, s.getStyle());
+            print(s2, s.getChild());
+        } else if (node instanceof NutsTextNodeCommand) {
+            NutsTextNodeCommand s = (NutsTextNodeCommand) node;
+            NutsTextFormat[] s2 = _appendFormats(formats, s.getStyle());
+            writeRaw(NutsTextFormats.list(s2), "");
+        } else {
+            writeRaw(NutsTextFormats.list(formats), String.valueOf(node));
         }
     }
 
-    public void draw(NutsTextNode node) {
+    public void print(NutsTextNode node) {
         if (node == null) {
-            node = NutsTextPlain.NULL;
+            node = NutsTextNodePlain.NULL;
         }
-        draw(null, node);
+        print(new NutsTextFormat[0], node);
     }
 
     @Override
@@ -504,15 +187,35 @@ public class DefaultNutsPrintStream extends NutsPrintStream {
     }
 
     @Override
-    public void draw(String text) {
+    public void print(String text) {
+        if (!isFormatEnabled()) {
+            writeRaw(text);
+            return;
+        }
         if (text == null) {
             text = "";
         }
         if (text.isEmpty()) {
-            //do nothin!!!
+            //do nothing!!!
         } else {
-            NutsTextNode node = DefaultNutsTextParser.INSTANCE.parse(text);
-            draw(node);
+            if (text.equals("`enable-formats`")) {
+                setFormatEnabled(true);
+            } else if (text.equals("`disable-formats`")) {
+                setFormatEnabled(false);
+            } else {
+                NutsTextNode node = DefaultNutsTextParser.INSTANCE.parse(text);
+                print(node);
+            }
         }
     }
+
+    private NutsTextFormat[] _appendFormats(NutsTextFormat[] old, NutsTextFormat v) {
+        List<NutsTextFormat> list = new ArrayList<NutsTextFormat>((old == null ? 0 : old.length) + 1);
+        if (old != null) {
+            list.addAll(Arrays.asList(old));
+        }
+        list.add(v);
+        return list.toArray(new NutsTextFormat[list.size()]);
+    }
+
 }

@@ -81,51 +81,51 @@ public class WhoCommand extends AbstractNutsCommand {
             Set<String> rights = new TreeSet<>(Arrays.asList(user.getRights()));
             Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedRights()));
             String[] currentLoginStack = validWorkspace.getCurrentLoginStack();
-            out.draw("===stack===      :");
+            out.print("===stack===      :");
             for (String log : currentLoginStack) {
-                out.draw(" <<" + log + ">>");
+                out.print(" [[" + log + "]]");
             }
             out.println();
             if (!groups.isEmpty()) {
-                out.drawln("===identities=== : " + groups.toString());
+                out.println("===identities=== : " + groups.toString());
             }
             if (!NutsConstants.USER_ADMIN.equals(login)) {
                 if (!rights.isEmpty()) {
-                    out.drawln("===rights===     : " + rights.toString());
+                    out.println("===rights===     : " + rights.toString());
                 }
                 if (!inherited.isEmpty()) {
-                    out.drawln("===inherited===  : " + (inherited.isEmpty() ? "NONE" : inherited.toString()));
+                    out.println("===inherited===  : " + (inherited.isEmpty() ? "NONE" : inherited.toString()));
                 }
             } else {
-                out.drawln("===rights===     : ALL");
+                out.println("===rights===     : ALL");
             }
             if (user.getMappedUser() != null) {
-                out.drawln("===remote-id===  : " + (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
+                out.println("===remote-id===  : " + (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
             }
             for (NutsRepository repository : context.getWorkspace().getRepositories()) {
                 NutsUserInfo ruser = repository.findUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !CoreStringUtils.isEmpty(ruser.getMappedUser()))) {
-                    out.drawln("[ [[" + repository.getRepositoryId() + "]] ]: ");
+                    out.println("[ [[" + repository.getRepositoryId() + "]] ]: ");
                     Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
                     Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));
                     if (!rgroups.isEmpty()) {
-                        out.drawln("    ===identities=== : " + rgroups.toString());
+                        out.println("    ===identities=== : " + rgroups.toString());
                     }
                     if (!NutsConstants.USER_ADMIN.equals(login)) {
                         if (!rrights.isEmpty()) {
-                            out.drawln("    ===rights===     : " + rrights.toString());
+                            out.println("    ===rights===     : " + rrights.toString());
                         }
                         if (!rinherited.isEmpty()) {
-                            out.drawln("    ===inherited===  : " + rinherited.toString());
+                            out.println("    ===inherited===  : " + rinherited.toString());
                         }
                     } else {
-                        out.drawln("    ===rights===     : ALL");
+                        out.println("    ===rights===     : ALL");
                     }
                     if (ruser.getMappedUser() != null) {
-                        out.drawln("    ===remote-id===  : " + ruser.getMappedUser());
+                        out.println("    ===remote-id===  : " + ruser.getMappedUser());
                     }
                 }
             }

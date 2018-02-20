@@ -9,9 +9,7 @@ import java.util.Arrays;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsElementNotFoundException;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsSecurityEntityConfig;
 import net.vpc.app.nuts.NutsUserInfo;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
@@ -282,9 +280,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                     adminPassword = context.getTerminal().readPassword("Enter password : ");
                 }
                 if (workspaĉe.switchUnsecureMode(adminPassword)) {
-                    context.getTerminal().getOut().drawln("<<unsecure box activated.Anonymous has all rights.>>");
+                    context.getTerminal().getOut().println("<<unsecure box activated.Anonymous has all rights.>>");
                 } else {
-                    context.getTerminal().getOut().drawln("<<unsecure box is already activated.>>");
+                    context.getTerminal().getOut().println("<<unsecure box is already activated.>>");
                 }
             }
             ConfigCommand.trySave(context, workspaĉe, repository, autoSave, cmdLine);
@@ -305,9 +303,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
             //secure-box
             if (cmdLine.isExecMode()) {
                 if (workspaĉe.switchSecureMode(adminPassword)) {
-                    context.getTerminal().getOut().drawln("\"\"secure box activated.\"\"");
+                    context.getTerminal().getOut().println("\"\"secure box activated.\"\"");
                 } else {
-                    context.getTerminal().getOut().drawln("\"\"secure box already activated.\"\"");
+                    context.getTerminal().getOut().println("\"\"secure box already activated.\"\"");
                 }
             }
             ConfigCommand.trySave(context, workspaĉe, repository, autoSave, cmdLine);

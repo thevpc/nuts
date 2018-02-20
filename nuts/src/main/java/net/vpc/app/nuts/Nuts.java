@@ -306,8 +306,8 @@ public class Nuts {
         }
         NutsSession session = ws.createSession();
         if (nocolors) {
-            session.getTerminal().getOut().setFormatEnabled(false);
-            session.getTerminal().getErr().setFormatEnabled(false);
+            session.getTerminal().getOut().print("`disable-formats`");
+            session.getTerminal().getErr().print("`disable-formats`");
         }
         if (showHelp) {
             NutsPrintStream out = session.getTerminal().getOut();
@@ -338,13 +338,13 @@ public class Nuts {
         if (version) {
             NutsPrintStream out = session.getTerminal().getOut();
 
-            out.drawln("workspace-boot       : [[" + ws.getWorkspaceBootId() + "]]");
-            out.drawln("workspace-runtime    : [[" + ws.getWorkspaceRuntimeId() + "]]");
-            out.drawln("workspace-root       : [[" + bws.getRoot() + "]]");
-            out.drawln("workspace-location   : [[" + ws.getWorkspaceLocation() + "]]");
-            out.drawln("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-            out.drawln("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
-            out.drawln("boot-java-classpath  : [[" + System.getProperty("java.class.path") + "]]");
+            out.println("workspace-boot       : [[" + ws.getWorkspaceBootId() + "]]");
+            out.println("workspace-runtime    : [[" + ws.getWorkspaceRuntimeId() + "]]");
+            out.println("workspace-root       : [[" + bws.getRoot() + "]]");
+            out.println("workspace-location   : [[" + ws.getWorkspaceLocation() + "]]");
+            out.println("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
+            out.println("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+            out.println("boot-java-classpath  : [[" + System.getProperty("java.class.path") + "]]");
 
             perf = showPerf(startTime, perf, session);
             someProcessing = true;
@@ -376,13 +376,13 @@ public class Nuts {
 
     private static boolean showPerf(long startTime, boolean perf, NutsSession session) {
         if (perf) {
-            session.getTerminal().getOut().drawln("Nuts loaded in [[" + (System.currentTimeMillis() - startTime) + "]] ms");
+            session.getTerminal().getOut().println("Nuts loaded in [[" + (System.currentTimeMillis() - startTime) + "]] ms");
         }
         return false;
     }
 
     public static void help(NutsWorkspace bws, NutsPrintStream term) {
         String help = bws.getHelpString();
-        term.drawln(help);
+        term.println(help);
     }
 }

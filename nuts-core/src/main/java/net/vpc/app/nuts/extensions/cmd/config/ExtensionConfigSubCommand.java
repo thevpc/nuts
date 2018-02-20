@@ -59,15 +59,15 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
         } else if (cmdLine.read("list extension points", "lxp")) {
             if (cmdLine.isExecMode()) {
                 for (Class extension : context.getValidWorkspace().getFactory().getExtensionPoints()) {
-                    context.getTerminal().getOut().drawln("[[" + extension.getName() + "]]:");
+                    context.getTerminal().getOut().println("[[" + extension.getName() + "]]:");
                     for (Class impl : context.getValidWorkspace().getFactory().getExtensionTypes(extension)) {
-                        context.getTerminal().getOut().drawln("\t" + impl.getName());
+                        context.getTerminal().getOut().println("\t" + impl.getName());
                     }
                     for (Object impl : context.getValidWorkspace().getFactory().getExtensionObjects(extension)) {
                         if (impl != null) {
-                            context.getTerminal().getOut().drawln("\t" + impl.getClass().getName() + " :: " + impl);
+                            context.getTerminal().getOut().println("\t" + impl.getClass().getName() + " :: " + impl);
                         } else {
-                            context.getTerminal().getOut().drawln("\tnull");
+                            context.getTerminal().getOut().println("\tnull");
                         }
                     }
                 }

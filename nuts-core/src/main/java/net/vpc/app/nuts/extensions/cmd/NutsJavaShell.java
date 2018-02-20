@@ -94,7 +94,7 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public void onErrorImpl(String message, Throwable th) {
-        component.getContext().getTerminal().getErr().println(message);
+        component.getContext().getTerminal().getErr().println("``"+message+"``");
     }
 
     @Override

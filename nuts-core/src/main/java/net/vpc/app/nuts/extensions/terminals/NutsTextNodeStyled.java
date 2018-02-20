@@ -27,63 +27,31 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
-
-import java.util.Arrays;
-import java.util.Iterator;
+package net.vpc.app.nuts.extensions.terminals;
 
 /**
- *
- * @author vpc
+ * Created by vpc on 5/23/17.
  */
-public class NutsTextFormatList extends NutsTextFormat implements Iterable<NutsTextFormat> {
+public class NutsTextNodeStyled implements NutsTextNode {
 
-    private final NutsTextFormat[] children;
+    private final NutsTextFormat style;
+    private NutsTextNode child;
 
-    public NutsTextFormatList(NutsTextFormat[] others) {
-        if(others ==null){
-            throw new NullPointerException();
-        }
-        this.children = others;
+    public NutsTextNodeStyled(NutsTextFormat style, NutsTextNode child) {
+        this.style = style;
+        this.child = child;
     }
 
-    public NutsTextFormat[] getChildren() {
-        return Arrays.copyOf(children, children.length);
+    public NutsTextFormat getStyle() {
+        return style;
     }
 
-    @Override
-    public Iterator<NutsTextFormat> iterator() {
-        return Arrays.asList(children).iterator();
+    public NutsTextNode getChild() {
+        return child;
     }
 
     @Override
     public String toString() {
-        return Arrays.toString(children);
+        return style + ":" + child;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Arrays.deepHashCode(this.children);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NutsTextFormatList other = (NutsTextFormatList) obj;
-        if (!Arrays.deepEquals(this.children, other.children)) {
-            return false;
-        }
-        return true;
-    }
-
 }

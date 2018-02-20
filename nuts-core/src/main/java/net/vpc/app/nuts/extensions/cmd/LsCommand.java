@@ -38,13 +38,26 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileOwnerAttributeView;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.UserPrincipal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by vpc on 1/7/17.
  */
 public class LsCommand extends AbstractNutsCommand {
+
+    private static final FileSorter FILE_SORTER = new FileSorter();
 
     public LsCommand() {
         super("ls", CORE_SUPPORT);
@@ -57,6 +70,10 @@ public class LsCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
+//        if (true) {
+//            URL from = new URL("http://eniso.info/fs/Documents/ByProfile/HeadOfDepartmentII/Presentations/a.pptx");
+//            CoreIOUtils.copy(CoreIOUtils.monitor(from, new DefaultInputStreamMonitor(context.getTerminal().getOut())), new File("/home/vpc/a.pdf"), true, true);
+//        }
         NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         boolean any = false;
@@ -109,13 +126,11 @@ public class LsCommand extends AbstractNutsCommand {
         } else if (path.isDirectory()) {
             if (addPrefix) {
                 terminal.getOut().println(path.getName() + ":");
-                for (File file1 : CoreIOUtils.nonNullArray(path.listFiles())) {
-                    ls0(file1, options, terminal);
-                }
-            } else {
-                for (File file1 : CoreIOUtils.nonNullArray(path.listFiles())) {
-                    ls0(file1, options, terminal);
-                }
+            }
+            File[] arr = CoreIOUtils.nonNullArray(path.listFiles());
+            Arrays.sort(arr, FILE_SORTER);
+            for (File file1 : arr) {
+                ls0(file1, options, terminal);
             }
         } else {
             ls0(path, options, terminal);
@@ -125,21 +140,63 @@ public class LsCommand extends AbstractNutsCommand {
     private void ls0(File path, Options options, NutsTerminal terminal) {
         String name = path.getName();
         if (options.l) {
-            terminal.getOut().print(path.isDirectory() ? "d" : path.isFile() ? "-" : "?");
+            terminal.getOut().print((path.isDirectory() ? "d" : path.isFile() ? "-" : "?"));
+            terminal.getOut().print((path.canRead()? "r" : "-"));
+            terminal.getOut().print((path.canWrite()? "w" : "-"));
+            terminal.getOut().print((path.canExecute()? "x" : "-"));
+            terminal.getOut().print(" ");
+            String owner = null;
+            String group = null;
+
+            try {
+                owner = Files.getFileAttributeView(path.toPath(), FileOwnerAttributeView.class).getOwner().getName();
+            } catch (IOException ex) {
+                //
+                owner = "unknown";
+            }
+            try {
+                group = Files.readAttributes(path.toPath(), PosixFileAttributes.class).group().getName();
+            } catch (IOException ex) {
+                //
+                group = "unknown";
+            }
+            terminal.getOut().print(owner);
+            terminal.getOut().print(" ");
+            terminal.getOut().print(group);
+            terminal.getOut().print(" ");
+            terminal.getOut().print(String.format("%8d", path.length()));
+            terminal.getOut().print(" ");
+            terminal.getOut().print(SIMPLE_DATE_FORMAT.format(path.lastModified()));
             terminal.getOut().print(" ");
             if (path.isDirectory()) {
-                name += "/";
+                name = "==" + name + "==";
                 terminal.getOut().println(name);
             } else {
                 terminal.getOut().println(name);
             }
         } else {
             if (path.isDirectory()) {
-                name += "/";
+                name = "==" + name + "==";
                 terminal.getOut().println(name);
             } else {
                 terminal.getOut().println(name);
             }
         }
+    }
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private static class FileSorter implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            int d1 = o1.isDirectory() ? 0 : o1.isFile() ? 1 : 2;
+            int d2 = o2.isDirectory() ? 0 : o2.isFile() ? 1 : 2;
+            int x = d1 - d2;
+            if (x != 0) {
+                return x;
+            }
+            return o1.getPath().compareTo(o2.getPath());
+        }
+
     }
 }

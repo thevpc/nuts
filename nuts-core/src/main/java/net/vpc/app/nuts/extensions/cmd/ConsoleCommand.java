@@ -53,7 +53,7 @@ public class ConsoleCommand extends AbstractNutsCommand {
         }
         NutsTerminal terminal = context.getTerminal();
         NutsPrintStream out = terminal.getOut();
-        out.drawln("**Nuts** console \\(**Network Updatable Things Services**\\) **v"
+        out.println("**Nuts** console \\(**Network Updatable Things Services**\\) **v"
                 +context.getValidWorkspace().getWorkspaceRuntimeId().getVersion().toString()
                 +"** \\(c\\) vpc 2017");
         
@@ -80,7 +80,7 @@ public class ConsoleCommand extends AbstractNutsCommand {
             try {
                 line = terminal.readLine(prompt);
             } catch (InterrupShellException ex) {
-                terminal.getErr().drawln("==" + ex.getMessage() + "==");
+                terminal.getErr().println("==" + ex.getMessage() + "==");
                 continue;
             }
             if (line == null) {

@@ -27,11 +27,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.core;
+package net.vpc.app.nuts.extensions.terminals;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public interface NutsTextNode {
+public class NutsTextNodePlain implements NutsTextNode {
 
+    public static final NutsTextNodePlain NULL = new NutsTextNodePlain(null);
+    private String value;
+
+    public NutsTextNodePlain(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return ("\"" + value + '\"');
+    }
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.extensions.textparsers.defaultparser;
+package net.vpc.app.nuts.extensions.terminals.textparsers;
 
 import java.util.ArrayList;
 import java.util.Arrays;

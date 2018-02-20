@@ -30,7 +30,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.readOnce("show location")) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
-                session.getTerminal().getOut().drawln(context.getValidWorkspace().getWorkspaceLocation());
+                session.getTerminal().getOut().println(context.getValidWorkspace().getWorkspaceLocation());
             }
             return true;
         }
@@ -51,7 +51,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                     //not found
                 }
                 if (newVersion != null) {
-                    session.getTerminal().getOut().drawln("Workspace updated to [[" + newVersion.getId() + "]]");
+                    session.getTerminal().getOut().println("Workspace updated to [[" + newVersion.getId() + "]]");
                 }
             }
             return true;

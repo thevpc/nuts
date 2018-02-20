@@ -27,44 +27,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.core;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import net.vpc.app.nuts.NutsTextFormat;
+package net.vpc.app.nuts.extensions.terminals;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public class NutsTextList implements NutsTextNode, Iterable<NutsTextNode> {
-    private List<NutsTextNode> children = new ArrayList<NutsTextNode>();
+public interface NutsTextNode {
 
-    public NutsTextList(NutsTextNode... children) {
-        for (NutsTextNode c : children) {
-            add(c);
-        }
-    }
-
-    public void add(NutsTextNode item) {
-        children.add(item);
-    }
-
-    public NutsTextNode get(int index) {
-        return children.get(index);
-    }
-
-    public int size() {
-        return children.size();
-    }
-
-    @Override
-    public Iterator<NutsTextNode> iterator() {
-        return children.iterator();
-    }
-
-    @Override
-    public String toString() {
-        return children.toString();
-    }
 }

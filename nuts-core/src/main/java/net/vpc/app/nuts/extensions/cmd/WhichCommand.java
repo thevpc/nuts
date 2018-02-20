@@ -112,12 +112,12 @@ public class WhichCommand extends AbstractNutsCommand {
         if (cmdLine.isEmpty()) {
             if (cmdLine.isExecMode()) {
                 Map<String, String> runtimeProperties = getRuntimeProperties(context.getValidWorkspace(), context.getSession());
-                out.drawln("nuts-version    : [[" + runtimeProperties.get("nuts.workspace.version") + "]]");
-                out.drawln("nuts-location   : [[" + runtimeProperties.get("nuts.workspace.location") + "]]");
-                out.drawln("nuts-api        : [[" + runtimeProperties.get("nuts.workspace.api-component") + "]]");
-                out.drawln("nuts-core       : [[" + runtimeProperties.get("nuts.workspace.core-component") + "]]");
-                out.drawln("java-version    : [[" + System.getProperty("java.version") + "]]");
-                out.drawln("java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+                out.println("nuts-version    : [[" + runtimeProperties.get("nuts.workspace.version") + "]]");
+                out.println("nuts-location   : [[" + runtimeProperties.get("nuts.workspace.location") + "]]");
+                out.println("nuts-api        : [[" + runtimeProperties.get("nuts.workspace.api-component") + "]]");
+                out.println("nuts-core       : [[" + runtimeProperties.get("nuts.workspace.core-component") + "]]");
+                out.println("java-version    : [[" + System.getProperty("java.version") + "]]");
+                out.println("java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
             }
             return 0;
         }

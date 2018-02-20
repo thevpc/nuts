@@ -38,9 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import net.vpc.app.nuts.NutsTextFormat;
-import net.vpc.app.nuts.NutsTextFormats;
-import net.vpc.app.nuts.NutsTextFormatList;
 
 /**
  * Created by vpc on 2/20/17.
@@ -186,33 +183,6 @@ public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
 //        }
     }
 
-    private AnsiStyleStyleApplier createAnsiStyleStyleApplier(NutsTextFormatList list) {
-        List<AnsiStyleStyleApplier> suppliers = new ArrayList<AnsiStyleStyleApplier>();
-        for (NutsTextFormat item : list) {
-            suppliers.add(resolveStyleApplyer(item));
-        }
-        return new ListAnsiStyleStyleApplier(suppliers);
-    }
-
-    private AnsiStyleStyleApplier resolveStyleApplyer(NutsTextFormat format) {
-        if (format instanceof NutsTextFormatList) {
-            return createAnsiStyleStyleApplier((NutsTextFormatList) format);
-        }
-        AnsiStyleStyleApplier s = stylesAppliers.get(format);
-        if (s != null) {
-            return s;
-        }
-        return DoNothingAnsiStyleStyleApplier.INSTANCE;
-    }
-
-//    private AnsiStyle resolveStyle(NutsTextFormat format, AnsiStyle old) {
-//        AnsiStyleStyleApplier s = resolveStyleApplyer(format);
-//        return s.apply(old);
-//    }
-    private void defineEscape(NutsTextFormat a, AnsiStyleStyleApplier style) {
-        stylesAppliers.put(a, style);
-    }
-
     public NutsAnsiUnixTermPrintStream() {
     }
 
@@ -249,20 +219,16 @@ public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
         AnsiStyleStyleApplier applier = resolveStyleApplyer(format);
         AnsiStyle style = applier.apply(new AnsiStyle());
         for (String command : style.getCommands()) {
-            super.print(command);
+            writeRaw(command);
         }
         String escaped = style.resolveEscapeString();
 //        super.print("\u001B[0m");
-        super.print(escaped);
+        writeRaw(escaped);
     }
 
     @Override
     protected void endFormat(NutsTextFormat color) {
-        super.print("\u001B[0m");
-        //String s = escapesStop.get(color);
-        //if (s != null) {
-        //    super.print(s);
-        //}
+        writeRaw("\u001B[0m");
     }
 
     @Override
@@ -270,34 +236,31 @@ public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
         return CORE_SUPPORT + 2;
     }
 
-    private static class ForegroundStyleApplier implements AnsiStyleStyleApplier {
-
-        String id;
-        int intensity;
-
-        public ForegroundStyleApplier(String id, int intensity) {
-            this.id = id;
-            this.intensity = intensity;
+    private AnsiStyleStyleApplier createAnsiStyleStyleApplier(NutsTextFormatList list) {
+        List<AnsiStyleStyleApplier> suppliers = new ArrayList<AnsiStyleStyleApplier>();
+        for (NutsTextFormat item : list) {
+            suppliers.add(resolveStyleApplyer(item));
         }
-
-        @Override
-        public AnsiStyle apply(AnsiStyle old) {
-            return old.setForeground(id).setIntensity(intensity);
-        }
+        return new ListAnsiStyleStyleApplier(suppliers);
     }
 
-    private static class BackgroundStyleApplier implements AnsiStyleStyleApplier {
-
-        String id;
-
-        public BackgroundStyleApplier(String id) {
-            this.id = id;
+    private AnsiStyleStyleApplier resolveStyleApplyer(NutsTextFormat format) {
+        if (format instanceof NutsTextFormatList) {
+            return createAnsiStyleStyleApplier((NutsTextFormatList) format);
         }
-
-        @Override
-        public AnsiStyle apply(AnsiStyle old) {
-            return old.setBackground(id);
+        AnsiStyleStyleApplier s = stylesAppliers.get(format);
+        if (s != null) {
+            return s;
         }
+        return DoNothingAnsiStyleStyleApplier.INSTANCE;
+    }
+
+//    private AnsiStyle resolveStyle(NutsTextFormat format, AnsiStyle old) {
+//        AnsiStyleStyleApplier s = resolveStyleApplyer(format);
+//        return s.apply(old);
+//    }
+    private void defineEscape(NutsTextFormat a, AnsiStyleStyleApplier style) {
+        stylesAppliers.put(a, style);
     }
 
 }

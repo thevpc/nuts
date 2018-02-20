@@ -843,12 +843,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         NutsUpdate[] updates = found.toArray(new NutsUpdate[found.size()]);
         NutsPrintStream out = resolveOut(session);
         if (updates.length == 0) {
-            out.drawln("Workspace is [[up-to-date]]");
+            out.println("Workspace is [[up-to-date]]");
             return updates;
         } else {
-            out.drawln("Workspace has " + updates.length + " component" + (updates.length > 1 ? "s" : "") + " to update");
+            out.println("Workspace has " + updates.length + " component" + (updates.length > 1 ? "s" : "") + " to update");
             for (NutsUpdate update : updates) {
-                out.drawln(update.getBaseId() + "  : " + update.getLocalId() + " => [[" + update.getAvailableId() + "]]");
+                out.println(update.getBaseId() + "  : " + update.getLocalId() + " => [[" + update.getAvailableId() + "]]");
             }
         }
 
@@ -873,7 +873,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                         all.add(arg);
                     }
                 }
-                out.drawln("applying nuts patch to [[" + CoreIOUtils.getCanonicalPath(myNutsJar) + "]] ...");
+                out.println("applying nuts patch to [[" + CoreIOUtils.getCanonicalPath(myNutsJar) + "]] ...");
 //                try {
                 execExternalNuts(newNutsJar, all.toArray(new String[all.size()]), false, false, session);
 //                } catch (InterruptedException e) {
@@ -1955,21 +1955,21 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                             while (new File(nutsJarFile.getPath() + "." + index).exists()) {
                                 index++;
                             }
-                            out.drawln("copying [[" + nutsJarFile + "]] to [[" + nutsJarFile.getPath() + "." + index + "]]");
+                            out.println("copying [[" + nutsJarFile + "]] to [[" + nutsJarFile.getPath() + "." + index + "]]");
                             try {
                                 Files.copy(nutsJarFile.toPath(), new File(nutsJarFile.getPath() + "." + index).toPath());
                             } catch (IOException e) {
                                 throw new NutsIOException(e);
                             }
                         }
-                        out.drawln("copying [[" + acFile.getPath() + "]] to [[" + nutsJarFile.getPath() + "]]");
+                        out.println("copying [[" + acFile.getPath() + "]] to [[" + nutsJarFile.getPath() + "]]");
                         try {
                             Files.copy(acFile.toPath(), nutsJarFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException e) {
                             throw new NutsIOException(e);
                         }
                     } else if (nutsJarFile.getName().endsWith(".jar")) {
-                        out.drawln("copying [[" + acFile.getPath() + "]] to [[" + nutsJarFile.getPath() + "]]");
+                        out.println("copying [[" + acFile.getPath() + "]] to [[" + nutsJarFile.getPath() + "]]");
                         try {
                             Files.copy(acFile.toPath(), nutsJarFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException e) {
@@ -1997,9 +1997,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                             break;
                     }
                 }
-                out.drawln("nuts patched ===successfully===...");
+                out.println("nuts patched ===successfully===...");
                 if (all.size() > 0) {
-                    out.drawln("running command (" + all + ") with newly patched version (" + nutsJarFile + ")");
+                    out.println("running command (" + all + ") with newly patched version (" + nutsJarFile + ")");
                     args = all.toArray(new String[all.size()]);
                 }
             }

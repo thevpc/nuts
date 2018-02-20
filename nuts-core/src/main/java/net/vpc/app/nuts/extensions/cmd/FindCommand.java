@@ -129,7 +129,7 @@ public class FindCommand extends AbstractNutsCommand {
                 if (cmdLine.isExecMode()) {
                     String help = getHelp();
                     findContext.out.println("Command " + this);
-                    findContext.out.drawln(help);
+                    findContext.out.println(help);
                 }
                 return 0;
             } else if (currentFindWhat == 0 && cmdLine.readOnce("-p", "--pkg")) {
@@ -192,7 +192,7 @@ public class FindCommand extends AbstractNutsCommand {
                 if (!it.isEmpty()) {
                     if (first) {
                         first = false;
-                        findContext.out.drawln("===Packages to COMMIT===:");
+                        findContext.out.println("===Packages to COMMIT===:");
                     }
                     display(it, findContext);
                 }
@@ -205,7 +205,7 @@ public class FindCommand extends AbstractNutsCommand {
                 if (!it.isEmpty()) {
                     if (first) {
                         first = false;
-                        findContext.out.drawln("===Packages to UPDATE===:");
+                        findContext.out.println("===Packages to UPDATE===:");
                     }
                     display(it, findContext);
                 }
@@ -409,7 +409,7 @@ public class FindCommand extends AbstractNutsCommand {
                             findContext.out.print(info.nuts.getNamespace());
                         }
                         findContext.out.print(" ");
-                        findContext.out.draw(format(info.nuts, imports));
+                        findContext.out.print(format(info.nuts, imports));
                         if (findContext.showFile) {
                             findContext.out.print(" ");
                             if (info.getFile() == null) {
@@ -435,7 +435,7 @@ public class FindCommand extends AbstractNutsCommand {
                             findContext.out.print(" [[" + descriptorError + "]]");
                         }
                     } else {
-                        findContext.out.draw(format(info.nuts, imports));
+                        findContext.out.print(format(info.nuts, imports));
                         if (findContext.showFile) {
                             findContext.out.print(" ");
                             if (info.getFile() == null) {
@@ -516,10 +516,10 @@ public class FindCommand extends AbstractNutsCommand {
                                 findContext.out.print(" ");
                                 findContext.out.print(Arrays.asList(dinfo.getDescriptor().getArch()));
                                 findContext.out.print(" ");
-                                findContext.out.drawln(format(dinfo.nuts, imports));
+                                findContext.out.println(format(dinfo.nuts, imports));
                             } else {
                                 findContext.out.print("\t");
-                                findContext.out.drawln(format(dinfo.nuts, imports));
+                                findContext.out.println(format(dinfo.nuts, imports));
                             }
                         }
                     }
@@ -603,7 +603,7 @@ public class FindCommand extends AbstractNutsCommand {
         }
         if (findContext.showSummary) {
             findContext.out.println();
-            findContext.out.drawln("===" + nutsList.size() + "=== nuts found in ===" + (findContext.executionTimeNano / 1000000 / 1000.0) + "===s");
+            findContext.out.println("===" + nutsList.size() + "=== nuts found in ===" + (findContext.executionTimeNano / 1000000 / 1000.0) + "===s");
         }
     }
 

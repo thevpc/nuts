@@ -27,18 +27,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.textparsers.defaultparser;
+package net.vpc.app.nuts.extensions.terminals.textparsers;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsTextFormat;
-import net.vpc.app.nuts.NutsTextFormats;
-import net.vpc.app.nuts.extensions.core.NutsTextList;
-import net.vpc.app.nuts.extensions.core.NutsTextNode;
-import net.vpc.app.nuts.extensions.core.NutsTextPlain;
-import net.vpc.app.nuts.extensions.core.NutsTextStyled;
-import net.vpc.app.nuts.extensions.textparsers.NutsTextFallbackParser;
+import net.vpc.app.nuts.extensions.terminals.NutsTextFormat;
+import net.vpc.app.nuts.extensions.terminals.NutsTextFormats;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodeCommand;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodePlain;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodeStyled;
+import net.vpc.app.nuts.extensions.terminals.NutsTextFallbackParser;
 
 /**
  * Created by vpc on 5/23/17.
@@ -64,7 +65,7 @@ public class DefaultNutsTextParser {
         for (TextNode node : n) {
             children.add(convert(node));
         }
-        return new NutsTextList(children.toArray(new NutsTextNode[children.size()]));
+        return new NutsTextNodeList(children.toArray(new NutsTextNode[children.size()]));
     }
 
     private NutsTextNode convert(TextNode n) {
@@ -74,71 +75,71 @@ public class DefaultNutsTextParser {
                     return convert(n.getNodes());
                 }
                 case "phrase": {
-                    return new NutsTextPlain(n.getValue());
+                    return new NutsTextNodePlain(n.getValue());
                 }
                 case "__":
                 case "___":
                 case "____": {
-                    return new NutsTextStyled(NutsTextFormats.UNDERLINED, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.UNDERLINED, convert(n.getNodes()));
                 }
                 case "//":
                 case "///":
                 case "////": {
-                    return new NutsTextStyled(NutsTextFormats.ITALIC, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.ITALIC, convert(n.getNodes()));
                 }
                 case "~~":
                 case "~~~":
                 case "~~~~": {
-                    return new NutsTextStyled(NutsTextFormats.STRIKED, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.STRIKED, convert(n.getNodes()));
                 }
                 case "%%":
                 case "%%%":
                 case "%%%%": {
-                    return new NutsTextStyled(NutsTextFormats.REVERSED, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.REVERSED, convert(n.getNodes()));
                 }
                 case "==":
                 case "===":
                 case "====": {
-                    return new NutsTextStyled(NutsTextFormats.FG_BLUE, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.FG_BLUE, convert(n.getNodes()));
                 }
                 case "**":
                 case "***":
                 case "****": {
-                    return new NutsTextStyled(NutsTextFormats.FG_CYAN, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.FG_CYAN, convert(n.getNodes()));
                 }
                 case "##":
                 case "###":
                 case "####": {
-                    return new NutsTextStyled(NutsTextFormats.FG_GREEN, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.FG_GREEN, convert(n.getNodes()));
                 }
                 case "@@":
                 case "@@@":
                 case "@@@@": {
-                    return new NutsTextStyled(NutsTextFormats.FG_RED, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.FG_RED, convert(n.getNodes()));
                 }
                 case "[":
                 case "[[":
                 case "[[[":
                 case "[[[[": {
-                    return new NutsTextStyled(NutsTextFormats.FG_MAGENTA, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.FG_MAGENTA, convert(n.getNodes()));
                 }
 
                 case "{{":
                 case "{{{":
                 case "{{{{": {
-                    return new NutsTextStyled(NutsTextFormats.FG_YELLOW, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.FG_YELLOW, convert(n.getNodes()));
                 }
 
                 case "++":
                 case "+++":
                 case "++++": {
-                    return new NutsTextStyled(NutsTextFormats.BG_GREEN, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_GREEN, convert(n.getNodes()));
                 }
 
                 case "^^":
                 case "^^^":
                 case "^^^^": {
-                    return new NutsTextStyled(NutsTextFormats.BG_BLUE, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_BLUE, convert(n.getNodes()));
                 }
                 case "(": {
                     return wrap(convert(n.getNodes()), "(", ")", null);
@@ -146,7 +147,7 @@ public class DefaultNutsTextParser {
                 case "((":
                 case "(((":
                 case "((((": {
-                    return new NutsTextStyled(NutsTextFormats.BG_CYAN, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_CYAN, convert(n.getNodes()));
                 }
                 case "{": {
                     return wrap(convert(n.getNodes()), "{", "}", NutsTextFormats.BG_GREEN);
@@ -154,22 +155,22 @@ public class DefaultNutsTextParser {
                 case "<<":
                 case "<<<":
                 case "<<<<": {
-                    return new NutsTextStyled(NutsTextFormats.BG_YELLOW, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_YELLOW, convert(n.getNodes()));
                 }
                 case "$$":
                 case "$$$":
                 case "$$$$": {
-                    return new NutsTextStyled(NutsTextFormats.BG_MAGENTA, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_MAGENTA, convert(n.getNodes()));
                 }
                 case "££":
                 case "£££":
                 case "££££": {
-                    return new NutsTextStyled(NutsTextFormats.BG_RED, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_RED, convert(n.getNodes()));
                 }
                 case "§§":
                 case "§§§":
                 case "§§§§": {
-                    return new NutsTextStyled(NutsTextFormats.BG_WHITE, convert(n.getNodes()));
+                    return new NutsTextNodeStyled(NutsTextFormats.BG_WHITE, convert(n.getNodes()));
                 }
                 case "\"":
                 case "\"\"":
@@ -183,41 +184,41 @@ public class DefaultNutsTextParser {
                 }
                 case "``": {
                     // this a plain text!
-                    return new NutsTextPlain(n.getValue());
+                    return new NutsTextNodePlain(n.getValue());
                 }
                 case "```": {
                     //this is a comment
-                    return new NutsTextPlain("");
+                    return new NutsTextNodePlain("");
                 }
                 case "`": {
                     //this a command !!
                     //should be interpreted as
                     String v = n.getValue().trim();
-                    List<NutsTextNode> nodes=new ArrayList<NutsTextNode>();
+                    List<NutsTextNode> nodes = new ArrayList<NutsTextNode>();
                     for (String cmd : v.split(";")) {
                         if ("move-line-start".endsWith(cmd)) {
-                            nodes.add(new NutsTextStyled(NutsTextFormats.MOVE_LINE_START, new NutsTextPlain("")));
-                        }else if ("move-up".endsWith(cmd)) {
-                            nodes.add(new NutsTextStyled(NutsTextFormats.MOVE_UP, new NutsTextPlain("")));
+                            nodes.add(new NutsTextNodeCommand(NutsTextFormats.MOVE_LINE_START));
+                        } else if ("move-up".endsWith(cmd)) {
+                            nodes.add(new NutsTextNodeCommand(NutsTextFormats.MOVE_UP));
                         }
                     }
-                    return new NutsTextList(nodes.toArray(new NutsTextNode[nodes.size()]));
+                    return new NutsTextNodeList(nodes.toArray(new NutsTextNode[nodes.size()]));
                 }
             }
         }
-        return new NutsTextPlain(String.valueOf(n.getValue()));
+        return new NutsTextNodePlain(String.valueOf(n.getValue()));
     }
 
     private NutsTextNode wrap(NutsTextNode t, String prefix, String suffix, NutsTextFormat format) {
-        NutsTextList y = new NutsTextList(
-                new NutsTextPlain(prefix),
+        NutsTextNodeList y = new NutsTextNodeList(
+                new NutsTextNodePlain(prefix),
                 t,
-                new NutsTextPlain(suffix)
+                new NutsTextNodePlain(suffix)
         );
         if (format == null) {
             return y;
         }
-        return new NutsTextStyled(format, y);
+        return new NutsTextNodeStyled(format, y);
     }
 
     public NutsTextNode parse(String text) {
@@ -226,6 +227,8 @@ public class DefaultNutsTextParser {
             TextNode tn = d.parseList();
             return convert(tn);
         } catch (Exception ex) {
+            System.err.println("Error parsing : ");
+            System.err.println(text);
             ex.printStackTrace();
             return NutsTextFallbackParser.INSTANCE.parse(text);
         }

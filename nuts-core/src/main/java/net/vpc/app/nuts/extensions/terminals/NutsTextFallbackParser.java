@@ -27,15 +27,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.textparsers;
+package net.vpc.app.nuts.extensions.terminals;
 
 import java.util.Objects;
-import net.vpc.app.nuts.NutsTextFormat;
-import net.vpc.app.nuts.NutsTextFormats;
-import net.vpc.app.nuts.extensions.core.NutsTextList;
-import net.vpc.app.nuts.extensions.core.NutsTextNode;
-import net.vpc.app.nuts.extensions.core.NutsTextPlain;
-import net.vpc.app.nuts.extensions.core.NutsTextStyled;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodePlain;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodeStyled;
 
 /**
  * Created by vpc on 5/23/17.
@@ -206,7 +204,7 @@ public class NutsTextFallbackParser {
     }
 
     public NutsTextNode parse(String text) {
-        NutsTextList found = new NutsTextList();
+        NutsTextNodeList found = new NutsTextNodeList();
         if (text == null) {
             text = "";
         }
@@ -216,7 +214,7 @@ public class NutsTextFallbackParser {
             int[] startLocation = findNext2(patterns, chars, index);
             if (startLocation == null) {
                 //not found
-                found.add(new NutsTextPlain(unescape(new String(chars, index, chars.length - index))));
+                found.add(new NutsTextNodePlain(unescape(new String(chars, index, chars.length - index))));
                 index = chars.length;
             } else {
                 String start = patterns[startLocation[0]].start;
@@ -224,12 +222,12 @@ public class NutsTextFallbackParser {
                 int startPos = startLocation[1];
                 int endPos = startLocation[2];
                 if (startPos > index) {
-                    found.add(new NutsTextPlain(unescape(new String(chars, index, startPos - index))));
+                    found.add(new NutsTextNodePlain(unescape(new String(chars, index, startPos - index))));
                 }
                 String styleName = start;
                 NutsTextFormat style = null;
                 String text2 = unescape(new String(chars, startPos + start.length(), endPos - (startPos + start.length())));
-                NutsTextPlain p = new NutsTextPlain(text2);
+                NutsTextNodePlain p = new NutsTextNodePlain(text2);
 
                 switch (styleName) {
                     case "---": {
@@ -359,7 +357,7 @@ public class NutsTextFallbackParser {
                     }
                 }
 
-                found.add(new NutsTextStyled(style, p));
+                found.add(new NutsTextNodeStyled(style, p));
                 index = endPos + stop.length();
             }
         }

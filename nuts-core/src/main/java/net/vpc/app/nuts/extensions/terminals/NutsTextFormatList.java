@@ -27,26 +27,63 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.core;
+package net.vpc.app.nuts.extensions.terminals;
+
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
- * Created by vpc on 5/23/17.
+ *
+ * @author vpc
  */
-public class NutsTextPlain implements NutsTextNode {
+public class NutsTextFormatList extends NutsTextFormat implements Iterable<NutsTextFormat> {
 
-    public static final NutsTextPlain NULL = new NutsTextPlain(null);
-    private String value;
+    private final NutsTextFormat[] children;
 
-    public NutsTextPlain(String value) {
-        this.value = value;
+    public NutsTextFormatList(NutsTextFormat[] others) {
+        if(others ==null){
+            throw new NullPointerException();
+        }
+        this.children = others;
     }
 
-    public String getValue() {
-        return value;
+    public NutsTextFormat[] getChildren() {
+        return Arrays.copyOf(children, children.length);
+    }
+
+    @Override
+    public Iterator<NutsTextFormat> iterator() {
+        return Arrays.asList(children).iterator();
     }
 
     @Override
     public String toString() {
-        return ("\"" + value + '\"');
+        return Arrays.toString(children);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Arrays.deepHashCode(this.children);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsTextFormatList other = (NutsTextFormatList) obj;
+        if (!Arrays.deepEquals(this.children, other.children)) {
+            return false;
+        }
+        return true;
+    }
+
 }

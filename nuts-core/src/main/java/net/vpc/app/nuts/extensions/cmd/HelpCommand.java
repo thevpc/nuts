@@ -52,8 +52,8 @@ public class HelpCommand extends AbstractNutsCommand {
         NutsPrintStream out = context.getTerminal().getOut();
         if (cmdLine.isEmpty()) {
             if (cmdLine.isExecMode()) {
-                out.drawln(context.getValidWorkspace().getHelpString());
-                out.drawln("@@AVAILABLE COMMANDS ARE:@@");
+                out.println(context.getValidWorkspace().getHelpString());
+                out.println("@@AVAILABLE COMMANDS ARE:@@");
                 NutsCommand[] commands = context.getCommandLine().getCommands();
                 Arrays.sort(commands, new Comparator<NutsCommand>() {
                     @Override
@@ -62,7 +62,7 @@ public class HelpCommand extends AbstractNutsCommand {
                     }
                 });
                 for (NutsCommand cmd : commands) {
-                    out.drawln("##" + CoreStringUtils.alignLeft(cmd.getName(), 15) + "## : " + cmd.getHelpHeader());
+                    out.println("##" + CoreStringUtils.alignLeft(cmd.getName(), 15) + "## : " + cmd.getHelpHeader());
                 }
             }
             return 0;
@@ -76,8 +76,8 @@ public class HelpCommand extends AbstractNutsCommand {
                     context.getTerminal().getErr().println("Command not found : " + command);
                 } else {
                     String help = command1.getHelp();
-                    out.drawln("==Command== " + command);
-                    out.drawln(help);
+                    out.println("==Command== " + command);
+                    out.println(help);
                 }
             }
         }

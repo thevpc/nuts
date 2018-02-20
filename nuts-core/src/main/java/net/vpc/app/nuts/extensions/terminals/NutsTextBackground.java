@@ -27,36 +27,38 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.extensions.terminals;
 
+import java.awt.Color;
 import java.util.Objects;
 
 /**
  *
  * @author vpc
  */
-public class NutsTextCursor extends NutsTextFormat {
+public class NutsTextBackground extends NutsTextFormat {
 
-    private final String name;
+    private String name;
+    private Color color;
 
-    public NutsTextCursor(String name) {
+    public NutsTextBackground(String name,Color color) {
+        this.color = color;
         this.name = name;
     }
 
-    public String getName() {
-        return name;
+    public Color getColor() {
+        return color;
     }
 
     @Override
     public String toString() {
-        return "Cursor(" +name + ')';
+        return "Background(" + name + ')';
     }
-    
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + Objects.hashCode(this.name);
+        int hash = 3;
+        hash = 41 * hash + Objects.hashCode(this.color);
         return hash;
     }
 
@@ -71,11 +73,14 @@ public class NutsTextCursor extends NutsTextFormat {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsTextCursor other = (NutsTextCursor) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        final NutsTextBackground other = (NutsTextBackground) obj;
+        if (!Objects.equals(this.color, other.color)) {
             return false;
         }
         return true;
     }
+    
+    
+
 
 }

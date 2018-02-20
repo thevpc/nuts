@@ -469,7 +469,7 @@ public class CoreIOUtils {
         if (sep < 0) {
             sep = p.lastIndexOf(':');
         }
-        p = sep == 0 ? p : p.substring(sep);
+        p = sep < 0 ? p : p.substring(sep+1);
         sep = p.indexOf('?');
         if (sep >= 0) {
             p = p.substring(0, sep);
@@ -646,7 +646,7 @@ public class CoreIOUtils {
     public static int execAndWait(String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand) throws InterruptedException, IOException {
         if (showCommand) {
             NutsPrintStream out = terminal.getOut();
-            out.draw("==[exec]==");
+            out.print("==[exec]==");
             for (String arg : args) {
                 out.print(" " + arg);
             }
@@ -986,6 +986,14 @@ public class CoreIOUtils {
             if (conn instanceof HttpURLConnection) {
                 ((HttpURLConnection) conn).disconnect();
             }
+        }
+    }
+
+    public static InputStream monitor(URL from, InputStreamMonitor monitor) throws NutsIOException {
+        try {
+            return monitor(from.openStream(), from, getURLName(from), getURLSize(from), monitor);
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
         }
     }
 

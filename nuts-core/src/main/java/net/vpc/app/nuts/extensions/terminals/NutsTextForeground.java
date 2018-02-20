@@ -27,33 +27,61 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.core;
+package net.vpc.app.nuts.extensions.terminals;
 
-import net.vpc.app.nuts.NutsTextFormat;
+import java.awt.Color;
+import java.util.Objects;
 
 /**
- * Created by vpc on 5/23/17.
+ *
+ * @author vpc
  */
-public class NutsTextStyled implements NutsTextNode {
+public class NutsTextForeground extends NutsTextFormat {
 
-    private final NutsTextFormat style;
-    private NutsTextNode child;
+    private Color color;
+    private String name;
 
-    public NutsTextStyled(NutsTextFormat style, NutsTextNode child) {
-        this.style = style;
-        this.child = child;
-    }
-
-    public NutsTextFormat getStyle() {
-        return style;
-    }
-
-    public NutsTextNode getChild() {
-        return child;
+    public NutsTextForeground(String name, Color color) {
+        this.color = color;
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return style + ":" + child;
+        return "Foreground(" + name + ')';
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + Objects.hashCode(this.color);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsTextForeground other = (NutsTextForeground) obj;
+        if (!Objects.equals(this.color, other.color)) {
+            return false;
+        }
+        return true;
+    }
+
 }

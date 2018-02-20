@@ -46,9 +46,9 @@ public class ConfigCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) {
-        if(subCommands==null){
-            subCommands=new ArrayList<>(
-                context.getValidWorkspace().getFactory().createAllSupported(ConfigSubCommand.class, this)
+        if (subCommands == null) {
+            subCommands = new ArrayList<>(
+                    context.getValidWorkspace().getFactory().createAllSupported(ConfigSubCommand.class, this)
             );
         }
         NutsCommandAutoComplete autoComplete = context.getAutoComplete();
@@ -99,14 +99,14 @@ public class ConfigCommand extends AbstractNutsCommand {
             for (ConfigSubCommand subCommand : subCommands) {
                 if (subCommand.exec(cmdLine, this, autoSave, context)) {
                     selectedSubCommand = subCommand;
-                    empty=false;
+                    empty = false;
                     break;
                 }
             }
             if (selectedSubCommand != null) {
                 continue;
             }
-            
+
             if (!cmdLine.isExecMode()) {
                 return -1;
             }
@@ -131,7 +131,11 @@ public class ConfigCommand extends AbstractNutsCommand {
         boolean enabled = repository.isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
         context.getTerminal().getOut().print(prefix);
-        context.getTerminal().getOut().print(enabled ? NutsTextFormats.FG_BLUE : NutsTextFormats.FG_RED, repository.getRepositoryId() + disabledString);
+        if (enabled) {
+            context.getTerminal().getOut().print("==" + repository.getRepositoryId() + disabledString + "==");
+        } else {
+            context.getTerminal().getOut().print("@@" + repository.getRepositoryId() + disabledString + "@@");
+        }
         context.getTerminal().getOut().print(" : " + repository);
         context.getTerminal().getOut().println();
 
@@ -172,9 +176,9 @@ public class ConfigCommand extends AbstractNutsCommand {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository == null) {
                     workspace.save();
-                    context.getTerminal().getOut().drawln("<<workspace saved.>>");
+                    context.getTerminal().getOut().println("<<workspace saved.>>");
                 } else {
-                    context.getTerminal().getOut().drawln("<<repository " + repository.getRepositoryId() + " saved.>>");
+                    context.getTerminal().getOut().println("<<repository " + repository.getRepositoryId() + " saved.>>");
                     repository.save();
                 }
             }

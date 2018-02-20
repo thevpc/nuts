@@ -188,9 +188,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         break;
                     default:
                         while (true) {
-                            executionContext.getTerminal().getOut().println("Multiple runnable classes detected  - actually <<<" + possibleClasses.size() + ">>> . Select one :");
+                            executionContext.getTerminal().getOut().println("Multiple runnable classes detected  - actually [[" + possibleClasses.size() + "]] . Select one :");
                             for (int i = 0; i < possibleClasses.size(); i++) {
-                                executionContext.getTerminal().getOut().drawln("==[" + (i + 1) + "]== <<<" + possibleClasses.get(i) + ">>>");
+                                executionContext.getTerminal().getOut().println("==[" + (i + 1) + "]== [[" + possibleClasses.get(i) + "]]");
                             }
                             String line = executionContext.getTerminal().readLine("Enter class # or name to run it. Type 'cancel' to cancel : ");
                             if (line != null) {
