@@ -59,4 +59,17 @@ class StringUtils {
         return result;
     }
 
+    public static String join(String sep, Collection<String> items) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> i = items.iterator();
+        if (i.hasNext()) {
+            sb.append(i.next());
+        }
+        while (i.hasNext()) {
+            sb.append(sep);
+            sb.append(i.next());
+        }
+        return sb.toString();
+    }
+
 }

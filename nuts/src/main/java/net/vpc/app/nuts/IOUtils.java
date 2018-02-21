@@ -1,38 +1,42 @@
 /**
  * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
- * <p>
- * is a new Open Source Package Manager to help install packages and libraries
- * for runtime execution. Nuts is the ultimate companion for maven (and other
- * build managers) as it helps installing all package dependencies at runtime.
- * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
- * large range of sub managers / repositories.
- * <p>
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
  * Copyright (C) 2016-2017 Taha BEN SALAH
- * <p>
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 3 of the License, or (at your option) any later
- * version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * <p>
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static net.vpc.app.nuts.DefaultNutsBootWorkspace.log;
 
 /**
  * Created by vpc on 1/15/17.
@@ -149,7 +153,87 @@ class IOUtils {
         return null;
     }
 
-    public static Properties loadProperties(URL url) {
+    public static boolean storeProperties(Properties p, File file) {
+        Writer writer = null;
+        try {
+            try {
+                p.store(writer = new FileWriter(file), null);
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Unable to store {0}", file);
+        }
+        return false;
+    }
+
+    public static Properties loadFileProperties(File file) {
+        Properties props = new Properties();
+        InputStream inputStream = null;
+        try {
+            try {
+                if (file != null && file.isFile()) {
+                    inputStream = new FileInputStream(file);
+                    props.load(inputStream);
+                }
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return props;
+    }
+
+    public static Properties loadURLProperties(String url) {
+        try {
+            if (url != null) {
+                return loadURLProperties(new URL(url));
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return new Properties();
+    }
+
+    public static Properties loadFileProperties(String file) {
+        try {
+            if (file != null) {
+                return loadFileProperties(new File(file));
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return new Properties();
+    }
+
+    public static File urlToFile(String url) {
+        if (url != null) {
+            URL u = null;
+            try {
+                u = new URL(url);
+            } catch (Exception ex) {
+                //
+            }
+            if (u != null) {
+                if ("file".equals(u.getProtocol())) {
+                    try {
+                        return new File(u.toURI());
+                    } catch (Exception ex) {
+                        return new File(u.getPath());
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Properties loadURLProperties(URL url) {
         Properties props = new Properties();
         InputStream inputStream = null;
         try {

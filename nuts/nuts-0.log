@@ -542,3 +542,9 @@ java.lang.InstantiationException
 	at com.sun.proxy.$Proxy0.createSession(Unknown Source)
 	at net.vpc.app.nuts.Nuts.uncheckedMain(Nuts.java:307)
 	at net.vpc.app.nuts.Nuts.main(Nuts.java:67)
+Tue Feb 20 17:09:05 CET 2018 WARNING net.vpc.app.nuts.DefaultNutsBootWorkspace: Runtime inaccessible from : file:/home/vpc/.nuts/bootstrap/
+Tue Feb 20 17:09:07 CET 2018 WARNING net.vpc.app.nuts.DefaultNutsBootWorkspace: Runtime inaccessible from : https://github.com/thevpc/nuts/raw/master/nuts/nuts-bootstrap
+Tue Feb 20 17:09:08 CET 2018 WARNING net.vpc.app.nuts.DefaultNutsBootWorkspace: Loaded Runtime net.vpc.app.nuts:nuts-core#0.3.7.0from : https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap
+Wed Feb 21 00:55:32 CET 2018 SEVERE net.vpc.app.nuts.DefaultNutsBootWorkspace: repository is not a valid folder : /home/vpc/.nuts/file:/home/vpc/.nuts/bootstrap
+Wed Feb 21 01:04:22 CET 2018 SEVERE net.vpc.app.nuts.DefaultNutsBootWorkspace: repository is not a valid folder : /home/vpc/.nuts/bootstrap
+Wed Feb 21 01:16:03 CET 2018 SEVERE net.vpc.app.nuts.DefaultNutsBootWorkspace: repository is not a valid folder : /home/vpc/.nuts/bootstrap

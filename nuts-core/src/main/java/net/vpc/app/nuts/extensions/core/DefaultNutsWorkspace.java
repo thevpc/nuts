@@ -359,7 +359,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         NutsWorkspaceFactory newFactory = getFactory().createSupported(NutsWorkspaceFactory.class, self());
         NutsWorkspace nutsWorkspace = getFactory().createSupported(NutsWorkspace.class, self());
         NutsWorkspaceImpl nutsWorkspaceImpl = (NutsWorkspaceImpl) nutsWorkspace;
-        nutsWorkspaceImpl.initializeWorkspace(workspaceBoot, newFactory, workspaceBootId.toString(), workspaceRuntimeId.toString(), workspace, bootClassLoader, options.copy().setIgnoreIfFound(true));
+        if (nutsWorkspaceImpl.initializeWorkspace(workspaceBoot, newFactory, workspaceBootId.toString(), workspaceRuntimeId.toString(), workspace, bootClassLoader, options.copy().setIgnoreIfFound(true))) {
+            log.fine("workspace created : " + workspaceBoot);
+        }
         return nutsWorkspace;
     }
 
