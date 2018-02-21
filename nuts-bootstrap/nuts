@@ -25,8 +25,8 @@
 # nuts --nuts-shell=cv mycommand
 #    runs nuts from cache only and show executed command
 # 
-# @date 2018-02-11
-# @version 0.3.6.0
+# @date 2018-02-21
+# @version 0.3.7.0
 
 #NUTS_JAVA_HOME='';
 
@@ -71,16 +71,18 @@ if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
     #local Maven
     if [ x"$nuts_shell_no_local" != x"1" ] ; then
         LOCAL_NUTS_FILE=''
-        LOCAL_NUTS_FOLDER="$HOME/.m2/repository/net/vpc/app/nuts/nuts"
-        LOCAL_NUTS_VERSION=$(grep -e '<release>.*</release>' "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" | grep -o '[0-9.]*')
-        if [ x"$LOCAL_NUTS_VERSION" != "x" ] ; then
-            LOCAL_NUTS_FILE="$LOCAL_NUTS_FOLDER/$LOCAL_NUTS_VERSION/nuts-$LOCAL_NUTS_VERSION.jar"
-        fi
+        if [ -f "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" ]; then
+            LOCAL_NUTS_FOLDER="$HOME/.m2/repository/net/vpc/app/nuts/nuts"
+            LOCAL_NUTS_VERSION=$(grep -e '<release>.*</release>' "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" | grep -o '[0-9.]*')
+            if [ x"$LOCAL_NUTS_VERSION" != "x" ] ; then
+                LOCAL_NUTS_FILE="$LOCAL_NUTS_FOLDER/$LOCAL_NUTS_VERSION/nuts-$LOCAL_NUTS_VERSION.jar"
+            fi
 
-        if [ $(check_file_size "$LOCAL_NUTS_FILE") -gt 0 ] ; then
-            NUTS_FILE_SOURCE=$LOCAL_NUTS_FILE
-            mkdir -p -- verbose "$(dirname $BOOT_NUTS_FILE)"
-            cp -rf "$LOCAL_NUTS_FILE" "$BOOT_NUTS_FILE"
+            if [ $(check_file_size "$LOCAL_NUTS_FILE") -gt 0 ] ; then
+                NUTS_FILE_SOURCE=$LOCAL_NUTS_FILE
+                mkdir -p -- verbose "$(dirname $BOOT_NUTS_FILE)"
+                cp -rf "$LOCAL_NUTS_FILE" "$BOOT_NUTS_FILE"
+            fi
         fi
     fi
 fi
