@@ -285,7 +285,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     + "javax.servlet:javax.servlet-api#3.1.0;"
                     + "org.jline#jline#3.5.2;"
                     + "org.ow2.asm:asm#5.2;"
-                    + "net.vpc.common:java-shell#0.4;"
+                    + "net.vpc.common:java-shell#0.5;"
                     + "org.glassfish:javax.json#1.0.4",
                     "~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"
             ));

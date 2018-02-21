@@ -79,6 +79,7 @@ if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
 
         if [ $(check_file_size "$LOCAL_NUTS_FILE") -gt 0 ] ; then
             NUTS_FILE_SOURCE=$LOCAL_NUTS_FILE
+            mkdir -p -- verbose "$(dirname $BOOT_NUTS_FILE)"
             cp -rf "$LOCAL_NUTS_FILE" "$BOOT_NUTS_FILE"
         fi
     fi
