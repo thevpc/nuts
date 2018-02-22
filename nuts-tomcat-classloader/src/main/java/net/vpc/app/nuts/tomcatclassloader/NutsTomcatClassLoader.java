@@ -133,7 +133,8 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
                     nutsClassLoader = resolveNutsWorkspace().getExtensionManager().getFactory().createClassLoader(pathList, null, null);
-                } catch (Exception e) {
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();
                 }
             } finally {
@@ -344,7 +345,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
             Field transformers = super.getClass().getDeclaredField("transformers");
             transformers.setAccessible(true);
             return (List<ClassFileTransformer>) transformers.get(this);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             return new ArrayList<>();
         }
     }

@@ -25,7 +25,7 @@
 # nuts --nuts-shell=cv mycommand
 #    runs nuts from cache only and show executed command
 # 
-# @date 2018-02-21
+# @date 2018-02-22
 # @version 0.3.8.0
 
 #NUTS_JAVA_HOME='';
@@ -117,7 +117,7 @@ fi
 
 JAVA_CMD='java'
 if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
-    JAVA_PREFIX="$NUTS_JAVA_HOME/bin/java";
+    JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
 fi
 
 if [ x"$nuts_shell_verbose" == x"1" ] ; then
