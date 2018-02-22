@@ -49,7 +49,7 @@ public class LogoutCommand extends AbstractNutsCommand {
         if (!cmdLine.isExecMode()) {
             return -1;
         }
-        context.getValidWorkspace().logout();
+        context.getValidWorkspace().getSecurityManager().logout();
         return 0;
     }
 }

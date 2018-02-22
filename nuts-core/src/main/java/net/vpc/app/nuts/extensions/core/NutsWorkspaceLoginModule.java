@@ -102,7 +102,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 return true;
             }
 
-            NutsSecurityEntityConfig registeredUser = workspace.getConfig().getSecurity(name);
+            NutsSecurityEntityConfig registeredUser = workspace.getConfigManager().getConfig().getSecurity(name);
             if (registeredUser != null && !CoreStringUtils.isEmpty(registeredUser.getCredentials())) {
                 if ((CoreStringUtils.isEmpty(password) && CoreStringUtils.isEmpty(registeredUser.getCredentials()))
                         || (!CoreStringUtils.isEmpty(password) && !CoreStringUtils.isEmpty(registeredUser.getCredentials())

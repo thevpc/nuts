@@ -97,10 +97,10 @@ public class WhichCommand extends AbstractNutsCommand {
                 cp_nutsCoreFile = core.getFile().getPath();
             }
         }
-        map.put("nuts.workspace.version", workspace.getBoot().getBootId());
+        map.put("nuts.workspace.version", workspace.getConfigManager().getBoot().getBootId());
         map.put("nuts.workspace.api-component", cp_nutsFile);
         map.put("nuts.workspace.core-component", cp_nutsCoreFile);
-        map.put("nuts.workspace.location", workspace.getWorkspaceLocation());
+        map.put("nuts.workspace.location", workspace.getConfigManager().getWorkspaceLocation());
         return map;
     }
 
@@ -112,12 +112,12 @@ public class WhichCommand extends AbstractNutsCommand {
         if (cmdLine.isEmpty()) {
             if (cmdLine.isExecMode()) {
                 Map<String, String> runtimeProperties = getRuntimeProperties(context.getValidWorkspace(), context.getSession());
-                out.println("nuts-version    : [[" + runtimeProperties.get("nuts.workspace.version") + "]]");
-                out.println("nuts-location   : [[" + runtimeProperties.get("nuts.workspace.location") + "]]");
-                out.println("nuts-api        : [[" + runtimeProperties.get("nuts.workspace.api-component") + "]]");
-                out.println("nuts-core       : [[" + runtimeProperties.get("nuts.workspace.core-component") + "]]");
-                out.println("java-version    : [[" + System.getProperty("java.version") + "]]");
-                out.println("java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+                out.printf("nuts-version    : [[%s]]\n",runtimeProperties.get("nuts.workspace.version") );
+                out.printf("nuts-location   : [[%s]]\n",runtimeProperties.get("nuts.workspace.location") );
+                out.printf("nuts-api        : [[%s]]\n",runtimeProperties.get("nuts.workspace.api-component") );
+                out.printf("nuts-core       : [[%s]]\n",runtimeProperties.get("nuts.workspace.core-component") );
+                out.printf("java-version    : [[%s]]\n",System.getProperty("java.version") );
+                out.printf("java-executable : [[%s]]\n",System.getProperty("java.home") + "/bin/java" );
             }
             return 0;
         }
@@ -127,7 +127,7 @@ public class WhichCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 NutsId found = validWorkspace.resolveId(id, context.getSession());
                 if (found == null) {
-                    context.getTerminal().getErr().println(id + " not found");
+                    context.getTerminal().getErr().printf("%s not found\n",id);
                     ret = 1;
                 } else {
                     out.println(found);

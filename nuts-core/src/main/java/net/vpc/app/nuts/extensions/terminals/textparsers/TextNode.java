@@ -197,6 +197,7 @@ public class TextNode {
         } else {
             s.append(", ").append(nodes);
         }
+        s.append(")");
         return s.toString();
     }
 

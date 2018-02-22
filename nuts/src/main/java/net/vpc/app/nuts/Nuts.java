@@ -178,19 +178,18 @@ public class Nuts {
                         checkupdates = true;
                         break;
                     case "--verbose":
+                    case "--log-finest":
                         logLevel = Level.FINEST;
                         break;
                     case "--info":
+                    case "--log-info":
                         logLevel = Level.INFO;
-                        break;
-                    case "--log-finest":
-                        logLevel = Level.FINEST;
                         break;
                     case "--log-fine":
                         logLevel = Level.FINE;
                         break;
-                    case "--log-info":
-                        logLevel = Level.INFO;
+                    case "--log-finer":
+                        logLevel = Level.FINER;
                         break;
                     case "--log-all":
                         logLevel = Level.ALL;
@@ -200,9 +199,6 @@ public class Nuts {
                         break;
                     case "--log-severe":
                         logLevel = Level.SEVERE;
-                        break;
-                    case "--log-finer":
-                        logLevel = Level.FINER;
                         break;
                     case "--log-size":
                         i++;
@@ -258,17 +254,19 @@ public class Nuts {
         }
 
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
+        long startBootsrapTime = System.currentTimeMillis();
         NutsBootWorkspace bws = openBootWorkspace(
                 new NutsBootOptions()
                         .setRoot(root)
                         .setRuntimeId(runtimeId)
                         .setRuntimeSourceURL(runtimeSourceURL)
         );
+        long endBootsrapTime = System.currentTimeMillis();
         if (!showError.isEmpty()) {
             for (String s : showError) {
-                System.err.println(s);
+                System.err.printf("%s", s);
             }
-            System.err.println("Try 'nuts --help' for more information.");
+            System.err.printf("Try 'nuts --help' for more information.\n");
             throw new NutsIllegalArgumentsException("Try 'nuts --help' for more information.");
         }
         boolean someProcessing = false;
@@ -278,6 +276,7 @@ public class Nuts {
         String[] args2 = argsList.toArray(new String[argsList.size()]);
 
         NutsWorkspace ws;
+        long startWSTime = System.currentTimeMillis();
         try {
             ws = bws.openWorkspace(workspace, new NutsWorkspaceCreateOptions()
                     .setArchetype(archetype)
@@ -288,30 +287,31 @@ public class Nuts {
             );
         } catch (Exception ex) {
             if (version) {
-                System.err.println("workspace-boot       : " + bws.getBootId() + "" + "");
-                System.err.println("workspace-runtime    : " + bws.getRuntimeId() + "");
-                System.err.println("workspace-root       : " + bws.getRoot() + "" + "");
-                System.err.println("workspace-location   : " + (workspace == null ? "" : workspace) + "");
-                System.err.println("boot-java-version    : " + System.getProperty("java.version"));
-                System.err.println("boot-java-executable : " + System.getProperty("java.home") + "/bin/java" + "");
-                System.err.println("boot-java-classpath  : " + System.getProperty("java.class.path") + "");
+                System.err.printf("workspace-boot       : %s\n", bws.getBootId());
+                System.err.printf("workspace-runtime    : %s\n", bws.getRuntimeId());
+                System.err.printf("workspace-root       : %s\n", bws.getRoot());
+                System.err.printf("workspace-location   : %s\n", (workspace == null ? "" : workspace));
+                System.err.printf("boot-java-version    : %s\n", System.getProperty("java.version"));
+                System.err.printf("boot-java-executable : %s\n", System.getProperty("java.home") + "/bin/java");
+                System.err.printf("boot-java-classpath  : %s\n", System.getProperty("java.class.path"));
             }
             if (showHelp) {
-                System.err.println("Unable to local help. No valid workspace was resolved");
+                System.err.printf("Unable to local help. No valid workspace was resolved\n");
             }
-            System.err.println("Unable to local nuts-core components.");
-            System.err.println("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...");
-            System.err.println("Exiting nuts, Bye!");
+            System.err.printf("Unable to local nuts-core components.\n");
+            System.err.printf("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...\n");
+            System.err.printf("Exiting nuts, Bye!\n");
             throw new NutsIllegalArgumentsException("Unable to locate nuts-core components", ex);
         }
-        NutsSession session = ws.createSession();
+        long endWSTime = System.currentTimeMillis();
+        NutsSession session = ws.getExtensionManager().getFactory().createSession();
         if (nocolors) {
             session.getTerminal().getOut().print("`disable-formats`");
             session.getTerminal().getErr().print("`disable-formats`");
         }
         if (showHelp) {
             NutsPrintStream out = session.getTerminal().getOut();
-            perf = showPerf(startTime, perf, session);
+            perf = showPerf(startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
             help(ws, out);
             someProcessing = true;
         }
@@ -320,11 +320,11 @@ public class Nuts {
             if (StringUtils.isEmpty(password)) {
                 password = session.getTerminal().readPassword("Password : ");
             }
-            ws.login(login, password);
+            ws.getSecurityManager().login(login, password);
         }
 
         if (applyUpdatesFile != null) {
-            ws.execExternalNuts(new File(applyUpdatesFile), args, false, false, session);
+            ws.exec(new File(applyUpdatesFile), args, false, false, session);
             return;
         }
 
@@ -338,15 +338,15 @@ public class Nuts {
         if (version) {
             NutsPrintStream out = session.getTerminal().getOut();
 
-            out.println("workspace-boot       : [[" + ws.getWorkspaceBootId() + "]]");
-            out.println("workspace-runtime    : [[" + ws.getWorkspaceRuntimeId() + "]]");
-            out.println("workspace-root       : [[" + bws.getRoot() + "]]");
-            out.println("workspace-location   : [[" + ws.getWorkspaceLocation() + "]]");
-            out.println("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-            out.println("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
-            out.println("boot-java-classpath  : [[" + System.getProperty("java.class.path") + "]]");
+            out.printf("workspace-boot       : [[%s]]\n", ws.getConfigManager().getWorkspaceBootId());
+            out.printf("workspace-runtime    : [[%s]]\n", ws.getConfigManager().getWorkspaceRuntimeId());
+            out.printf("workspace-root       : [[%s]]\n", bws.getRoot());
+            out.printf("workspace-location   : [[%s]]\n", ws.getConfigManager().getWorkspaceLocation());
+            out.printf("boot-java-version    : [[%s]]\n", System.getProperty("java.version"));
+            out.printf("boot-java-executable : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
+            out.printf("boot-java-classpath  : [[%s]]\n", System.getProperty("java.class.path"));
 
-            perf = showPerf(startTime, perf, session);
+            perf = showPerf(System.currentTimeMillis() - startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
             someProcessing = true;
         }
 
@@ -355,28 +355,32 @@ public class Nuts {
         }
         if (args2.length == 0) {
             /*perf = */
-            showPerf(startTime, perf, session);
+            showPerf(startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
             help(ws, session.getTerminal().getOut());
             return;
         }
         NutsConsole commandLine = null;
         try {
-            commandLine = ws.createConsole(session);
+            commandLine = ws.getExtensionManager().getFactory().createConsole(session);
         } catch (NutsExtensionMissingException ex) {
             /*perf = */
-            showPerf(startTime, perf, session);
-            session.getTerminal().getErr().println("Unable to create Console. Make sure nuts-core is installed properly.");
+            showPerf(System.currentTimeMillis() - startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
+            session.getTerminal().getErr().printf("Unable to create Console. Make sure nuts-core is installed properly.");
             return;
         }
         /*perf = */
-        showPerf(startTime, perf, session);
+        showPerf(System.currentTimeMillis() - startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
         commandLine.run(args2);
 
     }
 
-    private static boolean showPerf(long startTime, boolean perf, NutsSession session) {
+    private static boolean showPerf(long overallTime, long boot, long ws, boolean perf, NutsSession session) {
         if (perf) {
-            session.getTerminal().getOut().println("Nuts loaded in [[" + (System.currentTimeMillis() - startTime) + "]] ms");
+            session.getTerminal().getOut().printf("Nuts loaded in [[%s]] ms (boot in [[%s]] ms, create workspace in [[%s]] ms))\n",
+                    overallTime,
+                    boot,
+                    ws
+            );
         }
         return false;
     }

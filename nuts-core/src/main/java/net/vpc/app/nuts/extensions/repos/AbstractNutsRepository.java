@@ -37,8 +37,6 @@ import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.core.NutsSecurityEntityConfigImpl;
-import net.vpc.app.nuts.extensions.core.NutsUserInfoImpl;
 import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
 
 /**
@@ -46,129 +44,67 @@ import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
  */
 public abstract class AbstractNutsRepository implements NutsRepository {
 
+    private static final long serialVersionUID = 0L;
+
     private static final Logger log = Logger.getLogger(AbstractNutsRepository.class.getName());
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
     protected Map<String, String> extensions = new HashMap<String, String>();
-    private NutsRepositoryConfig config;
     private String repositoryId;
     private NutsWorkspace workspace;
     private Map<String, NutsRepository> mirors = new HashMap<>();
-    private File root;
-    private int speed;
+    private NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
+    private DefaultNutsRepositoryConfigManager configManager;
 
-    public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, File root, int slowness) {
-        this.speed = Math.max(0, slowness);
+    public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, File root, int speed) {
         if (config == null) {
             throw new NutsIllegalArgumentsException("Null Config");
         }
         checkNutsRepositoryConfig(config);
         if (root == null) {
-            root = CoreIOUtils.resolvePath(config.getId(), CoreIOUtils.createFile(workspace.getWorkspaceLocation(), NutsConstants.DEFAULT_REPOSITORIES_ROOT), workspace.getWorkspaceRootLocation());
+            root = CoreIOUtils.resolvePath(config.getId(), CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.DEFAULT_REPOSITORIES_ROOT), workspace.getConfigManager().getWorkspaceRootLocation());
         } else {
-            root = CoreIOUtils.resolvePath(root.getPath(), null, workspace.getWorkspaceRootLocation());
+            root = CoreIOUtils.resolvePath(root.getPath(), null, workspace.getConfigManager().getWorkspaceRootLocation());
         }
         if (root == null || (root.exists() && !root.isDirectory())) {
             throw new NutsInvalidRepositoryException(String.valueOf(root), "Unable to resolve root to a valid folder " + root + "");
         }
-        this.root = root;
-        this.config = config;
+        configManager = new DefaultNutsRepositoryConfigManager(root, config, Math.max(0, speed));
+
         this.repositoryId = config.getId();
         this.workspace = workspace;
     }
 
-    @Override
-    public String getEnv(String key, String defaultValue, boolean inherit) {
-        String t = getConfig().getEnv(key, null);
-        if (!CoreStringUtils.isEmpty(t)) {
-            return t;
-        }
-        t = getWorkspace().getEnv(key, null);
-        if (!CoreStringUtils.isEmpty(t)) {
-            return t;
-        }
-        return defaultValue;
+    public NutsRepositoryConfigManager getConfigManager() {
+        return configManager;
     }
 
-    @Override
-    public Properties getEnv(boolean inherit) {
-        Properties p = new Properties();
-        if (inherit) {
-            p.putAll(getWorkspace().getEnv());
-        }
-        p.putAll(getConfig().getEnv());
-        return p;
-    }
-
-    @Override
-    public void setEnv(String property, String value) {
-        getConfig().setEnv(property, value);
-    }
-
-    @Override
-    public int getSpeed() {
-        int s = speed;
-        if (isSupportedMirroring()) {
-            for (NutsRepository mirror : getMirrors()) {
-                s += mirror.getSpeed();
-            }
-        }
-        return s;
-    }
-
-    @Override
-    public String getLocation() {
-        return getConfig().getLocation();
-    }
-
-    @Override
-    public NutsRepositoryConfig getConfig() {
-        return config;
-    }
-
-    private void checkNutsRepositoryConfig(NutsRepositoryConfig config) {
-        if (CoreStringUtils.isEmpty(config.getType())) {
-            throw new NutsIllegalArgumentsException("Empty Repository Type");
-        }
-        if (CoreStringUtils.isEmpty(config.getId())) {
-            throw new NutsIllegalArgumentsException("Empty Repository Id");
-        }
-//        if (CoreStringUtils.isEmpty(config.getLocation())) {
-//            throw new NutsIllegalArgumentsException("Empty Repository Id");
-//        }
-    }
-
-    public File getRoot() {
-        return root;
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return workspace;
+    public NutsRepositorySecurityManager getSecurityManager() {
+        return securityManager;
     }
 
     @Override
     public void open(boolean autoCreate) {
-        File file = new File(getRoot(), NutsConstants.NUTS_REPOSITORY_FILE);
+        File file = new File(getConfigManager().getLocationFolder(), NutsConstants.NUTS_REPOSITORY_FILE);
         boolean found = false;
         if (file.exists()) {
             NutsRepositoryConfig newConfig = CoreJsonUtils.get(getWorkspace()).loadJson(file, NutsRepositoryConfigImpl.class);
             if (newConfig != null) {
                 found = true;
-                newConfig.setType(config.getType());
+                newConfig.setType(getConfigManager().getConfig().getType());
                 checkNutsRepositoryConfig(newConfig);
-                config = newConfig;
-                repositoryId = config.getId();
-                for (NutsRepositoryConfig repositoryConfig : config.getMirrors()) {
-                    wireRepository(getWorkspace().openRepository(repositoryConfig.getId(), new File(getMirorsRoot(), repositoryConfig.getId()), repositoryConfig.getLocation(), repositoryConfig.getType(), true));
+                configManager.setConfig(newConfig);
+                repositoryId = getConfigManager().getConfig().getId();
+                for (NutsRepositoryConfig repositoryConfig : getConfigManager().getConfig().getMirrors()) {
+                    wireRepository(getWorkspace().getRepositoryManager().openRepository(repositoryConfig.getId(), new File(getMirorsRoot(), repositoryConfig.getId()), repositoryConfig.getLocation(), repositoryConfig.getType(), true));
                 }
 
             }
         }
         if (!found) {
             if (autoCreate) {
-                NutsRepositoryConfig newConfig = new NutsRepositoryConfigImpl(getRepositoryId(), getLocation(), config.getType());
+                NutsRepositoryConfig newConfig = new NutsRepositoryConfigImpl(getRepositoryId(), getConfigManager().getLocation(), getConfigManager().getConfig().getType());
                 checkNutsRepositoryConfig(newConfig);
-                config = newConfig;
+                configManager.setConfig(newConfig);
             } else {
                 throw new NutsRepositoryNotFoundException(getRepositoryId());
             }
@@ -176,7 +112,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     private File getMirorsRoot() {
-        return new File(getRoot(), NutsConstants.DEFAULT_REPOSITORIES_ROOT);
+        return new File(getConfigManager().getLocationFolder(), NutsConstants.DEFAULT_REPOSITORIES_ROOT);
     }
 
     protected void wireRepository(NutsRepository repository) {
@@ -185,12 +121,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsRepositoryAlreadyRegisteredException(repository.getRepositoryId());
         }
         mirors.put(repository.getRepositoryId(), repository);
-        for (NutsRepositoryListener listener : getRepositoryListeners()) {
-            listener.onAddRepository(getWorkspace(), this, repository);
-        }
-        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-            listener.onAddRepository(getWorkspace(), this, repository);
-        }
+        fireOnAddRepository(repository);
     }
 
     @Override
@@ -210,7 +141,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     protected int getSupportLevel(NutsId id) {
-        String groups = config.getGroups();
+        String groups = getConfigManager().getConfig().getGroups();
         if (CoreStringUtils.isEmpty(groups)) {
             return 1;
         }
@@ -228,20 +159,20 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public void save() {
-        if (!isAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SAVE_REPOSITORY);
         }
-        File file = CoreIOUtils.createFile(getRoot(), NutsConstants.NUTS_REPOSITORY_FILE);
+        File file = CoreIOUtils.createFile(getConfigManager().getLocationFolder(), NutsConstants.NUTS_REPOSITORY_FILE);
         boolean created = false;
         if (!file.exists()) {
             created = true;
         }
-        getRoot().mkdirs();
-        CoreJsonUtils.get(getWorkspace()).storeJson(config, file, CoreJsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
+        getConfigManager().getLocationFolder().mkdirs();
+        CoreJsonUtils.get(getWorkspace()).storeJson(getConfigManager().getConfig(), file, CoreJsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
         if (created) {
-            log.log(Level.INFO, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Created repository " + getRepositoryId() + " at " + getRoot().getPath());
+            log.log(Level.INFO, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Created repository " + getRepositoryId() + " at " + getConfigManager().getLocationFolder().getPath());
         } else {
-            log.log(Level.FINE, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Updated repository " + getRepositoryId() + " at " + getRoot().getPath());
+            log.log(Level.FINE, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Updated repository " + getRepositoryId() + " at " + getConfigManager().getLocationFolder().getPath());
         }
         for (NutsRepository repository : mirors.values()) {
             repository.save();
@@ -269,22 +200,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (repo != null) {
             updated = true;
         }
-        if (config.getMirror(repositoryId) != null) {
+        if (getConfigManager().getConfig().getMirror(repositoryId) != null) {
             updated = true;
         }
         if (!updated) {
             throw new NutsRepositoryNotFoundException(repositoryId);
         }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " remove repo " + repositoryId);
-        config.removeMirror(repositoryId);
+        getConfigManager().getConfig().removeMirror(repositoryId);
         if (repo != null) {
             mirors.remove(repositoryId);
-            for (NutsRepositoryListener listener : getRepositoryListeners()) {
-                listener.onRemoveRepository(getWorkspace(), this, repo);
-            }
-            for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-                listener.onRemoveRepository(getWorkspace(), this, repo);
-            }
+            fireOnRemoveRepository(repo);
         }
     }
 
@@ -328,7 +254,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
         boolean supported = false;
         try {
-            supported = getWorkspace().isSupportedRepositoryType(type);
+            supported = getWorkspace().getRepositoryManager().isSupportedRepositoryType(type);
         } catch (Exception e) {
             //
         }
@@ -338,183 +264,24 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
         NutsRepositoryConfig newConf = new NutsRepositoryConfigImpl(repositoryId, location, type);
 
-        NutsRepositoryConfig repoConf = config.getMirror(repositoryId);
+        NutsRepositoryConfig repoConf = getConfigManager().getConfig().getMirror(repositoryId);
         if (repoConf != null) {
             throw new NutsRepositoryAlreadyRegisteredException(repositoryId);
         }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
-        config.addMirror(newConf);
+        getConfigManager().getConfig().addMirror(newConf);
 
-        NutsRepository repo = getWorkspace().openRepository(repositoryId, new File(getMirorsRoot(), repositoryId), location, type, autoCreate);
+        NutsRepository repo = getWorkspace().getRepositoryManager().openRepository(repositoryId, new File(getMirorsRoot(), repositoryId), location, type, autoCreate);
         wireRepository(repo);
         return repo;
     }
 
     @Override
     public String toString() {
-        return "id=" + getRepositoryId() + " ; impl=" + getClass().getSimpleName() + " ; folder=" + getRoot() + (CoreStringUtils.isEmpty(getLocation()) ? "" : (" ; location=" + getLocation()));
+        return "id=" + getRepositoryId() + " ; impl=" + getClass().getSimpleName() + " ; folder=" + getConfigManager().getLocation() + (CoreStringUtils.isEmpty(getConfigManager().getLocation()) ? "" : (" ; location=" + getConfigManager().getLocation()));
     }
 
     public void checkAllowedFetch(NutsSession session, NutsId id) {
-    }
-
-    @Override
-    public boolean isAllowed(String right) {
-        String name = getWorkspace().getCurrentLogin();
-        if (NutsConstants.USER_ADMIN.equals(name)) {
-            return true;
-        }
-        Stack<String> items = new Stack<>();
-        Set<String> visitedGroups = new HashSet<>();
-        visitedGroups.add(name);
-        items.push(name);
-        NutsRepositoryConfig c = getConfig();
-        while (!items.isEmpty()) {
-            String n = items.pop();
-            NutsSecurityEntityConfig s = c.getSecurity(n);
-            if (s != null) {
-                if (s.containsRight("!" + right)) {
-                    return false;
-                }
-                if (s.containsRight(right)) {
-                    return true;
-                }
-                for (String g : s.getGroups()) {
-                    if (!visitedGroups.contains(g)) {
-                        visitedGroups.add(g);
-                        items.push(g);
-                    }
-                }
-            }
-        }
-        return getWorkspace().isAllowed(right);
-    }
-
-    @Override
-    public void addUser(String user, String credentials, String... rights) {
-        if (CoreStringUtils.isEmpty(user)) {
-            throw new NutsIllegalArgumentsException("Invalid user");
-        }
-        config.setSecurity(new NutsSecurityEntityConfigImpl(user, null, null, null));
-        setUserCredentials(user, credentials, null);
-        if (rights != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : rights) {
-                security.addRight(right);
-            }
-        }
-    }
-
-    @Override
-    public void setUserRights(String user, String... rights) {
-        if (rights != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : security.getRights()) {
-                security.removeRight(right);
-            }
-            for (String right : rights) {
-                security.addRight(right);
-            }
-        }
-    }
-
-    @Override
-    public void addUserRights(String user, String... rights) {
-        if (rights != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : rights) {
-                security.addRight(right);
-            }
-        }
-    }
-
-    @Override
-    public void removeUserRights(String user, String... rights) {
-        if (rights != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : rights) {
-                security.removeRight(right);
-            }
-        }
-    }
-
-    @Override
-    public void setUserGroups(String user, String... groups) {
-        if (groups != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : security.getRights()) {
-                security.removeRight(right);
-            }
-            for (String right : groups) {
-                security.addGroup(right);
-            }
-        }
-    }
-
-    @Override
-    public void addUserGroups(String user, String... groups) {
-        if (groups != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : groups) {
-                security.addGroup(right);
-            }
-        }
-    }
-
-    @Override
-    public void removeUserGroups(String user, String... groups) {
-        if (groups != null) {
-            NutsSecurityEntityConfig security = getConfig().getSecurity(user);
-            for (String right : groups) {
-                security.removeGroup(right);
-            }
-        }
-    }
-
-    @Override
-    public void setUserRemoteIdentity(String user, String mappedIdentity) {
-        getConfig().getSecurity(user).setMappedUser(mappedIdentity);
-    }
-
-    @Override
-    public void setUserCredentials(String username, String password, String oldPassword) {
-        if (!isAllowed(NutsConstants.RIGHT_SET_PASSWORD)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SET_PASSWORD);
-        }
-        if (CoreStringUtils.isEmpty(username)) {
-            username = getWorkspace().getCurrentLogin();
-        }
-        NutsSecurityEntityConfig u = getConfig().getSecurity(username);
-        if (u == null) {
-            throw new NutsIllegalArgumentsException("No such user " + username);
-        }
-
-        if (!getWorkspace().getCurrentLogin().equals(username)) {
-            if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-                throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_ADMIN);
-            }
-        }
-        if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-            if (CoreStringUtils.isEmpty(password)) {
-                throw new NutsSecurityException("Missing old password");
-            }
-            //check old password
-            if (!CoreStringUtils.isEmpty(u.getCredentials())
-                    && !u.getCredentials().equals(CoreSecurityUtils.evalSHA1(oldPassword))) {
-                throw new NutsSecurityException("Invalid password");
-            }
-        }
-        if (CoreStringUtils.isEmpty(password)) {
-            throw new NutsIllegalArgumentsException("Missing password");
-        }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Update user credentials " + username);
-        getConfig().setSecurity(u);
-        if (CoreStringUtils.isEmpty(password)) {
-            password = null;
-        } else {
-            password = CoreSecurityUtils.httpEncrypt(password.getBytes(), CoreNutsUtils.DEFAULT_PASSPHRASE);
-        }
-        u.setCredentials(password);
     }
 
     @Override
@@ -537,7 +304,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public NutsDescriptor fetchDescriptor(NutsId id, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(session, id.setFace("nuts"));
@@ -552,7 +319,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public String fetchHash(NutsId id, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(session, id.setFace("hash"));
@@ -567,7 +334,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public String fetchDescriptorHash(NutsId id, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(session, id.setFace("nutshash"));
@@ -580,7 +347,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     public NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, NutsSession session) {
-        if (!isAllowed(NutsConstants.RIGHT_DEPLOY)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_DEPLOY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_DEPLOY);
         }
         if (CoreStringUtils.isEmpty(id.getGroup())) {
@@ -610,7 +377,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     public void push(NutsId id, String repoId, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_PUSH)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_PUSH)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_PUSH);
         }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
@@ -619,7 +386,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     public Iterator<NutsId> find(final NutsIdFilter filter, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(session, null);
@@ -630,7 +397,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public NutsId resolveId(NutsId id, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(session, id.setFace("content"));
@@ -664,7 +431,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public NutsFile fetch(NutsId id, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
         checkAllowedFetch(session, id.setFace("content"));
@@ -678,7 +445,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     public File copyTo(NutsId id, NutsSession session, File localPath) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
         checkAllowedFetch(session, id.setFace("content"));
@@ -689,7 +456,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public File copyDescriptorTo(NutsId id, NutsSession session, File localPath) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(session, id.setFace("descriptor"));
@@ -710,7 +477,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     public void undeploy(NutsId id, NutsSession session) {
         checkSession(session);
-        if (!isAllowed(NutsConstants.RIGHT_UNDEPLOY)) {
+        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_UNDEPLOY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_UNDEPLOY);
         }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
@@ -744,9 +511,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     /**
      * resolve static version id!!
+     *
      * @param id
      * @param session
-     * @return 
+     * @return
      */
     protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
 
@@ -772,7 +540,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (id == null) {
             throw new NutsIllegalArgumentsException("Missing id");
         }
-        if (!isAllowed(right)) {
+        if (!getSecurityManager().isAllowed(right)) {
             throw new NutsSecurityException("Not Allowed " + right);
         }
         if (CoreStringUtils.isEmpty(id.getGroup())) {
@@ -784,48 +552,155 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public NutsUserInfo findUser(String username) {
-        NutsSecurityEntityConfig security = getConfig().getSecurity(username);
-        Stack<String> inherited = new Stack<>();
-        if (security != null) {
-            Stack<String> visited = new Stack<>();
-            visited.push(username);
-            Stack<String> curr = new Stack<>();
-            curr.addAll(Arrays.asList(security.getGroups()));
-            while (!curr.empty()) {
-                String s = curr.pop();
-                visited.add(s);
-                NutsSecurityEntityConfig ss = getConfig().getSecurity(s);
-                if (ss != null) {
-                    inherited.addAll(Arrays.asList(ss.getRights()));
-                    for (String group : ss.getGroups()) {
-                        if (!visited.contains(group)) {
-                            curr.push(group);
-                        }
-                    }
-                }
-            }
-        }
-        return security == null ? null : new NutsUserInfoImpl(security, inherited.toArray(new String[inherited.size()]));
-    }
-
-    @Override
-    public NutsUserInfo[] findUsers() {
-        List<NutsUserInfo> all = new ArrayList<>();
-        for (NutsSecurityEntityConfig secu : getConfig().getSecurity()) {
-            all.add(findUser(secu.getUser()));
-        }
-        return all.toArray(new NutsUserInfo[all.size()]);
+    public NutsWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        getWorkspace().getConfig().getRepository(config.getId()).setEnabled(enabled);
+        getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).setEnabled(enabled);
     }
 
     @Override
     public boolean isEnabled() {
-        return getWorkspace().getConfig().getRepository(config.getId()).isEnabled();
+        return getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).isEnabled();
+    }
+
+    private void checkNutsRepositoryConfig(NutsRepositoryConfig config) {
+        if (CoreStringUtils.isEmpty(config.getType())) {
+            throw new NutsIllegalArgumentsException("Empty Repository Type");
+        }
+        if (CoreStringUtils.isEmpty(config.getId())) {
+            throw new NutsIllegalArgumentsException("Empty Repository Id");
+        }
+//        if (CoreStringUtils.isEmpty(config.getLocation())) {
+//            throw new NutsIllegalArgumentsException("Empty Repository Id");
+//        }
+    }
+
+    class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
+
+        private int speed;
+        private File locationFolder;
+        private NutsRepositoryConfig config;
+
+        public DefaultNutsRepositoryConfigManager(File locationFolder, NutsRepositoryConfig config, int speed) {
+            this.locationFolder = locationFolder;
+            this.config = config;
+            this.speed = speed;
+        }
+
+        @Override
+        public String getEnv(String key, String defaultValue, boolean inherit) {
+            String t = getConfig().getEnv(key, null);
+            if (!CoreStringUtils.isEmpty(t)) {
+                return t;
+            }
+            t = getWorkspace().getConfigManager().getEnv(key, null);
+            if (!CoreStringUtils.isEmpty(t)) {
+                return t;
+            }
+            return defaultValue;
+        }
+
+        @Override
+        public Properties getEnv(boolean inherit) {
+            Properties p = new Properties();
+            if (inherit) {
+                p.putAll(getWorkspace().getConfigManager().getEnv());
+            }
+            p.putAll(getConfig().getEnv());
+            return p;
+        }
+
+        @Override
+        public void setEnv(String property, String value) {
+            getConfig().setEnv(property, value);
+        }
+
+        @Override
+        public int getSpeed() {
+            int s = speed;
+            if (isSupportedMirroring()) {
+                for (NutsRepository mirror : getMirrors()) {
+                    s += mirror.getConfigManager().getSpeed();
+                }
+            }
+            return s;
+        }
+
+        @Override
+        public String getLocation() {
+            return getConfig().getLocation();
+        }
+
+        @Override
+        public NutsRepositoryConfig getConfig() {
+            return config;
+        }
+
+        public File getLocationFolder() {
+            return locationFolder;
+        }
+
+        public void setConfig(NutsRepositoryConfig newConfig) {
+            this.config = newConfig;
+        }
+
+    }
+
+    protected void fireOnUndeploy(NutsFile file) {
+        for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            listener.onUndeploy(this, file);
+        }
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
+            listener.onUndeploy(this, file);
+        }
+    }
+
+    protected void fireOnDeploy(NutsFile file) {
+        for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            listener.onDeploy(this, file);
+        }
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
+            listener.onDeploy(this, file);
+        }
+    }
+
+    protected void fireOnInstall(NutsFile file) {
+        for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            listener.onInstall(this, file);
+        }
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
+            listener.onInstall(this, file);
+        }
+    }
+
+    protected void fireOnPush(NutsFile file) {
+        for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            listener.onPush(this, file);
+        }
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
+            listener.onPush(this, file);
+        }
+    }
+
+    protected void fireOnAddRepository(NutsRepository repository) {
+        for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            listener.onAddRepository(getWorkspace(), this, repository);
+        }
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
+            listener.onAddRepository(getWorkspace(), this, repository);
+        }
+    }
+
+    protected void fireOnRemoveRepository(NutsRepository repository) {
+        for (NutsRepositoryListener listener : getRepositoryListeners()) {
+            listener.onRemoveRepository(getWorkspace(), this, repository);
+        }
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
+            listener.onRemoveRepository(getWorkspace(), this, repository);
+        }
     }
 
 }

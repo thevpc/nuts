@@ -31,6 +31,7 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 
 /**
  * Created by vpc on 1/7/17.
@@ -43,11 +44,12 @@ public class VersionCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsPrintStream out = context.getTerminal().getOut();
-        out.println("workspace-boot       : [[" + context.getWorkspace().getWorkspaceBootId() + "]]");
-        out.println("workspace-runtime    : [[" + context.getWorkspace().getWorkspaceRuntimeId() + "]]");
-        out.println("workspace-location   : [[" + context.getWorkspace().getWorkspaceLocation() + "]]");
-        out.println("boot-java-version    : [[" + System.getProperty("java.version") + "]]");
-        out.println("boot-java-executable : [[" + System.getProperty("java.home") + "/bin/java" + "]]");
+        NutsWorkspaceConfigManager config = context.getWorkspace().getConfigManager();
+        out.printf("workspace-boot       : [[%s]]\n" , config.getWorkspaceBootId() );
+        out.printf("workspace-runtime    : [[%s]]\n" , config.getWorkspaceRuntimeId() );
+        out.printf("workspace-location   : [[%s]]\n" , config.getWorkspaceLocation() );
+        out.printf("boot-java-version    : [[%s]]\n" , System.getProperty("java.version") );
+        out.printf("boot-java-executable : [[%s]]\n" , System.getProperty("java.home") + "/bin/java" );
         return 0;
     }
 }

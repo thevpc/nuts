@@ -530,6 +530,12 @@ public class CoreStringUtils {
         return str.trim();
     }
 
+    public static String repeat(char c, int count) {
+        char[] chars = new char[count];
+        Arrays.fill(chars, c);
+        return new String(chars);
+    }
+
     public static List<String> split(String str, String separators) {
         if (str == null) {
             return Collections.EMPTY_LIST;
@@ -569,14 +575,14 @@ public class CoreStringUtils {
     }
 
     public static int[] searchRabinKarp(String phrase, String[] words) {
-        char[] cphrase=phrase.toCharArray();
-        char[][] cwords=new char[words.length][];
+        char[] cphrase = phrase.toCharArray();
+        char[][] cwords = new char[words.length][];
         for (int i = 0; i < words.length; i++) {
-            cwords[i]=words[i].toCharArray();
+            cwords[i] = words[i].toCharArray();
         }
         return searchRabinKarp(cphrase, cwords);
     }
-    
+
     public static int[] searchRabinKarp(char[] phrase, char[][] words) {
         int[] wordhash = new int[words.length];
         int[] wordLengths = new int[words.length];
@@ -681,6 +687,72 @@ public class CoreStringUtils {
             }
         }
         return hval;
+    }
+
+    // %[argument_index$][flags][width][.precision][t]conversion
+    private static final Pattern printfPattern = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
+
+    private static String format0(Locale locale, String format0, Object arg) {
+        StringBuilder sb = new StringBuilder();
+        new Formatter(sb, locale).format(format0, new Object[]{arg});
+        return sb.toString();
+    }
+
+    public static String nescape(String str) {
+        if (str == null) {
+            str = "";
+        }
+        str = str.replace("`", "\\`");
+        return "``" + str + "``";
+    }
+
+    public static String format(Locale locale, String format, Object... args) {
+
+        StringBuilder sb = new StringBuilder();
+        Matcher m = printfPattern.matcher(format);
+        int x = 0;
+        for (int i = 0, len = format.length(); i < len;) {
+            if (m.find(i)) {
+                // Anything between the start of the string and the beginning
+                // of the format specifier is either fixed text or contains
+                // an invalid format string.
+                if (m.start() != i) {
+                    //checkText(s, i, m.start());
+                    sb.append(format.substring(i, m.start()));
+                }
+                sb.append(nescape(format0(locale, m.group(), args[x])));
+                x++;
+                i = m.end();
+            } else {
+                sb.append(format.substring(i));
+                break;
+            }
+        }
+        return sb.toString();
+
+//        char[] chars = format.toCharArray();
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < chars.length - 2; i++) {
+//            if (chars[i] == '{' && Character.isDigit(chars[i + 1])) {
+//                int j = i + 1;
+//                while (j < chars.length && Character.isDigit(chars[j])) {
+//                    j++;
+//                }
+//                if (j < chars.length && chars[j] == '}') {
+//                    int pos = Integer.parseInt(new String(chars, i + 1, j));
+//                    sb.append("``");
+//                    sb.append(args[pos]);
+//                    sb.append("``");
+//                    i = j;
+//                } else {
+//                    sb.append(chars[i]);
+//
+//                }
+//            } else {
+//                sb.append(chars[i]);
+//            }
+//        }
+//        return sb.toString();
     }
 
 }

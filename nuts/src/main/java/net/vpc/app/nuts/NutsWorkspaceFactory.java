@@ -29,13 +29,15 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Created by vpc on 1/5/17.
  */
-public interface NutsWorkspaceFactory extends NutsComponent<NutsWorkspaceFactory> {
+public interface NutsWorkspaceFactory {
 
     List<Class> discoverTypes(Class type, ClassLoader bootClassLoader);
 
@@ -65,4 +67,17 @@ public interface NutsWorkspaceFactory extends NutsComponent<NutsWorkspaceFactory
 
     public boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
+    NutsSession createSession();
+
+    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
+
+    NutsConsole createConsole(NutsSession session);
+
+    NutsTerminal createTerminal();
+
+    NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
+
+    NutsPrintStream createPrintStream(OutputStream out);
+
+    NutsId parseNutsId(String nutsId);
 }

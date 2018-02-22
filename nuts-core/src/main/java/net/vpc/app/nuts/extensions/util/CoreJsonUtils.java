@@ -56,7 +56,7 @@ public class CoreJsonUtils {
     }
 
     public static JsonSerializer get(NutsWorkspace ws) {
-        Map<String, Object> sharedObjects = ws.getSharedObjects();
+        Map<String, Object> sharedObjects = ws.getConfigManager().getSharedObjects();
         JsonSerializer o = (JsonSerializer) sharedObjects.get(JsonSerializer.class.getName());
         if (o == null) {
             o = JsonSerializerImpl.INSTANCE;

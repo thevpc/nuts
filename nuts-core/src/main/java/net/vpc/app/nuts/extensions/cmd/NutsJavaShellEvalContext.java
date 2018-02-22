@@ -80,7 +80,7 @@ class NutsJavaShellEvalContext extends DefaultJavaShellEvalContext {
 
     @Override
     public JavaShellEvalContext setOut(OutputStream out) {
-        commandContext.getTerminal().setOut(workspace.createEnhancedPrintStream(out));
+        commandContext.getTerminal().setOut(workspace.getExtensionManager().getFactory().createPrintStream(out));
         return this;
     }
 

@@ -18,10 +18,10 @@ public class ArchietypeConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
     public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
-       if (cmdLine.read("list archetypes", "la")) {
+        if (cmdLine.read("list archetypes", "la")) {
             if (cmdLine.isExecMode()) {
-                for (String archetype : context.getValidWorkspace().getAvailableArchetypes()) {
-                    context.getTerminal().getOut().println(archetype);
+                for (String archetype : context.getValidWorkspace().getRepositoryManager().getAvailableArchetypes()) {
+                    context.getTerminal().getOut().printf("%s\n",archetype);
                 }
             }
             return true;

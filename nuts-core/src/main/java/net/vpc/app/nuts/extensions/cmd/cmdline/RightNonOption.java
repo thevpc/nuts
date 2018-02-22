@@ -84,7 +84,7 @@ public class RightNonOption extends DefaultNonOption {
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNDEPLOY));
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNINSTALL));
         Iterator<NutsArgumentCandidate> i = all.iterator();
-        NutsUserInfo info = repository != null ? repository.findUser(user) : workspace != null ? workspace.findUser(user) : null;
+        NutsUserInfo info = repository != null ? repository.getSecurityManager().findUser(user) : workspace != null ? workspace.getSecurityManager().findUser(user) : null;
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getRights()));
         while (i.hasNext()) {
             NutsArgumentCandidate right = i.next();

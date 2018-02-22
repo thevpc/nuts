@@ -32,6 +32,8 @@ package net.vpc.app.nuts.extensions.terminals.textparsers;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.terminals.NutsTextFormat;
 import net.vpc.app.nuts.extensions.terminals.NutsTextFormats;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
@@ -39,7 +41,6 @@ import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNodeCommand;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNodePlain;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNodeStyled;
-import net.vpc.app.nuts.extensions.terminals.NutsTextFallbackParser;
 
 /**
  * Created by vpc on 5/23/17.
@@ -47,15 +48,7 @@ import net.vpc.app.nuts.extensions.terminals.NutsTextFallbackParser;
 public class DefaultNutsTextParser {
 
     public static final DefaultNutsTextParser INSTANCE = new DefaultNutsTextParser();
-
-    public static void main(String[] args) {
-//        String str = "''\\\"a''";
-//        String str = "''a''";
-//        String str = "a";
-        String str = "''aa''";
-        NutsTextNode t = INSTANCE.parse(str);
-        System.out.println(t);
-    }
+    private static final Logger log = Logger.getLogger(DefaultNutsTextParser.class.getName());
 
     private NutsTextNode convert(List<TextNode> n) {
         if (n.size() == 1) {
@@ -221,15 +214,17 @@ public class DefaultNutsTextParser {
         return new NutsTextNodeStyled(format, y);
     }
 
-    public NutsTextNode parse(String text) {
+    TextNode parseTextNode(String text) throws ParseException {
         NutsDefaultParserImpl d = new NutsDefaultParserImpl(new StringReader(text));
+        return d.parseList();
+    }
+
+    public NutsTextNode parse(String text) {
         try {
-            TextNode tn = d.parseList();
+            TextNode tn = parseTextNode(text);
             return convert(tn);
         } catch (Exception ex) {
-            System.err.println("Error parsing : ");
-            System.err.println(text);
-            ex.printStackTrace();
+            log.log(Level.FINEST, "Error parsing : \n" + text, ex);
             return NutsTextFallbackParser.INSTANCE.parse(text);
         }
     }

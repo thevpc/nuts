@@ -30,7 +30,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.readOnce("show location")) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
-                session.getTerminal().getOut().println(context.getValidWorkspace().getWorkspaceLocation());
+                session.getTerminal().getOut().printf("%s\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation());
             }
             return true;
         }
@@ -51,7 +51,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                     //not found
                 }
                 if (newVersion != null) {
-                    session.getTerminal().getOut().println("Workspace updated to [[" + newVersion.getId() + "]]");
+                    session.getTerminal().getOut().printf("Workspace updated to [[%s]]\n",newVersion.getId());
                 }
             }
             return true;
@@ -86,7 +86,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                                         .setCreateIfNotFound(ignoreIdFound)
                         );
                         if (!CoreStringUtils.isEmpty(login)) {
-                            workspace.login(login, password);
+                            workspace.getSecurityManager().login(login, password);
                         }
                         ConfigCommand.trySave(context, workspace, null, autoSave, cmdLine);
                     }
@@ -134,7 +134,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                                         .setCreateIfNotFound(createIfNotFound)
                         );
                         if (!CoreStringUtils.isEmpty(login)) {
-                            workspace.login(login, password);
+                            workspace.getSecurityManager().login(login, password);
                         }
                         context.setWorkspace(workspace);
                         ConfigCommand.trySave(context, workspace, null, autoSave, cmdLine);

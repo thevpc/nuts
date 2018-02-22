@@ -22,15 +22,15 @@ public class ImportConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.read("list imports", "li")) {
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                for (String imp : (context.getValidWorkspace().getImports())) {
-                    context.getTerminal().getOut().println(imp);
+                for (String imp : (context.getValidWorkspace().getConfigManager().getImports())) {
+                    context.getTerminal().getOut().printf("%s\n", imp);
                 }
             }
             return true;
         } else if (cmdLine.read("clear imports", "ci")) {
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                context.getValidWorkspace().removeAllImports();
+                context.getValidWorkspace().getConfigManager().removeAllImports();
                 ConfigCommand.trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
             }
             return true;
@@ -38,7 +38,7 @@ public class ImportConfigSubCommand extends AbstractConfigSubCommand {
             do {
                 String a = cmdLine.readNonOptionOrError(new DefaultNonOption("Import")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getValidWorkspace().addImports(a);
+                    context.getValidWorkspace().getConfigManager().addImports(a);
                 }
             } while (!cmdLine.isEmpty());
             if (cmdLine.isExecMode()) {
@@ -49,7 +49,7 @@ public class ImportConfigSubCommand extends AbstractConfigSubCommand {
             while (!cmdLine.isEmpty()) {
                 String ii = cmdLine.readNonOptionOrError(new DefaultNonOption("Import")).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getValidWorkspace().removeImports(ii);
+                    context.getValidWorkspace().getConfigManager().removeImports(ii);
                 }
             }
             if (cmdLine.isExecMode()) {

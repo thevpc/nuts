@@ -28,12 +28,12 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.read("add extension", "ax")) {
             String extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
             if (cmdLine.isExecMode()) {
-                context.getValidWorkspace().addExtension(extensionId, context.getSession());
+                context.getValidWorkspace().getExtensionManager().addExtension(extensionId, context.getSession());
             }
             while (!cmdLine.isEmpty()) {
                 extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getValidWorkspace().addExtension(extensionId, context.getSession());
+                    context.getValidWorkspace().getExtensionManager().addExtension(extensionId, context.getSession());
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -42,7 +42,7 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
             return true;
         } else if (cmdLine.read("list extensions", "lx")) {
             if (cmdLine.isExecMode()) {
-                for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensions()) {
+                for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensionManager().getExtensions()) {
                     NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getWiredId().toString(), false, context.getSession());
                     String extDesc = CoreStringUtils.trim(desc.getName());
                     if (!extDesc.isEmpty()) {
@@ -58,12 +58,12 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
             return true;
         } else if (cmdLine.read("list extension points", "lxp")) {
             if (cmdLine.isExecMode()) {
-                for (Class extension : context.getValidWorkspace().getFactory().getExtensionPoints()) {
+                for (Class extension : context.getValidWorkspace().getExtensionManager().getFactory().getExtensionPoints()) {
                     context.getTerminal().getOut().println("[[" + extension.getName() + "]]:");
-                    for (Class impl : context.getValidWorkspace().getFactory().getExtensionTypes(extension)) {
+                    for (Class impl : context.getValidWorkspace().getExtensionManager().getFactory().getExtensionTypes(extension)) {
                         context.getTerminal().getOut().println("\t" + impl.getName());
                     }
-                    for (Object impl : context.getValidWorkspace().getFactory().getExtensionObjects(extension)) {
+                    for (Object impl : context.getValidWorkspace().getExtensionManager().getFactory().getExtensionObjects(extension)) {
                         if (impl != null) {
                             context.getTerminal().getOut().println("\t" + impl.getClass().getName() + " :: " + impl);
                         } else {

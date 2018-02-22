@@ -95,8 +95,8 @@ public class NutsAdminServerComponent implements NutsServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        System.out.println("Nuts Admin Service '" + serverId + "' running at " + inetSocketAddress);
-        System.out.println("Serving workspace : " + invokerWorkspace.getWorkspaceLocation());
+        System.out.printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
+        System.out.printf("Serving workspace : %s\n", invokerWorkspace.getConfigManager().getWorkspaceLocation());
         MyNutsServer myNutsServer = new MyNutsServer(serverId, port, backlog, address, executor, invokerWorkspace);
 
         executor.execute(myNutsServer);
@@ -173,10 +173,10 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                 NutsConsole cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NutsPrintStream eout = invokerWorkspace.createEnhancedPrintStream(out);
-                                    NutsSession session = invokerWorkspace.createSession();
-                                    cli = invokerWorkspace.createConsole(session
-                                            .setTerminal(invokerWorkspace.createTerminal(finalAccept.getInputStream(),
+                                    NutsPrintStream eout = invokerWorkspace.getExtensionManager().getFactory().createPrintStream(out);
+                                    NutsSession session = invokerWorkspace.getExtensionManager().getFactory().createSession();
+                                    cli = invokerWorkspace.getExtensionManager().getFactory().createConsole(session
+                                            .setTerminal(invokerWorkspace.getExtensionManager().getFactory().createTerminal(finalAccept.getInputStream(),
                                                     eout, eout)));
 //                                    cli.uninstallCommand("server");
                                     cli.uninstallCommand("connect");
@@ -184,7 +184,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     cli.installCommand(new AbstractNutsCommand("stop-server", CORE_SUPPORT) {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
-                                            System.out.println("Stopping Server ...");
+                                            System.out.printf("Stopping Server ...");
                                             finalServerSocket.close();
                                             return 0;
                                         }

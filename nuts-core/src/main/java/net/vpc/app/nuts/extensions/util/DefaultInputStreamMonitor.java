@@ -17,10 +17,6 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
     private static DecimalFormat df = new DecimalFormat("##0.00");
     private static BytesSizeFormatter mf = new BytesSizeFormatter("BTD1F");
     private NutsPrintStream out;
-    public static void main(String[] args) {
-        System.out.println(String.format("%6s", df.format(12.3)));
-        System.out.println(String.format("%6s", df.format(122.3)));
-    }
 
     public DefaultInputStreamMonitor(NutsPrintStream out) {
         this.out = out;
@@ -28,11 +24,11 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
 
     @Override
     public boolean onProgress(InputStreamEvent event) {
-        double partialSeconds = event.getPartialNanos() / 1000000000.0;
-        if (partialSeconds > 1 || event.getGlobalCount() == event.getLength()) {
-            double globalSeconds = event.getGlobalNanos() / 1000000000.0;
-            long globalSpeed = (long) (event.getGlobalCount() / globalSeconds);
-            long partialSpeed = (long) (event.getPartialCount() / partialSeconds);
+        double partialSeconds = event.getPartialMillis() / 1000.0;
+        if (event.getGlobalCount() == 0 || partialSeconds > 0.5 || event.getGlobalCount() == event.getLength()) {
+            double globalSeconds = event.getGlobalMillis() / 1000.0;
+            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getGlobalCount() / globalSeconds);
+            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
             double percent = 0;
             if (event.getLength() > 0) {
                 percent = (double) (event.getGlobalCount() * 100.0 / event.getLength());
@@ -42,7 +38,7 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
             int x = (int) (20.0 / 100.0 * percent);
 
             StringBuilder line = new StringBuilder();
-                line.append("\\[");
+            line.append("\\[");
             if (x > 0) {
                 line.append("##");
                 for (int i = 0; i < x; i++) {
@@ -56,7 +52,7 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
             line.append("\\]");
             line.append(" " + String.format("%6s", df.format(percent)) + "\\% ");
             line.append(" [[" + (mf.format(partialSpeed)) + "/s]] ([[" + (mf.format(globalSpeed)) + "/s]])");
-            line.append(" [[" + event.getSourceName() + "]] ");
+            line.append(" ``" + event.getSourceName() + "`` ");
             while (line.length() < 80) {
                 line.append(' ');
             }
@@ -65,6 +61,7 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
 //            }
             out.println(line.toString());
             if (event.getGlobalCount() != event.getLength()) {
+                //print command to move cursor to last line!
                 out.print("`move-line-start;move-up`");
             }
             return true;

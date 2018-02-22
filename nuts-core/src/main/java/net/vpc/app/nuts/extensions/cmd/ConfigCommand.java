@@ -48,7 +48,7 @@ public class ConfigCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    context.getValidWorkspace().getFactory().createAllSupported(ConfigSubCommand.class, this)
+                    context.getValidWorkspace().getExtensionManager().getFactory().createAllSupported(ConfigSubCommand.class, this)
             );
         }
         NutsCommandAutoComplete autoComplete = context.getAutoComplete();
@@ -65,33 +65,33 @@ public class ConfigCommand extends AbstractNutsCommand {
                 empty = false;
                 if (cmdLine.isExecMode()) {
                     NutsPrintStream out = context.getTerminal().getOut();
-                    out.println("update");
-                    out.println("check-updates");
-                    out.println("create workspace ...");
-                    out.println("set workspace ...");
-                    out.println("create repo ...");
-                    out.println("add repo ...");
-                    out.println("remove repo ...");
-                    out.println("list repos ...");
-                    out.println("add extension ...");
-                    out.println("list extensions ...");
-                    out.println("edit repo <repoId> ...");
-                    out.println("list imports");
-                    out.println("clear imports");
-                    out.println("list archetypes");
-                    out.println("import");
-                    out.println("list imports");
-                    out.println("clear imports");
-                    out.println("unimport");
-                    out.println("list users");
-                    out.println("add user");
-                    out.println("edit user");
-                    out.println("passwd");
-                    out.println("secure");
-                    out.println("unsecure");
-                    out.println("set loglevel verbose|fine|finer|finest|error|severe|config|all|none");
-                    out.println("");
-                    out.println("type 'help config' for more detailed help");
+                    out.printf("update\n");
+                    out.printf("check-updates\n");
+                    out.printf("create workspace ...\n");
+                    out.printf("set workspace ...\n");
+                    out.printf("create repo ...\n");
+                    out.printf("add repo ...\n");
+                    out.printf("remove repo ...\n");
+                    out.printf("list repos ...\n");
+                    out.printf("add extension ...\n");
+                    out.printf("list extensions ...\n");
+                    out.printf("edit repo <repoId> ...\n");
+                    out.printf("list imports\n");
+                    out.printf("clear imports\n");
+                    out.printf("list archetypes\n");
+                    out.printf("import\n");
+                    out.printf("list imports\n");
+                    out.printf("clear imports\n");
+                    out.printf("unimport\n");
+                    out.printf("list users\n");
+                    out.printf("add user\n");
+                    out.printf("edit user\n");
+                    out.printf("passwd\n");
+                    out.printf("secure\n");
+                    out.printf("unsecure\n");
+                    out.printf("set loglevel verbose|fine|finer|finest|error|severe|config|all|none\n");
+                    out.printf("");
+                    out.printf("type 'help config' for more detailed help\n");
                 }
                 continue;
             }
@@ -112,16 +112,16 @@ public class ConfigCommand extends AbstractNutsCommand {
             }
             if (!cmdLine.isEmpty()) {
                 NutsPrintStream out = context.getTerminal().getErr();
-                out.println("Unexpected " + cmdLine.get(0));
-                out.println("type for more help : config -h");
+                out.printf("Unexpected %s\n", cmdLine.get(0));
+                out.printf("type for more help : config -h\n");
                 return 1;
             }
             break;
         } while (!cmdLine.isEmpty());
         if (empty) {
             NutsPrintStream out = context.getTerminal().getErr();
-            out.println("Missing config command");
-            out.println("type for more help : config -h");
+            out.printf("Missing config command\n");
+            out.printf("type for more help : config -h\n");
             return 1;
         }
         return 0;
@@ -153,9 +153,9 @@ public class ConfigCommand extends AbstractNutsCommand {
         if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository != null) {
-                    save = Boolean.parseBoolean(repository.getEnv("autosave", "false", true));
+                    save = Boolean.parseBoolean(repository.getConfigManager().getEnv("autosave", "false", true));
                 } else {
-                    save = Boolean.parseBoolean(context.getValidWorkspace().getEnv("autosave", "false"));
+                    save = Boolean.parseBoolean(context.getValidWorkspace().getConfigManager().getEnv("autosave", "false"));
                 }
             } else {
                 save = false;
@@ -175,10 +175,10 @@ public class ConfigCommand extends AbstractNutsCommand {
         if (save) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository == null) {
-                    workspace.save();
-                    context.getTerminal().getOut().println("<<workspace saved.>>");
+                    workspace.getConfigManager().save();
+                    context.getTerminal().getOut().printf("##workspace saved.##\n");
                 } else {
-                    context.getTerminal().getOut().println("<<repository " + repository.getRepositoryId() + " saved.>>");
+                    context.getTerminal().getOut().printf("##repository %s saved.##\n",repository.getRepositoryId());
                     repository.save();
                 }
             }

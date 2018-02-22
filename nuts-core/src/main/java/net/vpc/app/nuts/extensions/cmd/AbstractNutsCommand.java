@@ -119,7 +119,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
             if (autoComplete == null) {
                 throw new NutsIllegalArgumentsException("Missing Auto Complete");
             }
-            NutsCommandAutoCompleteComponent best = context.getWorkspace().getFactory().createSupported(NutsCommandAutoCompleteComponent.class, this);
+            NutsCommandAutoCompleteComponent best = context.getWorkspace().getExtensionManager().getFactory().createSupported(NutsCommandAutoCompleteComponent.class, this);
             if (best != null) {
                 best.autoComplete(this, context);
             } else {

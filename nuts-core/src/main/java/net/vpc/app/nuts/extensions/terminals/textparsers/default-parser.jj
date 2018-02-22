@@ -3,7 +3,7 @@ options {
 }
 
 PARSER_BEGIN(NutsDefaultParserImpl)
-package net.vpc.app.nuts.extensions.textparsers.defaultparser;
+package net.vpc.app.nuts.extensions.terminals.textparsers;
 import java.util.*;
 
 class NutsDefaultParserImpl{
@@ -3178,7 +3178,7 @@ TextNode parse_Simple():
   | (<ANTI_CHAR4>                                                    { n = TextNode.ANTI_CHAR4(token.image); })
   | (<ANTI_CHAR3>                                                    { n = TextNode.ANTI_CHAR3(token.image); })
   | (<ANTI_CHAR2>                                                    { n = TextNode.ANTI_CHAR2(token.image); })
-  | (<ANTI_CHAR>                                                     { n = TextNode.ANTI_CHAR(token.image);  })
+//  | (<ANTI_CHAR>                                                     { n = TextNode.ANTI_CHAR(token.image);  })
   )
    { return n;}
 }
@@ -3299,8 +3299,9 @@ TOKEN :
 //   >
   | <  ANTI_CHAR4 : ( "````" ( ( ~["`","\\"]) | ("`" ~["`","\\"]) | ("``" ~["`","\\"]) | ("```" ~["`","\\"]) | ("\\" ~[]) )+ "````" ) >
   | <  ANTI_CHAR3 : ( "```"  ( ( ~["`","\\"]) | ("`" ~["`","\\"]) | ("``" ~["`","\\"]) | ("\\" ~[]) )+ "```"  ) >
-  | <  ANTI_CHAR2 : ( "``"   ( ( ~["`","\\"]) | ("`" ~["`","\\"]) | ("\\" ~[]) )+ "``"   ) >
-  | <  ANTI_CHAR  : ( "`"    ( ( ~["'","\\"]) | ("\\" ~[]) )+ "`"    ) >
+//  | <  ANTI_CHAR2 : ( "``"   ( ( ~["`","\\"]) | ("`" ~["`","\\"]) | ("\\" ~[]) )+ "``"   ) >
+  | <  ANTI_CHAR2 : ( "``"   ( ( ~["`","\\"]) | ("`" ~["`"]) | ("\\" ["\"","'", "`","[","(","{",")","}","]","\\","<",">","$","£","§","¨","=","*","#","+","^","@","¤","%","~","_","/"]) )+ "``"   ) >
+  | <  ANTI_CHAR  : ( "`"    ( ( ~["'","\\"])                | ("\\" ["\"","'", "`","[","(","{",")","}","]","\\","<",">","$","£","§","¨","=","*","#","+","^","@","¤","%","~","_","/"]) )+ "`"    ) >
   | <  PHRASE :
     ( 
                    ~["\"","'", "`","[","(","{",")","}","]","\\","<",">","$","£","§","¨","=","*","#","+","^","@","¤","%","~","_","/"]

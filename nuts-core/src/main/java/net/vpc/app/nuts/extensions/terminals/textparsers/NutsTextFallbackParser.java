@@ -27,11 +27,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.terminals;
+package net.vpc.app.nuts.extensions.terminals.textparsers;
 
 import java.util.Objects;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
+import net.vpc.app.nuts.extensions.terminals.NutsTextFormat;
+import net.vpc.app.nuts.extensions.terminals.NutsTextFormats;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
+import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNodePlain;
 import net.vpc.app.nuts.extensions.terminals.NutsTextNodeStyled;
 

@@ -65,9 +65,9 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
     }
 
     private File getNutsFolder(NutsExecutionContext executionContext) {
-        File store = CoreIOUtils.resolvePath(executionContext.getWorkspace().getEnv(NutsConstants.ENV_STORE, NutsConstants.DEFAULT_STORE_ROOT),
-                CoreIOUtils.createFileByCwd(executionContext.getWorkspace().getWorkspaceLocation(), (executionContext.getWorkspace().getCwd())),
-                executionContext.getWorkspace().getWorkspaceRootLocation());
+        File store = CoreIOUtils.resolvePath(executionContext.getWorkspace().getConfigManager().getEnv(NutsConstants.ENV_STORE, NutsConstants.DEFAULT_STORE_ROOT),
+                CoreIOUtils.createFileByCwd(executionContext.getWorkspace().getConfigManager().getWorkspaceLocation(), (executionContext.getWorkspace().getConfigManager().getCwd())),
+                executionContext.getWorkspace().getConfigManager().getWorkspaceRootLocation());
         return CoreNutsUtils.getNutsFolder(executionContext.getNutsFile().getId(), store);
     }
 
@@ -75,7 +75,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
     public void install(NutsExecutionContext executionContext) {
         File installFolder = getNutsFolder(executionContext);
         try {
-            CoreIOUtils.unzip(executionContext.getNutsFile().getFile(), installFolder, executionContext.getWorkspace().getCwd());
+            CoreIOUtils.unzip(executionContext.getNutsFile().getFile(), installFolder, executionContext.getWorkspace().getConfigManager().getCwd());
             File log = new File(installFolder, ".nuts-install.log");
             CoreIOUtils.copy(new ByteArrayInputStream(String.valueOf(new Date()).getBytes()), log, true, true);
             if (executionContext.getExecArgs() != null && executionContext.getExecArgs().length > 0) {

@@ -70,17 +70,17 @@ public class WhoCommand extends AbstractNutsCommand {
             return -1;
         }
         NutsWorkspace validWorkspace = context.getValidWorkspace();
-        String login = validWorkspace.getCurrentLogin();
+        String login = validWorkspace.getSecurityManager().getCurrentLogin();
         NutsPrintStream out = context.getTerminal().getOut();
 
         out.println(login);
 
         if (argAll) {
-            NutsUserInfo user = validWorkspace.findUser(login);
+            NutsUserInfo user = validWorkspace.getSecurityManager().findUser(login);
             Set<String> groups = new TreeSet<>(Arrays.asList(user.getGroups()));
             Set<String> rights = new TreeSet<>(Arrays.asList(user.getRights()));
             Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedRights()));
-            String[] currentLoginStack = validWorkspace.getCurrentLoginStack();
+            String[] currentLoginStack = validWorkspace.getSecurityManager().getCurrentLoginStack();
             out.print("===stack===      :");
             for (String log : currentLoginStack) {
                 out.print(" [[" + log + "]]");
@@ -102,8 +102,8 @@ public class WhoCommand extends AbstractNutsCommand {
             if (user.getMappedUser() != null) {
                 out.println("===remote-id===  : " + (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
             }
-            for (NutsRepository repository : context.getWorkspace().getRepositories()) {
-                NutsUserInfo ruser = repository.findUser(login);
+            for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
+                NutsUserInfo ruser = repository.getSecurityManager().findUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !CoreStringUtils.isEmpty(ruser.getMappedUser()))) {

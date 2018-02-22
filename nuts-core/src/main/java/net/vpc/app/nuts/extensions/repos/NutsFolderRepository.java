@@ -118,6 +118,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return null;
     }
 
+    @Override
     protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession session) {
         NutsFile idFile = getLocalGroupAndArtifactAndVersionFile(id, true);
         File nutDescFile = idFile.getFile();
@@ -142,12 +143,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 throw new NutsIOException(e);
             }
             NutsFile nutsFile = new NutsFile(id, descriptor, localFile, true, false, null);
-            for (NutsRepositoryListener listener : getRepositoryListeners()) {
-                listener.onDeploy(this, nutsFile);
-            }
-            for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-                listener.onDeploy(this, nutsFile);
-            }
+            fireOnDeploy(nutsFile);
             return idFile.getId();
         }
         return idFile.getId();
@@ -158,6 +154,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return true;
     }
 
+    @Override
     protected void pushImpl(NutsId id, String repoId, NutsSession session) {
         NutsSession nonTransitiveSession = session.copy().setTransitive(false);
         NutsFile local = fetch(id, nonTransitiveSession);
@@ -178,16 +175,11 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 throw new NutsRepositoryAmbiguousException("Unable to perform push. Two Repositories provides the same nuts " + id);
             }
             all.get(0).deploy(id, local.getDescriptor(), local.getFile(), session);
-            for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-                listener.onPush(this, local);
-            }
         } else {
             NutsRepository repo = getMirror(repoId);
             repo.deploy(id, local.getDescriptor(), local.getFile(), session);
-            for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-                listener.onPush(this, local);
-            }
         }
+        fireOnPush(local);
     }
 
     protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
@@ -300,12 +292,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                                 desc.write(dlocalFile);
                             }
                             NutsFile nutsFile = new NutsFile(id, desc, localFile, false, false, null);
-                            for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
-                                listener.onInstall(this, nutsFile);
-                            }
-                            for (NutsRepositoryListener listener : getRepositoryListeners()) {
-                                listener.onInstall(this, nutsFile);
-                            }
+                            fireOnInstall(nutsFile);
                             return nutsFile;
                         }
                     }
@@ -640,16 +627,16 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id.toString(), errors.toString(), null);
         } else {
             //if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                NutsDescriptor desc = CoreNutsUtils.parseNutsDescriptor(localFile);
-                NutsId ed = getWorkspace().resolveEffectiveId(desc, session);
-                return new NutsFile(ed, desc, localFile, true, false, null);
+            NutsDescriptor desc = CoreNutsUtils.parseNutsDescriptor(localFile);
+            NutsId ed = getWorkspace().resolveEffectiveId(desc, session);
+            return new NutsFile(ed, desc, localFile, true, false, null);
             //
             //throw new NutsNotFoundException(id.toString());
         }
     }
 
     private File getStoreRoot() {
-        return new File(getRoot(), NutsConstants.DEFAULT_COMPONENTS_ROOT);
+        return new File(getConfigManager().getLocationFolder(), NutsConstants.DEFAULT_COMPONENTS_ROOT);
     }
 
 }

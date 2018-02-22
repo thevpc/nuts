@@ -75,7 +75,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(envAndApp[1]));
 
         NutsConsole commandLine = null;
-        commandLine = executionContext.getWorkspace().createConsole(executionContext.getSession());
+        commandLine = executionContext.getWorkspace().getExtensionManager().getFactory().createConsole(executionContext.getSession());
         return commandLine.runFile(nutMainFile.getFile(), app.toArray(new String[app.size()]));
     }
 

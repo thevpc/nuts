@@ -75,17 +75,6 @@ public class MavenUtils {
         return true;
     }
 
-//    public static void main(String[] args) {
-//        try {
-////            String file = "/home/vpc/.m2/repository/javax/sip/jain-sip-ri/1.2.164/jain-sip-ri-1.2.164.pom";
-//            String file = "/home/vpc/.m2/repository/com/google/code/gson/gson/2.2.4/gson-2.2.4.pom";
-//            NutsDescriptor d = null;
-//            d = parsePomXml(new FileInputStream(file));
-//            System.out.println(d);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
     public static NutsDescriptor parsePomXml(InputStream stream) {
         try {
             byte[] bytes = CoreIOUtils.readStreamAsBytes(stream, -1, true);

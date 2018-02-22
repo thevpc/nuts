@@ -62,7 +62,7 @@ public class HelpCommand extends AbstractNutsCommand {
                     }
                 });
                 for (NutsCommand cmd : commands) {
-                    out.println("##" + CoreStringUtils.alignLeft(cmd.getName(), 15) + "## : " + cmd.getHelpHeader());
+                    out.printf("##%s## : %s\n", CoreStringUtils.alignLeft(cmd.getName(), 15), cmd.getHelpHeader());
                 }
             }
             return 0;
@@ -73,10 +73,10 @@ public class HelpCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 NutsCommand command1 = context.getCommandLine().findCommand(command);
                 if (command1 == null) {
-                    context.getTerminal().getErr().println("Command not found : " + command);
+                    context.getTerminal().getErr().printf("Command not found : %s\n", command);
                 } else {
                     String help = command1.getHelp();
-                    out.println("==Command== " + command);
+                    out.printf("==Command== %s\f", command);
                     out.println(help);
                 }
             }

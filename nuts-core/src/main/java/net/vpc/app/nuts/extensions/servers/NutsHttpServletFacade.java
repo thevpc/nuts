@@ -59,7 +59,7 @@ public class NutsHttpServletFacade {
         register(new AbstractFacadeCommand("version") {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
-                context.sendResponseText(200, new NutsIdImpl(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getWorkspaceRuntimeId().getVersion().toString(), "").toString());
+                context.sendResponseText(200, new NutsIdImpl(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString(), "").toString());
             }
         });
         register(new AbstractFacadeCommand("fetch") {
@@ -363,7 +363,7 @@ public class NutsHttpServletFacade {
         } else {
             try {
                 try {
-                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.createSession()));
+                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.getExtensionManager().getFactory().createSession()));
                 } catch (SecurityException ex) {
                     log.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();

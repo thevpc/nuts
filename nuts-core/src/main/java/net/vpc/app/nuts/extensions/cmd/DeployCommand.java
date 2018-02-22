@@ -67,7 +67,7 @@ public class DeployCommand extends AbstractNutsCommand {
                             .setRepositoryId(repository),
                     context.getSession()
             );
-            context.getTerminal().getOut().println("File " + s + " deployed successfully as " + id);
+            context.getTerminal().getOut().printf("File ==%s== deployed successfully as ==%s==\n" + id,s,id);
         }
         return 0;
     }

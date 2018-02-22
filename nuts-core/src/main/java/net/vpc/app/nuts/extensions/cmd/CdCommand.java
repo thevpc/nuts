@@ -69,12 +69,12 @@ public class CdCommand extends AbstractNutsCommand {
                 result = 0;
                 break;
             case 0:
-                out.println("invalid folder " + folder);
+                out.printf("@@invalid folder %s @@\n", folder);
                 result = 1;
                 break;
             default:
                 for (File validFile : validFiles) {
-                    out.println(validFile.getPath());
+                    out.printf("%s\n", validFile.getPath());
                 }
                 result = 0;
                 break;

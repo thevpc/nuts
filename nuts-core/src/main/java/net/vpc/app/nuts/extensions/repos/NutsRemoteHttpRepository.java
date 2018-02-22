@@ -63,7 +63,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     public String getUrl(String path) {
-        return CoreIOUtils.buildUrl(getLocation(), path);
+        return CoreIOUtils.buildUrl(getConfigManager().getLocation(), path);
     }
 
     public NutsId getRemoteId() {
@@ -71,7 +71,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             try {
                 remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(getUrl("/version")));
             } catch (Exception ex) {
-                log.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", getLocation());
+                log.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", getConfigManager().getLocation());
             }
         }
         return remoteId;
@@ -83,7 +83,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         descriptor.write(descStream);
-        httpUpload(CoreIOUtils.buildUrl(getLocation(), "/deploy?" + resolveAuthURLPart()),
+        httpUpload(CoreIOUtils.buildUrl(getConfigManager().getLocation(), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts", new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", file.getName(), file),
                 new NutsTransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
@@ -290,18 +290,18 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     private String[] resolveAuth() {
-        String login = getWorkspace().getCurrentLogin();
-        NutsSecurityEntityConfig security = getConfig().getSecurity(login);
+        String login = getWorkspace().getSecurityManager().getCurrentLogin();
+        NutsSecurityEntityConfig security = getConfigManager().getConfig().getSecurity(login);
         String newLogin = "";
         String credentials = "";
-        String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE, true);
+        String passphrase = getConfigManager().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE, true);
         if (security == null) {
             newLogin = "anonymous";
             credentials = "anonymous";
         } else {
             newLogin = security.getMappedUser();
             if (CoreStringUtils.isEmpty(newLogin)) {
-                NutsUserInfo security2 = getWorkspace().findUser(login);
+                NutsUserInfo security2 = getWorkspace().getSecurityManager().findUser(login);
                 if (security2 != null) {
                     newLogin = security2.getMappedUser();
                 }

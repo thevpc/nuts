@@ -58,18 +58,18 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         ListMap<String, String> parameters = context.getParameters();
         String userLogin = parameters.getOne("ul");
         String userPassword = parameters.getOne("up");
-        String passphrase = context.getWorkspace().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        String passphrase = context.getWorkspace().getConfigManager().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
         userLogin = CoreStringUtils.isEmpty(userLogin) ? "" : new String(CoreSecurityUtils.httpDecrypt(userLogin, passphrase));
         userPassword = CoreStringUtils.isEmpty(userPassword) ? "" : new String(CoreSecurityUtils.httpDecrypt(userPassword, passphrase));
         if (!CoreStringUtils.isEmpty(userLogin)) {
             boolean loggedId = false;
             try {
-                context.getWorkspace().login(userLogin, userPassword);
+                context.getWorkspace().getSecurityManager().login(userLogin, userPassword);
                 loggedId = true;
                 executeImpl(context);
             } finally {
                 if (loggedId) {
-                    context.getWorkspace().logout();
+                    context.getWorkspace().getSecurityManager().logout();
                 }
             }
         } else {

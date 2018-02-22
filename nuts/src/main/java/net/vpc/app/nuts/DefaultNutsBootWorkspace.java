@@ -73,7 +73,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     @Override
     public NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options) {
         workspace = resolveWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME);
-        if (workspace.equals(NutsConstants.BOOTSTRAP_REPOSITORY_NAME) || new File(workspace).equals(new File(root,NutsConstants.DEFAULT_WORKSPACE_NAME))) {
+        if (workspace.equals(NutsConstants.BOOTSTRAP_REPOSITORY_NAME) || new File(workspace).equals(new File(root, NutsConstants.DEFAULT_WORKSPACE_NAME))) {
             throw new NutsInvalidWorkspaceException(NutsConstants.BOOTSTRAP_REPOSITORY_NAME, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + " is not a valid workspace name");
         }
         if (options == null) {
@@ -106,12 +106,12 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             log.log(Level.INFO, "Loading Nuts ClassWorld from {0}", Arrays.asList(urls));
         }
         ClassLoader workspaceClassLoader = urls.length == 0 ? getContextClassLoader() : new URLClassLoader(urls, getContextClassLoader());
-        ServiceLoader<NutsWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceFactory.class, workspaceClassLoader);
+        ServiceLoader<NutsWorkspaceObjectFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceObjectFactory.class, workspaceClassLoader);
 
         NutsWorkspace nutsWorkspace = null;
         NutsWorkspaceImpl nutsWorkspaceImpl = null;
-        NutsWorkspaceFactory factoryInstance = null;
-        for (NutsWorkspaceFactory a : serviceLoader) {
+        NutsWorkspaceObjectFactory factoryInstance = null;
+        for (NutsWorkspaceObjectFactory a : serviceLoader) {
             factoryInstance = a;
             nutsWorkspace = a.createSupported(NutsWorkspace.class, this);
             nutsWorkspaceImpl = (NutsWorkspaceImpl) nutsWorkspace;
@@ -119,9 +119,9 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
         if (nutsWorkspace == null) {
             //should never happen
-            System.err.println("Unable to load Workspace Component from ClassPath : ");
+            System.err.printf("Unable to load Workspace Component from ClassPath : \n");
             for (URL url : urls) {
-                System.err.println("\t" + url);
+                System.err.printf("\t%s\n", url);
             }
             throw new NutsInvalidWorkspaceException(workspace, "Unable to load Workspace Component from ClassPath : " + Arrays.asList(urls));
         }

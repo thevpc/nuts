@@ -127,7 +127,7 @@ public class NutsHttpServlet extends HttpServlet {
             try {
                 AdminServerConfig serverConfig = new AdminServerConfig();
                 serverConfig.setPort(adminServerPort);
-                adminServerRef = workspace.startServer(serverConfig);
+                adminServerRef = workspace.getServerManager().startServer(serverConfig);
             } catch (Exception ex) {
                 log.log(Level.SEVERE, "Unable to start admin server", ex);
             }

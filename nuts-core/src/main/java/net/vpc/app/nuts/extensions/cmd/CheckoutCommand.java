@@ -60,7 +60,7 @@ public class CheckoutCommand extends AbstractNutsCommand {
                 new File(contentFile),
                 context.getSession()
         );
-        context.getTerminal().getOut().println("Folder " + contentFile + " initialized with " + nf.getId());
+        context.getTerminal().getOut().printf("Folder ==%s== initialized with ==%s==\n", contentFile, nf.getId());
         return 0;
     }
 }

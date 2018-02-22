@@ -33,33 +33,33 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
     }
 
     public static boolean exec(NutsRepository editedRepo, CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
-        NutsWorkspace workspaĉe = context.getValidWorkspace();
+        NutsWorkspace workspace = context.getValidWorkspace();
         if (cmdLine.read("add user", "au")) {
             NutsRepository repository = null;
             if (editedRepo != null) {
                 repository = editedRepo;
             } else {
                 if (cmdLine.read("--repo", "-r")) {
-                    repository = workspaĉe.findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspaĉe)).getString());
+                    repository = workspace.getRepositoryManager().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspace)).getString());
                 }
             }
             if (repository == null) {
                 String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
-                    workspaĉe.addUser(user, password);
+                    workspace.getSecurityManager().addUser(user, password);
                 }
             } else {
                 String user = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
                 String mappedUser = cmdLine.readNonOption(new DefaultNonOption("MappedUser")).getString();
                 String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
                 if (cmdLine.isExecMode()) {
-                    repository.addUser(user, password);
-                    repository.setUserRemoteIdentity(user, mappedUser);
+                    repository.getSecurityManager().addUser(user, password);
+                    repository.getSecurityManager().setUserRemoteIdentity(user, mappedUser);
                 }
             }
             if (cmdLine.isExecMode()) {
-                ConfigCommand.trySave(context, workspaĉe, repository, autoSave, null);
+                ConfigCommand.trySave(context, workspace, repository, autoSave, null);
             }
             return true;
         } else if (cmdLine.read("list users", "lu")) {
@@ -68,15 +68,15 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.read("--repo", "-r")) {
-                    repository = workspaĉe.findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", workspaĉe)).getString());
+                    repository = workspace.getRepositoryManager().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", workspace)).getString());
                 }
             }
             if (cmdLine.isExecMode()) {
                 NutsUserInfo[] security;
                 if (repository == null) {
-                    security = workspaĉe.findUsers();
+                    security = workspace.getSecurityManager().findUsers();
                 } else {
-                    security = repository.findUsers();
+                    security = repository.getSecurityManager().findUsers();
                 }
                 for (NutsUserInfo u : security) {
                     context.getTerminal().getOut().println("User: " + u.getUser());
@@ -96,7 +96,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.read("--repo", "-r")) {
-                    repository = workspaĉe.findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspaĉe)).getString());
+                    repository = workspace.getRepositoryManager().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspace)).getString());
                 }
             }
 
@@ -117,9 +117,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
             if (cmdLine.isExecMode()) {
                 boolean admin;
                 if (repository == null) {
-                    admin = workspaĉe.isAllowed(NutsConstants.RIGHT_ADMIN);
+                    admin = workspace.getSecurityManager().isAllowed(NutsConstants.RIGHT_ADMIN);
                 } else {
-                    admin = repository.isAllowed(NutsConstants.RIGHT_ADMIN);
+                    admin = repository.getSecurityManager().isAllowed(NutsConstants.RIGHT_ADMIN);
                 }
 
                 if (oldPassword == null && !admin) {
@@ -130,11 +130,11 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 }
 
                 if (repository == null) {
-                    workspaĉe.setUserCredentials(user, password, oldPassword);
+                    workspace.getSecurityManager().setUserCredentials(user, password, oldPassword);
                 } else {
-                    repository.setUserCredentials(user, password, oldPassword);
+                    repository.getSecurityManager().setUserCredentials(user, password, oldPassword);
                 }
-                ConfigCommand.trySave(context, workspaĉe, repository, autoSave, null);
+                ConfigCommand.trySave(context, workspace, repository, autoSave, null);
             }
             return true;
 
@@ -144,7 +144,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.read("--repo", "-r")) {
-                    repository = workspaĉe.findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspaĉe)).getString());
+                    repository = workspace.getRepositoryManager().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspace)).getString());
                 }
             }
 
@@ -152,9 +152,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
             if (cmdLine.isExecMode()) {
                 NutsUserInfo u = null;
                 if (repository == null) {
-                    u = workspaĉe.findUser(user);
+                    u = workspace.getSecurityManager().findUser(user);
                 } else {
-                    u = repository.findUser(user);
+                    u = repository.getSecurityManager().findUser(user);
                 }
                 if (u == null) {
                     throw new NutsElementNotFoundException("No such user " + user);
@@ -191,9 +191,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                             String a = cmdLine.readNonOptionOrError(new DefaultNonOption("Group")).getString();
                             if (cmdLine.isExecMode()) {
                                 if (repository != null) {
-                                    repository.addUserGroups(user, a);
+                                    repository.getSecurityManager().addUserGroups(user, a);
                                 } else {
-                                    workspaĉe.addUserGroups(user, a);
+                                    workspace.getSecurityManager().addUserGroups(user, a);
                                 }
                             }
                             break;
@@ -202,31 +202,31 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                             String a = cmdLine.readNonOptionOrError(new GroupNonOption("Group", context, repository)).getString();
                             if (cmdLine.isExecMode()) {
                                 if (repository != null) {
-                                    repository.removeUserGroups(user, a);
+                                    repository.getSecurityManager().removeUserGroups(user, a);
                                 } else {
-                                    workspaĉe.removeUserGroups(user, a);
+                                    workspace.getSecurityManager().removeUserGroups(user, a);
                                 }
                             }
                             break;
                         }
                         case "--add-right": {
-                            String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", workspaĉe, repository, user, false)).getString();
+                            String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", workspace, repository, user, false)).getString();
                             if (cmdLine.isExecMode()) {
                                 if (repository != null) {
-                                    repository.addUserRights(user, a);
+                                    repository.getSecurityManager().addUserRights(user, a);
                                 } else {
-                                    workspaĉe.addUserRights(user, a);
+                                    workspace.getSecurityManager().addUserRights(user, a);
                                 }
                             }
                             break;
                         }
                         case "--remove-right": {
-                            String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", workspaĉe, repository, user, true)).getString();
+                            String a = cmdLine.readNonOptionOrError(new RightNonOption("Right", workspace, repository, user, true)).getString();
                             if (cmdLine.isExecMode()) {
                                 if (repository != null) {
-                                    repository.removeUserRights(user, a);
+                                    repository.getSecurityManager().removeUserRights(user, a);
                                 } else {
-                                    workspaĉe.removeUserRights(user, a);
+                                    workspace.getSecurityManager().removeUserRights(user, a);
                                 }
                             }
                             break;
@@ -235,9 +235,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                             String a = cmdLine.readNonOptionOrError(new DefaultNonOption("MappedUser")).getString();
                             if (cmdLine.isExecMode()) {
                                 if (repository != null) {
-                                    repository.setUserRemoteIdentity(user, a);
+                                    repository.getSecurityManager().setUserRemoteIdentity(user, a);
                                 } else {
-                                    workspaĉe.setUserRemoteIdentity(user, a);
+                                    workspace.getSecurityManager().setUserRemoteIdentity(user, a);
                                 }
                             }
                             break;
@@ -247,9 +247,9 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                             String old = (cmdLine.readNonOptionOrError(new DefaultNonOption("OldPassword")).getString());
                             if (cmdLine.isExecMode()) {
                                 if (repository != null) {
-                                    repository.setUserCredentials(user, pwd, old);
+                                    repository.getSecurityManager().setUserCredentials(user, pwd, old);
                                 } else {
-                                    workspaĉe.setUserCredentials(user, pwd, old);
+                                    workspace.getSecurityManager().setUserCredentials(user, pwd, old);
                                 }
                             }
                             break;
@@ -260,7 +260,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                ConfigCommand.trySave(context, workspaĉe, repository, autoSave, null);
+                ConfigCommand.trySave(context, workspace, repository, autoSave, null);
             }
             return true;
 
@@ -270,26 +270,26 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.read("--repo", "-r")) {
-                    repository = workspaĉe.findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspaĉe)).getString());
+                    repository = workspace.getRepositoryManager().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspace)).getString());
                 }
             }
             //unsecure-box
             if (cmdLine.isExecMode()) {
                 String adminPassword = null;
-                if (!context.getWorkspace().isAdmin()) {
+                if (!context.getWorkspace().getSecurityManager().isAdmin()) {
                     adminPassword = context.getTerminal().readPassword("Enter password : ");
                 }
-                if (workspaĉe.switchUnsecureMode(adminPassword)) {
+                if (workspace.getSecurityManager().switchUnsecureMode(adminPassword)) {
                     context.getTerminal().getOut().println("<<unsecure box activated.Anonymous has all rights.>>");
                 } else {
                     context.getTerminal().getOut().println("<<unsecure box is already activated.>>");
                 }
             }
-            ConfigCommand.trySave(context, workspaĉe, repository, autoSave, cmdLine);
+            ConfigCommand.trySave(context, workspace, repository, autoSave, cmdLine);
             return true;
         } else if (cmdLine.read("secure")) {
             String adminPassword = null;
-            if (!context.getWorkspace().isAdmin()) {
+            if (!context.getWorkspace().getSecurityManager().isAdmin()) {
                 adminPassword = context.getTerminal().readPassword("Enter password : ");
             }
             NutsRepository repository = null;
@@ -297,18 +297,18 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.read("--repo", "-r")) {
-                    repository = workspaĉe.findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspaĉe)).getString());
+                    repository = workspace.getRepositoryManager().findRepository(cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", workspace)).getString());
                 }
             }
             //secure-box
             if (cmdLine.isExecMode()) {
-                if (workspaĉe.switchSecureMode(adminPassword)) {
+                if (workspace.getSecurityManager().switchSecureMode(adminPassword)) {
                     context.getTerminal().getOut().println("\"\"secure box activated.\"\"");
                 } else {
                     context.getTerminal().getOut().println("\"\"secure box already activated.\"\"");
                 }
             }
-            ConfigCommand.trySave(context, workspaĉe, repository, autoSave, cmdLine);
+            ConfigCommand.trySave(context, workspace, repository, autoSave, cmdLine);
             return true;
         }
         return false;

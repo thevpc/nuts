@@ -14,19 +14,19 @@ public class InputStreamEvent {
     private final Object source;
     private final String sourceName;
     private final long globalCount;
-    private final long globalNanos;
+    private final long globalMillis;
     private final long partialCount;
-    private final long partialNanos;
+    private final long partialMillis;
     private final long length;
 
-    public InputStreamEvent(Object source, String sourceName, long globalCount, long globalNanos, long partialCount, long partialNanos,long length) {
+    public InputStreamEvent(Object source, String sourceName, long globalCount, long globalMillis, long partialCount, long partialMillis,long length) {
         this.source = source;
         this.length = length;
         this.sourceName = sourceName;
         this.globalCount = globalCount;
-        this.globalNanos = globalNanos;
+        this.globalMillis = globalMillis;
         this.partialCount = partialCount;
-        this.partialNanos = partialNanos;
+        this.partialMillis = partialMillis;
     }
 
     public long getLength() {
@@ -46,16 +46,16 @@ public class InputStreamEvent {
         return globalCount;
     }
 
-    public long getGlobalNanos() {
-        return globalNanos;
+    public long getGlobalMillis() {
+        return globalMillis;
     }
 
     public long getPartialCount() {
         return partialCount;
     }
 
-    public long getPartialNanos() {
-        return partialNanos;
+    public long getPartialMillis() {
+        return partialMillis;
     }
     
 }

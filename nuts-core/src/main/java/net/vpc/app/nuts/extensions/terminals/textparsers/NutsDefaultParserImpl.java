@@ -68,7 +68,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -144,7 +143,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -220,7 +218,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -296,7 +293,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -372,7 +368,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -448,7 +443,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -524,7 +518,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -600,7 +593,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -676,7 +668,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -752,7 +743,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -828,7 +818,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -904,7 +893,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -980,7 +968,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1056,7 +1043,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1132,7 +1118,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1208,7 +1193,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1284,7 +1268,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1360,7 +1343,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1436,7 +1418,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1512,7 +1493,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1588,7 +1568,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1664,7 +1643,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1740,7 +1718,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1816,7 +1793,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1892,7 +1868,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -1968,7 +1943,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2044,7 +2018,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2120,7 +2093,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2196,7 +2168,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2272,7 +2243,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2348,7 +2318,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2424,7 +2393,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2500,7 +2468,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2576,7 +2543,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2652,7 +2618,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2728,7 +2693,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2804,7 +2768,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2880,7 +2843,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -2956,7 +2918,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3032,7 +2993,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3108,7 +3068,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3184,7 +3143,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3260,7 +3218,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3336,7 +3293,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3412,7 +3368,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3488,7 +3443,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3564,7 +3518,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3640,7 +3593,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -3716,7 +3668,6 @@ list.add(n);
       case ANTI_CHAR4:
       case ANTI_CHAR3:
       case ANTI_CHAR2:
-      case ANTI_CHAR:
       case PHRASE:{
         ;
         break;
@@ -4126,7 +4077,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -4531,7 +4481,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -4933,7 +4882,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -5335,7 +5283,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -5737,7 +5684,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -6139,7 +6085,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -6541,7 +6486,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -6943,7 +6887,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -7345,7 +7288,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -7747,7 +7689,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -8149,7 +8090,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -8551,7 +8491,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -8953,7 +8892,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -9355,7 +9293,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -9757,7 +9694,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -10159,7 +10095,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -10561,7 +10496,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -10963,7 +10897,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -11365,7 +11298,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -11767,7 +11699,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -12169,7 +12100,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -12571,7 +12501,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -12973,7 +12902,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -13375,7 +13303,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -13777,7 +13704,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -14179,7 +14105,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -14581,7 +14506,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -14983,7 +14907,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -15385,7 +15308,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -15787,7 +15709,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -16189,7 +16110,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -16591,7 +16511,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -16993,7 +16912,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -17395,7 +17313,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -17797,7 +17714,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -18199,7 +18115,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -18601,7 +18516,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -19003,7 +18917,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -19405,7 +19318,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -19807,7 +19719,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -20209,7 +20120,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -20611,7 +20521,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -21013,7 +20922,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -21415,7 +21323,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -21817,7 +21724,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -22219,7 +22125,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -22621,7 +22526,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -23023,7 +22927,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -23425,7 +23328,6 @@ n = TextNode.TYPED(t,n);
     case ANTI_CHAR4:
     case ANTI_CHAR3:
     case ANTI_CHAR2:
-    case ANTI_CHAR:
     case PHRASE:{
       n = parse_Simple();
       break;
@@ -23510,11 +23412,6 @@ n = TextNode.ANTI_CHAR3(token.image);
 n = TextNode.ANTI_CHAR2(token.image);
       break;
       }
-    case ANTI_CHAR:{
-      jj_consume_token(ANTI_CHAR);
-n = TextNode.ANTI_CHAR(token.image);
-      break;
-      }
     default:
       jj_la1[98] = jj_gen;
       jj_consume_token(-1);
@@ -23549,7 +23446,7 @@ n = TextNode.ANTI_CHAR(token.image);
       jj_la1_1 = new int[] {0xffffffff,0xfdffffff,0xfeffffff,0xff7fffff,0xefffffff,0xf7ffffff,0xfbffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffff7f,0xffffffbf,0xffffffdf,0xffffffef,0xfffffff7,0xfffffffb,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffdfff,0xffffefff,0xfffff7ff,0xfffffffd,0xfffffffe,0xffffffff,0xfffffbff,0xfffffdff,0xfffffeff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffbfffff,0xffdfffff,0xffefffff,0xfffeffff,0xffff7fff,0xffffbfff,0xfff7ffff,0xfffbffff,0xfffdffff,0xffffffff,0xfdffffff,0xfeffffff,0xff7fffff,0xefffffff,0xf7ffffff,0xfbffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffff7f,0xffffffbf,0xffffffdf,0xffffffef,0xfffffff7,0xfffffffb,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffdfff,0xffffefff,0xfffff7ff,0xfffffffd,0xfffffffe,0xffffffff,0xfffffbff,0xfffffdff,0xfffffeff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffffffff,0xffbfffff,0xffdfffff,0xffefffff,0xfffeffff,0xffff7fff,0xffffbfff,0xfff7ffff,0xfffbffff,0xfffdffff,0xe0000000,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,};
+      jj_la1_2 = new int[] {0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,0x2,};
    }
 
   /** Constructor with InputStream. */

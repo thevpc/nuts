@@ -70,12 +70,12 @@ public class FetchCommand extends AbstractNutsCommand {
                         NutsFile file = null;
                         if (lastLocationFile == null) {
                             context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
-                            file = new NutsFile(context.getValidWorkspace().parseNutsId(id), null, null, false, false, null);
+                            file = new NutsFile(context.getValidWorkspace().getExtensionManager().getFactory().parseNutsId(id), null, null, false, false, null);
                         } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || CoreIOUtils.createFileByCwd(lastLocationFile, new File(context.getCommandLine().getCwd())).isDirectory()) {
                             File folder = CoreIOUtils.createFileByCwd(lastLocationFile, new File(context.getCommandLine().getCwd()));
                             folder.mkdirs();
                             NutsDescriptor descriptor = context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
-                            File target = new File(folder, CoreNutsUtils.getNutsFileName(context.getValidWorkspace().parseNutsId(id), ".effective.nuts"));
+                            File target = new File(folder, CoreNutsUtils.getNutsFileName(context.getValidWorkspace().getExtensionManager().getFactory().parseNutsId(id), ".effective.nuts"));
                             descriptor.write(target, true);
                             file = new NutsFile(CoreNutsUtils.parseOrErrorNutsId(id), descriptor, target, false, true, null);
                         } else {
@@ -112,15 +112,15 @@ public class FetchCommand extends AbstractNutsCommand {
     private void printFetchedFile(NutsFile file, NutsCommandContext context) {
         if (!file.isCached()) {
             if (file.isTemporary()) {
-                context.getTerminal().getOut().println(file.getId() + " fetched successfully temporarily to " + file.getFile().getPath());
+                context.getTerminal().getOut().printf("%s fetched successfully temporarily to %s\n", file.getId(), file.getFile().getPath());
             } else {
-                context.getTerminal().getOut().println(file.getId() + " fetched successfully");
+                context.getTerminal().getOut().printf("%s fetched successfully\n", file.getId());
             }
         } else {
             if (file.isTemporary()) {
-                context.getTerminal().getOut().println(file.getId() + " already fetched temporarily to " + file.getFile().getPath());
+                context.getTerminal().getOut().printf("%s already fetched temporarily to %s\n", file.getId(), file.getFile().getPath());
             } else {
-                context.getTerminal().getOut().println(file.getId() + " already fetched");
+                context.getTerminal().getOut().printf("%s already fetched\n", file.getId());
             }
         }
     }

@@ -83,7 +83,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                             .setRepositoryId(repositoryId),
                                     context.getSession()
                             );
-                            context.getTerminal().getOut().println("File " + s + " deployed successfully as " + deployedId);
+                            context.getTerminal().getOut().printf("File %s deployed successfully as %s\n", s, deployedId);
                         }
                     } else if (bundleOnly) {
                         for (String s : CoreIOUtils.expandPath(id, new File(context.getCommandLine().getCwd()))) {
@@ -92,7 +92,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                     descriptorFile == null ? null : CoreIOUtils.createFileByCwd(descriptorFile, new File(context.getCommandLine().getCwd())),
                                     context.getSession()
                             );
-                            context.getTerminal().getOut().println("File " + s + " bundled successfully as " + deployedId.getId() + " to " + deployedId.getFile());
+                            context.getTerminal().getOut().printf("File %s bundled successfully as %s to %s\n", s, deployedId.getId(), deployedId.getFile());
                         }
                     } else {
 
@@ -106,7 +106,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                                 .setRepositoryId(repositoryId),
                                         context.getSession()
                                 );
-                                context.getTerminal().getOut().println("File " + s + " deployed successfully as " + deployedId);
+                                context.getTerminal().getOut().printf("File %s deployed successfully as %s\n", s, deployedId);
                                 s = deployedId.toString();
                             }
                             logInstallStatus(s, context, force);
@@ -125,28 +125,28 @@ public class InstallCommand extends AbstractNutsCommand {
         try {
             file = context.getValidWorkspace().install(s, force, context.getSession());
         } catch (NutsAlreadytInstalledException ex) {
-            terminal.getOut().println(s + " already installed");
+            terminal.getOut().printf("%s already installed\n", s);
             return null;
         } catch (NutsNotInstallableException ex) {
-            terminal.getOut().println(s + " requires no installation. It should be usable as is.");
+            terminal.getOut().printf("%s requires no installation. It should be usable as is.\n", s);
             return null;
         }
         if (!file.isInstalled()) {
             if (!file.isCached()) {
                 if (file.isTemporary()) {
-                    terminal.getOut().println(file.getId() + " installed successfully from temporarily file " + file.getFile().getPath());
+                    terminal.getOut().printf("%s installed successfully from temporarily file %s\n", file.getId(), file.getFile().getPath());
                 } else {
-                    terminal.getOut().println(file.getId() + " installed successfully from remote repository");
+                    terminal.getOut().printf("%s installed successfully from remote repository\n", file.getId());
                 }
             } else {
                 if (file.isTemporary()) {
-                    terminal.getOut().println(file.getId() + " installed from local temporarily file " + file.getFile().getPath());
+                    terminal.getOut().printf("%s installed from local temporarily file %s \n", file.getId(), file.getFile().getPath());
                 } else {
-                    terminal.getOut().println(file.getId() + " installed from local repository");
+                    terminal.getOut().printf("%s installed from local repository\n", file.getId());
                 }
             }
         } else {
-            terminal.getOut().println(file.getId() + " installed successfully");
+            terminal.getOut().printf("%s installed successfully\n", file.getId());
         }
         return file;
     }

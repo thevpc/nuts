@@ -160,9 +160,9 @@ public class NutsJLineTerminal implements NutsTerminal {
                     //                .completer(completer)
                     //                .parser(parser)
                     .build();
-            reader.setVariable(LineReader.HISTORY_FILE, CoreIOUtils.createFile(workspace.getWorkspaceLocation(), "history"));
-            this.out = workspace.createEnhancedPrintStream(reader.getTerminal().output());
-            this.err = workspace.createEnhancedPrintStream(reader.getTerminal().output());//.setColor(NutsPrintStream.RED);
+            reader.setVariable(LineReader.HISTORY_FILE, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), "history"));
+            this.out = workspace.getExtensionManager().getFactory().createPrintStream(reader.getTerminal().output());
+            this.err = workspace.getExtensionManager().getFactory().createPrintStream(reader.getTerminal().output());//.setColor(NutsPrintStream.RED);
         }
     }
 

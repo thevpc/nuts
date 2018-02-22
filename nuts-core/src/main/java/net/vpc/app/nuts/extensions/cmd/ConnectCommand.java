@@ -91,7 +91,7 @@ public class ConnectCommand extends AbstractNutsCommand {
             CoreIOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NutsNonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getTerminal().getOut());
             PrintStream out = new PrintStream(socket.getOutputStream());
             if (!CoreStringUtils.isEmpty(login)) {
-                out.println("connect " + login + " " + password);
+                out.printf("connect ==%s %s== \n",login,password);
             }
             while (true) {
                 String line = context.getTerminal().readLine("");
@@ -102,7 +102,7 @@ public class ConnectCommand extends AbstractNutsCommand {
                     if (line.trim().equals("quit") || line.trim().equals("exit")) {
                         break;
                     }
-                    out.println(line);
+                    out.printf("%s\n",line);
                 }
             }
         } finally {

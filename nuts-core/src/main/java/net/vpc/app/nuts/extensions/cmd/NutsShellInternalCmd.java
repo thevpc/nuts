@@ -52,8 +52,8 @@ class NutsShellInternalCmd implements JavaShellInternalCmd {
         session.setTerminal(new NutsTerminalDelegate(
                 component.getContext().getTerminal(),
                 shell.getStdIn(),
-                component.getContext().getWorkspace().createEnhancedPrintStream(shell.getStdOut()),
-                component.getContext().getWorkspace().createEnhancedPrintStream(shell.getStdErr())
+                component.getContext().getWorkspace().getExtensionManager().getFactory().createPrintStream(shell.getStdOut()),
+                component.getContext().getWorkspace().getExtensionManager().getFactory().createPrintStream(shell.getStdErr())
         ));
         commandContext.setSession(session);
         commandContext.setEnv(shell.getEnv().getEnv());

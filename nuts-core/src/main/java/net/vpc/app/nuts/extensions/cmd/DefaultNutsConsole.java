@@ -84,7 +84,7 @@ public class DefaultNutsConsole implements NutsConsole {
         installCommand(new ShellToNutsCommand(new SourceCmd()));
         installCommand(new ShellToNutsCommand(new PwdCmd()));
 
-        for (NutsCommand command : workspace.getFactory().createAllSupported(NutsCommand.class, this)) {
+        for (NutsCommand command : workspace.getExtensionManager().getFactory().createAllSupported(NutsCommand.class, this)) {
             NutsCommand old = findCommand(command.getName());
             if (old != null && old.getSupportLevel(this) >= command.getSupportLevel(this)) {
                 continue;

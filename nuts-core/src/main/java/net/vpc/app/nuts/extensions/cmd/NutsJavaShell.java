@@ -49,7 +49,7 @@ public class NutsJavaShell extends JavaShell {
     public NutsJavaShell(DefaultNutsConsole component, NutsWorkspace workspace) {
         this.component = component;
         this.workspace = workspace;
-        super.setCwd(workspace.getCwd().getPath());
+        super.setCwd(workspace.getConfigManager().getCwd().getPath());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public void onErrorImpl(String message, Throwable th) {
-        component.getContext().getTerminal().getErr().println("``"+message+"``");
+        component.getContext().getTerminal().getErr().printf("@@@%s@@@\n",message);
     }
 
     @Override
@@ -108,6 +108,6 @@ public class NutsJavaShell extends JavaShell {
     @Override
     public void setCwd(String cwd) {
         super.setCwd(cwd);
-        workspace.setCwd(new File(cwd));
+        workspace.getConfigManager().setCwd(new File(cwd));
     }
 }

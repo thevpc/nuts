@@ -6,7 +6,7 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-root</artifactId>
     <name>net.vpc.app.nuts</name>
-    <version>0.3.7.0</version>
+    <version>0.3.8.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>

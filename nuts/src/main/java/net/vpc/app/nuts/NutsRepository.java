@@ -43,21 +43,13 @@ public interface NutsRepository {
     int SPEED_SLOW = 10000;
     int SPEED_SLOWEST = 100000;
 
-    int getSpeed();
-
-    Properties getEnv(boolean inherit);
-
-    void setEnv(String property, String value) ;
-    
-    String getEnv(String key, String defaultValue, boolean inherit);
-
-    String getLocation();
-    
-    NutsRepositoryConfig getConfig();
+    String getRepositoryId();
 
     NutsWorkspace getWorkspace();
 
-    String getRepositoryId();
+    NutsRepositoryConfigManager getConfigManager();
+
+    NutsRepositorySecurityManager getSecurityManager();
 
     /**
      * @param id descriptor Id, mandatory as descriptor may not being effective
@@ -103,30 +95,6 @@ public interface NutsRepository {
     void save();
 
     void open(boolean autoCreate);
-
-    boolean isAllowed(String right);
-
-    void addUser(String user, String password, String... rights);
-
-    void setUserRights(String user, String... rights);
-
-    void addUserRights(String user, String... rights);
-
-    void removeUserRights(String user, String... rights);
-
-    void setUserRemoteIdentity(String user, String mappedIdentity);
-
-    void setUserGroups(String user, String... groups);
-
-    void addUserGroups(String user, String... groups);
-
-    void removeUserGroups(String user, String... groups);
-
-    void setUserCredentials(String login, String password, String oldPassword);
-
-    NutsUserInfo[] findUsers();
-
-    NutsUserInfo findUser(String username);
 
     void removeRepositoryListener(NutsRepositoryListener listener);
 

@@ -221,10 +221,10 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         });
         server.start();
-        System.out.println("Nuts Http Service '" + serverId + "' running at " + inetSocketAddress);
-        System.out.println("Serving workspaces: ");
+        System.out.printf("Nuts Http Service '%s' running at %s\n" ,serverId, inetSocketAddress);
+        System.out.printf("Serving workspaces: \n");
         for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
-            System.out.println("\t/" + entry.getKey() + " : " + entry.getValue().getWorkspaceLocation());
+            System.out.printf("\t%s : %s\n", entry.getKey(), entry.getValue().getConfigManager().getWorkspaceLocation());
         }
         final String finalServerId = serverId;
         return new NutsServer() {

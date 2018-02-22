@@ -53,7 +53,7 @@ public class ServerNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getValues() {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        for (NutsServer server : workspace.getServers()) {
+        for (NutsServer server : workspace.getServerManager().getServers()) {
             all.add(new DefaultNutsArgumentCandidate(server.getServerId()));
         }
         return all;

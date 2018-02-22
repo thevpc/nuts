@@ -206,7 +206,7 @@ public class CorePlatformUtils {
                 }
                 myReader.close();
             } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
+                System.err.printf("Error: %s\n", e.getMessage());
             }
         }
         Map<String, String> m = new HashMap<>();
@@ -646,7 +646,7 @@ public class CorePlatformUtils {
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             try {
                                 Class<?> aClass = (classLoader == null ? Thread.currentThread().getContextClassLoader() : classLoader).loadClass(clz);
-                                System.out.println("Loaded " + aClass + " from " + file);
+                                System.out.printf("Loaded %s from %s\n", aClass, file);
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;

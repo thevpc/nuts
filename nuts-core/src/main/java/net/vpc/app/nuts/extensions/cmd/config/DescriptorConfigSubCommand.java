@@ -86,7 +86,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setId(context.getValidWorkspace().parseNutsId(value)));
+                        desc.set(desc.get().setId(context.getValidWorkspace().getExtensionManager().getFactory().parseNutsId(value)));
                     }
                 });
 
@@ -228,7 +228,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 }
             } else {
-                context.getTerminal().getOut().println(desc.get().toString(true));
+                context.getTerminal().getOut().printf("%s\n", desc.get().toString(true));
             }
         }
         return true;

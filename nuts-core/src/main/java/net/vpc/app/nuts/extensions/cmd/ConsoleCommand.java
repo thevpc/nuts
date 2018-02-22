@@ -53,22 +53,20 @@ public class ConsoleCommand extends AbstractNutsCommand {
         }
         NutsTerminal terminal = context.getTerminal();
         NutsPrintStream out = terminal.getOut();
-        out.println("**Nuts** console \\(**Network Updatable Things Services**\\) **v"
-                +context.getValidWorkspace().getWorkspaceRuntimeId().getVersion().toString()
-                +"** \\(c\\) vpc 2017");
-        
+        out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n",context.getValidWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString());
+
         NutsConsole commandLine = null;
-        commandLine = context.getWorkspace().createConsole(context.getSession());
+        commandLine = context.getWorkspace().getExtensionManager().getFactory().createConsole(context.getSession());
 
         while (true) {
 
             terminal = context.getTerminal();
             terminal.setCommandContext(context);
             NutsWorkspace ws = context.getWorkspace();
-            String wss = ws == null ? "" : CoreIOUtils.createFileByCwd(ws.getWorkspaceLocation(), new File(context.getCommandLine().getCwd())).getName();
+            String wss = ws == null ? "" : CoreIOUtils.createFileByCwd(ws.getConfigManager().getWorkspaceLocation(), new File(context.getCommandLine().getCwd())).getName();
             String login = null;
             if (ws != null) {
-                login = ws.getCurrentLogin();
+                login = ws.getSecurityManager().getCurrentLogin();
             }
             String prompt = login + "@" + wss;
             if (!CoreStringUtils.isEmpty(context.getServiceName())) {
@@ -80,7 +78,7 @@ public class ConsoleCommand extends AbstractNutsCommand {
             try {
                 line = terminal.readLine(prompt);
             } catch (InterrupShellException ex) {
-                terminal.getErr().println("==" + ex.getMessage() + "==");
+                terminal.getErr().printf("==%s==\n", ex.getMessage());
                 continue;
             }
             if (line == null) {

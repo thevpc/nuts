@@ -132,7 +132,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    nutsClassLoader = resolveNutsWorkspace().createClassLoader(pathList, null, null);
+                    nutsClassLoader = resolveNutsWorkspace().getExtensionManager().getFactory().createClassLoader(pathList, null, null);
                 } catch (Exception e) {
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();
                 }
@@ -150,7 +150,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                             .setRoot(getWorkspaceRoot())
                             .setRuntimeId(getWorkspaceRuntimeId())
                             .setRuntimeSourceURL(getRuntimeSourceURL())
-                    .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent())));
+                            .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent())));
             nutsWorkspace = bws.openWorkspace(getWorkspaceLocation(),
                     new NutsWorkspaceCreateOptions()
                             .setArchetype(getWorkspaceArchetype())

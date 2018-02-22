@@ -119,7 +119,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 jar = true;
             } else {
                 if (k.startsWith("-")) {
-                    executionContext.getTerminal().getErr().println("Ignored env param " + k + (value == null ? "" : ("=" + value)));
+                    executionContext.getTerminal().getErr().printf("Ignored env param %s%s\n", k, (value == null ? "" : ("=" + value)));
                 }
             }
         }
@@ -147,16 +147,16 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             File file = nutMainFile.getFile();
             if (file != null) {
                 List<String> classes = CorePlatformUtils.resolveMainClasses(file);
-                mainClass=CoreStringUtils.join(":", classes);
+                mainClass = CoreStringUtils.join(":", classes);
             }
         }
 
         if (jar) {
             if (mainClass != null) {
-                executionContext.getTerminal().getErr().println("Ignored main-class=" + mainClass + " . running jar!");
+                executionContext.getTerminal().getErr().printf("Ignored main-class=%s. running jar!\n", mainClass);
             }
             if (!classPath.isEmpty()) {
-                executionContext.getTerminal().getErr().println("Ignored class-path=" + classPath + " . running jar!");
+                executionContext.getTerminal().getErr().printf("Ignored class-path=%s. running jar!\n", classPath);
             }
             args.add("-jar");
             args.add(nutMainFile.getFile().getPath());
@@ -188,9 +188,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         break;
                     default:
                         while (true) {
-                            executionContext.getTerminal().getOut().println("Multiple runnable classes detected  - actually [[" + possibleClasses.size() + "]] . Select one :");
+                            executionContext.getTerminal().getOut().printf("Multiple runnable classes detected  - actually [[%s]] . Select one :\n", possibleClasses.size());
                             for (int i = 0; i < possibleClasses.size(); i++) {
-                                executionContext.getTerminal().getOut().println("==[" + (i + 1) + "]== [[" + possibleClasses.get(i) + "]]");
+                                executionContext.getTerminal().getOut().printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
                             }
                             String line = executionContext.getTerminal().readLine("Enter class # or name to run it. Type 'cancel' to cancel : ");
                             if (line != null) {

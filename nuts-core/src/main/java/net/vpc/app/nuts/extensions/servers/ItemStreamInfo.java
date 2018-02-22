@@ -115,7 +115,7 @@ public class ItemStreamInfo {
             }
             int expected = refBytes[index] & 0xff;
             if (y != expected) {
-                System.out.println("Error at " + index);
+                System.out.printf("Error at %s\n", index);
 //                throw new IOException("Error");
             }
             index++;

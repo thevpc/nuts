@@ -243,7 +243,7 @@ public class CoreIOUtils {
         for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
             map.put((String) entry.getKey(), (String) entry.getValue());
         }
-        File nutsJarFile = workspace.fetchBoot(session).getFile();
+        File nutsJarFile = workspace.fetchBootFile(session).getFile();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.getAbsolutePath());
         }
@@ -256,7 +256,7 @@ public class CoreIOUtils {
 
         map.put("nuts.java", resolveJavaCommand("", workspace));
         map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
-        map.put("nuts.workspace", workspace.getWorkspaceLocation());
+        map.put("nuts.workspace", workspace.getConfigManager().getWorkspaceLocation());
         map.put("nuts.version", id.getVersion().getValue());
         map.put("nuts.name", id.getName());
         map.put("nuts.group", id.getGroup());
@@ -306,7 +306,7 @@ public class CoreIOUtils {
         }
         args = args2.toArray(new String[args2.size()]);
 
-        File file = createFileByCwd(args[0], workspace.getCwd());
+        File file = createFileByCwd(args[0], workspace.getConfigManager().getCwd());
         if (file.exists() && !file.canExecute()) {
             if (!file.setExecutable(true)) {
                 log.log(Level.WARNING, "Unable to set file executable " + file);
@@ -315,9 +315,9 @@ public class CoreIOUtils {
             }
         }
         if (directory == null) {
-            directory = workspace.getCwd();
+            directory = workspace.getConfigManager().getCwd();
         } else {
-            directory = CoreIOUtils.createFileByCwd(directory.getPath(), workspace.getCwd());
+            directory = CoreIOUtils.createFileByCwd(directory.getPath(), workspace.getConfigManager().getCwd());
         }
         int x = Integer.MIN_VALUE;
         try {
@@ -338,7 +338,7 @@ public class CoreIOUtils {
         NutsVersionFilter javaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
         String bestJavaPath = null;
         String bestJavaVersion = null;
-        for (Map.Entry<Object, Object> entry : workspace.getEnv().entrySet()) {
+        for (Map.Entry<Object, Object> entry : workspace.getConfigManager().getEnv().entrySet()) {
             String key = (String) entry.getKey();
             if (key.startsWith("rt.java.")) {
                 String javaVersion = key.substring("rt.java.".length());
@@ -359,7 +359,7 @@ public class CoreIOUtils {
             bestJavaPath = "java";
         }
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
-            File file = createFileByCwd(bestJavaPath, workspace.getCwd());
+            File file = createFileByCwd(bestJavaPath, workspace.getConfigManager().getCwd());
             if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
                 bestJavaPath = CoreIOUtils.createFile(bestJavaPath, "bin/java").getPath();
             }
@@ -958,19 +958,6 @@ public class CoreIOUtils {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            copy(
-                    monitor(new FileInputStream("/home/vpc/data-vpc/VM/horton-works/HDP_2.5_virtualbox.ova"), null, null, -1, null),
-                    new FileOutputStream("/home/vpc/data-vpc/VM/horton-works/HDP_2.5_virtualbox.ova.2"),
-                    true,
-                    true
-            );
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CoreIOUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public static int getURLSize(URL url) {
         URLConnection conn = null;
         try {
@@ -1030,7 +1017,7 @@ public class CoreIOUtils {
     }
 
     public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) {
-        byte[] bytes = new byte[10240];
+        byte[] bytes = new byte[1024];//
         int count;
         long all = 0;
         try {

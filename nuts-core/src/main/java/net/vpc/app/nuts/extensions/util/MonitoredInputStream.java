@@ -37,9 +37,10 @@ public class MonitoredInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
+        onBeforeRead();
         int r = this.base.read();
         if (r != 0) {
-            onRead(1);
+            onAfterRead(1);
         }
         return r;
     }
@@ -71,39 +72,45 @@ public class MonitoredInputStream extends InputStream {
 
     @Override
     public long skip(long n) throws IOException {
+        onBeforeRead();
         long r = base.skip(n);
-        onRead(r);
+        onAfterRead(r);
         return r;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        onBeforeRead();
         int r = base.read(b, off, len);
-        onRead(r);
+        onAfterRead(r);
         return r;
     }
 
     @Override
     public int read(byte[] b) throws IOException {
+        onBeforeRead();
         int r = base.read(b);
-        onRead(r);
+        onAfterRead(r);
         return r;
     }
 
-    private void onRead(long count) {
-        long now = System.nanoTime();
+    private void onBeforeRead() {
         if (startTime == 0) {
+            long now = System.currentTimeMillis();
             this.startTime = now;
             this.lastTime = now;
-            this.lastCount = now;
             this.lastCount = 0;
-            this.count = count;
-        } else {
-            this.count += count;
-            if (monitor.onProgress(new InputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length))) {
-                this.lastCount = this.count;
-                this.lastTime = now;
-            }
+            this.count = 0;
+            monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, length));
+        }
+    }
+
+    private void onAfterRead(long count) {
+        long now = System.currentTimeMillis();
+        this.count += count;
+        if (monitor.onProgress(new InputStreamEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length))) {
+            this.lastCount = this.count;
+            this.lastTime = now;
         }
     }
 

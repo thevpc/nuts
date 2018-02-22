@@ -75,7 +75,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
-            String metadataURL = CoreIOUtils.buildUrl(getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
+            String metadataURL = CoreIOUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
             log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
             try {
                 metadataStream = openStream(metadataURL, id.setFace("maven-metadata"), session);
@@ -115,9 +115,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     @Override
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
-        String url = CoreIOUtils.buildUrl(getLocation(), "/archetype-catalog.xml");
+        String url = CoreIOUtils.buildUrl(getConfigManager().getLocation(), "/archetype-catalog.xml");
         log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'archetype-catalog\'", 20), url});
-        return parseArchetypeCatalog(openStream(url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getLocation()).setFace("archetype-catalog"), session), filter);
+        return parseArchetypeCatalog(openStream(url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace("archetype-catalog"), session), filter);
     }
 
     @Override
@@ -251,7 +251,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (CoreIOUtils.buildUrl(getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + extension));
+        return (CoreIOUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + extension));
     }
 
     @Override
@@ -301,7 +301,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         if (!monitorable) {
             return stream;
         }
-        return CoreIOUtils.monitor(stream, source, String.valueOf(source), size, new DefaultInputStreamMonitor(out));
+        return CoreIOUtils.monitor(stream, source, String.valueOf(path), size, new DefaultInputStreamMonitor(out));
     }
 
     @Override

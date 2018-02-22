@@ -68,9 +68,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getValidWorkspace();
         NutsFile file = ws.update(id, context.getSession());
         if (file.isCached()) {
-            context.getTerminal().getOut().println(file.getId() + " already installed");
+            context.getTerminal().getOut().printf("%s already installed\n", file.getId());
         } else {
-            context.getTerminal().getOut().println(file.getId() + " installed successfully");
+            context.getTerminal().getOut().printf("%s installed successfully\n", file.getId());
         }
     }
 
@@ -78,9 +78,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getValidWorkspace();
         NutsFile file = ws.updateWorkspace(context.getSession());
         if (file.isCached()) {
-            context.getTerminal().getOut().println(file.getId() + " already installed");
+            context.getTerminal().getOut().printf("%s already installed\n", file.getId());
         } else {
-            context.getTerminal().getOut().println(file.getId() + " installed successfully");
+            context.getTerminal().getOut().printf("%s installed successfully\n", file.getId());
         }
     }
 }

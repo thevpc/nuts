@@ -149,7 +149,7 @@ public class ServerCommand extends AbstractNutsCommand {
             }
             if (cmdLine.isExecMode()) {
                 if (servers.isEmpty()) {
-                    context.getTerminal().getErr().println("No Server config found.");
+                    context.getTerminal().getErr().printf("No Server config found.\n");
                     return 1;
                 }
                 Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();
@@ -215,32 +215,32 @@ public class ServerCommand extends AbstractNutsCommand {
                         default:
                             throw new NutsIllegalArgumentsException("Unsupported server type " + server.serverType);
                     }
-                    context.getValidWorkspace().startServer(config0);
+                    context.getValidWorkspace().getServerManager().startServer(config0);
                 }
             }
         } else if (cmdLine.read("stop")) {
             String s = cmdLine.readNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
             if (cmdLine.isExecMode()) {
-                context.getValidWorkspace().stopServer(s);
+                context.getValidWorkspace().getServerManager().stopServer(s);
             }
             while (!cmdLine.isEmpty()) {
                 s = cmdLine.readNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getValidWorkspace().stopServer(s);
+                    context.getValidWorkspace().getServerManager().stopServer(s);
                 }
             }
         } else if (cmdLine.read("list")) {
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                List<NutsServer> servers = context.getValidWorkspace().getServers();
+                List<NutsServer> servers = context.getValidWorkspace().getServerManager().getServers();
                 if (servers.isEmpty()) {
-                    context.getTerminal().getOut().println("No Server is Running");
+                    context.getTerminal().getOut().printf("No Server is Running\n");
                 }
                 for (NutsServer o : servers) {
                     if (o.isRunning()) {
-                        context.getTerminal().getOut().println("==Running== " + o.getServerId());
+                        context.getTerminal().getOut().printf("==Running== %s\n", o.getServerId());
                     } else {
-                        context.getTerminal().getOut().println("==Stopped== " + o.getServerId());
+                        context.getTerminal().getOut().printf("==Stopped== %s\n", o.getServerId());
                     }
                 }
             }

@@ -33,6 +33,7 @@ import java.io.*;
 import java.util.Locale;
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.NullOutputStream;
 
 /**
@@ -78,36 +79,6 @@ public class AbstractNutsPrintStream extends NutsPrintStream {
     }
 
     protected void endFormat(NutsTextFormat format) {
-    }
-
-    @Override
-    public AbstractNutsPrintStream printf(Locale l, String format, Object... args) {
-        AbstractNutsPrintStream.super.printf(l, format, args);
-        return this;
-    }
-
-    @Override
-    public AbstractNutsPrintStream format(Locale l, String format, Object... args) {
-        AbstractNutsPrintStream.super.format(l, format, args);
-        return this;
-    }
-
-    @Override
-    public AbstractNutsPrintStream append(CharSequence csq) {
-        AbstractNutsPrintStream.super.append(csq);
-        return this;
-    }
-
-    @Override
-    public AbstractNutsPrintStream append(CharSequence csq, int start, int end) {
-        AbstractNutsPrintStream.super.append(csq, start, end);
-        return this;
-    }
-
-    @Override
-    public AbstractNutsPrintStream append(char c) {
-        AbstractNutsPrintStream.super.append(c);
-        return this;
     }
 
     @Override

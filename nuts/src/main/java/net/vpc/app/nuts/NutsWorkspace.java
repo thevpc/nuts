@@ -30,48 +30,13 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.*;
-import javax.security.auth.callback.CallbackHandler;
 
 /**
  * Created by vpc on 1/5/17.
  */
 @Prototype
 public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
-
-    /////////////////////////////////////////////////////////////////
-    // CONFIG
-    NutsBootWorkspace getBoot();
-
-    NutsId getWorkspaceBootId();
-
-    NutsId getWorkspaceRuntimeId();
-
-    String getWorkspaceLocation();
-
-    String getWorkspaceRootLocation();
-
-    Properties getEnv();
-    
-    String getEnv(String property, String defaultValue);
-    
-    void setEnv(String property, String value);
-
-    void addImports(String ... importExpression);
-
-    void removeAllImports();
-
-    void removeImports(String ... importExpression);
-
-    void setImports(String[] imports);
-
-    String[] getImports();
-
-    NutsWorkspaceConfig getConfig();
-
-    Set<String> getAvailableArchetypes();
 
     NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
 
@@ -103,8 +68,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
-    /////////////////////////////////////////////////////////////////
-    // NUTS MANAGEMENTS
     NutsFile updateWorkspace(NutsSession session);
 
     NutsUpdate[] checkWorkspaceUpdates(boolean applyUpdates, String[] args, NutsSession session);
@@ -115,7 +78,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsSession session);
 
-    NutsFile install(String id,boolean force, NutsSession session);
+    NutsFile install(String id, boolean force, NutsSession session);
 
     NutsFile checkout(String id, File folder, NutsSession session);
 
@@ -141,26 +104,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
 
-    /////////////////////////////////////////////////////////////////
-    // REPOSITORY MANAGEMENT
-    boolean isSupportedRepositoryType(String repositoryType);
-
-    NutsRepository addRepository(String repositoryId, String location, String type, boolean autoCreate);
-
-    NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate);
-
-    NutsRepository openRepository(String repositoryId, File repositoryRoot, String location, String type, boolean autoCreate);
-
-    NutsRepository findRepository(String repositoryIdPath);
-
-    void removeRepository(String locationOrRepositoryId);
-
-    NutsRepository[] getRepositories();
-
-    NutsRepositoryDefinition[] getDefaultRepositories();
-
-    /////////////////////////////////////////////////////////////////
-    // EXEC SUPPORT
     int exec(String[] cmd, Properties env, NutsSession session);
 
     int exec(String id, String[] args, Properties env, NutsSession session);
@@ -174,130 +117,27 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
      * @param waitFor
      * @param session
      * @return
-     * @throws InterruptedException
      */
-    int execExternalNuts(File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session);
+    int exec(File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session);
 
-    /////////////////////////////////////////////////////////////////
-    // EXTENSION MANAGEMENT
-    NutsWorkspaceFactory getFactory();
+    NutsWorkspaceRepositoryManager getRepositoryManager();
 
-    NutsWorkspaceExtension addExtension(String id, NutsSession session);
+    NutsWorkspaceExtensionManager getExtensionManager();
 
-    boolean installExtensionComponent(Class extensionPointType, Object extensionImpl);
+    NutsWorkspaceServerManager getServerManager();
 
-    NutsWorkspaceExtension[] getExtensions();
+    NutsWorkspaceConfigManager getConfigManager();
 
-    /////////////////////////////////////////////////////////////////
-    // SECURITY MANAGEMENT
-    String getCurrentLogin();
-    
-    String[] getCurrentLoginStack();
+    NutsWorkspaceSecurityManager getSecurityManager();
 
-    void login(String login, String password);
+    NutsFile fetchBootFile(NutsSession session);
 
-    String login(CallbackHandler handler);
-
-    void logout();
-
-    void setUserCredentials(String login, String password, String oldPassword);
-
-    void addUser(String user, String password, String... rights);
-
-    void setUserRights(String user, String... rights);
-
-    void addUserRights(String user, String... rights);
-
-    void removeUserRights(String user, String... rights);
-
-    void setUserRemoteIdentity(String user, String mappedIdentity);
-
-    void setUserCredentials(String user, String credentials);
-
-    void setUserGroups(String user, String... groups);
-
-    void addUserGroups(String user, String... groups);
-
-    void removeUserGroups(String user, String... groups);
-    
-    NutsUserInfo[] findUsers();
-    
-    NutsUserInfo findUser(String username);
-
-    boolean isAllowed(String right);
-
-    boolean switchUnsecureMode(String adminPassword);
-
-    boolean switchSecureMode(String adminPassword);
-
-    boolean isAdmin();
-
-    /////////////////////////////////////////////////////////////////
-    // SERVER MANAGEMENT
-    NutsServer startServer(ServerConfig serverConfig);
-
-    NutsServer getServer(String serverId);
-
-    void stopServer(String serverId);
-
-    boolean isServerRunning(String serverId);
-
-    List<NutsServer> getServers();
-
-    /////////////////////////////////////////////////////////////////
-    // CONFIG MANAGEMENT
-    void save();
-
-    Map<String, Object> getSharedObjects();
-
-    /////////////////////////////////////////////////////////////////
-    // OBSERVERS
-    void addSharedObjectsListener(MapListener<String, Object> listener);
-
-    void removeSharedObjectsListener(MapListener<String, Object> listener);
-
-    MapListener<String, Object>[] getSharedObjectsListeners();
+    String getHelpString();
 
     void removeWorkspaceListener(NutsWorkspaceListener listener);
 
     void addWorkspaceListener(NutsWorkspaceListener listener);
 
     NutsWorkspaceListener[] getWorkspaceListeners();
-
-    void removeRepositoryListener(NutsRepositoryListener listener);
-
-    void addRepositoryListener(NutsRepositoryListener listener);
-
-    NutsRepositoryListener[] getRepositoryListeners();
-
-    /////////////////////////////////////////////////////////////////
-    // RUNTIME INFO
-    NutsFile fetchBoot(NutsSession session);
-
-    File resolveNutsJarFile();
-
-    Map<String, String> getRuntimeProperties();
-
-    /////////////////////////////////////////////////////////////////
-    // UTILITIES
-    NutsSession createSession();
-
-    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
-
-    NutsConsole createConsole(NutsSession session);
-
-    NutsTerminal createTerminal();
-
-    NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
-
-    NutsPrintStream createEnhancedPrintStream(OutputStream out);
-
-    File getCwd();
-
-    void setCwd(File file);
-
-    String getHelpString();
-
-    NutsId parseNutsId(String nutsId);
 
 }

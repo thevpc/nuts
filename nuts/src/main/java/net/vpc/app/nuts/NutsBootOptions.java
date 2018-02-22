@@ -15,7 +15,6 @@ public class NutsBootOptions implements Serializable {
 
     private String root;
     private String runtimeId;
-    private String workspaceRuntimeVersion;
     private String runtimeSourceURL;
     private NutsClassLoaderProvider classLoaderProvider;
 

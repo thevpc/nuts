@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  * Created by vpc on 2/20/17.
@@ -111,23 +111,14 @@ public class DefaultNutsPrintStream extends AbstractNutsPrintStream {
     }
 
     @Override
-    public DefaultNutsPrintStream printf(String format, Object... args) {
-        DefaultNutsPrintStream.super.printf(format, args);
+    public AbstractNutsPrintStream format(Locale l, String format, Object... args) {
+        print(CoreStringUtils.format(l, format, args));
         return this;
     }
-
-    @Override
-    public DefaultNutsPrintStream printf(Locale l, String format, Object... args) {
-        DefaultNutsPrintStream.super.printf(l, format, args);
+    public PrintStream format(String format, Object ... args) {
+        print(CoreStringUtils.format(Locale.getDefault(), format, args));
         return this;
     }
-
-    @Override
-    public DefaultNutsPrintStream format(Locale l, String format, Object... args) {
-        DefaultNutsPrintStream.super.format(l, format, args);
-        return this;
-    }
-
     @Override
     public void println(String text) {
         print(text);

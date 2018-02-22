@@ -52,9 +52,9 @@ public class UninstallCommand extends AbstractNutsCommand {
             if (cmdLine.isExecMode()) {
                 boolean file = context.getValidWorkspace().uninstall(id, context.getSession());
                 if (file) {
-                    context.getTerminal().getOut().println(id + " uninstalled successfully ");
+                    context.getTerminal().getOut().printf("%s uninstalled successfully \n", id);
                 } else {
-                    context.getTerminal().getOut().println(id + " could not be uninstalled");
+                    context.getTerminal().getOut().printf("%s could not be uninstalled\n", id);
                 }
             }
         } while (!cmdLine.isEmpty());
