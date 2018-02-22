@@ -17,6 +17,11 @@ cd $base/nuts-bootstrap/
 tar -cf nuts-bundle.tar.gz nuts nuts.jar version.txt
 cd $h
 
+
+echo "runtimeId=net.vpc.app.nuts:nuts-core#$v" > $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.boot
+echo "repositories=~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master" >> $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.boot
+cp $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.boot $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.boot
+
 mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/LATEST
 cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/LATEST/nuts-core-LATEST.properties
 
