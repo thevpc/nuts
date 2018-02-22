@@ -42,15 +42,12 @@ public class TextParserTest {
     public void tearDown() {
     }
 
-    @Test
-    public void case1() throws ParseException {
-        String text = "``3052`` ok ``2``";
-        NutsDefaultParserImpl d = new NutsDefaultParserImpl(new StringReader(text));
-        TextNode r = d.parseList();
-        TextNode y;
-        y = DefaultNutsTextParser.INSTANCE.parseTextNode(text);
-        display(y, "");
-    }
+//    @Test
+//    public void case1() {
+//        String text = "``3052`` ok ``2``";
+//        NutsDocNode y = DefaultNutsTextParser.INSTANCE.parseTextNode(text);
+//        display(y, "");
+//    }
 
 //    @Test
 //    public void case2() throws ParseException {
@@ -60,10 +57,10 @@ public class TextParserTest {
 //        display(y, "");
 //    }
 
-    protected void display(TextNode n, String prefix) {
-        System.out.printf(prefix + "%s : %s\n", n.getType(), n.getValue());
-        for (TextNode node : n.getNodes()) {
-            display(node, prefix + "  ");
-        }
-    }
+//    protected void display(NutsDocNode n, String prefix) {
+//        System.out.printf(prefix + "%s : %s\n", n.getType(), n.getValue());
+//        for (NutsDocNode node : n.getNodes()) {
+//            display(node, prefix + "  ");
+//        }
+//    }
 }

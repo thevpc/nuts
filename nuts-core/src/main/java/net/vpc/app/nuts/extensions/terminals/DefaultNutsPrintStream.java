@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
+import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextNodeParser;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
@@ -115,10 +116,12 @@ public class DefaultNutsPrintStream extends AbstractNutsPrintStream {
         print(CoreStringUtils.format(l, format, args));
         return this;
     }
-    public PrintStream format(String format, Object ... args) {
+
+    public PrintStream format(String format, Object... args) {
         print(CoreStringUtils.format(Locale.getDefault(), format, args));
         return this;
     }
+
     @Override
     public void println(String text) {
         print(text);

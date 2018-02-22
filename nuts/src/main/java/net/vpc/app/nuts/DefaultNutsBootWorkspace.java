@@ -43,6 +43,7 @@ import java.util.zip.ZipFile;
  * Created by vpc on 1/6/17.
  */
 public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
+    private static final String DEFAULT_REMOTE_BOOTSTRAP_REPOSITORY_URL = "https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap";
 
     public static final Logger log = Logger.getLogger(DefaultNutsBootWorkspace.class.getName());
     private final String root;
@@ -154,16 +155,43 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         return runtimeId == null ? null : runtimeId.toString();
     }
 
-    private String[] resolveRepositories(String... possibilities) {
+    private String[] resolveBootConfigRepositories(String... possibilities) {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
         initial.add(root + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
-        initial.add("~/.m2/repository");
+//        initial.add("~/.m2/repository");
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
         }
-        initial.add("https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap");
-        initial.add("https://github.com/thevpc/nuts/raw/master/nuts/nuts-bootstrap");
+        initial.add(DEFAULT_REMOTE_BOOTSTRAP_REPOSITORY_URL);
+//        initial.add("https://github.com/thevpc/nuts/raw/master/nuts/nuts-bootstrap");
+
+        LinkedHashSet<String> allValid = new LinkedHashSet<>();
+        for (String v : initial) {
+            if (!StringUtils.isEmpty(v)) {
+                v = v.trim();
+                for (String v0 : v.split(";")) {
+                    v0 = v0.trim();
+                    if (!allValid.contains(v0)) {
+                        allValid.add(v0);
+                    }
+                }
+            }
+        }
+        return allValid.toArray(new String[allValid.size()]);
+    }
+
+    private String[] resolveBootClassPathRepositories(String... possibilities) {
+        List<String> initial = new ArrayList<>();
+        initial.add(runtimeSourceURL);
+        initial.add(root + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
+        if (possibilities != null) {
+            initial.addAll(Arrays.asList(possibilities));
+        }
+        initial.add("~/.m2/repository");
+        initial.add(DEFAULT_REMOTE_BOOTSTRAP_REPOSITORY_URL);
+        initial.add("http://repo.maven.apache.org/maven2/");
+//        initial.add("https://github.com/thevpc/nuts/raw/master/nuts/nuts-bootstrap");
 
         LinkedHashSet<String> allValid = new LinkedHashSet<>();
         for (String v : initial) {
@@ -186,28 +214,29 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     private NutsWorkspaceClassPath loadWorkspaceClassPath(boolean first) {
         WorkspaceNutsId wbootId = WorkspaceNutsId.parse(getBootId());
-        File runtimeFile = getBootFileLocation(wbootId, "properties");
-        String[] resolvedRepositories = null;
+        File runtimeFile = getBootFileLocation(wbootId, "boot");
+        String bootPath = '/' + wbootId.groupId.replace('.', '/') + '/' + wbootId.groupId + '/' + wbootId.version + '/' + wbootId.artifactId + "-" + wbootId.getVersion() + ".boot";
+        String[] resolvedBootRepositories = null;
         String repositories = null;
         WorkspaceNutsId _runtimeId = runtimeId;
         if (_runtimeId == null || repositories == null) {
             String runtimeId = null;
             boolean storeRuntimeFile = true;
-            Properties runtimeProperties = null;
+            Properties bootProperties = null;
             if (runtimeFile.exists()) {
-                runtimeProperties = IOUtils.loadFileProperties(runtimeFile);
-                runtimeId = runtimeProperties.getProperty("runtimeId");
-                repositories = runtimeProperties.getProperty("repositories");
+                bootProperties = IOUtils.loadFileProperties(runtimeFile);
+                runtimeId = bootProperties.getProperty("runtimeId");
+                repositories = bootProperties.getProperty("repositories");
                 if (!StringUtils.isEmpty(runtimeId) && !StringUtils.isEmpty(repositories)) {
                     storeRuntimeFile = false;
                 }
             }
             if (StringUtils.isEmpty(runtimeId) || StringUtils.isEmpty(repositories)) {
-                resolvedRepositories = resolveRepositories(repositories);
-                for (String repo : resolvedRepositories) {
-                    String urlString = buildURL(repo, wbootId.groupId.replace('.', '/') + '/' + wbootId.groupId + '/' + wbootId.version + '/' + wbootId.artifactId + "-" + wbootId.getVersion() + "runtime.properties");
+                resolvedBootRepositories = resolveBootConfigRepositories(repositories);
+                for (String repo : resolvedBootRepositories) {
+                    String urlString = buildURL(repo, bootPath);
                     Properties wruntimeProperties = IOUtils.loadURLProperties(urlString);
-                    if (wruntimeProperties != null) {
+                    if (!wruntimeProperties.isEmpty()) {
                         String wruntimeId = wruntimeProperties.getProperty("runtimeId");
                         String wrepositories = wruntimeProperties.getProperty("repositories");
                         if (!StringUtils.isEmpty(wruntimeId) && !StringUtils.isEmpty(wrepositories)) {
@@ -218,37 +247,36 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     }
                 }
             }
-            if (StringUtils.isEmpty(repositories)) {
-                storeRuntimeFile = false;
-                if (resolvedRepositories == null) {
-                    resolvedRepositories = resolveRepositories(repositories);
-                }
-                repositories = StringUtils.join(";", Arrays.asList(resolvedRepositories));
-            }
 
-            if (StringUtils.isEmpty(runtimeId)) {
-                storeRuntimeFile = false;
+            if (_runtimeId == null && StringUtils.isEmpty(runtimeId)) {
+//                storeRuntimeFile = false;
                 runtimeId = "net.vpc.app.nuts:nuts-core#" + wbootId.getVersion() + ".0";
+                log.log(Level.WARNING, "Failed to resolve boot file (" + bootPath + ") from repositories. considering defaults : " + runtimeId);
+                for (String resolvedRepository : resolvedBootRepositories) {
+                    log.log(Level.WARNING, "\tFailed repository : " + resolvedRepository);
+                }
             }
-            if (storeRuntimeFile) {
-                runtimeProperties = new Properties();
-                runtimeProperties.setProperty("runtimeId", runtimeId);
-                runtimeProperties.setProperty("repositories", repositories);
-                IOUtils.storeProperties(runtimeProperties, runtimeFile);
+            if (StringUtils.isEmpty(repositories)) {
+                repositories = "";
+            }
+            if (_runtimeId == null && storeRuntimeFile) {
+                bootProperties = new Properties();
+                bootProperties.setProperty("runtimeId", runtimeId);
+                bootProperties.setProperty("repositories", repositories);
+                runtimeFile.getParentFile().mkdirs();
+                IOUtils.storeProperties(bootProperties, runtimeFile);
             }
             if (_runtimeId == null) {
                 _runtimeId = WorkspaceNutsId.parse(runtimeId);
             }
         }
-        if (resolvedRepositories == null) {
-            resolvedRepositories = resolveRepositories(repositories);
-        }
-        File localCurrent = getBootFile(_runtimeId, "properties");
+
+        File localRuntimeConfigFile = getBootFile(_runtimeId, "properties");
         List<NutsWorkspaceClassPath> all = new ArrayList<>();
-        if (localCurrent != null && localCurrent.exists()) {
+        if (localRuntimeConfigFile != null && localRuntimeConfigFile.exists()) {
             NutsWorkspaceClassPath c = null;
             try {
-                c = new NutsWorkspaceClassPath(localCurrent);
+                c = new NutsWorkspaceClassPath(localRuntimeConfigFile);
             } catch (Exception e) {
                 //
             }
@@ -259,7 +287,8 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 }
             }
         }
-        for (String u : resolvedRepositories) {
+        resolvedBootRepositories = resolveBootConfigRepositories(repositories);
+        for (String u : resolvedBootRepositories) {
             NutsWorkspaceClassPath cp = null;
             try {
                 String urlString = buildURL(u, getPath(_runtimeId, "properties"));
@@ -289,7 +318,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     + "org.glassfish:javax.json#1.0.4",
                     "~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"
             ));
-            log.log(Level.CONFIG, "Loading Default Runtime {0}", runtimeVersion);
+            log.log(Level.WARNING, "Loading Default Runtime ClassPath {0}", runtimeVersion);
         }
         if (all.isEmpty()) {
             return null;
@@ -301,10 +330,10 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         NutsWorkspaceClassPath cp = all.get(all.size() - 1);
         List<String> resolvedRepositories2 = new ArrayList<>();
         resolvedRepositories2.add(cp.getRepositoriesString());
-        resolvedRepositories2.addAll(Arrays.asList(resolvedRepositories));
+        resolvedRepositories2.addAll(Arrays.asList(resolvedBootRepositories));
 
         cp = new NutsWorkspaceClassPath(cp.getId().groupId + ":" + cp.getId().artifactId, cp.getId().version, cp.getDependenciesString(),
-                StringUtils.join(";", Arrays.asList(resolveRepositories(resolvedRepositories2.toArray(new String[resolvedRepositories2.size()])))));
+                StringUtils.join(";", Arrays.asList(resolveBootClassPathRepositories(resolvedRepositories2.toArray(new String[resolvedRepositories2.size()])))));
 
         File runtimePropLocation = getBootFileLocation(cp.getId(), "properties");
         if (!runtimePropLocation.exists() || runtimePropLocation.length() <= 0) {

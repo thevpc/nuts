@@ -254,14 +254,12 @@ public class Nuts {
         }
 
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
-        long startBootsrapTime = System.currentTimeMillis();
         NutsBootWorkspace bws = openBootWorkspace(
                 new NutsBootOptions()
                         .setRoot(root)
                         .setRuntimeId(runtimeId)
                         .setRuntimeSourceURL(runtimeSourceURL)
         );
-        long endBootsrapTime = System.currentTimeMillis();
         if (!showError.isEmpty()) {
             for (String s : showError) {
                 System.err.printf("%s", s);
@@ -311,7 +309,7 @@ public class Nuts {
         }
         if (showHelp) {
             NutsPrintStream out = session.getTerminal().getOut();
-            perf = showPerf(startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
+            perf = showPerf(startTime, endWSTime - startWSTime, perf, session);
             help(ws, out);
             someProcessing = true;
         }
@@ -346,7 +344,7 @@ public class Nuts {
             out.printf("boot-java-executable : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
             out.printf("boot-java-classpath  : [[%s]]\n", System.getProperty("java.class.path"));
 
-            perf = showPerf(System.currentTimeMillis() - startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
+            perf = showPerf(System.currentTimeMillis() - startTime, endWSTime - startWSTime, perf, session);
             someProcessing = true;
         }
 
@@ -355,7 +353,7 @@ public class Nuts {
         }
         if (args2.length == 0) {
             /*perf = */
-            showPerf(startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
+            showPerf(startTime, endWSTime - startWSTime, perf, session);
             help(ws, session.getTerminal().getOut());
             return;
         }
@@ -364,21 +362,20 @@ public class Nuts {
             commandLine = ws.getExtensionManager().getFactory().createConsole(session);
         } catch (NutsExtensionMissingException ex) {
             /*perf = */
-            showPerf(System.currentTimeMillis() - startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
+            showPerf(System.currentTimeMillis() - startTime, endWSTime - startWSTime, perf, session);
             session.getTerminal().getErr().printf("Unable to create Console. Make sure nuts-core is installed properly.");
             return;
         }
         /*perf = */
-        showPerf(System.currentTimeMillis() - startTime, endBootsrapTime - startBootsrapTime, endWSTime - startWSTime, perf, session);
+        showPerf(System.currentTimeMillis() - startTime, endWSTime - startWSTime, perf, session);
         commandLine.run(args2);
 
     }
 
-    private static boolean showPerf(long overallTime, long boot, long ws, boolean perf, NutsSession session) {
+    private static boolean showPerf(long overallTime, long ws, boolean perf, NutsSession session) {
         if (perf) {
-            session.getTerminal().getOut().printf("Nuts loaded in [[%s]] ms (boot in [[%s]] ms, create workspace in [[%s]] ms))\n",
+            session.getTerminal().getOut().printf("Nuts loaded in [[%s]] ms (create workspace in [[%s]] ms)\n",
                     overallTime,
-                    boot,
                     ws
             );
         }

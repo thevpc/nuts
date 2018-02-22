@@ -70,8 +70,8 @@ class NutsWorkspaceClassPath {
         if (StringUtils.isEmpty(dependencies)) {
             throw new IllegalArgumentException("Missing dependencies");
         }
-        if (StringUtils.isEmpty(repositories)) {
-            throw new IllegalArgumentException("Missing dependencies");
+        if (repositories == null) {
+            repositories = "";
         }
         this.dependencies = dependencies;
         this.repositories = repositories;
