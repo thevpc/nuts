@@ -15,7 +15,6 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.ExtensionNonOption;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
- *
  * @author vpc
  */
 public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
@@ -49,9 +48,9 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
                         extDesc = " : " + extDesc;
                     }
                     if (!extension.getId().equals(extension.getWiredId())) {
-                        context.getTerminal().getOut().println(extension.getId() + " (" + extension.getWiredId() + ")" + extDesc);
+                        context.getTerminal().getOut().printf("%s (%s)%s", extension.getId(), extension.getWiredId(), extDesc);
                     } else {
-                        context.getTerminal().getOut().println(extension.getId() + extDesc);
+                        context.getTerminal().getOut().printf("%s%s", extension.getId(), extDesc);
                     }
                 }
             }
@@ -59,15 +58,15 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
         } else if (cmdLine.read("list extension points", "lxp")) {
             if (cmdLine.isExecMode()) {
                 for (Class extension : context.getValidWorkspace().getExtensionManager().getFactory().getExtensionPoints()) {
-                    context.getTerminal().getOut().println("[[" + extension.getName() + "]]:");
+                    context.getTerminal().getOut().printf("[[%s]]:\n", extension.getName());
                     for (Class impl : context.getValidWorkspace().getExtensionManager().getFactory().getExtensionTypes(extension)) {
-                        context.getTerminal().getOut().println("\t" + impl.getName());
+                        context.getTerminal().getOut().printf("\t%s\n", impl.getName());
                     }
                     for (Object impl : context.getValidWorkspace().getExtensionManager().getFactory().getExtensionObjects(extension)) {
                         if (impl != null) {
-                            context.getTerminal().getOut().println("\t" + impl.getClass().getName() + " :: " + impl);
+                            context.getTerminal().getOut().printf("\t%s :: %s\n", impl.getClass().getName(), impl);
                         } else {
-                            context.getTerminal().getOut().println("\tnull");
+                            context.getTerminal().getOut().printf("\tnull\n");
                         }
                     }
                 }

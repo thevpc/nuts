@@ -8,6 +8,7 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.filters.descriptor.JsNutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.filters.version.JsNutsVersionFilter;
@@ -75,7 +76,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 }
             } catch (Exception ex) {
                 //suppose we cannot retrieve descriptor
-                log.severe("Unable to fetch Descriptor for " + id + " : " + ex.toString());
+                log.log(Level.SEVERE, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
                 return false;
             }
             if (!descriptorFilter.accept(descriptor)) {

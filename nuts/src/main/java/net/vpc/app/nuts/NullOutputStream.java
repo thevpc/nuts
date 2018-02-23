@@ -2,6 +2,9 @@ package net.vpc.app.nuts;
 
 import java.io.OutputStream;
 
+/**
+ * Null (does nothing) OutputStream
+ */
 public final class NullOutputStream extends OutputStream {
 
     public static final OutputStream INSTANCE = new NullOutputStream();

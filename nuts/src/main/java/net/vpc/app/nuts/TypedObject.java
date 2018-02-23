@@ -31,9 +31,9 @@ package net.vpc.app.nuts;
 
 public class TypedObject {
 
-    private Class type;
-    private String variant;
-    private Object value;
+    private final Class type;
+    private final String variant;
+    private final Object value;
 
     public TypedObject(Class type, Object value, String variant) {
         this.type = type;

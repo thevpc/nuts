@@ -136,9 +136,9 @@ public class NutsHttpServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        log.info("Starting Nuts Http Server at url http://<your-server>" + config.getServletContext().getContextPath() + "/service");
+        log.log(Level.INFO, "Starting Nuts Http Server at url http://<your-server>" + config.getServletContext().getContextPath() + "/service");
         if (adminServer) {
-            log.info("Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? NutsConstants.DEFAULT_HTTP_SERVER_PORT : adminServerPort));
+            log.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? NutsConstants.DEFAULT_HTTP_SERVER_PORT : adminServerPort));
         }
         adminServerPort = CoreStringUtils.parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
         workspaceLocation = config.getInitParameter("nuts-workspace-location");

@@ -79,13 +79,13 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                     security = repository.getSecurityManager().findUsers();
                 }
                 for (NutsUserInfo u : security) {
-                    context.getTerminal().getOut().println("User: " + u.getUser());
+                    context.getTerminal().getOut().printf("User: %s\n" ,u.getUser());
                     if (!CoreStringUtils.isEmpty(u.getMappedUser())) {
-                        context.getTerminal().getOut().println("   Mapper to  : " + u.getMappedUser());
+                        context.getTerminal().getOut().printf("   Mapper to  : %s\n" , u.getMappedUser());
                     }
-                    context.getTerminal().getOut().println("   Password   : " + (u.hasCredentials() ? "Set" : "None"));
-                    context.getTerminal().getOut().println("   Groups     : " + (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
-                    context.getTerminal().getOut().println("   Rights     : " + (u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
+                    context.getTerminal().getOut().printf("   Password   : %s\n" ,(u.hasCredentials() ? "Set" : "None"));
+                    context.getTerminal().getOut().printf("   Groups     : %s\n" , (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
+                    context.getTerminal().getOut().printf("   Rights     : %s\n" ,(u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
                 }
             }
             return true;

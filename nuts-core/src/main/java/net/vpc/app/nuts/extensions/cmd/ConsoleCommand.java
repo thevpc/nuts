@@ -46,14 +46,23 @@ public class ConsoleCommand extends AbstractNutsCommand {
         super("console", CORE_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         if (autoComplete != null) {
             return -1;
         }
+
+        if (args.length > 0) {
+            NutsTerminal terminal = context.getTerminal();
+            NutsConsole commandLine = context.getWorkspace().getExtensionManager().getFactory().createConsole(context.getSession());
+            terminal.setCommandContext(context);
+            return commandLine.run(args);
+        }
+
         NutsTerminal terminal = context.getTerminal();
         NutsPrintStream out = terminal.getOut();
-        out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n",context.getValidWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString());
+        out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n", context.getValidWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString());
 
         NutsConsole commandLine = null;
         commandLine = context.getWorkspace().getExtensionManager().getFactory().createConsole(context.getSession());

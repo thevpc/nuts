@@ -37,29 +37,29 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
             }
             int x = (int) (20.0 / 100.0 * percent);
 
-            StringBuilder line = new StringBuilder();
-            line.append("\\[");
+            StringBuilder formattedLine = new StringBuilder();
+            formattedLine.append("\\[");
             if (x > 0) {
-                line.append("##");
+                formattedLine.append("##");
                 for (int i = 0; i < x; i++) {
-                    line.append("\\*");
+                    formattedLine.append("\\*");
                 }
-                line.append("##");
+                formattedLine.append("##");
             }
             for (int i = x; i < 20; i++) {
-                line.append(" ");
+                formattedLine.append(" ");
             }
-            line.append("\\]");
-            line.append(" " + String.format("%6s", df.format(percent)) + "\\% ");
-            line.append(" [[" + (mf.format(partialSpeed)) + "/s]] ([[" + (mf.format(globalSpeed)) + "/s]])");
-            line.append(" ``" + event.getSourceName() + "`` ");
-            while (line.length() < 80) {
-                line.append(' ');
+            formattedLine.append("\\]");
+            formattedLine.append(" " + String.format("%6s", df.format(percent)) + "\\% ");
+            formattedLine.append(" [[" + (mf.format(partialSpeed)) + "/s]] ([[" + (mf.format(globalSpeed)) + "/s]])");
+            formattedLine.append(" ``" + event.getSourceName() + "`` ");
+            while (formattedLine.length() < 80) {
+                formattedLine.append(' ');
             }
 //            if (line.length() > 80) {
 //                line.delete(80, line.length());
 //            }
-            out.println(line.toString());
+            out.println(formattedLine.toString());
             if (event.getGlobalCount() != event.getLength()) {
                 //print command to move cursor to last line!
                 out.print("`move-line-start;move-up`");

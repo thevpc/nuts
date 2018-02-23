@@ -29,13 +29,59 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its dependencies and for
+ * creating workspaces using the method {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}.
+ * NutsBootWorkspace is also responsible of managing local jar cache folder located at $root/bootstrap
+ * where $root is the nuts root folder (~/.nuts) defined by {@link #getRootLocation()}.
+ * <pre>
+ *   ~/.nuts/bootstrap
+ *       └── net
+ *           └── vpc
+ *               └── app
+ *                   └── nuts
+ *                       ├── nuts
+ *                       │   └── 0.3.8
+ *                       │   │   └── nuts-0.3.8.boot
+ *                       │   └── LATEST
+ *                       │       └── nuts-LATEST.boot
+ *                       └── nuts-core
+ *                           └── 0.3.8.0
+ *                               └── nuts-core-0.3.8.0.properties
+ * </pre>
+ * Created by vpc on 1/6/17.
+ */
 public interface NutsBootWorkspace {
 
-    String getRuntimeId();
-
+    /**
+     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts component. The nuts id includes the version.
+     * @return a string representing the boot nuts id in the form net.vpc.app.nuts:nuts#VERSION
+     */
     String getBootId();
 
-    String getRoot();
+    /**
+     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts-core component. The nuts id includes the version.
+     * It may return another implementation component other then net.vpc.app.nuts:nuts-core
+     * @return a string representing the boot nuts id in the form net.vpc.app.nuts-core:nuts#VERSION
+     */
+    String getRuntimeId();
 
-    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
+    /**
+     * nuts root folder. It defaults to "~/.nuts"
+     * @return nuts root folder
+     */
+    String getRootLocation();
+
+    /**
+     * opens (and create if necessary) a new workspace at <code>workspaceLocation</code> location and
+     * according to the given creation options. workspaceLocation may be absolute or relative in which case it will
+     * be resolved as a sub folder of nuts root folder (see {@link #getRootLocation()}).
+     * If no options are provided (options==null) workspace will be created and saved it not found
+     * (<code></code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
+     * Please note that it may not be safe to create several instances of the same workspace.
+     * @param workspaceLocation workspace location
+     * @param options creation options
+     * @return a valid and initialized Workspace implementation
+     */
+    NutsWorkspace openWorkspace(String workspaceLocation, NutsWorkspaceCreateOptions options);
 }

@@ -29,6 +29,10 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * static NutsClassLoaderProvider that will always return the same instance.
+ * Class loader may be null in which case default class loader will be used
+ */
 public class SimpleNutsClassLoaderProvider implements NutsClassLoaderProvider {
 
     private ClassLoader classLoader;

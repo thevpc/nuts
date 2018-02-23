@@ -53,8 +53,11 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.extensions.core.DefaultNutsWorkspace;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterArch;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterById;
@@ -85,12 +88,13 @@ public class CoreNutsUtils {
 //                monitorable = false;
 //            }
 //        }
-    public static final String FACE_CATALOG ="catalog";
-    public static final String FACE_DESC ="descriptor";
-    public static final String FACE_PACKAGE ="package";
-    public static final String FACE_DESC_HASH ="descriptor-hash";
-    public static final String FACE_PACKAGE_HASH ="package-hash";
-    
+
+    public static final String FACE_CATALOG = "catalog";
+    public static final String FACE_DESC = "descriptor";
+    public static final String FACE_PACKAGE = "package";
+    public static final String FACE_DESC_HASH = "descriptor-hash";
+    public static final String FACE_PACKAGE_HASH = "package-hash";
+
     //    private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
@@ -833,5 +837,31 @@ public class CoreNutsUtils {
             search.setRepositoryFilter(new DefaultNutsRepositoryFilter(new HashSet<>(Arrays.asList(repos))));
         }
         return search;
+    }
+
+    public static String getResourceString(String resource, NutsWorkspace ws, Class cls) {
+        String help = null;
+        try {
+            InputStream s = null;
+            try {
+                s = cls.getResourceAsStream(resource);
+                if (s != null) {
+                    help = CoreIOUtils.readStreamAsString(s, true);
+                }
+            } finally {
+                if (s != null) {
+                    s.close();
+                }
+            }
+        } catch (IOException e) {
+            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
+        }
+        if (help == null) {
+            help = "no help found";
+        }
+        HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
+        props.putAll(ws.getConfigManager().getRuntimeProperties());
+        help = CoreStringUtils.replaceVars(help, new MapStringMapper(props));
+        return help;
     }
 }

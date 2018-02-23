@@ -15,7 +15,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="java-shell" target="1.6" />
+      <module name="java-shell" target="1.8" />
       <module name="nuts" target="1.8" />
       <module name="nuts-clown" target="1.5" />
       <module name="nuts-core" target="1.8" />

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
+import java.util.ArrayList;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CommandNonOption;
@@ -36,6 +37,8 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -50,34 +53,50 @@ public class HelpCommand extends AbstractNutsCommand {
         NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         CmdLine cmdLine = new CmdLine(autoComplete, args);
         NutsPrintStream out = context.getTerminal().getOut();
-        if (cmdLine.isEmpty()) {
-            if (cmdLine.isExecMode()) {
-                out.println(context.getValidWorkspace().getHelpString());
-                out.println("@@AVAILABLE COMMANDS ARE:@@");
-                NutsCommand[] commands = context.getCommandLine().getCommands();
-                Arrays.sort(commands, new Comparator<NutsCommand>() {
-                    @Override
-                    public int compare(NutsCommand o1, NutsCommand o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
-                for (NutsCommand cmd : commands) {
-                    out.printf("##%s## : %s\n", CoreStringUtils.alignLeft(cmd.getName(), 15), cmd.getHelpHeader());
-                }
-            }
-            return 0;
-        }
-
+        boolean showLicense = false;
+        List<String> commandNames = new ArrayList<>();
         while (!cmdLine.isEmpty()) {
-            String command = cmdLine.readNonOptionOrError(new CommandNonOption("Command", context)).getString();
-            if (cmdLine.isExecMode()) {
-                NutsCommand command1 = context.getCommandLine().findCommand(command);
-                if (command1 == null) {
-                    context.getTerminal().getErr().printf("Command not found : %s\n", command);
+            if (cmdLine.read("-l", "--license")) {
+                showLicense = true;
+            } else if (cmdLine.isOption()) {
+                if (cmdLine.isExecMode()) {
+                    throw new NutsIllegalArgumentsException("Invalid option " + cmdLine.read().getString());
+                }
+            } else {
+                commandNames.add(cmdLine.readNonOption(new CommandNonOption("command", context)).getStringOrError());
+            }
+        }
+        if (cmdLine.isExecMode()) {
+            if (showLicense) {
+                String licenseText = CoreNutsUtils.getResourceString("/net/vpc/app/nuts/nuts.license", context.getValidWorkspace(), HelpCommand.class);
+                out.println(licenseText);
+            } else {
+                if (commandNames.isEmpty()) {
+                    String helpText = CoreNutsUtils.getResourceString("/net/vpc/app/nuts/nuts-help.help", context.getValidWorkspace(), HelpCommand.class);
+                    out.println(helpText);
+                    out.println("@@AVAILABLE COMMANDS ARE:@@");
+                    NutsCommand[] commands = context.getCommandLine().getCommands();
+                    Arrays.sort(commands, new Comparator<NutsCommand>() {
+                        @Override
+                        public int compare(NutsCommand o1, NutsCommand o2) {
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                    });
+                    for (NutsCommand cmd : commands) {
+                        out.printf("##%s## : %s\n", CoreStringUtils.alignLeft(cmd.getName(), 15), cmd.getHelpHeader());
+                    }
                 } else {
-                    String help = command1.getHelp();
-                    out.printf("==Command== %s\f", command);
-                    out.println(help);
+                    for (String commandName : commandNames) {
+                        NutsCommand command1 = context.getCommandLine().findCommand(commandName);
+                        if (command1 == null) {
+                            context.getTerminal().getErr().printf("Command not found : %s\n", commandName);
+                        } else {
+                            String help = command1.getHelp();
+                            out.printf("==Command== %s\f", commandName);
+                            out.println(help);
+                        }
+
+                    }
                 }
             }
         }

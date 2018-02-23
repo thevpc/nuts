@@ -30,13 +30,23 @@
 package net.vpc.app.nuts;
 
 /**
+ * Map Listener
  * Created by vpc on 1/21/17.
  */
 public interface MapListener<K, V> {
 
+    /**
+     * Invoked when item added
+     */
     void elementAdded(K key, V value);
 
+    /**
+     * Invoked when item removed
+     */
     void elementRemoved(K key, V value);
 
+    /**
+     * Invoked when item updated
+     */
     void elementUpdated(K key, V newValue, V oldValue);
 }

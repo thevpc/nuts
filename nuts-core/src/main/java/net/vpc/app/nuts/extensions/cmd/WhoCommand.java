@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import java.util.Arrays;
+
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
@@ -73,7 +74,7 @@ public class WhoCommand extends AbstractNutsCommand {
         String login = validWorkspace.getSecurityManager().getCurrentLogin();
         NutsPrintStream out = context.getTerminal().getOut();
 
-        out.println(login);
+        out.printf("%s\n", login);
 
         if (argAll) {
             NutsUserInfo user = validWorkspace.getSecurityManager().findUser(login);
@@ -87,45 +88,45 @@ public class WhoCommand extends AbstractNutsCommand {
             }
             out.println();
             if (!groups.isEmpty()) {
-                out.println("===identities=== : " + groups.toString());
+                out.printf("===identities=== : %s\n", groups.toString());
             }
             if (!NutsConstants.USER_ADMIN.equals(login)) {
                 if (!rights.isEmpty()) {
-                    out.println("===rights===     : " + rights.toString());
+                    out.printf("===rights===     : %s\n", rights.toString());
                 }
                 if (!inherited.isEmpty()) {
-                    out.println("===inherited===  : " + (inherited.isEmpty() ? "NONE" : inherited.toString()));
+                    out.printf("===inherited===  : %s\n", (inherited.isEmpty() ? "NONE" : inherited.toString()));
                 }
             } else {
-                out.println("===rights===     : ALL");
+                out.printf("===rights===     : ALL\n");
             }
             if (user.getMappedUser() != null) {
-                out.println("===remote-id===  : " + (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
+                out.printf("===remote-id===  : %s\n", (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
             }
             for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
                 NutsUserInfo ruser = repository.getSecurityManager().findUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !CoreStringUtils.isEmpty(ruser.getMappedUser()))) {
-                    out.println("[ [[" + repository.getRepositoryId() + "]] ]: ");
+                    out.printf("[ [[%s]] ]: \n", repository.getRepositoryId());
                     Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
                     Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));
                     if (!rgroups.isEmpty()) {
-                        out.println("    ===identities=== : " + rgroups.toString());
+                        out.printf("    ===identities=== : %s\n" ,rgroups.toString());
                     }
                     if (!NutsConstants.USER_ADMIN.equals(login)) {
                         if (!rrights.isEmpty()) {
-                            out.println("    ===rights===     : " + rrights.toString());
+                            out.printf("    ===rights===     : %s\n" ,rrights.toString());
                         }
                         if (!rinherited.isEmpty()) {
-                            out.println("    ===inherited===  : " + rinherited.toString());
+                            out.printf("    ===inherited===  : %s\n" ,rinherited.toString());
                         }
                     } else {
-                        out.println("    ===rights===     : ALL");
+                        out.printf("    ===rights===     : ALL\n");
                     }
                     if (ruser.getMappedUser() != null) {
-                        out.println("    ===remote-id===  : " + ruser.getMappedUser());
+                        out.printf("    ===remote-id===  : %s\n" ,ruser.getMappedUser());
                     }
                 }
             }

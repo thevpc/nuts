@@ -1,31 +1,31 @@
 #!/bin/sh
 base=$(dirname $0)
+bootVersion=`grep "project.version=" $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties | cut -c17-2000`
+runtimeVersion=`grep "project.version=" $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties | cut -c17-2000`
+echo "detected nuts      version $bootVersion"
+echo "detected nuts-core version $runtimeVersion"
 
 mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST
 cp $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.properties
 
-v=`grep "project.version=" $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties | cut -c17-2000`
-echo "detected nuts      version $v"
-mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v
-cp $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.properties
+mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion
+cp $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.properties
 
-cp $base/nuts/target/nuts-$v.jar $base/nuts-bootstrap/nuts.jar
+cp $base/nuts/target/nuts-$bootVersion.jar $base/nuts-bootstrap/nuts.jar
 
-echo $v > $base/nuts-bootstrap/version.txt
+echo $bootVersion > $base/nuts-bootstrap/version.txt
 h=`pwd`
 cd $base/nuts-bootstrap/
 tar -cf nuts-bundle.tar.gz nuts nuts.jar version.txt
 cd $h
 
 
-echo "runtimeId=net.vpc.app.nuts:nuts-core#$v" > $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.boot
-echo "repositories=~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master" >> $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.boot
-cp $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$v/nuts-$v.boot $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.boot
+echo "runtimeId=net.vpc.app.nuts:nuts-core#$runtimeVersion" > $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.boot
+echo "repositories=http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master" >> $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.boot
+cp $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.boot $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.boot
 
 mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/LATEST
 cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/LATEST/nuts-core-LATEST.properties
 
-v=`grep "project.version=" $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties | cut -c17-2000`
-echo "detected nuts-core version $v"
-mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/$v
-cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/$v/nuts-core-$v.properties
+mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/$runtimeVersion
+cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/$runtimeVersion/nuts-core-$runtimeVersion.properties

@@ -36,6 +36,7 @@ import net.vpc.app.nuts.extensions.util.*;
 import java.io.*;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -280,7 +281,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
                 if (nutsDescriptor.getId().getName() == null) {
                     //why?
-                    log.severe("Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
+                    log.log(Level.SEVERE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
                     return null;
                 }
                 if (pathname.getName().endsWith(".pom")) {

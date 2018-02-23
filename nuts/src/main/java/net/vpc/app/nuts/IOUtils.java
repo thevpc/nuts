@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import static net.vpc.app.nuts.DefaultNutsBootWorkspace.log;
 
 /**
+ * IO Utils helper
  * Created by vpc on 1/15/17.
  */
 class IOUtils {

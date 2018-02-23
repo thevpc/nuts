@@ -97,7 +97,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                         } else {
                             repo = validWorkspace.getRepositoryManager().addRepository(repositoryId, location, repoType, true);
                         }
-                        context.getTerminal().getOut().println("Repository added successfully");
+                        context.getTerminal().getOut().printf("Repository added successfully\n");
                         ConfigCommand.trySave(context, validWorkspace, repo, autoSave, null);
                         ConfigCommand.trySave(context, validWorkspace, null, autoSave, null);
                     }
@@ -178,14 +178,14 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
             } else if (cmdLine.read("list repos", "lr")) {
                 NutsRepository editedRepo = validWorkspace.getRepositoryManager().findRepository(repoId);
                 NutsRepository[] linkRepositories = editedRepo.getMirrors();
-                context.getTerminal().getOut().println(linkRepositories.length + " sub repositories.");
+                context.getTerminal().getOut().printf("%s sub repositories.\n",linkRepositories.length);
                 for (NutsRepository repository : linkRepositories) {
                     config.showRepo(context, repository, "");
                 }
             } else if (cmdLine.readOnce("-h", "-?", "--help")) {
-                context.getTerminal().getOut().println("edit repository " + repoId + " add repo ...");
-                context.getTerminal().getOut().println("edit repository " + repoId + " remove repo ...");
-                context.getTerminal().getOut().println("edit repository " + repoId + " list repos ...");
+                context.getTerminal().getOut().printf("edit repository %s add repo ...\n",repoId);
+                context.getTerminal().getOut().printf("edit repository %s remove repo ...\n",repoId);
+                context.getTerminal().getOut().printf("edit repository %s list repos ...\n",repoId);
             } else {
                 NutsRepository editedRepo = validWorkspace.getRepositoryManager().findRepository(repoId);
                 if (UserConfigSubCommand.exec(editedRepo, cmdLine, config, autoSave, context)) {

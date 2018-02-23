@@ -132,8 +132,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsFile fetchBootFile(NutsSession session);
 
-    String getHelpString();
-
     void removeWorkspaceListener(NutsWorkspaceListener listener);
 
     void addWorkspaceListener(NutsWorkspaceListener listener);
