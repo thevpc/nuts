@@ -51,13 +51,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         extensions.put("src", "-src.zip");
     }
 
+    @Override
     protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
         File localNutFile = getLocalNutDescriptorFile(id).getFile();
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            if (localNutFile.exists()) {
-                return CoreNutsUtils.parseNutsDescriptor(localNutFile);
-            }
+        //if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+        if (localNutFile.exists()) {
+            return CoreNutsUtils.parseNutsDescriptor(localNutFile);
         }
+        //}
         if (session.isTransitive()) {
             for (NutsRepository remote : getMirrors()) {
                 NutsDescriptor nutsDescriptor = remote.fetchDescriptor(id, session);
@@ -73,11 +74,11 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     @Override
     protected String fetchHashImpl(NutsId id, NutsSession session) {
         File localNutFile = getLocalGroupAndArtifactAndVersionFile(id, false).getFile();
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+//        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             if (localNutFile.exists()) {
                 return CoreSecurityUtils.evalSHA1(localNutFile);
             }
-        }
+//        }
         if (session.isTransitive()) {
             for (NutsRepository remote : getMirrors()) {
                 String hash = remote.fetchHash(id, session);
@@ -97,11 +98,11 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     @Override
     protected String fetchDescriptorHashImpl(NutsId id, NutsSession session) {
         File localNutFile = getLocalNutDescriptorFile(id).getFile();
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+//        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             if (localNutFile.exists()) {
                 return CoreSecurityUtils.evalSHA1(localNutFile);
             }
-        }
+//        }
         if (session.isTransitive()) {
             for (NutsRepository remote : getMirrors()) {
                 String hash = remote.fetchDescriptorHash(id, session);
@@ -210,46 +211,46 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    @Override
-    protected NutsId resolveIdImpl(NutsId id, NutsSession session) {
-        NutsFile idAndFile = getLocalGroupAndArtifactAndVersionFile(id, false);
-        File localDescFile = idAndFile == null ? null : idAndFile.getFile();
-        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            if (localDescFile != null && localDescFile.exists()) {
-                return id.setFace(idAndFile.getId().getFace())
-                        .setNamespace(getRepositoryId());
-            }
-        }
-        StringBuilder errors = new StringBuilder();
-        if (session.isTransitive()) {
-            NutsSession transitiveSession = session.copy().setTransitive(true);
-            for (NutsRepository repo : getMirrors()) {
-                int sup = 0;
-                try {
-                    sup = repo.getSupportLevel(id, transitiveSession);
-                } catch (Exception ex) {
-                    errors.append(ex.toString()).append("\n");
-                }
-
-                if (sup > 0) {
-                    NutsId id1 = null;
-                    try {
-                        id1 = repo.resolveId(id, session);
-                        if (id1 != null) {
-                            NutsDescriptor desc = repo.fetchDescriptor(id1, session);
-                            desc.write(localDescFile);
-                        }
-                    } catch (Exception ex) {
-                        errors.append(ex).append("\n");
-                    }
-                    if (id1 != null) {
-                        return id1;
-                    }
-                }
-            }
-        }
-        throw new NutsNotFoundException(id.toString(), errors.toString(), null);
-    }
+//    @Override
+//    protected NutsId resolveIdImpl(NutsId id, NutsSession session) {
+//        NutsFile idAndFile = getLocalGroupAndArtifactAndVersionFile(id, false);
+//        File localDescFile = idAndFile == null ? null : idAndFile.getFile();
+////        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+//            if (localDescFile != null && localDescFile.exists()) {
+//                return id.setFace(idAndFile.getId().getFace())
+//                        .setNamespace(getRepositoryId());
+//            }
+////        }
+//        StringBuilder errors = new StringBuilder();
+//        if (session.isTransitive()) {
+//            NutsSession transitiveSession = session.copy().setTransitive(true);
+//            for (NutsRepository repo : getMirrors()) {
+//                int sup = 0;
+//                try {
+//                    sup = repo.getSupportLevel(id, transitiveSession);
+//                } catch (Exception ex) {
+//                    errors.append(ex.toString()).append("\n");
+//                }
+//
+//                if (sup > 0) {
+//                    NutsId id1 = null;
+//                    try {
+//                        id1 = repo.resolveId(id, session);
+//                        if (id1 != null) {
+//                            NutsDescriptor desc = repo.fetchDescriptor(id1, session);
+//                            desc.write(localDescFile);
+//                        }
+//                    } catch (Exception ex) {
+//                        errors.append(ex).append("\n");
+//                    }
+//                    if (id1 != null) {
+//                        return id1;
+//                    }
+//                }
+//            }
+//        }
+//        throw new NutsNotFoundException(id.toString(), errors.toString(), null);
+//    }
 
     @Override
     protected NutsFile fetchImpl(NutsId id, NutsSession session) {

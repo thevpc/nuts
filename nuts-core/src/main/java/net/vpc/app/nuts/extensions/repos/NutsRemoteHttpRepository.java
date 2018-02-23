@@ -186,20 +186,20 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         return httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
     }
 
-    @Override
-    public NutsId resolveIdImpl(NutsId id, NutsSession session) {
-        boolean transitive = session.isTransitive();
-        String s = null;
-        try {
-            s = httpGetString(getUrl("/resolve-id?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-        } catch (Exception ex) {
-            //ignore error
-        }
-        if (s == null) {
-            throw new NutsNotFoundException(id);
-        }
-        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
-    }
+//    @Override
+//    public NutsId resolveIdImpl(NutsId id, NutsSession session) {
+//        boolean transitive = session.isTransitive();
+//        String s = null;
+//        try {
+//            s = httpGetString(getUrl("/resolve-id?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
+//        } catch (Exception ex) {
+//            //ignore error
+//        }
+//        if (s == null) {
+//            throw new NutsNotFoundException(id);
+//        }
+//        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
+//    }
 
     @Override
     public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {

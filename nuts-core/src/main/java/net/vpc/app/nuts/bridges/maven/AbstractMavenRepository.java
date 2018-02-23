@@ -121,7 +121,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             NutsDescriptor nutsDescriptor = null;//parsePomXml(getStream(id, ".pom"), session);
             byte[] bytes = null;
             try {
-                stream = getStream(id, ".pom", "descriptor", session);
+                stream = getStream(id, ".pom", CoreNutsUtils.FACE_PACKAGE_HASH, session);
                 bytes = CoreIOUtils.readStreamAsBytes(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
@@ -129,7 +129,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id, ".pom", null, new ByteArrayInputStream(bytes), session);
+            checkSHA1Hash(id, ".pom", CoreNutsUtils.FACE_DESC_HASH, new ByteArrayInputStream(bytes), session);
             String ext = resolveExtension(nutsDescriptor);
             File jar = new File(getPath(id, ext));
             nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(jar));
@@ -149,8 +149,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             if (localPath.isDirectory()) {
                 localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext));
             }
-            CoreIOUtils.copy(getStream(id, ext, "package", session), localPath, true, true);
-            checkSHA1Hash(id, ext, null, new FileInputStream(localPath), session);
+            CoreIOUtils.copy(getStream(id, ext, CoreNutsUtils.FACE_PACKAGE, session), localPath, true, true);
+            checkSHA1Hash(id, ext, CoreNutsUtils.FACE_PACKAGE_HASH, new FileInputStream(localPath), session);
             return localPath;
         } catch (NutsIOException ex) {
             throw new NutsNotFoundException(id.toString(), null, ex);
@@ -195,7 +195,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     @Override
     public String fetchHashImpl(NutsId id, NutsSession session) {
-        return getStreamSHA1(id, ".jar", null, null);
+        return getStreamSHA1(id, ".jar", CoreNutsUtils.FACE_PACKAGE_HASH, null);
     }
 
     @Override
@@ -204,7 +204,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         NutsDescriptor nutsDescriptor = null;
         try {
             try {
-                stream = getStream(id, ".pom", "descriptor", session);
+                stream = getStream(id, ".pom", CoreNutsUtils.FACE_DESC, session);
                 nutsDescriptor = MavenUtils.parsePomXml(stream);
             } finally {
                 if (stream != null) {
@@ -219,18 +219,18 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return nutsDescriptor.getSHA1();
     }
 
-    @Override
-    public NutsId resolveIdImpl(NutsId id, NutsSession session) {
-        try {
-            NutsSession transitiveSession = session.copy().setTransitive(true);
-            NutsDescriptor d = fetchDescriptor(id, transitiveSession);
-            if (d != null) {
-                return id;
-            }
-        } catch (Exception ex) {
-            //not found
-        }
-        throw new NutsNotFoundException(id);
-    }
+//    @Override
+//    public NutsId resolveIdImpl(NutsId id, NutsSession session) {
+//        try {
+//            NutsSession transitiveSession = session.copy().setTransitive(true);
+//            NutsDescriptor d = fetchDescriptor(id, transitiveSession);
+//            if (d != null) {
+//                return id;
+//            }
+//        } catch (Exception ex) {
+//            //not found
+//        }
+//        throw new NutsNotFoundException(id);
+//    }
 
 }

@@ -78,7 +78,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             String metadataURL = CoreIOUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
             log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
             try {
-                metadataStream = openStream(metadataURL, id.setFace("maven-metadata"), session);
+                metadataStream = openStream(metadataURL, id.setFace(CoreNutsUtils.FACE_CATALOG), session);
             } catch (Exception ex) {
                 throw new NutsNotFoundException(id);
             }
@@ -117,7 +117,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         String url = CoreIOUtils.buildUrl(getConfigManager().getLocation(), "/archetype-catalog.xml");
         log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'archetype-catalog\'", 20), url});
-        return parseArchetypeCatalog(openStream(url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace("archetype-catalog"), session), filter);
+        return parseArchetypeCatalog(openStream(url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace(CoreNutsUtils.FACE_CATALOG), session), filter);
     }
 
     @Override
@@ -281,21 +281,30 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         boolean monitorable = true;
         if (source instanceof NutsId) {
             NutsId d = (NutsId) source;
-            if ("maven-metadata".equals(d.getFace())) {
+            if (CoreNutsUtils.FACE_CATALOG.equals(d.getFace())) {
                 monitorable = false;
             }
-            if ("archetype-catalog".equals(d.getFace())) {
+            if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
                 monitorable = false;
             }
-            if ("descriptor".equals(d.getFace())) {
+            if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
                 monitorable = false;
             }
-            if ("main-sha1".equals(d.getFace())) {
+            if (CoreNutsUtils.FACE_DESC.equals(d.getFace())) {
                 monitorable = false;
             }
-            if ("descriptor-sha1".equals(d.getFace())) {
-                monitorable = false;
-            }
+//            if ("archetype-catalog".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("descriptor".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("main-sha1".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("descriptor-sha1".equals(d.getFace())) {
+//                monitorable = false;
+//            }
         }
         NutsPrintStream out = session.getTerminal().getOut();
         if (!monitorable) {

@@ -309,11 +309,35 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
         checkAllowedFetch(session, id.setFace("nuts"));
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Fetch desc " + id);
-        NutsDescriptor d = fetchDescriptorImpl(id, session);
-        if (d == null) {
-            throw new NutsNotFoundException(id);
+
+        String versionString = id.getVersion().getValue();
+        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
+            NutsDescriptor d = fetchDescriptorImpl(id, session);
+            if (d == null) {
+                throw new NutsNotFoundException(id);
+            }
+            return d;
+        } else {
+            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
+            Iterator<NutsId> allVersions = findVersions(id, filter, session);
+
+            NutsId a = null;
+            while (allVersions.hasNext()) {
+                NutsId next = allVersions.next();
+                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+                    a = next;
+                }
+            }
+            if (a == null) {
+                throw new NutsNotFoundException(id.toString());
+            }
+            NutsDescriptor d = fetchDescriptorImpl(a, session);
+            if (d == null) {
+                throw new NutsNotFoundException(id);
+            }
+            return d;
         }
-        return d;
+
     }
 
     @Override
@@ -394,39 +418,39 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return findImpl(filter, session);
     }
 
-    @Override
-    public NutsId resolveId(NutsId id, NutsSession session) {
-        checkSession(session);
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
-        }
-        checkAllowedFetch(session, id.setFace("content"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Resolve " + id);
-
-        String versionString = id.getVersion().getValue();
-        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
-            NutsId id2 = resolveIdImpl(id, session);
-            if (id2 == null) {
-                throw new NutsNotFoundException(id);
-            }
-            return id2;
-        } else {
-            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
-            Iterator<NutsId> allVersions = findVersions(id, filter, session);
-
-            NutsId a = null;
-            while (allVersions.hasNext()) {
-                NutsId next = allVersions.next();
-                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
-                    a = next;
-                }
-            }
-            if (a == null) {
-                throw new NutsNotFoundException(id.toString());
-            }
-            return a;
-        }
-    }
+//    @Override
+//    public NutsId resolveId(NutsId id, NutsSession session) {
+//        checkSession(session);
+//        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
+//            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
+//        }
+//        checkAllowedFetch(session, id.setFace("content"));
+//        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Resolve " + id);
+//
+//        String versionString = id.getVersion().getValue();
+//        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
+//            NutsId id2 = resolveIdImpl(id, session);
+//            if (id2 == null) {
+//                throw new NutsNotFoundException(id);
+//            }
+//            return id2;
+//        } else {
+//            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
+//            Iterator<NutsId> allVersions = findVersions(id, filter, session);
+//
+//            NutsId a = null;
+//            while (allVersions.hasNext()) {
+//                NutsId next = allVersions.next();
+//                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+//                    a = next;
+//                }
+//            }
+//            if (a == null) {
+//                throw new NutsNotFoundException(id.toString());
+//            }
+//            return a;
+//        }
+//    }
 
     @Override
     public NutsFile fetch(NutsId id, NutsSession session) {
@@ -509,14 +533,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected abstract NutsFile fetchImpl(NutsId id, NutsSession session);
 
-    /**
-     * resolve static version id!!
-     *
-     * @param id
-     * @param session
-     * @return
-     */
-    protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
+//    protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
 
     protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session);
 

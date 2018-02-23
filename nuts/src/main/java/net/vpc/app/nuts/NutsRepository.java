@@ -74,7 +74,7 @@ public interface NutsRepository {
 
     String fetchDescriptorHash(NutsId id, NutsSession session);
 
-    NutsId resolveId(NutsId id, NutsSession session);
+//    NutsId resolveId(NutsId id, NutsSession session);
 
     Iterator<NutsId> find(NutsIdFilter filter, NutsSession session);
 

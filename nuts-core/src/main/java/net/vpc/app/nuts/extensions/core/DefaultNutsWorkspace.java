@@ -326,13 +326,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (oldId == null) {
             if (version.isSingleValue()) {
                 try {
-                    oldId = bootstrapNutsRepository.resolveId(getExtensionManager().getFactory().parseNutsId(id), session.setFetchMode(NutsFetchMode.OFFLINE));
+                    oldId = bootstrapNutsRepository.fetchDescriptor(getExtensionManager().getFactory().parseNutsId(id), session.setFetchMode(NutsFetchMode.OFFLINE)).getId();
                 } catch (Exception ex) {
                     //ignore
                 }
             } else {
                 try {
-                    oldId = bootstrapNutsRepository.resolveId(getExtensionManager().getFactory().parseNutsId(id), session.setFetchMode(NutsFetchMode.OFFLINE));
+                    oldId = bootstrapNutsRepository.fetchDescriptor(getExtensionManager().getFactory().parseNutsId(id), session.setFetchMode(NutsFetchMode.OFFLINE)).getId();
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -340,7 +340,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         }
         NutsFile newFileId = null;
         try {
-            newId = bootstrapNutsRepository.resolveId(getExtensionManager().getFactory().parseNutsId(id), session.setFetchMode(NutsFetchMode.ONLINE));
+            newId = bootstrapNutsRepository.fetchDescriptor(getExtensionManager().getFactory().parseNutsId(id), session.setFetchMode(NutsFetchMode.ONLINE)).getId();
             newFileId = bootstrapNutsRepository.fetch(newId, session);
         } catch (Exception ex) {
             //ignore
@@ -659,12 +659,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
                 for (NutsRepository repo : getEnabledRepositories(id, session)) {
                     try {
-                        NutsId child = repo.resolveId(id, session);
+                        NutsDescriptor child = repo.fetchDescriptor(id, session);
                         if (child != null) {
-                            if (CoreStringUtils.isEmpty(child.getNamespace())) {
-                                child = child.setNamespace(repo.getRepositoryId());
+                            NutsId id2 = child.getId();
+                            if (CoreStringUtils.isEmpty(id2.getNamespace())) {
+                                id2 = id2.setNamespace(repo.getRepositoryId());
                             }
-                            return child;
+                            return id2;
                         }
                     } catch (NutsNotFoundException exc) {
                         //

@@ -67,7 +67,30 @@ import net.vpc.app.nuts.extensions.filters.id.NutsIdJavascriptFilter;
  * Created by vpc on 5/16/17.
  */
 public class CoreNutsUtils {
-
+//        if (source instanceof NutsId) {
+//            NutsId d = (NutsId) source;
+//            if ("maven-metadata".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("archetype-catalog".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("descriptor".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("main-sha1".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//            if ("descriptor-sha1".equals(d.getFace())) {
+//                monitorable = false;
+//            }
+//        }
+    public static final String FACE_CATALOG ="catalog";
+    public static final String FACE_DESC ="descriptor";
+    public static final String FACE_PACKAGE ="package";
+    public static final String FACE_DESC_HASH ="descriptor-hash";
+    public static final String FACE_PACKAGE_HASH ="package-hash";
+    
     //    private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());

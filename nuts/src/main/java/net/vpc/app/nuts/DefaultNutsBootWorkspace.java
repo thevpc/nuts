@@ -43,6 +43,7 @@ import java.util.zip.ZipFile;
  * Created by vpc on 1/6/17.
  */
 public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
+
     private static final String DEFAULT_REMOTE_BOOTSTRAP_REPOSITORY_URL = "https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap";
 
     public static final Logger log = Logger.getLogger(DefaultNutsBootWorkspace.class.getName());
@@ -251,9 +252,9 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             if (_runtimeId == null && StringUtils.isEmpty(runtimeId)) {
 //                storeRuntimeFile = false;
                 runtimeId = "net.vpc.app.nuts:nuts-core#" + wbootId.getVersion() + ".0";
-                log.log(Level.WARNING, "Failed to resolve boot file (" + bootPath + ") from repositories. considering defaults : " + runtimeId);
+                log.log(Level.CONFIG, "Failed to resolve boot file (" + bootPath + ") from repositories. considering defaults : " + runtimeId);
                 for (String resolvedRepository : resolvedBootRepositories) {
-                    log.log(Level.WARNING, "\tFailed repository : " + resolvedRepository);
+                    log.log(Level.CONFIG, "\tInaccessible boot repository : " + resolvedRepository);
                 }
             }
             if (StringUtils.isEmpty(repositories)) {
@@ -318,7 +319,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     + "org.glassfish:javax.json#1.0.4",
                     "~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"
             ));
-            log.log(Level.WARNING, "Loading Default Runtime ClassPath {0}", runtimeVersion);
+            log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
         }
         if (all.isEmpty()) {
             return null;
@@ -428,10 +429,12 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                         return file;
                     }
                 } else {
-                    log.log(Level.SEVERE, "repository is not a valid folder : {0}", repoFolder);
+                    log.log(Level.CONFIG, "repository is not a valid folder : {0} . Unable to locate path {1}",
+                            new Object[]{repoFolder, path.replace('/', File.separatorChar)});
                 }
             } else {
-                log.log(Level.SEVERE, "repository url is not a valid folder : {0}", repository);
+                log.log(Level.CONFIG, "repository url is not a valid folder : {0} . Unable to locate path {1}",
+                        new Object[]{repoFolder, path.replace('/', File.separatorChar)});
             }
         } else if (repository.startsWith("~/")) {
             return getBootFile(id, ext, new File(System.getProperty("user.home"), repository.substring(2)).getPath(), cacheFolder, useCache);
@@ -460,7 +463,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     return file;
                 }
             } else {
-                log.log(Level.SEVERE, "repository is not a valid folder : {0}", repoFolder);
+                log.log(Level.CONFIG, "repository is not a valid folder : {0} . Unable to locate path {1}", new Object[]{repoFolder, path.replace('/', File.separatorChar)});
             }
         }
         return null;

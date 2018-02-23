@@ -60,7 +60,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     @Override
     protected String getStreamSHA1(NutsId id, String extension, String face, NutsSession session) {
-        return CoreSecurityUtils.evalSHA1(getStream(id, extension, "package-sha1", session), true);
+        return CoreSecurityUtils.evalSHA1(getStream(id, extension, CoreNutsUtils.FACE_PACKAGE_HASH, session), true);
     }
 
     @Override
