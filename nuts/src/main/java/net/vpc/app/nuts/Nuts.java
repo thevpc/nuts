@@ -373,7 +373,7 @@ public class Nuts {
 
     private static boolean showPerf(long overallTime, boolean perf, NutsSession session) {
         if (perf) {
-            session.getTerminal().getOut().printf("Nuts loaded in [[%s]]ms)\n",
+            session.getTerminal().getOut().printf("Nuts loaded in [[%s]]ms\n",
                     overallTime
             );
         }
