@@ -63,9 +63,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected String getStreamAsString(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
-//        if (url.startsWith("http")) {
-//            System.out.printf("Why");
-//        }
         if (CoreIOUtils.isRemoteURL(url)) {
             String message = CoreIOUtils.isRemoteURL(url) ? "downloading maven" : "open local file";
             log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
