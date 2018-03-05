@@ -256,6 +256,6 @@ class IOUtils {
             return false;
         }
         url = url.toLowerCase();
-        return (url.startsWith("http://") || url.startsWith("http://"));
+        return (url.startsWith("http://") || url.startsWith("https://"));
     }
 }
