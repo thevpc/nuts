@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsIOException;
 
@@ -60,7 +60,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentsException("Invalid boundary");
+        throw new NutsIllegalArgumentException("Invalid boundary");
     }
 
     public Iterator<ItemStreamInfo> iterator() {

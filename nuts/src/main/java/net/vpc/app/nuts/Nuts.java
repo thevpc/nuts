@@ -105,56 +105,56 @@ public class Nuts {
                     case "--workspace-root":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for workspace");
+                            throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
                         root = args[i];
                         break;
                     case "--workspace":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for workspace");
+                            throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
                         workspace = args[i];
                         break;
                     case "--archetype":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for archetype");
+                            throw new NutsIllegalArgumentException("Missing argument for archetype");
                         }
                         archetype = args[i];
                         break;
                     case "--login":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for login ");
+                            throw new NutsIllegalArgumentException("Missing argument for login ");
                         }
                         login = args[i];
                         break;
                     case "--password":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for password");
+                            throw new NutsIllegalArgumentException("Missing argument for password");
                         }
                         password = args[i];
                         break;
                     case "--apply-updates":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for apply-updates");
+                            throw new NutsIllegalArgumentException("Missing argument for apply-updates");
                         }
                         applyUpdatesFile = args[i];
                         break;
                     case "--runtime-id":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for runtime-id");
+                            throw new NutsIllegalArgumentException("Missing argument for runtime-id");
                         }
                         runtimeId = args[i];
                         break;
                     case "--runtime-source-url":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for boot-url");
+                            throw new NutsIllegalArgumentException("Missing argument for boot-url");
                         }
                         runtimeSourceURL = args[i];
                         break;
@@ -202,28 +202,28 @@ public class Nuts {
                     case "--log-size":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for log-size");
+                            throw new NutsIllegalArgumentException("Missing argument for log-size");
                         }
                         logSize = Integer.parseInt(args[i]);
                         break;
                     case "--log-count":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for log-count");
+                            throw new NutsIllegalArgumentException("Missing argument for log-count");
                         }
                         logCount = Integer.parseInt(args[i]);
                         break;
                     case "--exclude-extensions":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for exclude-extensions");
+                            throw new NutsIllegalArgumentException("Missing argument for exclude-extensions");
                         }
                         excludedExtensions.addAll(StringUtils.split(args[i], " ,;"));
                         break;
                     case "--exclude-repositories":
                         i++;
                         if (i >= args.length) {
-                            throw new NutsIllegalArgumentsException("Missing argument for exclude-repositories");
+                            throw new NutsIllegalArgumentException("Missing argument for exclude-repositories");
                         }
                         excludedRepositories.addAll(StringUtils.split(args[i], " ,;"));
                         break;
@@ -268,7 +268,7 @@ public class Nuts {
                 System.err.printf("%s", s);
             }
             System.err.printf("Try 'nuts --help' for more information.\n");
-            throw new NutsIllegalArgumentsException("Try 'nuts --help' for more information.");
+            throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
         }
         boolean someProcessing = false;
 
@@ -302,7 +302,7 @@ public class Nuts {
             System.err.printf("Unable to local nuts-core components.\n");
             System.err.printf("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...\n");
             System.err.printf("Exiting nuts, Bye!\n");
-            throw new NutsIllegalArgumentsException("Unable to locate nuts-core components", ex);
+            throw new NutsIllegalArgumentException("Unable to locate nuts-core components", ex);
         }
         long endWSTime = System.currentTimeMillis();
         NutsSession session = ws.getExtensionManager().getFactory().createSession();
@@ -373,7 +373,7 @@ public class Nuts {
 
     private static boolean showPerf(long overallTime, boolean perf, NutsSession session) {
         if (perf) {
-            session.getTerminal().getOut().printf("Nuts loaded in [[%s]]ms\n",
+            session.getTerminal().getOut().printf("**Nuts** loaded in [[%s]]ms\n",
                     overallTime
             );
         }

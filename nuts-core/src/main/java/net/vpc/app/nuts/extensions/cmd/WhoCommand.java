@@ -32,12 +32,9 @@ package net.vpc.app.nuts.extensions.cmd;
 import java.util.Arrays;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 /**
@@ -50,8 +47,7 @@ public class WhoCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean verbose = false;
         boolean argVisitedVerbose = false;
         boolean argAll = false;
@@ -113,20 +109,20 @@ public class WhoCommand extends AbstractNutsCommand {
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
                     Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));
                     if (!rgroups.isEmpty()) {
-                        out.printf("    ===identities=== : %s\n" ,rgroups.toString());
+                        out.printf("    ===identities=== : %s\n", rgroups.toString());
                     }
                     if (!NutsConstants.USER_ADMIN.equals(login)) {
                         if (!rrights.isEmpty()) {
-                            out.printf("    ===rights===     : %s\n" ,rrights.toString());
+                            out.printf("    ===rights===     : %s\n", rrights.toString());
                         }
                         if (!rinherited.isEmpty()) {
-                            out.printf("    ===inherited===  : %s\n" ,rinherited.toString());
+                            out.printf("    ===inherited===  : %s\n", rinherited.toString());
                         }
                     } else {
                         out.printf("    ===rights===     : ALL\n");
                     }
                     if (ruser.getMappedUser() != null) {
-                        out.printf("    ===remote-id===  : %s\n" ,ruser.getMappedUser());
+                        out.printf("    ===remote-id===  : %s\n", ruser.getMappedUser());
                     }
                 }
             }

@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
@@ -46,8 +44,7 @@ public class UnameCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         boolean farch = false;
         boolean fos = false;
         boolean fdist = false;

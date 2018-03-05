@@ -101,16 +101,16 @@ public class NutsWorkspaceConfigImpl implements NutsWorkspaceConfig {
     @Override
     public void addRepository(NutsRepositoryLocation repository) {
         if (repository == null) {
-            throw new NutsIllegalArgumentsException("Invalid Repository");
+            throw new NutsIllegalArgumentException("Invalid Repository");
         }
         if (CoreStringUtils.isEmpty(repository.getId())) {
-            throw new NutsIllegalArgumentsException("Invalid Repository Id");
+            throw new NutsIllegalArgumentException("Invalid Repository Id");
         }
         if (CoreStringUtils.isEmpty(repository.getType())) {
             repository.setType(NutsConstants.DEFAULT_REPOSITORY_TYPE);
         }
         if (this.repositories.containsKey(repository.getId())) {
-            throw new NutsIllegalArgumentsException("Duplicate Repository Id " + repository.getId());
+            throw new NutsIllegalArgumentException("Duplicate Repository Id " + repository.getId());
         }
         this.repositories.put(repository.getId(), repository);
     }
@@ -118,7 +118,7 @@ public class NutsWorkspaceConfigImpl implements NutsWorkspaceConfig {
     @Override
     public void removeRepository(String repositoryId) {
         if (repositoryId == null) {
-            throw new NutsIllegalArgumentsException("Invalid Null Repository");
+            throw new NutsIllegalArgumentException("Invalid Null Repository");
         }
         this.repositories.remove(repositoryId);
     }
@@ -126,7 +126,7 @@ public class NutsWorkspaceConfigImpl implements NutsWorkspaceConfig {
     @Override
     public boolean addExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentsException("Invalid Extension");
+            throw new NutsIllegalArgumentException("Invalid Extension");
         }
         NutsId oldId2 = CoreNutsUtils.finNutsIdByFullNameInStrings(extensionId, extensions);
         if (oldId2 == null) {
@@ -144,7 +144,7 @@ public class NutsWorkspaceConfigImpl implements NutsWorkspaceConfig {
     @Override
     public boolean removeExtension(NutsId extensionId) {
         if (extensionId == null) {
-            throw new NutsIllegalArgumentsException("Invalid Extension");
+            throw new NutsIllegalArgumentException("Invalid Extension");
         }
         NutsId oldId2 = CoreNutsUtils.finNutsIdByFullNameInStrings(extensionId, extensions);
         if (oldId2 != null) {

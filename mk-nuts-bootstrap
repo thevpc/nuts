@@ -5,8 +5,6 @@ runtimeVersion=`grep "project.version=" $base/nuts-core/target/classes/META-INF/
 echo "detected nuts      version $bootVersion"
 echo "detected nuts-core version $runtimeVersion"
 
-mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST
-cp $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.properties
 
 mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion
 cp $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.properties
@@ -20,9 +18,12 @@ tar -cf nuts-bundle.tar.gz nuts nuts.jar version.txt
 cd $h
 
 
-echo "runtimeId=net.vpc.app.nuts:nuts-core#$runtimeVersion" > $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.boot
-echo "repositories=http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master" >> $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.boot
-cp $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.boot $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.boot
+cp $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.properties
+echo "runtimeId=net.vpc.app.nuts:nuts-core#$runtimeVersion" >> $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.properties
+echo "repositories=http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master" >> $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.properties
+
+mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST
+cp $base/nuts-bootstrap/net/vpc/app/nuts/nuts/$bootVersion/nuts-$bootVersion.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts-LATEST.properties
 
 mkdir -p $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/LATEST
 cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $base/nuts-bootstrap/net/vpc/app/nuts/nuts-core/LATEST/nuts-core-LATEST.properties

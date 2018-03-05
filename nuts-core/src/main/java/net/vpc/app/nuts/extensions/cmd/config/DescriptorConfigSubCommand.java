@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Ref;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  *
@@ -26,7 +26,7 @@ import net.vpc.app.nuts.extensions.util.Ref;
 public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         boolean newDesc = false;
         String file = null;
         boolean save = false;
@@ -199,7 +199,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 save = cmdLine.readNonOptionOrError(new ValueNonOption("save", null, "true", "false")).getBoolean();
             } else {
                 if (!cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentsException("Unsupported");
+                    throw new NutsIllegalArgumentException("Unsupported");
                 }
             }
         }
@@ -211,7 +211,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     desc.set(CoreNutsUtils.parseNutsDescriptor(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
-                        throw new NutsIllegalArgumentsException("-file missing");
+                        throw new NutsIllegalArgumentException("-file missing");
                     }
                 }
             }
@@ -224,7 +224,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     desc.get().write(new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
-                        throw new NutsIllegalArgumentsException("-file missing");
+                        throw new NutsIllegalArgumentException("-file missing");
                     }
                 }
             } else {

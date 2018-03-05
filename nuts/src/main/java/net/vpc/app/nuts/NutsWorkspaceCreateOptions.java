@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -118,4 +119,55 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         this.excludedRepositories = excludedRepositories;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "NutsWorkspaceCreateOptions{" + "ignoreIfFound=" + ignoreIfFound + ", createIfNotFound=" + createIfNotFound + ", saveIfCreated=" + saveIfCreated + ", archetype=" + archetype + ", excludedExtensions=" + excludedExtensions + ", excludedRepositories=" + excludedRepositories + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.ignoreIfFound ? 1 : 0);
+        hash = 79 * hash + (this.createIfNotFound ? 1 : 0);
+        hash = 79 * hash + (this.saveIfCreated ? 1 : 0);
+        hash = 79 * hash + Objects.hashCode(this.archetype);
+        hash = 79 * hash + Objects.hashCode(this.excludedExtensions);
+        hash = 79 * hash + Objects.hashCode(this.excludedRepositories);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsWorkspaceCreateOptions other = (NutsWorkspaceCreateOptions) obj;
+        if (this.ignoreIfFound != other.ignoreIfFound) {
+            return false;
+        }
+        if (this.createIfNotFound != other.createIfNotFound) {
+            return false;
+        }
+        if (this.saveIfCreated != other.saveIfCreated) {
+            return false;
+        }
+        if (!Objects.equals(this.archetype, other.archetype)) {
+            return false;
+        }
+        if (!Objects.equals(this.excludedExtensions, other.excludedExtensions)) {
+            return false;
+        }
+        if (!Objects.equals(this.excludedRepositories, other.excludedRepositories)) {
+            return false;
+        }
+        return true;
+    }
+
 }

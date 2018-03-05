@@ -37,16 +37,18 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.CommandAutoComplete;
 
 /**
  * Created by vpc on 3/7/17.
  */
-public abstract class AbstractNutsCommandAutoComplete implements NutsCommandAutoComplete {
+public abstract class AbstractNutsCommandAutoComplete implements NutsCommandAutoComplete, CommandAutoComplete {
 
-    private LinkedHashMap<String, NutsArgumentCandidate> candidates = new LinkedHashMap<>();
+    private LinkedHashMap<String, ArgumentCandidate> candidates = new LinkedHashMap<>();
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates() {
+    public List getCandidates() {
         return new ArrayList<>(candidates.values());
     }
 
@@ -58,6 +60,13 @@ public abstract class AbstractNutsCommandAutoComplete implements NutsCommandAuto
     }
 
     public void addCandidate(NutsArgumentCandidate value) {
+        if (!CoreStringUtils.isEmpty(value.getValue())) {
+            candidates.put(value.getValue(), (ArgumentCandidate) value);
+        }
+    }
+
+    @Override
+    public void addCandidate(ArgumentCandidate value) {
         if (!CoreStringUtils.isEmpty(value.getValue())) {
             candidates.put(value.getValue(), value);
         }

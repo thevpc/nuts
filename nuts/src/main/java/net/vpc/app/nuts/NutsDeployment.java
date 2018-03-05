@@ -11,6 +11,12 @@ public class NutsDeployment {
     private String sha1;
     private String descSHA1;
     private String repositoryId;
+    private boolean force;
+
+    public NutsDeployment setForce(boolean force) {
+        this.force=force;
+        return this;
+    }
 
     public NutsDeployment setContent(InputStream stream) {
         content = new TypedObject(InputStream.class, stream, null);
@@ -47,6 +53,10 @@ public class NutsDeployment {
         return this;
     }
 
+    public boolean isForce() {
+        return force;
+    }
+    
     public String getSha1() {
         return sha1;
     }

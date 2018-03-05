@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-public class NutsCommandSyntaxError extends NutsIllegalArgumentsException {
+public class NutsCommandSyntaxError extends NutsIllegalArgumentException {
 
     public NutsCommandSyntaxError() {
     }

@@ -57,7 +57,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.vpc.app.nuts.extensions.core.DefaultNutsWorkspace;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterArch;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterById;
@@ -198,7 +197,7 @@ public class CoreNutsUtils {
 
     public static void validateNutName(String name) {
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentsException("Invalid nuts name " + name);
+            throw new NutsIllegalArgumentException("Invalid nuts name " + name);
         }
     }
 
@@ -385,7 +384,7 @@ public class CoreNutsUtils {
 
     public static void validateRepositoryId(String repositoryId) {
         if (!repositoryId.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentsException("Invalid repository id " + repositoryId);
+            throw new NutsIllegalArgumentException("Invalid repository id " + repositoryId);
         }
     }
 
@@ -641,7 +640,7 @@ public class CoreNutsUtils {
             Map<String, String> scope = CoreStringUtils.parseMap(face, "&");
             for (String s : scope.keySet()) {
                 if (!DEPENDENCY_SUPPORTED_PARAMS.contains(s)) {
-                    throw new NutsIllegalArgumentsException("Unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
+                    throw new NutsIllegalArgumentException("Unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
                 }
             }
             if (name == null) {
@@ -668,7 +667,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsRepositoryFilter.class)) {
             return (NutsRepositoryFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsRepositoryFilter Not yet supported from type " + object.getType().getName());
+        throw new NutsIllegalArgumentException("createNutsRepositoryFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsDependencyFilter createNutsDependencyFilter(TypedObject object) {
@@ -678,7 +677,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsDependencyFilter.class)) {
             return (NutsDependencyFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsDependencyFilter Not yet supported from type " + object.getType().getName());
+        throw new NutsIllegalArgumentException("createNutsDependencyFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsVersionFilter createNutsVersionFilter(TypedObject object) {
@@ -688,7 +687,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsVersionFilter.class)) {
             return (NutsVersionFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsVersionFilter Not yet supported from type " + object.getType().getName());
+        throw new NutsIllegalArgumentException("createNutsVersionFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsDescriptorFilter And(NutsDescriptorFilter... all) {
@@ -745,7 +744,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsDescriptorFilter.class)) {
             return (NutsDescriptorFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsDescriptorFilter Not yet supported from type " + object.getType().getName());
+        throw new NutsIllegalArgumentException("createNutsDescriptorFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsIdFilter createNutsIdFilter(TypedObject object) {
@@ -755,7 +754,7 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsIdFilter.class)) {
             return (NutsIdFilter) object.getValue();
         }
-        throw new NutsIllegalArgumentsException("createNutsIdFilter Not yet supported from type " + object.getType().getName());
+        throw new NutsIllegalArgumentException("createNutsIdFilter Not yet supported from type " + object.getType().getName());
     }
 
     public static NutsDependencyFilter And(NutsDependencyFilter... all) {
@@ -864,4 +863,19 @@ public class CoreNutsUtils {
         help = CoreStringUtils.replaceVars(help, new MapStringMapper(props));
         return help;
     }
+
+    public static String getPath(NutsId id, String ext, String sep) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id.getGroup().replaceAll("\\.", sep));
+        sb.append(sep);
+        sb.append(id.getName());
+        sb.append(sep);
+        sb.append(id.getVersion().toString());
+        sb.append(sep);
+        String name = id.getName() + "-" + id.getVersion().getValue();
+        sb.append(name);
+        sb.append(ext);
+        return sb.toString();
+    }
+
 }

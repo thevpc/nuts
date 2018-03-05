@@ -29,11 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
-import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
@@ -41,16 +39,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileOwnerAttributeView;
-import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
-import java.nio.file.attribute.UserPrincipal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by vpc on 1/7/17.
@@ -70,8 +64,7 @@ public class LsCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean any = false;
         Options options = new Options();
         List<File> folders = new ArrayList<>();
@@ -118,10 +111,10 @@ public class LsCommand extends AbstractNutsCommand {
 
     private void ls(File path, Options options, NutsCommandContext context, NutsTerminal terminal, boolean addPrefix) {
         if (!path.exists()) {
-            throw new NutsIllegalArgumentsException("ls: cannot access '" + path.getPath() + "': No such file or directory");
+            throw new NutsIllegalArgumentException("ls: cannot access '" + path.getPath() + "': No such file or directory");
         } else if (path.isDirectory()) {
             if (addPrefix) {
-                terminal.getOut().printf("%s:\n",path.getName());
+                terminal.getOut().printf("%s:\n", path.getName());
             }
             File[] arr = CoreIOUtils.nonNullArray(path.listFiles());
             Arrays.sort(arr, FILE_SORTER);
@@ -137,9 +130,9 @@ public class LsCommand extends AbstractNutsCommand {
         String name = path.getName();
         if (options.l) {
             terminal.getOut().print((path.isDirectory() ? "d" : path.isFile() ? "-" : "?"));
-            terminal.getOut().print((path.canRead()? "r" : "-"));
-            terminal.getOut().print((path.canWrite()? "w" : "-"));
-            terminal.getOut().print((path.canExecute()? "x" : "-"));
+            terminal.getOut().print((path.canRead() ? "r" : "-"));
+            terminal.getOut().print((path.canWrite() ? "w" : "-"));
+            terminal.getOut().print((path.canExecute() ? "x" : "-"));
             terminal.getOut().print(" ");
             String owner = null;
             String group = null;
@@ -156,24 +149,24 @@ public class LsCommand extends AbstractNutsCommand {
                 //
                 group = "unknown";
             }
-            terminal.getOut().printf("%s",owner);
+            terminal.getOut().printf("%s", owner);
             terminal.getOut().print(" ");
-            terminal.getOut().printf("%s",group);
+            terminal.getOut().printf("%s", group);
             terminal.getOut().print(" ");
-            terminal.getOut().printf("%s",String.format("%8d", path.length()));
+            terminal.getOut().printf("%s", String.format("%8d", path.length()));
             terminal.getOut().print(" ");
-            terminal.getOut().printf("%s",SIMPLE_DATE_FORMAT.format(path.lastModified()));
+            terminal.getOut().printf("%s", SIMPLE_DATE_FORMAT.format(path.lastModified()));
             terminal.getOut().print(" ");
             if (path.isDirectory()) {
-                terminal.getOut().printf("==%s==\n",name);
+                terminal.getOut().printf("==%s==\n", name);
             } else {
-                terminal.getOut().printf("%s\n",name);
+                terminal.getOut().printf("%s\n", name);
             }
         } else {
             if (path.isDirectory()) {
-                terminal.getOut().printf("==%s==\n",name);
+                terminal.getOut().printf("==%s==\n", name);
             } else {
-                terminal.getOut().printf("%s\n",name);
+                terminal.getOut().printf("%s\n", name);
             }
         }
     }

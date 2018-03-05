@@ -40,7 +40,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsParseException;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
@@ -120,10 +120,10 @@ public class JavascriptHelper {
             }
         }
         if (code == null) {
-            throw new NutsIllegalArgumentsException("Illegal js filter : empty content");
+            throw new NutsIllegalArgumentException("Illegal js filter : empty content");
         }
         if (!code.contains("return")) {
-            throw new NutsIllegalArgumentsException("js filter must contain a return clause");
+            throw new NutsIllegalArgumentException("js filter must contain a return clause");
         }
         try {
             engine = createScriptEngine();

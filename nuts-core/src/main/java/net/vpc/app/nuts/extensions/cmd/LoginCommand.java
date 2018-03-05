@@ -30,12 +30,10 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.NutsCommandContext;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -47,8 +45,7 @@ public class LoginCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         String login = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
         String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
         cmdLine.requireEmpty();

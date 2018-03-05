@@ -1,10 +1,13 @@
-updates a **nuts**
+updates a **nuts** or updates the workspace
 
 @@SYNOPSYS:@@
-update id
+update [ --force ] id1 ...
 
-updates a **nuts** from remote servers
+   updates the **nuts** to the latest version. If --force is armed, will be re-download the components and its dependencies.
 
+update [ --force ] [ --version <VERSION> ]
+
+   updates the current workspace to latest version or to the given version if provided.
 
 @@EXAMPLES:@@
 
@@ -12,3 +15,5 @@ update my-group:my-name
    update the **nuts**
 
 
+update 
+   updates the workspace

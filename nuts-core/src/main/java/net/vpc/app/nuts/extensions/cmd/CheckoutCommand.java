@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsFile;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FolderNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
 
@@ -48,11 +46,10 @@ public class CheckoutCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("Nuts", context)).getString();
         String contentFile = cmdLine.readNonOptionOrError(new FolderNonOption("folder")).getString();
-        if (autoComplete != null) {
+        if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }
         NutsFile nf = context.getValidWorkspace().checkout(

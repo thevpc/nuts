@@ -30,32 +30,19 @@
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
 import net.vpc.app.nuts.NutsArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 
 /**
  * Created by vpc on 3/7/17.
  */
-public class DefaultNutsArgumentCandidate implements NutsArgumentCandidate {
-
-    private String value;
-    private String display;
+public class DefaultNutsArgumentCandidate extends DefaultArgumentCandidate implements NutsArgumentCandidate {
 
     public DefaultNutsArgumentCandidate(String value) {
-        this.value = value;
-        this.display = value;
+        super(value);
     }
 
     public DefaultNutsArgumentCandidate(String value, String display) {
-        this.value = value;
-        this.display = display;
+        super(value, display);
     }
 
-    @Override
-    public String getDisplay() {
-        return display;
-    }
-
-    @Override
-    public String getValue() {
-        return value;
-    }
 }

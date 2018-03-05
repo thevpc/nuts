@@ -37,6 +37,8 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -52,13 +54,13 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<ArgumentCandidate> getValues() {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
         for (NutsRepositoryDefinition repo : workspace.getRepositoryManager().getDefaultRepositories()) {
             allValid.add(repo.getType());
         }
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+        List<ArgumentCandidate> all = new ArrayList<>();
         for (String v : allValid) {
             all.add(new DefaultNutsArgumentCandidate(v));
         }

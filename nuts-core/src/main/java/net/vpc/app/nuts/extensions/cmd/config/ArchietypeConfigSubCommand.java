@@ -8,7 +8,7 @@ package net.vpc.app.nuts.extensions.cmd.config;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  *
@@ -17,11 +17,11 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 public class ArchietypeConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         if (cmdLine.read("list archetypes", "la")) {
             if (cmdLine.isExecMode()) {
                 for (String archetype : context.getValidWorkspace().getRepositoryManager().getAvailableArchetypes()) {
-                    context.getTerminal().getOut().printf("%s\n",archetype);
+                    context.getTerminal().getOut().printf("%s\n", archetype);
                 }
             }
             return true;

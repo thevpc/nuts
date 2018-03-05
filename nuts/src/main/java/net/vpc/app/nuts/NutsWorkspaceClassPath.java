@@ -29,11 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -42,14 +38,6 @@ class NutsWorkspaceClassPath {
     private WorkspaceNutsId id;
     private String dependencies;
     private String repositories;
-
-    public NutsWorkspaceClassPath(File url) throws IOException {
-        this(url.toURI().toURL());
-    }
-
-    public NutsWorkspaceClassPath(URL url) throws IOException {
-        this(IOUtils.loadURLProperties(url));
-    }
 
     public NutsWorkspaceClassPath(Properties properties) {
         this(
@@ -91,7 +79,7 @@ class NutsWorkspaceClassPath {
     }
 
     public WorkspaceNutsId[] getDependenciesArray() {
-        String[] split = dependencies.split("[; ]");
+        List<String> split = StringUtils.split(dependencies, "\n\t ,;");
         List<WorkspaceNutsId> ts = new ArrayList<>();
         for (String s : split) {
             s = s.trim();
@@ -103,7 +91,10 @@ class NutsWorkspaceClassPath {
     }
 
     public String[] getRepositoriesArray() {
-        List<String> ts = Arrays.asList(repositories.split(";"));
+        List<String> ts = StringUtils.split(repositories, "\n;");
+        for (int i = 0; i < ts.size(); i++) {
+            ts.set(i, ts.get(i).trim());
+        }
         return ts.toArray(new String[ts.size()]);
     }
 }

@@ -35,16 +35,16 @@ package net.vpc.app.nuts;
  * NutsBootWorkspace is also responsible of managing local jar cache folder located at $root/bootstrap
  * where $root is the nuts root folder (~/.nuts) defined by {@link #getRootLocation()}.
  * <pre>
- *   ~/.nuts/bootstrap
+ *   ~/.nuts/bootstrap ({@link #getBootstrapLocation})
  *       └── net
  *           └── vpc
  *               └── app
  *                   └── nuts
  *                       ├── nuts
  *                       │   └── 0.3.8
- *                       │   │   └── nuts-0.3.8.boot
+ *                       │   │   └── nuts-0.3.8.properties
  *                       │   └── LATEST
- *                       │       └── nuts-LATEST.boot
+ *                       │       └── nuts-LATEST.properties
  *                       └── nuts-core
  *                           └── 0.3.8.0
  *                               └── nuts-core-0.3.8.0.properties
@@ -73,11 +73,19 @@ public interface NutsBootWorkspace {
     String getRootLocation();
 
     /**
+     * nuts bootstrap folder. It defaults to "~/.nuts/bootstrap"
+     * bootstrap folder contains jars and configuration files about
+     * nuts dependencies.
+     * @return nuts bootstrap folder
+     */
+    String getBootstrapLocation();
+
+    /**
      * opens (and create if necessary) a new workspace at <code>workspaceLocation</code> location and
      * according to the given creation options. workspaceLocation may be absolute or relative in which case it will
      * be resolved as a sub folder of nuts root folder (see {@link #getRootLocation()}).
      * If no options are provided (options==null) workspace will be created and saved it not found
-     * (<code></code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
+     * (<code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
      * Please note that it may not be safe to create several instances of the same workspace.
      * @param workspaceLocation workspace location
      * @param options creation options

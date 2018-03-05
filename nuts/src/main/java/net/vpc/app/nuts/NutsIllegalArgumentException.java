@@ -29,24 +29,24 @@
  */
 package net.vpc.app.nuts;
 
-public class NutsIllegalArgumentsException extends NutsException {
+public class NutsIllegalArgumentException extends NutsException {
 
-    public NutsIllegalArgumentsException() {
+    public NutsIllegalArgumentException() {
     }
 
-    public NutsIllegalArgumentsException(String message) {
+    public NutsIllegalArgumentException(String message) {
         super(message);
     }
 
-    public NutsIllegalArgumentsException(String message, Throwable cause) {
+    public NutsIllegalArgumentException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public NutsIllegalArgumentsException(Throwable cause) {
+    public NutsIllegalArgumentException(Throwable cause) {
         super(cause);
     }
 
-    public NutsIllegalArgumentsException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsIllegalArgumentException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -82,7 +82,7 @@ public class JsonSerializerImpl implements JsonSerializer {
                 return null;
             }
         }
-        throw new NutsIllegalArgumentsException("Unsupported");
+        throw new NutsIllegalArgumentException("Unsupported");
     }
 
     @Override
@@ -323,7 +323,7 @@ public class JsonSerializerImpl implements JsonSerializer {
             if (obj instanceof JsonString) {
                 t = (Class<T>) String.class;
             } else {
-                throw new NutsIllegalArgumentsException("Unable to resolve null type for " + obj);
+                throw new NutsIllegalArgumentException("Unable to resolve null type for " + obj);
             }
         }
         if (t.equals(String.class)) {

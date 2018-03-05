@@ -8,11 +8,11 @@ package net.vpc.app.nuts.extensions.cmd.config;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsCommandContext;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CoreLogUtils;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  *
@@ -21,7 +21,7 @@ import net.vpc.app.nuts.extensions.util.CoreLogUtils;
 public class LogConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         if (cmdLine.read("set loglevel", "sll")) {
             if (cmdLine.read("verbose", "finest")) {
                 if (cmdLine.isExecMode()) {
@@ -61,7 +61,7 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
                 }
             } else {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentsException("Invalid loglevel");
+                    throw new NutsIllegalArgumentException("Invalid loglevel");
                 }
             }
             cmdLine.requireEmpty();

@@ -14,12 +14,12 @@ import net.vpc.app.nuts.NutsUserInfo;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.GroupNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.RepositoryNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.RightNonOption;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -28,11 +28,11 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 public class UserConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, net.vpc.app.nuts.extensions.cmd.ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, net.vpc.app.nuts.extensions.cmd.ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         return exec(null, cmdLine, config, autoSave, context);
     }
 
-    public static boolean exec(NutsRepository editedRepo, CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public static boolean exec(NutsRepository editedRepo, CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         NutsWorkspace workspace = context.getValidWorkspace();
         if (cmdLine.read("add user", "au")) {
             NutsRepository repository = null;
@@ -79,13 +79,13 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                     security = repository.getSecurityManager().findUsers();
                 }
                 for (NutsUserInfo u : security) {
-                    context.getTerminal().getOut().printf("User: %s\n" ,u.getUser());
+                    context.getTerminal().getOut().printf("User: %s\n", u.getUser());
                     if (!CoreStringUtils.isEmpty(u.getMappedUser())) {
-                        context.getTerminal().getOut().printf("   Mapper to  : %s\n" , u.getMappedUser());
+                        context.getTerminal().getOut().printf("   Mapper to  : %s\n", u.getMappedUser());
                     }
-                    context.getTerminal().getOut().printf("   Password   : %s\n" ,(u.hasCredentials() ? "Set" : "None"));
-                    context.getTerminal().getOut().printf("   Groups     : %s\n" , (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
-                    context.getTerminal().getOut().printf("   Rights     : %s\n" ,(u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
+                    context.getTerminal().getOut().printf("   Password   : %s\n", (u.hasCredentials() ? "Set" : "None"));
+                    context.getTerminal().getOut().printf("   Groups     : %s\n", (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
+                    context.getTerminal().getOut().printf("   Rights     : %s\n", (u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
                 }
             }
             return true;

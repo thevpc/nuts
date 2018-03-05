@@ -141,7 +141,7 @@ public class DefaultNutsConsole implements NutsConsole {
     public NutsCommand getCommand(String cmd) {
         NutsCommand command = findCommand(cmd);
         if (command == null) {
-            throw new NutsIllegalArgumentsException("Command not found : " + cmd);
+            throw new NutsIllegalArgumentException("Command not found : " + cmd);
         }
         return command;
     }

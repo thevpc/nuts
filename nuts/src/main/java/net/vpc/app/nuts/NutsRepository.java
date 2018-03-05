@@ -44,6 +44,8 @@ public interface NutsRepository {
     int SPEED_SLOW = 10000;
     int SPEED_SLOWEST = 100000;
 
+    String getRepositoryType();
+    
     String getRepositoryId();
 
     NutsWorkspace getWorkspace();
@@ -59,9 +61,9 @@ public interface NutsRepository {
      * @param file
      * @return
      */
-    NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, NutsSession context);
+    NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, boolean force, NutsSession context);
 
-    void push(NutsId id, String repoId, NutsSession session);
+    void push(NutsId id, String repoId, boolean force, NutsSession session);
 
     NutsFile fetch(NutsId id, NutsSession session);
 

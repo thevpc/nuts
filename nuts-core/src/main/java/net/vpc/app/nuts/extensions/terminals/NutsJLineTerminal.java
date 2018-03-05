@@ -38,27 +38,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.IntConsumer;
-import java.util.function.IntSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.cmd.AbstractNutsCommandAutoComplete;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.apps.javashell.interpreter.InterrupShellException;
-import org.jline.terminal.Attributes;
-import org.jline.terminal.Cursor;
-import org.jline.terminal.MouseEvent;
-import org.jline.terminal.Size;
+import net.vpc.common.commandline.ArgumentCandidate;
 import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.InfoCmp;
-import org.jline.utils.NonBlockingReader;
 
 /**
  * Created by vpc on 2/20/17.
@@ -114,7 +102,7 @@ public class NutsJLineTerminal implements NutsTerminal {
                                 } else {
                                     NutsCommand command = nutsCommandContext.getCommandLine().findCommand(line.words().get(0));
                                     if (command != null) {
-                                        AbstractNutsCommandAutoComplete autoComplete = new AbstractNutsCommandAutoComplete() {
+                                        NutsCommandAutoComplete autoComplete = new AbstractNutsCommandAutoComplete() {
                                             @Override
                                             public String getLine() {
                                                 int x = line.words().get(0).length();
@@ -137,7 +125,8 @@ public class NutsJLineTerminal implements NutsTerminal {
                                         };
                                         command.autoComplete(nutsCommandContext, autoComplete);
                                         if (autoComplete.getCandidates() != null) {
-                                            for (NutsArgumentCandidate cmdCandidate : autoComplete.getCandidates()) {
+                                            for (Object cmdCandidate0 : autoComplete.getCandidates()) {
+                                                ArgumentCandidate cmdCandidate = (ArgumentCandidate) cmdCandidate0;
                                                 if (cmdCandidate != null) {
                                                     String value = cmdCandidate.getValue();
                                                     String display = cmdCandidate.getDisplay();

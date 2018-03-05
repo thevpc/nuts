@@ -33,12 +33,12 @@ import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.ObjectFilter;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FolderNonOption;
 import net.vpc.app.nuts.extensions.util.CoreCollectionUtils;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -50,8 +50,7 @@ public class CdCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        CommandLine cmdLine = cmdLine(args, context);
         cmdLine.requireNonEmpty();
         String folder = cmdLine.readNonOptionOrError(new FolderNonOption("Folder")).getString();
         File[] validFiles = CoreCollectionUtils.filterArray(File.class, CoreIOUtils.findFilesOrError(folder, new File(context.getCommandLine().getCwd())),

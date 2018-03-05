@@ -30,17 +30,14 @@
 package net.vpc.app.nuts;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import static net.vpc.app.nuts.DefaultNutsBootWorkspace.log;
 
 /**
- * IO Utils helper
- * Created by vpc on 1/15/17.
+ * IO Utils helper Created by vpc on 1/15/17.
  */
 class IOUtils {
 
@@ -254,4 +251,11 @@ class IOUtils {
         return props;
     }
 
+    public static boolean isRemoteURL(String url) {
+        if (url == null) {
+            return false;
+        }
+        url = url.toLowerCase();
+        return (url.startsWith("http://") || url.startsWith("http://"));
+    }
 }

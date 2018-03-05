@@ -30,10 +30,12 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,27 +48,37 @@ public class UpdateCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
-        if (cmdLine.isEmpty()) {
-            if (cmdLine.isExecMode()) {
-                //should update nuts
-                updateWorkspace(context);
-                return 0;
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        boolean force = false;
+        String version = null;
+        List<String> ids = new ArrayList<>();
+        while (!cmdLine.isEmpty()) {
+            if (cmdLine.readOnce("--force", "-f")) {
+                force = true;
+            } else if (cmdLine.readOnce("--version", "-v")) {
+                force = true;
+                version = cmdLine.readNonOptionOrError(new ValueNonOption("Version", context)).getString();
+            } else {
+                String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
+                ids.add(id);
             }
         }
-        while (!cmdLine.isEmpty()) {
-            String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
-            if (!cmdLine.isExecMode()) {
-                update(id, context);
+        if (ids.isEmpty()) {
+            if (cmdLine.isExecMode()) {
+                //should update nuts
+                updateWorkspace(version, force, context);
+            }
+        } else {
+            for (String id : ids) {
+                update(id, force, context);
             }
         }
         return 0;
     }
 
-    private void update(String id, NutsCommandContext context) throws IOException {
+    private void update(String id, boolean force, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getValidWorkspace();
-        NutsFile file = ws.update(id, context.getSession());
+        NutsFile file = ws.update(id, force, context.getSession());
         if (file.isCached()) {
             context.getTerminal().getOut().printf("%s already installed\n", file.getId());
         } else {
@@ -74,9 +86,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         }
     }
 
-    private void updateWorkspace(NutsCommandContext context) throws IOException {
+    private void updateWorkspace(String version, boolean force, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getValidWorkspace();
-        NutsFile file = ws.updateWorkspace(context.getSession());
+        NutsFile file = ws.updateWorkspace(version, force, context.getSession());
         if (file.isCached()) {
             context.getTerminal().getOut().printf("%s already installed\n", file.getId());
         } else {

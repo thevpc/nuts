@@ -56,8 +56,8 @@ public class NutsConstants {
 
     /**
      * default repository name. By default a repository named
-     * 'default-workspace' is created as folder
-     * ~/.nuts/default-workspace/default-repository (assuming default workspace
+     * "local" is created as folder
+     * ~/.nuts/default-workspace/local (assuming default workspace
      * and default root naming)
      */
     public static final String DEFAULT_REPOSITORY_NAME = "local";
@@ -66,13 +66,13 @@ public class NutsConstants {
      * default repositories root name. By default repositories are stored under
      * ${workspace-location}/repositories or ${repository-location}/repositories
      */
-    public static final String DEFAULT_REPOSITORIES_ROOT = "repositories";
+    public static final String FOLDER_NAME_REPOSITORIES = "repositories";
 
     /**
      * default components root name. By default repositories are stored under
      * ${workspace-location}/components
      */
-    public static final String DEFAULT_COMPONENTS_ROOT = "components";
+    public static final String FOLDER_NAME_COMPONENTS = "components";
 
     /**
      * default repository type. Nuts workspace can managed different
@@ -91,17 +91,17 @@ public class NutsConstants {
     /**
      * workspace config file name
      */
-    public static final String NUTS_WORKSPACE_FILE = "nuts-workspace.json";
+    public static final String NUTS_WORKSPACE_CONFIG_FILE_NAME = "nuts-workspace.json";
 
     /**
      * repository config file name
      */
-    public static final String NUTS_REPOSITORY_FILE = "nuts-repository.json";
+    public static final String NUTS_REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";
 
     /**
      * component (nuts) descriptor file name
      */
-    public static final String NUTS_DESC_FILE = "nuts.json";
+    public static final String NUTS_DESC_FILE_NAME = "nuts.json";
 
     public static final String RIGHT_FETCH_DESC = "fetch-desc";
     public static final String RIGHT_FETCH_CONTENT = "fetch-content";
@@ -135,8 +135,8 @@ public class NutsConstants {
     public static final String USER_ADMIN = "admin";
     public static final String USER_ANONYMOUS = "anonymous";
 
-    public static final String NUTS_COMPONENT_ID = "net.vpc.app.nuts:nuts";
-    public static final String NUTS_COMPONENT_CORE_ID = "net.vpc.app.nuts:nuts-core";
+    public static final String NUTS_ID_BOOT = "net.vpc.app.nuts:nuts";
+    public static final String NUTS_ID_RUNTIME = "net.vpc.app.nuts:nuts-core";
     public static final String QUERY_FACE = "face";
     public static final String QUERY_ARCH = "arch";
     public static final String QUERY_OS = "os";
@@ -145,6 +145,10 @@ public class NutsConstants {
     public static final String QUERY_FACE_DEFAULT_VALUE = "default";
     public static final String QUERY_FILE = "file";
     public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
+    public static final String URL_BOOTSTRAP_REMOTE = "https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap";
+    public static final String URL_BOOTSTRAP_LOCAL = "~/.nuts/remote-bootstrap";
+    public static final String URL_COMPONENTS_REMOTE = "http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
+    public static final String URL_COMPONENTS_LOCAL = "~/.m2/repository;~/.nuts/bootstrap";
 
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);

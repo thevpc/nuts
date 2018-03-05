@@ -35,6 +35,8 @@ import java.util.List;
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -50,8 +52,8 @@ public class PackagingNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+    public List<ArgumentCandidate> getValues() {
+        List<ArgumentCandidate> all = new ArrayList<>();
         all.add(new DefaultNutsArgumentCandidate("jar"));
         all.add(new DefaultNutsArgumentCandidate("war"));
         all.add(new DefaultNutsArgumentCandidate("war"));

@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
@@ -45,11 +44,11 @@ public class CommitCommand extends AbstractNutsCommand {
         super("commit", CORE_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-        if (autoComplete != null) {
+        if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }
         for (String s : CoreIOUtils.expandPath(contentFile, new File(context.getCommandLine().getCwd()))) {

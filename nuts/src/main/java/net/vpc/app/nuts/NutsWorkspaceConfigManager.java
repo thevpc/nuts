@@ -32,7 +32,6 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
-import javax.security.auth.callback.CallbackHandler;
 
 /**
  *
@@ -40,8 +39,6 @@ import javax.security.auth.callback.CallbackHandler;
  */
 public interface NutsWorkspaceConfigManager {
 
-    /////////////////////////////////////////////////////////////////
-    // CONFIG
     NutsBootWorkspace getBoot();
 
     NutsId getWorkspaceBootId();
@@ -50,6 +47,10 @@ public interface NutsWorkspaceConfigManager {
 
     String getWorkspaceLocation();
 
+    /**
+     * nuts root folder. It defaults to "~/.nuts"
+     * @return nuts root folder
+     */
     String getWorkspaceRootLocation();
 
     Properties getEnv();

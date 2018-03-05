@@ -30,11 +30,8 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.NutsCommandContext;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-
-import net.vpc.app.nuts.NutsCommandAutoComplete;
-import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.RepositoryNonOption;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,20 +43,20 @@ public class PushCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         String repo = null;
         cmdLine.requireNonEmpty();
-        boolean argVisitedRepo = false;
+        boolean force = false;
         while (!cmdLine.isEmpty()) {
-            if (!argVisitedRepo && cmdLine.read("--repo", "-r")) {
-                argVisitedRepo = true;
+            if (cmdLine.readOnce("--repo", "-r")) {
                 repo = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+            } else if (cmdLine.readOnce("--force", "-f")) {
+                force = true;
             } else {
                 String id = cmdLine.readNonOptionOrError(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
-                    context.getValidWorkspace().push(id, repo, context.getSession());
-                    context.getTerminal().getOut().printf( "%s pushed successfully\n",id);
+                    context.getValidWorkspace().push(id, repo, force, context.getSession());
+                    context.getTerminal().getOut().printf("%s pushed successfully\n", id);
                 }
             }
         }

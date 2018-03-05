@@ -96,7 +96,7 @@ public class NutsIdGraph {
         return files.get(id);
     }
 
-    private void set(NutsFile from) {
+    public void set(NutsFile from) {
         NutsFile old = files.get(from.getId());
         if (old == null) {
             files.put(from.getId(), from);

@@ -32,9 +32,10 @@ package net.vpc.app.nuts.extensions.cmd.cmdline;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -56,8 +57,8 @@ public class RepositoryNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+    public List<ArgumentCandidate> getValues() {
+        List<ArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
             for (NutsRepository repository : workspace.getRepositoryManager().getRepositories()) {
                 all.add(new DefaultNutsArgumentCandidate(repository.getRepositoryId()));

@@ -25,7 +25,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsLoginException;
 import net.vpc.app.nuts.NutsSecurityEntityConfig;
 import net.vpc.app.nuts.NutsSecurityException;
@@ -136,12 +136,12 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             if (!NutsConstants.USER_ANONYMOUS.equals(getCurrentLogin())) {
                 login = getCurrentLogin();
             } else {
-                throw new NutsIllegalArgumentsException("Not logged in");
+                throw new NutsIllegalArgumentException("Not logged in");
             }
         }
         NutsSecurityEntityConfig u = ws.getConfigManager().getConfig().getSecurity(login);
         if (u == null) {
-            throw new NutsIllegalArgumentsException("No such user " + login);
+            throw new NutsIllegalArgumentException("No such user " + login);
         }
         if (!getCurrentLogin().equals(login)) {
             if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
@@ -158,7 +158,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             }
         }
         if (CoreStringUtils.isEmpty(password)) {
-            throw new NutsIllegalArgumentsException("Missing password");
+            throw new NutsIllegalArgumentException("Missing password");
         }
         ws.getConfigManager().getConfig().setSecurity(u);
         setUserCredentials(u.getUser(), password);
@@ -273,7 +273,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
     @Override
     public void addUser(String user, String credentials, String... rights) {
         if (CoreStringUtils.isEmpty(user)) {
-            throw new NutsIllegalArgumentsException("Invalid user");
+            throw new NutsIllegalArgumentException("Invalid user");
         }
         ws.getConfigManager().getConfig().setSecurity(new NutsSecurityEntityConfigImpl(user, null, null, null));
         setUserCredentials(user, credentials);
@@ -289,7 +289,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
     public void setUserCredentials(String user, String credentials) {
         NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
         if (security == null) {
-            throw new NutsIllegalArgumentsException("User not found " + user);
+            throw new NutsIllegalArgumentException("User not found " + user);
         }
         if (CoreStringUtils.isEmpty(credentials)) {
             credentials = null;

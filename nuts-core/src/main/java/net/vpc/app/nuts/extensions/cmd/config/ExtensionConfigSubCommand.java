@@ -10,9 +10,9 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsWorkspaceExtension;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.ExtensionNonOption;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  * @author vpc
@@ -20,7 +20,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         if (autoSave == null) {
             autoSave = false;
         }

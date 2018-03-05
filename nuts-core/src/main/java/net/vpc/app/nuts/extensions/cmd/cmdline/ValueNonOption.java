@@ -29,12 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.cmd.cmdline;
 
-import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -50,7 +51,7 @@ public class ValueNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
+    public List<ArgumentCandidate> getValues() {
         return new ArrayList(Arrays.asList(values));
     }
 

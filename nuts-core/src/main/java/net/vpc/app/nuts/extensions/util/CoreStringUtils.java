@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsParseException;
 
 /**
@@ -80,7 +80,7 @@ public class CoreStringUtils {
     public static String checkNotEmpty(String str, String name) {
         str = CoreStringUtils.trim(str);
         if (CoreStringUtils.isEmpty(str)) {
-            throw new NutsIllegalArgumentsException("Empty string not allowed for " + name);
+            throw new NutsIllegalArgumentException("Empty string not allowed for " + name);
         }
         return str.trim();
     }

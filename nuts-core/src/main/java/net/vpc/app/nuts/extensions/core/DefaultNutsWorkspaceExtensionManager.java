@@ -29,7 +29,7 @@ import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
 import net.vpc.app.nuts.NutsExecutorComponent;
 import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsRepositoryFactoryComponent;
@@ -137,7 +137,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     protected NutsWorkspaceExtension wireExtension(NutsId id, NutsSession session) {
         session = ws.validateSession(session);
         if (id == null) {
-            throw new NutsIllegalArgumentsException("Extension Id could not be null");
+            throw new NutsIllegalArgumentException("Extension Id could not be null");
         }
         NutsId wired = CoreNutsUtils.finNutsIdByFullName(id, extensions.keySet());
         if (wired != null) {
@@ -184,7 +184,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     private boolean isLoadedClassPath(NutsFile file, NutsSession session) {
         session = ws.validateSession(session);
-        if (file.getId().isSameFullName(CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
+        if (file.getId().isSameFullName(CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_ID_BOOT))) {
             return true;
         }
         try {

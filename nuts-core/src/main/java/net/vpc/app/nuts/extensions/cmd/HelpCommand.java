@@ -31,7 +31,6 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import java.util.ArrayList;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.CommandNonOption;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
@@ -50,8 +49,7 @@ public class HelpCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         NutsPrintStream out = context.getTerminal().getOut();
         boolean showLicense = false;
         List<String> commandNames = new ArrayList<>();
@@ -60,7 +58,7 @@ public class HelpCommand extends AbstractNutsCommand {
                 showLicense = true;
             } else if (cmdLine.isOption()) {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentsException("Invalid option " + cmdLine.read().getString());
+                    throw new NutsIllegalArgumentException("Invalid option " + cmdLine.read().getString());
                 }
             } else {
                 commandNames.add(cmdLine.readNonOption(new CommandNonOption("command", context)).getStringOrError());

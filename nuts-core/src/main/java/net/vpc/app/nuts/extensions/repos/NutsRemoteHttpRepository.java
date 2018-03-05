@@ -53,7 +53,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, boolean force, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -77,17 +77,20 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         return remoteId;
     }
 
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession session) {
+    @Override
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, boolean force, NutsSession session) {
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
-            throw new NutsIllegalArgumentsException("Offline");
+            throw new NutsIllegalArgumentException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         descriptor.write(descStream);
         httpUpload(CoreIOUtils.buildUrl(getConfigManager().getLocation(), "/deploy?" + resolveAuthURLPart()),
-                new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts", new ByteArrayInputStream(descStream.toByteArray())),
+                new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
+                        new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", file.getName(), file),
                 new NutsTransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
-                new NutsTransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(file))
+                new NutsTransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(file)),
+                new NutsTransportParamParamPart("force", String.valueOf(force))
         );
         //TODO should read the id
         return id;
@@ -200,7 +203,6 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 //        }
 //        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
 //    }
-
     @Override
     public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         boolean transitive = session.isTransitive();

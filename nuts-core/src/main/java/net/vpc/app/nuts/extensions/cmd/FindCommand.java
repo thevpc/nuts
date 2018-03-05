@@ -36,6 +36,9 @@ import net.vpc.app.nuts.extensions.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import net.vpc.common.commandline.ArgVal;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -48,8 +51,7 @@ public class FindCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();
@@ -65,7 +67,7 @@ public class FindCommand extends AbstractNutsCommand {
                     if (!cmdLine.isExecMode()) {
                         return -1;
                     }
-                    throw new NutsIllegalArgumentsException("Unsupported");
+                    throw new NutsIllegalArgumentException("Unsupported");
                 }
                 findContext.jsflag = true;
             } else if (currentFindWhat == 0 && cmdLine.readOnce("-x", "--expression")) {
@@ -143,7 +145,7 @@ public class FindCommand extends AbstractNutsCommand {
             } else if (currentFindWhat == 0 && cmdLine.readOnce("-Y", "--summary")) {
                 findContext.showSummary = true;
             } else {
-                CmdLine.Val val = cmdLine.readNonOptionOrError(new DefaultNonOption("Expression"));
+                ArgVal val = cmdLine.readNonOptionOrError(new DefaultNonOption("Expression"));
                 if (currentFindWhat + 1 >= findWhats.size()) {
                     findWhats.add(new FindWhat());
                 }
@@ -152,7 +154,7 @@ public class FindCommand extends AbstractNutsCommand {
                         if (findWhats.get(currentFindWhat).jsCode == null) {
                             findWhats.get(currentFindWhat).jsCode = val.getString();
                         } else {
-                            throw new NutsIllegalArgumentsException("Unsupported");
+                            throw new NutsIllegalArgumentException("Unsupported");
                         }
                     } else {
                         String arg = val.getString();
@@ -165,7 +167,7 @@ public class FindCommand extends AbstractNutsCommand {
 //                            }
                             findWhats.get(currentFindWhat).nonjs.add(arg);
                         } else {
-                            throw new NutsIllegalArgumentsException("Unsupported");
+                            throw new NutsIllegalArgumentException("Unsupported");
                         }
                     }
                 }
@@ -265,7 +267,7 @@ public class FindCommand extends AbstractNutsCommand {
                 return searchUpdate(findContext, search, ws);
             }
             case STATUS: {
-                throw new NutsIllegalArgumentsException("Unsupported");
+                throw new NutsIllegalArgumentException("Unsupported");
             }
         }
         return Collections.emptyList();

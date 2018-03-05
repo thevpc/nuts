@@ -54,10 +54,10 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
-//        if (url.startsWith("http")) {
-//            System.out.printf("Why");
-//        }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " downloading maven " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+        if (CoreIOUtils.isRemoteURL(url)) {
+            String message = CoreIOUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+        }
         return openStream(url, id.setFace(face), session);
     }
 
@@ -66,7 +66,10 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 //        if (url.startsWith("http")) {
 //            System.out.printf("Why");
 //        }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " downloading maven " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+        if (CoreIOUtils.isRemoteURL(url)) {
+            String message = CoreIOUtils.isRemoteURL(url) ? "downloading maven" : "open local file";
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+        }
         return CoreIOUtils.readStreamAsString(openStream(url, id.setFace(face), session), true);
     }
 
@@ -100,12 +103,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, boolean force, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, NutsSession context) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, boolean force, NutsSession context) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -232,5 +235,4 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 //        }
 //        throw new NutsNotFoundException(id);
 //    }
-
 }

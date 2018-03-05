@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.CommandAutoComplete;
 
 /**
  * Created by vpc on 1/7/17.
@@ -53,6 +55,12 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     public AbstractNutsCommand(String name, int supportLevel) {
         this.name = name;
         this.supportLevel = supportLevel;
+    }
+
+    protected CommandLine cmdLine(String[] args, NutsCommandContext context) {
+        CommandAutoComplete autoComplete = (CommandAutoComplete) context.getAutoComplete();
+        CommandLine cmdLine = new CommandLine(args, autoComplete);
+        return cmdLine;
     }
 
     @Override
@@ -117,7 +125,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
         context.setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
-                throw new NutsIllegalArgumentsException("Missing Auto Complete");
+                throw new NutsIllegalArgumentException("Missing Auto Complete");
             }
             NutsCommandAutoCompleteComponent best = context.getWorkspace().getExtensionManager().getFactory().createSupported(NutsCommandAutoCompleteComponent.class, this);
             if (best != null) {

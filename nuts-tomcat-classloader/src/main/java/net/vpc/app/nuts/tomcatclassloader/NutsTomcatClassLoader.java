@@ -34,7 +34,7 @@ import java.util.List;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsBootOptions;
 import net.vpc.app.nuts.NutsBootWorkspace;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 public class NutsTomcatClassLoader extends WebappClassLoader {
 
@@ -311,7 +311,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 return new File(jarFile);
             }
         } else {
-            throw new NutsIllegalArgumentsException("Unable to resolve url from " + urlFile);
+            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlFile);
         }
     }
 

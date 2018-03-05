@@ -8,8 +8,8 @@ package net.vpc.app.nuts.extensions.cmd.config;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -18,7 +18,7 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
 public class ImportConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         if (cmdLine.read("list imports", "li")) {
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {

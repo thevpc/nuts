@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NutsIllegalArgumentsException("Invalid boundary");
+        throw new NutsIllegalArgumentException("Invalid boundary");
     }
 
     private static class ErrInputStream extends InputStream {

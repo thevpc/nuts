@@ -162,7 +162,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             args.add(nutMainFile.getFile().getPath());
         } else {
             if (mainClass == null) {
-                throw new NutsIllegalArgumentsException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
             }
             args.add("-classpath");
             StringBuilder sb = new StringBuilder();
@@ -182,7 +182,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 List<String> possibleClasses = CoreStringUtils.split(mainClass, ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentsException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                        throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
                     case 1:
                         args.add(mainClass);
                         break;

@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.vpc.app.nuts.*;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -54,8 +56,8 @@ public class UserNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+    public List<ArgumentCandidate> getValues() {
+        List<ArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
             for (NutsUserInfo nutsSecurityEntityConfig : workspace.getSecurityManager().findUsers()) {
                 all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));

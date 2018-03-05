@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsHttpServerConfig;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsServer;
 import net.vpc.app.nuts.NutsServerComponent;
 import net.vpc.app.nuts.NutsWorkspaceServerManager;
@@ -36,7 +36,7 @@ class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerManager {
         }
         NutsServerComponent server = ws.getExtensionManager().getFactory().createSupported(NutsServerComponent.class, serverConfig);
         if (server == null) {
-            throw new NutsIllegalArgumentsException("Not server extensions are registered.");
+            throw new NutsIllegalArgumentException("Not server extensions are registered.");
         }
         NutsServer s = server.start(ws.self(), serverConfig);
         if (servers.get(s.getServerId()) != null) {
@@ -50,7 +50,7 @@ class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerManager {
     public NutsServer getServer(String serverId) {
         NutsServer nutsServer = servers.get(serverId);
         if (nutsServer == null) {
-            throw new NutsIllegalArgumentsException("Server not found " + serverId);
+            throw new NutsIllegalArgumentException("Server not found " + serverId);
         }
         return nutsServer;
     }

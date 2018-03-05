@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -60,7 +60,7 @@ public class NutsURLClassLoader extends URLClassLoader {
         try {
             super.addURL(url.toURI().toURL());
         } catch (MalformedURLException e) {
-            throw new NutsIllegalArgumentsException(url.toString());
+            throw new NutsIllegalArgumentException(url.toString());
         }
     }
 }

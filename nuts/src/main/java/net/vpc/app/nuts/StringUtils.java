@@ -59,6 +59,15 @@ class StringUtils {
         return result;
     }
 
+    public static String mergeLists(String sep, String ... lists) {
+        LinkedHashSet<String> all=new LinkedHashSet<>(Arrays.asList(splitAndRemoveDuplicates(Arrays.asList(lists))));
+        return join(sep, all);
+    }
+    
+    public static String join(String sep, String[] items) {
+        return join(sep, Arrays.asList(items));
+    }
+    
     public static String join(String sep, Collection<String> items) {
         StringBuilder sb = new StringBuilder();
         Iterator<String> i = items.iterator();
@@ -70,6 +79,24 @@ class StringUtils {
             sb.append(i.next());
         }
         return sb.toString();
+    }
+
+    public static String[] splitAndRemoveDuplicates(List<String>... possibilities) {
+        LinkedHashSet<String> allValid = new LinkedHashSet<>();
+        for (List<String> initial : possibilities) {
+            for (String v : initial) {
+                if (!StringUtils.isEmpty(v)) {
+                    v = v.trim();
+                    for (String v0 : v.split(";")) {
+                        v0 = v0.trim();
+                        if (!allValid.contains(v0)) {
+                            allValid.add(v0);
+                        }
+                    }
+                }
+            }
+        }
+        return allValid.toArray(new String[allValid.size()]);
     }
 
 }

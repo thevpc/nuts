@@ -68,15 +68,15 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
-    NutsFile updateWorkspace(NutsSession session);
+    NutsFile updateWorkspace(String nutsVersion, boolean force, NutsSession session);
 
     NutsUpdate[] checkWorkspaceUpdates(boolean applyUpdates, String[] args, NutsSession session);
 
     NutsUpdate checkUpdates(String id, NutsSession session);
 
-    NutsFile update(String id, NutsSession session);
+    NutsFile update(String id, boolean force, NutsSession session);
 
-    NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsSession session);
+    NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, boolean force, NutsSession session);
 
     NutsFile install(String id, boolean force, NutsSession session);
 
@@ -88,7 +88,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     boolean uninstall(String id, NutsSession session);
 
-    void push(String id, String repoId, NutsSession session);
+    void push(String id, String repoId, boolean force, NutsSession session);
 
     /**
      * creates a zip file based on the folder. The folder should contain a

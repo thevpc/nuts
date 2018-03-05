@@ -29,12 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
-import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.NutsNonBlockingInputStreamAdapter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
@@ -42,6 +39,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -53,8 +51,7 @@ public class ConnectCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         String password = null;
         String server = null;
         while (!cmdLine.isEmpty()) {
@@ -71,7 +68,7 @@ public class ConnectCommand extends AbstractNutsCommand {
         String login = null;
         int port = -1;
         if (server == null) {
-            throw new NutsIllegalArgumentsException("Missing address");
+            throw new NutsIllegalArgumentException("Missing address");
         }
         if (server.contains("@")) {
             login = server.substring(0, server.indexOf("@"));

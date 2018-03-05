@@ -70,10 +70,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             String[] arch, String[] os, String[] osdist, String[] platform,
             NutsDependency[] dependencies, Map<String, String> properties) {
         if (id == null) {
-            throw new NutsIllegalArgumentsException("Missing id");
+            throw new NutsIllegalArgumentException("Missing id");
         }
         if (!id.getQueryMap().isEmpty()) {
-            throw new NutsIllegalArgumentsException("id should not have query defined in descriptors");
+            throw new NutsIllegalArgumentException("id should not have query defined in descriptors");
         }
         this.id = id;
         this.face = face;

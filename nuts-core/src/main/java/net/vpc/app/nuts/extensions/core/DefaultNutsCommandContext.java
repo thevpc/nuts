@@ -125,7 +125,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     @Override
     public NutsWorkspace getValidWorkspace() {
         if (workspace == null) {
-            throw new NutsIllegalArgumentsException("No valid Workspace openWorkspace");
+            throw new NutsIllegalArgumentException("No valid Workspace openWorkspace");
         }
         return workspace;
     }

@@ -5,7 +5,7 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-core</artifactId>
     <name>net.vpc.app.nuts.nuts-core</name>
-    <version>0.3.8.0</version>
+    <version>0.3.9.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -69,22 +69,27 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.3.8</version>
+            <version>0.3.9</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
             <artifactId>jline</artifactId>
             <version>3.5.2</version>
         </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-commandline</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.jline</groupId>-->
-            <!--<artifactId>jline-terminal</artifactId>-->
-            <!--<version>3.5.2</version>-->
+        <!--<groupId>org.jline</groupId>-->
+        <!--<artifactId>jline-terminal</artifactId>-->
+        <!--<version>3.5.2</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.jline</groupId>-->
-            <!--<artifactId>jline-reader</artifactId>-->
-            <!--<version>3.5.2</version>-->
+        <!--<groupId>org.jline</groupId>-->
+        <!--<artifactId>jline-reader</artifactId>-->
+        <!--<version>3.5.2</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.ow2.asm</groupId>
@@ -102,24 +107,24 @@
             <version>1.0.4</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.apache.maven</groupId>-->
-            <!--<artifactId>maven-aether-provider</artifactId>-->
-            <!--<version>3.3.9</version>-->
+        <!--<groupId>org.apache.maven</groupId>-->
+        <!--<artifactId>maven-aether-provider</artifactId>-->
+        <!--<version>3.3.9</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.eclipse.aether</groupId>-->
-            <!--<artifactId>aether-connector-basic</artifactId>-->
-            <!--<version>1.1.0</version>-->
+        <!--<groupId>org.eclipse.aether</groupId>-->
+        <!--<artifactId>aether-connector-basic</artifactId>-->
+        <!--<version>1.1.0</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.eclipse.aether</groupId>-->
-            <!--<artifactId> aether-transport-http</artifactId>-->
-            <!--<version>1.1.0</version>-->
+        <!--<groupId>org.eclipse.aether</groupId>-->
+        <!--<artifactId> aether-transport-http</artifactId>-->
+        <!--<version>1.1.0</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.eclipse.aether</groupId>-->
-            <!--<artifactId> aether-transport-file</artifactId>-->
-            <!--<version>1.1.0</version>-->
+        <!--<groupId>org.eclipse.aether</groupId>-->
+        <!--<artifactId> aether-transport-file</artifactId>-->
+        <!--<version>1.1.0</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>junit</groupId>

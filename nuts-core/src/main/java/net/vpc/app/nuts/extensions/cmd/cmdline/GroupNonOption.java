@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.vpc.app.nuts.*;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -66,17 +68,17 @@ public class GroupNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+    public List<ArgumentCandidate> getValues() {
+        List<ArgumentCandidate> all = new ArrayList<>();
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
                 all.add(new DefaultNutsArgumentCandidate(n));
             }
-        }else if (repository != null) {
+        } else if (repository != null) {
             for (NutsUserInfo nutsSecurityEntityConfig : repository.getSecurityManager().findUsers()) {
                 all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
-        }else if (workspace != null) {
+        } else if (workspace != null) {
             for (NutsUserInfo nutsSecurityEntityConfig : workspace.getSecurityManager().findUsers()) {
                 all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }

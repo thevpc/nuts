@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
@@ -51,10 +50,9 @@ public class ExecCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
 
-        if (autoComplete != null) {
+        if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }
         String[] finalArgs = cmdLine.toArray();
@@ -81,7 +79,7 @@ public class ExecCommand extends AbstractNutsCommand {
                 }
             }
             if (commands.isEmpty()) {
-                throw new NutsIllegalArgumentsException("Missing command");
+                throw new NutsIllegalArgumentException("Missing command");
             }
             String[] commandsArray = commands.toArray(new String[commands.size()]);
             String currentDirectory = context.getCurrentDirectory();

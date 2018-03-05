@@ -281,7 +281,7 @@ public class CoreIOUtils {
                     return resolveJavaCommand(skey.substring(4), workspace);
                 } else if (skey.equals("nuts")) {
                     NutsFile nutsFile = null;
-                    nutsFile = workspace.fetch(NutsConstants.NUTS_COMPONENT_ID, session);
+                    nutsFile = workspace.fetch(NutsConstants.NUTS_ID_BOOT, session);
                     if (nutsFile.getFile() != null) {
                         return ("<::expand::> " + get("java") + " -jar " + nutsFile.getFile().getPath());
                     }
@@ -469,7 +469,7 @@ public class CoreIOUtils {
         if (sep < 0) {
             sep = p.lastIndexOf(':');
         }
-        p = sep < 0 ? p : p.substring(sep+1);
+        p = sep < 0 ? p : p.substring(sep + 1);
         sep = p.indexOf('?');
         if (sep >= 0) {
             p = p.substring(0, sep);
@@ -556,7 +556,7 @@ public class CoreIOUtils {
     public static File[] findFilesOrError(String path, File cwd) {
         File[] all = findFiles(path, cwd);
         if (all.length == 0) {
-            throw new NutsIllegalArgumentsException("No file found " + path);
+            throw new NutsIllegalArgumentException("No file found " + path);
         }
         return all;
     }
@@ -1241,7 +1241,7 @@ public class CoreIOUtils {
                 throw new NutsIOException();
             }
         }
-        throw new NutsIllegalArgumentsException("Unsupported variant " + variant);
+        throw new NutsIllegalArgumentException("Unsupported variant " + variant);
     }
 
     public static InputStreamSource createInputStreamSource(InputStream inputStream, String name) {
@@ -1332,5 +1332,92 @@ public class CoreIOUtils {
         } catch (IOException e) {
             return file.getAbsolutePath();
         }
+    }
+
+    public static boolean storeProperties(Properties p, File file) {
+        Writer writer = null;
+        try {
+            try {
+                p.store(writer = new FileWriter(file), null);
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Unable to store {0}", file);
+        }
+        return false;
+    }
+
+    public static Properties loadFileProperties(File file) {
+        Properties props = new Properties();
+        InputStream inputStream = null;
+        try {
+            try {
+                if (file != null && file.isFile()) {
+                    inputStream = new FileInputStream(file);
+                    props.load(inputStream);
+                }
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return props;
+    }
+
+    public static Properties loadURLProperties(String url) {
+        try {
+            if (url != null) {
+                return loadURLProperties(new URL(url));
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return new Properties();
+    }
+
+    public static Properties loadURLProperties(URL url) {
+        Properties props = new Properties();
+        InputStream inputStream = null;
+        try {
+            try {
+                if (url != null) {
+                    inputStream = url.openStream();
+                    props.load(inputStream);
+                }
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return props;
+    }
+
+    public static Properties loadFileProperties(String file) {
+        try {
+            if (file != null) {
+                return loadFileProperties(new File(file));
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return new Properties();
+    }
+
+    public static boolean isRemoteURL(String url) {
+        if (url == null) {
+            return false;
+        }
+        url = url.toLowerCase();
+        return (url.startsWith("http://") || url.startsWith("http://") || url.startsWith("ftp://"));
     }
 }

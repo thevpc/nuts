@@ -45,7 +45,7 @@ package net.vpc.app.nuts.extensions.servers;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.*;
@@ -309,13 +309,13 @@ public class MultipartStream2 {
             ProgressNotifier pNotifier) {
 
         if (boundary == null) {
-            throw new NutsIllegalArgumentsException("boundary may not be null");
+            throw new NutsIllegalArgumentException("boundary may not be null");
         }
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
         this.boundaryLength = boundary.length + BOUNDARY_PREFIX.length;
         if (bufSize < this.boundaryLength + 1) {
-            throw new NutsIllegalArgumentsException(
+            throw new NutsIllegalArgumentException(
                     "The buffer size specified for the MultipartStream is too small");
         }
 

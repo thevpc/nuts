@@ -987,6 +987,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     protected NutsDescriptor createInstance(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
             String[] arch, String[] os, String[] osdist, String[] platform,
             NutsDependency[] dependencies, Map<String, String> properties) {
-        throw new NutsIllegalArgumentsException("Unmodifiable instance");
+        throw new NutsIllegalArgumentException("Unmodifiable instance");
     }
 }

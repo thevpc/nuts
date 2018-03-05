@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.extensions.core.JsonTransient;
 
@@ -120,7 +120,7 @@ class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
     @Override
     public Object getValue(Object o) {
         if (getter == null) {
-            throw new NutsIllegalArgumentsException("Field inaccessible : no getter found for field " + getName());
+            throw new NutsIllegalArgumentException("Field inaccessible : no getter found for field " + getName());
         }
         try {
             return getter.invoke(o);
@@ -149,7 +149,7 @@ class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NutsIllegalArgumentsException(e);
+            throw new NutsIllegalArgumentException(e);
         }
     }
 

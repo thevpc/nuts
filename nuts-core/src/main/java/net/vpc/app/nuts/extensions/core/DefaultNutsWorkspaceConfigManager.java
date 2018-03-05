@@ -18,7 +18,7 @@ import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsBootWorkspace;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsSecurityException;
 import net.vpc.app.nuts.NutsWorkspaceConfig;
@@ -179,7 +179,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
         if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_SAVE_WORKSPACE)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SAVE_WORKSPACE);
         }
-        File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_FILE);
+        File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         CoreJsonUtils.get(ws.self()).storeJson(config, file, CoreJsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
         for (NutsRepository repo : ws.getEnabledRepositories()) {
             repo.save();
@@ -228,13 +228,13 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
     @Override
     public void setCwd(File cwd) {
         if (cwd == null) {
-            throw new NutsIllegalArgumentsException("Invalid cwd");
+            throw new NutsIllegalArgumentException("Invalid cwd");
         }
         if (!cwd.isDirectory()) {
-            throw new NutsIllegalArgumentsException("Invalid cwd " + cwd);
+            throw new NutsIllegalArgumentException("Invalid cwd " + cwd);
         }
         if (!cwd.isAbsolute()) {
-            throw new NutsIllegalArgumentsException("Invalid cwd " + cwd);
+            throw new NutsIllegalArgumentException("Invalid cwd " + cwd);
         }
         this.cwd = cwd;
     }
@@ -242,7 +242,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
     @Override
     public File resolveNutsJarFile() {
         try {
-            NutsId baseId = CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID);
+            NutsId baseId = CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_ID_BOOT);
             String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
             URL resource = Nuts.class.getResource(urlPath);
             if (resource != null) {

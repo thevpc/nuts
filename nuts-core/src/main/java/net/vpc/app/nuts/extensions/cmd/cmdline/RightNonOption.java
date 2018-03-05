@@ -42,6 +42,8 @@ import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsUserInfo;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -67,8 +69,8 @@ public class RightNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getValues() {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+    public List<ArgumentCandidate> getValues() {
+        List<ArgumentCandidate> all = new ArrayList<>();
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_ADD_REPOSITORY));
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_ADMIN));
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_DEPLOY));
@@ -83,11 +85,11 @@ public class RightNonOption extends DefaultNonOption {
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_SET_PASSWORD));
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNDEPLOY));
         all.add(new DefaultNutsArgumentCandidate(NutsConstants.RIGHT_UNINSTALL));
-        Iterator<NutsArgumentCandidate> i = all.iterator();
+        Iterator<ArgumentCandidate> i = all.iterator();
         NutsUserInfo info = repository != null ? repository.getSecurityManager().findUser(user) : workspace != null ? workspace.getSecurityManager().findUser(user) : null;
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getRights()));
         while (i.hasNext()) {
-            NutsArgumentCandidate right = i.next();
+            ArgumentCandidate right = i.next();
             if (existing) {
                 if (!rights.contains(right.getValue())) {
                     i.remove();

@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsInvalidWorkspaceException extends NutsIllegalArgumentsException {
+public class NutsInvalidWorkspaceException extends NutsIllegalArgumentException {
 
     private final String workspace;
 

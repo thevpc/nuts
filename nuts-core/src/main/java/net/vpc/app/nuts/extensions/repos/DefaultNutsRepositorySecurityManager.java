@@ -14,7 +14,7 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepositoryConfig;
 import net.vpc.app.nuts.NutsRepositorySecurityManager;
 import net.vpc.app.nuts.NutsSecurityEntityConfig;
@@ -75,7 +75,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public void addUser(String user, String credentials, String... rights) {
         if (CoreStringUtils.isEmpty(user)) {
-            throw new NutsIllegalArgumentsException("Invalid user");
+            throw new NutsIllegalArgumentException("Invalid user");
         }
         repo.getConfigManager().getConfig().setSecurity(new NutsSecurityEntityConfigImpl(user, null, null, null));
         setUserCredentials(user, credentials, null);
@@ -168,7 +168,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         }
         NutsSecurityEntityConfig u = repo.getConfigManager().getConfig().getSecurity(username);
         if (u == null) {
-            throw new NutsIllegalArgumentsException("No such user " + username);
+            throw new NutsIllegalArgumentException("No such user " + username);
         }
         if (!repo.getWorkspace().getSecurityManager().getCurrentLogin().equals(username)) {
             if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
@@ -185,7 +185,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
             }
         }
         if (CoreStringUtils.isEmpty(password)) {
-            throw new NutsIllegalArgumentsException("Missing password");
+            throw new NutsIllegalArgumentException("Missing password");
         }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(repo.getRepositoryId(), 20) + " Update user credentials " + username);
         repo.getConfigManager().getConfig().setSecurity(u);

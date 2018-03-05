@@ -14,10 +14,10 @@ import net.vpc.app.nuts.NutsWorkspaceCreateOptions;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
 import net.vpc.app.nuts.extensions.cmd.cmdline.ArchitectureNonOption;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
-import net.vpc.app.nuts.extensions.cmd.cmdline.DefaultNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FolderNonOption;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *
@@ -26,11 +26,11 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
-    public boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         if (cmdLine.readOnce("show location")) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
-                session.getTerminal().getOut().printf("%s\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation());
+                session.getTerminal().getOut().printf("%s\n", context.getValidWorkspace().getConfigManager().getWorkspaceLocation());
             }
             return true;
         }
@@ -42,16 +42,20 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
             return true;
         }
         if (cmdLine.readOnce("update")) {
+            boolean force = true;
+            String version = null;
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
                 NutsFile newVersion = null;
                 try {
-                    newVersion = context.getValidWorkspace().updateWorkspace(session);
+                    newVersion = context.getValidWorkspace().updateWorkspace(version, force, session);
                 } catch (Exception ex) {
                     //not found
+                    ex.printStackTrace();
+                    session.getTerminal().getErr().printf("[[%s]]\n", ex.toString());
                 }
                 if (newVersion != null) {
-                    session.getTerminal().getOut().printf("Workspace updated to [[%s]]\n",newVersion.getId());
+                    session.getTerminal().getOut().printf("Workspace updated to [[%s]]\n", newVersion.getId());
                 }
             }
             return true;

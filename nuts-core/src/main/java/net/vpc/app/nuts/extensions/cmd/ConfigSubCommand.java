@@ -7,21 +7,22 @@ package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsComponent;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  *
  * @author vpc
  */
-public interface ConfigSubCommand extends NutsComponent<Object>{
+public interface ConfigSubCommand extends NutsComponent<Object> {
 
     /**
      * true if processed
+     *
      * @param cmdLine
      * @param autoSave
      * @param context
      * @param config
-     * @return 
+     * @return
      */
-    boolean exec(CmdLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context);
+    boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context);
 }

@@ -30,8 +30,8 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.*;
 import java.util.*;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -51,9 +51,8 @@ public class ConfigCommand extends AbstractNutsCommand {
                     context.getValidWorkspace().getExtensionManager().getFactory().createAllSupported(ConfigSubCommand.class, this)
             );
         }
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
         Boolean autoSave = null;
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean empty = true;
         do {
             if (cmdLine.readOnce("--save")) {
@@ -149,7 +148,7 @@ public class ConfigCommand extends AbstractNutsCommand {
         }
     }
 
-    public static boolean trySave(NutsCommandContext context, NutsWorkspace workspace, NutsRepository repository, Boolean save, CmdLine cmdLine) {
+    public static boolean trySave(NutsCommandContext context, NutsWorkspace workspace, NutsRepository repository, Boolean save, CommandLine cmdLine) {
         if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository != null) {
@@ -178,7 +177,7 @@ public class ConfigCommand extends AbstractNutsCommand {
                     workspace.getConfigManager().save();
                     context.getTerminal().getOut().printf("##workspace saved.##\n");
                 } else {
-                    context.getTerminal().getOut().printf("##repository %s saved.##\n",repository.getRepositoryId());
+                    context.getTerminal().getOut().printf("##repository %s saved.##\n", repository.getRepositoryId());
                     repository.save();
                 }
             }

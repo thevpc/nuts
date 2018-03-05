@@ -44,7 +44,7 @@ public interface NutsWorkspaceRepositoryManager {
 
     NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate);
 
-    NutsRepository openRepository(String repositoryId, File repositoryRoot, String location, String type, boolean autoCreate);
+    NutsRepository openRepository(String repositoryId, String location, String type, File repositoryRoot, boolean autoCreate);
 
     NutsRepository findRepository(String repositoryIdPath);
 

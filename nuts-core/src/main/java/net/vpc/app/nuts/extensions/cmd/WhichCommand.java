@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.cmd;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
 
 import java.net.URL;
@@ -86,7 +85,7 @@ public class WhichCommand extends AbstractNutsCommand {
 
         NutsFile core = null;
         try {
-            core = workspace.fetch(NutsConstants.NUTS_COMPONENT_CORE_ID, session.copy().setFetchMode(NutsFetchMode.OFFLINE));
+            core = workspace.fetch(NutsConstants.NUTS_ID_RUNTIME, session.copy().setFetchMode(NutsFetchMode.OFFLINE));
         } catch (Exception e) {
             //ignore
         }
@@ -105,8 +104,7 @@ public class WhichCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         NutsWorkspace validWorkspace = context.getValidWorkspace();
         NutsPrintStream out = context.getTerminal().getOut();
         if (cmdLine.isEmpty()) {

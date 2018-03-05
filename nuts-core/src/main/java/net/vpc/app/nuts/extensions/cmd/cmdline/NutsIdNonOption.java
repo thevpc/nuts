@@ -35,7 +35,7 @@ import net.vpc.app.nuts.NutsCommandContext;
  *
  * @author vpc
  */
-public class NutsIdNonOption extends DefaultNonOption {
+public class NutsIdNonOption extends net.vpc.common.commandline.DefaultNonOption {
 
     private NutsCommandContext context;
 

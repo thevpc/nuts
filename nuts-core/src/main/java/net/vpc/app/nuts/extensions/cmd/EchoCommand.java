@@ -29,12 +29,12 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
-import net.vpc.app.nuts.NutsCommandAutoComplete;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
+import net.vpc.common.commandline.ArgVal;
+import net.vpc.common.commandline.CommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,38 +46,37 @@ public class EchoCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmd = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean noTrailingNewLine = false;
         boolean plain = false;
         boolean first = true;
         NutsPrintStream out = context.getTerminal().getOut();
-        while (!cmd.isEmpty()) {
-            if (cmd.isOption()) {
-                CmdLine.Val option = cmd.read();
+        while (!cmdLine.isEmpty()) {
+            if (cmdLine.isOption()) {
+                ArgVal option = cmdLine.read();
                 if (option.isAny("-n")) {
                     noTrailingNewLine = true;
                 } else if (option.isAny("-p")) {
                     plain = true;
                 } else {
-                    throw new NutsIllegalArgumentsException("Unsupported option " + option);
+                    throw new NutsIllegalArgumentException("Unsupported option " + option);
                 }
             } else {
-                if (cmd.isExecMode()) {
+                if (cmdLine.isExecMode()) {
                     if (first) {
                         first = false;
                     } else {
                         out.print(" ");
                     }
                     if (plain) {
-                        out.print(cmd.readNonOptionOrError(new ValueNonOption("value", context)).getString());
+                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value", context)).getString());
                     } else {
-                        out.print(cmd.readNonOptionOrError(new ValueNonOption("value", context)).getString());
+                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value", context)).getString());
                     }
                 }
             }
         }
-        if (cmd.isExecMode()) {
+        if (cmdLine.isExecMode()) {
             if (!noTrailingNewLine) {
                 out.println();
             }

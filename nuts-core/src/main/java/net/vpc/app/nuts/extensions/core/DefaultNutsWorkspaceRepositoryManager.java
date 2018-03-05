@@ -79,12 +79,13 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
             throw new NutsRepositoryAlreadyRegisteredException(repositoryId);
         }
         ws.getConfigManager().getConfig().addRepository(new NutsRepositoryLocationImpl(repositoryId, location, type));
-        NutsRepository repo = openRepository(repositoryId, new File(getRepositoriesRoot(), repositoryId), location, type, autoCreate);
+//        NutsRepository repo = openRepository(repositoryId, new File(getRepositoriesRoot(), repositoryId), location, type, autoCreate);
+        NutsRepository repo = openRepository(repositoryId, location, type, getRepositoriesRoot(), autoCreate);
         return repo;
     }
 
     File getRepositoriesRoot() {
-        return CoreIOUtils.createFile(ws.getConfigManager().getWorkspaceLocation(), NutsConstants.DEFAULT_REPOSITORIES_ROOT);
+        return CoreIOUtils.createFile(ws.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES);
     }
 
     @Override
@@ -150,7 +151,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
     }
 
     @Override
-    public NutsRepository openRepository(String repositoryId, File repositoryRoot, String location, String type, boolean autoCreate) {
+    public NutsRepository openRepository(String repositoryId, String location, String type, File repositoryRoot, boolean autoCreate) {
         if (CoreStringUtils.isEmpty(type)) {
             type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
         }

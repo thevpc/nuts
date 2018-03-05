@@ -29,9 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -43,8 +41,7 @@ public class LogoutCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         cmdLine.requireEmpty();
         if (!cmdLine.isExecMode()) {
             return -1;

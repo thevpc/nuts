@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsIllegalArgumentsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -308,7 +308,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_ARCH.contains(arch)) {
             return true;
         }
-        throw new NutsIllegalArgumentsException("Unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
+        throw new NutsIllegalArgumentException("Unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
     }
 
     public static boolean checkSupportedOs(String os) {
@@ -318,7 +318,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_OS.contains(os)) {
             return true;
         }
-        throw new NutsIllegalArgumentsException("Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
+        throw new NutsIllegalArgumentException("Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
     }
 
     public static String getArch() {
@@ -341,7 +341,7 @@ public class CorePlatformUtils {
 
     public static URL resolveURLFromResource(Class cls, String urlPath) throws MalformedURLException {
         if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentsException("Unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlPath);
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -364,7 +364,7 @@ public class CorePlatformUtils {
             if (url_tostring.endsWith(encoded)) {
                 return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
             }
-            throw new NutsIllegalArgumentsException("Unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlPath);
         }
     }
 
@@ -379,7 +379,7 @@ public class CorePlatformUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NutsIllegalArgumentsException("Unable to encode " + t, ex);
+                    throw new NutsIllegalArgumentException("Unable to encode " + t, ex);
                 }
             }
         }

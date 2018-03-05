@@ -29,11 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
-import net.vpc.app.nuts.NutsCommandAutoComplete;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsDeployment;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.extensions.cmd.cmdline.CmdLine;
 import net.vpc.app.nuts.extensions.cmd.cmdline.FileNonOption;
 import net.vpc.app.nuts.extensions.cmd.cmdline.RepositoryNonOption;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
@@ -50,12 +48,11 @@ public class DeployCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
-        CmdLine cmdLine = new CmdLine(autoComplete, args);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
         String descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
         String repository = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
-        if (autoComplete != null) {
+        if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }
         for (String s : CoreIOUtils.expandPath(contentFile, new File(context.getCommandLine().getCwd()))) {
@@ -67,7 +64,7 @@ public class DeployCommand extends AbstractNutsCommand {
                             .setRepositoryId(repository),
                     context.getSession()
             );
-            context.getTerminal().getOut().printf("File ==%s== deployed successfully as ==%s==\n" + id,s,id);
+            context.getTerminal().getOut().printf("File ==%s== deployed successfully as ==%s==\n" + id, s, id);
         }
         return 0;
     }
