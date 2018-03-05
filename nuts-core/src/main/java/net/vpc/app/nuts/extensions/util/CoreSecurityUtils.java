@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsIOException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -136,7 +135,25 @@ public class CoreSecurityUtils {
             throw new NutsIOException(e);
         }
 
-        return new HexBinaryAdapter().marshal(sha1.digest());
+        return toHexString(sha1.digest());
 
+    }
+
+    public static String toHexString(byte[] bytes) {
+        StringBuffer sb = new StringBuffer(bytes.length * 2);
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(toHex(bytes[i] >> 4));
+            sb.append(toHex(bytes[i]));
+        }
+
+        return sb.toString();
+    }
+
+    private static char toHex(int nibble) {
+        final char[] hexDigit
+                = {
+                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+                };
+        return hexDigit[nibble & 0xF];
     }
 }

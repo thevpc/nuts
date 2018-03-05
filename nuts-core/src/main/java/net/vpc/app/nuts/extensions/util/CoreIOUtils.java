@@ -1418,6 +1418,6 @@ public class CoreIOUtils {
             return false;
         }
         url = url.toLowerCase();
-        return (url.startsWith("http://") || url.startsWith("http://") || url.startsWith("ftp://"));
+        return (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://"));
     }
 }
