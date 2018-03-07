@@ -54,7 +54,7 @@ public class LsCommand extends AbstractNutsCommand {
     private static final FileSorter FILE_SORTER = new FileSorter();
 
     public LsCommand() {
-        super("ls", CORE_SUPPORT);
+        super("ls", DEFAULT_SUPPORT);
     }
 
     private static class Options {

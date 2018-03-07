@@ -64,6 +64,7 @@ import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOs;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOsdist;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPlatform;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdJavascriptFilter;
+import net.vpc.app.nuts.extensions.filters.repository.ExprNutsRepositoryFilter;
 
 /**
  * Created by vpc on 5/16/17.
@@ -667,6 +668,10 @@ public class CoreNutsUtils {
         if (object.getType().equals(NutsRepositoryFilter.class)) {
             return (NutsRepositoryFilter) object.getValue();
         }
+        if (object.getType().equals(String.class)) {
+            String s = (String) object.getValue();
+            return new ExprNutsRepositoryFilter(s);
+        }
         throw new NutsIllegalArgumentException("createNutsRepositoryFilter Not yet supported from type " + object.getType().getName());
     }
 
@@ -876,6 +881,10 @@ public class CoreNutsUtils {
         sb.append(name);
         sb.append(ext);
         return sb.toString();
+    }
+
+    public static String nativePath(String path) {
+        return path.replace('/', File.separatorChar);
     }
 
 }

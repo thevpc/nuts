@@ -53,7 +53,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsFile nutsFile) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     public int exec(NutsExecutionContext executionContext) {

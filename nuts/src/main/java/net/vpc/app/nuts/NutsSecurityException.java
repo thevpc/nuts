@@ -33,7 +33,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  */
-public class NutsSecurityException extends SecurityException{
+public class NutsSecurityException extends SecurityException {
 
     public NutsSecurityException() {
     }
@@ -49,5 +49,5 @@ public class NutsSecurityException extends SecurityException{
     public NutsSecurityException(Throwable cause) {
         super(cause);
     }
-    
+
 }

@@ -49,7 +49,7 @@ import net.vpc.common.commandline.DefaultNonOption;
 public class ServerCommand extends AbstractNutsCommand {
 
     public ServerCommand() {
-        super("server", CORE_SUPPORT);
+        super("server", DEFAULT_SUPPORT);
     }
 
     @Override

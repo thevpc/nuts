@@ -5,6 +5,7 @@ import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
@@ -39,6 +40,36 @@ public class ScopeNutsDependencyFilter implements NutsDependencyFilter, Simplifi
     @Override
     public NutsDependencyFilter simplify() {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ScopeNutsDependencyFilter" + scopes;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.scopes);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ScopeNutsDependencyFilter other = (ScopeNutsDependencyFilter) obj;
+        if (!Objects.equals(this.scopes, other.scopes)) {
+            return false;
+        }
+        return true;
     }
 
 }

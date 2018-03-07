@@ -62,7 +62,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     private static String removeBashComment(String str) {

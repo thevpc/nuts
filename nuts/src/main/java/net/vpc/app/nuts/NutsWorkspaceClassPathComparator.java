@@ -38,7 +38,7 @@ import java.util.List;
  * @author vpc
  */
 class NutsWorkspaceClassPathComparator implements Comparator<NutsWorkspaceClassPath> {
-    
+
     public NutsWorkspaceClassPathComparator() {
     }
 
@@ -111,5 +111,5 @@ class NutsWorkspaceClassPathComparator implements Comparator<NutsWorkspaceClassP
         }
         return all.toArray(new String[all.size()]);
     }
-    
+
 }

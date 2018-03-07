@@ -37,6 +37,7 @@ import java.util.logging.*;
 
 /**
  * Log util helper
+ *
  * @author Taha BEN SALAH <taha.bensalah@gmail.com>
  * @creationdate 9/16/12 10:00 PM
  */

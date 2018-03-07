@@ -41,7 +41,7 @@ import net.vpc.common.commandline.DefaultNonOption;
 public class LoginCommand extends AbstractNutsCommand {
 
     public LoginCommand() {
-        super("login", CORE_SUPPORT);
+        super("login", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

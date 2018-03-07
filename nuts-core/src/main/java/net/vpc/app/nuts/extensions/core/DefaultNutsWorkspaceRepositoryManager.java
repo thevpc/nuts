@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInvalidRepositoryException;
 import net.vpc.app.nuts.NutsRepoInfo;
 import net.vpc.app.nuts.NutsRepository;
@@ -157,7 +158,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         }
         NutsRepositoryFactoryComponent factory_ = ws.getExtensionManager().getFactory().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
         if (factory_ != null) {
-            NutsRepository r = factory_.create(repositoryId, location, type, repositoryRoot);
+            NutsRepository r = factory_.create(repositoryId, location, type, ws, null, repositoryRoot);
             if (r != null) {
                 r.open(autoCreate);
                 wireRepository(r);

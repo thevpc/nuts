@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import javax.security.auth.callback.CallbackHandler;
-
 /**
  *
  * @author vpc

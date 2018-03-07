@@ -110,7 +110,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
                     }
                 }
             } catch (IOException e) {
-                log.log(Level.SEVERE, "Unable to load help for " + getName(), e);
+                log.log(Level.CONFIG, "Unable to load help for " + getName(), e);
             }
             if (help == null) {
                 help = "no help found for command " + getName();

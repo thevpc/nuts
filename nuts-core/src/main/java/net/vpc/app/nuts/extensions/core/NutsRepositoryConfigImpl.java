@@ -37,6 +37,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import net.vpc.app.nuts.NutsRepositoryLocation;
 
 /**
  * Created by vpc on 1/8/17.
@@ -44,7 +45,7 @@ import java.util.Properties;
 public class NutsRepositoryConfigImpl implements NutsRepositoryConfig {
 
     private static final long serialVersionUID = 1;
-    private final Map<String, NutsRepositoryConfig> mirrors = new HashMap<>();
+    private final Map<String, NutsRepositoryLocation> mirrors = new HashMap<>();
     private final Map<String, NutsSecurityEntityConfig> security = new HashMap<>();
     private String id;
     private String type;
@@ -108,9 +109,8 @@ public class NutsRepositoryConfigImpl implements NutsRepositoryConfig {
     }
 
     @Override
-    public NutsRepositoryConfig setGroups(String groups) {
+    public void setGroups(String groups) {
         this.groups = groups;
-        return this;
     }
 
     @Override
@@ -119,26 +119,26 @@ public class NutsRepositoryConfigImpl implements NutsRepositoryConfig {
     }
 
     @Override
-    public void addMirror(NutsRepositoryConfig c) {
+    public void addMirror(NutsRepositoryLocation c) {
         if (c != null) {
             mirrors.put(c.getId(), c);
         }
     }
 
     @Override
-    public NutsRepositoryConfig getMirror(String id) {
+    public NutsRepositoryLocation getMirror(String id) {
         return mirrors.get(id);
     }
 
     @Override
-    public NutsRepositoryConfig[] getMirrors() {
-        return mirrors.values().toArray(new NutsRepositoryConfig[mirrors.size()]);
+    public NutsRepositoryLocation[] getMirrors() {
+        return mirrors.values().toArray(new NutsRepositoryLocation[mirrors.size()]);
     }
 
     @Override
-    public void setMirrors(NutsRepositoryConfig[] mirrors) {
+    public void setMirrors(NutsRepositoryLocation[] mirrors) {
         this.mirrors.clear();
-        for (NutsRepositoryConfig mirror : mirrors) {
+        for (NutsRepositoryLocation mirror : mirrors) {
             addMirror(mirror);
         }
     }

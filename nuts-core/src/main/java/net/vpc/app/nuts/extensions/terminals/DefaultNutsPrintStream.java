@@ -177,7 +177,7 @@ public class DefaultNutsPrintStream extends AbstractNutsPrintStream {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT + 1;
+        return DEFAULT_SUPPORT + 1;
     }
 
     @Override

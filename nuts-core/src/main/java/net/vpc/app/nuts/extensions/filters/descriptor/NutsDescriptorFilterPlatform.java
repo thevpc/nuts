@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
+import java.util.Objects;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
@@ -69,6 +70,36 @@ public class NutsDescriptorFilterPlatform implements NutsDescriptorFilter, Simpl
     @Override
     public String toJsNutsDescriptorFilterExpr() {
         return "descriptor.matchesPlatform('" + CoreStringUtils.escapeCoteStrings(platform) + "')";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.platform);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDescriptorFilterPlatform other = (NutsDescriptorFilterPlatform) obj;
+        if (!Objects.equals(this.platform, other.platform)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Platform{" + platform + '}';
     }
 
 }

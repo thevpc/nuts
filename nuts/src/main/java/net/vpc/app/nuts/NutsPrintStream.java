@@ -36,6 +36,7 @@ import java.util.Locale;
  * Created by vpc on 2/20/17.
  */
 public abstract class NutsPrintStream extends PrintStream implements NutsComponent<Object> {
+
     public NutsPrintStream() {
         super(NullOutputStream.INSTANCE);
     }

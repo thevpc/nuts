@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import net.vpc.common.commandline.ArgVal;
-import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.DefaultNonOption;
 
 /**
@@ -46,7 +45,7 @@ import net.vpc.common.commandline.DefaultNonOption;
 public class FindCommand extends AbstractNutsCommand {
 
     public FindCommand() {
-        super("find", CORE_SUPPORT);
+        super("find", DEFAULT_SUPPORT);
     }
 
     @Override

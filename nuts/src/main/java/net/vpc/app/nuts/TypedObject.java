@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Objects;
+
 public class TypedObject {
 
     private final Class type;
@@ -52,4 +54,43 @@ public class TypedObject {
     public Object getValue() {
         return value;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.type);
+        hash = 89 * hash + Objects.hashCode(this.variant);
+        hash = 89 * hash + Objects.hashCode(this.value);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TypedObject other = (TypedObject) obj;
+        if (!Objects.equals(this.variant, other.variant)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Objects.equals(this.value, other.value)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + type.getSimpleName() + (variant == null ? "" : "/" + variant) + "=" + value + '}';
+    }
+
 }

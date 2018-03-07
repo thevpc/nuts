@@ -44,8 +44,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     private static final Logger log = Logger.getLogger(AbstractMavenRepository.class.getName());
 
-    public AbstractMavenRepository(NutsRepositoryConfig config, NutsWorkspace workspace, File root, int slowness) {
-        super(config, workspace, root, slowness);
+    public AbstractMavenRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int slowness) {
+        super(config, workspace, parentRepository, root, slowness);
         extensions.put("src", "-src.zip");
         extensions.put("pom", ".pom");
     }

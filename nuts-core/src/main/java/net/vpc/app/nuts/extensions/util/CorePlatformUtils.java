@@ -47,6 +47,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.ObjectFilter;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
@@ -98,6 +99,25 @@ public class CorePlatformUtils {
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         return new HashMap<>();
+    }
+
+    public static String getOsSystemLib() {
+        switch (CoreNutsUtils.parseNutsId(getOs()).getFullName()) {
+            case "linux":
+            case "mac":
+            case "sunos":
+            case "freebsd": {
+                return "/usr/share";
+            }
+            case "windows": {
+                String pf = System.getenv("ProgramFiles");
+                if (CoreStringUtils.isEmpty(pf)) {
+                    pf = "C:\\Program Files";
+                }
+                return pf;
+            }
+        }
+        return "/usr/share";
     }
 
     /**
@@ -298,7 +318,8 @@ public class CorePlatformUtils {
             }
             return "freebsd#" + v;
         }
-        return property;
+        return "unknown";
+//        return property;
     }
 
     public static boolean checkSupportedArch(String arch) {
@@ -626,7 +647,7 @@ public class CorePlatformUtils {
         return names;
     }
 
-    public static boolean isLoadedClassPath(File file, ClassLoader classLoader) {
+    public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NutsTerminal terminal) {
 //    private boolean isLoadedClassPath(NutsFile nutsFile) {
 //        if (file.getId().isSameFullName(NutsId.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
 //            return true;
@@ -646,7 +667,9 @@ public class CorePlatformUtils {
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             try {
                                 Class<?> aClass = (classLoader == null ? Thread.currentThread().getContextClassLoader() : classLoader).loadClass(clz);
-                                System.out.printf("Loaded %s from %s\n", aClass, file);
+                                if (terminal != null) {
+                                    terminal.getOut().printf("Loaded %s from %s\n", aClass, file);
+                                }
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;

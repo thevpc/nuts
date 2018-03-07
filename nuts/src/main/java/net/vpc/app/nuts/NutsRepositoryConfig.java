@@ -51,17 +51,17 @@ public interface NutsRepositoryConfig {
 
     String getGroups();
 
-    NutsRepositoryConfig setGroups(String groups);
+    void setGroups(String groups);
 
     void removeMirror(String repositoryId);
 
-    void addMirror(NutsRepositoryConfig c);
+    void addMirror(NutsRepositoryLocation c);
 
-    NutsRepositoryConfig getMirror(String id);
+    NutsRepositoryLocation getMirror(String id);
 
-    NutsRepositoryConfig[] getMirrors();
+    NutsRepositoryLocation[] getMirrors();
 
-    void setMirrors(NutsRepositoryConfig[] mirrors);
+    void setMirrors(NutsRepositoryLocation[] mirrors);
 
     String getEnv(String property, String defaultValue);
 

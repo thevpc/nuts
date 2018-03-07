@@ -41,7 +41,7 @@ import java.io.File;
 public class CommitCommand extends AbstractNutsCommand {
 
     public CommitCommand() {
-        super("commit", CORE_SUPPORT);
+        super("commit", DEFAULT_SUPPORT);
     }
 
     @Override

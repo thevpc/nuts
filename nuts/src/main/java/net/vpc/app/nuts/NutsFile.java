@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * Created by vpc on 1/6/17.
@@ -117,4 +118,54 @@ public class NutsFile {
     public NutsFile copy() {
         return new NutsFile(this);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.descriptor);
+        hash = 67 * hash + Objects.hashCode(this.file);
+        hash = 67 * hash + Objects.hashCode(this.id);
+        hash = 67 * hash + (this.cached ? 1 : 0);
+        hash = 67 * hash + (this.temporary ? 1 : 0);
+        hash = 67 * hash + (this.installed ? 1 : 0);
+        hash = 67 * hash + Objects.hashCode(this.installFolder);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsFile other = (NutsFile) obj;
+        if (this.cached != other.cached) {
+            return false;
+        }
+        if (this.temporary != other.temporary) {
+            return false;
+        }
+        if (this.installed != other.installed) {
+            return false;
+        }
+        if (!Objects.equals(this.descriptor, other.descriptor)) {
+            return false;
+        }
+        if (!Objects.equals(this.file, other.file)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.installFolder, other.installFolder)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

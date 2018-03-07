@@ -39,7 +39,7 @@ import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 public class VersionCommand extends AbstractNutsCommand {
 
     public VersionCommand() {
-        super("version", CORE_SUPPORT);
+        super("version", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

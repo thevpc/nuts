@@ -42,7 +42,7 @@ import java.io.File;
 public class CheckoutCommand extends AbstractNutsCommand {
 
     public CheckoutCommand() {
-        super("checkout", CORE_SUPPORT);
+        super("checkout", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

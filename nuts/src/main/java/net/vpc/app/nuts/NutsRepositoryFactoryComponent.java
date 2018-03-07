@@ -39,6 +39,6 @@ public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepoIn
 
     NutsRepositoryDefinition[] getDefaultRepositories();
 
-    NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot);
+    NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot);
 
 }

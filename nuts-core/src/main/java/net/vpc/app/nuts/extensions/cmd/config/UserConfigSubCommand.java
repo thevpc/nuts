@@ -316,7 +316,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
 }

@@ -14,7 +14,7 @@ public class NutsDeployment {
     private boolean force;
 
     public NutsDeployment setForce(boolean force) {
-        this.force=force;
+        this.force = force;
         return this;
     }
 
@@ -56,7 +56,7 @@ public class NutsDeployment {
     public boolean isForce() {
         return force;
     }
-    
+
     public String getSha1() {
         return sha1;
     }

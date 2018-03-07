@@ -30,8 +30,7 @@
 package net.vpc.app.nuts;
 
 /**
- * Map Listener
- * Created by vpc on 1/21/17.
+ * Map Listener Created by vpc on 1/21/17.
  */
 public interface MapListener<K, V> {
 

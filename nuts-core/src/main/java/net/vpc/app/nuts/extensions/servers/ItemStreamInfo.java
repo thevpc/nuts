@@ -95,31 +95,31 @@ public class ItemStreamInfo {
         throw new NutsIllegalArgumentException("Invalid boundary");
     }
 
-    private static class ErrInputStream extends InputStream {
-
-        private final InputStream ss;
-        private final byte[] refBytes;
-        int index;
-
-        public ErrInputStream(InputStream ss, byte[] refBytes) {
-            this.ss = ss;
-            this.refBytes = refBytes;
-            index = 0;
-        }
-
-        @Override
-        public int read() throws IOException {
-            int y = ss.read();
-            if (y < 0) {
-                return y;
-            }
-            int expected = refBytes[index] & 0xff;
-            if (y != expected) {
-                System.out.printf("Error at %s\n", index);
-//                throw new IOException("Error");
-            }
-            index++;
-            return y;
-        }
-    }
+//    private static class ErrInputStream extends InputStream {
+//
+//        private final InputStream ss;
+//        private final byte[] refBytes;
+//        int index;
+//
+//        public ErrInputStream(InputStream ss, byte[] refBytes) {
+//            this.ss = ss;
+//            this.refBytes = refBytes;
+//            index = 0;
+//        }
+//
+//        @Override
+//        public int read() throws IOException {
+//            int y = ss.read();
+//            if (y < 0) {
+//                return y;
+//            }
+//            int expected = refBytes[index] & 0xff;
+//            if (y != expected) {
+//                System.out.printf("Error at %s\n", index);
+////                throw new IOException("Error");
+//            }
+//            index++;
+//            return y;
+//        }
+//    }
 }

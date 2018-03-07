@@ -97,5 +97,4 @@ public class NutsBootOptions implements Serializable {
         return true;
     }
 
-    
 }

@@ -40,7 +40,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 public class UnameCommand extends AbstractNutsCommand {
 
     public UnameCommand() {
-        super("uname", CORE_SUPPORT);
+        super("uname", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

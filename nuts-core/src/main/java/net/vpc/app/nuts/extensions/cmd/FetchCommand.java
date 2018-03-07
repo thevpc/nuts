@@ -43,7 +43,7 @@ import java.io.File;
 public class FetchCommand extends AbstractNutsCommand {
 
     public FetchCommand() {
-        super("fetch", CORE_SUPPORT);
+        super("fetch", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

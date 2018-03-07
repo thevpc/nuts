@@ -58,7 +58,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
     public int getSupportLevel(NutsFile nutsFile) {
         if (nutsFile != null && nutsFile.getDescriptor() != null) {
             if ("zip".equals(nutsFile.getDescriptor().getPackaging())) {
-                return CORE_SUPPORT;
+                return DEFAULT_SUPPORT;
             }
         }
         return NO_SUPPORT;

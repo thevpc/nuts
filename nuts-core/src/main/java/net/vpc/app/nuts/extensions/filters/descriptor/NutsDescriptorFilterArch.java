@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
+import java.util.Objects;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
@@ -71,4 +72,35 @@ public class NutsDescriptorFilterArch implements NutsDescriptorFilter, Simplifia
         return "descriptor.matchesArch('" + CoreStringUtils.escapeCoteStrings(arch) + "')";
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.arch);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDescriptorFilterArch other = (NutsDescriptorFilterArch) obj;
+        if (!Objects.equals(this.arch, other.arch)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Arch{" + arch + '}';
+    }
+
+    
 }

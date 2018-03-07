@@ -34,7 +34,7 @@ import net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeCompo
 import net.vpc.app.nuts.extensions.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
-import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyFilter2;
+import net.vpc.app.nuts.extensions.filters.dependency.NutsExclusionDependencyFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdPatternFilter;
 
 import java.io.File;
@@ -481,11 +481,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 }
             }
         }
-        log.log(Level.SEVERE, "Inaccessible runtime info. Fatal error");
-        for (String bootUrl : bootUrls) {
-            log.log(Level.SEVERE, "Inaccessible runtime info url : {0}", bootUrl);
+        if (bootUrls.isEmpty()) {
+            log.log(Level.CONFIG, "Inaccessible runtime info. Fatal error");
         }
-        throw new NutsIllegalArgumentException("Missing boot infos");
+        for (String bootUrl : bootUrls) {
+            log.log(Level.CONFIG, "Inaccessible runtime info url : {0}", bootUrl);
+        }
+        throw new NutsIllegalArgumentException("Inaccessible runtime info : " + bootUrls);
     }
 
     protected String expandPath(String path) {
@@ -567,7 +569,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
         }
         if (updatedExtensions.size() > 0) {
-            log.log(Level.SEVERE, "Some extensions were updated. Nuts should be restarted for extensions to take effect.");
+            log.log(Level.INFO, "Some extensions were updated. Nuts should be restarted for extensions to take effect.");
         }
         return bootIdFile[0];
     }
@@ -1243,7 +1245,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public int getSupportLevel(NutsBootWorkspace criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     @Override
@@ -1530,7 +1532,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (exclusions == null || exclusions.length == 0) {
             return filter;
         }
-        return new NutsDependencyFilter2(filter, exclusions);
+        return new NutsExclusionDependencyFilter(filter, exclusions);
     }
 
     protected NutsId deploy(File contentFile, NutsDescriptor descriptor, String repositoryId, boolean force, NutsSession session) {
@@ -2099,7 +2101,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
             NutsSecurityEntityConfig adminSecurity = getConfigManager().getConfig().getSecurity(NutsConstants.USER_ADMIN);
             if (adminSecurity == null || CoreStringUtils.isEmpty(adminSecurity.getCredentials())) {
-                log.log(Level.SEVERE, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+                log.log(Level.CONFIG, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
                 getSecurityManager().setUserCredentials(NutsConstants.USER_ADMIN, "admin");
                 if (save) {
                     getConfigManager().save();

@@ -332,7 +332,11 @@ public class CoreStringUtils {
     }
 
     public static String exceptionToString(Throwable ex) {
-        return ex.getMessage();
+        String message = ex.getMessage();
+        if(message==null){
+            message=ex.toString();
+        }
+        return message;
     }
 
     public static String simpexpToRegexp(String pattern) {

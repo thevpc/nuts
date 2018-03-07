@@ -30,10 +30,12 @@
 package net.vpc.app.nuts;
 
 /**
- * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its dependencies and for
- * creating workspaces using the method {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}.
- * NutsBootWorkspace is also responsible of managing local jar cache folder located at $root/bootstrap
- * where $root is the nuts root folder (~/.nuts) defined by {@link #getRootLocation()}.
+ * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its
+ * dependencies and for creating workspaces using the method
+ * {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}. NutsBootWorkspace
+ * is also responsible of managing local jar cache folder located at
+ * $root/bootstrap where $root is the nuts root folder (~/.nuts) defined by
+ * {@link #getRootLocation()}.
  * <pre>
  *   ~/.nuts/bootstrap ({@link #getBootstrapLocation})
  *       └── net
@@ -48,45 +50,53 @@ package net.vpc.app.nuts;
  *                       └── nuts-core
  *                           └── 0.3.8.0
  *                               └── nuts-core-0.3.8.0.properties
- * </pre>
- * Created by vpc on 1/6/17.
+ * </pre> Created by vpc on 1/6/17.
  */
 public interface NutsBootWorkspace {
 
     /**
-     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts component. The nuts id includes the version.
-     * @return a string representing the boot nuts id in the form net.vpc.app.nuts:nuts#VERSION
+     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts component. The
+     * nuts id includes the version.
+     *
+     * @return a string representing the boot nuts id in the form
+     * net.vpc.app.nuts:nuts#VERSION
      */
     String getBootId();
 
     /**
-     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts-core component. The nuts id includes the version.
-     * It may return another implementation component other then net.vpc.app.nuts:nuts-core
-     * @return a string representing the boot nuts id in the form net.vpc.app.nuts-core:nuts#VERSION
+     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts-core component.
+     * The nuts id includes the version. It may return another implementation
+     * component other then net.vpc.app.nuts:nuts-core
+     *
+     * @return a string representing the boot nuts id in the form
+     * net.vpc.app.nuts-core:nuts#VERSION
      */
     String getRuntimeId();
 
     /**
      * nuts root folder. It defaults to "~/.nuts"
+     *
      * @return nuts root folder
      */
     String getRootLocation();
 
     /**
-     * nuts bootstrap folder. It defaults to "~/.nuts/bootstrap"
-     * bootstrap folder contains jars and configuration files about
-     * nuts dependencies.
+     * nuts bootstrap folder. It defaults to "~/.nuts/bootstrap" bootstrap
+     * folder contains jars and configuration files about nuts dependencies.
+     *
      * @return nuts bootstrap folder
      */
     String getBootstrapLocation();
 
     /**
-     * opens (and create if necessary) a new workspace at <code>workspaceLocation</code> location and
-     * according to the given creation options. workspaceLocation may be absolute or relative in which case it will
-     * be resolved as a sub folder of nuts root folder (see {@link #getRootLocation()}).
-     * If no options are provided (options==null) workspace will be created and saved it not found
-     * (<code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
+     * opens (and create if necessary) a new workspace at
+     * <code>workspaceLocation</code> location and according to the given
+     * creation options. workspaceLocation may be absolute or relative in which
+     * case it will be resolved as a sub folder of nuts root folder (see
+     * {@link #getRootLocation()}). If no options are provided (options==null)
+     * workspace will be created and saved it not found null     (<code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
      * Please note that it may not be safe to create several instances of the same workspace.
+     *
      * @param workspaceLocation workspace location
      * @param options creation options
      * @return a valid and initialized Workspace implementation

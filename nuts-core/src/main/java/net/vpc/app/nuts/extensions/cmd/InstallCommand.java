@@ -43,7 +43,7 @@ import java.io.File;
 public class InstallCommand extends AbstractNutsCommand {
 
     public InstallCommand() {
-        super("install", CORE_SUPPORT);
+        super("install", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

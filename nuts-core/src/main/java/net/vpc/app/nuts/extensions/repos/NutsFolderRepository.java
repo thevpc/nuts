@@ -46,8 +46,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     public static final Logger log = Logger.getLogger(NutsFolderRepository.class.getName());
 
-    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, root, SPEED_FAST);
+    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
+        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository, root, SPEED_FAST);
         extensions.put("src", "-src.zip");
     }
 
@@ -126,10 +126,10 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (nutDescFile == null) {
             throw new NutsIllegalArgumentException("Invalid descriptor");
         }
-        boolean deployed=false;
+        boolean deployed = false;
         if (force || !nutDescFile.exists()) {
             if (nutDescFile.exists()) {
-                log.log(Level.FINE, "Nuts desc file Ovrerridden {0}", nutDescFile.getPath());
+                log.log(Level.FINE, "Nuts descriptor file Ovrerridden {0}", nutDescFile.getPath());
             }
             descriptor.write(nutDescFile);
             try {
@@ -142,7 +142,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (force || !localFile.exists()) {
             try {
                 if (localFile.exists()) {
-                    log.log(Level.FINE, "Nuts component file Ovrerridden {0}", localFile.getPath());
+                    log.log(Level.FINE, "Nuts component  file Ovrerridden {0}", localFile.getPath());
                 }
                 CoreIOUtils.copy(file, localFile, true);
                 CoreIOUtils.copy(CoreSecurityUtils.evalSHA1(localFile), CoreIOUtils.createFile(localFile.getParent(), localFile.getName() + ".sha1"), true);

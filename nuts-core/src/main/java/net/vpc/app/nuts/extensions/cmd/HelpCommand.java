@@ -45,7 +45,7 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 public class HelpCommand extends AbstractNutsCommand {
 
     public HelpCommand() {
-        super("help", CORE_SUPPORT);
+        super("help", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

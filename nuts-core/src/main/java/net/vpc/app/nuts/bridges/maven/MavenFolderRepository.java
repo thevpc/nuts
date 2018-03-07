@@ -46,8 +46,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
-    public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, "maven"), workspace, root, SPEED_FAST);
+    public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
+        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, "maven"), workspace, parentRepository, root, SPEED_FAST);
     }
 
     @Override
@@ -281,7 +281,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
                 if (nutsDescriptor.getId().getName() == null) {
                     //why?
-                    log.log(Level.SEVERE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
+                    log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
                     return null;
                 }
                 if (pathname.getName().endsWith(".pom")) {

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
+import java.util.Objects;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.NutsIdFilter;
@@ -78,6 +79,36 @@ public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifia
             return ((JsNutsIdFilter) id).toJsNutsIdFilterExpr();
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Id{" + id + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDescriptorFilterById other = (NutsDescriptorFilterById) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepository;
@@ -48,7 +47,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
             String repoType = cmdLine.readNonOption(new RepositoryNonOption("RepositoryType", context.getValidWorkspace())).getString();
             cmdLine.requireEmpty();
             if (cmdLine.isExecMode()) {
-                NutsRepository repository = validWorkspace.getRepositoryManager().openRepository(repositoryId, location, repoType, null, true);
+                NutsRepository repository = validWorkspace.getRepositoryManager().addRepository(repositoryId, location, repoType, true);
                 ConfigCommand.trySave(context, validWorkspace, repository, autoSave, null);
             }
             return true;
@@ -202,7 +201,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
 }

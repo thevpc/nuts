@@ -46,7 +46,7 @@ import net.vpc.common.commandline.CommandLine;
 public class CdCommand extends AbstractNutsCommand {
 
     public CdCommand() {
-        super("cd", CORE_SUPPORT);
+        super("cd", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

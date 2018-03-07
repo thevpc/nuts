@@ -59,15 +59,15 @@ class StringUtils {
         return result;
     }
 
-    public static String mergeLists(String sep, String ... lists) {
-        LinkedHashSet<String> all=new LinkedHashSet<>(Arrays.asList(splitAndRemoveDuplicates(Arrays.asList(lists))));
+    public static String mergeLists(String sep, String... lists) {
+        LinkedHashSet<String> all = new LinkedHashSet<>(Arrays.asList(splitAndRemoveDuplicates(Arrays.asList(lists))));
         return join(sep, all);
     }
-    
+
     public static String join(String sep, String[] items) {
         return join(sep, Arrays.asList(items));
     }
-    
+
     public static String join(String sep, Collection<String> items) {
         StringBuilder sb = new StringBuilder();
         Iterator<String> i = items.iterator();

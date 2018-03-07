@@ -69,7 +69,7 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
         } else if (cmdLine.read("get loglevel")) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
-                System.out.printf("%s\n", rootLogger.getLevel().toString());
+                context.getTerminal().getOut().printf("%s\n", rootLogger.getLevel().toString());
             }
         }
         return false;
@@ -77,7 +77,7 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
 }

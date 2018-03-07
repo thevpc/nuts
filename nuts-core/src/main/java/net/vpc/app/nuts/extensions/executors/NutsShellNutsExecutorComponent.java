@@ -55,7 +55,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         if (nutsFile != null) {
             if ("nsh".equals(nutsFile.getDescriptor().getPackaging())
                     || "nuts".equals(nutsFile.getDescriptor().getPackaging())) {
-                return CORE_SUPPORT + 1;
+                return DEFAULT_SUPPORT + 1;
             }
         }
         return NO_SUPPORT;

@@ -46,7 +46,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     @Override

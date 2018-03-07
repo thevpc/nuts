@@ -43,8 +43,8 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     private static final Logger log = Logger.getLogger(NutsRemoteHttpRepository.class.getName());
     private NutsId remoteId;
 
-    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, root, SPEED_SLOW);
+    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
+        super(new NutsRepositoryConfigImpl(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository, root, SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(url + "/version"));
         } catch (Exception ex) {

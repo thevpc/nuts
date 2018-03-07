@@ -55,10 +55,9 @@ public class NutsConstants {
     public static final String BOOTSTRAP_REPOSITORY_NAME = "bootstrap";
 
     /**
-     * default repository name. By default a repository named
-     * "local" is created as folder
-     * ~/.nuts/default-workspace/local (assuming default workspace
-     * and default root naming)
+     * default repository name. By default a repository named "local" is created
+     * as folder ~/.nuts/default-workspace/local (assuming default workspace and
+     * default root naming)
      */
     public static final String DEFAULT_REPOSITORY_NAME = "local";
 

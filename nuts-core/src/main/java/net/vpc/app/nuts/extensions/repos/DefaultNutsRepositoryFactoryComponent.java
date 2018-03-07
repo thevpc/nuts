@@ -33,6 +33,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.io.File;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -47,20 +49,19 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
             return NO_SUPPORT;
         }
         if (CoreStringUtils.isEmpty(location)) {
-            return BOOT_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {
-            return BOOT_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         return NO_SUPPORT;
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot) {
         if (NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
-            NutsWorkspace workspace = NutsEnvironmentContext.getNutsWorkspace();
             if (!location.contains("://")) {
-                return new NutsFolderRepository(repositoryId, location, workspace, repositoryRoot);
+                return new NutsFolderRepository(repositoryId, location, workspace, parentRepository, repositoryRoot);
             }
         }
         return null;
@@ -68,6 +69,8 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
 
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories() {
-        return new NutsRepositoryDefinition[0];
+        return new NutsRepositoryDefinition[]{
+            new NutsRepositoryDefinition("system", CorePlatformUtils.getOsSystemLib() + CoreNutsUtils.nativePath("/nuts/system-repository"), "nuts", false)
+        };
     }
 }

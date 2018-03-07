@@ -54,7 +54,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     public int getSupportLevel(NutsFile nutsFile) {
         if (nutsFile != null) {
             if ("jar".equals(nutsFile.getDescriptor().getPackaging())) {
-                return CORE_SUPPORT + 1;
+                return DEFAULT_SUPPORT + 1;
             }
         }
         return NO_SUPPORT;

@@ -17,11 +17,6 @@ public class DefaultNutsTextNodeParser {
 
     public static final DefaultNutsTextNodeParser INSTANCE = new DefaultNutsTextNodeParser();
 
-    public static void main(String[] args) {
-        NutsDocNode r = INSTANCE.parse("**hello**");
-        System.out.println(r);
-    }
-
     private TokResult parse(char[] s, int index, String exit) {
         List<NutsDocNode> all = new ArrayList<NutsDocNode>();
         StringBuilder curr = new StringBuilder();

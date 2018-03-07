@@ -65,7 +65,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
     @Override
     public int getSupportLevel(ServerConfig config) {
-        return (config == null || config instanceof NutsHttpServerConfig) ? CORE_SUPPORT : NO_SUPPORT;
+        return (config == null || config instanceof NutsHttpServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
     public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
@@ -98,6 +98,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
+        NutsTerminal terminal = invokerWorkspace.getExtensionManager().getFactory().createTerminal();
 
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
@@ -160,7 +161,8 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                             SSLParameters defaultSSLParameters = c.getDefaultSSLParameters();
                             params.setSSLParameters(defaultSSLParameters);
                         } catch (Exception ex) {
-                            log.log(Level.SEVERE, "Failed to create HTTPS port");
+                            log.log(Level.CONFIG, "Failed to create HTTPS port");
+                            terminal.getErr().printf("**Failed to create HTTPS port**");
                         }
                     }
                 });
@@ -221,10 +223,10 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         });
         server.start();
-        System.out.printf("Nuts Http Service '%s' running at %s\n" ,serverId, inetSocketAddress);
-        System.out.printf("Serving workspaces: \n");
+        terminal.getOut().printf("Nuts Http Service '%s' running at %s\n", serverId, inetSocketAddress);
+        terminal.getOut().printf("Serving workspaces: \n");
         for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
-            System.out.printf("\t%s : %s\n", entry.getKey(), entry.getValue().getConfigManager().getWorkspaceLocation());
+            terminal.getOut().printf("\t%s : %s\n", entry.getKey(), entry.getValue().getConfigManager().getWorkspaceLocation());
         }
         final String finalServerId = serverId;
         return new NutsServer() {

@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.extensions.core.NutsRepositoryLocationImpl;
 import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
 
 /**
@@ -50,12 +51,13 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
     protected Map<String, String> extensions = new HashMap<String, String>();
     private String repositoryId;
+    private NutsRepository parentRepository;
     private NutsWorkspace workspace;
     private Map<String, NutsRepository> mirors = new HashMap<>();
     private NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
     private DefaultNutsRepositoryConfigManager configManager;
 
-    public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, File root, int speed) {
+    public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int speed) {
         if (config == null) {
             throw new NutsIllegalArgumentException("Null Config");
         }
@@ -72,6 +74,16 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
         this.repositoryId = config.getId();
         this.workspace = workspace;
+        this.parentRepository = parentRepository;
+    }
+
+    @Override
+    public String getRepositoryLocation() {
+        return getConfigManager().getLocation();
+    }
+
+    public NutsRepository getParentRepository() {
+        return parentRepository;
     }
 
     public NutsRepositoryConfigManager getConfigManager() {
@@ -94,8 +106,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 checkNutsRepositoryConfig(newConfig);
                 configManager.setConfig(newConfig);
                 repositoryId = getConfigManager().getConfig().getId();
-                for (NutsRepositoryConfig repositoryConfig : getConfigManager().getConfig().getMirrors()) {
-                    wireRepository(getWorkspace().getRepositoryManager().openRepository(repositoryConfig.getId(), repositoryConfig.getLocation(), repositoryConfig.getType(), new File(getMirorsRoot(), repositoryConfig.getId()), true));
+                for (NutsRepositoryLocation repositoryConfig : getConfigManager().getConfig().getMirrors()) {
+                    openRepository(repositoryConfig.getId(), repositoryConfig.getLocation(), repositoryConfig.getType(), new File(getMirorsRoot(), repositoryConfig.getId()), true);
                 }
 
             }
@@ -109,6 +121,22 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 throw new NutsRepositoryNotFoundException(getRepositoryId());
             }
         }
+    }
+
+    protected NutsRepository openRepository(String repositoryId, String location, String type, File repositoryRoot, boolean autoCreate) {
+        if (CoreStringUtils.isEmpty(type)) {
+            type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
+        }
+        NutsRepositoryFactoryComponent factory_ = getWorkspace().getExtensionManager().getFactory().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
+        if (factory_ != null) {
+            NutsRepository r = factory_.create(repositoryId, location, type, getWorkspace(), this, repositoryRoot);
+            if (r != null) {
+                r.open(autoCreate);
+                wireRepository(r);
+                return r;
+            }
+        }
+        throw new NutsInvalidRepositoryException(repositoryId, "Invalid type " + type);
     }
 
     private File getMirorsRoot() {
@@ -163,7 +191,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public void save() {
+    public boolean save() {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SAVE_REPOSITORY);
         }
@@ -172,8 +200,14 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!file.exists()) {
             created = true;
         }
+        boolean saved = false;
         getConfigManager().getLocationFolder().mkdirs();
-        CoreJsonUtils.get(getWorkspace()).storeJson(getConfigManager().getConfig(), file, CoreJsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
+        try {
+            CoreJsonUtils.get(getWorkspace()).storeJson(getConfigManager().getConfig(), file, CoreJsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
+            saved = true;
+        } catch (NutsIOException ex) {
+            //unable to store;
+        }
         if (created) {
             log.log(Level.INFO, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Created repository " + getRepositoryId() + " at " + getConfigManager().getLocationFolder().getPath());
         } else {
@@ -182,6 +216,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepository repository : mirors.values()) {
             repository.save();
         }
+        return saved;
     }
 
     @Override
@@ -267,17 +302,16 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsInvalidRepositoryException(repositoryId, "Invalid type " + type);
         }
 
-        NutsRepositoryConfig newConf = new NutsRepositoryConfigImpl(repositoryId, location, type);
+        NutsRepositoryLocation newConf = new NutsRepositoryLocationImpl(repositoryId, location, type);
 
-        NutsRepositoryConfig repoConf = getConfigManager().getConfig().getMirror(repositoryId);
+        NutsRepositoryLocation repoConf = getConfigManager().getConfig().getMirror(repositoryId);
         if (repoConf != null) {
             throw new NutsRepositoryAlreadyRegisteredException(repositoryId);
         }
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
         getConfigManager().getConfig().addMirror(newConf);
 
-        NutsRepository repo = getWorkspace().getRepositoryManager().openRepository(repositoryId, location, type, new File(getMirorsRoot(), repositoryId), autoCreate);
-        wireRepository(repo);
+        NutsRepository repo = openRepository(repositoryId, location, type, new File(getMirorsRoot(), repositoryId), autoCreate);
         return repo;
     }
 
@@ -580,12 +614,22 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public void setEnabled(boolean enabled) {
-        getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).setEnabled(enabled);
+        NutsRepository pr = getParentRepository();
+        if (pr != null) {
+            pr.getConfigManager().getConfig().getMirror(getConfigManager().getConfig().getId()).setEnabled(enabled);
+        } else {
+            getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).setEnabled(enabled);
+        }
     }
 
     @Override
     public boolean isEnabled() {
-        return getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).isEnabled();
+        NutsRepository pr = getParentRepository();
+        if (pr != null) {
+            return pr.getConfigManager().getConfig().getMirror(getConfigManager().getConfig().getId()).isEnabled();
+        } else {
+            return getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).isEnabled();
+        }
     }
 
     private void checkNutsRepositoryConfig(NutsRepositoryConfig config) {

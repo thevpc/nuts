@@ -39,7 +39,7 @@ import net.vpc.common.commandline.DefaultNonOption;
 public class PushCommand extends AbstractNutsCommand {
 
     public PushCommand() {
-        super("push", CORE_SUPPORT);
+        super("push", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

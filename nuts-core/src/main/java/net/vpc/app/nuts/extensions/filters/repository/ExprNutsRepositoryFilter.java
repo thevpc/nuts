@@ -5,24 +5,32 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
-import java.util.Set;
+import java.util.regex.Pattern;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+public class ExprNutsRepositoryFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
 
-    private final Set<String> repos;
+    private String repos;
+    private Pattern reposPattern;
 
-    public DefaultNutsRepositoryFilter(Set<String> repos) {
+    public ExprNutsRepositoryFilter(String repos) {
         this.repos = repos;
+        if (CoreStringUtils.isEmpty(repos)) {
+            reposPattern = Pattern.compile(".*");
+            this.repos = "";
+        } else {
+            reposPattern = Pattern.compile(CoreStringUtils.simpexpToRegexp(repos));
+        }
     }
 
     @Override
     public boolean accept(NutsRepository repository) {
-        return repos.isEmpty() || repos.contains(repository.getRepositoryId());
+        return repos.isEmpty() || reposPattern.matcher(CoreStringUtils.trim(repository.getRepositoryId())).matches();
     }
 
     @Override
     public NutsRepositoryFilter simplify() {
-        if (repos.isEmpty()) {
+        if (CoreStringUtils.isEmpty(repos)) {
             return null;
         }
         return this;
@@ -30,13 +38,13 @@ public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simpli
 
     @Override
     public String toString() {
-        return "DefaultNutsRepositoryFilter{" + "repos=" + repos + '}';
+        return "ExprNutsRepositoryFilter{" + "repos=" + repos + '}';
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + Objects.hashCode(this.repos);
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.repos);
         return hash;
     }
 
@@ -51,12 +59,11 @@ public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simpli
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultNutsRepositoryFilter other = (DefaultNutsRepositoryFilter) obj;
+        final ExprNutsRepositoryFilter other = (ExprNutsRepositoryFilter) obj;
         if (!Objects.equals(this.repos, other.repos)) {
             return false;
         }
         return true;
     }
-    
     
 }

@@ -1,8 +1,11 @@
 package net.vpc.app.nuts.extensions.filters.dependency;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
@@ -40,5 +43,36 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
         }
         return this;
     }
+
+        @Override
+    public String toString() {
+        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Arrays.deepHashCode(this.all);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDependencyFilterOr other = (NutsDependencyFilterOr) obj;
+        if (!Arrays.deepEquals(this.all, other.all)) {
+            return false;
+        }
+        return true;
+    }
+    
 
 }

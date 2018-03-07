@@ -61,7 +61,7 @@ public class DefaultNutsTerminal implements NutsTerminal {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return BOOT_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     @Override

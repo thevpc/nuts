@@ -45,7 +45,7 @@ import java.util.Map;
 public class ExecCommand extends AbstractNutsCommand {
 
     public ExecCommand() {
-        super("exec", CORE_SUPPORT);
+        super("exec", DEFAULT_SUPPORT);
     }
 
     @Override

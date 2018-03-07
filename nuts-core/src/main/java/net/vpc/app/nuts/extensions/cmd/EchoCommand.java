@@ -34,7 +34,6 @@ import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
 import net.vpc.common.commandline.ArgVal;
-import net.vpc.common.commandline.CommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -42,7 +41,7 @@ import net.vpc.common.commandline.CommandLine;
 public class EchoCommand extends AbstractNutsCommand {
 
     public EchoCommand() {
-        super("echo", CORE_SUPPORT);
+        super("echo", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

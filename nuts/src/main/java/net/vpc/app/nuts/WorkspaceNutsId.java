@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Objects;
+
 class WorkspaceNutsId {
 
     String groupId;
@@ -71,5 +73,38 @@ class WorkspaceNutsId {
     public String getArtifactId() {
         return artifactId;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.groupId);
+        hash = 53 * hash + Objects.hashCode(this.artifactId);
+        hash = 53 * hash + Objects.hashCode(this.version);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final WorkspaceNutsId other = (WorkspaceNutsId) obj;
+        if (!Objects.equals(this.groupId, other.groupId)) {
+            return false;
+        }
+        if (!Objects.equals(this.artifactId, other.artifactId)) {
+            return false;
+        }
+        if (!Objects.equals(this.version, other.version)) {
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -55,7 +55,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     @Override

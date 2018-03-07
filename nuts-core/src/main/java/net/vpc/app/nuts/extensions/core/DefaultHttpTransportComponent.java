@@ -50,7 +50,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
     @Override
     public int getSupportLevel(String url) {
-        return BOOT_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     @Override

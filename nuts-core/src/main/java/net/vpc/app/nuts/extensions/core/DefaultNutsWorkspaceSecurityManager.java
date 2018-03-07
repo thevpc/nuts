@@ -76,7 +76,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         }
         NutsUserInfo adminSecurity = findUser(NutsConstants.USER_ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
-            DefaultNutsWorkspace.log.log(Level.SEVERE, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+            DefaultNutsWorkspace.log.log(Level.CONFIG, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
             setUserCredentials(NutsConstants.USER_ADMIN, "admin");
         }
         String credentials = CoreSecurityUtils.evalSHA1(adminPassword);

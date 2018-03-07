@@ -304,7 +304,6 @@ public class Nuts {
             System.err.printf("Exiting nuts, Bye!\n");
             throw new NutsIllegalArgumentException("Unable to locate nuts-core components", ex);
         }
-        long endWSTime = System.currentTimeMillis();
         NutsSession session = ws.getExtensionManager().getFactory().createSession();
         if (nocolors) {
             session.getTerminal().getOut().print("`disable-formats`");

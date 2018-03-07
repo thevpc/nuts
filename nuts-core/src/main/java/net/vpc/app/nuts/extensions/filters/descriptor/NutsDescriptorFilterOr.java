@@ -6,7 +6,9 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 public class NutsDescriptorFilterOr implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
@@ -83,4 +85,8 @@ public class NutsDescriptorFilterOr implements NutsDescriptorFilter, Simplifiabl
         return sb.toString();
     }
 
+    @Override
+    public String toString() {
+        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+    }
 }

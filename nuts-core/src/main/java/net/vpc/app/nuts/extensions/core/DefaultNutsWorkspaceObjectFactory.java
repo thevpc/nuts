@@ -158,7 +158,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
         try {
             theInstance = t.newInstance();
         } catch (InstantiationException e) {
-            log.log(Level.SEVERE, "Unable to instantiate " + t, e);
+            log.log(Level.CONFIG, "Unable to instantiate " + t, e);
             Throwable cause = e.getCause();
             if (cause == null) {
                 cause = e;
@@ -187,7 +187,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
         try {
             t1 = t.getConstructor(argTypes).newInstance(args);
         } catch (InstantiationException e) {
-            log.log(Level.SEVERE, "Unable to instantiate " + t, e);
+            log.log(Level.CONFIG, "Unable to instantiate " + t, e);
             Throwable cause = e.getCause();
             if (cause == null) {
                 cause = e;
@@ -197,7 +197,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
             }
             throw new NutsFactoryException(cause);
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Unable to instantiate " + t, e);
+            log.log(Level.CONFIG, "Unable to instantiate " + t, e);
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -392,7 +392,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
 
     @Override
     public int getSupportLevel(NutsWorkspaceObjectFactory criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
     
 

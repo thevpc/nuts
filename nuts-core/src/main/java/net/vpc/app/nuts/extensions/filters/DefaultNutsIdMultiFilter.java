@@ -76,7 +76,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 }
             } catch (Exception ex) {
                 //suppose we cannot retrieve descriptor
-                log.log(Level.SEVERE, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
+                log.log(Level.INFO, "Unable to fetch Descriptor for " + id + " : " + ex.toString());
                 return false;
             }
             if (!descriptorFilter.accept(descriptor)) {
@@ -178,4 +178,10 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
         }
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return "DefaultNutsIdMultiFilter{" + "idFilter=" + idFilter + ", versionFilter=" + versionFilter + ", descriptorFilter=" + descriptorFilter + ", repository=" + (repository == null ? "" : repository.getRepositoryId()) + '}';
+    }
+
 }

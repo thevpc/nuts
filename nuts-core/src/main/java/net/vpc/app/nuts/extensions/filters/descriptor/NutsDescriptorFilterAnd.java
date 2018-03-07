@@ -6,7 +6,9 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
@@ -82,4 +84,35 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
         }
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Arrays.deepHashCode(this.all);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDescriptorFilterAnd other = (NutsDescriptorFilterAnd) obj;
+        if (!Arrays.deepEquals(this.all, other.all)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return CoreStringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+    }
+
 }

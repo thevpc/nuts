@@ -62,7 +62,7 @@ public class DefaultNutsConsole implements NutsConsole {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     @Override
@@ -186,7 +186,7 @@ public class DefaultNutsConsole implements NutsConsole {
         private final JavaShellInternalCmd ec;
 
         public ShellToNutsCommand(JavaShellInternalCmd ec) {
-            super(ec.getName(), CORE_SUPPORT);
+            super(ec.getName(), DEFAULT_SUPPORT);
             this.ec = ec;
         }
 

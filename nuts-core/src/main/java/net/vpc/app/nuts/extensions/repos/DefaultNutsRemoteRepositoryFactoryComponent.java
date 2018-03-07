@@ -47,20 +47,19 @@ public class DefaultNutsRemoteRepositoryFactoryComponent implements NutsReposito
             return NO_SUPPORT;
         }
         if (CoreStringUtils.isEmpty(location)) {
-            return CORE_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         if (location.startsWith("http://") || location.startsWith("https://")) {
-            return CORE_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         return NO_SUPPORT;
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot) {
         if (NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
-            NutsWorkspace workspace = NutsEnvironmentContext.getNutsWorkspace();
             if (location.startsWith("http://") || location.startsWith("https://")) {
-                return (new NutsRemoteHttpRepository(repositoryId, location, workspace, repositoryRoot));
+                return (new NutsRemoteHttpRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));
             }
         }
         return null;

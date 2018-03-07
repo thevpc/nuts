@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
+import java.util.Objects;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
@@ -69,6 +70,36 @@ public class NutsDescriptorFilterPackaging implements NutsDescriptorFilter, Simp
     @Override
     public String toJsNutsDescriptorFilterExpr() {
         return "descriptor.matchesPackaging('" + CoreStringUtils.escapeCoteStrings(packaging) + "')";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.packaging);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDescriptorFilterPackaging other = (NutsDescriptorFilterPackaging) obj;
+        if (!Objects.equals(this.packaging, other.packaging)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Packaging{" + packaging + '}';
     }
 
 }

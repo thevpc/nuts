@@ -43,7 +43,7 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.ValueNonOption;
 public class UpdateCommand extends AbstractNutsCommand {
 
     public UpdateCommand() {
-        super("update", CORE_SUPPORT);
+        super("update", DEFAULT_SUPPORT);
     }
 
     @Override
@@ -80,9 +80,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getValidWorkspace();
         NutsFile file = ws.update(id, force, context.getSession());
         if (file.isCached()) {
-            context.getTerminal().getOut().printf("%s already installed\n", file.getId());
+            context.getTerminal().getOut().printf("%s **already installed**\n", file.getId());
         } else {
-            context.getTerminal().getOut().printf("%s installed successfully\n", file.getId());
+            context.getTerminal().getOut().printf("%s ##installed successfully##\n", file.getId());
         }
     }
 
@@ -90,9 +90,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getValidWorkspace();
         NutsFile file = ws.updateWorkspace(version, force, context.getSession());
         if (file.isCached()) {
-            context.getTerminal().getOut().printf("%s already installed\n", file.getId());
+            context.getTerminal().getOut().printf("%s **already installed**\n", file.getId());
         } else {
-            context.getTerminal().getOut().printf("%s installed successfully\n", file.getId());
+            context.getTerminal().getOut().printf("%s ##installed successfully##\n", file.getId());
         }
     }
 }

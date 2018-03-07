@@ -38,6 +38,7 @@ import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,4 +130,30 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         }
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + Objects.hashCode(this.intervals);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultNutsVersionFilter other = (DefaultNutsVersionFilter) obj;
+        if (!Objects.equals(this.intervals, other.intervals)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class NutsDependencySearch {
@@ -128,4 +129,55 @@ public class NutsDependencySearch {
     public Set<NutsId> getNoFoundResult() {
         return noFoundResult;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.ids);
+        hash = 41 * hash + (this.includeMain ? 1 : 0);
+        hash = 41 * hash + (this.trackNotFound ? 1 : 0);
+        hash = 41 * hash + Objects.hashCode(this.dependencyFilter);
+        hash = 41 * hash + Objects.hashCode(this.scope);
+        hash = 41 * hash + Objects.hashCode(this.noFoundResult);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsDependencySearch other = (NutsDependencySearch) obj;
+        if (this.includeMain != other.includeMain) {
+            return false;
+        }
+        if (this.trackNotFound != other.trackNotFound) {
+            return false;
+        }
+        if (!Objects.equals(this.ids, other.ids)) {
+            return false;
+        }
+        if (!Objects.equals(this.dependencyFilter, other.dependencyFilter)) {
+            return false;
+        }
+        if (this.scope != other.scope) {
+            return false;
+        }
+        if (!Objects.equals(this.noFoundResult, other.noFoundResult)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsDependencySearch{" + "ids=" + ids + ", includeMain=" + includeMain + ", trackNotFound=" + trackNotFound + ", dependencyFilter=" + dependencyFilter + ", scope=" + scope + ", noFoundResult=" + noFoundResult + '}';
+    }
+
 }

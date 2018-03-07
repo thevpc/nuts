@@ -43,7 +43,7 @@ import java.util.Map;
 public class WhichCommand extends AbstractNutsCommand {
 
     public WhichCommand() {
-        super("which", CORE_SUPPORT);
+        super("which", DEFAULT_SUPPORT);
     }
 
     public static Map<String, String> getRuntimeProperties(NutsWorkspace workspace, NutsSession session) {

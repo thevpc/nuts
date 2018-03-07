@@ -83,7 +83,7 @@ public class AbstractNutsPrintStream extends NutsPrintStream {
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT;
+        return DEFAULT_SUPPORT;
     }
 
     public boolean isFormatEnabled() {

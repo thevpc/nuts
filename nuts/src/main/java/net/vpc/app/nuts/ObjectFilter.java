@@ -31,6 +31,8 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/9/17.
+ *
+ * @param <T>
  */
 public interface ObjectFilter<T> {
 

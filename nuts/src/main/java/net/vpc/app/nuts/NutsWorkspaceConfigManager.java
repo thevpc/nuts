@@ -49,6 +49,7 @@ public interface NutsWorkspaceConfigManager {
 
     /**
      * nuts root folder. It defaults to "~/.nuts"
+     *
      * @return nuts root folder
      */
     String getWorkspaceRootLocation();
@@ -88,6 +89,5 @@ public interface NutsWorkspaceConfigManager {
     MapListener<String, Object>[] getSharedObjectsListeners();
 
     void save();
-
 
 }

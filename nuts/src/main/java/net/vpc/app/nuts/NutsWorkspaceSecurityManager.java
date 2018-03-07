@@ -37,7 +37,6 @@ import javax.security.auth.callback.CallbackHandler;
  */
 public interface NutsWorkspaceSecurityManager {
 
-    // SECURITY MANAGEMENT
     String getCurrentLogin();
 
     String[] getCurrentLoginStack();

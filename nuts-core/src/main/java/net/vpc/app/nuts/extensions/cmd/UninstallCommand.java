@@ -38,7 +38,7 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
 public class UninstallCommand extends AbstractNutsCommand {
 
     public UninstallCommand() {
-        super("uninstall", CORE_SUPPORT);
+        super("uninstall", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

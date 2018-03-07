@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.filters.id;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
@@ -142,6 +143,36 @@ public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFil
             return null;
         }
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Arrays.deepHashCode(this.ids);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsIdPatternFilter other = (NutsIdPatternFilter) obj;
+        if (!Arrays.deepEquals(this.ids, other.ids)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsIdPatternFilter" + Arrays.toString(ids);
     }
 
 }

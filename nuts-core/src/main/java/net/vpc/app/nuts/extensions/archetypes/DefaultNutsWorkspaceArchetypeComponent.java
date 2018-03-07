@@ -44,7 +44,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public int getSupportLevel(Object criteria) {
-        return CORE_SUPPORT + 2;
+        return DEFAULT_SUPPORT + 2;
     }
 
     @Override

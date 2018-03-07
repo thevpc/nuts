@@ -43,7 +43,7 @@ import java.util.TreeSet;
 public class WhoCommand extends AbstractNutsCommand {
 
     public WhoCommand() {
-        super("who", CORE_SUPPORT);
+        super("who", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

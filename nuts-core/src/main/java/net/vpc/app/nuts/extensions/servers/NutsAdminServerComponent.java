@@ -55,7 +55,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
 
     @Override
     public int getSupportLevel(ServerConfig config) {
-        return (config == null || config instanceof AdminServerConfig) ? CORE_SUPPORT : NO_SUPPORT;
+        return (config == null || config instanceof AdminServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
     public NutsServer start(NutsWorkspace invokerWorkspace, ServerConfig config) {
@@ -63,6 +63,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException("Missing Workspace");
         }
+        NutsTerminal terminal = invokerWorkspace.getExtensionManager().getFactory().createTerminal();
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -95,9 +96,9 @@ public class NutsAdminServerComponent implements NutsServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        System.out.printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
-        System.out.printf("Serving workspace : %s\n", invokerWorkspace.getConfigManager().getWorkspaceLocation());
-        MyNutsServer myNutsServer = new MyNutsServer(serverId, port, backlog, address, executor, invokerWorkspace);
+        terminal.getOut().printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
+        terminal.getOut().printf("Serving workspace : %s\n", invokerWorkspace.getConfigManager().getWorkspaceLocation());
+        MyNutsServer myNutsServer = new MyNutsServer(serverId, port, backlog, address, executor, invokerWorkspace, terminal);
 
         executor.execute(myNutsServer);
         return myNutsServer;
@@ -113,14 +114,16 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         NutsWorkspace invokerWorkspace;
         boolean running;
         ServerSocket serverSocket = null;
+        NutsTerminal terminal = null;
 
-        public MyNutsServer(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace) {
+        public MyNutsServer(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsTerminal terminal) {
             this.serverId = serverId;
             this.finalPort = finalPort;
             this.finalBacklog = finalBacklog;
             this.address = address;
             this.finalExecutor = finalExecutor;
             this.invokerWorkspace = invokerWorkspace;
+            this.terminal = terminal;
         }
 
         @Override
@@ -181,10 +184,10 @@ public class NutsAdminServerComponent implements NutsServerComponent {
 //                                    cli.uninstallCommand("server");
                                     cli.uninstallCommand("connect");
                                     cli.setServiceName(serverId);
-                                    cli.installCommand(new AbstractNutsCommand("stop-server", CORE_SUPPORT) {
+                                    cli.installCommand(new AbstractNutsCommand("stop-server", DEFAULT_SUPPORT) {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
-                                            System.out.printf("Stopping Server ...");
+                                            terminal.getOut().printf("Stopping Server ...\n");
                                             finalServerSocket.close();
                                             return 0;
                                         }
@@ -192,12 +195,12 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     cli.run(args);
                                     finalAccept.close();
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    terminal.getErr().printf("%s\n", e);
                                 }
                             }
                         });
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        terminal.getErr().printf("%s\n", ex);
                     }
                 }
             } finally {

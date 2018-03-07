@@ -41,7 +41,7 @@ public class ConfigCommand extends AbstractNutsCommand {
     private List<ConfigSubCommand> subCommands;
 
     public ConfigCommand() {
-        super("config", CORE_SUPPORT);
+        super("config", DEFAULT_SUPPORT);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class ConfigCommand extends AbstractNutsCommand {
         } else {
             context.getTerminal().getOut().print("@@" + repository.getRepositoryId() + disabledString + "@@");
         }
-        context.getTerminal().getOut().print(" : " + repository);
+        context.getTerminal().getOut().print(" : " + repository.getRepositoryType() +" "+repository.getConfigManager().getLocation());
         context.getTerminal().getOut().println();
 
     }

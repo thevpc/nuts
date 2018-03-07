@@ -37,7 +37,7 @@ import net.vpc.app.nuts.NutsCommandContext;
 public class LogoutCommand extends AbstractNutsCommand {
 
     public LogoutCommand() {
-        super("logout", CORE_SUPPORT);
+        super("logout", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

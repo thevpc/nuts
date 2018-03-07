@@ -51,7 +51,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     @Override
     public int getSupportLevel(NutsRepoInfo criteria) {
         if (criteria == null) {
-            return CORE_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         String repositoryType = criteria.getType();
         String location = criteria.getLocation();
@@ -59,26 +59,25 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
             return NO_SUPPORT;
         }
         if (CoreStringUtils.isEmpty(location)) {
-            return BOOT_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         if (location.startsWith("http://") || location.startsWith("https://")) {
-            return BOOT_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {
-            return BOOT_SUPPORT;
+            return DEFAULT_SUPPORT;
         }
         return NO_SUPPORT;
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, File repositoryRoot) {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot) {
         if ("maven".equals(repositoryType)) {
-            NutsWorkspace workspace = NutsEnvironmentContext.getNutsWorkspace();
             if (location.startsWith("http://") || location.startsWith("https://")) {
-                return (new MavenRemoteRepository(repositoryId, location, workspace, repositoryRoot));
+                return (new MavenRemoteRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));
             }
             if (!location.contains("://")) {
-                return new MavenFolderRepository(repositoryId, location, workspace, repositoryRoot);
+                return new MavenFolderRepository(repositoryId, location, workspace, parentRepository, repositoryRoot);
             }
         }
         return null;

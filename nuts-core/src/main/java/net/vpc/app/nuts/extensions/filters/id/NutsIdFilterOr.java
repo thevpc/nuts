@@ -6,8 +6,9 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import net.vpc.app.nuts.NutsDescriptorFilter;
+import java.util.stream.Collectors;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
@@ -82,4 +83,37 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
         }
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + Arrays.deepHashCode(this.all);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsIdFilterOr other = (NutsIdFilterOr) obj;
+        if (!Arrays.deepEquals(this.all, other.all)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+
 }
