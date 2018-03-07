@@ -786,6 +786,18 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return CoreCollectionUtils.toList(findIterator(search, session));
     }
 
+    protected Iterator<NutsId> filterByLatestVersion(Iterator<NutsId> base) {
+        LinkedHashMap<String, NutsId> valid = new LinkedHashMap<>();
+        while (base.hasNext()) {
+            NutsId n = base.next();
+            NutsId old = valid.get(n.getFullName());
+            if (old == null || old.getVersion().compareTo(n.getVersion()) < 0) {
+                valid.put(n.getFullName(), n);
+            }
+        }
+        return valid.values().iterator();
+    }
+
     @Override
     public Iterator<NutsId> findIterator(NutsSearch search, NutsSession session) {
         session = validateSession(session);
@@ -828,6 +840,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //            if(search.isIncludeDependencies()){
 //
 //            }
+            if (search.isLastestVersions()) {
+                return filterByLatestVersion(result);
+            }
             return result;
         }
 
@@ -859,6 +874,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //                                if(search.isIncludeDependencies()){
 //
 //                                }
+                                if (search.isLastestVersions()) {
+                                    return filterByLatestVersion(b);
+                                }
                                 return b;
                             }
                         }
@@ -892,6 +910,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //                            .setIncludeMain(true)
 //                            , )
 //                }
+                if (search.isLastestVersions()) {
+                    return filterByLatestVersion(b);
+                }
                 return b;
             }
         }
@@ -1636,11 +1657,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             } else {
                 NutsRepository goodRepo = getEnabledRepositoryOrError(repositoryId);
                 if (goodRepo == null) {
-                    throw new NutsIllegalArgumentException("Repository Not found " + repositoryId);
+                    throw new NutsRepositoryNotFoundException(repositoryId);
                 }
                 return goodRepo.deploy(effId, descriptor, contentFile, force, session);
             }
-            throw new NutsIllegalArgumentException("Repository Not found " + repositoryId);
+            throw new NutsRepositoryNotFoundException(repositoryId);
         } finally {
             if (tempFile != null) {
                 tempFile.delete();

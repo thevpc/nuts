@@ -37,9 +37,11 @@ import net.vpc.app.nuts.extensions.cmd.cmdline.RepositoryNonOption;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
+import net.vpc.app.nuts.NutsCommandSyntaxError;
 import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.NutsSearch;
 import net.vpc.app.nuts.extensions.cmd.cmdline.NutsIdNonOption;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -52,7 +54,8 @@ public class DeployCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        boolean fileMode = true;
+        boolean fileMode = false;
+        boolean idMode = false;
         String to = null;
         String from = null;
         String id = null;
@@ -61,11 +64,10 @@ public class DeployCommand extends AbstractNutsCommand {
         while (!cmdLine.isEmpty()) {
             if (contentFile == null && id == null && cmdLine.readOnce("--file", "-f")) {
                 fileMode = true;
-                contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-            } else if (fileMode && cmdLine.readOnce("--desc", "-d")) {
+            } else if (!idMode && cmdLine.readOnce("--desc", "-d")) {
                 descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
             } else if (cmdLine.readOnce("--id", "-i")) {
-                fileMode = false;
+                idMode = true;
             } else if (!fileMode && cmdLine.readOnce("--source", "-s")) {
                 from = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else if (cmdLine.readOnce("--to", "-t")) {
@@ -74,9 +76,16 @@ public class DeployCommand extends AbstractNutsCommand {
                 if (contentFile != null || id != null) {
                     cmdLine.requireEmpty();
                 } else {
+                    if (!idMode && !fileMode) {
+                        if (cmdLine.isAutoCompleteMode()) {
+                            return -1;
+                        } else {
+                            throw new NutsCommandSyntaxError("Missing --id or --file");
+                        }
+                    }
                     if (fileMode) {
                         contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-                    } else {
+                    } else if (idMode) {
                         id = cmdLine.readNonOptionOrError(new NutsIdNonOption("Nuts", context)).getString();
                     }
                 }
@@ -86,6 +95,9 @@ public class DeployCommand extends AbstractNutsCommand {
             return 0;
         }
         if (fileMode) {
+            if (CoreStringUtils.isEmpty(contentFile)) {
+                throw new NutsCommandSyntaxError("Missing File");
+            }
             for (String s : CoreIOUtils.expandPath(contentFile, new File(context.getCommandLine().getCwd()))) {
                 NutsId nid = null;
                 nid = context.getValidWorkspace().deploy(
@@ -95,10 +107,13 @@ public class DeployCommand extends AbstractNutsCommand {
                                 .setRepositoryId(to),
                         context.getSession()
                 );
-                context.getTerminal().getOut().printf("File ==%s== deployed successfully as ==%s== to %s\n" + nid, s, nid,to==null?"<default-repo>":to);
+                context.getTerminal().getOut().printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
             }
-        } else {
-            for (NutsId nutsId : context.getValidWorkspace().find(new NutsSearch(id).setRepositoryFilter(from), context.getSession())) {
+        } else if (idMode) {
+            if (CoreStringUtils.isEmpty(id)) {
+                throw new NutsCommandSyntaxError("Missing Id");
+            }
+            for (NutsId nutsId : context.getValidWorkspace().find(new NutsSearch(id).setLastestVersions(true).setRepositoryFilter(from), context.getSession())) {
                 NutsFile fetched = context.getValidWorkspace().fetch(nutsId.toString(), context.getSession());
                 if (fetched.getFile() != null) {
                     NutsId nid = null;
@@ -109,10 +124,11 @@ public class DeployCommand extends AbstractNutsCommand {
                                     .setRepositoryId(to),
                             context.getSession()
                     );
-                    context.getTerminal().getOut().printf("Nuts ==%s== deployed successfully to %s\n" + nid, nutsId,to==null?"<default-repo>":to);
+                    context.getTerminal().getOut().printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);
                 }
             }
         }
         return 0;
+
     }
 }

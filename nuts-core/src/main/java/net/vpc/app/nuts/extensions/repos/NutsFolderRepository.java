@@ -151,6 +151,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
             NutsFile nutsFile = new NutsFile(id, descriptor, localFile, true, false, null);
             fireOnDeploy(nutsFile);
+        } else {
+            throw new NutsAlreadytDeployedException(id);
         }
         return idFile.getId();
     }

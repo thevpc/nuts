@@ -1198,22 +1198,7 @@ public class CoreIOUtils {
     }
 
     public static InputStreamSource createInputStreamSource(byte[] bytes, String name) {
-        return new InputStreamSource() {
-            @Override
-            public InputStream openStream() {
-                return new ByteArrayInputStream(bytes);
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public Object getSource() {
-                return bytes;
-            }
-        };
+        return new ByteArrayInputStreamSource(bytes,name,bytes);
     }
 
     public static InputStreamSource createInputStreamSource(String path, String variant, String name, File cwd) {
@@ -1246,68 +1231,15 @@ public class CoreIOUtils {
 
     public static InputStreamSource createInputStreamSource(InputStream inputStream, String name) {
         byte[] bytes = readStreamAsBytes(inputStream, true);
-        return new InputStreamSource() {
-            @Override
-            public InputStream openStream() {
-                return new ByteArrayInputStream(bytes);
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public Object getSource() {
-                return inputStream;
-            }
-        };
+        return new ByteArrayInputStreamSource(bytes, name, inputStream);
     }
 
     public static InputStreamSource createInputStreamSource(URL url) {
-        return new InputStreamSource() {
-            @Override
-            public InputStream openStream() {
-                try {
-                    return url.openStream();
-                } catch (IOException e) {
-                    throw new NutsIOException(e);
-                }
-            }
-
-            @Override
-            public String getName() {
-                return getURLName(url);
-            }
-
-            @Override
-            public Object getSource() {
-                return url;
-            }
-        };
+        return new URLInputStreamSource(url);
     }
 
     public static InputStreamSource createInputStreamSource(File file, File cwd) {
-        return new InputStreamSource() {
-            @Override
-            public InputStream openStream() {
-                try {
-                    return new FileInputStream(file);
-                } catch (FileNotFoundException e) {
-                    throw new NutsIOException(e);
-                }
-            }
-
-            @Override
-            public String getName() {
-                return file.getName();
-            }
-
-            @Override
-            public Object getSource() {
-                return file;
-            }
-        };
+        return new FileInputStreamSource(file);
     }
 
     public static URL getURL(String url) {
@@ -1420,4 +1352,7 @@ public class CoreIOUtils {
         url = url.toLowerCase();
         return (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://"));
     }
+
+
+
 }

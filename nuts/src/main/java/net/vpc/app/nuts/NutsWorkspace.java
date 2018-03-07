@@ -40,8 +40,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
 
-    /////////////////////////////////////////////////////////////////
-    // NUTS RETRIEVAL
     Iterator<NutsId> findIterator(NutsSearch search, NutsSession session);
 
     List<NutsId> find(NutsSearch search, NutsSession session);

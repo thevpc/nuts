@@ -13,7 +13,8 @@ public class NutsSearch {
     private TypedObject versionFilter;
     private TypedObject descriptorFilter;
     private NutsDependencyScope scope = NutsDependencyScope.RUN;
-
+    private boolean lastestVersions;
+    
     public NutsSearch() {
 
     }
@@ -26,6 +27,16 @@ public class NutsSearch {
         addIds(ids);
     }
 
+    public boolean isLastestVersions() {
+        return lastestVersions;
+    }
+
+    public NutsSearch setLastestVersions(boolean lastestVersions) {
+        this.lastestVersions = lastestVersions;
+        return this;
+    }
+
+    
     public NutsSearch addIds(String... ids) {
         if (ids != null) {
             for (String id : ids) {

@@ -32,22 +32,22 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsAlreadytInstalledException extends NutsElementNotFoundException {
+public class NutsAlreadytDeployedException extends NutsElementNotFoundException {
 
     private final String nuts;
 
-    public NutsAlreadytInstalledException(NutsId nuts) {
+    public NutsAlreadytDeployedException(NutsId nuts) {
         this(nuts == null ? null : nuts.toString());
     }
 
-    public NutsAlreadytInstalledException(String nuts) {
-        super("Already Installed nuts " + (nuts == null ? "<null>" : nuts));
+    public NutsAlreadytDeployedException(String nuts) {
+        super("Already deployed nuts " + (nuts == null ? "<null>" : nuts));
         this.nuts = nuts;
     }
 
-    public NutsAlreadytInstalledException(String nuts, String msg, Exception ex) {
+    public NutsAlreadytDeployedException(String nuts, String msg, Exception ex) {
         super(
-                StringUtils.isEmpty(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,
+                StringUtils.isEmpty(msg) ? "Already deployed nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.nuts = nuts;
     }
