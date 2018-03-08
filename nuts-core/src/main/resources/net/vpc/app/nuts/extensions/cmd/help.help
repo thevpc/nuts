@@ -1,16 +1,16 @@
 shows help
 
 @@SYNOPSYS:@@
-help <command> ...
+##help## [<command> ...]
 
 shows help of the given command or of all commands if none is provided.
 
 
 @@EXAMPLES:@@
 
-help
+##help##
    shows all help
 
-help connect
-   shows help of connect comand
+##help## connect
+   shows help of connect command
 

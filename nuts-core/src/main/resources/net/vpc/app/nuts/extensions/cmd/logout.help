@@ -1,14 +1,14 @@
 logs out
 
 @@SYNOPSYS:@@
-logout
+##logout##
 
 logs out (to anonymous)
 
 
 @@EXAMPLES:@@
 
-logout
+##logout##
    logs out to anonymous
 
 

@@ -1,13 +1,13 @@
 shows version
 
 @@SYNOPSYS:@@
-version
+##version##
 
 shows version
 
 @@EXAMPLES:@@
 
-version
+##version##
    shows version
 
 

@@ -48,16 +48,9 @@ public class WhoCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        boolean verbose = false;
-        boolean argVisitedVerbose = false;
         boolean argAll = false;
-        boolean argAllRights = false;
         while (!cmdLine.isEmpty()) {
-            if (!argVisitedVerbose && cmdLine.read("--verbose", "-v")) {
-                argVisitedVerbose = true;
-                verbose = true;
-            } else if (!argAllRights && cmdLine.read("--all", "-a")) {
-                argAllRights = true;
+            if (cmdLine.readOnce("--all", "-a")) {
                 argAll = true;
             } else {
                 cmdLine.requireEmpty();
@@ -78,11 +71,13 @@ public class WhoCommand extends AbstractNutsCommand {
             Set<String> rights = new TreeSet<>(Arrays.asList(user.getRights()));
             Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedRights()));
             String[] currentLoginStack = validWorkspace.getSecurityManager().getCurrentLoginStack();
-            out.print("===stack===      :");
-            for (String log : currentLoginStack) {
-                out.print(" [[" + log + "]]");
+            if (currentLoginStack.length > 1) {
+                out.print("===stack===      :");
+                for (String log : currentLoginStack) {
+                    out.print(" [[" + log + "]]");
+                }
+                out.println();
             }
-            out.println();
             if (!groups.isEmpty()) {
                 out.printf("===identities=== : %s\n", groups.toString());
             }

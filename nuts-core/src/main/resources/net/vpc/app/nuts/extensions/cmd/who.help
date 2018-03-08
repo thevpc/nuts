@@ -1,13 +1,14 @@
 shows who is logged in
 
 @@SYNOPSYS:@@
-[[who]]
+##who## [ options ]
 
 shows who is logged in
 
+--all  -a   : show all information about user
 @@EXAMPLES:@@
 
-login toto@192.36.6.8
-   connects to 192.36.6.8 on the default port (8898)
+who -a
+   shows all information about current user
 
 

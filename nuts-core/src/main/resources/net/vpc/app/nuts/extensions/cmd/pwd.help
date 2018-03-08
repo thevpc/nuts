@@ -1,12 +1,12 @@
 prints working directory
 
 @@SYNOPSYS:@@
-pwd
+##pwd##
 
 prints working directory
 @@EXAMPLES:@@
 
-pwd
+##pwd##
    prints working directory
 
 

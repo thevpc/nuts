@@ -1,15 +1,12 @@
 shows the error message of the last command if was erroneous.
 
 @@SYNOPSYS:@@
-err [--trace]
+##showerr## [--trace]
 
 shows the error message of the last command if was erroneous
 when the --trace option is present will display the full stacktrace
 
 @@EXAMPLES:@@
 
-err
+##showerr##
    show the last error message
-
-install --trace
-   show the last error stack trace

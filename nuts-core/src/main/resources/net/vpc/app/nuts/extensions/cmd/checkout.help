@@ -1,14 +1,14 @@
 checks out a **nuts** to a local folder to be modified
 
 @@SYNOPSYS:@@
-checkout {{nuts-id}} folder-path
+##checkout## {{nuts-id}} folder-path
 
 checks out a **nuts** to a local folder to be modified. The version of the checked out **nuts** is suffixed with "-CHECKED-OUT"
 Only "zip" **nuts** could be checked out as they are unzipped to the folder.
 
 @@EXAMPLES:@@
 
-deploy checkout net.vpc:myapp /to/my/folder
+##checkout## net.vpc:myapp /to/my/folder
    creates folder /to/my/folder and checks out net.vpc:myapp sources into the folder
 
 

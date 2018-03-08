@@ -1,7 +1,7 @@
 creates a new interactive command line console
 
 @@SYNOPSYS:@@
-console
+##console##
 
 creates a new interactive command line console.
 

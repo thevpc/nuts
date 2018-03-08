@@ -1,20 +1,20 @@
 invokes a **nuts** command
 
 @@SYNOPSYS:@@
-exec <command arguments>
+##exec## <command arguments>
 
 invokes a **nuts** command
 
 @@EXAMPLES:@@
 
-exec my-nuts-group:my-nuts#12.3
+##exec## my-nuts-group:my-nuts#12.3
    executes the version 12.3 of my-nuts-group:my-nuts
 
-exec my-nuts-group:my-nuts
+##exec## my-nuts-group:my-nuts
    executes the latest version of my-nuts-group:my-nuts
 
 
-exec my-nuts
+##exec## my-nuts
    executes the latest version of my-nuts-group:my-nuts
         supposing that my-nuts-group is added as imported group using
         config import my-nuts-group

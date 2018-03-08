@@ -1,14 +1,14 @@
 commits (re-deploys) an already checked out folder
 
 @@SYNOPSYS:@@
-commit folder
+##commit## <folder>
 
 commits (re-deploys) an already checked out folder
 
 
 @@EXAMPLES:@@
 
-commit /my/checkeout/folder
+##commit## /my/checkeout/folder
    commits and @@DELETES@@ the checked out folder
 
 

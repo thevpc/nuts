@@ -1,18 +1,18 @@
 shows the full id of a **nuts**
 
 @@SYNOPSYS:@@
-[[which]] {{nuts-id}} ...
+##which## {{nuts-id}} ...
 
 installs one or more **nuts** from remote repositories if not yet installed
 If no [nuts-id] is defined an error will occur
 
 @@EXAMPLES:@@
 
-install my-group:my-thing#2.3
+##install## my-group:my-thing#2.3
    installs - if able to resolve it - exactly the **nuts** "my-group:my-thing#2.3"
 
-install my-group:my-thing
+##install## my-group:my-thing
    installs - if able to resolve it - the latest version  of "my-group:my-thing"
 
-install my-thing
+##install## my-thing
   installs - if able to resolve it - the latest version  of "my-group:my-thing" as long as "my-group" is defined as a default include group

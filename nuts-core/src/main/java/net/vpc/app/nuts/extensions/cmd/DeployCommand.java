@@ -52,6 +52,7 @@ public class DeployCommand extends AbstractNutsCommand {
         super("deploy", DEFAULT_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean fileMode = false;

@@ -49,7 +49,7 @@ public class HelpCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         NutsPrintStream out = context.getTerminal().getOut();
         boolean showLicense = false;
         List<String> commandNames = new ArrayList<>();
@@ -81,7 +81,8 @@ public class HelpCommand extends AbstractNutsCommand {
                         }
                     });
                     for (NutsCommand cmd : commands) {
-                        out.printf("##%s## : %s\n", CoreStringUtils.alignLeft(cmd.getName(), 15), cmd.getHelpHeader());
+                        out.printf("##%s## : ", CoreStringUtils.alignLeft(cmd.getName(), 15));
+                        out.println(cmd.getHelpHeader()); //formatted
                     }
                 } else {
                     for (String commandName : commandNames) {

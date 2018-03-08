@@ -1,7 +1,7 @@
 searches for installed and available **nuts**
 
 @@SYNOPSYS:@@
-find <options> [-js <JAVASCRIPT EXPRESSION>]  [ [-e] <LIKE EXPRESSION> ...]
+##find## <options> [-js <JAVASCRIPT EXPRESSION>]  [ [-e] <LIKE EXPRESSION> ...]
 
 searches for installed and available **nuts**. Found **nuts** are displayed as namespace aware **nuts** ids
 (starting wth namespace:// where namespace is the name of the repository where the **nuts** was found).
@@ -71,17 +71,17 @@ will be listed.
 
 @@EXAMPLES:@@
 
-find
+##find##
    searches for and displays ALL available **nuts**
 
-find -i
+##find## -i
    searches for and displays ALL installed **nuts**
 
-find -i ab* *yz
+##find## -i ab* *yz
    searches for and displays installed **nuts** that starts with 'ab' or ends with 'yz'
 
-find -js \"return id.version.ge(\'1.2\') && id.version.le(\'1.8\')\"
+##find## -js \"return id.version.ge(\'1.2\') && id.version.le(\'1.8\')\"
    searches for and displays installed **nuts** with version between 1.2 and 1.8 (exclusively)
 
-find -r maven-vpc-public -R net.vpc.app.nuts:nuts net.vpc.app.nuts:nuts-core
+##find## -r maven-vpc-public -R net.vpc.app.nuts:nuts net.vpc.app.nuts:nuts-core
    searches for and displays remote (will not look locally) at the maven-vpc-public repository for newest versions of nuts and nuts-core

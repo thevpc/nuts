@@ -7,26 +7,26 @@
 #
 # you might use simply java -jar nuts.jar
 # if your have already an existing copy of nuts.jar.
-# This shell will add some flavour to nuts execution patern.
+# This shell will add some flavour to nuts execution pattern.
 # It will look for existing nuts.jar as follows
 #  + check if ~/.nuts/bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts.jar exists (cache)
 #  + check if nuts.jar exists in the local maven repository ~/m2/repository (local)
 #  + download from "https://github.com/thevpc/vpc-public-maven/raw/master/" (remote)
-# if the resolved file is not in the cache, il will be store there for future use.
+# if the resolved file is not in the cache, it will be store there for future use.
 # 
-# if you want to customize this behaviour you can use --nuts-shell=<flags> argument
+# if you want to customize this behavior you can use --nuts-shell=<flags> argument
 # as follows : the argument should be the very first argument.
 # flags 'r,l,c,v' can be added as value to the argument "--nuts-shell="
 # c denotes cache source
 # l denotes local source
 # r denotes remote source
-# r denotes verbos mode
+# r denotes verbose mode
 # Example :
 # nuts --nuts-shell=cv mycommand
 #    runs nuts from cache only and show executed command
 # 
-# @date 2018-02-22
-# @version 0.3.8.0
+# @date 2018-03-08
+# @version 0.4.0.0
 
 #NUTS_JAVA_HOME='';
 
