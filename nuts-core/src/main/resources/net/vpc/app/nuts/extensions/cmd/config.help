@@ -41,6 +41,8 @@ VARIATIONS:
 
 ##config## (list extensions| lx)
 
+##config## (find extensions| fx)
+
 @@EXAMPLES:@@
 
 ##config## create -i workspace ~~/example

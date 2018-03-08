@@ -7,6 +7,7 @@ package net.vpc.app.nuts.extensions.cmd.config;
 
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsExtensionInfo;
 import net.vpc.app.nuts.NutsWorkspaceExtension;
 import net.vpc.app.nuts.extensions.cmd.AbstractConfigSubCommand;
 import net.vpc.app.nuts.extensions.cmd.ConfigCommand;
@@ -27,12 +28,12 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.read("add extension", "ax")) {
             String extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
             if (cmdLine.isExecMode()) {
-                context.getValidWorkspace().getExtensionManager().addExtension(extensionId, context.getSession());
+                context.getValidWorkspace().getExtensionManager().addWorkspaceExtension(extensionId, context.getSession());
             }
             while (!cmdLine.isEmpty()) {
                 extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getValidWorkspace().getExtensionManager().addExtension(extensionId, context.getSession());
+                    context.getValidWorkspace().getExtensionManager().addWorkspaceExtension(extensionId, context.getSession());
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -41,17 +42,31 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
             return true;
         } else if (cmdLine.read("list extensions", "lx")) {
             if (cmdLine.isExecMode()) {
-                for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensionManager().getExtensions()) {
+                for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensionManager().getWorkspaceExtensions()) {
                     NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getWiredId().toString(), false, context.getSession());
                     String extDesc = CoreStringUtils.trim(desc.getName());
                     if (!extDesc.isEmpty()) {
                         extDesc = " : " + extDesc;
                     }
                     if (!extension.getId().equals(extension.getWiredId())) {
-                        context.getTerminal().getOut().printf("%s (%s)%s", extension.getId(), extension.getWiredId(), extDesc);
+                        context.getTerminal().getOut().printf("%s (%s) : ", extension.getId(), extension.getWiredId());
+                        context.getTerminal().getOut().println(extDesc);
                     } else {
-                        context.getTerminal().getOut().printf("%s%s", extension.getId(), extDesc);
+                        context.getTerminal().getOut().printf("%s%s\n", extension.getId(), extDesc);
                     }
+                }
+            }
+            return true;
+        } else if (cmdLine.read("find extensions", "fx")) {
+            if (cmdLine.isExecMode()) {
+                for (NutsExtensionInfo extension : context.getValidWorkspace().getExtensionManager().findWorkspaceExtensions(context.getSession())) {
+                    NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getId().toString(), false, context.getSession());
+                    String extDesc = CoreStringUtils.trim(desc.getName());
+                    if (!extDesc.isEmpty()) {
+                        extDesc = " : " + extDesc;
+                    }
+                    context.getTerminal().getOut().printf("%s : ", extension.getId());
+                    context.getTerminal().getOut().println(extDesc);
                 }
             }
             return true;

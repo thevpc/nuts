@@ -29,17 +29,43 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.List;
+
 /**
  *
  * @author vpc
  */
 public interface NutsWorkspaceExtensionManager {
 
-    NutsWorkspaceExtension addExtension(String id, NutsSession session);
+    /**
+     * find all available extensions for the current workspace
+     *
+     * @param session
+     * @return
+     */
+    List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session);
 
-    boolean installExtensionComponent(Class extensionPointType, Object extensionImpl);
+    /**
+     * finds all available extensions (from remote repositories) for the given
+     * boot version (aka version of nuts api)
+     *
+     * @param version boot version
+     * @param session current session
+     * @return all available extensions
+     */
+    List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session);
 
-    NutsWorkspaceExtension[] getExtensions();
+    List<NutsExtensionInfo> findExtensions(String id, NutsSession session);
+
+    NutsWorkspaceExtension addWorkspaceExtension(String id, NutsSession session);
+
+    boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
+
+    NutsWorkspaceExtension[] getWorkspaceExtensions();
 
     NutsWorkspaceFactory getFactory();
+
+    URLLocation[] getExtensionURLLocations(String nutsId, String appId, String extensionType);
+    
+    String[] getExtensionRepositoryLocations(String appId);
 }

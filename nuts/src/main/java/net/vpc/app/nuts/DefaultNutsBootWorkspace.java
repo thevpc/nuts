@@ -1,30 +1,30 @@
 /**
  * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
- * <p>
- * is a new Open Source Package Manager to help install packages and libraries
- * for runtime execution. Nuts is the ultimate companion for maven (and other
- * build managers) as it helps installing all package dependencies at runtime.
- * Nuts is not tied to java and is a good choice to share shell scripts and
- * other 'things' . Its based on an extensible architecture to help supporting a
- * large range of sub managers / repositories.
- * <p>
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
  * Copyright (C) 2016-2017 Taha BEN SALAH
- * <p>
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 3 of the License, or (at your option) any later
- * version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * <p>
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -51,7 +51,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     public static final Logger log = Logger.getLogger(DefaultNutsBootWorkspace.class.getName());
     private final String rootLocation;
     private final String runtimeSourceURL;
-    private WorkspaceNutsId runtimeId;
+    private BootNutsId runtimeId;
     private final NutsClassLoaderProvider contextClassLoaderProvider;
 
     public DefaultNutsBootWorkspace() {
@@ -65,7 +65,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         log.log(Level.CONFIG, "Create boot workspace with options {0}", new Object[]{bootOptions});
         this.rootLocation = StringUtils.isEmpty(bootOptions.getRoot()) ? NutsConstants.DEFAULT_WORKSPACE_ROOT : bootOptions.getRoot();
         this.runtimeSourceURL = bootOptions.getRuntimeSourceURL();
-        this.runtimeId = StringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : WorkspaceNutsId.parse(bootOptions.getRuntimeId());
+        this.runtimeId = StringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : BootNutsId.parse(bootOptions.getRuntimeId());
         this.contextClassLoaderProvider = bootOptions.getClassLoaderProvider() == null ? DefaultNutsClassLoaderProvider.INSTANCE : bootOptions.getClassLoaderProvider();
     }
 
@@ -119,7 +119,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
 
         allExtensionFiles.put(workspaceClassPath.getId().toString(), f);
-        for (WorkspaceNutsId id : workspaceClassPath.getDependenciesArray()) {
+        for (BootNutsId id : workspaceClassPath.getDependenciesArray()) {
             f = getBootFile(id, "jar", workspaceClassPath.getRepositoriesArray(), repoFolder, false);
             if (f == null) {
                 throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load " + id);
@@ -207,17 +207,17 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         return StringUtils.splitAndRemoveDuplicates(initial);
     }
 
-    private File getBootFileLocation(WorkspaceNutsId id, String ext) {
+    private File getBootFileLocation(BootNutsId id, String ext) {
         return new File(createFile(rootLocation, NutsConstants.BOOTSTRAP_REPOSITORY_NAME), getPath(id, ext));
     }
 
     private NutsWorkspaceClassPath loadWorkspaceClassPath(boolean first) {
-        WorkspaceNutsId wbootId = WorkspaceNutsId.parse(getBootId());
+        BootNutsId wbootId = BootNutsId.parse(getBootId());
         File bootPropertiesFile = getBootFileLocation(wbootId, "properties");
         String bootPropertiesPath = '/' + getPath(wbootId, "properties");
         String[] resolvedBootRepositories = null;
         String repositories = null;
-        WorkspaceNutsId _runtimeId = runtimeId;
+        BootNutsId _runtimeId = runtimeId;
         if (_runtimeId == null || repositories == null) {
             String runtimeId = null;
             boolean storeRuntimeFile = true;
@@ -274,7 +274,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 IOUtils.storeProperties(bootProperties, bootPropertiesFile);
             }
             if (_runtimeId == null) {
-                _runtimeId = WorkspaceNutsId.parse(runtimeId);
+                _runtimeId = BootNutsId.parse(runtimeId);
             }
         }
 
@@ -317,7 +317,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
         }
         if (all.isEmpty()) {
-            String runtimeVersion = WorkspaceNutsId.parse(getBootId()).version + ".0";
+            String runtimeVersion = BootNutsId.parse(getBootId()).version + ".0";
             all.add(new NutsWorkspaceClassPath(
                     NutsConstants.NUTS_ID_RUNTIME,
                     runtimeVersion,
@@ -358,7 +358,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             p.setProperty("project.id", cp.getId().getGroupId() + ":" + cp.getId().getArtifactId());
             p.setProperty("project.version", cp.getId().getVersion());
             StringBuilder dsb = new StringBuilder();
-            for (WorkspaceNutsId id : cp.getDependenciesArray()) {
+            for (BootNutsId id : cp.getDependenciesArray()) {
                 if (dsb.length() > 0) {
                     dsb.append(";");
                 }
@@ -396,7 +396,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         return new File(url).toURI().toURL();
     }
 
-    private File getBootFile(WorkspaceNutsId vid, String ext, String[] repositories, File cacheFolder, boolean useCache) {
+    private File getBootFile(BootNutsId vid, String ext, String[] repositories, File cacheFolder, boolean useCache) {
         for (String repository : repositories) {
             File file = getBootFile(vid, ext, repository, cacheFolder, useCache);
             if (file != null) {
@@ -425,7 +425,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
     }
 
-    private File getBootFile(WorkspaceNutsId vid, String ext) {
+    private File getBootFile(BootNutsId vid, String ext) {
         return getBootFile(vid, ext, NutsConstants.BOOTSTRAP_REPOSITORY_NAME, null, false);
     }
 
@@ -447,15 +447,15 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         return new File(parent, child);
     }
 
-    private String getFileName(WorkspaceNutsId id, String ext) {
+    private String getFileName(BootNutsId id, String ext) {
         return id.artifactId + "-" + id.version + "." + ext;
     }
 
-    private String getPath(WorkspaceNutsId id, String ext) {
+    private String getPath(BootNutsId id, String ext) {
         return id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/" + getFileName(id, ext);
     }
 
-    private File getBootFile(WorkspaceNutsId id, String ext, String repository, File cacheFolder, boolean useCache) {
+    private File getBootFile(BootNutsId id, String ext, String repository, File cacheFolder, boolean useCache) {
         repository = repository.trim();
         String path = getPath(id, ext);
         if (useCache && cacheFolder != null) {

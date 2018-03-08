@@ -27,55 +27,63 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.filters.descriptor;
+package net.vpc.app.nuts;
 
 import java.util.Objects;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.extensions.util.Simplifiable;
-
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
- * Created by vpc on 2/20/17.
+ * simple dummy implementation of NutsId base functionalities
+ * @author vpc
  */
-public class NutsDescriptorFilterPlatform implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+class BootNutsId {
 
-    private final String platform;
+    String groupId;
+    String artifactId;
+    String version;
 
-    public NutsDescriptorFilterPlatform(String packaging) {
-        this.platform = packaging;
+    public BootNutsId(String groupId, String artifactId, String version) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
     }
 
-    public String getPlatform() {
-        return platform;
-    }
-
-    @Override
-    public boolean accept(NutsDescriptor descriptor) {
-        return descriptor.matchesPlatform(platform);
-    }
-
-    /**
-     * @return null if nothing to check after
-     */
-    @Override
-    public NutsDescriptorFilter simplify() {
-        if (CoreStringUtils.isEmpty(platform)) {
-            return null;
+    static BootNutsId parse(String id) {
+        String[] splittedBootId = id.split("[:#]");
+        if (splittedBootId.length == 3) {
+            return new BootNutsId(splittedBootId[0], splittedBootId[1], splittedBootId[2]);
         }
-        return this;
+        if (splittedBootId.length == 2) {
+            return new BootNutsId(splittedBootId[0], splittedBootId[1], "LATEST");
+        }
+        throw new NutsParseException("Unable to parse " + id);
     }
 
     @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesPlatform('" + CoreStringUtils.escapeCoteStrings(platform) + "')";
+    public String toString() {
+        if (version == null) {
+            return groupId + ":" + artifactId;
+        }
+        return groupId + ":" + artifactId + "#" + version;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.platform);
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.groupId);
+        hash = 53 * hash + Objects.hashCode(this.artifactId);
+        hash = 53 * hash + Objects.hashCode(this.version);
         return hash;
     }
 
@@ -90,16 +98,17 @@ public class NutsDescriptorFilterPlatform implements NutsDescriptorFilter, Simpl
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsDescriptorFilterPlatform other = (NutsDescriptorFilterPlatform) obj;
-        if (!Objects.equals(this.platform, other.platform)) {
+        final BootNutsId other = (BootNutsId) obj;
+        if (!Objects.equals(this.groupId, other.groupId)) {
+            return false;
+        }
+        if (!Objects.equals(this.artifactId, other.artifactId)) {
+            return false;
+        }
+        if (!Objects.equals(this.version, other.version)) {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Platform{" + platform + '}';
     }
 
 }

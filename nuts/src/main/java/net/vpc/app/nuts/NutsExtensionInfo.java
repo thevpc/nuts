@@ -31,55 +31,66 @@ package net.vpc.app.nuts;
 
 import java.util.Objects;
 
-class WorkspaceNutsId {
+/**
+ *
+ * @author vpc
+ */
+public class NutsExtensionInfo {
 
-    String groupId;
-    String artifactId;
-    String version;
+    private final NutsId id;
+    private final String name;
+    private final String description;
+    private final String author;
+    private final String category;
+    private final String source;
 
-    public WorkspaceNutsId(String groupId, String artifactId, String version) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
+    public NutsExtensionInfo(NutsId id, String name, String author, String description, String category, String source) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.description = description;
+        this.category = category;
+        this.source = source;
     }
 
-    static WorkspaceNutsId parse(String id) {
-        String[] splittedBootId = id.split("[:#]");
-        if (splittedBootId.length == 3) {
-            return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], splittedBootId[2]);
-        }
-        if (splittedBootId.length == 2) {
-            return new WorkspaceNutsId(splittedBootId[0], splittedBootId[1], "LATEST");
-        }
-        throw new NutsParseException("Unable to parse " + id);
+    public NutsId getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getSource() {
+        return source;
     }
 
     @Override
     public String toString() {
-        if (version == null) {
-            return groupId + ":" + artifactId;
-        }
-        return groupId + ":" + artifactId + "#" + version;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
+        return "NutsExtensionInfo{" + "id=" + id + ", name=" + name + ", description=" + description + ", author=" + author + ", category=" + category + ", source=" + source + '}';
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.groupId);
-        hash = 53 * hash + Objects.hashCode(this.artifactId);
-        hash = 53 * hash + Objects.hashCode(this.version);
+        hash = 59 * hash + Objects.hashCode(this.id);
+        hash = 59 * hash + Objects.hashCode(this.name);
+        hash = 59 * hash + Objects.hashCode(this.description);
+        hash = 59 * hash + Objects.hashCode(this.author);
+        hash = 59 * hash + Objects.hashCode(this.category);
+        hash = 59 * hash + Objects.hashCode(this.source);
         return hash;
     }
 
@@ -94,17 +105,27 @@ class WorkspaceNutsId {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final WorkspaceNutsId other = (WorkspaceNutsId) obj;
-        if (!Objects.equals(this.groupId, other.groupId)) {
+        final NutsExtensionInfo other = (NutsExtensionInfo) obj;
+        if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.artifactId, other.artifactId)) {
+        if (!Objects.equals(this.description, other.description)) {
             return false;
         }
-        if (!Objects.equals(this.version, other.version)) {
+        if (!Objects.equals(this.author, other.author)) {
+            return false;
+        }
+        if (!Objects.equals(this.category, other.category)) {
+            return false;
+        }
+        if (!Objects.equals(this.source, other.source)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
 
+    
 }

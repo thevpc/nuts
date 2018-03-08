@@ -5,7 +5,9 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +20,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
 import net.vpc.app.nuts.NutsCommand;
 import net.vpc.app.nuts.NutsCommandAutoCompleteComponent;
 import net.vpc.app.nuts.NutsComponent;
@@ -27,6 +33,7 @@ import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsDependencySearch;
 import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
 import net.vpc.app.nuts.NutsExecutorComponent;
+import net.vpc.app.nuts.NutsExtensionInfo;
 import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
@@ -44,6 +51,9 @@ import net.vpc.app.nuts.NutsWorkspaceExtension;
 import net.vpc.app.nuts.NutsWorkspaceExtensionAlreadyRegisteredException;
 import net.vpc.app.nuts.NutsWorkspaceExtensionManager;
 import net.vpc.app.nuts.NutsWorkspaceFactory;
+import net.vpc.app.nuts.URLLocation;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.ListMap;
@@ -78,9 +88,66 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     private final DefaultNutsWorkspace ws;
     private final NutsWorkspaceFactory factory;
 
-    protected DefaultNutsWorkspaceExtensionManager(final DefaultNutsWorkspace ws,NutsWorkspaceFactory factory) {
+    protected DefaultNutsWorkspaceExtensionManager(DefaultNutsWorkspace ws, NutsWorkspaceFactory factory) {
         this.ws = ws;
         this.factory = factory;
+    }
+
+    @Override
+    public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
+        return findWorkspaceExtensions(ws.getBootId().getVersion().toString(), session);
+    }
+
+    @Override
+    public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
+        if (version == null) {
+            version = ws.getBootId().getVersion().toString();
+        }
+        NutsId id = ws.getBootId().setVersion(version);
+        return findExtensions(id.toString(), session);
+    }
+
+    @Override
+    public List<NutsExtensionInfo> findExtensions(String id, NutsSession session) {
+        NutsId nid = getFactory().parseNutsId(id);
+        if (nid.getVersion().isEmpty()) {
+            throw new NutsIllegalArgumentException("Missing version");
+        }
+        List<NutsExtensionInfo> ret = new ArrayList<>();
+        List<String> allUrls = new ArrayList<>();
+        for (String r : getExtensionRepositoryLocations(id)) {
+            String url = r + "/" + CoreNutsUtils.getPath(nid, ".extensions", "/");
+            allUrls.add(url);
+            URL u = expandURL(url);
+            if (url != null) {
+                JsonStructure s = null;
+                try {
+                    s = CoreJsonUtils.get().loadJsonStructure(u.openStream());
+                } catch (Exception ex) {
+                    ///
+                }
+                if (s != null && s instanceof JsonArray) {
+                    JsonArray a = (JsonArray) s;
+                    for (JsonValue v : a) {
+                        if (v.getValueType() == JsonValue.ValueType.OBJECT) {
+                            JsonObject o = (JsonObject) v;
+                            try {
+                                ret.add(new NutsExtensionInfo(CoreNutsUtils.parseNullableOrErrorNutsId(o.getString("id")),
+                                        o.getString("name", null), o.getString("author", null), o.getString("description", null), o.getString("category", null), u.toString()));
+                            } catch (Exception ex) {
+                                //ignore any error
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        boolean latestVersion = true;
+        if (latestVersion && ret.size() > 1) {
+            return CoreNutsUtils.filterNutsExtensionInfoByLatestVersion(ret);
+        }
+        return ret;
     }
 
     protected void oninitializeWorkspace(ClassLoader bootClassLoader) {
@@ -99,7 +166,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     @Override
-    public NutsWorkspaceExtension addExtension(String id, NutsSession session) {
+    public NutsWorkspaceExtension addWorkspaceExtension(String id, NutsSession session) {
         session = ws.validateSession(session);
         NutsId oldId = CoreNutsUtils.finNutsIdByFullName(CoreNutsUtils.parseOrErrorNutsId(id), extensions.keySet());
         NutsWorkspaceExtension old = null;
@@ -119,7 +186,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     @Override
-    public boolean installExtensionComponent(Class extensionPointType, Object extensionImpl) {
+    public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl) {
         if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
             if (extensionPointType.isInstance(extensionImpl)) {
                 return registerInstance(extensionPointType, extensionImpl);
@@ -130,7 +197,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     @Override
-    public NutsWorkspaceExtension[] getExtensions() {
+    public NutsWorkspaceExtension[] getWorkspaceExtensions() {
         return extensions.values().toArray(new NutsWorkspaceExtension[extensions.size()]);
     }
 
@@ -279,6 +346,43 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     @Override
     public NutsWorkspaceFactory getFactory() {
         return factory;
+    }
+
+    @Override
+    public URLLocation[] getExtensionURLLocations(String nutsId, String appId, String extensionType) {
+        List<URLLocation> bootUrls = new ArrayList<>();
+        for (String r : getExtensionRepositoryLocations(nutsId)) {
+            String url = r + "/" + CoreNutsUtils.getPath(CoreNutsUtils.parseNutsId(nutsId), "." + extensionType, "/");
+            URL u = expandURL(url);
+            bootUrls.add(new URLLocation(url, u));
+        }
+        return bootUrls.toArray(new URLLocation[bootUrls.size()]);
+    }
+
+    @Override
+    public String[] getExtensionRepositoryLocations(String appId) {
+        //should read this form config?
+        //or should be read from and extension component?
+        String repos = ws.getConfigManager().getEnv("bootstrapRepositoryLocations", "") + ";" + NutsConstants.URL_BOOTSTRAP_LOCAL + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE;
+        List<String> urls = new ArrayList<>();
+        for (String r : CoreStringUtils.split(repos, "; ")) {
+            if (!CoreStringUtils.isEmpty(r)) {
+                urls.add(r);
+            }
+        }
+        return urls.toArray(new String[urls.size()]);
+    }
+
+    protected URL expandURL(String url) {
+        try {
+            url = ws.expandPath(url);
+            if (CoreIOUtils.isRemoteURL(url)) {
+                return new URL(url);
+            }
+            return new File(url).toURI().toURL();
+        } catch (MalformedURLException ex) {
+            return null;
+        }
     }
 
 }

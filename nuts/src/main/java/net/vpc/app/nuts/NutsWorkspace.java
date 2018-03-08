@@ -136,4 +136,8 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceListener[] getWorkspaceListeners();
 
+    NutsId getBootId();
+
+    NutsId getRuntimeId();
+
 }

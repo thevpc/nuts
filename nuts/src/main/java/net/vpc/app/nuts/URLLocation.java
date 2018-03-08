@@ -27,42 +27,44 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.cmd.cmdline;
+package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsCommandContext;
-import net.vpc.app.nuts.NutsRepositoryDefinition;
-import net.vpc.app.nuts.NutsWorkspace;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-import net.vpc.common.commandline.ArgumentCandidate;
-import net.vpc.common.commandline.DefaultNonOption;
+import java.net.URL;
 
 /**
+ * Convenient class to hold information about base path and expanded url
  *
  * @author vpc
  */
-public class RepositoryTypeNonOption extends DefaultNonOption {
+public class URLLocation {
 
-    private NutsWorkspace workspace;
+    private String path;
+    private URL url;
 
-    public RepositoryTypeNonOption(String name, NutsCommandContext context) {
-        super(name);
-        this.workspace = context.getValidWorkspace();
+    public URLLocation(String path, URL url) {
+        this.path = path;
+        this.url = url;
+    }
+
+    /**
+     * base path
+     * @return base path
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * expanded url
+     * @return expanded url
+     */
+    public URL getUrl() {
+        return url;
     }
 
     @Override
-    public List<ArgumentCandidate> getValues() {
-        TreeSet<String> allValid = new TreeSet<>();
-        allValid.add("nuts");
-        for (NutsRepositoryDefinition repo : workspace.getRepositoryManager().getDefaultRepositories()) {
-            allValid.add(repo.getType());
-        }
-        List<ArgumentCandidate> all = new ArrayList<>();
-        for (String v : allValid) {
-            all.add(new DefaultNutsArgumentCandidate(v));
-        }
-        return all;
+    public String toString() {
+        return "URLLocation{" + "path=" + path + ", url=" + url + '}';
     }
+
 }
