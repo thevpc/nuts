@@ -41,7 +41,7 @@ import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOr;
 import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterOr;
 import net.vpc.app.nuts.extensions.filters.dependency.ScopeNutsDependencyFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterOr;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdPatternFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
@@ -63,7 +63,7 @@ import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterById;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOs;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOsdist;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPlatform;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdJavascriptFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.extensions.filters.repository.ExprNutsRepositoryFilter;
 
 /**
@@ -814,13 +814,13 @@ public class CoreNutsUtils {
                     } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
                         depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j)));
                     } else {
-                        idFilter = simplify(And(idFilter, NutsIdJavascriptFilter.valueOf(j)));
+                        idFilter = simplify(And(idFilter, NutsJavascriptIdFilter.valueOf(j)));
                     }
                 }
             }
         }
         if (ids != null) {
-            idFilter = simplify(And(idFilter, new NutsIdPatternFilter(ids)));
+            idFilter = simplify(And(idFilter, new NutsPatternIdFilter(ids)));
         }
         NutsDescriptorFilter packs = null;
         for (String v : packagings) {

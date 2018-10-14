@@ -47,7 +47,12 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     public static final Logger log = Logger.getLogger(NutsFolderRepository.class.getName());
 
     public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository, root, SPEED_FAST);
+        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository,
+                CoreIOUtils.resolvePath(repositoryLocation,
+                        root != null ? root : CoreIOUtils.createFile(
+                                        workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
+                        workspace.getConfigManager().getWorkspaceRootLocation()),
+                SPEED_FAST);
         extensions.put("src", "-src.zip");
     }
 
@@ -533,6 +538,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             try {
+                if (id.getVersion().isSingleValue()) {
+                    NutsFile localGroupAndArtifactAndVersionFile = getLocalGroupAndArtifactAndVersionFile(id, true);
+                    File localFile = localGroupAndArtifactAndVersionFile.getFile();
+                    if (localFile != null) {
+                        return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId()))).iterator();
+                    }
+                    return Collections.emptyIterator();
+                }
                 namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");

@@ -96,9 +96,15 @@ public class CoreVersionUtils {
         String[] v2arr = splitVersionParts(v2);
         for (int i = 0; i < Math.max(v1arr.length, v2arr.length); i++) {
             if (i >= v1arr.length) {
+                if(v2arr[i].equalsIgnoreCase("SNAPSHOT")){
+                    return 1;
+                }
                 return -1;
             }
             if (i >= v2arr.length) {
+                if(v1arr[i].equalsIgnoreCase("SNAPSHOT")){
+                    return -1;
+                }
                 return 1;
             }
             int x = compareVersionItem(v1arr[i], v2arr[i]);
@@ -130,8 +136,14 @@ public class CoreVersionUtils {
     }
 
     private static int compareVersionItem(String v1, String v2) {
-        if (CoreStringUtils.isInt(v1) && CoreStringUtils.isInt(v2)) {
+        if (v1.equals(v2)) {
+            return 0;
+        } else if (CoreStringUtils.isInt(v1) && CoreStringUtils.isInt(v2)) {
             return Integer.parseInt(v1) - Integer.parseInt(v2);
+        } else if ("SNAPSHOT".equalsIgnoreCase(v1)) {
+            return -1;
+        } else if ("SNAPSHOT".equalsIgnoreCase(v2)) {
+            return 1;
         } else {
             int a = CoreStringUtils.getStartingInt(v1);
             int b = CoreStringUtils.getStartingInt(v2);

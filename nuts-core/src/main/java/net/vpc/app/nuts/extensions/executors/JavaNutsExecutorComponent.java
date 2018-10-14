@@ -60,6 +60,41 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
+    private static class Prop {
+
+        String name;
+
+        public Prop(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isAssignment() {
+            return name.contains("=");
+        }
+
+        public String getKey() {
+            String[] strings = CoreNutsUtils.splitNameAndValue(name);
+            if (strings != null) {
+                return (strings[0]);
+            } else {
+                return name;
+            }
+        }
+
+        public String getValue() {
+            String[] strings = CoreNutsUtils.splitNameAndValue(name);
+            if (strings != null) {
+                return strings[1];
+            } else {
+                return "";
+            }
+        }
+    }
+
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsFile nutMainFile = executionContext.getNutsFile();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
@@ -74,43 +109,52 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(envAndApp0[1]));
         app.addAll(Arrays.asList(envAndApp[1]));
 
-        Properties runnerProps = new Properties();
+        StringKeyValueList runnerProps = new StringKeyValueList();
         if (executionContext.getExecutorDescriptor() != null) {
-            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getExecutorDescriptor().getProperties(), runnerProps);
+            runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
+//            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getExecutorDescriptor().getProperties(), runnerProps);
         }
         for (String k : env) {
             String[] strings = CoreNutsUtils.splitNameAndValue(k);
             if (strings != null) {
-                runnerProps.put(strings[0], strings[1]);
+                runnerProps.add(strings[0], strings[1]);
             } else {
-                runnerProps.put(k, "");
+                runnerProps.add(k, "");
             }
         }
 
         if (executionContext.getEnv() != null) {
-            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getEnv(), runnerProps);
-        }
-        if (runnerProps == null) {
-            runnerProps = new Properties();
+            runnerProps.add((Map) executionContext.getEnv());
         }
 
         List<String> jvmArgs = new ArrayList<String>();
         String javaVersion = null;//runnerProps.getProperty("java.version");
+        String javaHome = null;//runnerProps.getProperty("java.version");
         String mainClass = null;
         boolean showCommand = false;
         boolean jar = false;
         List<String> classPath = new ArrayList<>();
-        for (Map.Entry<Object, Object> e : runnerProps.entrySet()) {
-            String k = (String) e.getKey();
-            String value = (String) e.getValue();
-            if (k.startsWith("-J")) {
-                jvmArgs.add(k.substring(2) + (value.isEmpty() ? "" : ("=" + value)));
-            } else if (k.startsWith("-D") || k.startsWith("-Xmx") || k.startsWith("-Xms")) {
-                jvmArgs.add(k + "=" + value);
-            } else if (k.equals("-java-version") || k.equals("java-version")) {
-                javaVersion = "java#" + value;
-            } else if (k.equals("-class-path") || k.equals("-cp") || k.equals("-classpath") || k.equals("class-path")) {
+        for (StringKeyValue e : runnerProps) {
+            String k = e.getKey();
+            String value = e.getValue();
+            if (k.equals("-java-version")) {
+                javaVersion = value;
+            } else if (k.equals("-java-home")) {
+                javaHome = value;
+            } else if (k.equals("-class-path") || k.equals("-cp") || k.equals("-classpath")) {
                 classPath.add(value);
+            } else if (k.equals("-nuts-path") || k.equals("-np") || k.equals("-nutspath")) {
+                NutsSearch ns = new NutsSearch().setLastestVersions(true);
+                for (String n : CoreStringUtils.split(value, "; ")) {
+                    if (!CoreStringUtils.isEmpty(n)) {
+                        ns.addId(n);
+                    }
+                }
+                final List<NutsId> all = executionContext.getWorkspace().find(ns, executionContext.getSession());
+                for (NutsId nutsId : all) {
+                    NutsFile f = executionContext.getWorkspace().fetch(nutsId.toString(), executionContext.getSession());
+                    classPath.add(f.getFile().getPath());
+                }
             } else if (k.equals("-main-class")) {
                 mainClass = value;
             } else if (k.equals("-show-command")) {
@@ -118,14 +162,21 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             } else if (k.equals("-jar")) {
                 jar = true;
             } else {
-                if (k.startsWith("-")) {
-                    executionContext.getTerminal().getErr().printf("Ignored env param %s%s\n", k, (value == null ? "" : ("=" + value)));
+                if (value.length() > 0) {
+                    jvmArgs.add(k + "=" + value);
+                } else {
+                    jvmArgs.add(k);
                 }
             }
         }
-
-        if (CoreStringUtils.isEmpty(javaVersion)) {
-            javaVersion = "java";
+        if (javaHome == null) {
+            if (!CoreStringUtils.isEmpty(javaVersion)) {
+                javaHome = "${java#" + javaVersion + "}";
+            } else {
+                javaHome = "${java}";
+            }
+        } else {
+            javaHome = javaHome + "/bin/java";
         }
 
         List<NutsFile> nutsFiles = new ArrayList<>();
@@ -141,7 +192,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             );
         }
         List<String> args = new ArrayList<String>();
-        args.add("${" + javaVersion + "}");
+        args.add(javaHome);
         args.addAll(jvmArgs);
         if (mainClass == null) {
             File file = nutMainFile.getFile();

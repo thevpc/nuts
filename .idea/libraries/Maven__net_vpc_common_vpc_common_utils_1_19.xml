@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.vpc.common:vpc-common-utils:1.19">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/common/vpc-common-utils/1.19/vpc-common-utils-1.19.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/common/vpc-common-utils/1.19/vpc-common-utils-1.19-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/common/vpc-common-utils/1.19/vpc-common-utils-1.19-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

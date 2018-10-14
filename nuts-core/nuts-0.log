@@ -1,0 +1,169 @@
+Sun Aug 12 16:53:47 CET 2018 CONFIG net.vpc.app.nuts.DefaultNutsBootWorkspace: Create boot workspace with options NutsBootOptions{root=null, runtimeId=null, runtimeSourceURL=null, classLoaderProvider=null}
+Sun Aug 12 16:53:47 CET 2018 CONFIG net.vpc.app.nuts.DefaultNutsBootWorkspace: Open Workspace null with options NutsWorkspaceCreateOptions{ignoreIfFound=false, createIfNotFound=true, saveIfCreated=true, archetype=null, excludedExtensions=[], excludedRepositories=[]}
+Sun Aug 12 16:53:47 CET 2018 INFO net.vpc.app.nuts.DefaultNutsBootWorkspace: Loading Nuts ClassWorld from [file:/home/vpc/.m2/repository/net/vpc/app/nuts/nuts-core/0.4.0.1/nuts-core-0.4.0.1.jar, file:/home/vpc/.m2/repository/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar, file:/home/vpc/.m2/repository/net/vpc/app/nuts/0.4.0/nuts-0.4.0.jar, file:/home/vpc/.m2/repository/org/jline/jline/3.5.2/jline-3.5.2.jar, file:/home/vpc/.m2/repository/net/vpc/common/vpc-common-commandline/1.0/vpc-common-commandline-1.0.jar, file:/home/vpc/.m2/repository/org/ow2/asm/asm/5.2/asm-5.2.jar, file:/home/vpc/.m2/repository/net/vpc/common/java-shell/0.5/java-shell-0.5.jar, file:/home/vpc/.m2/repository/org/glassfish/javax.json/1.0.4/javax.json-1.0.4.jar]
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsTransportComponent for impl type net.vpc.app.nuts.extensions.core.DefaultHttpTransportComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsWorkspace for impl type net.vpc.app.nuts.extensions.core.DefaultNutsWorkspace
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsRepositoryFactoryComponent for impl type net.vpc.app.nuts.extensions.repos.DefaultNutsRepositoryFactoryComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsRepositoryFactoryComponent for impl type net.vpc.app.nuts.extensions.repos.DefaultNutsRemoteRepositoryFactoryComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsTerminal for impl type net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsTerminal for impl type net.vpc.app.nuts.extensions.terminals.NutsJLineTerminal
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering class net.vpc.app.nuts.NutsPrintStream for impl type net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering class net.vpc.app.nuts.NutsPrintStream for impl type net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsWorkspaceArchetypeComponent for impl type net.vpc.app.nuts.extensions.archetypes.ServerNutsWorkspaceArchetypeComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsWorkspaceArchetypeComponent for impl type net.vpc.app.nuts.extensions.archetypes.MinimalNutsWorkspaceArchetypeComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsWorkspaceArchetypeComponent for impl type net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsServerComponent for impl type net.vpc.app.nuts.extensions.servers.NutsHttpServerComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsServerComponent for impl type net.vpc.app.nuts.extensions.servers.NutsAdminServerComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsInstallerComponent for impl type net.vpc.app.nuts.extensions.installers.ZipNutsInstallerComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsDescriptorContentParserComponent for impl type net.vpc.app.nuts.extensions.parsers.BashNutsDescriptorContentParserComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsDescriptorContentParserComponent for impl type net.vpc.app.nuts.extensions.parsers.ZipNutsDescriptorContentParserComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsDescriptorContentParserComponent for impl type net.vpc.app.nuts.extensions.parsers.JarNutsDescriptorContentParserComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsDescriptorContentParserComponent for impl type net.vpc.app.nuts.extensions.parsers.NutsShellDescriptorContentParserComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsExecutorComponent for impl type net.vpc.app.nuts.extensions.executors.JavaNutsExecutorComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsExecutorComponent for impl type net.vpc.app.nuts.extensions.executors.NutsShellNutsExecutorComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsExecutorComponent for impl type net.vpc.app.nuts.extensions.executors.ProcessNutsExecutorComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.ServerCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.ConfigCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.ConnectCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.ConsoleCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.DeployCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.ExecCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.FindCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.VersionCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.HelpCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.HistoryCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.InstallCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.FetchCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.UninstallCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.LoginCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.LogoutCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.PushCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.UpdateCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.WhichCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.WhoCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.EchoCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.LsCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.CdCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.UnameCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.CheckoutCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsCommand for impl type net.vpc.app.nuts.extensions.cmd.CommitCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsConsole for impl type net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Registering interface net.vpc.app.nuts.NutsRepositoryFactoryComponent for impl type net.vpc.app.nuts.bridges.maven.MavenNutsRepositoryFactoryComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsTerminal to prototype instance net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsTerminal to prototype instance net.vpc.app.nuts.extensions.terminals.NutsJLineTerminal
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsRepositoryFactoryComponent to singleton instance net.vpc.app.nuts.extensions.repos.DefaultNutsRepositoryFactoryComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsRepositoryFactoryComponent to singleton instance net.vpc.app.nuts.extensions.repos.DefaultNutsRemoteRepositoryFactoryComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsRepositoryFactoryComponent to singleton instance net.vpc.app.nuts.bridges.maven.MavenNutsRepositoryFactoryComponent
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsTerminal to prototype instance net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsTerminal to prototype instance net.vpc.app.nuts.extensions.terminals.NutsJLineTerminal
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve class net.vpc.app.nuts.NutsPrintStream to prototype instance net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsConsole to prototype instance net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : env
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : alias
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : exit
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : props
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : set
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : setprop
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : showerr
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : unset
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : unalias
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : unexport
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : type
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : source
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : pwd
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.ServerCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.ConfigCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.ConnectCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.ConsoleCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.DeployCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.ExecCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.FindCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.VersionCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.HelpCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.HistoryCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.InstallCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.FetchCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.UninstallCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.LoginCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.LogoutCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.PushCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.UpdateCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.WhichCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.WhoCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.EchoCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.LsCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.CdCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.UnameCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.CheckoutCommand
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsCommand to singleton instance net.vpc.app.nuts.extensions.cmd.CommitCommand
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : server
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : config
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : connect
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : console
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : deploy
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : exec
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : find
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : version
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : help
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : history
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : install
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : fetch
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : uninstall
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : login
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : logout
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : push
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : update
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : which
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : who
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : echo
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : ls
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : cd
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : uname
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : checkout
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : commit
+Sun Aug 12 16:53:47 CET 2018 FINER net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory: Resolve interface net.vpc.app.nuts.NutsConsole to prototype instance net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : env
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : alias
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : exit
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : props
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : set
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : setprop
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : showerr
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : unset
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : unalias
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : unexport
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : type
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : source
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : pwd
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : server
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : config
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : connect
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : console
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : deploy
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : exec
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : find
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : version
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : help
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : history
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : install
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : fetch
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : uninstall
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : login
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : logout
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : push
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : update
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : which
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : who
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : echo
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : ls
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : cd
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : uname
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : checkout
+Sun Aug 12 16:53:47 CET 2018 FINE net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole: Installing Command : commit

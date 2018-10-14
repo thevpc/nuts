@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.filters.version;
 
-import net.vpc.app.nuts.extensions.filters.id.JsNutsIdFilter;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
@@ -41,11 +40,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
 /**
  * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
  */
-public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsIdFilter {
+public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
 
     public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]])(?<LV1>[^\\[\\],]*),(?<RV1>[^\\[\\],]*)(?<R1>[\\[\\]]))|(?<VAL2>(?<L2>[\\[\\]])(?<V2>[^\\[\\],]*)(?<R2>[\\[\\]]))|(?<VAL3>(?<V3>[^\\[\\], ]+)))(\\s|,|\n)*)");
     private List<NutsVersionInterval> intervals = new ArrayList<>();

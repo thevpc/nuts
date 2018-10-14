@@ -40,34 +40,34 @@ import net.vpc.app.nuts.extensions.util.JavascriptHelper;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsIdJavascriptFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
+public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
     private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
 
     private String code;
     private JavascriptHelper engineHelper;
 
-    private static final WeakHashMap<String, NutsIdJavascriptFilter> cached = new WeakHashMap<>();
+    private static final WeakHashMap<String, NutsJavascriptIdFilter> cached = new WeakHashMap<>();
 
-    public static NutsIdJavascriptFilter valueOf(String value) {
+    public static NutsJavascriptIdFilter valueOf(String value) {
         if (CoreStringUtils.isEmpty(value)) {
             return null;
         }
         synchronized (cached) {
-            NutsIdJavascriptFilter old = cached.get(value);
+            NutsJavascriptIdFilter old = cached.get(value);
             if (old == null) {
-                old = new NutsIdJavascriptFilter(value);
+                old = new NutsJavascriptIdFilter(value);
                 cached.put(value, old);
             }
             return old;
         }
     }
 
-    public NutsIdJavascriptFilter(String code) {
+    public NutsJavascriptIdFilter(String code) {
         this(code, null);
     }
 
-    public NutsIdJavascriptFilter(String code, Set<String> blacklist) {
+    public NutsJavascriptIdFilter(String code, Set<String> blacklist) {
         engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null);
         this.code = code;
         //check if valid
@@ -111,7 +111,7 @@ public class NutsIdJavascriptFilter implements NutsIdFilter, Simplifiable<NutsId
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsIdJavascriptFilter other = (NutsIdJavascriptFilter) obj;
+        final NutsJavascriptIdFilter other = (NutsJavascriptIdFilter) obj;
         if (!Objects.equals(this.code, other.code)) {
             return false;
         }

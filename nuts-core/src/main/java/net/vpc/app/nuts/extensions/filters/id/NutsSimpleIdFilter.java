@@ -27,69 +27,55 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.filters.descriptor;
+package net.vpc.app.nuts.extensions.filters.id;
 
-import java.util.Objects;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsDescriptorFilter;
+import java.util.Arrays;
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
-import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
 /**
- *
- * @author vpc
+ * Created by vpc on 1/7/17.
  */
-public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
+public class NutsSimpleIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
-    private NutsIdFilter id;
+    private NutsId id;
 
-    public NutsDescriptorFilterById(NutsIdFilter id) {
+    public NutsSimpleIdFilter(NutsId id) {
         this.id = id;
+        if (id == null) {
+            throw new NutsIllegalArgumentException("Missing id " + id);
+        }
     }
 
-    @Override
-    public boolean accept(NutsDescriptor descriptor) {
-        if (id != null) {
-            return id.accept(descriptor.getId());
+    public boolean accept(NutsId id) {
+        if (!this.id.getFullName().equals(id.getFullName())) {
+            return false;
+        }
+        if (!this.id.getVersion().toFilter().accept(id.getVersion())) {
+            return false;
         }
         return true;
     }
 
     @Override
-    public NutsDescriptorFilter simplify() {
-        if (id != null && id instanceof Simplifiable) {
-            NutsIdFilter id2 = ((Simplifiable<NutsIdFilter>) id).simplify();
-            if (id2 != id) {
-                if (id2 == null) {
-                    return null;
-                }
-                return new NutsDescriptorFilterById(id2);
-            }
-        }
+    public String toJsNutsIdFilterExpr() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("id.matches('").append(CoreStringUtils.escapeCoteStrings(id.toString())).append("')");
+        return sb.toString();
+    }
+
+    @Override
+    public NutsIdFilter simplify() {
         return this;
     }
 
     @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        if (id == null) {
-            return "true";
-        }
-        if (id instanceof NutsJsAwareIdFilter) {
-            return ((NutsJsAwareIdFilter) id).toJsNutsIdFilterExpr();
-        }
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return "Id{" + id + '}';
-    }
-
-    @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.id);
+        int hash = 7;
+        hash = 89 * hash + this.id.hashCode();
         return hash;
     }
 
@@ -104,11 +90,20 @@ public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifia
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsDescriptorFilterById other = (NutsDescriptorFilterById) obj;
-        if (!Objects.equals(this.id, other.id)) {
+        final NutsSimpleIdFilter other = (NutsSimpleIdFilter) obj;
+        if (!this.id.equals(other.getId())) {
             return false;
         }
         return true;
+    }
+
+    public NutsId getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsSimpleIdFilter{" + id + "}";
     }
 
 }

@@ -42,18 +42,18 @@ import java.util.regex.Pattern;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
+public class NutsPatternIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
     private boolean valid = false;
     private Pattern idPattern;
 
     private String[] ids = new String[0];
 
-    public NutsIdPatternFilter() {
+    public NutsPatternIdFilter() {
 
     }
 
-    public NutsIdPatternFilter(String[] id) {
+    public NutsPatternIdFilter(String[] id) {
         List<String> all = new ArrayList<>();
         if (id != null) {
             for (String i : id) {
@@ -163,7 +163,7 @@ public class NutsIdPatternFilter implements NutsIdFilter, Simplifiable<NutsIdFil
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsIdPatternFilter other = (NutsIdPatternFilter) obj;
+        final NutsPatternIdFilter other = (NutsPatternIdFilter) obj;
         if (!Arrays.deepEquals(this.ids, other.ids)) {
             return false;
         }

@@ -49,6 +49,8 @@ public interface JsonSerializer {
     void serializeArrProp(Object value, Class t, JsonArrayBuilder builder, SerializeOptions options);
 
     <T> T loadJson(File file, Class<T> cls);
+    
+    <T> T loadJson(String structure, Class<T> cls);
 
     void storeJson(JsonStructure structure, File file, boolean pretty);
 

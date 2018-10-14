@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.*;
-import java.util.Locale;
 
 /**
  * Created by vpc on 2/20/17.

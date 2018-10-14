@@ -27,19 +27,37 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.extensions.filters.id;
+package net.vpc.app.nuts.extensions.cmd;
+
+import net.vpc.app.nuts.HistoryElement;
+import net.vpc.app.nuts.NutsCommandContext;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.ObjectFilter;
+import net.vpc.app.nuts.extensions.cmd.cmdline.FolderNonOption;
+import net.vpc.app.nuts.extensions.util.CoreCollectionUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.common.commandline.CommandLine;
+
+import java.io.File;
+import java.util.List;
 
 /**
- * Created by vpc on 1/5/17.
+ * Created by vpc on 1/7/17.
  */
-public interface JsNutsIdFilter {
+public class HistoryCommand extends AbstractNutsCommand {
 
-    /**
-     * if convertible to javascript boolean expression return valid non null
-     * code. Return null in all other cases.
-     *
-     * @return if convertible to javascript boolean expression return valid non
-     * null code. Return null in all other cases.
-     */
-    String toJsNutsIdFilterExpr();
+    public HistoryCommand() {
+        super("history", DEFAULT_SUPPORT);
+    }
+
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
+        CommandLine cmdLine = cmdLine(args, context);
+        NutsPrintStream out = context.getTerminal().getOut();
+        List<HistoryElement> history = context.getCommandLine().getHistory(200);
+        for (int i = 0; i < history.size(); i++) {
+            HistoryElement historyElement = history.get(i);
+            out.println((i+1)+". "+historyElement.getCommand());
+        }
+        return 0;
+    }
 }

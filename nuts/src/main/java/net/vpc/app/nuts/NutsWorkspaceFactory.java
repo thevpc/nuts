@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -78,6 +79,12 @@ public interface NutsWorkspaceFactory {
     NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
 
     NutsPrintStream createPrintStream(OutputStream out);
+
+    NutsPrintStream createPrintStream(File out);
+
+    NutsPrintStream createNullPrintStream();
+
+    InputStream createNullInputStream();
 
     NutsId parseNutsId(String nutsId);
 }

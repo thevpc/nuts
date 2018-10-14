@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -36,8 +36,7 @@ import net.vpc.apps.javashell.parser.Env;
 import net.vpc.apps.javashell.parser.JavaShellEvalContext;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,6 +50,7 @@ public class DefaultNutsConsole implements NutsConsole {
     private NutsCommandContext context = new DefaultNutsCommandContext();
     private NutsJavaShell sh;
     private JavaShellEvalContext javaShellContext;
+    private HistoryElementList history = new HistoryElementList();
 
     public DefaultNutsConsole() {
 
@@ -95,6 +95,11 @@ public class DefaultNutsConsole implements NutsConsole {
         sh = new NutsJavaShell(this, workspace);
         javaShellContext = sh.createContext(this.context, null, null, new Env(), new String[0]);
         context.getUserProperties().put(JavaShellEvalContext.class.getName(), javaShellContext);
+        try {
+            history.load();
+        } catch (Exception ex) {
+            //ignore
+        }
     }
 
     public void setServiceName(String serviceName) {
@@ -112,13 +117,28 @@ public class DefaultNutsConsole implements NutsConsole {
 
     @Override
     public int runLine(String line) {
+        history.add(line);
         return sh.executeLine(line, javaShellContext);
     }
 
     @Override
     public int run(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (i > 0) {
+                sb.append(" ");
+            }
+            if (arg.contains(" ")) {
+                sb.append("\"").append(arg).append("\"");
+            } else {
+                sb.append(arg);
+            }
+        }
+        history.add(sb.toString());
         return sh.executeArguments(args, sh.createContext(javaShellContext).setArgs(args));
     }
+
 
     public int getLastResult() {
         return sh.getLastResult();
@@ -209,5 +229,10 @@ public class DefaultNutsConsole implements NutsConsole {
         public String getHelpHeader() {
             return ec.getHelpHeader();
         }
+    }
+
+    @Override
+    public List<HistoryElement> getHistory(int maxElements) {
+        return history.getElements(maxElements);
     }
 }

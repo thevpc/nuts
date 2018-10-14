@@ -27,45 +27,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
-
-import java.util.List;
+package net.vpc.app.nuts.extensions.filters.id;
 
 /**
- *
- * @author vpc
+ * Created by vpc on 1/5/17.
  */
-public interface NutsWorkspaceExtensionManager {
+public interface NutsJsAwareIdFilter {
 
     /**
-     * find all available extensions for the current workspace
+     * if convertible to javascript boolean expression return valid non null
+     * code. Return null in all other cases.
      *
-     * @param session
-     * @return
+     * @return if convertible to javascript boolean expression return valid non
+     * null code. Return null in all other cases.
      */
-    List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session);
-
-    /**
-     * finds all available extensions (from remote repositories) for the given
-     * boot version (aka version of nuts api)
-     *
-     * @param version boot version
-     * @param session current session
-     * @return all available extensions
-     */
-    List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session);
-
-    List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session);
-
-    NutsWorkspaceExtension addWorkspaceExtension(String id, NutsSession session);
-
-    boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
-
-    NutsWorkspaceExtension[] getWorkspaceExtensions();
-
-    NutsWorkspaceFactory getFactory();
-
-    URLLocation[] getExtensionURLLocations(String id, String appId, String extensionType);
-    
-    String[] getExtensionRepositoryLocations(String appId);
+    String toJsNutsIdFilterExpr();
 }

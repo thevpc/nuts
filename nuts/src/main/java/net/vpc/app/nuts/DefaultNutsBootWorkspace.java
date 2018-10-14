@@ -87,7 +87,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      */
     @Override
     public String getBootId() {
-        return "net.vpc.app.nuts:nuts#" + IOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"))
+        return NutsConstants.NUTS_ID_BOOT + "#" + IOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app/nuts/nuts.properties"))
                 .getProperty("project.version", "0.0.0");
     }
 
@@ -227,8 +227,13 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 runtimeId = bootProperties.getProperty("runtimeId");
                 repositories = bootProperties.getProperty("repositories");
                 if (!StringUtils.isEmpty(runtimeId) && !StringUtils.isEmpty(repositories)) {
+                    log.log(Level.CONFIG, "Loaded boot from " + bootPropertiesFile.getPath() + " : runtimeId=" + runtimeId + " ; repositories=" + repositories);
                     storeRuntimeFile = false;
+                } else {
+                    log.log(Level.CONFIG, "Failed to load boot props file from " + bootPropertiesFile.getPath() + " . Corrupted file. runtimeId=" + runtimeId + " ; repositories=" + repositories);
                 }
+            } else {
+                log.log(Level.CONFIG, "Failed to load boot props file from " + bootPropertiesFile.getPath() + " . File does not exist.");
             }
             if (StringUtils.isEmpty(runtimeId) || StringUtils.isEmpty(repositories)) {
                 resolvedBootRepositories = resolveBootConfigRepositories(repositories);
@@ -242,9 +247,14 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                             if (!StringUtils.isEmpty(wruntimeId) && !StringUtils.isEmpty(wrepositories)) {
                                 runtimeId = wruntimeId;
                                 repositories = wrepositories;
+                                log.log(Level.CONFIG, "Loaded boot props from " + urlString + " : runtimeId=" + runtimeId + " ; repositories=" + repositories);
                                 break;
                             }
+                        } else {
+                            log.log(Level.CONFIG, "Failed to load boot props file from " + urlString);
                         }
+                    } else {
+                        log.log(Level.CONFIG, "Failed to load boot props file from " + urlString);
                     }
                 }
             }
@@ -252,13 +262,13 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             if (_runtimeId == null && StringUtils.isEmpty(runtimeId)) {
 //                storeRuntimeFile = false;
                 runtimeId = NutsConstants.NUTS_ID_RUNTIME + "#" + wbootId.getVersion() + ".0";
-                log.log(Level.CONFIG, "Failed to resolve boot file ({0}) from repositories. considering defaults : {1}", new Object[]{bootPropertiesPath, runtimeId});
-                if (resolvedBootRepositories != null) {
-                    for (String repo : resolvedBootRepositories) {
-                        URL uu = buildURL(repo, bootPropertiesPath);
-                        log.log(Level.CONFIG, "Inaccessible repository boot path: {0}", uu == null ? (repo + "/" + bootPropertiesPath) : uu.toString());
-                    }
-                }
+                log.log(Level.CONFIG, "Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootPropertiesPath, runtimeId});
+//                if (resolvedBootRepositories != null) {
+//                    for (String repo : resolvedBootRepositories) {
+//                        URL uu = buildURL(repo, bootPropertiesPath);
+//                        log.log(Level.CONFIG, "Inaccessible repository boot path: {0}", uu == null ? (repo + "/" + bootPropertiesPath) : uu.toString());
+//                    }
+//                }
             }
             if (StringUtils.isEmpty(repositories)) {
                 repositories = "";
@@ -272,6 +282,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 bootProperties.setProperty("repositories", repositories);
                 bootPropertiesFile.getParentFile().mkdirs();
                 IOUtils.storeProperties(bootProperties, bootPropertiesFile);
+                log.log(Level.CONFIG, "Store boot file {1}", new Object[]{bootPropertiesFile});
             }
             if (_runtimeId == null) {
                 _runtimeId = BootNutsId.parse(runtimeId);
@@ -302,14 +313,14 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 try {
                     cp = new NutsWorkspaceClassPath(IOUtils.loadURLProperties(urlString));
                 } catch (Exception ex) {
-                    log.log(Level.CONFIG, "Inaccessible repository runtime path : {0}", urlString);
+                    log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", urlString);
                     //ignore
                 }
             } else {
-                log.log(Level.CONFIG, "Inaccessible repository runtime path : {0}", (u + "/" + getPath(_runtimeId, "properties")));
+                log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", (u + "/" + getPath(_runtimeId, "properties")));
             }
             if (cp != null) {
-                log.log(Level.CONFIG, "Loaded runtime {0} from : {1}", new Object[]{cp.getId(), u});
+                log.log(Level.CONFIG, "Loaded runtime id {0} from runtime props file {1}", new Object[]{cp.getId(), u});
                 all.add(cp);
                 if (first) {
                     break;
@@ -323,6 +334,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     runtimeVersion,
                     getBootId() + ";"
                     + "net.vpc.common:java-shell#0.5;"
+                    + "net.vpc.common:vpc-common-utils#1.21;"
                     + "net.vpc.common:vpc-common-commandline#1.0;"
                     + "javax.servlet:javax.servlet-api#3.1.0;"
                     + "org.jline#jline#3.5.2;"

@@ -34,9 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
-import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextNodeParser;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**

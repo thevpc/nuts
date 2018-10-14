@@ -60,7 +60,7 @@ public class CoreIOUtils {
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
 
     public static boolean visitZipFile(InputStream zipFile, ObjectFilter<String> possiblePaths, StreamVisitor visitor) throws NutsIOException {
-        byte[] buffer = new byte[4 * 1024];
+        //byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content
         ZipInputStream zis = null;
@@ -253,9 +253,12 @@ public class CoreIOUtils {
         map.put("nuts.id.fullName", nutMainFile.getId().getFullName());
         map.put("nuts.id.group", nutMainFile.getId().getGroup());
         map.put("nuts.file", nutMainFile.getFile().getPath());
+        String defaultJavaCommand = resolveJavaCommand("", workspace);
 
-        map.put("nuts.java", resolveJavaCommand("", workspace));
-        map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
+        map.put("nuts.java", defaultJavaCommand);
+        if (map.containsKey("nuts.jar")) {
+            map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
+        }
         map.put("nuts.workspace", workspace.getConfigManager().getWorkspaceLocation());
         map.put("nuts.version", id.getVersion().getValue());
         map.put("nuts.name", id.getName());
@@ -278,7 +281,11 @@ public class CoreIOUtils {
             @Override
             public String get(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
-                    return resolveJavaCommand(skey.substring(4), workspace);
+                    String javaVer = skey.substring(4);
+                    if (CoreStringUtils.isEmpty(javaVer)) {
+                        return defaultJavaCommand;
+                    }
+                    return resolveJavaCommand(javaVer, workspace);
                 } else if (skey.equals("nuts")) {
                     NutsFile nutsFile = null;
                     nutsFile = workspace.fetch(NutsConstants.NUTS_ID_BOOT, session);
@@ -336,27 +343,41 @@ public class CoreIOUtils {
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
         requestedJavaVersion = CoreStringUtils.trim(requestedJavaVersion);
         NutsVersionFilter javaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
+        String defaultJavaPath = null;
         String bestJavaPath = null;
         String bestJavaVersion = null;
         for (Map.Entry<Object, Object> entry : workspace.getConfigManager().getEnv().entrySet()) {
             String key = (String) entry.getKey();
-            if (key.startsWith("rt.java.")) {
-                String javaVersion = key.substring("rt.java.".length());
+            if (key.startsWith("java#")) {
+                String javaVersion = key.substring("java#".length());
                 if (javaVersionFilter.accept(new NutsVersionImpl(javaVersion))) {
                     if (bestJavaVersion == null || CoreVersionUtils.compareVersions(bestJavaVersion, javaVersion) < 0) {
                         bestJavaVersion = javaVersion;
                         bestJavaPath = (String) entry.getValue();
                     }
                 }
+            } else if (key.equals("java")) {
+                defaultJavaPath = (String) entry.getValue();
             }
         }
         if (CoreStringUtils.isEmpty(bestJavaPath)) {
-            if (CoreStringUtils.isEmpty(requestedJavaVersion)) {
+            if (!CoreStringUtils.isEmpty(requestedJavaVersion)) {
                 log.log(Level.FINE, "No valid JRE found. recommended " + requestedJavaVersion + " . using default");
+                if (!CoreStringUtils.isEmpty(defaultJavaPath)) {
+                    log.log(Level.FINE, "Using default JRE.");
+                    bestJavaPath = defaultJavaPath;
+                } else {
+                    bestJavaPath = System.getProperty("java.home");
+                }
             } else {
-                log.log(Level.FINE, "No valid JRE found. using default.");
+                if (!CoreStringUtils.isEmpty(defaultJavaPath)) {
+                    log.log(Level.FINE, "Using default JRE at " + defaultJavaPath);
+                    bestJavaPath = defaultJavaPath;
+                } else {
+                    log.log(Level.FINE, "Using java.home at " + System.getProperty("java.home"));
+                    bestJavaPath = System.getProperty("java.home");
+                }
             }
-            bestJavaPath = "java";
         }
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
             File file = createFileByCwd(bestJavaPath, workspace.getConfigManager().getCwd());
@@ -1072,7 +1093,7 @@ public class CoreIOUtils {
                 return CoreIOUtils.createFile(path);
             }
         }
-        return null;
+        return baseFolder;
     }
 
     public static File createTempFile(NutsDescriptor descriptor, boolean desc, File directory) {
@@ -1198,7 +1219,7 @@ public class CoreIOUtils {
     }
 
     public static InputStreamSource createInputStreamSource(byte[] bytes, String name) {
-        return new ByteArrayInputStreamSource(bytes,name,bytes);
+        return new ByteArrayInputStreamSource(bytes, name, bytes);
     }
 
     public static InputStreamSource createInputStreamSource(String path, String variant, String name, File cwd) {
@@ -1356,7 +1377,5 @@ public class CoreIOUtils {
     public static String nativePath(String path) {
         return path.replace('/', File.separatorChar);
     }
-
-
 
 }

@@ -48,7 +48,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --perf --verbose  console</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts which netbeans-launcher</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -63,7 +63,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --perf --verbose  console</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts which netbeans-launcher</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -77,7 +77,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --perf --verbose  console</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts which netbeans-launcher</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

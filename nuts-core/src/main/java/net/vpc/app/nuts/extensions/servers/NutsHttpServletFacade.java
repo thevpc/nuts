@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.servers;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
 import net.vpc.app.nuts.extensions.util.*;
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -257,6 +260,52 @@ public class NutsHttpServletFacade {
                         context.getSession().copy());
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
+            }
+        });
+        register(new AbstractFacadeCommand("exec") {
+            @Override
+            public void executeImpl(FacadeCommandContext context) throws IOException {
+
+//                String boundary = context.getRequestHeaderFirstValue("Content-type");
+//                if (CoreStringUtils.isEmpty(boundary)) {
+//                    context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
+//                    return;
+//                }
+//                MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary);
+//                NutsDescriptor descriptor = null;
+//                String receivedContentHash = null;
+//                InputStream content = null;
+//                File contentFile = null;
+//                for (ItemStreamInfo info : stream) {
+//                    String name = info.resolveVarInHeader("Content-Disposition", "name");
+//                    switch (name) {
+//                        case "descriptor":
+//                            descriptor = CoreNutsUtils.parseNutsDescriptor(info.getContent(), true);
+//                            break;
+//                        case "content-hash":
+//                            receivedContentHash = CoreSecurityUtils.evalSHA1(info.getContent(), true);
+//                            break;
+//                        case "content":
+//                            contentFile = CoreIOUtils.createTempFile(descriptor, false);
+//                            CoreIOUtils.copy(info.getContent(), contentFile, true, true);
+//                            break;
+//                    }
+//                }
+//                if (contentFile == null) {
+//                    context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
+//                }
+                ListMap<String, String> parameters = context.getParameters();
+                List<String> cmd = parameters.getAll("cmd");
+                NutsWorkspace ws = context.getWorkspace();
+
+                NutsSession session = ws.createSession();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                session.getTerminal().setOut(ws.getExtensionManager().getFactory().createPrintStream(out));
+                session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
+
+                int result=ws.exec(cmd.toArray(new String[cmd.size()]), null, session);
+                
+                context.sendResponseText(200, String.valueOf(result)+"\n"+new String(out.toByteArray()));
             }
         });
     }

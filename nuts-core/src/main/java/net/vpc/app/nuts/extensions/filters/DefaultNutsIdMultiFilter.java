@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.extensions.filters;
 
-import net.vpc.app.nuts.extensions.filters.id.JsNutsIdFilter;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.*;
@@ -13,8 +12,9 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.filters.descriptor.JsNutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.filters.version.JsNutsVersionFilter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
-public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
+public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
     private static final Logger log = Logger.getLogger(DefaultNutsIdMultiFilter.class.getName());
     private final NutsIdFilter idFilter;
@@ -137,8 +137,8 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 sb.append(" && ");
             }
             if (id.type.equals(NutsIdFilter.class)) {
-                if (id.value instanceof JsNutsIdFilter) {
-                    JsNutsIdFilter b = (JsNutsIdFilter) id.value;
+                if (id.value instanceof NutsJsAwareIdFilter) {
+                    NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id.value;
                     String expr = b.toJsNutsIdFilterExpr();
                     if (CoreStringUtils.isEmpty(expr)) {
                         return null;

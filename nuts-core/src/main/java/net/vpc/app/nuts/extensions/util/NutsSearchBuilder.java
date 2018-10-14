@@ -43,8 +43,8 @@ import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFi
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterArch;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPackaging;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdJavascriptFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdPatternFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
 import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.And;
 import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.simplify;
 
@@ -144,12 +144,12 @@ public class NutsSearchBuilder {
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
                     depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j)));
                 } else {
-                    idFilter = simplify(And(idFilter, NutsIdJavascriptFilter.valueOf(j)));
+                    idFilter = simplify(And(idFilter, NutsJavascriptIdFilter.valueOf(j)));
                 }
             }
         }
         if (!ids.isEmpty()) {
-            idFilter = simplify(And(idFilter, new NutsIdPatternFilter(ids.toArray(new String[ids.size()]))));
+            idFilter = simplify(And(idFilter, new NutsPatternIdFilter(ids.toArray(new String[ids.size()]))));
         }
         NutsDescriptorFilter packs = null;
         for (String v : packagings) {

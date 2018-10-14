@@ -189,7 +189,7 @@ public class FindCommand extends AbstractNutsCommand {
             findContext.fecthMode = SearchMode.COMMIT;
             boolean first = true;
             for (FindWhat findWhat : findWhats) {
-                List<NutsId> it = (find(findWhat, findContext));
+                List<NutsIdExt> it = (find(findWhat, findContext));
                 if (!it.isEmpty()) {
                     if (first) {
                         first = false;
@@ -202,7 +202,7 @@ public class FindCommand extends AbstractNutsCommand {
             first = true;
             findContext.fecthMode = SearchMode.UPDATE;
             for (FindWhat findWhat : findWhats) {
-                List<NutsId> it = (find(findWhat, findContext));
+                List<NutsIdExt> it = (find(findWhat, findContext));
                 if (!it.isEmpty()) {
                     if (first) {
                         first = false;
@@ -227,7 +227,7 @@ public class FindCommand extends AbstractNutsCommand {
         } else {
             for (FindWhat findWhat : findWhats) {
                 long from = System.nanoTime();
-                List<NutsId> it = find(findWhat, findContext);
+                List<NutsIdExt> it = find(findWhat, findContext);
                 long to = System.nanoTime();
                 findContext.executionTimeNano = to - from;
                 findContext.executionSearch = findWhat;
@@ -237,7 +237,15 @@ public class FindCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private List<NutsId> find(FindWhat findWhat, final FindContext findContext) throws IOException {
+    private List<NutsIdExt> toext(List<NutsId> list) {
+        List<NutsIdExt> e=new ArrayList<>();
+        for (NutsId nutsId : list) {
+            e.add(new NutsIdExt(nutsId,null));
+        }
+        return e;
+    }
+
+    private List<NutsIdExt> find(FindWhat findWhat, final FindContext findContext) throws IOException {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
@@ -251,13 +259,13 @@ public class FindCommand extends AbstractNutsCommand {
         NutsWorkspace ws = findContext.context.getValidWorkspace();
         switch (findContext.fecthMode) {
             case ONLINE: {
-                return searchOnline(findContext, search, ws);
+                return toext(searchOnline(findContext, search, ws));
             }
             case OFFLINE: {
-                return searchOffline(findContext, search, ws);
+                return toext(searchOffline(findContext, search, ws));
             }
             case REMOTE: {
-                return searchRemote(findContext, search, ws);
+                return toext(searchRemote(findContext, search, ws));
             }
             case COMMIT: {
                 return searchCommit(findContext, search, ws);
@@ -272,7 +280,7 @@ public class FindCommand extends AbstractNutsCommand {
         return Collections.emptyList();
     }
 
-    private List<NutsId> searchUpdate(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
+    private List<NutsIdExt> searchUpdate(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
         Map<String, NutsId> local = new LinkedHashMap<>();
         for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)))) {
             NutsId r = local.get(nutsId.getFullName());
@@ -287,37 +295,66 @@ public class FindCommand extends AbstractNutsCommand {
                 remote.put(nutsId.getFullName(), nutsId);
             }
         }
+
+        //force search of all local nutIds because some repositories could not make a wildcard search...
+        for (NutsId localNutsId : local.values()) {
+            for (NutsId nutsId : (ws.find(new NutsSearch().addId(localNutsId.toString()), findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
+                NutsId r = remote.get(nutsId.getFullName());
+                if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
+                    remote.put(nutsId.getFullName(), nutsId);
+                }
+            }
+        }
+
+        Map<String, NutsIdExt> ret = new LinkedHashMap<>();
         for (NutsId localNutsId : local.values()) {
             NutsId remoteNutsId = remote.get(localNutsId.getFullName());
             if (remoteNutsId != null && localNutsId.getVersion().compareTo(remoteNutsId.getVersion()) >= 0) {
                 remote.remove(localNutsId.getFullName());
+            }else if(remoteNutsId!=null){
+                ret.put(localNutsId.getFullName(),new NutsIdExt(remoteNutsId,"(local: "+localNutsId.getVersion().toString()+")"));
             }
         }
-        return new ArrayList<NutsId>(remote.values());
+        return new ArrayList<NutsIdExt>(ret.values());
     }
 
-    private List<NutsId> searchCommit(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
+    private List<NutsIdExt> searchCommit(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
         Map<String, NutsId> local = new LinkedHashMap<>();
+        Map<String, NutsId> remote = new LinkedHashMap<>();
         for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)))) {
             NutsId r = local.get(nutsId.getFullName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getFullName(), nutsId);
             }
         }
-        Map<String, NutsId> remote = new LinkedHashMap<>();
         for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
             NutsId r = remote.get(nutsId.getFullName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getFullName(), nutsId);
             }
         }
-        for (NutsId nutsId : remote.values()) {
-            NutsId r = local.get(nutsId.getFullName());
-            if (r != null && nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
-                local.remove(nutsId.getFullName());
+
+        //force search of all local nutIds because some repositories could not make a wildcard search...
+        for (NutsId localNutsId : local.values()) {
+            for (NutsId nutsId : (ws.find(new NutsSearch().addId(localNutsId.toString()), findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
+                NutsId r = remote.get(nutsId.getFullName());
+                if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
+                    remote.put(nutsId.getFullName(), nutsId);
+                }
             }
         }
-        return new ArrayList<NutsId>(local.values());
+
+        Map<String, NutsIdExt> ret = new LinkedHashMap<>();
+
+        for (NutsId remoteNutsId : remote.values()) {
+            NutsId localNutsId = local.get(remoteNutsId.getFullName());
+            if (localNutsId != null && remoteNutsId.getVersion().compareTo(localNutsId.getVersion()) >= 0) {
+//                local.remove(nutsId.getFullName());
+            }else if(localNutsId!=null){
+                ret.put(remoteNutsId.getFullName(),new NutsIdExt(localNutsId,"(remote: "+remoteNutsId.getVersion().toString()+")"));
+            }
+        }
+        return new ArrayList<NutsIdExt>(ret.values());
     }
 
     private List<NutsId> searchRemote(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
@@ -333,7 +370,7 @@ public class FindCommand extends AbstractNutsCommand {
         //display(nutsIdIterator,findContext);
     }
 
-    private void display(List<NutsId> nutsList, FindContext findContext) throws IOException {
+    private void display(List<NutsIdExt> nutsList, FindContext findContext) throws IOException {
         if (nutsList.isEmpty()) {
             findContext.err.printf("Nuts not found : %s\n", findContext.executionSearch);
             return;
@@ -344,26 +381,29 @@ public class FindCommand extends AbstractNutsCommand {
         Set<String> visitedArchs = new HashSet<>();
         if (!findContext.longflag) {
             //if not long flag, should remove namespace and duplicates
-            Set<NutsId> mm = new HashSet<>();
-            for (NutsId nutsId : nutsList) {
-                mm.add(nutsId.setNamespace(null).setFace(null).setQuery(""));
+            Set<NutsIdExt> mm = new HashSet<>();
+            for (NutsIdExt nutsId : nutsList) {
+                mm.add(new NutsIdExt(
+                        nutsId.id.setNamespace(null).setFace(null).setQuery(""),
+                        nutsId.extra
+                ));
             }
             nutsList = new ArrayList<>(mm);
         }
         if (findContext.bestVersion) {
-            Map<String, NutsId> mm = new HashMap<>();
-            for (NutsId nutsId : nutsList) {
-                String fullName = nutsId.getFullName();
-                NutsId old = mm.get(fullName);
-                if (old == null || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+            Map<String, NutsIdExt> mm = new HashMap<>();
+            for (NutsIdExt nutsId : nutsList) {
+                String fullName = nutsId.id.getFullName();
+                NutsIdExt old = mm.get(fullName);
+                if (old == null || old.id.getVersion().compareTo(nutsId.id.getVersion()) < 0) {
                     mm.put(fullName, nutsId);
                 }
             }
             nutsList = new ArrayList<>(mm.values());
         }
-        Collections.sort(nutsList, CoreNutsUtils.NUTS_ID_COMPARATOR);
+        Collections.sort(nutsList/*, CoreNutsUtils.NUTS_ID_COMPARATOR*/);
 
-        for (NutsId nutsId : nutsList) {
+        for (NutsIdExt nutsId : nutsList) {
             NutsInfo info = new NutsInfo(nutsId, findContext.context);
             if (findContext.installed != null) {
                 if (findContext.installed != info.isInstalled(findContext.installedDependencies)) {
@@ -410,7 +450,7 @@ public class FindCommand extends AbstractNutsCommand {
                             findContext.out.print(info.nuts.getNamespace());
                         }
                         findContext.out.print(" ");
-                        findContext.out.print(format(info.nuts, imports));
+                        findContext.out.print(format(info.nuts, info.desc, imports));
                         if (findContext.showFile) {
                             findContext.out.print(" ");
                             if (info.getFile() == null) {
@@ -436,7 +476,7 @@ public class FindCommand extends AbstractNutsCommand {
                             findContext.out.print(" [[" + descriptorError + "]]");
                         }
                     } else {
-                        findContext.out.print(format(info.nuts, imports));
+                        findContext.out.print(format(info.nuts, info.desc, imports));
                         if (findContext.showFile) {
                             findContext.out.print(" ");
                             if (info.getFile() == null) {
@@ -504,7 +544,7 @@ public class FindCommand extends AbstractNutsCommand {
                         );
                         Arrays.sort(depsFiles, CoreNutsUtils.NUTS_FILE_COMPARATOR);
                         for (NutsFile dd : depsFiles) {
-                            NutsInfo dinfo = new NutsInfo(dd.getId(), findContext.context);
+                            NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(),null), findContext.context);
                             dinfo.descriptor = dd.getDescriptor();
                             if (findContext.longflag) {
                                 String status = (dinfo.isInstalled(findContext.installedDependencies) ? "i"
@@ -517,10 +557,10 @@ public class FindCommand extends AbstractNutsCommand {
                                 findContext.out.print(" ");
                                 findContext.out.printf("%s", Arrays.asList(dinfo.getDescriptor().getArch()));
                                 findContext.out.print(" ");
-                                findContext.out.println(format(dinfo.nuts, imports));
+                                findContext.out.println(format(dinfo.nuts, info.desc, imports));
                             } else {
                                 findContext.out.print("\t");
-                                findContext.out.println(format(dinfo.nuts, imports));
+                                findContext.out.println(format(dinfo.nuts, info.desc, imports));
                             }
                         }
                     }
@@ -611,7 +651,7 @@ public class FindCommand extends AbstractNutsCommand {
         }
     }
 
-    private String format(NutsId id, Set<String> imports) {
+    private String format(NutsId id, String desc,Set<String> imports) {
         id = id.setNamespace(null)
                 .setQueryProperty(NutsConstants.QUERY_FACE, null)
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
@@ -640,6 +680,11 @@ public class FindCommand extends AbstractNutsCommand {
             sb.append("?");
             sb.append(CoreStringUtils.nescape(id.getQuery()));
         }
+        if(!CoreStringUtils.isEmpty(desc)){
+            sb.append(" **");
+            sb.append(CoreStringUtils.nescape(desc));
+            sb.append("**");
+        }
         return sb.toString();
     }
 
@@ -655,6 +700,7 @@ public class FindCommand extends AbstractNutsCommand {
     private static class NutsInfo {
 
         NutsId nuts;
+        String desc;
         Boolean fetched;
         Boolean is_installed;
         Boolean is_updatable;
@@ -664,8 +710,9 @@ public class FindCommand extends AbstractNutsCommand {
         NutsDescriptor descriptor;
         NutsFile _fetchedFile;
 
-        public NutsInfo(NutsId nuts, NutsCommandContext context) throws IOException {
-            this.nuts = nuts;
+        public NutsInfo(NutsIdExt nuts, NutsCommandContext context) throws IOException {
+            this.nuts = nuts.id;
+            this.desc = nuts.extra;
             this.context = context;
             ws = context.getValidWorkspace();
             session = context.getSession();

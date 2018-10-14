@@ -19,7 +19,7 @@ VARIATIONS:
 ##config## (create repo| cr) <repoId> [<repoLocation> [<repoType>]]
   creates a new repository at location <repository> (relatively to the workspace)
   identified as <repoId>  and typed <repoType>. if <repoLocation> is not typed
-  the id will be resolved as the folder's name. If the <repoType> is not type
+  the id will be resolved as the folder\'s name. If the <repoType> is not type
   the default repository type will be used.
 
 ##config## (add repo| ar) <repositoryId> <repoLocation> [<repoType>]

@@ -83,5 +83,5 @@ will be listed.
 ##find## -js \"return id.version.ge(\'1.2\') && id.version.le(\'1.8\')\"
    searches for and displays installed **nuts** with version between 1.2 and 1.8 (exclusively)
 
-##find## -r maven-vpc-public -R net.vpc.app.nuts:nuts net.vpc.app.nuts:nuts-core
+##find## -r maven-vpc-public -R net.vpc.app:nuts net.vpc.app.nuts:nuts-core
    searches for and displays remote (will not look locally) at the maven-vpc-public repository for newest versions of nuts and nuts-core

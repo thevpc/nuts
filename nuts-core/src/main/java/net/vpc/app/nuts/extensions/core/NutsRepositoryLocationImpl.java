@@ -126,4 +126,10 @@ public class NutsRepositoryLocationImpl implements NutsRepositoryLocation {
         result = 31 * result + (location != null ? location.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "NutsRepositoryLocation{" + "id=" + id + ", type=" + type + ", location=" + location + ", enabled=" + enabled + ", instanceSerialVersionUID=" + instanceSerialVersionUID + '}';
+    }
+    
 }

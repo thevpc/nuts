@@ -134,7 +134,7 @@ public class NutsConstants {
     public static final String USER_ADMIN = "admin";
     public static final String USER_ANONYMOUS = "anonymous";
 
-    public static final String NUTS_ID_BOOT = "net.vpc.app.nuts:nuts";
+    public static final String NUTS_ID_BOOT = "net.vpc.app:nuts";
     public static final String NUTS_ID_RUNTIME = "net.vpc.app.nuts:nuts-core";
     public static final String QUERY_FACE = "face";
     public static final String QUERY_ARCH = "arch";

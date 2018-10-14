@@ -221,6 +221,9 @@ public class MavenUtils {
             throw new NutsParseException(e);
         }
         boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+        if(packaging.toString().trim().isEmpty()){
+            packaging.append("jar");
+        }
         return new DefaultNutsDescriptor(
                 new NutsIdImpl(
                         null, groupId.toString().trim(), artifactId.toString().trim(),

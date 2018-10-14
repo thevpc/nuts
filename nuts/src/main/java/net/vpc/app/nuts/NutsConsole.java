@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by vpc on 1/24/17.
@@ -48,6 +49,8 @@ public interface NutsConsole extends NutsComponent<Object> {
     int runLine(String line);
 
     int run(String[] args);
+
+    List<HistoryElement> getHistory(int maxElements);
 
     int getLastResult();
 

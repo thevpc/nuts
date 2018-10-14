@@ -3,10 +3,10 @@ package net.vpc.app.nuts.extensions.filters.version;
 import java.util.Objects;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.extensions.filters.id.JsNutsIdFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
-public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsIdFilter {
+public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
 
     @Override
     public boolean accept(NutsVersion version) {

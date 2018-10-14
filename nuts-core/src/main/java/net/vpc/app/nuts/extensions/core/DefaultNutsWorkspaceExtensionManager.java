@@ -104,11 +104,11 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             version = ws.getBootId().getVersion().toString();
         }
         NutsId id = ws.getBootId().setVersion(version);
-        return findExtensions(id.toString(), session);
+        return findExtensions(id.toString(), "extensions", session);
     }
 
     @Override
-    public List<NutsExtensionInfo> findExtensions(String id, NutsSession session) {
+    public List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session) {
         NutsId nid = getFactory().parseNutsId(id);
         if (nid.getVersion().isEmpty()) {
             throw new NutsIllegalArgumentException("Missing version");
@@ -116,7 +116,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         List<NutsExtensionInfo> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + CoreNutsUtils.getPath(nid, ".extensions", "/");
+            String url = r + "/" + CoreNutsUtils.getPath(nid, "." + extensionType, "/");
             allUrls.add(url);
             URL u = expandURL(url);
             if (url != null) {

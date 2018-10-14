@@ -298,4 +298,15 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
         return sharedObjects;
     }
 
+    @Override
+    public String toString() {
+        return "NutsWorkspaceConfig{" +
+                "workspaceBootId=" + workspaceBootId +
+                ", workspaceBoot=" + workspaceBoot +
+                ", workspaceRuntimeId=" + workspaceRuntimeId +
+                ", workspaceRoot='" + workspaceRoot + '\'' +
+                ", workspace='" + workspace + '\'' +
+                ", cwd=" + cwd +
+                '}';
+    }
 }

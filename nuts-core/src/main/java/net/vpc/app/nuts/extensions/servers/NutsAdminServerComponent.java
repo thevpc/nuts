@@ -177,7 +177,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     NutsPrintStream eout = invokerWorkspace.getExtensionManager().getFactory().createPrintStream(out);
-                                    NutsSession session = invokerWorkspace.getExtensionManager().getFactory().createSession();
+                                    NutsSession session = invokerWorkspace.createSession();
                                     cli = invokerWorkspace.getExtensionManager().getFactory().createConsole(session
                                             .setTerminal(invokerWorkspace.getExtensionManager().getFactory().createTerminal(finalAccept.getInputStream(),
                                                     eout, eout)));

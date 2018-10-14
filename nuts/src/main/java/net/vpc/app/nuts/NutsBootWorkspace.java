@@ -55,11 +55,11 @@ package net.vpc.app.nuts;
 public interface NutsBootWorkspace {
 
     /**
-     * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts component. The
+     * loaded (at runtime) nuts id for the net.vpc.app:nuts component. The
      * nuts id includes the version.
      *
      * @return a string representing the boot nuts id in the form
-     * net.vpc.app.nuts:nuts#VERSION
+     * net.vpc.app:nuts#VERSION
      */
     String getBootId();
 

@@ -37,6 +37,7 @@ net.vpc.app.nuts.extensions.cmd.ExecCommand
 net.vpc.app.nuts.extensions.cmd.FindCommand
 net.vpc.app.nuts.extensions.cmd.VersionCommand
 net.vpc.app.nuts.extensions.cmd.HelpCommand
+net.vpc.app.nuts.extensions.cmd.HistoryCommand
 net.vpc.app.nuts.extensions.cmd.InstallCommand
 net.vpc.app.nuts.extensions.cmd.FetchCommand
 net.vpc.app.nuts.extensions.cmd.UninstallCommand

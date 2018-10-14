@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.repos;
 
-import net.vpc.app.nuts.extensions.filters.id.JsNutsIdFilter;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsRepositoryConfigImpl;
 import net.vpc.app.nuts.extensions.util.*;
@@ -37,6 +36,7 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
 public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
@@ -44,7 +44,11 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     private NutsId remoteId;
 
     public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository, root, SPEED_SLOW);
+        super(new NutsRepositoryConfigImpl(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository, 
+                root!=null?root:CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
+                        workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), 
+                        workspace.getConfigManager().getWorkspaceRootLocation())
+                , SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(url + "/version"));
         } catch (Exception ex) {
@@ -224,8 +228,8 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveAuth();
-        if (filter instanceof JsNutsIdFilter) {
-            String js = ((JsNutsIdFilter) filter).toJsNutsIdFilterExpr();
+        if (filter instanceof NutsJsAwareIdFilter) {
+            String js = ((NutsJsAwareIdFilter) filter).toJsNutsIdFilterExpr();
             if (js != null) {
                 ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
                         new NutsTransportParamParamPart("root", "/"),

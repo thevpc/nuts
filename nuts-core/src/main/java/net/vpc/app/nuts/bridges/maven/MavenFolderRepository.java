@@ -34,6 +34,8 @@ import net.vpc.app.nuts.extensions.core.NutsRepositoryConfigImpl;
 import net.vpc.app.nuts.extensions.util.*;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -47,7 +49,12 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
     public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, "maven"), workspace, parentRepository, root, SPEED_FAST);
+        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, "maven"), workspace, parentRepository,
+                CoreIOUtils.resolvePath(repositoryId,
+                        root != null ? root : CoreIOUtils.createFile(
+                                        workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
+                        workspace.getConfigManager().getWorkspaceRootLocation()),
+                SPEED_FAST);
     }
 
     @Override
@@ -248,6 +255,13 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         Iterator<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
+            if (id.getVersion().isSingleValue()) {
+                final NutsDescriptor d = parsePomDescriptor(id, session);
+                if (d != null) {
+                    return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId()))).iterator();
+                }
+                return Collections.emptyIterator();
+            }
             try {
                 namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session);
             } catch (NutsNotFoundException ex) {
@@ -260,11 +274,37 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         return namedNutIdIterator;
     }
 
-    protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, NutsSession transitive) {
+    protected NutsDescriptor parsePomDescriptor(File pathname, NutsSession session) throws IOException {
+        NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
+        if (nutsDescriptor.getId().getName() == null) {
+            //why?
+            log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
+            return null;
+        }
+        if (pathname.getName().endsWith(".pom")) {
+            File loc = new File(pathname.getPath().substring(0, pathname.getPath().length() - 4) + ".jar");
+            nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(loc));
+        }
+        return nutsDescriptor;
+    }
+
+    protected NutsDescriptor parsePomDescriptor(NutsId id, NutsSession session) {
+        File file = new File(getLocalGroupAndArtifactFile(id), id.getVersion().getValue() + File.separatorChar + id.getName() + '-' + id.getVersion().getValue() + ".pom");
+        if (file.exists()) {
+            try {
+                return parsePomDescriptor(file, session);
+            } catch (Exception any) {
+                //ignore
+            }
+        }
+        return null;
+    }
+
+    protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, NutsSession session) {
         if (folder == null || !folder.exists() || !folder.isDirectory()) {
             return Collections.emptyIterator();
         }
-        return new FolderNutIdIterator(getWorkspace(), getRepositoryId(), folder, filter, transitive, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getWorkspace(), getRepositoryId(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 MavenFolderRepository.this.undeploy(id, session);
@@ -277,18 +317,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(File pathname, NutsSession session) throws IOException {
-//                System.out.println("parse "+pathname);
-                NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
-                if (nutsDescriptor.getId().getName() == null) {
-                    //why?
-                    log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
-                    return null;
-                }
-                if (pathname.getName().endsWith(".pom")) {
-                    File loc = new File(pathname.getPath().substring(0, pathname.getPath().length() - 4) + ".jar");
-                    nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(loc));
-                }
-                return nutsDescriptor;
+                return parsePomDescriptor(pathname, session);
             }
         });
     }

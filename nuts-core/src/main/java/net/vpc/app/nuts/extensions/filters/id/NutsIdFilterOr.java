@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>, JsNutsIdFilter {
+public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
     private NutsIdFilter[] all;
 
@@ -50,8 +50,15 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
                 return newValues[0];
             }
             return new NutsIdFilterOr(newValues);
+        }else{
+            if (all.length == 0) {
+                return null;
+            }
+            if (all.length == 1) {
+                return all[0];
+            }
+            return this;
         }
-        return this;
     }
 
     @Override
@@ -67,8 +74,8 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
             if (sb.length() > 0) {
                 sb.append(" || ");
             }
-            if (id instanceof JsNutsIdFilter) {
-                JsNutsIdFilter b = (JsNutsIdFilter) id;
+            if (id instanceof NutsJsAwareIdFilter) {
+                NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
                 if (CoreStringUtils.isEmpty(expr)) {
                     return null;

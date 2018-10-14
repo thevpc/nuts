@@ -29,11 +29,16 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import net.vpc.app.nuts.NullInputStream;
+import net.vpc.app.nuts.NullOutputStream;
 import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsConsole;
 import net.vpc.app.nuts.NutsDependencyScope;
@@ -48,6 +53,7 @@ import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceFactory;
 import net.vpc.app.nuts.NutsWorkspaceObjectFactory;
+import net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
@@ -199,6 +205,28 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             return (NutsPrintStream) out;
         }
         return objectFactory.createSupported(NutsPrintStream.class, ws, new Class[]{OutputStream.class}, new Object[]{out});
+    }
+
+    @Override
+    public NutsPrintStream createPrintStream(File out) {
+        if (out == null) {
+            return null;
+        }
+        try {
+            return new DefaultNutsPrintStream(out);
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    @Override
+    public InputStream createNullInputStream() {
+        return NullInputStream.INSTANCE;
+    }
+    
+    @Override
+    public NutsPrintStream createNullPrintStream() {
+        return createPrintStream(NullOutputStream.INSTANCE);
     }
 
     @Override

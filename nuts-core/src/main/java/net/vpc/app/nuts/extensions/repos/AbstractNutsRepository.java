@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.core.NutsRepositoryLocationImpl;
 import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsSimpleIdFilter;
 
 /**
  * Created by vpc on 1/18/17.
@@ -58,14 +59,19 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     private DefaultNutsRepositoryConfigManager configManager;
 
     public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int speed) {
+        init(config, workspace, parentRepository, root, speed);
+    }
+
+    protected void init(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int speed) {
         if (config == null) {
             throw new NutsIllegalArgumentException("Null Config");
         }
         checkNutsRepositoryConfig(config);
         if (root == null) {
-            root = CoreIOUtils.resolvePath(config.getLocation(), CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getWorkspaceRootLocation());
+            throw new IllegalArgumentException("Missing folder");
+//            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getWorkspaceRootLocation());
         } else {
-            root = CoreIOUtils.resolvePath(config.getLocation(), root, workspace.getConfigManager().getWorkspaceRootLocation());
+            root = CoreIOUtils.resolvePath(null, root, workspace.getConfigManager().getWorkspaceRootLocation());
         }
         if (root == null || (root.exists() && !root.isDirectory())) {
             throw new NutsInvalidRepositoryException(String.valueOf(root), "Unable to resolve root to a valid folder " + root + "");
@@ -311,7 +317,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
         getConfigManager().getConfig().addMirror(newConf);
 
-        NutsRepository repo = openRepository(repositoryId, location, type, new File(getMirorsRoot(), repositoryId), autoCreate);
+        NutsRepository repo = openRepository(repositoryId, location, type, getMirorsRoot(), autoCreate);
         return repo;
     }
 
@@ -357,7 +363,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             }
             return d;
         } else {
-            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), null, CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
+            DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), new NutsSimpleIdFilter(id), CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
             Iterator<NutsId> allVersions = findVersions(id, filter, session);
 
             NutsId a = null;
@@ -600,10 +606,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + right);
         }
         if (CoreStringUtils.isEmpty(id.getGroup())) {
-            throw new NutsIllegalArgumentException("Missing group");
+            throw new NutsIllegalArgumentException("Missing group for "+id);
         }
         if (CoreStringUtils.isEmpty(id.getName())) {
-            throw new NutsIllegalArgumentException("Missing name");
+            throw new NutsIllegalArgumentException("Missing name for "+id);
         }
     }
 

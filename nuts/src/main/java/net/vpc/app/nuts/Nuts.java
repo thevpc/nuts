@@ -265,7 +265,7 @@ public class Nuts {
         );
         if (!showError.isEmpty()) {
             for (String s : showError) {
-                System.err.printf("%s", s);
+                System.err.printf("%s·\n", s);
             }
             System.err.printf("Try 'nuts --help' for more information.\n");
             throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
@@ -297,14 +297,14 @@ public class Nuts {
                 System.err.printf("boot-java-classpath  : %s\n", System.getProperty("java.class.path"));
             }
             if (showHelp) {
-                System.err.printf("Unable to local help. No valid workspace was resolved\n");
+                System.err.printf("Unable to locate help. No valid workspace was resolved\n");
             }
-            System.err.printf("Unable to local nuts-core components.\n");
+            System.err.printf("Unable to locate nuts-core components.\n");
             System.err.printf("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...\n");
             System.err.printf("Exiting nuts, Bye!\n");
             throw new NutsIllegalArgumentException("Unable to locate nuts-core components", ex);
         }
-        NutsSession session = ws.getExtensionManager().getFactory().createSession();
+        NutsSession session = ws.createSession();
         if (nocolors) {
             session.getTerminal().getOut().print("`disable-formats`");
             session.getTerminal().getErr().print("`disable-formats`");

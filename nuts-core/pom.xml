@@ -5,7 +5,7 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-core</artifactId>
     <name>net.vpc.app.nuts.nuts-core</name>
-    <version>0.4.0.0</version>
+    <version>0.4.1.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -67,9 +67,9 @@
             <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
+            <groupId>net.vpc.app</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
@@ -80,6 +80,11 @@
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-commandline</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-utils</artifactId>
+            <version>1.21</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>org.jline</groupId>-->

@@ -7,6 +7,7 @@ package net.vpc.app.nuts.extensions.util;
 
 import java.text.DecimalFormat;
 import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.common.util.BytesSizeFormat;
 
 /**
  *
@@ -15,7 +16,7 @@ import net.vpc.app.nuts.NutsPrintStream;
 public class DefaultInputStreamMonitor implements InputStreamMonitor {
 
     private static DecimalFormat df = new DecimalFormat("##0.00");
-    private static BytesSizeFormatter mf = new BytesSizeFormatter("BTD1F");
+    private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
     private NutsPrintStream out;
 
     public DefaultInputStreamMonitor(NutsPrintStream out) {

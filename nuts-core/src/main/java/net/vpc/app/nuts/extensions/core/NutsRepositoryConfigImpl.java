@@ -36,6 +36,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import net.vpc.app.nuts.NutsRepositoryLocation;
 
@@ -214,4 +215,63 @@ public class NutsRepositoryConfigImpl implements NutsRepositoryConfig {
             addSecurity(conf);
         }
     }
+
+    @Override
+    public String toString() {
+        return "NutsRepositoryConfig{" + "mirrors=" + mirrors + ", security=" + security + ", id=" + id + ", type=" + type + ", location=" + location + ", groups=" + groups + ", env=" + env + ", instanceSerialVersionUID=" + instanceSerialVersionUID + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.mirrors);
+        hash = 83 * hash + Objects.hashCode(this.security);
+        hash = 83 * hash + Objects.hashCode(this.id);
+        hash = 83 * hash + Objects.hashCode(this.type);
+        hash = 83 * hash + Objects.hashCode(this.location);
+        hash = 83 * hash + Objects.hashCode(this.groups);
+        hash = 83 * hash + Objects.hashCode(this.env);
+        hash = 83 * hash + (int) (this.instanceSerialVersionUID ^ (this.instanceSerialVersionUID >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsRepositoryConfigImpl other = (NutsRepositoryConfigImpl) obj;
+        if (this.instanceSerialVersionUID != other.instanceSerialVersionUID) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Objects.equals(this.location, other.location)) {
+            return false;
+        }
+        if (!Objects.equals(this.groups, other.groups)) {
+            return false;
+        }
+        if (!Objects.equals(this.mirrors, other.mirrors)) {
+            return false;
+        }
+        if (!Objects.equals(this.security, other.security)) {
+            return false;
+        }
+        if (!Objects.equals(this.env, other.env)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

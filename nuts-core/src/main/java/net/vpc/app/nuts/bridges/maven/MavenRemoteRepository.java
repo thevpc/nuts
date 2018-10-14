@@ -63,7 +63,12 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     private static final Logger log = Logger.getLogger(MavenRemoteRepository.class.getName());
 
     public MavenRemoteRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, url, "maven"), workspace, parentRepository, root, SPEED_SLOW);
+        super(new NutsRepositoryConfigImpl(repositoryId, url, "maven"), workspace, parentRepository, 
+                CoreIOUtils.resolvePath(repositoryId, 
+                        root!=null?root:CoreIOUtils.createFile(
+                        workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), 
+                        workspace.getConfigManager().getWorkspaceRootLocation())
+                , SPEED_SLOW);
     }
 
     @Override
@@ -317,7 +322,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public void checkAllowedFetch(NutsSession session, NutsId id) {
         super.checkAllowedFetch(session, id);
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
-            throw new NutsNotFoundException(id.toString());
+            throw new NutsNotFoundException(id==null?null:id.toString());
         }
     }
 }

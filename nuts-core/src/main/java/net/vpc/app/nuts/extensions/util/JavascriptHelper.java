@@ -44,7 +44,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsParseException;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdJavascriptFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.extensions.filters.version.NutsVersionJavascriptFilter;
 
 /**
@@ -81,7 +81,7 @@ public class JavascriptHelper {
                 return CoreStringUtils.isEmpty(value.toString());
             }
             if (value instanceof NutsId) {
-                return NutsIdJavascriptFilter.valueOf(pattern).accept((NutsId) value);
+                return NutsJavascriptIdFilter.valueOf(pattern).accept((NutsId) value);
             }
             if (value instanceof NutsDependency) {
                 return NutsDependencyJavascriptFilter.valueOf(pattern).accept((NutsDependency) value);
