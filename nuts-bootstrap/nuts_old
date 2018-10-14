@@ -26,7 +26,7 @@
 #    runs nuts from cache only and show executed command
 # 
 # @date 2018-03-08
-# @version 0.4.1.0
+# @version 0.4.0.0
 
 #NUTS_JAVA_HOME='';
 

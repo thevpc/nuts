@@ -5,7 +5,7 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.4.0.0
+/_/ |_/\__,_/\__/____/   version 0.4.1.0
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
