@@ -9,7 +9,7 @@
 # if your have already an existing copy of nuts.jar.
 # This shell will add some flavour to nuts execution pattern.
 # It will look for existing nuts.jar as follows
-#  + check if ~/.nuts/bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts.jar exists (cache)
+#  + check if ~/.nuts/bootstrap/net/vpc/app/nuts/LATEST/nuts.jar exists (cache)
 #  + check if nuts.jar exists in the local maven repository ~/m2/repository (local)
 #  + download from "https://github.com/thevpc/vpc-public-maven/raw/master/" (remote)
 # if the resolved file is not in the cache, it will be store there for future use.
@@ -40,7 +40,7 @@ check_file_size () {
 }
 
 base=$(dirname $0)
-BOOT_NUTS_FILE="$HOME/.nuts/bootstrap/net/vpc/app/nuts/nuts/LATEST/nuts.jar"
+BOOT_NUTS_FILE="$HOME/.nuts/bootstrap/net/vpc/app/nuts/LATEST/nuts.jar"
 
 NUTS_FILE_SOURCE=''
 
@@ -72,7 +72,7 @@ if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
     if [ x"$nuts_shell_no_local" != x"1" ] ; then
         LOCAL_NUTS_FILE=''
         if [ -f "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" ]; then
-            LOCAL_NUTS_FOLDER="$HOME/.m2/repository/net/vpc/app/nuts/nuts"
+            LOCAL_NUTS_FOLDER="$HOME/.m2/repository/net/vpc/app/nuts"
             LOCAL_NUTS_VERSION=$(grep -e '<release>.*</release>' "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" | grep -o '[0-9.]*')
             if [ x"$LOCAL_NUTS_VERSION" != "x" ] ; then
                 LOCAL_NUTS_FILE="$LOCAL_NUTS_FOLDER/$LOCAL_NUTS_VERSION/nuts-$LOCAL_NUTS_VERSION.jar"
@@ -90,11 +90,11 @@ fi
 
 if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
     #remote github
-    #https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/maven-metadata.xml
+    #https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/maven-metadata.xml
     
     if [ x"$nuts_shell_no_remote" != x"1" ] ; then
-        REMOTE_NUTS_VERSION=$(wget -q -O - "https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/maven-metadata.xml" | grep -e '<release>.*</release>' | grep -o '[0-9.]*')
-        REMOTE_NUTS_URL="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$REMOTE_NUTS_VERSION/nuts-$REMOTE_NUTS_VERSION.jar"
+        REMOTE_NUTS_VERSION=$(wget -q -O - "https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/maven-metadata.xml" | grep -e '<release>.*</release>' | grep -o '[0-9.]*')
+        REMOTE_NUTS_URL="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/$REMOTE_NUTS_VERSION/nuts-$REMOTE_NUTS_VERSION.jar"
         echo "downloading nuts.jar from remote repository... $REMOTE_NUTS_URL to $BOOT_NUTS_FILE"
         mkdir -p -- verbose "$(dirname $BOOT_NUTS_FILE)"
         wget -q -O "$BOOT_NUTS_FILE" "$REMOTE_NUTS_URL"

@@ -83,10 +83,10 @@ nuts my-app.jar some-argument-of-my-app
 
 #### Passing VM arguments
 If you need to pass JVM arguments you have to prefix them with "--nuts" so if you want to fix maximum heap size use 
--J-Xmx2G instead of -Xmx2G
+--nuts-Xmx2G instead of -Xmx2G
 
 ```bash
-nuts -J-Xms1G -J-Xmx2G my-app.jar -Janother-vm-arg=3 some-argument-of-my-app some-app-argument
+nuts my-app.jar --nuts-Xms1G --nuts-Xmx2G some-argument-1-of-my-app some-argument-1-of-my-app
 ```
 
 
