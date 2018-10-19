@@ -1,5 +1,5 @@
 #!/bin/bash 
-#    _   __      __
+#     _   __      __
 #    / | / /_  __/ /______
 #   /  |/ / / / / __/ ___/
 #  / /|  / /_/ / /_(__  )
@@ -8,121 +8,28 @@
 # you might use simply java -jar nuts.jar
 # if your have already an existing copy of nuts.jar.
 # This shell will add some flavour to nuts execution pattern.
-# It will look for existing nuts.jar as follows
-#  + check if ~/.nuts/bootstrap/net/vpc/app/nuts/LATEST/nuts.jar exists (cache)
-#  + check if nuts.jar exists in the local maven repository ~/m2/repository (local)
-#  + download from "https://github.com/thevpc/vpc-public-maven/raw/master/" (remote)
-# if the resolved file is not in the cache, it will be store there for future use.
+# It will actually look for java execution envirement in $NUTS_JAVA_HOME
 # 
-# if you want to customize this behavior you can use --nuts-shell=<flags> argument
-# as follows : the argument should be the very first argument.
-# flags 'r,l,c,v' can be added as value to the argument "--nuts-shell="
-# c denotes cache source
-# l denotes local source
-# r denotes remote source
-# r denotes verbose mode
 # Example :
-# nuts --nuts-shell=cv mycommand
-#    runs nuts from cache only and show executed command
-# 
-# @date 2018-03-08
-# @version 0.4.1.0
+# nuts console
+#    runs nuts and starts console
+# @date 2018-10-19
+# @version 0.4.2.0
 
 #NUTS_JAVA_HOME='';
 
-check_file_size () {
-    actualsize='-1'
-
-    if [ -f "$1" ] ; then
-        actualsize=$(wc -c <"$1")
-    fi
-    echo $actualsize;
-}
-
 base=$(dirname $0)
-BOOT_NUTS_FILE="$HOME/.nuts/bootstrap/net/vpc/app/nuts/LATEST/nuts.jar"
-
-NUTS_FILE_SOURCE=''
-
-if [[ $1 = "--nuts-shell="* ]] ; then
-    RR="$1"
-    shift
-    if [[ "$RR" != "--nuts-shell="*"c"* ]] ; then
-            nuts_shell_no_cache=1
-    fi
-    if [[ "$RR" != "--nuts-shell="*"l"* ]] ; then
-            nuts_shell_no_local=1
-    fi
-    if [[ "$RR" != "--nuts-shell="*"r"* ]] ; then
-            nuts_shell_no_remote=1
-    fi
-    if [[ "$RR" != "--nuts-shell="*"v"* ]] ; then
-            nuts_shell_verbose=1
-    fi
-fi
-
-if [ x"$nuts_shell_no_cache" != x"1" ] ; then
-    if [ $(check_file_size "$BOOT_NUTS_FILE") -gt 0 ] ; then
-        NUTS_FILE_SOURCE="$BOOT_NUTS_FILE"
-    fi
-fi
-
-if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
-    #local Maven
-    if [ x"$nuts_shell_no_local" != x"1" ] ; then
-        LOCAL_NUTS_FILE=''
-        if [ -f "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" ]; then
-            LOCAL_NUTS_FOLDER="$HOME/.m2/repository/net/vpc/app/nuts"
-            LOCAL_NUTS_VERSION=$(grep -e '<release>.*</release>' "$LOCAL_NUTS_FOLDER/maven-metadata-local.xml" | grep -o '[0-9.]*')
-            if [ x"$LOCAL_NUTS_VERSION" != "x" ] ; then
-                LOCAL_NUTS_FILE="$LOCAL_NUTS_FOLDER/$LOCAL_NUTS_VERSION/nuts-$LOCAL_NUTS_VERSION.jar"
-            fi
-
-            if [ $(check_file_size "$LOCAL_NUTS_FILE") -gt 0 ] ; then
-                NUTS_FILE_SOURCE=$LOCAL_NUTS_FILE
-                mkdir -p -- verbose "$(dirname $BOOT_NUTS_FILE)"
-                cp -rf "$LOCAL_NUTS_FILE" "$BOOT_NUTS_FILE"
-            fi
-        fi
-    fi
-fi
-
-
-if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
-    #remote github
-    #https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/maven-metadata.xml
-    
-    if [ x"$nuts_shell_no_remote" != x"1" ] ; then
-        REMOTE_NUTS_VERSION=$(wget -q -O - "https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/maven-metadata.xml" | grep -e '<release>.*</release>' | grep -o '[0-9.]*')
-        REMOTE_NUTS_URL="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/$REMOTE_NUTS_VERSION/nuts-$REMOTE_NUTS_VERSION.jar"
-        echo "downloading nuts.jar from remote repository... $REMOTE_NUTS_URL to $BOOT_NUTS_FILE"
-        mkdir -p -- verbose "$(dirname $BOOT_NUTS_FILE)"
-        wget -q -O "$BOOT_NUTS_FILE" "$REMOTE_NUTS_URL"
-        if [ "$?" -ne 0 ] ; then
-            echo Unable to download nuts.jar from "$REMOTE_NUTS_URL"
-            rm "$BOOT_NUTS_FILE"
-            exit 1
-        fi
-        NUTS_FILE_SOURCE="$REMOTE_NUTS_URL"
-    fi
-fi
-
-
-
-if [ x"$NUTS_FILE_SOURCE" = "x" ] ; then
-    echo "unable to resolve nuts file. exit"
-    exit 2
-fi
 
 
 JAVA_CMD='java'
+
+if [ x"$JAVA_HOME" != "x" ] ; then
+    JAVA_CMD="$JAVA_HOME/bin/java";
+fi
+
 if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
     JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
 fi
 
-if [ x"$nuts_shell_verbose" == x"1" ] ; then
-    echo "Nuts Source  : $NUTS_FILE_SOURCE"
-    echo "Nuts Command : $JAVA_CMD -jar $BOOT_NUTS_FILE $*"
-fi
-    
-$JAVA_CMD -jar "$BOOT_NUTS_FILE" $*
+
+$JAVA_CMD -jar "$base/nuts.jar" $*

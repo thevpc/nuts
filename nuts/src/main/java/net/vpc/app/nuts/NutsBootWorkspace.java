@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  * {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}. NutsBootWorkspace
  * is also responsible of managing local jar cache folder located at
  * $root/bootstrap where $root is the nuts root folder (~/.nuts) defined by
- * {@link #getRootLocation()}.
+ * {@link #getNutsHomeLocation()}.
  * <pre>
  *   ~/.nuts/bootstrap ({@link #getBootstrapLocation})
  *       └── net
@@ -78,7 +78,7 @@ public interface NutsBootWorkspace {
      *
      * @return nuts root folder
      */
-    String getRootLocation();
+    String getNutsHomeLocation();
 
     /**
      * nuts bootstrap folder. It defaults to "~/.nuts/bootstrap" bootstrap
@@ -93,7 +93,7 @@ public interface NutsBootWorkspace {
      * <code>workspaceLocation</code> location and according to the given
      * creation options. workspaceLocation may be absolute or relative in which
      * case it will be resolved as a sub folder of nuts root folder (see
-     * {@link #getRootLocation()}). If no options are provided (options==null)
+     * {@link #getNutsHomeLocation()}). If no options are provided (options==null)
      * workspace will be created and saved it not found null     (<code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
      * Please note that it may not be safe to create several instances of the same workspace.
      *

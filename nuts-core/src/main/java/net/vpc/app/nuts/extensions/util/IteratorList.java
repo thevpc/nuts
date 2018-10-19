@@ -41,6 +41,13 @@ public class IteratorList<T> implements Iterator<T> {
     private List<Iterator<T>> children = new ArrayList<Iterator<T>>();
     private int index = 0;
 
+    public void addNonEmpty(Iterator<T> child) {
+        child = CoreNutsUtils.nullifyIfEmpty(child);
+        if (child != null) {
+            add(child);
+        }
+    }
+
     public void add(Iterator<T> child) {
         if (child == null) {
             throw new NullPointerException();

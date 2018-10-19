@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,13 +30,23 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by vpc on 1/5/17.
  */
 public class Nuts {
+
+    private static final Logger log = Logger.getLogger(Nuts.class.getName());
 
     public static NutsBootWorkspace openBootWorkspace() {
         return new DefaultNutsBootWorkspace();
@@ -73,8 +83,12 @@ public class Nuts {
 
     public static void uncheckedMain(String[] args) {
         long startTime = System.currentTimeMillis();
+        args = checkDistinctBootVersionRequest(args);
+        if (args == null) {
+            return;
+        }
         int startAppArgs = 0;
-        String root = null;
+        String nutsHome = null;
         String workspace = null;
         String archetype = null;
         String login = null;
@@ -102,12 +116,12 @@ public class Nuts {
             String a = args[i];
             if (a.startsWith("-")) {
                 switch (a) {
-                    case "--workspace-root":
+                    case "--home":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
-                        root = args[i];
+                        nutsHome = args[i];
                         break;
                     case "--workspace":
                         i++;
@@ -167,6 +181,7 @@ public class Nuts {
                     case "--nosave":
                         save = false;
                         break;
+                    case "-version":
                     case "--version":
                         version = true;
                         break;
@@ -259,11 +274,16 @@ public class Nuts {
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
         NutsBootWorkspace bws = openBootWorkspace(
                 new NutsBootOptions()
-                        .setRoot(root)
+                        .setRoot(nutsHome)
                         .setRuntimeId(runtimeId)
                         .setRuntimeSourceURL(runtimeSourceURL)
         );
         if (!showError.isEmpty()) {
+            if (showHelp) {
+                //dont show any error, just show help as requested!
+                showStaticHelp();
+                return;
+            }
             for (String s : showError) {
                 System.err.printf("%s·\n", s);
             }
@@ -288,16 +308,17 @@ public class Nuts {
             );
         } catch (Exception ex) {
             if (version) {
-                System.err.printf("workspace-boot       : %s\n", bws.getBootId());
-                System.err.printf("workspace-runtime    : %s\n", bws.getRuntimeId());
-                System.err.printf("workspace-root       : %s\n", bws.getRootLocation());
                 System.err.printf("workspace-location   : %s\n", (workspace == null ? "" : workspace));
-                System.err.printf("boot-java-version    : %s\n", System.getProperty("java.version"));
-                System.err.printf("boot-java-executable : %s\n", System.getProperty("java.home") + "/bin/java");
-                System.err.printf("boot-java-classpath  : %s\n", System.getProperty("java.class.path"));
+                System.err.printf("nuts-boot            : %s\n", bws.getBootId());
+                System.err.printf("nuts-runtime         : %s\n", bws.getRuntimeId());
+                System.err.printf("nuts-home            : %s\n", bws.getNutsHomeLocation());
+                System.err.printf("java-version         : %s\n", System.getProperty("java.version"));
+                System.err.printf("java-executable      : %s\n", System.getProperty("java.home") + "/bin/java");
+                System.err.printf("java-class-path      : %s\n", System.getProperty("java.class.path"));
+                System.err.printf("java-library-path    : %s\n", System.getProperty("java.library.path"));
             }
             if (showHelp) {
-                System.err.printf("Unable to locate help. No valid workspace was resolved\n");
+                showStaticHelp();
             }
             System.err.printf("Unable to locate nuts-core components.\n");
             System.err.printf("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...\n");
@@ -340,14 +361,28 @@ public class Nuts {
 
         if (version) {
             NutsPrintStream out = session.getTerminal().getOut();
-
-            out.printf("workspace-boot       : [[%s]]\n", ws.getConfigManager().getWorkspaceBootId());
-            out.printf("workspace-runtime    : [[%s]]\n", ws.getConfigManager().getWorkspaceRuntimeId());
-            out.printf("workspace-root       : [[%s]]\n", bws.getRootLocation());
             out.printf("workspace-location   : [[%s]]\n", ws.getConfigManager().getWorkspaceLocation());
-            out.printf("boot-java-version    : [[%s]]\n", System.getProperty("java.version"));
-            out.printf("boot-java-executable : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
-            out.printf("boot-java-classpath  : [[%s]]\n", System.getProperty("java.class.path"));
+            out.printf("nuts-boot            : [[%s]]\n", ws.getConfigManager().getWorkspaceBootId());
+            out.printf("nuts-runtime         : [[%s]]\n", ws.getConfigManager().getWorkspaceRuntimeId());
+            out.printf("nuts-home            : [[%s]]\n", bws.getNutsHomeLocation());
+            out.printf("java-version         : [[%s]]\n", System.getProperty("java.version"));
+            out.printf("java-executable      : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
+            out.printf("java-class-path      : [[%s]]\n", System.getProperty("java.class.path"));
+            out.printf("java-library-path    : [[%s]]\n", System.getProperty("java.library.path"));
+            URL[] cl = ws.getConfigManager().getBootClassWorldURLs();
+            StringBuilder runtimeClasPath = new StringBuilder("?");
+            if (cl != null) {
+                runtimeClasPath = new StringBuilder();
+                for (URL url : cl) {
+                    if (url != null) {
+                        if (runtimeClasPath.length() > 0) {
+                            runtimeClasPath.append(":");
+                        }
+                        runtimeClasPath.append(url);
+                    }
+                }
+            }
+            out.printf("runtime-class-path   : [[%s]]\n", runtimeClasPath.toString());
 
             perf = showPerf(System.currentTimeMillis() - startTime, perf, session);
             someProcessing = true;
@@ -379,4 +414,263 @@ public class Nuts {
         return false;
     }
 
+    static String[] checkDistinctBootVersionRequest(String[] args) {
+        List<String> goodArgs = new ArrayList<>();
+        String requiredBootVersion = null;
+        boolean configureLog = false;
+        Level logLevel = null;
+        int logSize = 0;
+        int logCount = 0;
+        String logFolder = null;
+        String nutsHome = null;
+        for (int i = 0; i < args.length; i++) {
+            String a = args[i];
+            if (a.equals("--run-version")) {
+                i++;
+                if (i >= args.length) {
+                    throw new NutsIllegalArgumentException("Missing argument for archetype");
+                }
+                requiredBootVersion = args[i];
+            } else if (a.equals("--home")) {
+                i++;
+                if (i >= args.length) {
+                    throw new NutsIllegalArgumentException("Missing argument for workspace");
+                }
+                nutsHome = args[i];
+            } else if (a.equals("--verbose") || a.equals("--log-finest")) {
+                configureLog = true;
+                logLevel = Level.FINEST;
+                goodArgs.add(a);
+            } else if (a.equals("--info") || a.equals("--log-info")) {
+                configureLog = true;
+                logLevel = Level.INFO;
+                goodArgs.add(a);
+            } else if (a.equals("--log-fine")) {
+                configureLog = true;
+                logLevel = Level.FINE;
+                goodArgs.add(a);
+            } else if (a.equals("--log-finer")) {
+                configureLog = true;
+                logLevel = Level.FINER;
+                goodArgs.add(a);
+            } else if (a.equals("--log-all")) {
+                configureLog = true;
+                logLevel = Level.ALL;
+                goodArgs.add(a);
+            } else if (a.equals("--log-off")) {
+                configureLog = true;
+                logLevel = Level.OFF;
+                goodArgs.add(a);
+            } else if (a.equals("--log-severe")) {
+                configureLog = true;
+                logLevel = Level.SEVERE;
+                goodArgs.add(a);
+            } else if (a.equals("--log-size")) {
+                configureLog = true;
+                goodArgs.add(a);
+                i++;
+                if (i >= args.length) {
+                    throw new NutsIllegalArgumentException("Missing argument for log-size");
+                }
+                logSize = Integer.parseInt(args[i]);
+                a = args[i];
+                goodArgs.add(a);
+            } else if (a.equals("--log-count")) {
+                goodArgs.add(a);
+                i++;
+                if (i >= args.length) {
+                    throw new NutsIllegalArgumentException("Missing argument for log-count");
+                }
+                logCount = Integer.parseInt(args[i]);
+                a = args[i];
+                goodArgs.add(a);
+            } else {
+                goodArgs.add(a);
+            }
+        }
+        if (configureLog) {
+            LogUtils.prepare(logLevel, logFolder, logSize, logCount);
+        }
+        args = goodArgs.toArray(new String[goodArgs.size()]);
+
+        String actualVersion = getActualVersion();
+        if (nutsHome == null) {
+            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
+        }
+        if (requiredBootVersion != null && !requiredBootVersion.equals(actualVersion)) {
+            log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
+            if ("CURRENT".equalsIgnoreCase(requiredBootVersion)) {
+                String versionUrl = "/net/vpc/app/nuts/CURRENT/nuts.version";
+                File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+                boolean loaded = false;
+                try {
+                    if (versionFile.isFile()) {
+                        String str = IOUtils.readStringFromFile(versionFile);
+                        if (str != null) {
+                            str = str.trim();
+                            if (str.length() > 0) {
+                                requiredBootVersion = str;
+                            }
+                            loaded = true;
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.err.printf("Unable to load nuts version from " + versionUrl + ".\n");
+                }
+                if (loaded) {
+                    log.fine("Detected version " + requiredBootVersion);
+                } else {
+                    requiredBootVersion = "LATEST";
+                }
+
+            }
+            if ("LATEST".equalsIgnoreCase(requiredBootVersion)) {
+                String mvnUrl = ("https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/maven-metadata.xml");
+                boolean loaded = false;
+                try {
+                    String str = IOUtils.readStringFromURL(new URL(mvnUrl));
+                    if (str != null) {
+                        for (String line : str.split("\n")) {
+                            line = line.trim();
+                            if (line.startsWith("<release>")) {
+                                requiredBootVersion = line.substring("<release>".length(), line.length() - "</release>".length()).trim();
+                                loaded = true;
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.err.printf("Unable to load nuts version from " + mvnUrl + ".\n");
+                    ex.printStackTrace();
+                    throw new NutsIllegalArgumentException("Unable to load nuts version from " + mvnUrl);
+                }
+                if (loaded) {
+                    System.out.println("detected version " + requiredBootVersion);
+                } else {
+                    throw new NutsIllegalArgumentException("Unable to load nuts version from " + mvnUrl);
+                }
+            }
+            String jarUrl = "/net/vpc/app/nuts/" + requiredBootVersion + "/nuts-" + requiredBootVersion + ".jar";
+            File bootFile0 = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + jarUrl);
+            log.fine("Checking boot jar from " + nutsHome + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
+            File bootFile = bootFile0;
+            if (!bootFile.isFile()) {
+                bootFile = new File(System.getProperty("user.home"), "/.m2/repository" + jarUrl);
+                log.fine("Checking boot jar from ~/.m2 (local maven)");
+                if (!bootFile.isFile()) {
+                    log.fine("Checking boot jar from remote vpc-public-maven repository");
+                    String mvnUrl = "https://github.com/thevpc/vpc-public-maven/raw/master" + jarUrl;
+                    try {
+                        if (bootFile0.getParentFile() != null) {
+                            bootFile0.getParentFile().mkdirs();
+                        }
+                        ReadableByteChannel rbc = Channels.newChannel(new URL(mvnUrl).openStream());
+                        FileOutputStream fos = new FileOutputStream(bootFile0);
+                        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                        bootFile = bootFile0;
+                    } catch (Exception ex) {
+                        bootFile = null;
+                        System.err.printf("Unable to load nuts from " + mvnUrl + ".\n");
+                        ex.printStackTrace();
+                        throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
+                    }
+                }
+            }
+            List<String> cmd = new ArrayList<>();
+            cmd.add(System.getProperty("java.home") + "/bin/java");
+            cmd.add("-jar");
+            cmd.add(bootFile.getPath());
+            cmd.addAll(goodArgs);
+            try {
+                new ProcessBuilder(cmd).inheritIO().start();
+            } catch (IOException ex) {
+                throw new IllegalArgumentException("Unable to start nuts", ex);
+            }
+            return null;
+        } else {
+            String v = getConfigCurrentVersion(nutsHome);
+            if (v == null) {
+                setConfigCurrentVersion(actualVersion, nutsHome);
+            }
+        }
+        return args;
+    }
+
+    public static String getConfigCurrentVersion(String root) {
+        if (root == null) {
+            root = System.getProperty("user.home") + File.separator + ".nuts";
+        }
+        String versionUrl = "/net/vpc/app/nuts/CURRENT/nuts.version";
+        File versionFile = new File(root, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+        try {
+            if (versionFile.isFile()) {
+                String str = IOUtils.readStringFromFile(versionFile);
+                if (str != null) {
+                    str = str.trim();
+                    if (str.length() > 0) {
+                        return str;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.err.printf("Unable to load nuts version from " + versionUrl + ".\n");
+        }
+        return null;
+    }
+
+    public static boolean setConfigCurrentVersion(String version, String root) {
+        if (root == null) {
+            //System.getProperty("user.home") + File.separator + ".nuts"
+            root = NutsConstants.DEFAULT_NUTS_HOME;
+        }
+        root = IOUtils.expandPath(root);
+
+        String versionUrl = "/net/vpc/app/nuts/CURRENT/nuts.version";
+        File versionFile = new File(root, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+        if (version != null) {
+            version = version.trim();
+            if (version.isEmpty()) {
+                version = null;
+            }
+        }
+        if (version == null) {
+            return versionFile.delete();
+        } else {
+            if (versionFile.getParentFile() != null) {
+                versionFile.getParentFile().mkdirs();
+            }
+            PrintStream ps = null;
+            try {
+                try {
+                    ps = new PrintStream(versionFile);
+                    ps.println(version);
+                    ps.close();
+                } finally {
+                    if (ps != null) {
+                        ps.close();
+                    }
+                }
+                return true;
+            } catch (FileNotFoundException ex) {
+                log.log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
+
+    public static String getActualVersion() {
+        return IOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app/nuts/nuts.properties")).getProperty("project.version", "0.0.0");
+    }
+
+    private static void showStaticHelp() {
+        String actualVersion = getActualVersion();
+        String str = null;
+        try {
+            str = IOUtils.readStringFromURL(Nuts.class.getResource("/net/vpc/app/nuts/NutsStaticHelp.txt"));
+            System.out.println("Nuts " + actualVersion);
+            System.out.println(str);
+        } catch (IOException e) {
+            System.err.println("Unable to load Help");
+            e.printStackTrace();
+        }
+    }
 }

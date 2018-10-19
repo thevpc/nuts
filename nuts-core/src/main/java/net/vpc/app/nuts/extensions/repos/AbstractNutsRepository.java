@@ -69,9 +69,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         checkNutsRepositoryConfig(config);
         if (root == null) {
             throw new IllegalArgumentException("Missing folder");
-//            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getWorkspaceRootLocation());
+//            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getNutsHomeLocation());
         } else {
-            root = CoreIOUtils.resolvePath(null, root, workspace.getConfigManager().getWorkspaceRootLocation());
+            root = CoreIOUtils.resolvePath(null, root, workspace.getConfigManager().getNutsHomeLocation());
         }
         if (root == null || (root.exists() && !root.isDirectory())) {
             throw new NutsInvalidRepositoryException(String.valueOf(root), "Unable to resolve root to a valid folder " + root + "");

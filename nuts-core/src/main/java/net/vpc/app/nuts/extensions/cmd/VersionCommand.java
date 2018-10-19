@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.cmd;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import net.vpc.app.nuts.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
@@ -45,11 +47,29 @@ public class VersionCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         NutsPrintStream out = context.getTerminal().getOut();
         NutsWorkspaceConfigManager config = context.getWorkspace().getConfigManager();
-        out.printf("workspace-boot       : [[%s]]\n" , config.getWorkspaceBootId() );
-        out.printf("workspace-runtime    : [[%s]]\n" , config.getWorkspaceRuntimeId() );
-        out.printf("workspace-location   : [[%s]]\n" , config.getWorkspaceLocation() );
-        out.printf("boot-java-version    : [[%s]]\n" , System.getProperty("java.version") );
-        out.printf("boot-java-executable : [[%s]]\n" , System.getProperty("java.home") + "/bin/java" );
+        out.printf("workspace-location   : [[%s]]\n", config.getWorkspaceLocation());
+        out.printf("nuts-boot            : [[%s]]\n", config.getWorkspaceBootId());
+        out.printf("nuts-runtime         : [[%s]]\n", config.getWorkspaceRuntimeId());
+        out.printf("nuts-home            : [[%s]]\n", context.getWorkspace().getConfigManager().getNutsHomeLocation());
+        out.printf("boot-java-version    : [[%s]]\n", System.getProperty("java.version"));
+        out.printf("boot-java-executable : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
+        out.printf("java.class.path      : [[%s]]\n", System.getProperty("java.class.path"));
+        out.printf("java.library.path    : [[%s]]\n", System.getProperty("java.library.path"));
+
+        URL[] cl = context.getWorkspace().getConfigManager().getBootClassWorldURLs();
+        StringBuilder runtimeClasPath = new StringBuilder("?");
+        if (cl != null) {
+            runtimeClasPath = new StringBuilder();
+            for (URL url : cl) {
+                if (url != null) {
+                    if (runtimeClasPath.length() > 0) {
+                        runtimeClasPath.append(":");
+                    }
+                    runtimeClasPath.append(url);
+                }
+            }
+        }
+        out.printf("runtime-class-path   : [[%s]]\n", runtimeClasPath.toString());
         return 0;
     }
 }

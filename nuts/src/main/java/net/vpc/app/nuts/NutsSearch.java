@@ -14,7 +14,30 @@ public class NutsSearch {
     private TypedObject descriptorFilter;
     private NutsDependencyScope scope = NutsDependencyScope.RUN;
     private boolean lastestVersions;
-    
+    private boolean sort = true;
+
+    public NutsSearch(NutsSearch other) {
+        copyFrom(other);
+    }
+
+    public NutsSearch copy() {
+        return new NutsSearch(this);
+    }
+
+    public void copyFrom(NutsSearch other) {
+        if (other != null) {
+            ids.addAll(other.ids);
+            idFilter = other.idFilter;
+            dependencyFilter = other.dependencyFilter;
+            repositoryFilter = other.repositoryFilter;
+            versionFilter = other.versionFilter;
+            descriptorFilter = other.descriptorFilter;
+            scope = other.scope;
+            lastestVersions = other.lastestVersions;
+            sort = other.sort;
+        }
+    }
+
     public NutsSearch() {
 
     }
@@ -27,6 +50,15 @@ public class NutsSearch {
         addIds(ids);
     }
 
+    public boolean isSort() {
+        return sort;
+    }
+
+    public NutsSearch setSort(boolean sort) {
+        this.sort = sort;
+        return this;
+    }
+
     public boolean isLastestVersions() {
         return lastestVersions;
     }
@@ -36,7 +68,6 @@ public class NutsSearch {
         return this;
     }
 
-    
     public NutsSearch addIds(String... ids) {
         if (ids != null) {
             for (String id : ids) {
@@ -52,6 +83,12 @@ public class NutsSearch {
                 addId(id == null ? null : id.toString());
             }
         }
+        return this;
+    }
+
+    public NutsSearch setIds(String... ids) {
+        this.ids.clear();
+        addIds(ids);
         return this;
     }
 
@@ -75,6 +112,17 @@ public class NutsSearch {
         return this;
     }
 
+//    public NutsSearch setDependencyFilter(TypedObject filter) {
+//        if (filter == null) {
+//            this.dependencyFilter = null;
+//        } else if (NutsDependencyFilter.class.equals(filter.getType()) || String.class.equals(filter.getType())) {
+//            this.dependencyFilter = filter;
+//        } else {
+//            throw new IllegalArgumentException("Invalid Object");
+//        }
+//        return this;
+//    }
+//
     public NutsSearch setDependencyFilter(NutsDependencyFilter filter) {
         this.dependencyFilter = filter == null ? null : new TypedObject(NutsDependencyFilter.class, filter, null);
         return this;
@@ -113,12 +161,12 @@ public class NutsSearch {
     }
 
     public NutsSearch setVersionFilter(String filter) {
-        this.versionFilter = filter==null?null:new TypedObject(String.class, filter, null);
+        this.versionFilter = filter == null ? null : new TypedObject(String.class, filter, null);
         return this;
     }
 
     public NutsSearch setDescriptorFilter(NutsDescriptorFilter filter) {
-        this.descriptorFilter = filter==null?null:new TypedObject(NutsDescriptorFilter.class, filter, null);
+        this.descriptorFilter = filter == null ? null : new TypedObject(NutsDescriptorFilter.class, filter, null);
         return this;
     }
 
@@ -127,12 +175,12 @@ public class NutsSearch {
     }
 
     public NutsSearch setDescriptorFilter(String filter) {
-        this.descriptorFilter = filter==null?null:new TypedObject(String.class, filter, null);
+        this.descriptorFilter = filter == null ? null : new TypedObject(String.class, filter, null);
         return this;
     }
 
     public NutsSearch setIdFilter(NutsIdFilter filter) {
-        this.idFilter = filter==null?null:new TypedObject(NutsIdFilter.class, filter, null);
+        this.idFilter = filter == null ? null : new TypedObject(NutsIdFilter.class, filter, null);
         return this;
     }
 
@@ -141,7 +189,7 @@ public class NutsSearch {
     }
 
     public NutsSearch setIdFilter(String filter) {
-        this.idFilter = filter==null?null:new TypedObject(String.class, filter, null);
+        this.idFilter = filter == null ? null : new TypedObject(String.class, filter, null);
         return this;
     }
 

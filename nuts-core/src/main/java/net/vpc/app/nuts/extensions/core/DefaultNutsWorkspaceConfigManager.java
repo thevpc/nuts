@@ -65,8 +65,9 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
     private NutsId workspaceBootId;
     private NutsBootWorkspace workspaceBoot;
     private NutsId workspaceRuntimeId;
-    private String workspaceRoot;
+    private String nutsHome;
     private ClassLoader bootClassLoader;
+    private URL[] bootClassWorldURLs;
     private NutsWorkspaceConfig config = new NutsWorkspaceConfigImpl();
     private String workspace;
     private File cwd = new File(System.getProperty("user.dir"));
@@ -211,8 +212,8 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
     }
 
     @Override
-    public String getWorkspaceRootLocation() {
-        return workspaceRoot;
+    public String getNutsHomeLocation() {
+        return nutsHome;
     }
 
     @Override
@@ -222,7 +223,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
         map.put("nuts.workspace-boot.id", workspaceBootId.toString());
         map.put("nuts.workspace-runtime.id", getWorkspaceRuntimeId().toString());
         map.put("nuts.workspace-runtime.version", getWorkspaceRuntimeId().getVersion().toString());
-        map.put("nuts.workspace-location", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, getWorkspaceRootLocation()));
+        map.put("nuts.workspace-location", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, getNutsHomeLocation()));
         return map;
     }
 
@@ -235,13 +236,19 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
             String worksaceRoot,
             NutsWorkspaceObjectFactory factory,
             NutsId workspaceBootId, NutsId workspaceRuntimeId, String workspace,
+            URL[] bootClassWorldURLs,
             ClassLoader bootClassLoader) {
         this.workspaceBoot = workspaceBoot;
-        this.workspaceRoot = worksaceRoot;
+        this.nutsHome = worksaceRoot;
         this.workspaceBootId = workspaceBootId;
         this.workspaceRuntimeId = workspaceRuntimeId;
         this.bootClassLoader = bootClassLoader;
+        this.bootClassWorldURLs = bootClassWorldURLs == null ? null : Arrays.copyOf(bootClassWorldURLs, bootClassWorldURLs.length);
         this.workspace = workspace;
+    }
+
+    public URL[] getBootClassWorldURLs() {
+        return bootClassWorldURLs == null ? null : Arrays.copyOf(bootClassWorldURLs, bootClassWorldURLs.length);
     }
 
     @Override
@@ -300,13 +307,13 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager {
 
     @Override
     public String toString() {
-        return "NutsWorkspaceConfig{" +
-                "workspaceBootId=" + workspaceBootId +
-                ", workspaceBoot=" + workspaceBoot +
-                ", workspaceRuntimeId=" + workspaceRuntimeId +
-                ", workspaceRoot='" + workspaceRoot + '\'' +
-                ", workspace='" + workspace + '\'' +
-                ", cwd=" + cwd +
-                '}';
+        return "NutsWorkspaceConfig{"
+                + "workspaceBootId=" + workspaceBootId
+                + ", workspaceBoot=" + workspaceBoot
+                + ", workspaceRuntimeId=" + workspaceRuntimeId
+                + ", nutsHome='" + nutsHome + '\''
+                + ", workspace='" + workspace + '\''
+                + ", cwd=" + cwd
+                + '}';
     }
 }

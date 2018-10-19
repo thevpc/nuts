@@ -50,7 +50,7 @@ public class FindCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
+        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();
@@ -140,7 +140,7 @@ public class FindCommand extends AbstractNutsCommand {
             } else if (currentFindWhat == 0 && cmdLine.readOnce("-r", "--repo")) {
                 findContext.repos.add(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
             } else if (currentFindWhat == 0 && cmdLine.readOnce("-v", "--last-version")) {
-                findContext.bestVersion = true;
+                findContext.latestVersions = true;
             } else if (currentFindWhat == 0 && cmdLine.readOnce("-Y", "--summary")) {
                 findContext.showSummary = true;
             } else {
@@ -238,9 +238,9 @@ public class FindCommand extends AbstractNutsCommand {
     }
 
     private List<NutsIdExt> toext(List<NutsId> list) {
-        List<NutsIdExt> e=new ArrayList<>();
+        List<NutsIdExt> e = new ArrayList<>();
         for (NutsId nutsId : list) {
-            e.add(new NutsIdExt(nutsId,null));
+            e.add(new NutsIdExt(nutsId, null));
         }
         return e;
     }
@@ -254,7 +254,9 @@ public class FindCommand extends AbstractNutsCommand {
                 .addArch(findContext.arch)
                 .addPackaging(findContext.pack)
                 .addRepository(findContext.repos)
-                .build();
+                .build()
+                .setSort(true)
+                .setLastestVersions(findContext.latestVersions);
 
         NutsWorkspace ws = findContext.context.getValidWorkspace();
         switch (findContext.fecthMode) {
@@ -311,8 +313,8 @@ public class FindCommand extends AbstractNutsCommand {
             NutsId remoteNutsId = remote.get(localNutsId.getFullName());
             if (remoteNutsId != null && localNutsId.getVersion().compareTo(remoteNutsId.getVersion()) >= 0) {
                 remote.remove(localNutsId.getFullName());
-            }else if(remoteNutsId!=null){
-                ret.put(localNutsId.getFullName(),new NutsIdExt(remoteNutsId,"(local: "+localNutsId.getVersion().toString()+")"));
+            } else if (remoteNutsId != null) {
+                ret.put(localNutsId.getFullName(), new NutsIdExt(remoteNutsId, "(local: " + localNutsId.getVersion().toString() + ")"));
             }
         }
         return new ArrayList<NutsIdExt>(ret.values());
@@ -350,8 +352,8 @@ public class FindCommand extends AbstractNutsCommand {
             NutsId localNutsId = local.get(remoteNutsId.getFullName());
             if (localNutsId != null && remoteNutsId.getVersion().compareTo(localNutsId.getVersion()) >= 0) {
 //                local.remove(nutsId.getFullName());
-            }else if(localNutsId!=null){
-                ret.put(remoteNutsId.getFullName(),new NutsIdExt(localNutsId,"(remote: "+remoteNutsId.getVersion().toString()+")"));
+            } else if (localNutsId != null) {
+                ret.put(remoteNutsId.getFullName(), new NutsIdExt(localNutsId, "(remote: " + remoteNutsId.getVersion().toString() + ")"));
             }
         }
         return new ArrayList<NutsIdExt>(ret.values());
@@ -390,18 +392,18 @@ public class FindCommand extends AbstractNutsCommand {
             }
             nutsList = new ArrayList<>(mm);
         }
-        if (findContext.bestVersion) {
-            Map<String, NutsIdExt> mm = new HashMap<>();
-            for (NutsIdExt nutsId : nutsList) {
-                String fullName = nutsId.id.getFullName();
-                NutsIdExt old = mm.get(fullName);
-                if (old == null || old.id.getVersion().compareTo(nutsId.id.getVersion()) < 0) {
-                    mm.put(fullName, nutsId);
-                }
-            }
-            nutsList = new ArrayList<>(mm.values());
-        }
-        Collections.sort(nutsList/*, CoreNutsUtils.NUTS_ID_COMPARATOR*/);
+//        if (findContext.latestVersions) {
+//            Map<String, NutsIdExt> mm = new HashMap<>();
+//            for (NutsIdExt nutsId : nutsList) {
+//                String fullName = nutsId.id.getFullName();
+//                NutsIdExt old = mm.get(fullName);
+//                if (old == null || old.id.getVersion().compareTo(nutsId.id.getVersion()) < 0) {
+//                    mm.put(fullName, nutsId);
+//                }
+//            }
+//            nutsList = new ArrayList<>(mm.values());
+//        }
+//        Collections.sort(nutsList/*, CoreNutsUtils.NUTS_ID_COMPARATOR*/);
 
         for (NutsIdExt nutsId : nutsList) {
             NutsInfo info = new NutsInfo(nutsId, findContext.context);
@@ -544,7 +546,7 @@ public class FindCommand extends AbstractNutsCommand {
                         );
                         Arrays.sort(depsFiles, CoreNutsUtils.NUTS_FILE_COMPARATOR);
                         for (NutsFile dd : depsFiles) {
-                            NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(),null), findContext.context);
+                            NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(), null), findContext.context);
                             dinfo.descriptor = dd.getDescriptor();
                             if (findContext.longflag) {
                                 String status = (dinfo.isInstalled(findContext.installedDependencies) ? "i"
@@ -651,7 +653,7 @@ public class FindCommand extends AbstractNutsCommand {
         }
     }
 
-    private String format(NutsId id, String desc,Set<String> imports) {
+    private String format(NutsId id, String desc, Set<String> imports) {
         id = id.setNamespace(null)
                 .setQueryProperty(NutsConstants.QUERY_FACE, null)
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
@@ -680,7 +682,7 @@ public class FindCommand extends AbstractNutsCommand {
             sb.append("?");
             sb.append(CoreStringUtils.nescape(id.getQuery()));
         }
-        if(!CoreStringUtils.isEmpty(desc)){
+        if (!CoreStringUtils.isEmpty(desc)) {
             sb.append(" **");
             sb.append(CoreStringUtils.nescape(desc));
             sb.append("**");
@@ -814,7 +816,7 @@ public class FindCommand extends AbstractNutsCommand {
         Boolean installed = null;
         Boolean installedDependencies = null;
         Boolean updatable = null;
-        boolean bestVersion = false;
+        boolean latestVersions = false;
         NutsPrintStream out;
         NutsPrintStream err;
         String display = "id";

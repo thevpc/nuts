@@ -33,8 +33,7 @@ uninstall packages allowing multiple versions of the very same package to  be in
 
 ## Download Latest stable version
 
-+ Linux Installer (sh)  :: [nuts.sh](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts)
-+ Linux Bundle    :: [nuts-bundle.tar.gz](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts-bundle.tar.gz)
++ Linux Installer    :: [nuts-bundle.tar.gz](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts-bundle.tar.gz)
 + Java or any Java enabled OS : Windows,iOS, ... :: [nuts.jar](https://github.com/thevpc/nuts/raw/master/nuts-bootstrap/nuts.jar)
 
 ## Requirements

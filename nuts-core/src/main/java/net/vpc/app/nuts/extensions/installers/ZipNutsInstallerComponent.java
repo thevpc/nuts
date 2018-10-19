@@ -67,7 +67,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
     private File getNutsFolder(NutsExecutionContext executionContext) {
         File store = CoreIOUtils.resolvePath(executionContext.getWorkspace().getConfigManager().getEnv(NutsConstants.ENV_STORE, NutsConstants.DEFAULT_STORE_ROOT),
                 CoreIOUtils.createFileByCwd(executionContext.getWorkspace().getConfigManager().getWorkspaceLocation(), (executionContext.getWorkspace().getConfigManager().getCwd())),
-                executionContext.getWorkspace().getConfigManager().getWorkspaceRootLocation());
+                executionContext.getWorkspace().getConfigManager().getNutsHomeLocation());
         return CoreNutsUtils.getNutsFolder(executionContext.getNutsFile().getId(), store);
     }
 

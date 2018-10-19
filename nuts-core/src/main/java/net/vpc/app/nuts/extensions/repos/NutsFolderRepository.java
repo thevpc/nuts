@@ -51,7 +51,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 CoreIOUtils.resolvePath(repositoryLocation,
                         root != null ? root : CoreIOUtils.createFile(
                                         workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getWorkspaceRootLocation()),
+                        workspace.getConfigManager().getNutsHomeLocation()),
                 SPEED_FAST);
         extensions.put("src", "-src.zip");
     }
@@ -205,7 +205,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         } else {
             IteratorList<NutsId> iterator = new IteratorList<NutsId>();
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                iterator.add(findInFolder(getStoreRoot(), filter, session));
+                iterator.addNonEmpty(findInFolder(getStoreRoot(), filter, session));
             }
             for (NutsRepository remote : getMirrors()) {
                 Iterator<NutsId> child = null;
@@ -216,7 +216,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     //
                 }
                 if (child != null) {
-                    iterator.add(child);
+                    iterator.addNonEmpty(child);
                 }
             }
             return iterator;
@@ -559,7 +559,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
         IteratorList<NutsId> list = new IteratorList<>();
         if (namedNutIdIterator != null) {
-            list.add(namedNutIdIterator);
+            list.addNonEmpty(namedNutIdIterator);
         }
         for (NutsRepository repo : getMirrors()) {
             int sup = 0;
@@ -577,7 +577,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //                    errors.append(ex).append(" \n");
                 }
                 if (vers != null) {
-                    list.add(vers);
+                    list.addNonEmpty(vers);
                 }
             }
         }

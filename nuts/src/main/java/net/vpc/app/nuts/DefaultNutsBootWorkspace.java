@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -63,7 +63,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             bootOptions = new NutsBootOptions();
         }
         log.log(Level.CONFIG, "Create boot workspace with options {0}", new Object[]{bootOptions});
-        this.rootLocation = StringUtils.isEmpty(bootOptions.getRoot()) ? NutsConstants.DEFAULT_WORKSPACE_ROOT : bootOptions.getRoot();
+        this.rootLocation = StringUtils.isEmpty(bootOptions.getRoot()) ? NutsConstants.DEFAULT_NUTS_HOME : bootOptions.getRoot();
         this.runtimeSourceURL = bootOptions.getRuntimeSourceURL();
         this.runtimeId = StringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : BootNutsId.parse(bootOptions.getRuntimeId());
         this.contextClassLoaderProvider = bootOptions.getClassLoaderProvider() == null ? DefaultNutsClassLoaderProvider.INSTANCE : bootOptions.getClassLoaderProvider();
@@ -73,13 +73,13 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      * {@inheritDoc}
      */
     @Override
-    public String getRootLocation() {
+    public String getNutsHomeLocation() {
         return rootLocation;
     }
 
     @Override
     public String getBootstrapLocation() {
-        return getRootLocation() + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME;
+        return getNutsHomeLocation() + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME;
     }
 
     /**
@@ -126,11 +126,11 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
             allExtensionFiles.put(id.toString(), f);
         }
-        URL[] urls = resolveClassWorldURLs(allExtensionFiles.values());
+        URL[] bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
         if (log != null) {
-            log.log(Level.INFO, "Loading Nuts ClassWorld from {0}", Arrays.asList(urls));
+            log.log(Level.INFO, "Loading Nuts ClassWorld from {0}", Arrays.asList(bootClassWorldURLs));
         }
-        ClassLoader workspaceClassLoader = urls.length == 0 ? getContextClassLoader() : new URLClassLoader(urls, getContextClassLoader());
+        ClassLoader workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new URLClassLoader(bootClassWorldURLs, getContextClassLoader());
         ServiceLoader<NutsWorkspaceObjectFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceObjectFactory.class, workspaceClassLoader);
 
         NutsWorkspace nutsWorkspace = null;
@@ -145,13 +145,15 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         if (nutsWorkspace == null || nutsWorkspaceImpl == null) {
             //should never happen
             System.err.printf("Unable to load Workspace Component from ClassPath : \n");
-            for (URL url : urls) {
+            for (URL url : bootClassWorldURLs) {
                 System.err.printf("\t%s\n", url);
             }
-            log.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(urls));
-            throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load Workspace Component from ClassPath : " + Arrays.asList(urls));
+            log.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs));
+            throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load Workspace Component from ClassPath : " + Arrays.asList(bootClassWorldURLs));
         }
-        if (nutsWorkspaceImpl.initializeWorkspace(this, factoryInstance, getBootId(), workspaceClassPath.getId().toString(), workspaceLocation, workspaceClassLoader, options.copy().setIgnoreIfFound(true))) {
+        if (nutsWorkspaceImpl.initializeWorkspace(this, factoryInstance, getBootId(), workspaceClassPath.getId().toString(), workspaceLocation,
+                bootClassWorldURLs,
+                workspaceClassLoader, options.copy().setIgnoreIfFound(true))) {
             log.log(Level.FINE, "Workspace created {0}", workspaceLocation);
         }
         return nutsWorkspace;
@@ -333,13 +335,13 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     NutsConstants.NUTS_ID_RUNTIME,
                     runtimeVersion,
                     getBootId() + ";"
-                    + "net.vpc.common:java-shell#0.5;"
-                    + "net.vpc.common:vpc-common-utils#1.21;"
-                    + "net.vpc.common:vpc-common-commandline#1.0;"
-                    + "javax.servlet:javax.servlet-api#3.1.0;"
-                    + "org.jline#jline#3.5.2;"
-                    + "org.ow2.asm:asm#5.2;"
-                    + "org.glassfish:javax.json#1.0.4",
+                            + "net.vpc.common:java-shell#0.5;"
+                            + "net.vpc.common:vpc-common-utils#1.21;"
+                            + "net.vpc.common:vpc-common-commandline#1.0;"
+                            + "javax.servlet:javax.servlet-api#3.1.0;"
+                            + "org.jline#jline#3.5.2;"
+                            + "org.ow2.asm:asm#5.2;"
+                            + "org.glassfish:javax.json#1.0.4",
                     expandPath0(NutsConstants.URL_COMPONENTS_LOCAL) + ";" + NutsConstants.URL_COMPONENTS_REMOTE
             ));
             log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
@@ -384,15 +386,15 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     }
 
     protected String expandPath0(String path) {
-        if (path.startsWith("~/.nuts/")) {
-            path = rootLocation + "/" + path.substring("~/.nuts/".length());
+        if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
+            path = rootLocation + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
         }
         return path;
     }
 
     protected String expandPath(String path) {
-        if (path.startsWith("~/.nuts/")) {
-            path = rootLocation + "/" + path.substring("~/.nuts/".length());
+        if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
+            path = rootLocation + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
         }
         if (path.startsWith("~/")) {
             path = System.getProperty("user.home") + path.substring(1);

@@ -29,6 +29,11 @@ class NutsIdExt implements Comparable<NutsIdExt>{
 
     @Override
     public int compareTo(NutsIdExt o) {
-        return this.id.toString().compareTo(o.id.toString());
+        int x = this.id.getFullName().compareTo(o.id.getFullName());
+        if(x!=0){
+            return x;
+        }
+        x = - this.id.getVersion().compareTo(o.id.getVersion());
+        return x;
     }
 }

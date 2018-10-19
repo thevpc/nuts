@@ -42,7 +42,7 @@ public class NutsConstants {
      * Default workspace root folder. Workspaces are created as plain folders
      * under this root folder.
      */
-    public static final String DEFAULT_WORKSPACE_ROOT = "~/.nuts";
+    public static final String DEFAULT_NUTS_HOME = "~/.nuts";
 
     /**
      * default workspace name
@@ -147,7 +147,7 @@ public class NutsConstants {
     public static final String URL_BOOTSTRAP_REMOTE = "https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap";
     public static final String URL_BOOTSTRAP_LOCAL = "~/.nuts/remote-bootstrap";
     public static final String URL_COMPONENTS_REMOTE = "http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
-    public static final String URL_COMPONENTS_LOCAL = "~/.m2/repository;~/.nuts/bootstrap";
+    public static final String URL_COMPONENTS_LOCAL = "~/.m2/repository;"+DEFAULT_NUTS_HOME+"/bootstrap";
 
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);

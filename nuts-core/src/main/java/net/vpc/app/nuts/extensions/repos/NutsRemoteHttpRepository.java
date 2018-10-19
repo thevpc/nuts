@@ -47,7 +47,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         super(new NutsRepositoryConfigImpl(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository, 
                 root!=null?root:CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
                         workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), 
-                        workspace.getConfigManager().getWorkspaceRootLocation())
+                        workspace.getConfigManager().getNutsHomeLocation())
                 , SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(url + "/version"));

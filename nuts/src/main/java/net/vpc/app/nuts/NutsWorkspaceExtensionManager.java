@@ -66,6 +66,6 @@ public interface NutsWorkspaceExtensionManager {
     NutsWorkspaceFactory getFactory();
 
     URLLocation[] getExtensionURLLocations(String id, String appId, String extensionType);
-    
+
     String[] getExtensionRepositoryLocations(String appId);
 }

@@ -39,7 +39,7 @@ public interface NutsHttpConnectionFacade {
 
     InputStream open() throws IOException;
 
-    public long length() throws IOException;
+    public URLHeader getURLHeader() throws IOException;
 
     InputStream upload(NutsTransportParamPart... parts) throws IOException;
 }

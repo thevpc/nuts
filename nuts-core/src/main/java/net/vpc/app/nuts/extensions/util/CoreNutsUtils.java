@@ -883,7 +883,6 @@ public class CoreNutsUtils {
         return sb.toString();
     }
 
-
     public static List<NutsId> filterNutsIdByLatestVersion(List<NutsId> base) {
         LinkedHashMap<String, NutsId> valid = new LinkedHashMap<>();
         for (NutsId n : base) {
@@ -905,4 +904,28 @@ public class CoreNutsUtils {
         }
         return new ArrayList<>(valid.values());
     }
+
+    public static <T> Iterator<T> nullifyIfEmpty(Iterator<T> other) {
+        PushBackIterator<T> b = new PushBackIterator<>(other);
+        if (b.hasNext()) {
+            b.pushBack();
+            return b;
+        } else {
+            return null;
+        }
+    }
+
+    public static String expandPath(String path,String nutsHome) {
+        if(CoreStringUtils.isEmpty(nutsHome)){
+            nutsHome=NutsConstants.DEFAULT_NUTS_HOME;
+        }
+        if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
+            path = nutsHome + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
+        }
+        if (path.startsWith("~/")) {
+            path = System.getProperty("user.home") + path.substring(1);
+        }
+        return path;
+    }
+
 }

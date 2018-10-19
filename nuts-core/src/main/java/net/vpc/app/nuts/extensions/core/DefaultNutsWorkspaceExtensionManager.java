@@ -363,7 +363,9 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     public String[] getExtensionRepositoryLocations(String appId) {
         //should read this form config?
         //or should be read from and extension component?
-        String repos = ws.getConfigManager().getEnv("bootstrapRepositoryLocations", "") + ";" + NutsConstants.URL_BOOTSTRAP_LOCAL + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE;
+        String repos = ws.getConfigManager().getEnv("bootstrapRepositoryLocations", "") + ";"
+                + NutsConstants.URL_BOOTSTRAP_LOCAL
+                + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE;
         List<String> urls = new ArrayList<>();
         for (String r : CoreStringUtils.split(repos, "; ")) {
             if (!CoreStringUtils.isEmpty(r)) {

@@ -369,6 +369,7 @@ public class CoreStringUtils {
                 case ')':
                 case '?':
                 case '^':
+                case '|':
                 case '\\': {
                     sb.append('\\').append(c);
                     break;

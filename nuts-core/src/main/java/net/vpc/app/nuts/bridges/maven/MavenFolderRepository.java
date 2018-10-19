@@ -53,7 +53,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 CoreIOUtils.resolvePath(repositoryId,
                         root != null ? root : CoreIOUtils.createFile(
                                         workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getWorkspaceRootLocation()),
+                        workspace.getConfigManager().getNutsHomeLocation()),
                 SPEED_FAST);
     }
 
@@ -92,7 +92,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     private File getStoreRoot() {
-        return CoreIOUtils.resolvePath(getConfigManager().getLocation(), getConfigManager().getLocationFolder(), getWorkspace().getConfigManager().getWorkspaceRootLocation());
+        return CoreIOUtils.resolvePath(getConfigManager().getLocation(), getConfigManager().getLocationFolder(), getWorkspace().getConfigManager().getNutsHomeLocation());
     }
 
     @Override

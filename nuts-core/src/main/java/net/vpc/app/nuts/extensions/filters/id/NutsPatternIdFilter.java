@@ -174,5 +174,12 @@ public class NutsPatternIdFilter implements NutsIdFilter, Simplifiable<NutsIdFil
     public String toString() {
         return "NutsIdPatternFilter" + Arrays.toString(ids);
     }
+    
+    public static boolean containsWildcad(String id){
+        return 
+                id.indexOf('*')>=0
+               // ||id.indexOf('|')>=0
+                ;
+    }
 
 }

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.URLHeader;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
 
@@ -979,7 +980,7 @@ public class CoreIOUtils {
         }
     }
 
-    public static int getURLSize(URL url) {
+    public static URLHeader getURLHeader(URL url) {
         URLConnection conn = null;
         try {
             conn = url.openConnection();
@@ -987,7 +988,14 @@ public class CoreIOUtils {
                 ((HttpURLConnection) conn).setRequestMethod("HEAD");
             }
             conn.getInputStream();
-            return conn.getContentLength();
+            final String f = conn.getHeaderField("Last-Modified");
+            final URLHeader info = new URLHeader(url.toString());
+            info.setContentType(conn.getContentType());
+            info.setContentEncoding(conn.getContentEncoding());
+            info.setContentLength(conn.getContentLengthLong());
+            long m = conn.getLastModified();
+            info.setLastModified(m == 0 ? null : new Date(m));
+            return info;
         } catch (IOException e) {
             throw new NutsIOException(e);
         } finally {
@@ -999,7 +1007,7 @@ public class CoreIOUtils {
 
     public static InputStream monitor(URL from, InputStreamMonitor monitor) throws NutsIOException {
         try {
-            return monitor(from.openStream(), from, getURLName(from), getURLSize(from), monitor);
+            return monitor(from.openStream(), from, getURLName(from), getURLHeader(from).getContentLength(), monitor);
         } catch (IOException ex) {
             throw new NutsIOException(ex);
         }
@@ -1066,7 +1074,7 @@ public class CoreIOUtils {
 
     public static File resolvePath(String path, File baseFolder, String workspaceRoot) {
         if (CoreStringUtils.isEmpty(workspaceRoot)) {
-            workspaceRoot = NutsConstants.DEFAULT_WORKSPACE_ROOT;
+            workspaceRoot = NutsConstants.DEFAULT_NUTS_HOME;
         }
         if (path != null && path.length() > 0) {
             String firstItem = "";

@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
@@ -52,7 +53,7 @@ public interface NutsWorkspaceConfigManager {
      *
      * @return nuts root folder
      */
-    String getWorkspaceRootLocation();
+    String getNutsHomeLocation();
 
     Properties getEnv();
 
@@ -90,4 +91,5 @@ public interface NutsWorkspaceConfigManager {
 
     void save();
 
+    URL[] getBootClassWorldURLs();
 }

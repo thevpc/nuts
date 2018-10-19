@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.filters.id;
 
-import java.util.Arrays;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
