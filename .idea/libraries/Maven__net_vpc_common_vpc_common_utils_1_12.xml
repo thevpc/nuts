@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.vpc.common:vpc-common-utils:1.12">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/common/vpc-common-utils/1.12/vpc-common-utils-1.12.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/common/vpc-common-utils/1.12/vpc-common-utils-1.12-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/common/vpc-common-utils/1.12/vpc-common-utils-1.12-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

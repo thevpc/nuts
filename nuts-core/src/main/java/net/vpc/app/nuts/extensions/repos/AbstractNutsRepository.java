@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,14 +30,13 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsRepositoryConfigImpl;
 import net.vpc.app.nuts.extensions.util.*;
 
 import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.core.NutsRepositoryLocationImpl;
+
 import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsSimpleIdFilter;
 
@@ -58,11 +57,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     private NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
     private DefaultNutsRepositoryConfigManager configManager;
 
-    public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int speed) {
+    public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, String root, int speed) {
         init(config, workspace, parentRepository, root, speed);
     }
 
-    protected void init(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int speed) {
+    protected void init(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, String root, int speed) {
         if (config == null) {
             throw new NutsIllegalArgumentException("Null Config");
         }
@@ -71,12 +70,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new IllegalArgumentException("Missing folder");
 //            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getNutsHomeLocation());
         } else {
-            root = CoreIOUtils.resolvePath(null, root, workspace.getConfigManager().getNutsHomeLocation());
+            root = CoreIOUtils.resolvePath(null, new File(root), workspace.getConfigManager().getNutsHomeLocation()).getPath();
         }
-        if (root == null || (root.exists() && !root.isDirectory())) {
+        if (root == null || (new File(root).exists() && !new File(root).isDirectory())) {
             throw new NutsInvalidRepositoryException(String.valueOf(root), "Unable to resolve root to a valid folder " + root + "");
         }
-        configManager = new DefaultNutsRepositoryConfigManager(root, config, Math.max(0, speed));
+        configManager = new DefaultNutsRepositoryConfigManager(this, root, config, Math.max(0, speed));
 
         this.repositoryId = config.getId();
         this.workspace = workspace;
@@ -105,22 +104,22 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         File file = new File(getConfigManager().getLocationFolder(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
         boolean found = false;
         if (file.exists()) {
-            NutsRepositoryConfig newConfig = CoreJsonUtils.get(getWorkspace()).loadJson(file, NutsRepositoryConfigImpl.class);
+            NutsRepositoryConfig newConfig = CoreJsonUtils.loadJson(file, NutsRepositoryConfig.class);
             if (newConfig != null) {
                 found = true;
-                newConfig.setType(getConfigManager().getConfig().getType());
+                newConfig.setType(getRepositoryType());
                 checkNutsRepositoryConfig(newConfig);
                 configManager.setConfig(newConfig);
-                repositoryId = getConfigManager().getConfig().getId();
-                for (NutsRepositoryLocation repositoryConfig : getConfigManager().getConfig().getMirrors()) {
-                    openRepository(repositoryConfig.getId(), repositoryConfig.getLocation(), repositoryConfig.getType(), new File(getMirorsRoot(), repositoryConfig.getId()), true);
+                repositoryId = getConfigManager().getId();
+                for (NutsRepositoryLocation repositoryConfig : getConfigManager().getMirrors()) {
+                    openRepository(repositoryConfig.getId(), repositoryConfig.getLocation(), repositoryConfig.getType(), new File(getMirorsRoot(), repositoryConfig.getId()).getPath(), true);
                 }
 
             }
         }
         if (!found) {
             if (autoCreate) {
-                NutsRepositoryConfig newConfig = new NutsRepositoryConfigImpl(getRepositoryId(), getConfigManager().getLocation(), getConfigManager().getConfig().getType());
+                NutsRepositoryConfig newConfig = new NutsRepositoryConfig(getRepositoryId(), getConfigManager().getLocation(), getRepositoryType());
                 checkNutsRepositoryConfig(newConfig);
                 configManager.setConfig(newConfig);
             } else {
@@ -129,11 +128,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
-    protected NutsRepository openRepository(String repositoryId, String location, String type, File repositoryRoot, boolean autoCreate) {
+    protected NutsRepository openRepository(String repositoryId, String location, String type, String repositoryRoot, boolean autoCreate) {
         if (CoreStringUtils.isEmpty(type)) {
             type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
         }
-        NutsRepositoryFactoryComponent factory_ = getWorkspace().getExtensionManager().getFactory().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
+        NutsRepositoryFactoryComponent factory_ = getWorkspace().getExtensionManager().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
         if (factory_ != null) {
             NutsRepository r = factory_.create(repositoryId, location, type, getWorkspace(), this, repositoryRoot);
             if (r != null) {
@@ -145,8 +144,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         throw new NutsInvalidRepositoryException(repositoryId, "Invalid type " + type);
     }
 
-    private File getMirorsRoot() {
-        return new File(getConfigManager().getLocationFolder(), NutsConstants.FOLDER_NAME_REPOSITORIES);
+    private String getMirorsRoot() {
+        return new File(getConfigManager().getLocationFolder(), NutsConstants.FOLDER_NAME_REPOSITORIES).getPath();
     }
 
     protected void wireRepository(NutsRepository repository) {
@@ -161,7 +160,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public int getSupportLevel(NutsId id, NutsSession session) {
         checkSession(session);
-        int namespaceSupport = getSupportLevel(id);
+        int namespaceSupport = getSupportLevelCurrent(id, session);
         if (session.isTransitive()) {
             NutsSession transitiveSession = session.copy().setTransitive(true);
             for (NutsRepository remote : mirors.values()) {
@@ -174,8 +173,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return namespaceSupport;
     }
 
-    protected int getSupportLevel(NutsId id) {
-        String groups = getConfigManager().getConfig().getGroups();
+    protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
+        String groups = getConfigManager().getGroups();
         if (CoreStringUtils.isEmpty(groups)) {
             return 1;
         }
@@ -189,7 +188,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public String getRepositoryType() {
-        return getConfigManager().getConfig().getType();
+        return getConfigManager().getType();
     }
 
     protected void setRepositoryId(String repositoryId) {
@@ -201,28 +200,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SAVE_REPOSITORY);
         }
-        File file = CoreIOUtils.createFile(getConfigManager().getLocationFolder(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
-        boolean created = false;
-        if (!file.exists()) {
-            created = true;
-        }
-        boolean saved = false;
-        getConfigManager().getLocationFolder().mkdirs();
-        try {
-            CoreJsonUtils.get(getWorkspace()).storeJson(getConfigManager().getConfig(), file, CoreJsonUtils.PRETTY_IGNORE_EMPTY_OPTIONS);
-            saved = true;
-        } catch (NutsIOException ex) {
-            //unable to store;
-        }
-        if (created) {
-            log.log(Level.INFO, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Created repository " + getRepositoryId() + " at " + getConfigManager().getLocationFolder().getPath());
-        } else {
-            log.log(Level.FINE, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Updated repository " + getRepositoryId() + " at " + getConfigManager().getLocationFolder().getPath());
-        }
+        boolean b = getConfigManager().save();
         for (NutsRepository repository : mirors.values()) {
-            repository.save();
+            b |= repository.save();
         }
-        return saved;
+        return b;
     }
 
     @Override
@@ -246,14 +228,16 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (repo != null) {
             updated = true;
         }
-        if (getConfigManager().getConfig().getMirror(repositoryId) != null) {
+        if (getConfigManager().getMirror(repositoryId) != null) {
             updated = true;
         }
         if (!updated) {
             throw new NutsRepositoryNotFoundException(repositoryId);
         }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " remove repo " + repositoryId);
-        getConfigManager().getConfig().removeMirror(repositoryId);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " remove repo " + repositoryId);
+        }
+        getConfigManager().removeMirror(repositoryId);
         if (repo != null) {
             mirors.remove(repositoryId);
             fireOnRemoveRepository(repo);
@@ -308,14 +292,16 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsInvalidRepositoryException(repositoryId, "Invalid type " + type);
         }
 
-        NutsRepositoryLocation newConf = new NutsRepositoryLocationImpl(repositoryId, location, type);
+        NutsRepositoryLocation newConf = new NutsRepositoryLocation(repositoryId, location, type);
 
-        NutsRepositoryLocation repoConf = getConfigManager().getConfig().getMirror(repositoryId);
+        NutsRepositoryLocation repoConf = getConfigManager().getMirror(repositoryId);
         if (repoConf != null) {
             throw new NutsRepositoryAlreadyRegisteredException(repositoryId);
         }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
-        getConfigManager().getConfig().addMirror(newConf);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
+        }
+        getConfigManager().addMirror(newConf);
 
         NutsRepository repo = openRepository(repositoryId, location, type, getMirorsRoot(), autoCreate);
         return repo;
@@ -323,10 +309,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public String toString() {
-        return "id=" + getRepositoryId() + " ; impl=" + getClass().getSimpleName() + " ; folder=" + getConfigManager().getLocation() + (CoreStringUtils.isEmpty(getConfigManager().getLocation()) ? "" : (" ; location=" + getConfigManager().getLocation()));
+        return "id=" + getRepositoryId()
+                + " ; impl=" + getClass().getSimpleName() + " ; folder=" + getConfigManager().getLocation() + (CoreStringUtils.isEmpty(getConfigManager().getLocation()) ? "" : (" ; location=" + getConfigManager().getLocation()));
     }
 
-    public void checkAllowedFetch(NutsSession session, NutsId id) {
+    public void checkAllowedFetch(NutsId id, NutsSession session) {
     }
 
     @Override
@@ -352,11 +339,24 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
-        checkAllowedFetch(session, id.setFace("nuts"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch descriptor", 24) + " " + id);
+        checkAllowedFetch(id.setFace("nuts"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch descriptor", 24) + " " + id);
+        }
 
         String versionString = id.getVersion().getValue();
-        if (CoreVersionUtils.isStaticVersionPattern(versionString)) {
+        if (CoreVersionUtils.isStaticVersionPattern(versionString) || CoreStringUtils.isEmpty(versionString)) {
+            if (CoreStringUtils.isEmpty(versionString) || "LATEST".equals(versionString)) {
+                NutsId a = findLatestVersion(id.setVersion(null), null, session);
+                if (a == null) {
+                    throw new NutsNotFoundException(id.toString());
+                }
+                NutsDescriptor d = fetchDescriptorImpl(a, session);
+                if (d == null) {
+                    throw new NutsNotFoundException(id);
+                }
+                return d;
+            }
             NutsDescriptor d = fetchDescriptorImpl(id, session);
             if (d == null) {
                 throw new NutsNotFoundException(id);
@@ -364,15 +364,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             return d;
         } else {
             DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), new NutsSimpleIdFilter(id), CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
-            Iterator<NutsId> allVersions = findVersions(id, filter, session);
-
-            NutsId a = null;
-            while (allVersions.hasNext()) {
-                NutsId next = allVersions.next();
-                if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
-                    a = next;
-                }
-            }
+            NutsId a = findLatestVersion(id, filter, session);
             if (a == null) {
                 throw new NutsNotFoundException(id.toString());
             }
@@ -385,14 +377,28 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     }
 
+    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
+        Iterator<NutsId> allVersions = findVersions(id, filter, session);
+        NutsId a = null;
+        while (allVersions.hasNext()) {
+            NutsId next = allVersions.next();
+            if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
+                a = next;
+            }
+        }
+        return a;
+    }
+
     @Override
     public String fetchHash(NutsId id, NutsSession session) {
         checkSession(session);
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
-        checkAllowedFetch(session, id.setFace("hash"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component hash", 24) + " " + id);
+        checkAllowedFetch(id.setFace("hash"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component hash", 24) + " " + id);
+        }
         String d = fetchHashImpl(id, session);
         if (d == null) {
             throw new NutsNotFoundException(id);
@@ -406,8 +412,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
-        checkAllowedFetch(session, id.setFace("nutshash"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc hash", 24) + " " + id);
+        checkAllowedFetch(id.setFace("nutshash"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc hash", 24) + " " + id);
+        }
         String d = fetchDescriptorHashImpl(id, session);
         if (d == null) {
             throw new NutsNotFoundException(id);
@@ -416,7 +424,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public NutsId deploy(NutsId id, NutsDescriptor descriptor, File file, boolean force, NutsSession session) {
+    public NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session) {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_DEPLOY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_DEPLOY);
         }
@@ -440,7 +448,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 //            }
 //        }
         id = id.unsetQuery();
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
+        }
         id = id.setFace(descriptor.getFace());
         return deployImpl(id, descriptor, file, force, session);
     }
@@ -451,7 +461,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_PUSH)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_PUSH);
         }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
+        }
         pushImpl(id, repoId, force, session);
     }
 
@@ -460,12 +472,14 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
-        checkAllowedFetch(session, null);
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Find components");
+        checkAllowedFetch(null, session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Find components");
+        }
         return findImpl(filter, session);
     }
 
-//    @Override
+    //    @Override
 //    public NutsId resolveId(NutsId id, NutsSession session) {
 //        checkSession(session);
 //        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
@@ -504,8 +518,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
-        checkAllowedFetch(session, id.setFace("content"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component", 24) + " " + id);
+        checkAllowedFetch(id.setFace("content"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component", 24) + " " + id);
+        }
         NutsFile f = fetchImpl(id, session);
         if (f == null) {
             throw new NutsNotFoundException(id);
@@ -513,35 +529,41 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return f;
     }
 
-    public File copyTo(NutsId id, NutsSession session, File localPath) {
+    public String copyTo(NutsId id, String localPath, NutsSession session) {
         checkSession(session);
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_CONTENT)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
-        checkAllowedFetch(session, id.setFace("content"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component (local)", 24) + " " + id);
-        return copyToImpl(id, session, localPath);
+        checkAllowedFetch(id.setFace("content"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component (local)", 24) + " " + id);
+        }
+        return copyToImpl(id, localPath, session);
     }
 
     @Override
-    public File copyDescriptorTo(NutsId id, NutsSession session, File localPath) {
+    public String copyDescriptorTo(NutsId id, String localPath, NutsSession session) {
         checkSession(session);
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
-        checkAllowedFetch(session, id.setFace("descriptor"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc (local)", 24) + " " + id);
-        if (localPath.isDirectory()) {
-            localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom"));
+        checkAllowedFetch(id.setFace("descriptor"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc (local)", 24) + " " + id);
         }
-        return copyDescriptorToImpl(id, session, localPath);
+        if (new File(localPath).isDirectory()) {
+            localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom")).getPath();
+        }
+        return copyDescriptorToImpl(id, localPath, session);
     }
 
     public Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         checkSession(session);
         checkNutsId(id, NutsConstants.RIGHT_FETCH_DESC);
-        checkAllowedFetch(session, id.setFace("content"));
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+        checkAllowedFetch(id.setFace("content"), session);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+        }
         return findVersionsImpl(id, idFilter, session);
     }
 
@@ -550,7 +572,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_UNDEPLOY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_UNDEPLOY);
         }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
+        }
         undeployImpl(id, session);
     }
 
@@ -573,18 +597,18 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected abstract Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session);
 
-    public abstract File copyDescriptorToImpl(NutsId id, NutsSession session, File localPath);
+    public abstract String copyDescriptorToImpl(NutsId id, String localPath, NutsSession session);
 
-    protected abstract File copyToImpl(NutsId id, NutsSession session, File localPath);
+    protected abstract String copyToImpl(NutsId id, String localPath, NutsSession session);
 
     protected abstract NutsFile fetchImpl(NutsId id, NutsSession session);
 
-//    protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
+    //    protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
     protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session);
 
     protected abstract void pushImpl(NutsId id, String repoId, boolean force, NutsSession session);
 
-    protected abstract NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, boolean force, NutsSession session);
+    protected abstract NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session);
 
     protected abstract String fetchDescriptorHashImpl(NutsId id, NutsSession session);
 
@@ -606,10 +630,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + right);
         }
         if (CoreStringUtils.isEmpty(id.getGroup())) {
-            throw new NutsIllegalArgumentException("Missing group for "+id);
+            throw new NutsIllegalArgumentException("Missing group for " + id);
         }
         if (CoreStringUtils.isEmpty(id.getName())) {
-            throw new NutsIllegalArgumentException("Missing name for "+id);
+            throw new NutsIllegalArgumentException("Missing name for " + id);
         }
     }
 
@@ -622,9 +646,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     public void setEnabled(boolean enabled) {
         NutsRepository pr = getParentRepository();
         if (pr != null) {
-            pr.getConfigManager().getConfig().getMirror(getConfigManager().getConfig().getId()).setEnabled(enabled);
+            pr.getConfigManager().getMirror(getRepositoryId()).setEnabled(enabled);
         } else {
-            getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).setEnabled(enabled);
+            getWorkspace().getConfigManager().setRepositoryEnabled(getRepositoryId(), enabled);
         }
     }
 
@@ -632,9 +656,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     public boolean isEnabled() {
         NutsRepository pr = getParentRepository();
         if (pr != null) {
-            return pr.getConfigManager().getConfig().getMirror(getConfigManager().getConfig().getId()).isEnabled();
+            return pr.getConfigManager().getMirror(getRepositoryId()).isEnabled();
         } else {
-            return getWorkspace().getConfigManager().getConfig().getRepository(getConfigManager().getConfig().getId()).isEnabled();
+            return getWorkspace().getConfigManager().isRepositoryEnabled(getRepositoryId());
         }
     }
 
@@ -648,77 +672,6 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 //        if (CoreStringUtils.isEmpty(config.getLocation())) {
 //            throw new NutsIllegalArgumentException("Empty Repository Id");
 //        }
-    }
-
-    class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
-
-        private int speed;
-        private File locationFolder;
-        private NutsRepositoryConfig config;
-
-        public DefaultNutsRepositoryConfigManager(File locationFolder, NutsRepositoryConfig config, int speed) {
-            this.locationFolder = locationFolder;
-            this.config = config;
-            this.speed = speed;
-        }
-
-        @Override
-        public String getEnv(String key, String defaultValue, boolean inherit) {
-            String t = getConfig().getEnv(key, null);
-            if (!CoreStringUtils.isEmpty(t)) {
-                return t;
-            }
-            t = getWorkspace().getConfigManager().getEnv(key, null);
-            if (!CoreStringUtils.isEmpty(t)) {
-                return t;
-            }
-            return defaultValue;
-        }
-
-        @Override
-        public Properties getEnv(boolean inherit) {
-            Properties p = new Properties();
-            if (inherit) {
-                p.putAll(getWorkspace().getConfigManager().getEnv());
-            }
-            p.putAll(getConfig().getEnv());
-            return p;
-        }
-
-        @Override
-        public void setEnv(String property, String value) {
-            getConfig().setEnv(property, value);
-        }
-
-        @Override
-        public int getSpeed() {
-            int s = speed;
-            if (isSupportedMirroring()) {
-                for (NutsRepository mirror : getMirrors()) {
-                    s += mirror.getConfigManager().getSpeed();
-                }
-            }
-            return s;
-        }
-
-        @Override
-        public String getLocation() {
-            return getConfig().getLocation();
-        }
-
-        @Override
-        public NutsRepositoryConfig getConfig() {
-            return config;
-        }
-
-        public File getLocationFolder() {
-            return locationFolder;
-        }
-
-        public void setConfig(NutsRepositoryConfig newConfig) {
-            this.config = newConfig;
-        }
-
     }
 
     protected void fireOnUndeploy(NutsFile file) {
@@ -773,6 +726,18 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getWorkspace().getRepositoryManager().getRepositoryListeners()) {
             listener.onRemoveRepository(getWorkspace(), this, repository);
         }
+    }
+
+
+    @Override
+    public int getSpeed() {
+        int s = getConfigManager().getSpeed();
+        if (isSupportedMirroring()) {
+            for (NutsRepository mirror : getMirrors()) {
+                s += mirror.getSpeed();
+            }
+        }
+        return s;
     }
 
 }

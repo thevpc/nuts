@@ -43,7 +43,7 @@ import java.util.zip.ZipFile;
  * Default Bootstrap implementation. This class is responsible of loading
  * initial nuts-core.jar and its dependencies and for creating workspaces using
  * the method {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}.
- *
+ * <p>
  * Created by vpc on 1/6/17.
  */
 public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
@@ -63,9 +63,9 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             bootOptions = new NutsBootOptions();
         }
         log.log(Level.CONFIG, "Create boot workspace with options {0}", new Object[]{bootOptions});
-        this.rootLocation = StringUtils.isEmpty(bootOptions.getRoot()) ? NutsConstants.DEFAULT_NUTS_HOME : bootOptions.getRoot();
+        this.rootLocation = NutsStringUtils.isEmpty(bootOptions.getHome()) ? NutsConstants.DEFAULT_NUTS_HOME : bootOptions.getHome();
         this.runtimeSourceURL = bootOptions.getRuntimeSourceURL();
-        this.runtimeId = StringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : BootNutsId.parse(bootOptions.getRuntimeId());
+        this.runtimeId = NutsStringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : BootNutsId.parse(bootOptions.getRuntimeId());
         this.contextClassLoaderProvider = bootOptions.getClassLoaderProvider() == null ? DefaultNutsClassLoaderProvider.INSTANCE : bootOptions.getClassLoaderProvider();
     }
 
@@ -87,7 +87,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      */
     @Override
     public String getBootId() {
-        return NutsConstants.NUTS_ID_BOOT + "#" + IOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app/nuts/nuts.properties"))
+        return NutsConstants.NUTS_ID_BOOT + "#" + NutsIOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"))
                 .getProperty("project.version", "0.0.0");
     }
 
@@ -96,6 +96,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      */
     @Override
     public NutsWorkspace openWorkspace(String workspaceLocation, NutsWorkspaceCreateOptions options) {
+        long startTime = System.currentTimeMillis();
         if (options == null) {
             options = new NutsWorkspaceCreateOptions()
                     .setCreateIfNotFound(true)
@@ -113,23 +114,21 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
 
         File repoFolder = createFile(rootLocation, NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
-        File f = getBootFile(workspaceClassPath.getId(), "jar", workspaceClassPath.getRepositoriesArray(), repoFolder, true);
+        File f = getBootFile(workspaceClassPath.getId(), getFileName(workspaceClassPath.getId(), "jar"), workspaceClassPath.getRepositoriesArray(), repoFolder, true);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load " + workspaceClassPath.getId());
         }
 
         allExtensionFiles.put(workspaceClassPath.getId().toString(), f);
         for (BootNutsId id : workspaceClassPath.getDependenciesArray()) {
-            f = getBootFile(id, "jar", workspaceClassPath.getRepositoriesArray(), repoFolder, false);
+            f = getBootFile(id, getFileName(id, "jar"), workspaceClassPath.getRepositoriesArray(), repoFolder, false);
             if (f == null) {
                 throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load " + id);
             }
             allExtensionFiles.put(id.toString(), f);
         }
         URL[] bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
-        if (log != null) {
-            log.log(Level.INFO, "Loading Nuts ClassWorld from {0}", Arrays.asList(bootClassWorldURLs));
-        }
+        log.log(Level.CONFIG, "Loading Nuts ClassWorld from {0}", Arrays.asList(bootClassWorldURLs));
         ClassLoader workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new URLClassLoader(bootClassWorldURLs, getContextClassLoader());
         ServiceLoader<NutsWorkspaceObjectFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceObjectFactory.class, workspaceClassLoader);
 
@@ -156,6 +155,8 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 workspaceClassLoader, options.copy().setIgnoreIfFound(true))) {
             log.log(Level.FINE, "Workspace created {0}", workspaceLocation);
         }
+        long endTime = System.currentTimeMillis();
+        log.log(Level.FINE, "Workspace created in {0}ms", (endTime-startTime));
         return nutsWorkspace;
     }
 
@@ -193,7 +194,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             initial.addAll(Arrays.asList(possibilities));
         }
         initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE);
-        return StringUtils.splitAndRemoveDuplicates(initial);
+        return NutsStringUtils.splitAndRemoveDuplicates(initial);
     }
 
     private String[] resolveBootClassPathRepositories(String... possibilities) {
@@ -206,17 +207,17 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
         initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE);
         initial.add(NutsConstants.URL_COMPONENTS_REMOTE);
-        return StringUtils.splitAndRemoveDuplicates(initial);
+        return NutsStringUtils.splitAndRemoveDuplicates(initial);
     }
 
-    private File getBootFileLocation(BootNutsId id, String ext) {
-        return new File(createFile(rootLocation, NutsConstants.BOOTSTRAP_REPOSITORY_NAME), getPath(id, ext));
+    private File getBootFileLocation(BootNutsId id, String name) {
+        return new File(createFile(rootLocation, NutsConstants.BOOTSTRAP_REPOSITORY_NAME), getPathFile(id, name));
     }
 
     private NutsWorkspaceClassPath loadWorkspaceClassPath(boolean first) {
         BootNutsId wbootId = BootNutsId.parse(getBootId());
-        File bootPropertiesFile = getBootFileLocation(wbootId, "properties");
-        String bootPropertiesPath = '/' + getPath(wbootId, "properties");
+        File bootPropertiesFile = getBootFileLocation(wbootId, "nuts.properties");
+        String bootPropertiesPath = '/' + getPathFile(wbootId, "nuts.properties");
         String[] resolvedBootRepositories = null;
         String repositories = null;
         BootNutsId _runtimeId = runtimeId;
@@ -225,43 +226,55 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             boolean storeRuntimeFile = true;
             Properties bootProperties = null;
             if (bootPropertiesFile.exists()) {
-                bootProperties = IOUtils.loadFileProperties(bootPropertiesFile);
+                bootProperties = NutsIOUtils.loadFileProperties(bootPropertiesFile);
                 runtimeId = bootProperties.getProperty("runtimeId");
                 repositories = bootProperties.getProperty("repositories");
-                if (!StringUtils.isEmpty(runtimeId) && !StringUtils.isEmpty(repositories)) {
-                    log.log(Level.CONFIG, "Loaded boot from " + bootPropertiesFile.getPath() + " : runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                if (!NutsStringUtils.isEmpty(runtimeId) && !NutsStringUtils.isEmpty(repositories)) {
+                    if (log.isLoggable(Level.CONFIG)) {
+                        log.log(Level.CONFIG, "Loaded boot from " + bootPropertiesFile.getPath() + " : runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                    }
                     storeRuntimeFile = false;
                 } else {
-                    log.log(Level.CONFIG, "Failed to load boot props file from " + bootPropertiesFile.getPath() + " . Corrupted file. runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                    if (log.isLoggable(Level.CONFIG)) {
+                        log.log(Level.CONFIG, "Failed to load boot props file from " + bootPropertiesFile.getPath() + " . Corrupted file. runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                    }
                 }
             } else {
-                log.log(Level.CONFIG, "Failed to load boot props file from " + bootPropertiesFile.getPath() + " . File does not exist.");
+                if (log.isLoggable(Level.CONFIG)) {
+                    log.log(Level.CONFIG, "Failed to load boot props file from " + bootPropertiesFile.getPath() + " . File does not exist.");
+                }
             }
-            if (StringUtils.isEmpty(runtimeId) || StringUtils.isEmpty(repositories)) {
+            if (NutsStringUtils.isEmpty(runtimeId) || NutsStringUtils.isEmpty(repositories)) {
                 resolvedBootRepositories = resolveBootConfigRepositories(repositories);
                 for (String repo : resolvedBootRepositories) {
                     URL urlString = buildURL(repo, bootPropertiesPath);
                     if (urlString != null) {
-                        Properties wruntimeProperties = IOUtils.loadURLProperties(urlString);
+                        Properties wruntimeProperties = NutsIOUtils.loadURLProperties(urlString);
                         if (!wruntimeProperties.isEmpty()) {
                             String wruntimeId = wruntimeProperties.getProperty("runtimeId");
                             String wrepositories = wruntimeProperties.getProperty("repositories");
-                            if (!StringUtils.isEmpty(wruntimeId) && !StringUtils.isEmpty(wrepositories)) {
+                            if (!NutsStringUtils.isEmpty(wruntimeId) && !NutsStringUtils.isEmpty(wrepositories)) {
                                 runtimeId = wruntimeId;
                                 repositories = wrepositories;
-                                log.log(Level.CONFIG, "Loaded boot props from " + urlString + " : runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                                if (log.isLoggable(Level.CONFIG)) {
+                                    log.log(Level.CONFIG, "Loaded boot props from " + urlString + " : runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                                }
                                 break;
                             }
                         } else {
-                            log.log(Level.CONFIG, "Failed to load boot props file from " + urlString);
+                            if (log.isLoggable(Level.CONFIG)) {
+                                log.log(Level.CONFIG, "Failed to load boot props file from " + urlString);
+                            }
                         }
                     } else {
-                        log.log(Level.CONFIG, "Failed to load boot props file from " + urlString);
+                        if (log.isLoggable(Level.CONFIG)) {
+                            log.log(Level.CONFIG, "Failed to load boot props file from " + urlString);
+                        }
                     }
                 }
             }
 
-            if (_runtimeId == null && StringUtils.isEmpty(runtimeId)) {
+            if (_runtimeId == null && NutsStringUtils.isEmpty(runtimeId)) {
 //                storeRuntimeFile = false;
                 runtimeId = NutsConstants.NUTS_ID_RUNTIME + "#" + wbootId.getVersion() + ".0";
                 log.log(Level.CONFIG, "Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootPropertiesPath, runtimeId});
@@ -272,31 +285,31 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 //                    }
 //                }
             }
-            if (StringUtils.isEmpty(repositories)) {
+            if (NutsStringUtils.isEmpty(repositories)) {
                 repositories = "";
             }
             if (_runtimeId == null && storeRuntimeFile) {
-                if (StringUtils.isEmpty(repositories)) {
+                if (NutsStringUtils.isEmpty(repositories)) {
                     repositories = NutsConstants.URL_COMPONENTS_REMOTE;
                 }
                 bootProperties = new Properties();
                 bootProperties.setProperty("runtimeId", runtimeId);
                 bootProperties.setProperty("repositories", repositories);
                 bootPropertiesFile.getParentFile().mkdirs();
-                IOUtils.storeProperties(bootProperties, bootPropertiesFile);
-                log.log(Level.CONFIG, "Store boot file {1}", new Object[]{bootPropertiesFile});
+                NutsIOUtils.storeProperties(bootProperties, bootPropertiesFile);
+                log.log(Level.CONFIG, "Store boot file {0}", new Object[]{bootPropertiesFile});
             }
             if (_runtimeId == null) {
                 _runtimeId = BootNutsId.parse(runtimeId);
             }
         }
 
-        File localRuntimeConfigFile = getBootFile(_runtimeId, "properties");
+        File localRuntimeConfigFile = getBootFile(_runtimeId, "nuts.properties");
         List<NutsWorkspaceClassPath> all = new ArrayList<>();
         if (localRuntimeConfigFile != null && localRuntimeConfigFile.exists()) {
             NutsWorkspaceClassPath c = null;
             try {
-                c = new NutsWorkspaceClassPath(IOUtils.loadFileProperties(localRuntimeConfigFile));
+                c = new NutsWorkspaceClassPath(NutsIOUtils.loadFileProperties(localRuntimeConfigFile));
             } catch (Exception e) {
                 //
             }
@@ -310,16 +323,16 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         resolvedBootRepositories = resolveBootConfigRepositories(repositories);
         for (String u : resolvedBootRepositories) {
             NutsWorkspaceClassPath cp = null;
-            URL urlString = buildURL(u, getPath(_runtimeId, "properties"));
+            URL urlString = buildURL(u, getPathFile(_runtimeId, "nuts.properties"));
             if (urlString != null) {
                 try {
-                    cp = new NutsWorkspaceClassPath(IOUtils.loadURLProperties(urlString));
+                    cp = new NutsWorkspaceClassPath(NutsIOUtils.loadURLProperties(urlString));
                 } catch (Exception ex) {
                     log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", urlString);
                     //ignore
                 }
             } else {
-                log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", (u + "/" + getPath(_runtimeId, "properties")));
+                log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", (u + "/" + getPathFile(_runtimeId, "nuts.properties")));
             }
             if (cp != null) {
                 log.log(Level.CONFIG, "Loaded runtime id {0} from runtime props file {1}", new Object[]{cp.getId(), u});
@@ -335,13 +348,11 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     NutsConstants.NUTS_ID_RUNTIME,
                     runtimeVersion,
                     getBootId() + ";"
-                            + "net.vpc.common:java-shell#0.5;"
-                            + "net.vpc.common:vpc-common-utils#1.21;"
-                            + "net.vpc.common:vpc-common-commandline#1.0;"
-                            + "javax.servlet:javax.servlet-api#3.1.0;"
-                            + "org.jline#jline#3.5.2;"
+                            + "net.vpc.common:vpc-common-utils#1.22;"
+                            + "net.vpc.common:vpc-common-io#1.3.6;"
                             + "org.ow2.asm:asm#5.2;"
-                            + "org.glassfish:javax.json#1.0.4",
+                            + "com.google.code.gson:gson#2.8.5"
+                    ,
                     expandPath0(NutsConstants.URL_COMPONENTS_LOCAL) + ";" + NutsConstants.URL_COMPONENTS_REMOTE
             ));
             log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
@@ -354,9 +365,9 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             Collections.sort(all, new NutsWorkspaceClassPathComparator());
         }
         NutsWorkspaceClassPath cp = all.get(all.size() - 1);
-        String repositoriesToStore = StringUtils.join(";",
+        String repositoriesToStore = NutsStringUtils.join(";",
                 resolveBootClassPathRepositories(
-                        StringUtils.splitAndRemoveDuplicates(Arrays.asList(cp.getRepositoriesString()), Arrays.asList(resolvedBootRepositories))
+                        NutsStringUtils.splitAndRemoveDuplicates(Arrays.asList(cp.getRepositoriesString()), Arrays.asList(resolvedBootRepositories))
                 )
         );
 
@@ -380,7 +391,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
             p.setProperty("project.dependencies.compile", dsb.toString());
             p.setProperty("project.repositories", cp.getRepositoriesString());
-            IOUtils.storeProperties(p, runtimePropLocation);
+            NutsIOUtils.storeProperties(p, runtimePropLocation);
         }
         return cp;
     }
@@ -404,15 +415,16 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     protected URL expandURL(String url) throws MalformedURLException {
         url = expandPath(url);
-        if (IOUtils.isRemoteURL(url)) {
+        if (NutsIOUtils.isRemoteURL(url)) {
             return new URL(url);
         }
         return new File(url).toURI().toURL();
     }
 
-    private File getBootFile(BootNutsId vid, String ext, String[] repositories, File cacheFolder, boolean useCache) {
+    private File getBootFile(BootNutsId vid, String fileName, String[] repositories, File cacheFolder, boolean useCache) {
+        String path = getPathFile(vid, fileName);
         for (String repository : repositories) {
-            File file = getBootFile(vid, ext, repository, cacheFolder, useCache);
+            File file = getBootFile(path, repository, cacheFolder, useCache);
             if (file != null) {
                 return file;
             }
@@ -422,7 +434,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     private URL buildURL(String base, String path) {
         try {
-            if (IOUtils.isRemoteURL(base)) {
+            if (NutsIOUtils.isRemoteURL(base)) {
                 if (!base.endsWith("/") && !path.endsWith("/")) {
                     base += "/";
                 }
@@ -439,8 +451,8 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         }
     }
 
-    private File getBootFile(BootNutsId vid, String ext) {
-        return getBootFile(vid, ext, NutsConstants.BOOTSTRAP_REPOSITORY_NAME, null, false);
+    private File getBootFile(BootNutsId vid, String fileName) {
+        return getBootFile(vid, fileName, NutsConstants.BOOTSTRAP_REPOSITORY_NAME, null, false);
     }
 
     private static File createFile(String parent, String child) {
@@ -465,13 +477,27 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         return id.artifactId + "-" + id.version + "." + ext;
     }
 
-    private String getPath(BootNutsId id, String ext) {
-        return id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/" + getFileName(id, ext);
+    private String getPathFile(BootNutsId id, String name) {
+        String ff = id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/" + name;
+        return ff;
     }
 
-    private File getBootFile(BootNutsId id, String ext, String repository, File cacheFolder, boolean useCache) {
+    private String getPath(BootNutsId id, String ext) {
+        String ff = id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/nuts." + ext;
+        System.out.println(ff);
+        return ff;
+    }
+//    private String getPath(BootNutsId id, String ext) {
+//        return id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/" + getFileName(id, ext);
+//    }
+
+    private File getBootFile(BootNutsId id, String fileName, String repository, File cacheFolder, boolean useCache) {
+        String path = getPathFile(id, fileName);
+        return getBootFile(path, repository, cacheFolder, useCache);
+    }
+
+    private File getBootFile(String path, String repository, File cacheFolder, boolean useCache) {
         repository = repository.trim();
-        String path = getPath(id, ext);
         if (useCache && cacheFolder != null) {
             File f = new File(cacheFolder, path.replace('/', File.separatorChar));
             if (f.isFile()) {
@@ -479,50 +505,60 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
         }
         if (repository.startsWith("file:")) {
-            File repoFolder = IOUtils.urlToFile(repository);
-            if (repoFolder != null) {
-                if (repoFolder.isDirectory()) {
-                    File file = new File(repoFolder, path.replace('/', File.separatorChar));
-                    if (file.isFile()) {
-                        return file;
-                    }
-                } else {
-                    log.log(Level.CONFIG, "repository is not a valid folder : {0} . Unable to locate path {1}",
-                            new Object[]{repoFolder, path.replace('/', File.separatorChar)});
-                }
-            } else {
-                log.log(Level.CONFIG, "repository url is not a valid folder : {0} . Unable to locate path {1}",
-                        new Object[]{repoFolder, path.replace('/', File.separatorChar)});
+            File repoFolder = NutsIOUtils.urlToFile(repository);
+            File ff=resolveFileForRepository(path,repoFolder,repository);
+            if(ff!=null){
+                return ff;
             }
         } else if (repository.startsWith("~/")) {
-            return getBootFile(id, ext, new File(System.getProperty("user.home"), repository.substring(2)).getPath(), cacheFolder, useCache);
-        } else if (cacheFolder != null && IOUtils.isRemoteURL(repository)) {
+            File ff=resolveFileForRepository(path,new File(System.getProperty("user.home"), repository.substring(2)),repository);
+            if(ff!=null){
+                return ff;
+            }
+        } else if (cacheFolder != null && NutsIOUtils.isRemoteURL(repository)) {
             File ok = null;
+            File to = new File(cacheFolder, path);
+            String urlPath = repository;
+            if (!urlPath.endsWith("/")) {
+                urlPath += "/";
+            }
+            urlPath += path;
             try {
-                File to = new File(cacheFolder, path);
-                String urlPath = repository;
-                if (!urlPath.endsWith("/")) {
-                    urlPath += "/";
-                }
-                urlPath += path;
                 InputStream from = new URL(urlPath).openStream();
-                log.log(Level.CONFIG, "Loading {0}.{1} from {2}", new Object[]{id.toString(), ext, urlPath});
-                IOUtils.copy(from, to, true, true);
+                log.log(Level.CONFIG, "[SUCCESS] Loading  {0}", new Object[]{urlPath});
+                NutsIOUtils.copy(from, to, true, true);
                 ok = to;
             } catch (IOException ex) {
+                log.log(Level.CONFIG, "[ERROR  ] Loading  {0}", new Object[]{urlPath});
                 //not found
             }
             return ok;
         } else {
             File repoFolder = createFile(rootLocation, repository);
-            if (repoFolder.isDirectory()) {
-                File file = new File(repoFolder, path.replace('/', File.separatorChar));
-                if (file.isFile()) {
-                    return file;
-                }
-            } else {
-                log.log(Level.CONFIG, "repository is not a valid folder : {0} . Unable to locate path {1}", new Object[]{repoFolder, path.replace('/', File.separatorChar)});
+            File ff=resolveFileForRepository(path,repoFolder,repository);
+            if(ff!=null){
+                return ff;
             }
+        }
+        return null;
+    }
+
+    private File resolveFileForRepository(String path,File repoFolder,String repositoryString) {
+        if(repoFolder==null){
+            log.log(Level.CONFIG, "repository url is not a valid folder : {0} . Unable to locate path {1}",
+                    new Object[]{repositoryString, path.replace('/', File.separatorChar)});
+            return null;
+        }
+        File file = new File(repoFolder, path.replace('/', File.separatorChar));
+        if (repoFolder.isDirectory()) {
+            if (file.isFile()) {
+                log.log(Level.CONFIG, "[SUCCESS] Locating {0}", new Object[]{file});
+                return file;
+            }else{
+                log.log(Level.CONFIG, "[ERROR  ] Locating {0}", new Object[]{file});
+            }
+        } else {
+            log.log(Level.CONFIG, "[ERROR  ] Locating {0} . Repository is not a valid folder : {1}", new Object[]{file,repoFolder});
         }
         return null;
     }
@@ -549,7 +585,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                                     return false;
                                 }
                                 Class<?> aClass = contextClassLoader.loadClass(clz);
-                                log.log(Level.FINEST, "Class {0} Loaded successufully from {1}", new Object[]{aClass, file});
+                                log.log(Level.FINEST, "Class {0} Loaded successfully from {1}", new Object[]{aClass, file});
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;
@@ -593,11 +629,11 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     }
 
     private String resolveWorkspacePath(String workspace, String defaultName) {
-        if (StringUtils.isEmpty(workspace)) {
-            File file = IOUtils.resolvePath(rootLocation + "/" + defaultName, null, rootLocation);
+        if (NutsStringUtils.isEmpty(workspace)) {
+            File file = NutsIOUtils.resolvePath(rootLocation + "/" + defaultName, null, rootLocation);
             workspace = file == null ? null : file.getPath();
         } else {
-            File file = IOUtils.resolvePath(workspace, null, rootLocation);
+            File file = NutsIOUtils.resolvePath(workspace, null, rootLocation);
             workspace = file == null ? null : file.getPath();
         }
         return workspace;

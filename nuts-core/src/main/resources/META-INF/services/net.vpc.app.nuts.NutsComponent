@@ -6,16 +6,13 @@ net.vpc.app.nuts.extensions.repos.DefaultNutsRemoteRepositoryFactoryComponent
 
 
 net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal
-net.vpc.app.nuts.extensions.terminals.NutsJLineTerminal
 net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
-net.vpc.app.nuts.extensions.terminals.DefaultNutsPrintStream
+net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream
 
 net.vpc.app.nuts.extensions.archetypes.ServerNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.extensions.archetypes.MinimalNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent
 
-net.vpc.app.nuts.extensions.servers.NutsHttpServerComponent
-net.vpc.app.nuts.extensions.servers.NutsAdminServerComponent
 
 net.vpc.app.nuts.extensions.installers.ZipNutsInstallerComponent
 
@@ -28,43 +25,7 @@ net.vpc.app.nuts.extensions.executors.JavaNutsExecutorComponent
 net.vpc.app.nuts.extensions.executors.NutsShellNutsExecutorComponent
 net.vpc.app.nuts.extensions.executors.ProcessNutsExecutorComponent
 
-net.vpc.app.nuts.extensions.cmd.ServerCommand
-net.vpc.app.nuts.extensions.cmd.ConfigCommand
-net.vpc.app.nuts.extensions.cmd.ConnectCommand
-net.vpc.app.nuts.extensions.cmd.ConsoleCommand
-net.vpc.app.nuts.extensions.cmd.DeployCommand
-net.vpc.app.nuts.extensions.cmd.ExecCommand
-net.vpc.app.nuts.extensions.cmd.FindCommand
-net.vpc.app.nuts.extensions.cmd.VersionCommand
-net.vpc.app.nuts.extensions.cmd.HelpCommand
-net.vpc.app.nuts.extensions.cmd.HistoryCommand
-net.vpc.app.nuts.extensions.cmd.InstallCommand
-net.vpc.app.nuts.extensions.cmd.FetchCommand
-net.vpc.app.nuts.extensions.cmd.UninstallCommand
-net.vpc.app.nuts.extensions.cmd.LoginCommand
-net.vpc.app.nuts.extensions.cmd.LogoutCommand
-net.vpc.app.nuts.extensions.cmd.PushCommand
-net.vpc.app.nuts.extensions.cmd.UpdateCommand
-net.vpc.app.nuts.extensions.cmd.WhichCommand
-net.vpc.app.nuts.extensions.cmd.WhoCommand
-net.vpc.app.nuts.extensions.cmd.EchoCommand
-net.vpc.app.nuts.extensions.cmd.LsCommand
-net.vpc.app.nuts.extensions.cmd.CdCommand
-net.vpc.app.nuts.extensions.cmd.UnameCommand
-net.vpc.app.nuts.extensions.cmd.CheckoutCommand
-net.vpc.app.nuts.extensions.cmd.CommitCommand
-net.vpc.app.nuts.extensions.cmd.DefaultNutsConsole
-
-
-
 net.vpc.app.nuts.bridges.maven.MavenNutsRepositoryFactoryComponent
 net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory
 
-net.vpc.app.nuts.extensions.cmd.config.ArchietypeConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.DescriptorConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.ExtensionConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.ImportConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.LogConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.RepositoryConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.UserConfigSubCommand
-net.vpc.app.nuts.extensions.cmd.config.WorkspaceConfigSubCommand
+net.vpc.app.nuts.extensions.core.DefaultNutsAuthenticationAgent

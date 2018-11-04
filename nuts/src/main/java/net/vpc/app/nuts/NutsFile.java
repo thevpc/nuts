@@ -29,23 +29,23 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Created by vpc on 1/6/17.
  */
-public class NutsFile {
+public class NutsFile implements Serializable{
 
     private NutsDescriptor descriptor;
-    private File file;
+    private String file;
     private NutsId id;
     private boolean cached;
     private boolean temporary;
     private boolean installed;
-    private File installFolder;
+    private String installFolder;
 
-    public NutsFile(NutsId id, NutsDescriptor descriptor, File file, boolean cached, boolean temporary, File installFolder) {
+    public NutsFile(NutsId id, NutsDescriptor descriptor, String file, boolean cached, boolean temporary, String installFolder) {
         this.descriptor = descriptor;
         this.file = file;
         this.id = id;
@@ -65,11 +65,11 @@ public class NutsFile {
         }
     }
 
-    public File getInstallFolder() {
+    public String getInstallFolder() {
         return installFolder;
     }
 
-    public NutsFile setInstallFolder(File installFolder) {
+    public NutsFile setInstallFolder(String installFolder) {
         this.installFolder = installFolder;
         return this;
     }
@@ -99,7 +99,7 @@ public class NutsFile {
         return descriptor;
     }
 
-    public File getFile() {
+    public String getFile() {
         return file;
     }
 

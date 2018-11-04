@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
 import java.util.Set;
 
 /**
@@ -44,7 +43,7 @@ public interface NutsWorkspaceRepositoryManager {
 
     NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate);
 
-    NutsRepository openRepository(String repositoryId, String location, String type, File repositoryRoot, boolean autoCreate);
+    NutsRepository openRepository(String repositoryId, String location, String type, String repositoryRoot, boolean autoCreate);
 
     NutsRepository findRepository(String repositoryIdPath);
 

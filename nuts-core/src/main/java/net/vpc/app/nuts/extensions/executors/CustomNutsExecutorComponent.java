@@ -59,11 +59,14 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     public int exec(NutsExecutionContext executionContext) {
-        List<String> args = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
+        List<String> args = new ArrayList<>();
+        args.add(id.toString());
+        args.addAll(Arrays.asList(executionContext.getArgs()));
         return executionContext.getWorkspace().exec(
-                id.toString(),
                 args.toArray(new String[args.size()]),
-                executionContext.getEnv(), executionContext.getSession()
+                executionContext.getEnv(),
+                executionContext.getCwd(),
+                executionContext.getSession()
         );
     }
 

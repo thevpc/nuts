@@ -40,7 +40,10 @@ Java    Version: ${java.version} (${java.vm.name})
 nuts \[Nuts Options\] \[Nuts Command\]
 
 @@Nuts Options:@@
- [[--workspace-root]] {{\<workspace-root-location\>}}
+
+ [[--run-version]] {{\<boo-versino\>}}
+      run another **nuts** version
+ [[--home]] {{\<workspaces-home-location\>}}
       root location containing all workspaces.
       This defaults to ~/.nuts where ~ refers to the users\'s home directory.
  [[--workspace]] {{\<workspace-location\>}}
@@ -71,10 +74,10 @@ nuts \[Nuts Options\] \[Nuts Command\]
       specify user credentials (see --login)
  [[--save]]
       saves workspace if newly created
+ [[--nosave]]
+      do not save workspace if newly created
  [[--version]]
-      show version
- [[--which]]
-      show which versions, libraries and locations are used for booting **nuts**
+      show version, libraries and locations are used for booting **nuts**
  [[--perf]]
       show startup time in ms
  [[--help]]

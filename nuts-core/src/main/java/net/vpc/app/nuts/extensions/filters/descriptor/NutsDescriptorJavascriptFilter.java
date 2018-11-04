@@ -31,7 +31,9 @@ package net.vpc.app.nuts.extensions.filters.descriptor;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
 import java.util.*;
@@ -43,32 +45,6 @@ import net.vpc.app.nuts.extensions.util.JavascriptHelper;
  */
 public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
-    private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
-    private static DefaultNutsDescriptor SAMPLE_NUTS_DESCRIPTOR = new DefaultNutsDescriptor(
-            SAMPLE_NUTS_ID, "default",
-            new NutsId[]{SAMPLE_NUTS_ID},
-            "sample",
-            true,
-            "sample",
-            new NutsExecutorDescriptor(
-                    SAMPLE_NUTS_ID,
-                    new String[]{"sample"},
-                    null
-            ),
-            new NutsExecutorDescriptor(
-                    SAMPLE_NUTS_ID,
-                    new String[]{"sample"},
-                    null
-            ),
-            "sample",
-            "sample",
-            new String[]{"sample"},
-            new String[]{"sample"},
-            new String[]{"sample"},
-            new String[]{"sample"},
-            null,
-            null
-    );
 
     private String code;
     private JavascriptHelper engineHelper;
@@ -97,7 +73,7 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Sim
         engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", blacklist, null);
         this.code = code;
         //check if valid
-        accept(SAMPLE_NUTS_DESCRIPTOR);
+        accept(CoreNutsUtils.SAMPLE_NUTS_DESCRIPTOR);
     }
 
     public String getCode() {

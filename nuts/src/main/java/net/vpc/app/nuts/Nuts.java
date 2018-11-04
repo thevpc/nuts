@@ -48,12 +48,44 @@ public class Nuts {
 
     private static final Logger log = Logger.getLogger(Nuts.class.getName());
 
+    public static void main(String[] args) {
+        try {
+            uncheckedMain(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
     public static NutsBootWorkspace openBootWorkspace() {
-        return new DefaultNutsBootWorkspace();
+        return openBootWorkspace(null);
     }
 
     public static NutsBootWorkspace openBootWorkspace(NutsBootOptions bootOptions) {
         return new DefaultNutsBootWorkspace(bootOptions);
+    }
+
+    public static NutsWorkspace openWorkspace(String[] args) {
+        String workspace = null;
+        NutsBootOptions nutsBootOptions = new NutsBootOptions();
+        NutsWorkspaceCreateOptions workspaceCreateOptions = new NutsWorkspaceCreateOptions();
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("--nuts-no-more-args")) {
+                break;
+            } else if (args[i].startsWith("--nuts-")) {
+                if (args[i].startsWith("--nuts-workspace=")) {
+                    workspace = args[i].substring("--nuts-workspace=".length());
+                } else if (args[i].startsWith("--nuts-runtimeId=")) {
+                    nutsBootOptions.setRuntimeId(args[i].substring("--nuts-runtimeId=".length()));
+                } else if (args[i].startsWith("--nuts-home=")) {
+                    nutsBootOptions.setHome(args[i].substring("--nuts-home=".length()));
+                }
+                //ok
+            } else {
+                break;
+            }
+        }
+        return openWorkspace(workspace, workspaceCreateOptions, nutsBootOptions);
     }
 
     public static NutsWorkspace openWorkspace() {
@@ -70,15 +102,6 @@ public class Nuts {
 
     public static NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options, NutsBootOptions bootOptions) {
         return openBootWorkspace(bootOptions).openWorkspace(workspace, options);
-    }
-
-    public static void main(String[] args) {
-        try {
-            uncheckedMain(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
     }
 
     public static void uncheckedMain(String[] args) {
@@ -112,10 +135,19 @@ public class Nuts {
         Set<String> excludedExtensions = new HashSet<>();
         Set<String> excludedRepositories = new HashSet<>();
         List<String> extraEnv = new ArrayList<>();
+        boolean runShell = false;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
             if (a.startsWith("-")) {
                 switch (a) {
+                    //dash (startAppArgs) should be the very last argument
+                    case "-": {
+                        runShell = true;
+                        startAppArgs = i + 1;
+                        //force exit loop
+                        i = args.length;
+                        continue;
+                    }
                     case "--home":
                         i++;
                         if (i >= args.length) {
@@ -233,14 +265,14 @@ public class Nuts {
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-extensions");
                         }
-                        excludedExtensions.addAll(StringUtils.split(args[i], " ,;"));
+                        excludedExtensions.addAll(NutsStringUtils.split(args[i], " ,;"));
                         break;
                     case "--exclude-repositories":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-repositories");
                         }
-                        excludedRepositories.addAll(StringUtils.split(args[i], " ,;"));
+                        excludedRepositories.addAll(NutsStringUtils.split(args[i], " ,;"));
                         break;
                     case "--help": {
                         showHelp = true;
@@ -274,7 +306,7 @@ public class Nuts {
         LogUtils.prepare(logLevel, logFolder, logSize, logCount);
         NutsBootWorkspace bws = openBootWorkspace(
                 new NutsBootOptions()
-                        .setRoot(nutsHome)
+                        .setHome(nutsHome)
                         .setRuntimeId(runtimeId)
                         .setRuntimeSourceURL(runtimeSourceURL)
         );
@@ -327,28 +359,28 @@ public class Nuts {
         }
         NutsSession session = ws.createSession();
         if (nocolors) {
-            session.getTerminal().getOut().print("`disable-formats`");
-            session.getTerminal().getErr().print("`disable-formats`");
+            session.getTerminal().getFormattedOut().print("`disable-formats`");
+            session.getTerminal().getFormattedErr().print("`disable-formats`");
         }
         if (showHelp) {
-            perf = showPerf(startTime, perf, session);
-            ws.exec(new String[]{"console", "help"}, null, session);
+            perf = showPerf(System.currentTimeMillis() - startTime, perf, session);
+            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null,session);
             someProcessing = true;
         }
         if (showLicense) {
-            perf = showPerf(startTime, perf, session);
-            ws.exec(new String[]{"console", "help", "--license"}, null, session);
+            perf = showPerf(System.currentTimeMillis() - startTime, perf, session);
+            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help", "--license"}, null, null,session);
             someProcessing = true;
         }
         if (login != null && login.trim().length() > 0) {
-            if (StringUtils.isEmpty(password)) {
+            if (NutsStringUtils.isEmpty(password)) {
                 password = session.getTerminal().readPassword("Password : ");
             }
             ws.getSecurityManager().login(login, password);
         }
 
         if (applyUpdatesFile != null) {
-            ws.exec(new File(applyUpdatesFile), args, false, false, session);
+            ws.exec(applyUpdatesFile, args, false, false, session);
             return;
         }
 
@@ -360,7 +392,7 @@ public class Nuts {
         }
 
         if (version) {
-            NutsPrintStream out = session.getTerminal().getOut();
+            NutsPrintStream out = session.getTerminal().getFormattedOut();
             out.printf("workspace-location   : [[%s]]\n", ws.getConfigManager().getWorkspaceLocation());
             out.printf("nuts-boot            : [[%s]]\n", ws.getConfigManager().getWorkspaceBootId());
             out.printf("nuts-runtime         : [[%s]]\n", ws.getConfigManager().getWorkspaceRuntimeId());
@@ -393,22 +425,24 @@ public class Nuts {
         }
         if (commandArguments.length == 0 && !showHelp) {
             /*perf = */
-            showPerf(startTime, perf, session);
-            ws.exec(new String[]{"console", "help"}, null, session);
+            showPerf(System.currentTimeMillis() - startTime, perf, session);
+            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null,session);
             return;
         }
         /*perf = */
         showPerf(System.currentTimeMillis() - startTime, perf, session);
         List<String> consoleArguments = new ArrayList<>();
-        consoleArguments.add("console");
+        if (runShell) {
+            consoleArguments.add(NutsConstants.NUTS_SHELL);
+        }
         consoleArguments.addAll(Arrays.asList(commandArguments));
-        ws.exec(consoleArguments.toArray(new String[consoleArguments.size()]), null, session);
+        ws.exec(consoleArguments.toArray(new String[consoleArguments.size()]), null, null, session);
     }
 
-    private static boolean showPerf(long overallTime, boolean perf, NutsSession session) {
+    private static boolean showPerf(long overallTimeMillis, boolean perf, NutsSession session) {
         if (perf) {
-            session.getTerminal().getOut().printf("**Nuts** loaded in [[%s]]ms\n",
-                    overallTime
+            session.getTerminal().getFormattedOut().printf("**Nuts** loaded in [[%s]]ms\n",
+                    overallTimeMillis
             );
         }
         return false;
@@ -500,12 +534,12 @@ public class Nuts {
         if (requiredBootVersion != null && !requiredBootVersion.equals(actualVersion)) {
             log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
             if ("CURRENT".equalsIgnoreCase(requiredBootVersion)) {
-                String versionUrl = "/net/vpc/app/nuts/CURRENT/nuts.version";
+                String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
                 File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
                 boolean loaded = false;
                 try {
                     if (versionFile.isFile()) {
-                        String str = IOUtils.readStringFromFile(versionFile);
+                        String str = NutsIOUtils.readStringFromFile(versionFile);
                         if (str != null) {
                             str = str.trim();
                             if (str.length() > 0) {
@@ -525,10 +559,10 @@ public class Nuts {
 
             }
             if ("LATEST".equalsIgnoreCase(requiredBootVersion)) {
-                String mvnUrl = ("https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/maven-metadata.xml");
+                String mvnUrl = ("https://github.com/thevpc/vpc-public-maven/raw/master" + NutsConstants.NUTS_ID_BOOT_PATH + "/maven-metadata.xml");
                 boolean loaded = false;
                 try {
-                    String str = IOUtils.readStringFromURL(new URL(mvnUrl));
+                    String str = NutsIOUtils.readStringFromURL(new URL(mvnUrl));
                     if (str != null) {
                         for (String line : str.split("\n")) {
                             line = line.trim();
@@ -549,7 +583,7 @@ public class Nuts {
                     throw new NutsIllegalArgumentException("Unable to load nuts version from " + mvnUrl);
                 }
             }
-            String jarUrl = "/net/vpc/app/nuts/" + requiredBootVersion + "/nuts-" + requiredBootVersion + ".jar";
+            String jarUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/" + requiredBootVersion + "/nuts-" + requiredBootVersion + ".jar";
             File bootFile0 = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + jarUrl);
             log.fine("Checking boot jar from " + nutsHome + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
             File bootFile = bootFile0;
@@ -595,15 +629,15 @@ public class Nuts {
         return args;
     }
 
-    public static String getConfigCurrentVersion(String root) {
-        if (root == null) {
-            root = System.getProperty("user.home") + File.separator + ".nuts";
+    public static String getConfigCurrentVersion(String nutsHome) {
+        if (nutsHome == null) {
+            nutsHome = System.getProperty("user.home") + File.separator + ".nuts";
         }
-        String versionUrl = "/net/vpc/app/nuts/CURRENT/nuts.version";
-        File versionFile = new File(root, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+        String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
+        File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
         try {
             if (versionFile.isFile()) {
-                String str = IOUtils.readStringFromFile(versionFile);
+                String str = NutsIOUtils.readStringFromFile(versionFile);
                 if (str != null) {
                     str = str.trim();
                     if (str.length() > 0) {
@@ -617,15 +651,15 @@ public class Nuts {
         return null;
     }
 
-    public static boolean setConfigCurrentVersion(String version, String root) {
-        if (root == null) {
+    public static boolean setConfigCurrentVersion(String version, String nutsHome) {
+        if (nutsHome == null) {
             //System.getProperty("user.home") + File.separator + ".nuts"
-            root = NutsConstants.DEFAULT_NUTS_HOME;
+            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
         }
-        root = IOUtils.expandPath(root);
+        nutsHome = NutsIOUtils.expandPath(nutsHome);
 
-        String versionUrl = "/net/vpc/app/nuts/CURRENT/nuts.version";
-        File versionFile = new File(root, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+        String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
+        File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
         if (version != null) {
             version = version.trim();
             if (version.isEmpty()) {
@@ -658,14 +692,14 @@ public class Nuts {
     }
 
     public static String getActualVersion() {
-        return IOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app/nuts/nuts.properties")).getProperty("project.version", "0.0.0");
+        return NutsIOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties")).getProperty("project.version", "0.0.0");
     }
 
     private static void showStaticHelp() {
         String actualVersion = getActualVersion();
         String str = null;
         try {
-            str = IOUtils.readStringFromURL(Nuts.class.getResource("/net/vpc/app/nuts/NutsStaticHelp.txt"));
+            str = NutsIOUtils.readStringFromURL(Nuts.class.getResource("/net/vpc/app/nuts/NutsStaticHelp.txt"));
             System.out.println("Nuts " + actualVersion);
             System.out.println(str);
         } catch (IOException e) {
@@ -673,4 +707,21 @@ public class Nuts {
             e.printStackTrace();
         }
     }
+
+    public static String[] skipNutsArgs(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("--nuts-no-more-args")) {
+                if (i + 1 >= args.length) {
+                    break;
+                }
+                return Arrays.copyOfRange(args, i + 1, args.length);
+            } else if (args[i].startsWith("--nuts-")) {
+                //ok
+            } else {
+                return Arrays.copyOfRange(args, i, args.length);
+            }
+        }
+        return new String[0];
+    }
+
 }

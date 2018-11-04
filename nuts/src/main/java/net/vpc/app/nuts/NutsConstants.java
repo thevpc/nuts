@@ -98,6 +98,11 @@ public class NutsConstants {
     public static final String NUTS_REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";
 
     /**
+     * repository config file name
+     */
+    public static final String NUTS_SHELL = "net.vpc.app.nuts.toolbox:nsh";
+
+    /**
      * component (nuts) descriptor file name
      */
     public static final String NUTS_DESC_FILE_NAME = "nuts.json";
@@ -134,7 +139,8 @@ public class NutsConstants {
     public static final String USER_ADMIN = "admin";
     public static final String USER_ANONYMOUS = "anonymous";
 
-    public static final String NUTS_ID_BOOT = "net.vpc.app:nuts";
+    public static final String NUTS_ID_BOOT = "net.vpc.app.nuts:nuts";
+    public static final String NUTS_ID_BOOT_PATH = "/"+NUTS_ID_BOOT.replaceAll("[.:]","/");
     public static final String NUTS_ID_RUNTIME = "net.vpc.app.nuts:nuts-core";
     public static final String QUERY_FACE = "face";
     public static final String QUERY_ARCH = "arch";

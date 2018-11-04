@@ -29,7 +29,9 @@
  */
 package net.vpc.app.nuts;
 
-public interface NutsVersion {
+import java.io.Serializable;
+
+public interface NutsVersion extends Serializable{
 
     String getValue();
 

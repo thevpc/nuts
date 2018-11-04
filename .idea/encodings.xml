@@ -3,8 +3,42 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/nuts" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nuts-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/nuts-servlet" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nuts-tomcat-classloader" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/derby" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/feenoo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/mvn" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/ndesc-ed" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/ndi" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/nsh" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/nuts-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/tomcat" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../../common/java-shell" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../../common/maven/writer-maven-plugin" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/derby" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/feenoo" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/ndesc-ed" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/ndi" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/tomcat" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-classpath" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-commandline" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-desktop-automation" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-ext-compress" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java-test" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/application" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/branding" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-core" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-standalone" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-examples" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-puppets" charset="UTF-8" />
   </component>
 </project>

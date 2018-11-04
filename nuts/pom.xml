@@ -2,9 +2,9 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.vpc.app</groupId>
+    <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.4.2</version>
+    <version>0.4.3</version>
     <name>net.vpc.app.nuts</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -91,7 +91,7 @@
                 <artifactId>writer-maven-plugin</artifactId>
                 <version>1.0.4</version>
                 <configuration>
-                    <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app/nuts/nuts.properties</outputFile>
+                    <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties</outputFile>
                 </configuration>
                 <executions>
                     <execution>

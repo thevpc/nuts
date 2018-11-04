@@ -33,15 +33,13 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreCollectionUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
+    private static final long serialVersionUID=1l;
 
     private NutsId id;
     private String face;
@@ -63,12 +61,36 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] os;
     private String[] osdist;
     private String[] platform;
+    private String[] locations;
     private NutsDependency[] dependencies;
     private Map<String, String> properties;
 
-    public DefaultNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-            String[] arch, String[] os, String[] osdist, String[] platform,
-            NutsDependency[] dependencies, Map<String, String> properties) {
+    public DefaultNutsDescriptor(NutsDescriptor d) {
+        this(
+                d.getId(),
+                d.getFace(),
+                d.getParents(),
+                d.getPackaging(),
+                d.isExecutable(),
+                d.getExt(),
+                d.getExecutor(),
+                d.getInstaller(),
+                d.getName(),
+                d.getDescription(),
+                d.getArch(),
+                d.getOs(),
+                d.getOsdist(),
+                d.getPlatform(),
+                d.getDependencies(),
+                d.getLocations(),
+                d.getProperties()
+        );
+    }
+
+    public DefaultNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext,
+                                 NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
+                                 String[] arch, String[] os, String[] osdist, String[] platform,
+                                 NutsDependency[] dependencies, String[] locations,Map<String, String> properties) {
         if (id == null) {
             throw new NutsIllegalArgumentException("Missing id");
         }
@@ -92,6 +114,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.os = CoreCollectionUtils.toArraySet(os);
         this.osdist = CoreCollectionUtils.toArraySet(osdist);
         this.platform = CoreCollectionUtils.toArraySet(platform);
+        this.locations = CoreCollectionUtils.toArraySet(locations);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
             if (dependencies[i] == null) {
@@ -184,117 +207,46 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor setDependencies(NutsDependency[] dependencies) {
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                dependencies,
-                getProperties()
-        );
+    public String[] getLocations() {
+        return locations;
     }
+
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
-
-        if (executable != that.executable) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-        if (face != null ? !face.equals(that.face) : that.face != null) {
-            return false;
-        }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(parents, that.parents)) {
-            return false;
-        }
-        if (packaging != null ? !packaging.equals(that.packaging) : that.packaging != null) {
-            return false;
-        }
-        if (ext != null ? !ext.equals(that.ext) : that.ext != null) {
-            return false;
-        }
-        if (executor != null ? !executor.equals(that.executor) : that.executor != null) {
-            return false;
-        }
-        if (installer != null ? !installer.equals(that.installer) : that.installer != null) {
-            return false;
-        }
-        if (name != null ? !name.equals(that.name) : that.name != null) {
-            return false;
-        }
-        if (description != null ? !description.equals(that.description) : that.description != null) {
-            return false;
-        }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(arch, that.arch)) {
-            return false;
-        }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(os, that.os)) {
-            return false;
-        }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(osdist, that.osdist)) {
-            return false;
-        }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(platform, that.platform)) {
-            return false;
-        }
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(dependencies, that.dependencies)) {
-            return false;
-        }
-        return properties != null ? properties.equals(that.properties) : that.properties == null;
+        return executable == that.executable &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(face, that.face) &&
+                Arrays.equals(parents, that.parents) &&
+                Objects.equals(packaging, that.packaging) &&
+                Objects.equals(ext, that.ext) &&
+                Objects.equals(executor, that.executor) &&
+                Objects.equals(installer, that.installer) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) &&
+                Arrays.equals(arch, that.arch) &&
+                Arrays.equals(os, that.os) &&
+                Arrays.equals(osdist, that.osdist) &&
+                Arrays.equals(platform, that.platform) &&
+                Arrays.equals(locations, that.locations) &&
+                Arrays.equals(dependencies, that.dependencies) &&
+                Objects.equals(properties, that.properties);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (face != null ? face.hashCode() : 0);
+
+        int result = Objects.hash(id, face, packaging, ext, executable, executor, installer, name, description, properties);
         result = 31 * result + Arrays.hashCode(parents);
-        result = 31 * result + (packaging != null ? packaging.hashCode() : 0);
-        result = 31 * result + (ext != null ? ext.hashCode() : 0);
-        result = 31 * result + (executable ? 1 : 0);
-        result = 31 * result + (executor != null ? executor.hashCode() : 0);
-        result = 31 * result + (installer != null ? installer.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(arch);
         result = 31 * result + Arrays.hashCode(os);
         result = 31 * result + Arrays.hashCode(osdist);
         result = 31 * result + Arrays.hashCode(platform);
+        result = 31 * result + Arrays.hashCode(locations);
         result = 31 * result + Arrays.hashCode(dependencies);
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    protected NutsDescriptor createInstance(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description, String[] arch, String[] os, String[] osdist, String[] platform, NutsDependency[] dependencies, Map<String, String> properties) {
-        return new DefaultNutsDescriptor(
-                id, face, parents, packaging, executable, ext, executor, installer, name, description, arch, os, osdist, platform, dependencies, properties
-        );
     }
 }

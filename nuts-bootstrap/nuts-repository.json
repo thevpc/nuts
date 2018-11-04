@@ -1,0 +1,14 @@
+{
+  "mirrors": {},
+  "users": {
+    "anonymous": {
+      "user": "anonymous",
+      "groups": [],
+      "rights": []
+    }
+  },
+  "id": "nuts-vpc-public",
+  "type": "nuts",
+  "componentsLocation": ".",
+  "env": {}
+}

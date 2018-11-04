@@ -38,17 +38,17 @@ import java.util.Objects;
  */
 public class NutsBootOptions implements Serializable {
 
-    private String root;
+    private String home;
     private String runtimeId;
     private String runtimeSourceURL;
     private NutsClassLoaderProvider classLoaderProvider;
 
-    public String getRoot() {
-        return root;
+    public String getHome() {
+        return home;
     }
 
-    public NutsBootOptions setRoot(String workspaceRoot) {
-        this.root = workspaceRoot;
+    public NutsBootOptions setHome(String home) {
+        this.home = home;
         return this;
     }
 
@@ -81,13 +81,41 @@ public class NutsBootOptions implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsBootOptions{" + "root=" + root + ", runtimeId=" + runtimeId + ", runtimeSourceURL=" + runtimeSourceURL + ", classLoaderProvider=" + classLoaderProvider + '}';
+        StringBuilder sb=new StringBuilder("NutsBootOptions(");
+        boolean empty=true;
+        if(home!=null){
+            sb.append("home=").append(home);
+            empty=false;
+        }
+        if(runtimeId!=null){
+            if(!empty){
+                sb.append(", ");
+            }
+            sb.append("runtimeId=").append(runtimeId);
+            empty=false;
+        }
+        if(runtimeSourceURL!=null){
+            if(!empty){
+                sb.append(", ");
+            }
+            sb.append("runtimeSourceURL=").append(runtimeSourceURL);
+            empty=false;
+        }
+        if(classLoaderProvider!=null){
+            if(!empty){
+                sb.append(", ");
+            }
+            sb.append("classLoaderProvider=").append(classLoaderProvider);
+            empty=false;
+        }
+        sb.append(")");
+        return sb.toString();
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 41 * hash + Objects.hashCode(this.root);
+        hash = 41 * hash + Objects.hashCode(this.home);
         hash = 41 * hash + Objects.hashCode(this.runtimeId);
         hash = 41 * hash + Objects.hashCode(this.runtimeSourceURL);
         hash = 41 * hash + Objects.hashCode(this.classLoaderProvider);
@@ -106,7 +134,7 @@ public class NutsBootOptions implements Serializable {
             return false;
         }
         final NutsBootOptions other = (NutsBootOptions) obj;
-        if (!Objects.equals(this.root, other.root)) {
+        if (!Objects.equals(this.home, other.home)) {
             return false;
         }
         if (!Objects.equals(this.runtimeId, other.runtimeId)) {

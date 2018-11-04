@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -48,7 +47,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     List<NutsId> find(NutsSearch search, NutsSession session);
 
-    File copyTo(String id, File localPath, NutsSession session);
+    String copyTo(String id, String localPath, NutsSession session);
 
     NutsFile fetch(String id, NutsSession session);
 
@@ -82,9 +81,9 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsFile install(String id, boolean force, NutsSession session);
 
-    NutsFile checkout(String id, File folder, NutsSession session);
+    NutsFile checkout(String id, String folder, NutsSession session);
 
-    NutsId commit(File folder, NutsSession session);
+    NutsId commit(String folder, NutsSession session);
 
     boolean isInstalled(String id, boolean checkDependencies, NutsSession session);
 
@@ -97,18 +96,26 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
      * descriptor file at its root
      *
      * @param contentFolder folder to bundle
-     * @param destFile created bundle file or null to create a file with the
-     * very same name as the folder
-     * @param session current session
+     * @param destFile      created bundle file or null to create a file with the
+     *                      very same name as the folder
+     * @param session       current session
      * @return bundled nuts file, the nuts is neither deployed nor installed!
      */
-    NutsFile createBundle(File contentFolder, File destFile, NutsSession session);
+    NutsFile createBundle(String contentFolder, String destFile, NutsSession session);
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
 
-    int exec(String[] cmd, Properties env, NutsSession session);
+    /**
+     * out and err are copied to string result
+     *
+     * @param cmd
+     * @param env
+     * @param session
+     * @return
+     */
+    public NutsExecResult execToString(String[] cmd, Properties env, String dir, NutsSession session);
 
-    int exec(String id, String[] args, Properties env, NutsSession session);
+    int exec(String[] cmd, Properties env, String dir, NutsSession session);
 
     /**
      * exec another instance of nuts
@@ -120,7 +127,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
      * @param session
      * @return
      */
-    int exec(File nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session);
+    int exec(String nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session);
 
     NutsWorkspaceRepositoryManager getRepositoryManager();
 
@@ -128,17 +135,15 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceExtensionManager getExtensionManager();
 
-    NutsWorkspaceServerManager getServerManager();
-
     NutsWorkspaceConfigManager getConfigManager();
 
     NutsWorkspaceSecurityManager getSecurityManager();
 
-    File getStoreRoot();
+    String getStoreRoot();
 
-    File getStoreRoot(NutsId id);
+    String getStoreRoot(NutsId id);
 
-    File getStoreRoot(String id);
+    String getStoreRoot(String id);
 
     NutsFile fetchBootFile(NutsSession session);
 
@@ -157,4 +162,20 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     NutsId[] resolveNutsIdsForClass(Class clazz);
 
     NutsId parseNutsId(String id);
+
+    String getPlatformOs();
+
+    String getPlatformOsDist();
+
+    String getPlatformOsLib();
+
+    String getPlatformArch();
+
+    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
+
+    ClassLoader createClassLoader(String[] nutsIds, NutsDependencyScope scope, ClassLoader parentClassLoader, NutsSession session);
+
+    String resolvePath(String path);
+
+    String resolveRepositoryPath(String location);
 }

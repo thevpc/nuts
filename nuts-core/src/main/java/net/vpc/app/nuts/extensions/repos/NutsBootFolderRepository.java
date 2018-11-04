@@ -18,19 +18,19 @@ import net.vpc.app.nuts.NutsWorkspace;
  */
 public class NutsBootFolderRepository extends NutsFolderRepository {
 
-    public NutsBootFolderRepository(NutsBootWorkspace bootWorkspace, NutsWorkspace workspace, File root) {
+    public NutsBootFolderRepository(NutsBootWorkspace bootWorkspace, NutsWorkspace workspace, String root) {
         super(NutsConstants.BOOTSTRAP_REPOSITORY_NAME, bootWorkspace.getBootstrapLocation(), workspace, null, root);
     }
 
     @Override
-    protected File getStoreRoot() {
+    protected String getStoreRoot() {
         return getConfigManager().getLocationFolder();
     }
 
     protected NutsFile getLocalNutDescriptorFile(NutsId id) {
         return new NutsFile(
                 id, null,
-                new File(getLocalVersionFolder(id), NutsConstants.NUTS_DESC_FILE_NAME), true, true, null
+                new File(getLocalVersionFolder(id), NutsConstants.NUTS_DESC_FILE_NAME).getPath(), true, true, null
         );
     }
 

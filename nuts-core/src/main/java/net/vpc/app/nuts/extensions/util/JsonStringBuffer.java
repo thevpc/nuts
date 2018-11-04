@@ -35,7 +35,7 @@ public class JsonStringBuffer {
     private JsonStatus status = new JsonStatus();
 
     public boolean append(String line) {
-        CoreJsonUtils.get().readJsonPartialString(line, status);
+        CoreJsonUtils.readJsonPartialString(line, status);
         status.checkPartialValid(true);
         sb.append(line);
         if (status.countBraces > 0 && status.checkValid(false)) {

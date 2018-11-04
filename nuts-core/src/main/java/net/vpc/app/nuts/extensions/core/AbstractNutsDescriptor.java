@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -31,10 +31,8 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.io.FileUtils;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
 import java.io.*;
 import java.util.*;
 
@@ -198,21 +196,43 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         write(file, false);
     }
 
+    //    @Override
+    public void write(OutputStream os, boolean pretty) throws NutsIOException {
+        OutputStreamWriter o = new OutputStreamWriter(os);
+        write(o, pretty);
+        try {
+            o.flush();
+        } catch (IOException e) {
+            //
+        }
+    }
+
     @Override
-    public void write(OutputStream file) throws NutsIOException {
-        write(file, false);
+    public void write(Writer out) throws NutsIOException {
+        write(out, false);
+    }
+
+    @Override
+    public void write(PrintStream out) throws NutsIOException {
+        PrintWriter out1 = new PrintWriter(out);
+        write(out1);
+        out1.flush();
+    }
+
+    @Override
+    public void write(OutputStream out) throws NutsIOException {
+        PrintWriter out1 = new PrintWriter(out);
+        write(out1);
+        out1.flush();
     }
 
     @Override
     public void write(File file, boolean pretty) throws NutsIOException {
-        File parent = file.getParentFile();
-        if (parent != null) {
-            parent.mkdirs();
-        }
-        FileOutputStream os = null;
+        FileUtils.createParents(file);
+        FileWriter os = null;
         try {
             try {
-                os = new FileOutputStream(file);
+                os = new FileWriter(file);
             } catch (IOException e) {
                 throw new NutsIOException(e);
             }
@@ -230,7 +250,13 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     public String toString(boolean pretty) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        write(b, pretty);
+        OutputStreamWriter w = new OutputStreamWriter(b);
+        write(w, pretty);
+        try {
+            w.flush();
+        } catch (IOException e) {
+            //
+        }
         return new String(b.toByteArray());
     }
 
@@ -240,120 +266,10 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public void write(OutputStream os, boolean pretty) throws NutsIOException {
-        NutsDescriptor desc = this;
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        objectBuilder.add("nuts-version", "1.0");
-        objectBuilder.add("id", desc.getId().toString());
-        objectBuilder.add("face", CoreStringUtils.isEmpty(desc.getFace()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : desc.getFace());
-        objectBuilder.add("executable", desc.isExecutable());
-        if (desc.getParents().length > 0) {
-            JsonArrayBuilder p = Json.createArrayBuilder();
-            for (NutsId nutsId : getParents()) {
-                p.add(nutsId.toString());
-            }
-            objectBuilder.add("parents", p);
-        }
-        if (CoreStringUtils.isEmpty(desc.getPackaging())) {
-            //objectBuilder.add("packaging", JsonValue.NULL);
-        } else {
-            objectBuilder.add("packaging", desc.getPackaging());
-        }
-        if (CoreStringUtils.isEmpty(desc.getExt())) {
-            //objectBuilder.add("ext", JsonValue.NULL);
-        } else {
-            objectBuilder.add("ext", desc.getExt());
-        }
-        if (CoreStringUtils.isEmpty(desc.getName())) {
-            //objectBuilder.add("ext", JsonValue.NULL);
-        } else {
-            objectBuilder.add("name", desc.getName());
-        }
-
-        if (CoreStringUtils.isEmpty(desc.getDescription())) {
-            //objectBuilder.add("ext", JsonValue.NULL);
-        } else {
-            objectBuilder.add("description", desc.getDescription());
-        }
-        Map<String, String> properties = getProperties();
-        if (properties != null && !properties.isEmpty()) {
-            objectBuilder.add("properties", CoreJsonUtils.get().serializeStringsMap(desc.getProperties(), CoreJsonUtils.IGNORE_EMPTY_OPTIONS));
-        }
-        if (desc.getExecutor() != null) {
-            JsonObjectBuilder objectBuilder2 = nutsExecutorDescriptorToJsonObjectBuilder(desc.getExecutor());
-            if (objectBuilder2 != null) {
-                objectBuilder.add("executor", objectBuilder2);
-            }
-        }
-        if (desc.getInstaller() != null) {
-            JsonObjectBuilder objectBuilder2 = nutsExecutorDescriptorToJsonObjectBuilder(desc.getInstaller());
-            if (objectBuilder2 != null) {
-                objectBuilder.add("installer", objectBuilder2);
-            }
-        }
-
-        String[] architectures = desc.getArch();
-        if (architectures != null && architectures.length > 0) {
-            JsonArrayBuilder arch = Json.createArrayBuilder();
-            for (String nutsId : architectures) {
-                arch.add(nutsId);
-            }
-            objectBuilder.add("arch", arch);
-        }
-
-        architectures = desc.getOs();
-        if (architectures != null && architectures.length > 0) {
-            JsonArrayBuilder arch = Json.createArrayBuilder();
-            for (String nutsId : architectures) {
-                arch.add(nutsId);
-            }
-            objectBuilder.add("os", arch);
-        }
-
-        architectures = desc.getOsdist();
-        if (architectures != null && architectures.length > 0) {
-            JsonArrayBuilder arch = Json.createArrayBuilder();
-            for (String nutsId : architectures) {
-                arch.add(nutsId);
-            }
-            objectBuilder.add("osdist", arch);
-        }
-
-        architectures = desc.getPlatform();
-        if (architectures != null && architectures.length > 0) {
-            JsonArrayBuilder arch = Json.createArrayBuilder();
-            for (String nutsId : architectures) {
-                arch.add(nutsId);
-            }
-            objectBuilder.add("platform", arch);
-        }
-
-        JsonArrayBuilder dep = Json.createArrayBuilder();
-        NutsDependency[] dependencies = desc.getDependencies();
-        if (dependencies != null && dependencies.length > 0) {
-            for (NutsDependency nutsDependency : dependencies) {
-                dep.add(nutsDependency.toString());
-            }
-            objectBuilder.add("dependencies", dep);
-        }
-        CoreJsonUtils.get().storeJson(objectBuilder.build(), new OutputStreamWriter(os), pretty);
+    public void write(Writer os, boolean pretty) throws NutsIOException {
+        CoreJsonUtils.get().write(this, os, true);
     }
 
-    private JsonObjectBuilder nutsExecutorDescriptorToJsonObjectBuilder(NutsExecutorDescriptor e) {
-        JsonObjectBuilder objectBuilder2 = Json.createObjectBuilder();
-        if (e != null) {
-            if (e.getId() != null) {
-                objectBuilder2.add("id", e.getId().toString());
-            }
-            if (e.getArgs() != null && e.getArgs().length > 0) {
-                objectBuilder2.add("args", CoreJsonUtils.get().serializeArr(e.getArgs(), CoreJsonUtils.IGNORE_EMPTY_OPTIONS));
-            }
-            if (e.getProperties() != null && !e.getProperties().isEmpty()) {
-                objectBuilder2.add("properties", CoreJsonUtils.get().serializeObj(e.getProperties(), CoreJsonUtils.IGNORE_EMPTY_OPTIONS));
-            }
-        }
-        return objectBuilder2;
-    }
 
     @Override
     public NutsDescriptor applyProperties() {
@@ -421,15 +337,25 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         } else {
             n_ext = n_packaging;
         }
-        return createInstance(
-                n_id, n_alt, n_parents, n_packaging, n_executable, n_ext, n_executor, n_installer, n_name, n_desc,
-                n_archs.toArray(new String[n_archs.size()]),
-                n_os.toArray(new String[n_os.size()]),
-                n_osdist.toArray(new String[n_osdist.size()]),
-                n_platform.toArray(new String[n_platform.size()]),
-                n_deps.toArray(new NutsDependency[n_deps.size()]),
-                n_props
-        );
+        return new DefaultNutsDescriptorBuilder()
+                .setId(n_id)
+                .setFace(n_alt)
+                .setParents(n_parents)
+                .setPackaging(n_packaging)
+                .setExecutable(n_executable)
+                .setExt(n_ext)
+                .setExecutor(n_executor)
+                .setInstaller(n_installer)
+                .setName(n_name)
+                .setDescription(n_desc)
+                .setArch(n_archs.toArray(new String[n_archs.size()]))
+                .setOs(n_os.toArray(new String[n_os.size()]))
+                .setOsdist(n_osdist.toArray(new String[n_osdist.size()]))
+                .setPlatform(n_platform.toArray(new String[n_platform.size()]))
+                .setDependencies(n_deps.toArray(new NutsDependency[n_deps.size()]))
+                .setProperties(n_props)
+                .build()
+                ;
     }
 
     @Override
@@ -456,15 +382,26 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         for (NutsDependency d2 : getDependencies()) {
             n_deps.add(applyNutsDependencyProperties(d2, map));
         }
-        return createInstance(
-                n_id, n_alt, getParents(), n_packaging, isExecutable(), n_ext, n_executor, n_installer, n_name, n_desc,
-                CoreNutsUtils.applyStringProperties(getArch(), map),
-                CoreNutsUtils.applyStringProperties(getOs(), map),
-                CoreNutsUtils.applyStringProperties(getOsdist(), map),
-                CoreNutsUtils.applyStringProperties(getPlatform(), map),
-                n_deps.toArray(new NutsDependency[n_deps.size()]),
-                n_props
-        );
+
+        return new DefaultNutsDescriptorBuilder()
+                .setId(n_id)
+                .setFace(n_alt)
+                .setParents(getParents())
+                .setPackaging(n_packaging)
+                .setExecutable(isExecutable())
+                .setExt(n_ext)
+                .setExecutor(n_executor)
+                .setInstaller(n_installer)
+                .setName(n_name)
+                .setDescription(n_desc)
+                .setArch(CoreNutsUtils.applyStringProperties(getArch(), map))
+                .setOs(CoreNutsUtils.applyStringProperties(getOs(), map))
+                .setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map))
+                .setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map))
+                .setDependencies(n_deps.toArray(new NutsDependency[n_deps.size()]))
+                .setProperties(n_props)
+                .build()
+                ;
     }
 
     private NutsId applyNutsIdProperties(NutsId child, StringMapper properties) {
@@ -575,256 +512,64 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor setDependencies(NutsDependency[] dependencies) {
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                dependencies,
-                getProperties()
-        );
+        return builder().setDependencies(dependencies).build();
     }
+
+
+    @Override
+    public NutsDescriptor setLocations(String[] locations) {
+        return builder().setLocations(locations).build();
+    }
+
 
     @Override
     public NutsDescriptor addOs(String os) {
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                CoreCollectionUtils.toArraySet(getOs(), new String[]{os}),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().addOs(os).build();
     }
 
     @Override
     public NutsDescriptor removeOs(String os) {
-        Set<String> vals = CoreCollectionUtils.toSet(getOs());
-        vals.remove(os);
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                vals.toArray(new String[vals.size()]),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().removeOs(os).build();
     }
 
     @Override
     public NutsDescriptor addOsdist(String osdist) {
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                CoreCollectionUtils.toArraySet(getOsdist(), new String[]{osdist}),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().addOsdist(osdist).build();
     }
 
     @Override
     public NutsDescriptor removeOsdist(String os) {
-        Set<String> vals = CoreCollectionUtils.toSet(getOs());
-        vals.remove(os);
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                vals.toArray(new String[vals.size()]),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().removeOsdist(os).build();
     }
 
     @Override
     public NutsDescriptor addPlatform(String platform) {
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                CoreCollectionUtils.toArraySet(getPlatform(), new String[]{platform}),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().addPlatform(platform).build();
     }
 
     @Override
-    public NutsDescriptor removePlatform(String os) {
-        Set<String> vals = CoreCollectionUtils.toSet(getPlatform());
-        vals.remove(os);
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                vals.toArray(new String[vals.size()]),
-                getDependencies(),
-                getProperties()
-        );
+    public NutsDescriptor removePlatform(String platform) {
+        return builder().removePlatform(platform).build();
     }
 
     @Override
     public NutsDescriptor addArch(String arch) {
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                CoreCollectionUtils.toArraySet(getArch(), new String[]{arch}),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().addArch(arch).build();
     }
 
     @Override
     public NutsDescriptor removeArch(String arch) {
-        Set<String> vals = CoreCollectionUtils.toSet(getArch());
-        vals.remove(arch);
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                vals.toArray(new String[vals.size()]),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().removeArch(arch).build();
     }
 
     @Override
     public NutsDescriptor addProperty(String name, String value) {
-        Map<String, String> properties = new HashMap<>(getProperties());
-        properties.put(name, value);
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                properties
-        );
+        return builder().addProperty(name,value).build();
     }
 
     @Override
     public NutsDescriptor removeProperty(String name) {
-        Map<String, String> properties = new HashMap<>(getProperties());
-        properties.remove(name);
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                properties
-        );
+        return builder().removeProperty(name).build();
     }
 
     @Override
@@ -832,24 +577,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (CoreStringUtils.trim(ext).equals(getExt())) {
             return this;
         }
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                ext,
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().setExt(ext).build();
     }
 
     @Override
@@ -857,24 +585,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (CoreStringUtils.trim(packaging).equals(getPackaging())) {
             return this;
         }
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                packaging,
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().setPackaging(packaging).build();
     }
 
     @Override
@@ -882,24 +593,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (executable == isExecutable()) {
             return this;
         }
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                executable,
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().setExecutable(executable).build();
     }
 
     @Override
@@ -907,24 +601,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (Objects.equals(executor, getExecutor())) {
             return this;
         }
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                executor,
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().setExecutor(executor).build();
     }
 
     @Override
@@ -932,24 +609,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (Objects.equals(id, getId())) {
             return this;
         }
-        return createInstance(
-                id,
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                getProperties()
-        );
+        return builder().setId(id).build();
     }
 
     @Override
@@ -964,29 +624,12 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (Objects.equals(l_properties, getProperties())) {
             return this;
         }
-        return createInstance(
-                getId(),
-                getFace(),
-                getParents(),
-                getPackaging(),
-                isExecutable(),
-                getExt(),
-                getExecutor(),
-                getInstaller(),
-                getName(),
-                getDescription(),
-                getArch(),
-                getOs(),
-                getOsdist(),
-                getPlatform(),
-                getDependencies(),
-                l_properties
-        );
+        return builder().setProperties(map).build();
     }
 
-    protected NutsDescriptor createInstance(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-            String[] arch, String[] os, String[] osdist, String[] platform,
-            NutsDependency[] dependencies, Map<String, String> properties) {
-        throw new NutsIllegalArgumentException("Unmodifiable instance");
+    @Override
+    public NutsDescriptorBuilder builder() {
+        return new DefaultNutsDescriptorBuilder(this);
     }
+
 }

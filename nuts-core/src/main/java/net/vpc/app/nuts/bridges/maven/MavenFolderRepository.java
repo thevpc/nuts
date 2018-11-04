@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsRepositoryConfigImpl;
 import net.vpc.app.nuts.extensions.util.*;
 
 import java.io.*;
@@ -48,13 +47,22 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
-    public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, File root) {
-        super(new NutsRepositoryConfigImpl(repositoryId, repositoryLocation, "maven"), workspace, parentRepository,
+    public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
+        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, "maven"), workspace, parentRepository,
                 CoreIOUtils.resolvePath(repositoryId,
-                        root != null ? root : CoreIOUtils.createFile(
-                                        workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getNutsHomeLocation()),
+                        root != null ? new File(root) : CoreIOUtils.createFile(
+                                workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
+                        workspace.getConfigManager().getNutsHomeLocation()).getPath(),
                 SPEED_FAST);
+    }
+
+    @Override
+    protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
+        switch (session.getFetchMode()) {
+            case REMOTE:
+                return 0;
+        }
+        return super.getSupportLevelCurrent(id, session);
     }
 
     @Override
@@ -92,14 +100,16 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     private File getStoreRoot() {
-        return CoreIOUtils.resolvePath(getConfigManager().getLocation(), getConfigManager().getLocationFolder(), getWorkspace().getConfigManager().getNutsHomeLocation());
+        return CoreIOUtils.resolvePath(getConfigManager().getLocation(),
+                new File(getConfigManager().getLocationFolder()),
+                getWorkspace().getConfigManager().getNutsHomeLocation());
     }
 
     @Override
     protected NutsFile fetchImpl(NutsId id, NutsSession session) {
         NutsFile nutsFile = getNutsFile(id, session);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            if (nutsFile != null && nutsFile.getFile() != null && nutsFile.getFile().exists()) {
+            if (nutsFile != null && nutsFile.getFile() != null && new File(nutsFile.getFile()).exists()) {
                 NutsDescriptor desc = nutsFile.getDescriptor();
                 if (desc != null) {
                     NutsId id2 = getWorkspace().resolveEffectiveId(desc, session);
@@ -194,13 +204,13 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 if (nutsDescriptor != null) {
                     nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(localFile));
                 }
-                return new NutsFile(id, nutsDescriptor, localFile, true, false, null);
+                return new NutsFile(id, nutsDescriptor, localFile.getPath(), true, false, null);
             }
         }
         return null;
     }
 
-//    protected File getLocalGroupAndArtifactAndVersionFile(NutsId id, boolean desc, NutsSession session) throws IOException {
+    //    protected File getLocalGroupAndArtifactAndVersionFile(NutsId id, boolean desc, NutsSession session) throws IOException {
 //        if (CoreStringUtils.isEmpty(id.getGroup())) {
 //            return null;
 //        }
@@ -278,7 +288,9 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
         if (nutsDescriptor.getId().getName() == null) {
             //why?
-            log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
+            if(log.isLoggable(Level.FINE)) {
+                log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
+            }
             return null;
         }
         if (pathname.getName().endsWith(".pom")) {
@@ -298,6 +310,31 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             }
         }
         return null;
+    }
+
+    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
+        if (id.getVersion().isEmpty() && filter == null) {
+            File file = getLocalGroupAndArtifactFile(id);
+            NutsId bestId=null;
+            if (file.exists()) {
+                File[] versionFolders = file.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        return pathname.isDirectory();
+                    }
+                });
+                if (versionFolders != null) {
+                    for (File versionFolder : versionFolders) {
+                        NutsId id2 = id.setVersion(versionFolder.getName());
+                        if(bestId==null || id2.getVersion().compareTo(bestId.getVersion())>0){
+                            bestId=id2;
+                        }
+                    }
+                }
+            }
+            return bestId;
+        }
+        return super.findLatestVersion(id, filter, session);
     }
 
     protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, NutsSession session) {

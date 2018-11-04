@@ -29,7 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -63,9 +67,63 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsWorkspaceExtension[] getWorkspaceExtensions();
 
-    NutsWorkspaceFactory getFactory();
-
     URLLocation[] getExtensionURLLocations(String id, String appId, String extensionType);
 
     String[] getExtensionRepositoryLocations(String appId);
+
+    List<Class> discoverTypes(Class type, ClassLoader bootClassLoader);
+
+    <T> List<T> discoverInstances(Class<T> type, ClassLoader bootClassLoader);
+
+    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria);
+
+    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
+
+    <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria);
+
+    <T> List<T> createAll(Class<T> type);
+
+    Set<Class> getExtensionPoints();
+
+    Set<Class> getExtensionTypes(Class extensionPoint);
+
+    List<Object> getExtensionObjects(Class extensionPoint);
+
+    boolean isRegisteredType(Class extensionPointType, String name);
+
+    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
+
+    <T> boolean registerInstance(Class<T> extensionPoint, T implementation);
+
+    boolean registerType(Class extensionPointType, Class extensionType);
+
+    boolean isRegisteredType(Class extensionPointType, Class extensionType);
+
+    NutsSession createSession();
+
+    NutsTerminal createTerminal();
+
+    NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
+
+    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
+
+    ClassLoader createClassLoader(String[] nutsIds, NutsDependencyScope scope, ClassLoader parentClassLoader, NutsSession session);
+
+    NutsPrintStream createPrintStream(OutputStream out, boolean formatted);
+
+    NutsPrintStream createPrintStream(File out);
+
+    InputStream createNullInputStream();
+
+    NutsPrintStream createNullPrintStream();
+
+    NutsId parseNutsId(String nutsId);
+
+    NutsDescriptorBuilder createDescriptorBuilder();
+
+    NutsIdBuilder createIdBuilder();
+
+    NutsDependencyBuilder createDependencyBuilder();
+
+    JsonSerializer createJsonSerializer();
 }

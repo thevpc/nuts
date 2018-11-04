@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -48,14 +48,9 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsLoginException;
-import net.vpc.app.nuts.NutsSecurityEntityConfig;
-import net.vpc.app.nuts.NutsSecurityException;
-import net.vpc.app.nuts.NutsUserInfo;
-import net.vpc.app.nuts.NutsWorkspaceConfig;
-import net.vpc.app.nuts.NutsWorkspaceSecurityManager;
+
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
@@ -98,9 +93,11 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (adminPassword == null) {
             adminPassword = "";
         }
-        NutsUserInfo adminSecurity = findUser(NutsConstants.USER_ADMIN);
+        NutsEffectiveUser adminSecurity = findUser(NutsConstants.USER_ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
-            DefaultNutsWorkspace.log.log(Level.CONFIG, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+            if (DefaultNutsWorkspace.log.isLoggable(Level.CONFIG)) {
+                DefaultNutsWorkspace.log.log(Level.CONFIG, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+            }
             setUserCredentials(NutsConstants.USER_ADMIN, "admin");
         }
         String credentials = CoreSecurityUtils.evalSHA1(adminPassword);
@@ -108,8 +105,8 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             throw new NutsSecurityException("Invalid credentials");
         }
         boolean activated = false;
-        if (ws.getConfigManager().getConfig().isSecure()) {
-            ws.getConfigManager().getConfig().setSecure(false);
+        if (ws.getConfigManager().isSecure()) {
+            ws.getConfigManager().setSecure(false);
             activated = true;
         }
         return activated;
@@ -130,8 +127,8 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (Objects.equals(credentials, adminPassword)) {
             throw new NutsSecurityException("Invalid credentials");
         }
-        if (!ws.getConfigManager().getConfig().isSecure()) {
-            ws.getConfigManager().getConfig().setSecure(true);
+        if (!ws.getConfigManager().isSecure()) {
+            ws.getConfigManager().setSecure(true);
             deactivated = true;
         }
         return deactivated;
@@ -163,7 +160,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                 throw new NutsIllegalArgumentException("Not logged in");
             }
         }
-        NutsSecurityEntityConfig u = ws.getConfigManager().getConfig().getSecurity(login);
+        NutsUserConfig u = ws.getConfigManager().getUser(login);
         if (u == null) {
             throw new NutsIllegalArgumentException("No such user " + login);
         }
@@ -173,75 +170,93 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             }
         }
         if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-            if (CoreStringUtils.isEmpty(password)) {
-                throw new NutsSecurityException("Missing old password");
-            }
-            //check old password
-            if (CoreStringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
-                throw new NutsSecurityException("Invalid password");
-            }
+            ws.getExtensionManager().createSupported(NutsAuthenticationAgent.class, u.getAuthenticationAgent())
+                    .checkCredentials(
+                            u.getCredentials(),
+                            u.getAuthenticationAgent(),
+                            password,
+                            ws.getConfigManager()
+                    );
+//
+//            if (CoreStringUtils.isEmpty(password)) {
+//                throw new NutsSecurityException("Missing old password");
+//            }
+//            //check old password
+//            if (CoreStringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
+//                throw new NutsSecurityException("Invalid password");
+//            }
         }
         if (CoreStringUtils.isEmpty(password)) {
             throw new NutsIllegalArgumentException("Missing password");
         }
-        ws.getConfigManager().getConfig().setSecurity(u);
+        ws.getConfigManager().setUser(u);
         setUserCredentials(u.getUser(), password);
     }
 
     @Override
     public void setUserRemoteIdentity(String user, String mappedIdentity) {
-        ws.getConfigManager().getConfig().getSecurity(user).setMappedUser(mappedIdentity);
+        NutsUserConfig security = ws.getConfigManager().getUser(user);
+        security.setMappedUser(mappedIdentity);
+        ws.getConfigManager().setUser(security);
     }
 
     @Override
     public void setUserRights(String user, String... rights) {
         if (rights != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : security.getRights()) {
                 security.removeRight(right);
             }
             for (String right : rights) {
-                security.addRight(right);
+                if (!CoreStringUtils.isEmpty(right)) {
+                    security.addRight(right);
+                }
             }
+            ws.getConfigManager().setUser(security);
         }
     }
 
     @Override
     public void addUserRights(String user, String... rights) {
         if (rights != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : rights) {
-                security.addRight(right);
+                if (!CoreStringUtils.isEmpty(right)) {
+                    security.addRight(right);
+                }
             }
+            ws.getConfigManager().setUser(security);
         }
     }
 
     @Override
     public void removeUserRights(String user, String... rights) {
         if (rights != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : rights) {
                 security.removeRight(right);
             }
+            ws.getConfigManager().setUser(security);
         }
     }
 
     @Override
     public void setUserGroups(String user, String... groups) {
         if (groups != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : security.getRights()) {
                 security.removeRight(right);
             }
             for (String right : groups) {
                 security.addGroup(right);
             }
+            ws.getConfigManager().setUser(security);
         }
     }
 
     @Override
-    public NutsUserInfo findUser(String username) {
-        NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(username);
+    public NutsEffectiveUser findUser(String username) {
+        NutsUserConfig security = ws.getConfigManager().getUser(username);
         Stack<String> inherited = new Stack<>();
         if (security != null) {
             Stack<String> visited = new Stack<>();
@@ -251,7 +266,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
-                NutsSecurityEntityConfig ss = ws.getConfigManager().getConfig().getSecurity(s);
+                NutsUserConfig ss = ws.getConfigManager().getUser(s);
                 if (ss != null) {
                     inherited.addAll(Arrays.asList(ss.getRights()));
                     for (String group : ss.getGroups()) {
@@ -262,35 +277,39 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                 }
             }
         }
-        return security == null ? null : new NutsUserInfoImpl(security, inherited.toArray(new String[inherited.size()]));
+        return security == null ? null : new NutsEffectiveUserImpl(security, inherited.toArray(new String[inherited.size()]));
     }
 
     @Override
-    public NutsUserInfo[] findUsers() {
-        List<NutsUserInfo> all = new ArrayList<>();
-        for (NutsSecurityEntityConfig secu : ws.getConfigManager().getConfig().getSecurity()) {
+    public NutsEffectiveUser[] findUsers() {
+        List<NutsEffectiveUser> all = new ArrayList<>();
+        for (NutsUserConfig secu : ws.getConfigManager().getUsers()) {
             all.add(findUser(secu.getUser()));
         }
-        return all.toArray(new NutsUserInfo[all.size()]);
+        return all.toArray(new NutsEffectiveUser[all.size()]);
     }
 
     @Override
     public void addUserGroups(String user, String... groups) {
         if (groups != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
-            for (String right : groups) {
-                security.addGroup(right);
+            NutsUserConfig usr = ws.getConfigManager().getUser(user);
+            for (String grp : groups) {
+                if (!CoreStringUtils.isEmpty(grp)) {
+                    usr.addGroup(grp);
+                }
             }
+            ws.getConfigManager().setUser(usr);
         }
     }
 
     @Override
     public void removeUserGroups(String user, String... groups) {
         if (groups != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
-            for (String right : groups) {
-                security.removeGroup(right);
+            NutsUserConfig usr = ws.getConfigManager().getUser(user);
+            for (String grp : groups) {
+                usr.removeGroup(grp);
             }
+            ws.getConfigManager().setUser(usr);
         }
     }
 
@@ -299,34 +318,47 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (CoreStringUtils.isEmpty(user)) {
             throw new NutsIllegalArgumentException("Invalid user");
         }
-        ws.getConfigManager().getConfig().setSecurity(new NutsSecurityEntityConfigImpl(user, null, null, null));
+        ws.getConfigManager().setUser(new NutsUserConfig(user, null, null, null, null));
         setUserCredentials(user, credentials);
         if (rights != null) {
-            NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : rights) {
-                security.addRight(right);
+                if (!CoreStringUtils.isEmpty(right)) {
+                    security.addRight(right);
+                }
             }
+            ws.getConfigManager().setUser(security);
         }
+    }
+
+    @Override
+    public void setUserAuthenticationAgent(String user, String authenticationAgent) {
+        NutsUserConfig security = ws.getConfigManager().getUser(user);
+        if (security == null) {
+            throw new NutsIllegalArgumentException("User not found " + user);
+        }
+        if (CoreStringUtils.isEmpty(authenticationAgent)) {
+            authenticationAgent = null;
+        }
+        security.setAuthenticationAgent(authenticationAgent);
+        ws.getConfigManager().setUser(security);
     }
 
     @Override
     public void setUserCredentials(String user, String credentials) {
-        NutsSecurityEntityConfig security = ws.getConfigManager().getConfig().getSecurity(user);
+        NutsUserConfig security = ws.getConfigManager().getUser(user);
         if (security == null) {
             throw new NutsIllegalArgumentException("User not found " + user);
         }
-        if (CoreStringUtils.isEmpty(credentials)) {
-            credentials = null;
-        } else {
-            credentials = CoreSecurityUtils.evalSHA1(credentials);
-        }
-        security.setCredentials(credentials);
+        security.setCredentials(ws.getExtensionManager().createSupported(NutsAuthenticationAgent.class, security.getAuthenticationAgent())
+                .setCredentials(credentials, security.getAuthenticationAgent(),
+                        ws.getConfigManager()));
+        ws.getConfigManager().setUser(security);
     }
 
     @Override
     public boolean isAllowed(String right) {
-        NutsWorkspaceConfig c = ws.getConfigManager().getConfig();
-        if (!c.isSecure()) {
+        if (!ws.getConfigManager().isSecure()) {
             return true;
         }
         String name = getCurrentLogin();
@@ -342,7 +374,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         items.push(name);
         while (!items.isEmpty()) {
             String n = items.pop();
-            NutsSecurityEntityConfig s = c.getSecurity(n);
+            NutsUserConfig s = ws.getConfigManager().getUser(n);
             if (s != null) {
                 if (s.containsRight(right)) {
                     return true;

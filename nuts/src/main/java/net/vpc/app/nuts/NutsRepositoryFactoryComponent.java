@@ -29,16 +29,14 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-
 /**
  * Created by vpc on 1/15/17.
  */
 @Singleton
 public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepoInfo> {
 
-    NutsRepositoryDefinition[] getDefaultRepositories();
+    NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace);
 
-    NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot);
+    NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot);
 
 }

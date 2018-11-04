@@ -29,9 +29,10 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public interface NutsId {
+public interface NutsId extends Serializable{
 
     boolean isSameFullName(NutsId other);
 
@@ -90,4 +91,6 @@ public interface NutsId {
     NutsVersion getVersion();
 
     NutsId apply(StringMapper properties);
+
+    NutsIdBuilder builder();
 }

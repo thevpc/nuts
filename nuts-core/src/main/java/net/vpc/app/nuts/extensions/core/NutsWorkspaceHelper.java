@@ -35,12 +35,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsSession;
+
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
@@ -49,11 +46,16 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
  */
 public class NutsWorkspaceHelper {
 
-    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsSession session) {
-        return filterRepositories(repos, id, session, false, null);
+    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session) {
+        return filterRepositories(repos, id, repositoryFilter, session, false, null);
     }
 
-    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp) {
+    public static List<NutsRepository> filterRepositories(
+            List<NutsRepository> repos,
+            NutsId id,
+            NutsRepositoryFilter repositoryFilter, NutsSession session,
+            boolean sortByLevelDesc,
+            final Comparator<NutsRepository> postComp) {
         class RepoAndLevel {
 
             NutsRepository r;
@@ -67,15 +69,17 @@ public class NutsWorkspaceHelper {
         List<RepoAndLevel> repos2 = new ArrayList<>();
 //        List<Integer> reposLevels = new ArrayList<>();
         for (NutsRepository repository : repos) {
-            int t = 0;
-            try {
-                t = repository.getSupportLevel(id, session);
-            } catch (Exception e) {
-                //ignore...
-            }
-            if (t > 0) {
-                repos2.add(new RepoAndLevel(repository, t));
+            if(repositoryFilter==null || repositoryFilter.accept(repository)) {
+                int t = 0;
+                try {
+                    t = repository.getSupportLevel(id, session);
+                } catch (Exception e) {
+                    //ignore...
+                }
+                if (t > 0) {
+                    repos2.add(new RepoAndLevel(repository, t));
 //                    reposLevels.add(t);
+                }
             }
         }
         if (sortByLevelDesc) {
@@ -100,12 +104,12 @@ public class NutsWorkspaceHelper {
         return ret;
     }
 
-    public static NutsId configureFetchEnv(NutsId id) {
+    public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
         Map<String, String> face = id.getQueryMap();
         if (face.get(NutsConstants.QUERY_FACE) == null && face.get("arch") == null && face.get("os") == null && face.get("osdist") == null && face.get("platform") == null) {
-            face.put("arch", CorePlatformUtils.getArch());
-            face.put("os", CorePlatformUtils.getOs());
-            face.put("osdist", CorePlatformUtils.getOsdist());
+            face.put("arch", ws.getPlatformArch());
+            face.put("os", ws.getPlatformOs());
+            face.put("osdist", ws.getPlatformOsDist());
             return id.setQuery(face);
         }
         return id;

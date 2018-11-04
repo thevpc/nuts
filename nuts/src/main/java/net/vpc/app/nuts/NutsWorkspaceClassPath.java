@@ -49,13 +49,13 @@ class NutsWorkspaceClassPath {
     }
 
     public NutsWorkspaceClassPath(String id, String version, String dependencies, String repositories) {
-        if (StringUtils.isEmpty(id)) {
+        if (NutsStringUtils.isEmpty(id)) {
             throw new IllegalArgumentException("Missing id");
         }
-        if (StringUtils.isEmpty(version)) {
+        if (NutsStringUtils.isEmpty(version)) {
             throw new IllegalArgumentException("Missing version");
         }
-        if (StringUtils.isEmpty(dependencies)) {
+        if (NutsStringUtils.isEmpty(dependencies)) {
             throw new IllegalArgumentException("Missing dependencies");
         }
         if (repositories == null) {
@@ -79,7 +79,7 @@ class NutsWorkspaceClassPath {
     }
 
     public BootNutsId[] getDependenciesArray() {
-        List<String> split = StringUtils.split(dependencies, "\n\t ,;");
+        List<String> split = NutsStringUtils.split(dependencies, "\n\t ,;");
         List<BootNutsId> ts = new ArrayList<>();
         for (String s : split) {
             s = s.trim();
@@ -91,7 +91,7 @@ class NutsWorkspaceClassPath {
     }
 
     public String[] getRepositoriesArray() {
-        List<String> ts = StringUtils.split(repositories, "\n;");
+        List<String> ts = NutsStringUtils.split(repositories, "\n;");
         for (int i = 0; i < ts.size(); i++) {
             ts.set(i, ts.get(i).trim());
         }

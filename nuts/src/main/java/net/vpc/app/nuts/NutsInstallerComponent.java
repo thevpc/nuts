@@ -29,15 +29,11 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-
 /**
  * Created by vpc on 1/7/17.
  */
 @Singleton
 public interface NutsInstallerComponent extends NutsComponent<NutsFile> {
-
-    File getInstallFolder(NutsExecutionContext executionContext);
 
     void install(NutsExecutionContext executionContext);
 

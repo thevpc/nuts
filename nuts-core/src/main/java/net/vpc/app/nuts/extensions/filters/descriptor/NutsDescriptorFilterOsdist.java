@@ -43,8 +43,8 @@ public class NutsDescriptorFilterOsdist implements NutsDescriptorFilter, Simplif
 
     private final String osdist;
 
-    public NutsDescriptorFilterOsdist(String packaging) {
-        this.osdist = packaging;
+    public NutsDescriptorFilterOsdist(String osdist) {
+        this.osdist = osdist;
     }
 
     public String getOsdist() {

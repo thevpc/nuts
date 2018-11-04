@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class NutsTerminalDelegate implements NutsTerminal {
+public class NutsTerminalDelegate extends AbstractNutsTerminal {
 
     private NutsTerminal base;
     private InputStream inReplace;
@@ -61,11 +61,6 @@ public class NutsTerminalDelegate implements NutsTerminal {
     @Override
     public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
 
-    }
-
-    @Override
-    public void setCommandContext(NutsCommandContext context) {
-        base.setCommandContext(context);
     }
 
     @Override

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.vpc.upa:upa-api:1.2.0.48">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/upa/upa-api/1.2.0.48/upa-api-1.2.0.48.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/upa/upa-api/1.2.0.48/upa-api-1.2.0.48-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/vpc/upa/upa-api/1.2.0.48/upa-api-1.2.0.48-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

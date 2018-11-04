@@ -46,8 +46,9 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     private NutsSession session;
     private NutsWorkspace workspace;
     private NutsExecutorDescriptor executorDescriptor;
+    private String cwd;
 
-    public NutsExecutionContextImpl(NutsFile nutsFile, NutsSession session, NutsWorkspace workspace) {
+    public NutsExecutionContextImpl(NutsFile nutsFile, NutsSession session, NutsWorkspace workspace,String cwd) {
         this.nutsFile = nutsFile;
         this.session = session;
         if (nutsFile != null && nutsFile.getDescriptor() != null && nutsFile.getDescriptor().getInstaller() != null) {
@@ -65,9 +66,11 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
         if (execProperties == null) {
             execProperties = new Properties();
         }
+        this.cwd = cwd;
     }
 
-    public NutsExecutionContextImpl(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env, Properties execProperties, NutsSession session, NutsWorkspace workspace) {
+
+    public NutsExecutionContextImpl(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace) {
         if (appArgs == null) {
             appArgs = new String[0];
         }
@@ -83,13 +86,14 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
         this.execProperties = execProperties;
         this.workspace = workspace;
         this.session = session;
+        this.cwd = cwd;
         if (env == null) {
             env = new Properties();
         }
         this.env = env;
     }
 
-    public NutsExecutionContextImpl(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor) {
+    public NutsExecutionContextImpl(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor) {
         if (args == null) {
             args = new String[0];
         }
@@ -104,8 +108,9 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
         this.session = session;
         this.workspace = workspace;
         this.executorDescriptor = executorDescriptor;
-        this.execArgs = execArgs;
+        this.execArgs = execArgs ;
         this.execProperties = execProperties;
+        this.cwd = cwd;
         if (env == null) {
             env = new Properties();
         }
@@ -156,4 +161,10 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     public Properties getEnv() {
         return env;
     }
+
+    @Override
+    public String getCwd() {
+        return cwd;
+    }
+
 }

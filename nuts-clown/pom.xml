@@ -7,13 +7,26 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-clown</artifactId>
     <name>net.vpc.app.nuts.nuts-clown</name>
-    <version>0.4.2.0</version>
+    <version>0.4.3.0</version>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app</groupId>
+            <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.4.2</version>
+            <version>0.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.vpc.app.nuts</groupId>
+            <artifactId>nuts-servlet</artifactId>
+            <version>0.4.3.0</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>vpc-public-maven</id>
+            <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>
+        </repository>
+    </repositories>
+
 </project>

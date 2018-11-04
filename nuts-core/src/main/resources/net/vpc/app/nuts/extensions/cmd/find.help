@@ -25,9 +25,9 @@ will be listed.
 
 @@Find Expressions:@@
 -x    --expression        : non js expression
--p    --pkg   <PKG>       : accept packagings
--a    --arch  <ARCH>      : accept architectures ("x86", "ia64", "amd64", "ppc", "sparc")
--r    --repo  <REPO>      : accept only listed repository
+-p    --pkg   <PKG>         : accept packagings
+-a    --arch  <ARCH>        : accept architectures ("x86", "ia64", "amd64", "ppc", "sparc")
+-r    --repo  <REPO>        : accept only listed repository
 -e    --exec              : accept executable **nuts**
 -!e   --lib               : accept non executable (libs) **nuts**
 -u    --updatable         : accept updatable **nuts**
@@ -77,8 +77,11 @@ will be listed.
 ##find## -i
    searches for and displays ALL installed **nuts**
 
-##find## -i ab* *yz
+##find## -i \"ab*\" \"*yz\"
    searches for and displays installed **nuts** that starts with 'ab' or ends with 'yz'
+
+##find## -e \"ab*\"
+   searches for and displays executable **nuts** that starts with 'ab'
 
 ##find## -js \"return id.version.ge(\'1.2\') && id.version.le(\'1.8\')\"
    searches for and displays installed **nuts** with version between 1.2 and 1.8 (exclusively)

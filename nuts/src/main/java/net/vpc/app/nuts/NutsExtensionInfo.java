@@ -42,7 +42,7 @@ public class NutsExtensionInfo {
     private final String description;
     private final String author;
     private final String category;
-    private final String source;
+    private String source;
 
     public NutsExtensionInfo(NutsId id, String name, String author, String description, String category, String source) {
         this.id = id;
@@ -50,6 +50,10 @@ public class NutsExtensionInfo {
         this.author = author;
         this.description = description;
         this.category = category;
+        this.source = source;
+    }
+
+    public void setSource(String source) {
         this.source = source;
     }
 

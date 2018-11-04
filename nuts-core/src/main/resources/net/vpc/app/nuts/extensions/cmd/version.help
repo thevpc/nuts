@@ -1,7 +1,9 @@
 shows version
 
 @@SYNOPSYS:@@
-##version##
+##version## [ -l ] [ --long ]
+
+-l --long   : long format
 
 shows version
 
@@ -10,4 +12,6 @@ shows version
 ##version##
    shows version
 
+##version## -l
+   shows version in long format
 

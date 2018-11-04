@@ -15,15 +15,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsRepositoryConfig;
 import net.vpc.app.nuts.NutsRepositorySecurityManager;
-import net.vpc.app.nuts.NutsSecurityEntityConfig;
+import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsSecurityException;
-import net.vpc.app.nuts.NutsUserInfo;
-import net.vpc.app.nuts.extensions.core.NutsSecurityEntityConfigImpl;
-import net.vpc.app.nuts.extensions.core.NutsUserInfoImpl;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
+import net.vpc.app.nuts.NutsEffectiveUser;
+import net.vpc.app.nuts.extensions.core.NutsEffectiveUserImpl;
+import net.vpc.app.nuts.extensions.core.NutsAuthenticationAgent;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
@@ -50,10 +47,9 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         Set<String> visitedGroups = new HashSet<>();
         visitedGroups.add(name);
         items.push(name);
-        NutsRepositoryConfig c = repo.getConfigManager().getConfig();
         while (!items.isEmpty()) {
             String n = items.pop();
-            NutsSecurityEntityConfig s = c.getSecurity(n);
+            NutsUserConfig s = repo.getConfigManager().getUser(n);
             if (s != null) {
                 if (s.containsRight("!" + right)) {
                     return false;
@@ -77,12 +73,14 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (CoreStringUtils.isEmpty(user)) {
             throw new NutsIllegalArgumentException("Invalid user");
         }
-        repo.getConfigManager().getConfig().setSecurity(new NutsSecurityEntityConfigImpl(user, null, null, null));
+        repo.getConfigManager().setUser(new NutsUserConfig(user, null, null, null, null));
         setUserCredentials(user, credentials, null);
         if (rights != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = repo.getConfigManager().getUser(user);
             for (String right : rights) {
-                security.addRight(right);
+                if (!CoreStringUtils.isEmpty(right)) {
+                    security.addRight(right);
+                }
             }
         }
     }
@@ -90,12 +88,14 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public void setUserRights(String user, String... rights) {
         if (rights != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = repo.getConfigManager().getUser(user);
             for (String right : security.getRights()) {
                 security.removeRight(right);
             }
             for (String right : rights) {
-                security.addRight(right);
+                if (!CoreStringUtils.isEmpty(right)) {
+                    security.addRight(right);
+                }
             }
         }
     }
@@ -103,9 +103,11 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public void addUserRights(String user, String... rights) {
         if (rights != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = repo.getConfigManager().getUser(user);
             for (String right : rights) {
-                security.addRight(right);
+                if (!CoreStringUtils.isEmpty(right)) {
+                    security.addRight(right);
+                }
             }
         }
     }
@@ -113,7 +115,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public void removeUserRights(String user, String... rights) {
         if (rights != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
+            NutsUserConfig security = repo.getConfigManager().getUser(user);
             for (String right : rights) {
                 security.removeRight(right);
             }
@@ -123,39 +125,46 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public void setUserGroups(String user, String... groups) {
         if (groups != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
-            for (String right : security.getRights()) {
-                security.removeRight(right);
+            NutsUserConfig usr = repo.getConfigManager().getUser(user);
+            for (String right : usr.getRights()) {
+                usr.removeRight(right);
             }
-            for (String right : groups) {
-                security.addGroup(right);
+            for (String grp : groups) {
+                usr.addGroup(grp);
             }
+            repo.getConfigManager().setUser(usr);
         }
     }
 
     @Override
     public void addUserGroups(String user, String... groups) {
         if (groups != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
-            for (String right : groups) {
-                security.addGroup(right);
+            NutsUserConfig usr = repo.getConfigManager().getUser(user);
+            for (String grp : groups) {
+                if (!CoreStringUtils.isEmpty(grp)) {
+                    usr.addGroup(grp);
+                }
             }
+            repo.getConfigManager().setUser(usr);
         }
     }
 
     @Override
     public void removeUserGroups(String user, String... groups) {
         if (groups != null) {
-            NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(user);
-            for (String right : groups) {
-                security.removeGroup(right);
+            NutsUserConfig usr = repo.getConfigManager().getUser(user);
+            for (String grp : groups) {
+                usr.removeGroup(grp);
             }
+            repo.getConfigManager().setUser(usr);
         }
     }
 
     @Override
     public void setUserRemoteIdentity(String user, String mappedIdentity) {
-        repo.getConfigManager().getConfig().getSecurity(user).setMappedUser(mappedIdentity);
+        NutsUserConfig u = repo.getConfigManager().getUser(user);
+        u.setMappedUser(mappedIdentity);
+        repo.getConfigManager().setUser(u);
     }
 
     @Override
@@ -166,7 +175,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (CoreStringUtils.isEmpty(username)) {
             username = repo.getWorkspace().getSecurityManager().getCurrentLogin();
         }
-        NutsSecurityEntityConfig u = repo.getConfigManager().getConfig().getSecurity(username);
+        NutsUserConfig u = repo.getConfigManager().getUser(username);
         if (u == null) {
             throw new NutsIllegalArgumentException("No such user " + username);
         }
@@ -176,49 +185,56 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
             }
         }
         if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-            if (CoreStringUtils.isEmpty(password)) {
-                throw new NutsSecurityException("Missing old password");
-            }
-            //check old password
-            if (!CoreStringUtils.isEmpty(u.getCredentials()) && !u.getCredentials().equals(CoreSecurityUtils.evalSHA1(oldPassword))) {
-                throw new NutsSecurityException("Invalid password");
-            }
+            repo.getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class,u.getAuthenticationAgent())
+                    .checkCredentials(
+                    u.getCredentials(),u.getAuthenticationAgent(), oldPassword,
+                            repo.getConfigManager()
+            );
+//            if (CoreStringUtils.isEmpty(password)) {
+//                throw new NutsSecurityException("Missing old password");
+//            }
+//            //check old password
+//            if (!CoreStringUtils.isEmpty(u.getCredentials()) && !u.getCredentials().equals(CoreSecurityUtils.evalSHA1(oldPassword))) {
+//                throw new NutsSecurityException("Invalid password");
+//            }
         }
         if (CoreStringUtils.isEmpty(password)) {
             throw new NutsIllegalArgumentException("Missing password");
         }
-        log.log(Level.FINEST, CoreStringUtils.alignLeft(repo.getRepositoryId(), 20) + " Update user credentials " + username);
-        repo.getConfigManager().getConfig().setSecurity(u);
-        if (CoreStringUtils.isEmpty(password)) {
-            password = null;
-        } else {
-            password = CoreSecurityUtils.httpEncrypt(password.getBytes(), CoreNutsUtils.DEFAULT_PASSPHRASE);
+        if(log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(repo.getRepositoryId(), 20) + " Update user credentials " + username);
         }
-        u.setCredentials(password);
+
+        u.setCredentials(
+                repo.getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class,u.getAuthenticationAgent())
+                .setCredentials(password,u.getAuthenticationAgent(),
+                        repo.getConfigManager())
+        );
+        repo.getConfigManager().setUser(u);
     }
 
     @Override
-    public NutsUserInfo[] findUsers() {
-        List<NutsUserInfo> all = new ArrayList<>();
-        for (NutsSecurityEntityConfig secu : repo.getConfigManager().getConfig().getSecurity()) {
-            all.add(findUser(secu.getUser()));
+    public NutsEffectiveUser[] findUsers() {
+        List<NutsEffectiveUser> all = new ArrayList<>();
+        for (NutsUserConfig secu : repo.getConfigManager().getUsers()) {
+            all.add(getEffectiveUser(secu.getUser()));
         }
-        return all.toArray(new NutsUserInfo[all.size()]);
+        return all.toArray(new NutsEffectiveUser[all.size()]);
     }
 
     @Override
-    public NutsUserInfo findUser(String username) {
-        NutsSecurityEntityConfig security = repo.getConfigManager().getConfig().getSecurity(username);
+    public NutsEffectiveUser getEffectiveUser(String username) {
+        NutsUserConfig u = repo.getConfigManager().getUser(username);
         Stack<String> inherited = new Stack<>();
-        if (security != null) {
+        if (u != null) {
             Stack<String> visited = new Stack<>();
             visited.push(username);
             Stack<String> curr = new Stack<>();
-            curr.addAll(Arrays.asList(security.getGroups()));
+            curr.addAll(Arrays.asList(u.getGroups()));
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
-                NutsSecurityEntityConfig ss = repo.getConfigManager().getConfig().getSecurity(s);
+                NutsUserConfig ss = repo.getConfigManager().getUser(s);
                 if (ss != null) {
                     inherited.addAll(Arrays.asList(ss.getRights()));
                     for (String group : ss.getGroups()) {
@@ -229,7 +245,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
                 }
             }
         }
-        return security == null ? null : new NutsUserInfoImpl(security, inherited.toArray(new String[inherited.size()]));
+        return u == null ? null : new NutsEffectiveUserImpl(u, inherited.toArray(new String[inherited.size()]));
     }
 
 }

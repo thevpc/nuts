@@ -31,12 +31,12 @@ package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Ref;
-import net.vpc.app.nuts.extensions.util.StreamVisitor;
+import net.vpc.common.io.InputStreamVisitor;
+import net.vpc.common.io.PathFilter;
 import net.vpc.app.nuts.bridges.maven.MavenUtils;
-import net.vpc.app.nuts.ObjectFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +45,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.io.ZipUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -69,7 +70,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         final Ref<NutsDescriptor> maven = new Ref<>();
         final Ref<String> mainClass = new Ref<>();
 
-        CoreIOUtils.visitZipFile(parserContext.getFullStream(), new ObjectFilter<String>() {
+        ZipUtils.visitZipStream(parserContext.getFullStream(), new PathFilter() {
             @Override
             public boolean accept(String path) {
                 if ("META-INF/MANIFEST.MF".equals(path)) {
@@ -80,7 +81,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                 }
                 return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
             }
-        }, new StreamVisitor() {
+        }, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) throws IOException {
                 switch (path) {
@@ -93,15 +94,15 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                 mainClass.set(attrs.getValue(attrName));
                             }
                         }
-                        NutsDescriptor d = new DefaultNutsDescriptor(
-                                CoreNutsUtils.parseNutsId("temp:jar#1.0"),
-                                null,
-                                null,
-                                "jar",
-                                mainClass.isSet(), "jar", new NutsExecutorDescriptor(JAVA, new String[]{
-                            "--nuts-jar"
-                        }, null), null, null, null, null, null, null, null, null, null
-                        );
+                        NutsDescriptor d =new DefaultNutsDescriptorBuilder()
+                                .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
+                                .setExecutable(mainClass.isSet())
+                                .setExt("jar")
+                                .setPackaging("jar")
+                                .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"--nuts-jar"}))
+                                .build();
+
+
                         metainf.set(d);
                         break;
                     case "META-INF/nuts.json":
@@ -128,19 +129,18 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             baseNutsDescriptor = maven.get();
             if (mainClass.isSet()) {
                 return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                    "--nuts-main-class", mainClass.get(),}, null));
+                    "--nuts-main-class", mainClass.get()}));
             }
         } else if (metainf.isSet()) {
             baseNutsDescriptor = metainf.get();
         }
         if (baseNutsDescriptor == null) {
-            baseNutsDescriptor = new DefaultNutsDescriptor(
-                    CoreNutsUtils.parseNutsId("temp:jar#1.0"),
-                    null,
-                    null,
-                    "jar",
-                    true, "jar", null, null, null, null, null, null, null, null, null, null
-            );
+            baseNutsDescriptor =new DefaultNutsDescriptorBuilder()
+                    .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
+                    .setExecutable(true)
+                    .setExt("jar")
+                    .setPackaging("jar")
+                    .build();
         }
         List<String> classes = CorePlatformUtils.resolveMainClasses(parserContext.getFullStream());
         if (classes.isEmpty()) {

@@ -34,7 +34,9 @@ import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.InputStreamSource;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.io.InputStreamSource;
+import net.vpc.common.io.RuntimeIOException;
 
 import java.io.*;
 
@@ -72,7 +74,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     public InputStream getHeadStream() {
         if (bytes == null) {
             try {
-                bytes = CoreIOUtils.readStreamAsBytes(file.openStream(), 1024 * 1024 * 10, true);
+                bytes = IOUtils.readStreamAsBytes(file.open(), 1024 * 1024 * 10, true);
             } catch (IOException e) {
                 throw new NutsIOException(e);
             }
@@ -82,7 +84,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
 
     @Override
     public InputStream getFullStream() {
-        return file.openStream();
+        return file.open();
     }
 
     public String getFileExtension() {

@@ -29,16 +29,26 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
 import java.util.Properties;
 
 /**
  * Created by vpc on 1/5/17.
  */
-public class NutsExecutorDescriptor {
+public class NutsExecutorDescriptor implements Serializable{
+    private static final long serialVersionUID=1l;
 
     private final NutsId id;
     private final String[] args;
     private final Properties properties;
+
+    public NutsExecutorDescriptor(NutsId id) {
+        this(id,null,null);
+    }
+
+    public NutsExecutorDescriptor(NutsId id, String[] args) {
+        this(id,args,null);
+    }
 
     public NutsExecutorDescriptor(NutsId id, String[] args, Properties properties) {
         this.id = id;

@@ -32,9 +32,7 @@ package net.vpc.app.nuts.extensions.repos;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import java.io.File;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
+import net.vpc.common.io.FileUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -58,9 +56,9 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot) {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         if (NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
-            if (!location.contains("://")) {
+            if (location==null || !location.contains("://")) {
                 return new NutsFolderRepository(repositoryId, location, workspace, parentRepository, repositoryRoot);
             }
         }
@@ -68,9 +66,9 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     }
 
     @Override
-    public NutsRepositoryDefinition[] getDefaultRepositories() {
+    public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return new NutsRepositoryDefinition[]{
-            new NutsRepositoryDefinition("system", CorePlatformUtils.getOsSystemLib() + CoreIOUtils.nativePath("/nuts/system-repository"), "nuts", false)
+            new NutsRepositoryDefinition("system", workspace.getPlatformOsLib() + FileUtils.getNativePath("/nuts/system-repository"), "nuts", false)
         };
     }
 }

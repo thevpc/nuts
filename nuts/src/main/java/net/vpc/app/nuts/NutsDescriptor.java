@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,54 +29,61 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Map;
 
 /**
  * Created by vpc on 2/19/17.
  */
-public interface NutsDescriptor {
+public interface NutsDescriptor extends Serializable {
 
-    boolean matchesEnv(String arch, String os, String dist, String platform);
+    NutsId getId();
 
-    boolean matchesPackaging(String packaging);
+    NutsId[] getParents();
+
+    boolean isExecutable();
+
+    String getPackaging();
+
+    String getExt();
+
+    String getFace();
+
+    String[] getArch();
+
+    String[] getOs();
+
+    String[] getOsdist();
+
+    String[] getPlatform();
+
+    String getName();
+
+    String[] getLocations();
+
+    NutsDescriptor setLocations(String[] locations);
+
+    NutsDependency[] getDependencies();
+
+    NutsExecutorDescriptor getExecutor();
 
     NutsExecutorDescriptor getInstaller();
 
     Map<String, String> getProperties();
 
-    NutsId[] getParents();
-
-    NutsDescriptor setProperties(Map<String, String> map, boolean append);
-
-    String getName();
-
     String getDescription();
-
-    boolean isExecutable();
-
-    NutsDescriptor setExecutable(boolean executable);
 
     String getSHA1();
 
-    void write(File file) throws NutsIOException;
 
-    void write(OutputStream file) throws NutsIOException;
+    boolean matchesEnv(String arch, String os, String dist, String platform);
 
-    void write(File file, boolean pretty) throws NutsIOException;
+    boolean matchesPackaging(String packaging);
 
-    String toString(boolean pretty);
-
-    String toString();
-
-    void write(OutputStream os, boolean pretty) throws NutsIOException;
-
-    NutsExecutorDescriptor getExecutor();
+    NutsDescriptor setExecutable(boolean executable);
 
     NutsDescriptor setExecutor(NutsExecutorDescriptor executor);
 
-    String getExt();
 
     NutsDescriptor setExt(String ext);
 
@@ -100,15 +107,9 @@ public interface NutsDescriptor {
 
     NutsDescriptor removePlatform(String platform);
 
-    String getPackaging();
-
     NutsDescriptor setPackaging(String packaging);
 
-    NutsId getId();
-
     NutsDescriptor setId(NutsId id);
-
-    String getFace();
 
     NutsDescriptor removeDependency(NutsDependency dependency);
 
@@ -116,17 +117,10 @@ public interface NutsDescriptor {
 
     NutsDescriptor addDependencies(NutsDependency[] dependencies);
 
-    NutsDependency[] getDependencies();
-
     NutsDescriptor setDependencies(NutsDependency[] dependencies);
 
-    String[] getArch();
+    NutsDescriptor setProperties(Map<String, String> map, boolean append);
 
-    String[] getOs();
-
-    String[] getOsdist();
-
-    String[] getPlatform();
 
     NutsDescriptor applyParents(NutsDescriptor[] parentDescriptors);
 
@@ -141,4 +135,21 @@ public interface NutsDescriptor {
     boolean matchesArch(String arch);
 
     boolean matchesOsdist(String oddist);
+
+    void write(File file) throws NutsIOException;
+
+    void write(PrintStream out) throws NutsIOException;
+
+    void write(OutputStream out) throws NutsIOException;
+
+    void write(Writer out) throws NutsIOException;
+
+    void write(File file, boolean pretty) throws NutsIOException;
+
+    void write(Writer os, boolean pretty) throws NutsIOException;
+
+    String toString(boolean pretty);
+
+    NutsDescriptorBuilder builder();
+
 }

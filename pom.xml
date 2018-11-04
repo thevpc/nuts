@@ -6,11 +6,20 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
     <name>net.vpc.app.nuts.nuts-builder</name>
-    <version>0.4.2.0</version>
+    <version>0.4.3.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
+        <module>toolbox/mvn</module>
+        <module>toolbox/nsh</module>
+        <module>toolbox/ndi</module>
+        <module>toolbox/nuts-server</module>
+        <module>toolbox/derby</module>
+        <module>toolbox/feenoo</module>
+        <module>toolbox/tomcat</module>
+        <module>toolbox/ndesc-ed</module>
+        <module>nuts-servlet</module>
         <module>nuts-clown</module>
         <module>nuts-tomcat-classloader</module>
     </modules>

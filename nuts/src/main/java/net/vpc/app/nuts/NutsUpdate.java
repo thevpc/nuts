@@ -29,21 +29,19 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-
 /**
  * Created by vpc on 6/23/17.
  */
 public class NutsUpdate {
 
-    private File oldIdFile;
-    private File availableIdFile;
+    private String oldIdFile;
+    private String availableIdFile;
     private NutsId baseId;
     private NutsId localId;
     private NutsId availableId;
     private boolean runtime;
 
-    public NutsUpdate(NutsId baseId, NutsId localId, NutsId availableId, File oldIdFile, File availableIdFile, boolean runtime) {
+    public NutsUpdate(NutsId baseId, NutsId localId, NutsId availableId, String oldIdFile, String availableIdFile, boolean runtime) {
         this.baseId = baseId;
         this.localId = localId;
         this.availableId = availableId;
@@ -52,11 +50,11 @@ public class NutsUpdate {
         this.runtime = runtime;
     }
 
-    public File getOldIdFile() {
+    public String getOldIdFile() {
         return oldIdFile;
     }
 
-    public File getAvailableIdFile() {
+    public String getAvailableIdFile() {
         return availableIdFile;
     }
 

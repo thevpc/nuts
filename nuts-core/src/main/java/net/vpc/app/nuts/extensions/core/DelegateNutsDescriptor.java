@@ -152,4 +152,9 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     public NutsDescriptor setExecutable(boolean executable) {
         return getBase().setExecutable(executable);
     }
+
+    @Override
+    public String[] getLocations() {
+        return getBase().getLocations();
+    }
 }

@@ -5,26 +5,54 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
 import java.util.Properties;
 
 /**
- *
  * @author vpc
  */
-public interface NutsRepositoryConfigManager {
+public interface NutsRepositoryConfigManager extends EnvProvider {
+
+    String getId();
+
+    String getType();
+
+    String getGroups();
 
     int getSpeed();
 
-    Properties getEnv(boolean inherit);
-
     void setEnv(String property, String value);
 
-    String getEnv(String key, String defaultValue, boolean inherit);
 
     String getLocation();
 
-    File getLocationFolder();
+    String getComponentsLocation();
 
-    NutsRepositoryConfig getConfig();
+    String getLocationFolder();
+
+    void removeUser(String userId);
+
+    void setUser(NutsUserConfig user);
+
+    NutsUserConfig getUser(String userId);
+
+    NutsUserConfig[] getUsers();
+
+//    NutsRepositoryConfig getConfig();
+
+    void removeMirror(String repositoryId);
+
+
+    void addMirror(NutsRepositoryLocation c);
+
+
+    NutsRepositoryLocation getMirror(String id);
+
+
+    NutsRepositoryLocation[] getMirrors();
+
+    boolean save();
+
+    Properties getEnv(boolean inherit);
+
+    String getEnv(String key, String defaultValue, boolean inherit);
 }

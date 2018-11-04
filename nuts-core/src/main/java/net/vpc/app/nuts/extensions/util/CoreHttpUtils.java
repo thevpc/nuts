@@ -39,6 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import net.vpc.app.nuts.NutsIOException;
+import net.vpc.common.util.ListMap;
 
 /**
  * Created by vpc on 5/16/17.
@@ -271,7 +272,7 @@ public class CoreHttpUtils {
 
     public static NutsHttpConnectionFacade getHttpClientFacade(NutsWorkspace ws, String url) throws IOException {
 //        System.out.println("getHttpClientFacade "+url);
-        NutsTransportComponent best = ws.getExtensionManager().getFactory().createSupported(NutsTransportComponent.class, url);
+        NutsTransportComponent best = ws.getExtensionManager().createSupported(NutsTransportComponent.class, url);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }

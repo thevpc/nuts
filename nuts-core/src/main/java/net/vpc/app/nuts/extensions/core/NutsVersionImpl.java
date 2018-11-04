@@ -40,7 +40,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
  * Created by vpc on 1/15/17.
  */
 public class NutsVersionImpl implements NutsVersion {
-
+    private static final long serialVersionUID=1l;
     private final String value;
 
     @Override

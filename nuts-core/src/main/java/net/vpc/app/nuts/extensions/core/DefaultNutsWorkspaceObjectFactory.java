@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,15 +29,16 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import java.io.InputStream;
 import java.lang.reflect.Proxy;
+
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.ListMap;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
+import net.vpc.common.util.ListMap;
 
 /**
  * Created by vpc on 1/5/17.
@@ -49,6 +50,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
     private final ListMap<Class, Class> classes = new ListMap<>();
     private final ListMap<Class, Object> instances = new ListMap<>();
     private final Map<Class, Object> singletons = new HashMap<>();
+    private final Map<ClassLoader, List<Class>> discoveredCache = new HashMap<>();
 
     public DefaultNutsWorkspaceObjectFactory() {
         initialize();
@@ -60,7 +62,12 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
 
     @Override
     public List<Class> discoverTypes(Class type, ClassLoader bootClassLoader) {
-        List<Class> types = CorePlatformUtils.loadServiceClasses(NutsComponent.class, bootClassLoader);
+        List<Class> types = discoveredCache.get(bootClassLoader);
+        if (types == null) {
+            types = CorePlatformUtils.loadServiceClasses(NutsComponent.class, bootClassLoader);
+            discoveredCache.put(bootClassLoader, types);
+        }
+
         List<Class> valid = new ArrayList<>();
         for (Class t : types) {
             if (type.isAssignableFrom(t)) {
@@ -175,7 +182,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
             return (T) ((NutsWorkspaceImpl) theInstance).self();
         } else if (NutsRepository.class.isAssignableFrom(t)) {
             return (T) Proxy.newProxyInstance(t.getClassLoader(), new Class[]{
-                NutsRepository.class
+                    NutsRepository.class
             }, NutsEnvironmentContext.createHandler((NutsRepository) theInstance));
         } else {
             return theInstance;
@@ -380,7 +387,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
     @Override
     public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria) {
         List<T> list = createAll(type);
-        for (Iterator<T> iterator = list.iterator(); iterator.hasNext();) {
+        for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
             T t = iterator.next();
             int supportLevel = t.getSupportLevel(supportCriteria);
             if (supportLevel <= 0) {
@@ -394,6 +401,6 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
     public int getSupportLevel(NutsWorkspaceObjectFactory criteria) {
         return DEFAULT_SUPPORT;
     }
-    
+
 
 }

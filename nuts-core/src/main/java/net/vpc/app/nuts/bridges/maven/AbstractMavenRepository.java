@@ -32,6 +32,8 @@ package net.vpc.app.nuts.bridges.maven;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.io.URLUtils;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -44,7 +46,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     private static final Logger log = Logger.getLogger(AbstractMavenRepository.class.getName());
 
-    public AbstractMavenRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, File root, int slowness) {
+    public AbstractMavenRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, String root, int slowness) {
         super(config, workspace, parentRepository, root, slowness);
         extensions.put("src", "-src.zip");
         extensions.put("pom", ".pom");
@@ -54,20 +56,24 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
-        if (CoreIOUtils.isRemoteURL(url)) {
-            String message = CoreIOUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
-            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+        if (URLUtils.isRemoteURL(url)) {
+            String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
+            if(log.isLoggable(Level.FINEST)) {
+                log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+            }
         }
         return openStream(url, id.setFace(face), session);
     }
 
     protected String getStreamAsString(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
-        if (CoreIOUtils.isRemoteURL(url)) {
-            String message = CoreIOUtils.isRemoteURL(url) ? "downloading maven" : "open local file";
-            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+        if (URLUtils.isRemoteURL(url)) {
+            String message = URLUtils.isRemoteURL(url) ? "downloading maven" : "open local file";
+            if(log.isLoggable(Level.FINEST)) {
+                log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+            }
         }
-        return CoreIOUtils.readStreamAsString(openStream(url, id.setFace(face), session), true);
+        return IOUtils.readStreamAsString(openStream(url, id.setFace(face), session), true);
     }
 
     protected void checkSHA1Hash(NutsId id, String extension, String face, InputStream stream, NutsSession session) throws IOException {
@@ -105,7 +111,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, File file, boolean force, NutsSession context) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession context) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -122,7 +128,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             byte[] bytes = null;
             try {
                 stream = getStream(id, ".pom", CoreNutsUtils.FACE_PACKAGE_HASH, session);
-                bytes = CoreIOUtils.readStreamAsBytes(stream, true);
+                bytes = IOUtils.readStreamAsBytes(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
                 if (stream != null) {
@@ -142,14 +148,14 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected File copyToImpl(NutsId id, NutsSession session, File localPath) {
+    protected String copyToImpl(NutsId id, String localPath, NutsSession session) {
         try {
             NutsDescriptor d = getWorkspace().fetchDescriptor(id.toString(), true, session);
             String ext = resolveExtension(d);
-            if (localPath.isDirectory()) {
-                localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext));
+            if (new File(localPath).isDirectory()) {
+                localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext)).getPath();
             }
-            CoreIOUtils.copy(getStream(id, ext, CoreNutsUtils.FACE_PACKAGE, session), localPath, true, true);
+            IOUtils.copy(getStream(id, ext, CoreNutsUtils.FACE_PACKAGE, session), new File(localPath), true, true);
             checkSHA1Hash(id, ext, CoreNutsUtils.FACE_PACKAGE_HASH, new FileInputStream(localPath), session);
             return localPath;
         } catch (NutsIOException ex) {
@@ -184,12 +190,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public File copyDescriptorToImpl(NutsId id, NutsSession session, File localPath) {
+    public String copyDescriptorToImpl(NutsId id, String localPath, NutsSession session) {
         NutsDescriptor nutsDescriptor = fetchDescriptor(id, session);
-        if (localPath.isDirectory()) {
-            localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom"));
+        if (new File(localPath).isDirectory()) {
+            localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom")).getPath();
         }
-        nutsDescriptor.write(localPath);
+        nutsDescriptor.write(new File(localPath));
         return localPath;
     }
 

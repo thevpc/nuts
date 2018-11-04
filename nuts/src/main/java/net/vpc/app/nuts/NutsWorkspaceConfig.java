@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,61 +29,147 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Properties;
+import java.io.Serializable;
+import java.util.*;
 
-public interface NutsWorkspaceConfig {
+public class NutsWorkspaceConfig implements Serializable {
 
-    long getInstanceSerialVersionUID();
+    private static final long serialVersionUID = 1;
+    private boolean secure = false;
+    private String workspace = null;
+    private String componentsLocation = null;
+    private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
+    private List<NutsId> extensions = new ArrayList<>();
+    private Properties env = new Properties();
+    private final Map<String, NutsUserConfig> security = new HashMap<>();
+    private String[] imports = new String[0];
 
-    void setInstanceSerialVersionUID(long instanceSerialVersionUID);
+    public NutsWorkspaceConfig() {
+    }
 
-    String getWorkspace();
+    public NutsWorkspaceConfig(NutsWorkspaceConfig other) {
+        this.secure = other.isSecure();
+        this.workspace = other.getWorkspace();
+        this.componentsLocation = other.getComponentsLocation();
+        for (NutsRepositoryLocation repository : other.getRepositories()) {
+            this.repositories.put(repository.getId(), repository);
+        }
+        for (NutsUserConfig repository : other.getSecurity()) {
+            this.security.put(repository.getUser(), repository);
+        }
+        this.extensions.addAll(Arrays.asList(other.getExtensions()));
+        this.env.putAll(other.getEnv());
+        this.imports = other.getImports();
+    }
 
-    void setWorkspace(String workspace);
+    public String getComponentsLocation() {
+        return componentsLocation;
+    }
 
-    NutsRepositoryLocation[] getRepositories();
+    public void setComponentsLocation(String componentsLocation) {
+        this.componentsLocation = componentsLocation;
+    }
 
-    void setRepositories(NutsRepositoryLocation[] repositories);
+    public String getWorkspace() {
+        return workspace;
+    }
 
-    void setImports(String[] imports);
 
-    String[] getImports();
+    public void setWorkspace(String workspace) {
+        this.workspace = workspace;
+    }
 
-    NutsRepositoryLocation getRepository(String repositoryId);
 
-    void addRepository(NutsRepositoryLocation repository);
+    public NutsRepositoryLocation[] getRepositories() {
+        return repositories.values().toArray(new NutsRepositoryLocation[repositories.size()]);
+    }
 
-    void removeRepository(String repositoryId);
 
-    boolean addExtension(NutsId extensionId);
+    public String[] getImports() {
+        return imports;
+    }
 
-    void addExtension(String extensionId);
 
-    boolean removeExtension(NutsId extensionId);
+    public void setImports(String[] imports) {
+        this.imports = imports;
+    }
 
-    String[] getExtensions();
 
-    void setExtensions(String[] extensions);
+    public NutsRepositoryLocation getRepository(String repositoryId) {
+        return this.repositories.get(repositoryId);
+    }
 
-    Properties getEnv();
 
-    void setEnv(Properties env);
+    public void addRepository(NutsRepositoryLocation repository) {
+        this.repositories.put(repository.getId(), repository);
+    }
 
-    void setEnv(String property, String value);
 
-    String getEnv(String property, String defaultValue);
+    public void removeRepository(String repositoryId) {
+        this.repositories.remove(repositoryId);
+    }
 
-    void removeSecurity(String securityId);
 
-    void setSecurity(NutsSecurityEntityConfig securityEntityConfig);
+    public boolean containsRepository(String repositoryId) {
+        return repositories.containsKey(repositoryId);
+    }
 
-    NutsSecurityEntityConfig getSecurity(String id);
 
-    NutsSecurityEntityConfig[] getSecurity();
+    public void addExtension(NutsId extensionId) {
+        this.extensions.add(extensionId);
+    }
 
-    void setSecurity(NutsSecurityEntityConfig[] securityEntityConfigs);
 
-    boolean isSecure();
+    public void removeExtension(NutsId extensionId) {
+        extensions.remove(extensionId);
+    }
 
-    void setSecure(boolean secure);
+
+    public NutsId[] getExtensions() {
+        return extensions.toArray(new NutsId[extensions.size()]);
+    }
+
+
+    public Properties getEnv() {
+        return env;
+    }
+
+
+    public void setEnv(Properties env) {
+        this.env = env;
+    }
+
+
+    public void removeSecurity(String securityId) {
+        security.remove(securityId);
+    }
+
+
+    public void setSecurity(NutsUserConfig securityEntityConfig) {
+        if (securityEntityConfig != null) {
+            security.put(securityEntityConfig.getUser(), securityEntityConfig);
+        }
+    }
+
+
+    public NutsUserConfig getSecurity(String id) {
+        return security.get(id);
+    }
+
+
+    public NutsUserConfig[] getSecurity() {
+        return security.values().toArray(new NutsUserConfig[security.size()]);
+    }
+
+
+    public boolean isSecure() {
+        return secure;
+    }
+
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+
 }

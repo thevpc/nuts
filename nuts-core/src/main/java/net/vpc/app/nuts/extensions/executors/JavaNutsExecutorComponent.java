@@ -32,6 +32,7 @@ package net.vpc.app.nuts.extensions.executors;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.io.FileUtils;
 
 import java.io.File;
 import java.util.*;
@@ -153,7 +154,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 final List<NutsId> all = executionContext.getWorkspace().find(ns, executionContext.getSession());
                 for (NutsId nutsId : all) {
                     NutsFile f = executionContext.getWorkspace().fetch(nutsId.toString(), executionContext.getSession());
-                    classPath.add(f.getFile().getPath());
+                    classPath.add(f.getFile());
                 }
             } else if (k.equals("-main-class")) {
                 mainClass = value;
@@ -194,34 +195,42 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         List<String> args = new ArrayList<String>();
         args.add(javaHome);
         args.addAll(jvmArgs);
-        if (mainClass == null) {
-            File file = nutMainFile.getFile();
-            if (file != null) {
-                List<String> classes = CorePlatformUtils.resolveMainClasses(file);
-                mainClass = CoreStringUtils.join(":", classes);
-            }
-        }
 
         if (jar) {
             if (mainClass != null) {
-                executionContext.getTerminal().getErr().printf("Ignored main-class=%s. running jar!\n", mainClass);
+                executionContext.getTerminal().getFormattedErr().printf("Ignored main-class=%s. running jar!\n", mainClass);
             }
             if (!classPath.isEmpty()) {
-                executionContext.getTerminal().getErr().printf("Ignored class-path=%s. running jar!\n", classPath);
+                executionContext.getTerminal().getFormattedErr().printf("Ignored class-path=%s. running jar!\n", classPath);
             }
             args.add("-jar");
-            args.add(nutMainFile.getFile().getPath());
+            args.add(nutMainFile.getFile());
         } else {
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                File file = CoreIOUtils.fileByPath(nutMainFile.getFile());
+                if (file != null) {
+                    //check manifest!
+                    String mainClassFromManifest = CorePlatformUtils.getMainClass(file);
+                    if(mainClassFromManifest!=null){
+                        mainClass = mainClassFromManifest;
+                    }else {
+                        List<String> classes = CorePlatformUtils.resolveMainClasses(file);
+                        if(classes.size()>0) {
+                            mainClass = CoreStringUtils.join(":", classes);
+                        }
+                    }
+                }
+            }
+            if (mainClass == null) {
+                throw new NutsIllegalArgumentException("Missing Main Class for " + nutMainFile.getId());
             }
             args.add("-classpath");
             StringBuilder sb = new StringBuilder();
-            sb.append(nutMainFile.getFile().getPath());
+            sb.append(nutMainFile.getFile());
             for (NutsFile nutsFile : nutsFiles) {
                 if (nutsFile.getFile() != null) {
                     sb.append(File.pathSeparatorChar);
-                    sb.append(nutsFile.getFile().getPath());
+                    sb.append(nutsFile.getFile());
                 }
             }
             for (String cp : classPath) {
@@ -239,9 +248,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         break;
                     default:
                         while (true) {
-                            executionContext.getTerminal().getOut().printf("Multiple runnable classes detected  - actually [[%s]] . Select one :\n", possibleClasses.size());
+                            NutsPrintStream out = executionContext.getTerminal().getFormattedOut();
+                            out.printf("Multiple runnable classes detected  - actually [[%s]] . Select one :\n", possibleClasses.size());
                             for (int i = 0; i < possibleClasses.size(); i++) {
-                                executionContext.getTerminal().getOut().printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
+                                out.printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
                             }
                             String line = executionContext.getTerminal().readLine("Enter class # or name to run it. Type 'cancel' to cancel : ");
                             if (line != null) {
@@ -272,9 +282,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         args.addAll(app);
 
+        File directory = CoreStringUtils.isEmpty(executionContext.getCwd()) ? null :
+                new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 args.toArray(new String[args.size()]),
-                null, null, executionContext.getTerminal(), showCommand
+                null, directory
+                , executionContext.getTerminal(), showCommand
         );
 
     }

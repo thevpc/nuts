@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import javax.security.auth.callback.CallbackHandler;
-
 /**
  *
  * @author vpc
@@ -57,8 +55,8 @@ public interface NutsRepositorySecurityManager {
 
     void setUserCredentials(String login, String password, String oldPassword);
 
-    NutsUserInfo[] findUsers();
+    NutsEffectiveUser[] findUsers();
 
-    NutsUserInfo findUser(String username);
+    NutsEffectiveUser getEffectiveUser(String username);
 
 }

@@ -32,6 +32,8 @@ package net.vpc.app.nuts.extensions.executors;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.io.FileUtils;
 
 import java.io.File;
 import java.util.*;
@@ -57,7 +59,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
     public int exec(NutsExecutionContext executionContext) {
         NutsFile nutMainFile = executionContext.getNutsFile();
-        File storeFolder = nutMainFile.getInstallFolder();
+        String storeFolder = nutMainFile.getInstallFolder();
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
         String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
 
@@ -77,12 +79,12 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(envAndApp[1]));
 
         Map<String, String> envMap = new HashMap<>();
-        File dir = null;
+        File directory  = null;
         boolean showCommand = false;
         for (Iterator<String> iterator = env.iterator(); iterator.hasNext();) {
             String e = iterator.next();
             if (e.startsWith("-dir=")) {
-                dir = new File(e.substring(("-dir=").length()));
+                directory  =new File(executionContext.getWorkspace().resolvePath(e.substring(("-dir=").length())));
                 iterator.remove();
             } else if (e.startsWith("-env-")) {
                 String nv = e.substring("-env-".length());
@@ -98,9 +100,13 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 showCommand = true;
             }
         }
+        if(directory==null) {
+            directory = CoreStringUtils.isEmpty(executionContext.getCwd()) ? null :
+                    new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
+        }
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 app.toArray(new String[app.size()]),
-                envMap, dir, executionContext.getTerminal(), showCommand
+                envMap, directory, executionContext.getTerminal(), showCommand
         );
     }
 }

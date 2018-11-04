@@ -48,7 +48,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     protected String nutsPath;
     protected String workspaceLocation;
     protected String workspaceRuntimeId;
-    protected String workspaceRoot;
+    protected String home;
     protected String workspaceBootURL;
     protected String workspaceExcludedRepositories;
     protected String workspaceExcludedExtensions;
@@ -132,7 +132,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    nutsClassLoader = resolveNutsWorkspace().getExtensionManager().getFactory().createClassLoader(pathList, null, null);
+                    nutsClassLoader = resolveNutsWorkspace().getExtensionManager().createClassLoader(pathList, null, null);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();
@@ -146,20 +146,21 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 
     public synchronized NutsWorkspace resolveNutsWorkspace() {
         if (nutsWorkspace == null) {
-            NutsBootWorkspace bws = Nuts.openBootWorkspace(
-                    new NutsBootOptions()
-                            .setRoot(getWorkspaceRoot())
-                            .setRuntimeId(getWorkspaceRuntimeId())
-                            .setRuntimeSourceURL(getRuntimeSourceURL())
-                            .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent())));
-            nutsWorkspace = bws.openWorkspace(getWorkspaceLocation(),
+            nutsWorkspace =
+                    Nuts.openWorkspace(getWorkspaceLocation(),
                     new NutsWorkspaceCreateOptions()
                             .setArchetype(getWorkspaceArchetype())
                             .setCreateIfNotFound(true)
                             .setSaveIfCreated(true)
                             .setExcludedRepositories(new HashSet<>(Arrays.asList(splitString(getWorkspaceExcludedRepositories(), ";"))))
                             .setExcludedExtensions(new HashSet<>(Arrays.asList(splitString(getWorkspaceExcludedExtensions(), " ;"))))
-            );
+                            ,
+                            new NutsBootOptions()
+                                    .setHome(getHome())
+                                    .setRuntimeId(getWorkspaceRuntimeId())
+                                    .setRuntimeSourceURL(getRuntimeSourceURL())
+                                    .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent()))
+                    );
         }
         return nutsWorkspace;
     }
@@ -375,12 +376,12 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         this.workspaceBootURL = workspaceBootURL;
     }
 
-    public String getWorkspaceRoot() {
-        return workspaceRoot;
+    public String getHome() {
+        return home;
     }
 
-    public void setWorkspaceRoot(String workspaceRoot) {
-        this.workspaceRoot = workspaceRoot;
+    public void setHome(String home) {
+        this.home = home;
     }
 
     public String getWorkspaceExcludedRepositories() {

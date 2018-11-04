@@ -32,8 +32,6 @@ package net.vpc.app.nuts.extensions.repos;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import java.io.File;
-
 /**
  * Created by vpc on 1/15/17.
  */
@@ -56,7 +54,7 @@ public class DefaultNutsRemoteRepositoryFactoryComponent implements NutsReposito
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot) {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         if (NutsConstants.DEFAULT_REPOSITORY_TYPE.equals(repositoryType)) {
             if (location.startsWith("http://") || location.startsWith("https://")) {
                 return (new NutsRemoteHttpRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));
@@ -66,7 +64,7 @@ public class DefaultNutsRemoteRepositoryFactoryComponent implements NutsReposito
     }
 
     @Override
-    public NutsRepositoryDefinition[] getDefaultRepositories() {
+    public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return new NutsRepositoryDefinition[0];
     }
 }

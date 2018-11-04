@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -34,6 +34,7 @@ import net.vpc.app.nuts.extensions.filters.version.AllNutsVersionFilter;
 import net.vpc.app.nuts.extensions.filters.version.DefaultNutsVersionFilter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,33 +51,45 @@ public class CoreVersionUtils {
     }
 
     public static String incVersion(String oldVersion) {
-        if (CoreStringUtils.isEmpty(oldVersion)) {
-            return "1";
+        return incVersion(oldVersion, -1);
+    }
+
+//    public static void main(String[] args) {
+//        System.out.println(splitVersionParts2("3-3.SNAPSHOT"));
+//        System.out.println(incVersion("3-3.SNAPSHOT",1));
+//    }
+
+//    public static String incVersionPart(String part) {
+//        Matcher m = Pattern.compile("^(<C>.+)(?<N>[0-9]+)$").matcher(part);
+//        if (m.find()) {
+//            return m.group("C") + String.valueOf(Long.parseLong(m.group("N")) + 1);
+//        }
+//        m = Pattern.compile("^(?<N>[0-9]+)(?<C>.+)$").matcher(part);
+//        if (m.find()) {
+//            return m.group("C") + String.valueOf(Long.parseLong(m.group("N")) + 1);
+//        }
+//        m = Pattern.compile("^(?<C1>.+)(?<N>[0-9]+)(?<C2>.+)$").matcher(part);
+//        if (m.find()) {
+//            return m.group("C1") + String.valueOf(Long.parseLong(m.group("N")) + 1) + m.group("C2");
+//        }
+//        if (CoreStringUtils.isLong(part)) {
+//            return String.valueOf(Long.parseLong(part) + 1L);
+//        }
+//        return part + 1;
+//    }
+
+    public static String incVersion(String oldVersion, int level) {
+        VersionParts parts = splitVersionParts2(oldVersion);
+        int digitCount = parts.getDigitCount();
+        if (level <= 0) {
+            level = digitCount;
         }
-        int t = oldVersion.lastIndexOf('.');
-        if (t >= 0) {
-            String a = oldVersion.substring(0, t);
-            String b = oldVersion.substring(t + 1);
-            if (CoreStringUtils.isLong(b)) {
-                return a + "." + (Long.parseLong(b) + 1L);
-            } else {
-                Matcher m = Pattern.compile("^(<C>.+)(?<N>[0-9]+)$").matcher(b);
-                if (m.find()) {
-                    return a + "." + m.group("C") + String.valueOf(Long.parseLong(m.group("N")) + 1);
-                }
-                m = Pattern.compile("^(?<N>[0-9]+)(?<C>.+)$").matcher(b);
-                if (m.find()) {
-                    return a + "." + m.group("C") + String.valueOf(Long.parseLong(m.group("N")) + 1);
-                }
-                m = Pattern.compile("^(?<C1>.+)(?<N>[0-9]+)(?<C2>.+)$").matcher(b);
-                if (m.find()) {
-                    return a + "." + m.group("C1") + String.valueOf(Long.parseLong(m.group("N")) + 1) + m.group("C2");
-                }
-                return oldVersion + "." + 1;
-            }
-        } else {
-            return oldVersion + "." + 1;
+        for (int i = digitCount; i < level; i++) {
+            parts.addDigit(0,".");
         }
+        VersionPart digit = parts.getDigit(level);
+        digit.string=String.valueOf(Long.parseLong(digit.string)+1);
+        return parts.toString();
     }
 
     public static int compareVersions(String v1, String v2) {
@@ -96,13 +109,13 @@ public class CoreVersionUtils {
         String[] v2arr = splitVersionParts(v2);
         for (int i = 0; i < Math.max(v1arr.length, v2arr.length); i++) {
             if (i >= v1arr.length) {
-                if(v2arr[i].equalsIgnoreCase("SNAPSHOT")){
+                if (v2arr[i].equalsIgnoreCase("SNAPSHOT")) {
                     return 1;
                 }
                 return -1;
             }
             if (i >= v2arr.length) {
-                if(v1arr[i].equalsIgnoreCase("SNAPSHOT")){
+                if (v1arr[i].equalsIgnoreCase("SNAPSHOT")) {
                     return -1;
                 }
                 return 1;
@@ -113,6 +126,107 @@ public class CoreVersionUtils {
             }
         }
         return 0;
+    }
+
+    private static class VersionPart {
+        String string;
+        boolean digit;
+
+        public VersionPart(String string, boolean digit) {
+            this.string = string;
+            this.digit = digit;
+        }
+
+        @Override
+        public String toString() {
+            String name=digit?"digit":"sep";
+            return name + "(" + string + ")";
+        }
+    }
+
+    private static class VersionParts {
+        List<VersionPart> all;
+
+        public VersionParts(List<VersionPart> all) {
+            this.all = all;
+        }
+
+        public int getDigitCount(){
+            int c=0;
+            for (VersionPart s : all) {
+                if(s.digit){
+                    c++;
+                }
+            }
+            return c;
+        }
+
+        public VersionPart getDigit(int index){
+            int c=0;
+            for (VersionPart s : all) {
+                if(s.digit){
+                    c++;
+                    if(c==index){
+                        return s;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void addDigit(long val,String sep){
+            if(all.size()==0){
+                all.add(new VersionPart(String.valueOf(val),true));
+            }else if(all.get(all.size()-1).digit){
+                all.add(new VersionPart(sep,false));
+                all.add(new VersionPart(String.valueOf(val),true));
+            }else{
+                all.add(new VersionPart(String.valueOf(val),true));
+            }
+        }
+
+        public String toString(){
+            StringBuilder sb=new StringBuilder();
+            for (VersionPart versionPart : all) {
+                sb.append(versionPart.string);
+            }
+            return sb.toString();
+        }
+    }
+    private static VersionParts splitVersionParts2(String v1) {
+        v1 = CoreStringUtils.trim(v1);
+        List<VersionPart> parts = new ArrayList<>();
+        StringBuilder last = new StringBuilder();
+        boolean digit = false;
+        for (char c : v1.toCharArray()) {
+            if (Character.isDigit(c)) {
+                if (last.length() == 0 || digit) {
+                    digit = true;
+                    last.append(c);
+                } else {
+                    parts.add(new VersionPart(last.toString(), false));
+                    CoreStringUtils.clear(last);
+                    digit = true;
+                    last.append(c);
+                }
+            } else {
+                if (last.length() == 0) {
+                    digit = false;
+                    last.append(c);
+                } else if(!digit){
+                    last.append(c);
+                } else {
+                    parts.add(new VersionPart(last.toString(), true));
+                    CoreStringUtils.clear(last);
+                    digit = false;
+                    last.append(c);
+                }
+            }
+        }
+        if (last.length() > 0) {
+            parts.add(new VersionPart(last.toString(), digit));
+        }
+        return new VersionParts(parts);
     }
 
     private static String[] splitVersionParts(String v1) {
@@ -159,7 +273,7 @@ public class CoreVersionUtils {
         if (CoreStringUtils.isEmpty(pattern)) {
             return false;
         }
-        if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",")) {
+        if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",") || pattern.contains("*")) {
             return false;
         } else {
             return !"LATEST".equals(pattern);

@@ -33,8 +33,10 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +47,8 @@ import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 /**
  * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
  */
-public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
+public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter,Serializable {
+    private static final long serialVersionUID=1l;
 
     public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]])(?<LV1>[^\\[\\],]*),(?<RV1>[^\\[\\],]*)(?<R1>[\\[\\]]))|(?<VAL2>(?<L2>[\\[\\]])(?<V2>[^\\[\\],]*)(?<R2>[\\[\\]]))|(?<VAL3>(?<V3>[^\\[\\], ]+)))(\\s|,|\n)*)");
     private List<NutsVersionInterval> intervals = new ArrayList<>();
@@ -95,7 +98,14 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
                     d.add(new NutsVersionInterval(false, true, val, null));
                 }
             } else {
-                d.add(new NutsVersionInterval(true, true, y.group("V3"), y.group("V3")));
+                String v3 = y.group("V3");
+                if(v3.endsWith("*")){
+                    String min = v3.substring(0, v3.length() - 1);
+                    String max = CoreVersionUtils.incVersion(min,-1);
+                    d.add(new NutsVersionInterval(true, false, min, max));
+                }else {
+                    d.add(new NutsVersionInterval(true, true, v3, v3));
+                }
             }
         }
 

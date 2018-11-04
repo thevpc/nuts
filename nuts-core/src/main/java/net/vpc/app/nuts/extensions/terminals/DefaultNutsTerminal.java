@@ -37,7 +37,7 @@ import java.io.*;
 /**
  * Created by vpc on 2/20/17.
  */
-public class DefaultNutsTerminal implements NutsTerminal {
+public class DefaultNutsTerminal extends AbstractNutsTerminal {
 
     private BufferedReader reader;
     private InputStream in;
@@ -54,19 +54,14 @@ public class DefaultNutsTerminal implements NutsTerminal {
     @Override
     public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
         this.in = in == null ? System.in : in;
-        this.out = out == null ? (workspace == null ? new DefaultNutsPrintStream(System.out) : workspace.getExtensionManager().getFactory().createPrintStream(System.out)) : out;
-        this.err = err == null ? (workspace == null ? new DefaultNutsPrintStream(System.err) : workspace.getExtensionManager().getFactory().createPrintStream(System.err)) : err;
+        this.out = out == null ? (workspace == null ? new NutsNonFormattedPrintStream(System.out) : workspace.getExtensionManager().createPrintStream(System.out,true)) : out;
+        this.err = err == null ? (workspace == null ? new NutsNonFormattedPrintStream(System.err) : workspace.getExtensionManager().createPrintStream(System.err,true)) : err;
         reader = new BufferedReader(new InputStreamReader(this.in));
     }
 
     @Override
     public int getSupportLevel(Object criteria) {
         return DEFAULT_SUPPORT;
-    }
-
-    @Override
-    public void setCommandContext(NutsCommandContext context) {
-
     }
 
     @Override
@@ -105,6 +100,24 @@ public class DefaultNutsTerminal implements NutsTerminal {
             return inReplace;
         }
         return in;
+    }
+
+    @Override
+    public NutsFormattedPrintStream getFormattedOut() {
+        NutsPrintStream o = getOut();
+        if(o instanceof NutsFormattedPrintStream){
+            return (NutsFormattedPrintStream) o;
+        }
+        return new NutsDefaultFormattedPrintStream(o);
+    }
+
+    @Override
+    public NutsFormattedPrintStream getFormattedErr() {
+        NutsPrintStream o = getErr();
+        if(o instanceof NutsFormattedPrintStream){
+            return (NutsFormattedPrintStream) o;
+        }
+        return new NutsDefaultFormattedPrintStream(o);
     }
 
     @Override

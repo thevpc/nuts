@@ -5,7 +5,7 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-tomcat-classloader</artifactId>
     <name>net.vpc.app.nuts.nuts-tomcat-classloader</name>
-    <version>n.0.4.2.0.t.8.0.21</version>
+    <version>n.0.4.3.0.t.8.0.21</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -62,9 +62,9 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>net.vpc.app</groupId>
+            <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.4.2</version>
+            <version>0.4.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
@@ -83,25 +83,6 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.vpc.common.maven</groupId>
-                <artifactId>writer-maven-plugin</artifactId>
-                <version>1.0.4</version>
-                <configuration>
-                    <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties</outputFile>
-                    <text>
-                        out.printProjectProperties();
-                        out.printlnf("project.repositories=%s","~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
-                    </text>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>write-bsh</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

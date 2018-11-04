@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.filters.dependency.OptionalNutsDependencyFilter;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPackaging;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyFilterAnd;
@@ -48,7 +49,6 @@ import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
 import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
 
-import javax.json.*;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
@@ -57,6 +57,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterArch;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterById;
@@ -65,11 +66,14 @@ import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOsdist
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPlatform;
 import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.extensions.filters.repository.ExprNutsRepositoryFilter;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.util.Filter;
 
 /**
  * Created by vpc on 5/16/17.
  */
 public class CoreNutsUtils {
+    private static final Logger log = Logger.getLogger(CoreNutsUtils.class.getName());
 //        if (source instanceof NutsId) {
 //            NutsId d = (NutsId) source;
 //            if ("maven-metadata".equals(d.getFace())) {
@@ -178,6 +182,43 @@ public class CoreNutsUtils {
         }
     };
 
+
+    public static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("namespace", "group", "name", "version", "param='true'");
+
+    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR =
+            new DefaultNutsDescriptorBuilder()
+                    .setId(new NutsIdImpl(null, "group", "name", "version", (String) null))
+                    .setFace("face")
+                    .setName("Application Full Name")
+                    .setDescription("Application Description")
+                    .setExecutable(true)
+                    .setPackaging("jar")
+                    .setExt("exe")
+                    .setArch(new String[]{"64bit"})
+                    .setOs(new String[]{"linux#4.6"})
+                    .setOsdist(new String[]{"opensuse#42"})
+                    .setPlatform(new String[]{"java#8"})
+                    .setExecutor(new NutsExecutorDescriptor(
+                            new NutsIdImpl(null, null, "java", "8", (String) null),
+                            new String[]{"-jar"}
+                    ))
+                    .setInstaller(new NutsExecutorDescriptor(
+                            new NutsIdImpl(null, null, "java", "8", (String) null),
+                            new String[]{"-jar"}
+                    ))
+                    .setLocations(new String[]{
+                            "http://server/somelink"
+                    })
+                    .setDependencies(
+                            new NutsDependency[]{
+                                    new NutsDependencyImpl(
+                                            "namespace", "group", "name", "version", "param='true'",
+                                            "compile", new NutsId[0]
+                                    )
+                            }
+                    )
+                    .build();
+
     public static NutsId finNutsIdByFullName(NutsId id, Collection<NutsId> all) {
         if (all != null) {
             for (NutsId nutsId : all) {
@@ -260,8 +301,8 @@ public class CoreNutsUtils {
         int i = arg.indexOf('=');
         if (i >= 0) {
             return new String[]{
-                i == 0 ? "" : arg.substring(0, i),
-                i == arg.length() - 1 ? "" : arg.substring(i + 1),};
+                    i == 0 ? "" : arg.substring(0, i),
+                    i == arg.length() - 1 ? "" : arg.substring(i + 1),};
         }
         return null;
     }
@@ -287,43 +328,12 @@ public class CoreNutsUtils {
             }
         }
         return new String[][]{
-            env.toArray(new String[env.size()]),
-            app.toArray(new String[app.size()]),};
+                env.toArray(new String[env.size()]),
+                app.toArray(new String[app.size()]),};
     }
 
     public static NutsDescriptor createNutsDescriptor() {
-        return createNutsDescriptor(
-                parseNutsId("my-group:my-id#1.0"),
-                null,
-                null,
-                null,
-                false,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
-    public static NutsDescriptor createNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext, NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description, String[] arch, String[] os, String[] osdist, String[] platform, NutsDependency[] dependencies, Map<String, String> properties) {
-        return new DefaultNutsDescriptor(
-                id, face, parents, packaging, executable, ext, executor, installer, name, description, arch, os, osdist, platform, dependencies, properties
-        );
-    }
-
-    public static NutsDescriptor createNutsDescriptor(NutsDescriptor other) {
-        return createNutsDescriptor(
-                other.getId(), other.getFace(), other.getParents(), other.getPackaging(), other.isExecutable(),
-                other.getExt(), other.getExecutor(), other.getInstaller(), other.getName(), other.getDescription(),
-                other.getArch(), other.getOs(), other.getOsdist(), other.getPlatform(), other.getDependencies(), other.getProperties()
-        );
+        return new DefaultNutsDescriptorBuilder().setId(parseNutsId("my-group:my-id#1.0")).build();
     }
 
     /**
@@ -371,6 +381,19 @@ public class CoreNutsUtils {
         return null;
     }
 
+    public static NutsId finNutsIdByFullNameInIds(NutsId id, Collection<NutsId> all) {
+        if (all != null) {
+            for (NutsId nutsId : all) {
+                if (nutsId != null) {
+                    if (nutsId.isSameFullName(id)) {
+                        return nutsId;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static boolean isEffectiveValue(String value) {
         return (!CoreStringUtils.isEmpty(value) && !CoreStringUtils.containsVars(value));
     }
@@ -389,6 +412,11 @@ public class CoreNutsUtils {
         }
     }
 
+    public static void main(String[] args) {
+        NutsDescriptor d = parseOrNullNutsDescriptor(new File("/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts-bootstrap/org/apache/catalina/tomcat/7.0.91/nuts.json"));
+        System.out.println(d);
+    }
+
     public static NutsDescriptor parseOrNullNutsDescriptor(File file) {
         if (!file.exists()) {
             return null;
@@ -396,7 +424,7 @@ public class CoreNutsUtils {
         try {
             return parseNutsDescriptor(new FileInputStream(file), true);
         } catch (Exception ex) {
-            //ignore
+            log.log(Level.SEVERE, "Unable to parse file "+file,ex);
         }
         return null;
     }
@@ -441,78 +469,7 @@ public class CoreNutsUtils {
 
     public static NutsDescriptor parseNutsDescriptor(InputStream in, boolean closeStream) {
         try {
-            JsonObject jsonObject = Json.createReader(in).readObject();
-            String nutsVersion = jsonObject.getString("nuts-version");
-            if ("1.0".equals(nutsVersion)) {
-                NutsId id = CoreNutsUtils.parseOrErrorNutsId(jsonObject.getString("id"));
-                String alt = CoreJsonUtils.get().deserialize(jsonObject.get(NutsConstants.QUERY_FACE), String.class);
-                String packaging = CoreJsonUtils.get().deserialize(jsonObject.get("packaging"), String.class);
-                String ext = CoreJsonUtils.get().deserialize(jsonObject.get("ext"), String.class);
-                String[] parentStrings = CoreJsonUtils.get().deserialize(jsonObject.get("parents"), String[].class);
-                Map<String, String> props = CoreJsonUtils.get().deserializeStringsMap(jsonObject.get("properties"), new HashMap());
-                NutsId[] parents = new NutsId[parentStrings == null ? 0 : parentStrings.length];
-                for (int i = 0; i < parents.length; i++) {
-                    parents[i] = CoreNutsUtils.parseOrErrorNutsId(parentStrings[i]);
-                }
-                String name = CoreJsonUtils.get().deserialize(jsonObject.get("name"), String.class);
-                String description = CoreJsonUtils.get().deserialize(jsonObject.get("description"), String.class);
-                boolean executable = false;
-                if (jsonObject.get("executable") != null) {
-                    executable = (jsonObject.getBoolean("executable"));
-                }
-                NutsExecutorDescriptor executor = null;
-                NutsExecutorDescriptor installer = null;
-                if (!CoreJsonUtils.get().isNull(jsonObject.get("executor"))) {
-                    JsonObject runObj = (JsonObject) jsonObject.get("executor");
-                    NutsId rid = runObj.get("id") == null ? null : CoreNutsUtils.parseOrErrorNutsId(runObj.getString("id"));
-                    String[] rargs = CoreJsonUtils.get().deserialize(runObj.getJsonArray("args"), String[].class);
-                    Properties rprops = CoreJsonUtils.get().deserialize(runObj.getJsonObject("properties"), Properties.class);
-                    executor = new NutsExecutorDescriptor(rid, rargs, rprops);
-                }
-                if (!CoreJsonUtils.get().isNull(jsonObject.get("installer"))) {
-                    JsonObject runObj = (JsonObject) jsonObject.get("installer");
-                    NutsId rid = runObj.get("id") == null ? null : CoreNutsUtils.parseOrErrorNutsId(runObj.getString("id"));
-                    String[] rargs = CoreJsonUtils.get().deserialize(runObj.getJsonArray("args"), String[].class);
-                    Properties rprops = CoreJsonUtils.get().deserialize(runObj.getJsonObject("properties"), Properties.class);
-                    installer = new NutsExecutorDescriptor(rid, rargs, rprops);
-                }
-                List<NutsDependency> deps = new ArrayList<>();
-
-                JsonArray dependencies = CoreJsonUtils.get().isNull(jsonObject.get("dependencies")) ? null : jsonObject.getJsonArray("dependencies");
-                if (dependencies != null) {
-                    for (JsonValue dependency : dependencies) {
-                        NutsDependency depp = parseNutsDependency(((JsonString) dependency).getString());
-                        if (depp == null) {
-                            throw new NutsParseException("Invalid dependency " + dependency);
-                        }
-                        deps.add(depp);
-                    }
-                }
-                String[] os = CoreJsonUtils.get().getJsonObjectStringArray(jsonObject, "os");
-                String[] osdist = CoreJsonUtils.get().getJsonObjectStringArray(jsonObject, "osdist");
-                String[] arch = CoreJsonUtils.get().getJsonObjectStringArray(jsonObject, "arch");
-                String[] platform = CoreJsonUtils.get().getJsonObjectStringArray(jsonObject, "platform");
-
-                return new DefaultNutsDescriptor(
-                        id,
-                        alt,
-                        parents,
-                        packaging,
-                        executable,
-                        ext,
-                        executor,
-                        installer,
-                        name,
-                        description,
-                        arch,
-                        os,
-                        osdist,
-                        platform,
-                        deps.toArray(new NutsDependency[deps.size()]),
-                        props
-                );
-            }
-            throw new NutsParseException("Unsupported version " + nutsVersion);
+            return CoreJsonUtils.get().read(new InputStreamReader(in), NutsDescriptor.class);
         } finally {
             if (closeStream) {
                 try {
@@ -723,9 +680,9 @@ public class CoreNutsUtils {
         return simplify(
                 And(
                         new NutsDescriptorFilterArch(arch),
-                        new NutsDescriptorFilterOs(arch),
-                        new NutsDescriptorFilterOsdist(arch),
-                        new NutsDescriptorFilterPlatform(arch)
+                        new NutsDescriptorFilterOs(os),
+                        new NutsDescriptorFilterOsdist(osdist),
+                        new NutsDescriptorFilterPlatform(platform)
                 )
         );
     }
@@ -850,7 +807,7 @@ public class CoreNutsUtils {
             try {
                 s = cls.getResourceAsStream(resource);
                 if (s != null) {
-                    help = CoreIOUtils.readStreamAsString(s, true);
+                    help = IOUtils.readStreamAsString(s, true);
                 }
             } finally {
                 if (s != null) {
@@ -905,19 +862,13 @@ public class CoreNutsUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static <T> Iterator<T> nullifyIfEmpty(Iterator<T> other) {
-        PushBackIterator<T> b = new PushBackIterator<>(other);
-        if (b.hasNext()) {
-            b.pushBack();
-            return b;
-        } else {
-            return null;
-        }
+    public static String expandPath(String path, NutsWorkspace ws) {
+        return CoreNutsUtils.expandPath(path, ws.getConfigManager().getNutsHomeLocation());
     }
 
-    public static String expandPath(String path,String nutsHome) {
-        if(CoreStringUtils.isEmpty(nutsHome)){
-            nutsHome=NutsConstants.DEFAULT_NUTS_HOME;
+    public static String expandPath(String path, String nutsHome) {
+        if (CoreStringUtils.isEmpty(nutsHome)) {
+            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
         }
         if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
             path = nutsHome + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
@@ -927,5 +878,18 @@ public class CoreNutsUtils {
         }
         return path;
     }
+
+    public static <T> Filter<T> createFilter(ObjectFilter<T> t) {
+        if (t == null) {
+            return null;
+        }
+        return new Filter<T>() {
+            @Override
+            public boolean accept(T value) {
+                return t.accept(value);
+            }
+        };
+    }
+
 
 }

@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -38,6 +38,7 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsParseException;
@@ -318,6 +319,18 @@ public class CoreStringUtils {
         return sb.toString();
     }
 
+    public static String alignRight(String s, int width) {
+        StringBuilder sb = new StringBuilder();
+        if (s != null) {
+            sb.append(s);
+            int x = width - sb.length();
+            if (x > 0) {
+                sb.insert(0, fillString(' ', x));
+            }
+        }
+        return sb.toString();
+    }
+
     public static String join(String sep, Collection<String> items) {
         StringBuilder sb = new StringBuilder();
         Iterator<String> i = items.iterator();
@@ -333,8 +346,8 @@ public class CoreStringUtils {
 
     public static String exceptionToString(Throwable ex) {
         String message = ex.getMessage();
-        if(message==null){
-            message=ex.toString();
+        if (message == null) {
+            message = ex.toString();
         }
         return message;
     }
@@ -716,7 +729,7 @@ public class CoreStringUtils {
         StringBuilder sb = new StringBuilder();
         Matcher m = printfPattern.matcher(format);
         int x = 0;
-        for (int i = 0, len = format.length(); i < len;) {
+        for (int i = 0, len = format.length(); i < len; ) {
             if (m.find(i)) {
                 // Anything between the start of the string and the beginning
                 // of the format specifier is either fixed text or contains
@@ -734,30 +747,6 @@ public class CoreStringUtils {
             }
         }
         return sb.toString();
-
-//        char[] chars = format.toCharArray();
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < chars.length - 2; i++) {
-//            if (chars[i] == '{' && Character.isDigit(chars[i + 1])) {
-//                int j = i + 1;
-//                while (j < chars.length && Character.isDigit(chars[j])) {
-//                    j++;
-//                }
-//                if (j < chars.length && chars[j] == '}') {
-//                    int pos = Integer.parseInt(new String(chars, i + 1, j));
-//                    sb.append("``");
-//                    sb.append(args[pos]);
-//                    sb.append("``");
-//                    i = j;
-//                } else {
-//                    sb.append(chars[i]);
-//
-//                }
-//            } else {
-//                sb.append(chars[i]);
-//            }
-//        }
-//        return sb.toString();
     }
 
 }

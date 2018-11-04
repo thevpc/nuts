@@ -29,25 +29,91 @@
  */
 package net.vpc.app.nuts;
 
-public interface NutsRepositoryLocation {
+import java.io.Serializable;
 
-    long getInstanceSerialVersionUID();
+public class NutsRepositoryLocation implements Serializable{
 
-    void setInstanceSerialVersionUID(long instanceSerialVersionUID);
+    private static final long serialVersionUID = 1;
 
-    boolean isEnabled();
+    private String id;
+    private String type;
+    private String location;
+    private boolean enabled = true;
 
-    void setEnabled(boolean enabled);
+    public NutsRepositoryLocation() {
+    }
 
-    String getId();
+    public NutsRepositoryLocation(NutsRepositoryLocation other) {
+        this.id = other.getId();
+        this.type = other.getType();
+        this.location = other.getLocation();
+        this.enabled = other.isEnabled();
+    }
 
-    NutsRepositoryLocation setId(String id);
+    public NutsRepositoryLocation(String id, String location, String type) {
+        this.id = id;
+        this.type = type;
+        this.location = location;
+    }
 
-    String getType();
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-    void setType(String type);
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-    String getLocation();
+    public String getId() {
+        return id;
+    }
 
-    void setLocation(String location);
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        NutsRepositoryLocation that = (NutsRepositoryLocation) o;
+
+        if (type != null ? !type.equals(that.type) : that.type != null) {
+            return false;
+        }
+        return location != null ? location.equals(that.location) : that.location == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsRepositoryLocation{" + "id=" + id + ", type=" + type + ", location=" + location + ", enabled=" + enabled + '}';
+    }
 }

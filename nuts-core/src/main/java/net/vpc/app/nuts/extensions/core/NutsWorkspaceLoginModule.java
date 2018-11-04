@@ -31,9 +31,8 @@ package net.vpc.app.nuts.extensions.core;
 
 import com.sun.security.auth.UserPrincipal;
 import net.vpc.app.nuts.NutsEnvironmentContext;
-import net.vpc.app.nuts.NutsSecurityEntityConfig;
+import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import javax.security.auth.Subject;
@@ -102,14 +101,30 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 return true;
             }
 
-            NutsSecurityEntityConfig registeredUser = workspace.getConfigManager().getConfig().getSecurity(name);
-            if (registeredUser != null && !CoreStringUtils.isEmpty(registeredUser.getCredentials())) {
-                if ((CoreStringUtils.isEmpty(password) && CoreStringUtils.isEmpty(registeredUser.getCredentials()))
-                        || (!CoreStringUtils.isEmpty(password) && !CoreStringUtils.isEmpty(registeredUser.getCredentials())
-                        && registeredUser.getCredentials().equals(CoreSecurityUtils.evalSHA1(password)))) {
+            NutsUserConfig registeredUser = workspace.getConfigManager().getUser(name);
+            if (registeredUser != null) {
+                try {
+                    workspace.getExtensionManager().createSupported(NutsAuthenticationAgent.class,registeredUser.getAuthenticationAgent())
+                            .checkCredentials(
+                            registeredUser.getCredentials(),
+                                    registeredUser.getAuthenticationAgent(),
+                                    password,
+                                    workspace.getConfigManager()
+                    );
                     this.login = name;
                     return true;
+                }catch (Exception ex){
+
                 }
+
+//                if(!CoreStringUtils.isEmpty(registeredUser.getCredentials())){
+//                    if ((CoreStringUtils.isEmpty(password) && CoreStringUtils.isEmpty(registeredUser.getCredentials()))
+//                            || (!CoreStringUtils.isEmpty(password) && !CoreStringUtils.isEmpty(registeredUser.getCredentials())
+//                            && registeredUser.getCredentials().equals(CoreSecurityUtils.evalSHA1(password)))) {
+//                        this.login = name;
+//                        return true;
+//                    }
+//                }
             }
 
             // If credentials are NOT OK we throw a LoginException

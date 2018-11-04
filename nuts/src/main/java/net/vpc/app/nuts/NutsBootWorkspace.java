@@ -44,12 +44,12 @@ package net.vpc.app.nuts;
  *                   └── nuts
  *                       ├── nuts
  *                       │   └── 0.3.8
- *                       │   │   └── nuts-0.3.8.properties
+ *                       │   │   └── nuts.properties
  *                       │   └── LATEST
- *                       │       └── nuts-LATEST.properties
+ *                       │       └── nuts.properties
  *                       └── nuts-core
  *                           └── 0.3.8.0
- *                               └── nuts-core-0.3.8.0.properties
+ *                               └── nuts-core.properties
  * </pre> Created by vpc on 1/6/17.
  */
 public interface NutsBootWorkspace {

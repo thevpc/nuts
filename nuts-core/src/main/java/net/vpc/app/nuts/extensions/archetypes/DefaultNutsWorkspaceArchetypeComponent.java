@@ -49,7 +49,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
+        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, null, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
         defaultRepo.getConfigManager().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
 
@@ -62,10 +62,8 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         }
 
         workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
-        workspace.getConfigManager().addImports("net.vpc");
-        workspace.getConfigManager().addImports("net.vpc.app");
-        workspace.getConfigManager().addImports("net.vpc.toolbox");
         workspace.getConfigManager().addImports("net.vpc.app.nuts.toolbox");
+        workspace.getConfigManager().addImports("net.vpc.app");
         workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         workspace.getSecurityManager().setUserRights(NutsConstants.USER_ANONYMOUS, NutsConstants.RIGHT_FETCH_DESC, NutsConstants.RIGHT_FETCH_CONTENT);

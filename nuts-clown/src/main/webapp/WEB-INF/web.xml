@@ -4,7 +4,6 @@
     <servlet>
         <servlet-name>NutsHttpServlet</servlet-name>
         <servlet-class>net.vpc.app.nuts.extensions.servers.NutsHttpServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
         <init-param>
             <param-name>workspace</param-name>
             <param-value>~~/http-workspace</param-value>
@@ -17,6 +16,7 @@
             <param-name>admin-server.port</param-name>
             <param-value></param-value>
         </init-param>
+        <load-on-startup>1</load-on-startup>
         <!--<init-param>-->
             <!--<param-name>workspaces</param-name>-->
             <!--<param-value>{"":""}</param-value>-->

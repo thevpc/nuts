@@ -122,7 +122,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
 
     @Override
     public String toString() {
-        return "NutsWorkspaceCreateOptions{" + "ignoreIfFound=" + ignoreIfFound + ", createIfNotFound=" + createIfNotFound + ", saveIfCreated=" + saveIfCreated + ", archetype=" + archetype + ", excludedExtensions=" + excludedExtensions + ", excludedRepositories=" + excludedRepositories + '}';
+        return "NutsWorkspaceCreateOptions(" + "ignoreIfFound=" + ignoreIfFound + ", createIfNotFound=" + createIfNotFound + ", saveIfCreated=" + saveIfCreated + ", archetype=" + archetype + ", excludedExtensions=" + excludedExtensions + ", excludedRepositories=" + excludedRepositories + ')';
     }
 
     @Override

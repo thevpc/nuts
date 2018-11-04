@@ -33,10 +33,9 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
 import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.common.io.ZipUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -64,7 +63,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
-            if (CoreIOUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
+            if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
                 return CoreNutsUtils.parseNutsDescriptor(buffer.toByteArray());
             }
         } catch (IOException e) {

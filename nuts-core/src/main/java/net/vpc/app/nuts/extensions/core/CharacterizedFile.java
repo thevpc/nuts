@@ -33,7 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.extensions.util.InputStreamSource;
+import net.vpc.common.io.InputStreamSource;
 
 /**
  *

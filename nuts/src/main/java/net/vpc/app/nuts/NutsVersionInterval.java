@@ -29,10 +29,13 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.Serializable;
+
 /**
  * Created by vpc on 2/1/17.
  */
-public class NutsVersionInterval {
+public class NutsVersionInterval implements Serializable{
+    private static final long serialVersionUID=1l;
 
     private final boolean inclusiveLowerBoundary;
     private final boolean inclusiveUpperBoundary;
@@ -47,13 +50,13 @@ public class NutsVersionInterval {
     }
 
     public boolean acceptVersion(NutsVersion version) {
-        if (!StringUtils.isEmpty(min)) {
+        if (!NutsStringUtils.isEmpty(min)) {
             int t = version.compareTo(min);
             if ((inclusiveLowerBoundary && t < 0) || (!inclusiveLowerBoundary && t <= 0)) {
                 return false;
             }
         }
-        if (!StringUtils.isEmpty(max)) {
+        if (!NutsStringUtils.isEmpty(max)) {
             int t = version.compareTo(max);
             return (!inclusiveUpperBoundary || t <= 0) && (inclusiveUpperBoundary || t < 0);
         }
@@ -61,7 +64,7 @@ public class NutsVersionInterval {
     }
 
     public boolean isFixedValue() {
-        return inclusiveLowerBoundary && inclusiveUpperBoundary && StringUtils.trim(min).equals(StringUtils.trim(max))
+        return inclusiveLowerBoundary && inclusiveUpperBoundary && NutsStringUtils.trim(min).equals(NutsStringUtils.trim(max))
                 && !"LATEST".endsWith(min) && !"RELEASE".endsWith(min);
     }
 

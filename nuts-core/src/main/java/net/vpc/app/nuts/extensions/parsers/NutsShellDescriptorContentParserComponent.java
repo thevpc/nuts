@@ -31,6 +31,7 @@ package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.JsonStringBuffer;
 
@@ -121,13 +122,12 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return new DefaultNutsDescriptor(
-                        CoreNutsUtils.parseNutsId("temp:nsh#1.0"),
-                        null,
-                        null,
-                        "nsh",
-                        true, "nsh", new NutsExecutorDescriptor(NSH, new String[0], null), null, null, null, null, null, null, null, null, null
-                );
+                return new DefaultNutsDescriptorBuilder()
+                        .setId( CoreNutsUtils.parseNutsId("temp:nsh#1.0"))
+                        .setExt("nsh")
+                        .setExecutor(new NutsExecutorDescriptor(NSH))
+                        .build()
+                        ;
             }
             return CoreNutsUtils.parseNutsDescriptor(comment.getValidString());
         } finally {

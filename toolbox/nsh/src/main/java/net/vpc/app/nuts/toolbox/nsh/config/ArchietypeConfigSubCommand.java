@@ -1,0 +1,39 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.vpc.app.nuts.toolbox.nsh.config;
+
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.toolbox.nsh.AbstractConfigSubCommand;
+import net.vpc.app.nuts.toolbox.nsh.ConfigCommand;
+import net.vpc.common.commandline.CommandLine;
+
+/**
+ *
+ * @author vpc
+ */
+public class ArchietypeConfigSubCommand extends AbstractConfigSubCommand {
+
+    @Override
+    public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
+        if (cmdLine.read("list archetypes", "la")) {
+            NutsPrintStream out = context.getTerminal().getFormattedOut();
+            if (cmdLine.isExecMode()) {
+                for (String archetype : context.getValidWorkspace().getRepositoryManager().getAvailableArchetypes()) {
+                    out.printf("%s\n", archetype);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int getSupportLevel(Object criteria) {
+        return DEFAULT_SUPPORT;
+    }
+
+}

@@ -29,20 +29,16 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
+public class NutsAnsiUnixTermPrintStream extends NutsDefaultFormattedPrintStream {
 
 //    public static final NutsTextFormat[] ALL_SUPPORTED_COLORS = new NutsTextFormat[]{
 //        NutsTextFormats.FG_BLACK,
@@ -233,6 +229,21 @@ public class NutsAnsiUnixTermPrintStream extends DefaultNutsPrintStream {
 
     @Override
     public int getSupportLevel(Object criteria) {
+//        Console console = System.console();
+////        if(console ==null){
+////            return -1;
+////        }
+////        if(criteria==console.writer()){
+////            return DEFAULT_SUPPORT + 2;
+////        }
+//        if(criteria ==System.out){
+//            return DEFAULT_SUPPORT + 2;
+//        }
+//        if(criteria ==System.err){
+//            return DEFAULT_SUPPORT + 2;
+//        }
+//        System.out.println(criteria+" :: "+System.out+" :: "+System.err);
+//        return -1;
         return DEFAULT_SUPPORT + 2;
     }
 

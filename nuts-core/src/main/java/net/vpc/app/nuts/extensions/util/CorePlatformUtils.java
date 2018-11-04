@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -41,14 +41,16 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.ObjectFilter;
+import net.vpc.common.io.*;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
@@ -101,8 +103,8 @@ public class CorePlatformUtils {
         return new HashMap<>();
     }
 
-    public static String getOsSystemLib() {
-        switch (CoreNutsUtils.parseNutsId(getOs()).getFullName()) {
+    public static String getPlatformOsLib() {
+        switch (CoreNutsUtils.parseNutsId(getPlatformOs()).getFullName()) {
             case "linux":
             case "mac":
             case "sunos":
@@ -128,7 +130,7 @@ public class CorePlatformUtils {
      * @return
      */
     public static Map<String, String> getOsDistMapLinux() {
-        File dir = CoreIOUtils.createFileByCwd("/etc/", null);
+        File dir = FileUtils.createFileByCwd("/etc/", null);
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
             File[] a = dir.listFiles(new FilenameFilter() {
@@ -140,14 +142,14 @@ public class CorePlatformUtils {
                 fileList.addAll(Arrays.asList(a));
             }
         }
-        File fileVersion = CoreIOUtils.createFileByCwd("/proc/version", null);
+        File fileVersion = FileUtils.createFileByCwd("/proc/version", null);
         if (fileVersion.exists()) {
             fileList.add(fileVersion);
         }
         String disId = null;
         String disName = null;
         String disVersion = null;
-        File linuxOsrelease = CoreIOUtils.createFileByCwd("/proc/sys/kernel/osrelease", null);
+        File linuxOsrelease = FileUtils.createFileByCwd("/proc/sys/kernel/osrelease", null);
         StringBuilder osVersion = new StringBuilder();
         if (linuxOsrelease.isFile()) {
             BufferedReader myReader = null;
@@ -170,7 +172,12 @@ public class CorePlatformUtils {
         if (osVersion.toString().trim().isEmpty()) {
             CoreStringUtils.clear(osVersion);
             try {
-                CoreIOUtils.execAndEcho(new String[]{"uname", "-r"}, null, null, osVersion, null, 50);
+                osVersion.append(
+                        new ProcessBuilder2().setCommand("uname", "-r")
+                                .setOutAndErrStringBuffer()
+                                .setSleepMillis(50)
+                                .waitFor().getOutString()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -237,8 +244,8 @@ public class CorePlatformUtils {
         return m;
     }
 
-    public static String getOsdist() {
-        String osInfo = getOs();
+    public static String getPlatformOsDist() {
+        String osInfo = getPlatformOs();
         if (osInfo.startsWith("linux")) {
             Map<String, String> m = getOsDistMap();
             String distId = m.get("distId");
@@ -259,7 +266,7 @@ public class CorePlatformUtils {
      *
      * @return
      */
-    public static String getOs() {
+    public static String getPlatformOs() {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             Map<String, String> m = getOsDistMap();
@@ -342,7 +349,7 @@ public class CorePlatformUtils {
         throw new NutsIllegalArgumentException("Unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
     }
 
-    public static String getArch() {
+    public static String getPlatformArch() {
         String property = System.getProperty("os.arch");
         String aliased = SUPPORTED_ARCH_ALIASES.get(property);
         return (aliased == null) ? property : aliased;
@@ -582,6 +589,37 @@ public class CorePlatformUtils {
         }
     }
 
+    public static String[] getMainClassAndLibs(File jarFile, boolean foreComponentNames) throws IOException {
+        String main = null;
+        List<String> clsAndLibs = new ArrayList<>();
+        JarFile jarfile = new JarFile(jarFile);
+        Manifest manifest = jarfile.getManifest();
+        Attributes attrs = manifest.getMainAttributes();
+
+        for (Object o : attrs.keySet()) {
+            Attributes.Name attrName = (Attributes.Name) o;
+            if ("Main-Class".equals(attrName.toString())) {
+                main = attrs.getValue(attrName);
+            } else if ("Class-Path".equals(attrName.toString())) {
+                for (String s : attrs.getValue(attrName).split(" ")) {
+                    if (foreComponentNames) {
+                        if (s.indexOf('/') >= 0) {
+                            s = s.substring(s.lastIndexOf("/") + 1);
+                        }
+                        if (s.toLowerCase().endsWith(".jar")) {
+                            s = s.substring(0, s.length() - 4);
+                        }
+                        clsAndLibs.add(s);
+                    } else {
+                        clsAndLibs.add(s);
+                    }
+                }
+            }
+        }
+        clsAndLibs.add(main);
+        return clsAndLibs.toArray(new String[clsAndLibs.size()]);
+    }
+
     public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
         String fullName = "META-INF/services/" + service.getName();
         Enumeration<URL> configs;
@@ -750,12 +788,12 @@ public class CorePlatformUtils {
 
     public static List<String> resolveMainClasses(InputStream jarStream) {
         final List<String> classes = new ArrayList<>();
-        CoreIOUtils.visitZipFile(jarStream, new ObjectFilter<String>() {
+        ZipUtils.visitZipStream(jarStream, new PathFilter() {
             @Override
             public boolean accept(String value) {
                 return value.endsWith(".class");
             }
-        }, new StreamVisitor() {
+        }, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) throws IOException {
                 boolean mainClass = isMainClass(inputStream);
@@ -780,7 +818,7 @@ public class CorePlatformUtils {
              */
             @Override
             public void visit(int version, int access, String name,
-                    String signature, String superName, String[] interfaces) {
+                              String signature, String superName, String[] interfaces) {
 //                System.out.println("Visiting class: "+name);
 //                System.out.println("Class Major Version: "+version);
 //                System.out.println("Super class: "+superName);
@@ -800,7 +838,7 @@ public class CorePlatformUtils {
              */
             @Override
             public AnnotationVisitor visitAnnotation(String desc,
-                    boolean visible) {
+                                                     boolean visible) {
                 return super.visitAnnotation(desc, visible);
             }
 
@@ -817,7 +855,7 @@ public class CorePlatformUtils {
              */
             @Override
             public void visitInnerClass(String name, String outerName,
-                    String innerName, int access) {
+                                        String innerName, int access) {
                 super.visitInnerClass(name, outerName, innerName, access);
             }
 
@@ -826,7 +864,7 @@ public class CorePlatformUtils {
              */
             @Override
             public FieldVisitor visitField(int access, String name,
-                    String desc, String signature, Object value) {
+                                           String desc, String signature, Object value) {
                 return super.visitField(access, name, desc, signature, value);
             }
 
@@ -840,7 +878,7 @@ public class CorePlatformUtils {
              */
             @Override
             public MethodVisitor visitMethod(int access, String name,
-                    String desc, String signature, String[] exceptions) {
+                                             String desc, String signature, String[] exceptions) {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {

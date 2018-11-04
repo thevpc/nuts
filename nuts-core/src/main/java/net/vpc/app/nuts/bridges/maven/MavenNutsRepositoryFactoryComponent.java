@@ -32,8 +32,6 @@ package net.vpc.app.nuts.bridges.maven;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
-import java.io.File;
-
 /**
  * Created by vpc on 1/15/17.
  */
@@ -44,7 +42,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
         new NutsRepositoryDefinition("maven-central", "http://repo.maven.apache.org/maven2/", "maven", true),
         new NutsRepositoryDefinition("maven-vpc-public", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "maven", true)};
 
-    public NutsRepositoryDefinition[] getDefaultRepositories() {
+    public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return DEFAULTS;
     }
 
@@ -71,7 +69,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, File repositoryRoot) {
+    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         if ("maven".equals(repositoryType)) {
             if (location.startsWith("http://") || location.startsWith("https://")) {
                 return (new MavenRemoteRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));

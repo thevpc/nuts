@@ -59,6 +59,8 @@ public interface NutsWorkspaceSecurityManager {
 
     void setUserRemoteIdentity(String user, String mappedIdentity);
 
+    void setUserAuthenticationAgent(String user, String authenticationAgent);
+
     void setUserCredentials(String user, String credentials);
 
     void setUserGroups(String user, String... groups);
@@ -67,9 +69,9 @@ public interface NutsWorkspaceSecurityManager {
 
     void removeUserGroups(String user, String... groups);
 
-    NutsUserInfo[] findUsers();
+    NutsEffectiveUser[] findUsers();
 
-    NutsUserInfo findUser(String username);
+    NutsEffectiveUser findUser(String username);
 
     boolean isAllowed(String right);
 

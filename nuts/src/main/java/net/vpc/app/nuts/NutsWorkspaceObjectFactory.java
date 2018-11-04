@@ -55,14 +55,14 @@ public interface NutsWorkspaceObjectFactory extends NutsComponent<NutsWorkspaceO
 
     List<Object> getExtensionObjects(Class extensionPoint);
 
-    public boolean isRegisteredType(Class extensionPointType, String name);
+    boolean isRegisteredType(Class extensionPointType, String name);
 
-    public boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
+    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
 
-    public <T> void registerInstance(Class<T> extensionPoint, T implementation);
+    <T> void registerInstance(Class<T> extensionPoint, T implementation);
 
-    public void registerType(Class extensionPointType, Class extensionType);
+    void registerType(Class extensionPointType, Class extensionType);
 
-    public boolean isRegisteredType(Class extensionPointType, Class extensionType);
+    boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
 }

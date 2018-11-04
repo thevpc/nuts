@@ -31,6 +31,7 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.NutsIdBuilder;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.StringMapper;
@@ -393,4 +394,8 @@ public class NutsIdImpl implements NutsId {
         );
     }
 
+    @Override
+    public NutsIdBuilder builder() {
+        return new DefaultNutsIdBuilder(this);
+    }
 }

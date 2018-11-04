@@ -9,7 +9,32 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../../common/java-shell/pom.xml" />
         <option value="$PROJECT_DIR$/../../common/maven/writer-maven-plugin/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-standalone/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-classpath/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-desktop-automation/pom.xml" />
+        <option value="$PROJECT_DIR$/../../toolbox/mvn-box/pom.xml" />
+        <option value="$PROJECT_DIR$/nuts-servlet/pom.xml" />
+        <option value="$PROJECT_DIR$/nuts-sh/pom.xml" />
+        <option value="$PROJECT_DIR$/nuts-server/pom.xml" />
+        <option value="$PROJECT_DIR$/nuts-mvn/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nb-launcher/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/feenoo/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-commandline/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-ext-compress/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/toolbox/feenoo/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
