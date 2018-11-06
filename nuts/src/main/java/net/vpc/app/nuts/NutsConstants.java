@@ -80,12 +80,19 @@ public class NutsConstants {
      * expresses mainly manager subsystem type (nuts, maven, gradle, zypper,
      * apt-get, etc...)
      */
-    public static final String DEFAULT_REPOSITORY_TYPE = "nuts";
+    public static final String REPOSITORY_TYPE_NUTS = "nuts";
+    public static final String REPOSITORY_TYPE_NUTS_FOLDER = "nuts-folder";
+    public static final String REPOSITORY_TYPE_NUTS_SERVER = "nuts-server";
+    public static final String REPOSITORY_TYPE_NUTS_MAVEN = "maven";
 
     /**
      * Installation Store
      */
-    public static final String DEFAULT_STORE_ROOT = "store";
+    public static final String DEFAULT_STORE_PROGRAM = "programs";
+    public static final String DEFAULT_STORE_TEMP = "temp";
+    public static final String DEFAULT_STORE_VAR = "var";
+    public static final String DEFAULT_STORE_LOG = "log";
+    public static final String DEFAULT_STORE_CONFIG = "config";
 
     /**
      * workspace config file name
@@ -129,7 +136,11 @@ public class NutsConstants {
     public static final String ENV_KEY_AUTOSAVE = "autosave";
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
     public static final String ENV_KEY_DEPLOY_PRIORITY = "deploy-priority";
-    public static final String ENV_STORE = "workspace-store";
+    public static final String ENV_STORE_PROGRAMS = "workspace-programs";
+    public static final String ENV_STORE_VAR = "workspace-var";
+    public static final String ENV_STORE_LOGS = "workspace-logs";
+    public static final String ENV_STORE_TEMP = "workspace-temp";
+    public static final String ENV_STORE_CONFIG = "workspace-config";
 
     public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
@@ -150,7 +161,7 @@ public class NutsConstants {
     public static final String QUERY_FACE_DEFAULT_VALUE = "default";
     public static final String QUERY_FILE = "file";
     public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
-    public static final String URL_BOOTSTRAP_REMOTE = "https://raw.githubusercontent.com/thevpc/nuts/master/nuts-bootstrap";
+    public static final String URL_BOOTSTRAP_REMOTE = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
     public static final String URL_BOOTSTRAP_LOCAL = "~/.nuts/remote-bootstrap";
     public static final String URL_COMPONENTS_REMOTE = "http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
     public static final String URL_COMPONENTS_LOCAL = "~/.m2/repository;"+DEFAULT_NUTS_HOME+"/bootstrap";

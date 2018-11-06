@@ -59,7 +59,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     private MvnClient wrapper;
 
     public MavenRemoteRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, url, "maven"), workspace, parentRepository,
+        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN), workspace, parentRepository,
                 CoreIOUtils.resolvePath(repositoryId,
                         root != null ? new File(root) : CoreIOUtils.createFile(
                                 workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
@@ -131,7 +131,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     private NutsRepository getLocalMavenRepo() {
         for (NutsRepository nutsRepository : getWorkspace().getRepositoryManager().getRepositories()) {
-            if (nutsRepository.getRepositoryType().equals("maven") && nutsRepository.getConfigManager().getLocation().equals("~/.m2")) {
+            if (nutsRepository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN) && nutsRepository.getConfigManager().getLocation().equals("~/.m2")) {
                 return nutsRepository;
             }
         }

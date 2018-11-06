@@ -10,7 +10,6 @@ public class Nsh {
         NutsWorkspace ws = Nuts.openWorkspace(args);
         args=Nuts.skipNutsArgs(args);
         DefaultNutsConsole c=new DefaultNutsConsole(ws);
-        System.out.println(Arrays.toString(args));
         c.run(args);
     }
 }

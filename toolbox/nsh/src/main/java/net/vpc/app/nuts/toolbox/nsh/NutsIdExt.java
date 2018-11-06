@@ -4,9 +4,9 @@ import net.vpc.app.nuts.NutsId;
 
 import java.util.Objects;
 
-class NutsIdExt implements Comparable<NutsIdExt>{
-    NutsId id;
-    String extra;
+public class NutsIdExt implements Comparable<NutsIdExt>{
+    public NutsId id;
+    public String extra;
 
     public NutsIdExt(NutsId id, String extra) {
         this.id = id;

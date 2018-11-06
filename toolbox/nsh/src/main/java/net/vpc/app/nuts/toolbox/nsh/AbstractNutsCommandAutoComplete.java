@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsArgumentCandidate;
-import net.vpc.app.nuts.toolbox.nsh.cmdline.DefaultNutsArgumentCandidate;
+import net.vpc.app.nuts.toolbox.nsh.options.DefaultNutsArgumentCandidate;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 import java.util.ArrayList;

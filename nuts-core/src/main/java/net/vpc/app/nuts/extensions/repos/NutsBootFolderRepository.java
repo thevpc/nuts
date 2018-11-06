@@ -19,7 +19,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 public class NutsBootFolderRepository extends NutsFolderRepository {
 
     public NutsBootFolderRepository(NutsBootWorkspace bootWorkspace, NutsWorkspace workspace, String root) {
-        super(NutsConstants.BOOTSTRAP_REPOSITORY_NAME, bootWorkspace.getBootstrapLocation(), workspace, null, root);
+        super(NutsConstants.BOOTSTRAP_REPOSITORY_NAME, bootWorkspace.getBootstrapLocation(), workspace, null);
     }
 
     @Override

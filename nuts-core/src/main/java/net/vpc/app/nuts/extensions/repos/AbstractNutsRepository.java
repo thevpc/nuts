@@ -130,7 +130,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected NutsRepository openRepository(String repositoryId, String location, String type, String repositoryRoot, boolean autoCreate) {
         if (CoreStringUtils.isEmpty(type)) {
-            type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
+            type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         NutsRepositoryFactoryComponent factory_ = getWorkspace().getExtensionManager().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
         if (factory_ != null) {
@@ -280,7 +280,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsUnsupportedOperationException();
         }
         if (CoreStringUtils.isEmpty(type)) {
-            type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
+            type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         boolean supported = false;
         try {

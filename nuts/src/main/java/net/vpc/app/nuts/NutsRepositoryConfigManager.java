@@ -27,6 +27,8 @@ public interface NutsRepositoryConfigManager extends EnvProvider {
 
     String getComponentsLocation();
 
+    void setComponentsLocation(String location);
+
     String getLocationFolder();
 
     void removeUser(String userId);

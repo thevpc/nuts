@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
@@ -79,7 +78,7 @@ public class MavenUtils {
 
     public static NutsDescriptor parsePomXml(InputStream stream) {
         try {
-            byte[] bytes = IOUtils.readStreamAsBytes(stream, -1, true);
+            byte[] bytes = IOUtils.loadByteArray(stream, -1, true);
             int skip = 0;
             while (skip < bytes.length && Character.isWhitespace(bytes[skip])) {
                 skip++;
@@ -373,7 +372,7 @@ public class MavenUtils {
         NutsDescriptor nutsDescriptor = null;
         try {
             try {
-//            bytes = IOUtils.readStreamAsBytes(stream, true);
+//            bytes = IOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(stream);
                 HashMap<String, String> properties = new HashMap<>();
                 NutsSession transitiveSession = session.copy().setTransitive(true);

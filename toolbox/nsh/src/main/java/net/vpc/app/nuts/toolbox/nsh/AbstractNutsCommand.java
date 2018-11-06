@@ -102,7 +102,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
                 try {
                     s = getClass().getResourceAsStream("/net/vpc/app/nuts/extensions/cmd/" + getName() + ".help");
                     if (s != null) {
-                        help = IOUtils.readStreamAsString(s, true);
+                        help = IOUtils.loadString(s, true);
                     }
                 } finally {
                     if (s != null) {

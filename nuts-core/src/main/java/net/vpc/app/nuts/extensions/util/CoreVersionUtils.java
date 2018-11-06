@@ -81,6 +81,10 @@ public class CoreVersionUtils {
     public static String incVersion(String oldVersion, int level) {
         VersionParts parts = splitVersionParts2(oldVersion);
         int digitCount = parts.getDigitCount();
+        if(digitCount==0){
+            parts.addDigit(0,".");
+        }
+        digitCount = parts.getDigitCount();
         if (level <= 0) {
             level = digitCount;
         }

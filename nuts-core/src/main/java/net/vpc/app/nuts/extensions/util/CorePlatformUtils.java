@@ -130,7 +130,7 @@ public class CorePlatformUtils {
      * @return
      */
     public static Map<String, String> getOsDistMapLinux() {
-        File dir = FileUtils.createFileByCwd("/etc/", null);
+        File dir = FileUtils.getAbsoluteFile(null, "/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
             File[] a = dir.listFiles(new FilenameFilter() {
@@ -142,14 +142,14 @@ public class CorePlatformUtils {
                 fileList.addAll(Arrays.asList(a));
             }
         }
-        File fileVersion = FileUtils.createFileByCwd("/proc/version", null);
+        File fileVersion = FileUtils.getAbsoluteFile(null, "/proc/version");
         if (fileVersion.exists()) {
             fileList.add(fileVersion);
         }
         String disId = null;
         String disName = null;
         String disVersion = null;
-        File linuxOsrelease = FileUtils.createFileByCwd("/proc/sys/kernel/osrelease", null);
+        File linuxOsrelease = FileUtils.getAbsoluteFile(null, "/proc/sys/kernel/osrelease");
         StringBuilder osVersion = new StringBuilder();
         if (linuxOsrelease.isFile()) {
             BufferedReader myReader = null;

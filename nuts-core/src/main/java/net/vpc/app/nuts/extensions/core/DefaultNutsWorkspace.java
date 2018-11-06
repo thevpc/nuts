@@ -82,9 +82,14 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     private String platformArch;
     private String platformOsdist;
     private String platformOsLib;
+    private Properties properties=new Properties();
 
     public DefaultNutsWorkspace() {
 
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     @Override
@@ -132,6 +137,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     public NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options) {
         NutsWorkspaceObjectFactory newFactory = getExtensionManager().createSupported(NutsWorkspaceObjectFactory.class, self());
         NutsWorkspace nutsWorkspace = getExtensionManager().createSupported(NutsWorkspace.class, self());
+        if(options.isNoColors()){
+            nutsWorkspace.getProperties().setProperty("nocolors","true");
+        }
         NutsWorkspaceImpl nutsWorkspaceImpl = (NutsWorkspaceImpl) nutsWorkspace;
         if (nutsWorkspaceImpl.initializeWorkspace(configManager.getWorkspaceBoot(), newFactory,
                 configManager.getWorkspaceBootId().toString(), configManager.getWorkspaceRuntimeId().toString(),
@@ -266,11 +274,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
             NutsId newId = deploy(new NutsDeployment().setContent(new File(folder)).setDescriptor(d), session);
             d.write(file);
-            try {
-                IOUtils.delete(new File(folder));
-            } catch (IOException ex) {
-                throw new NutsIOException(ex);
-            }
+            IOUtils.delete(new File(folder));
             return newId;
         } else {
             throw new NutsUnsupportedOperationException("commit not supported");
@@ -533,11 +537,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         List<String> repositoryUrls = new ArrayList<>();
         repositoryUrls.add(expandPath(NutsConstants.URL_COMPONENTS_LOCAL));
         for (NutsRepository repository : repositories) {
-            if (repository.getRepositoryType().equals(NutsConstants.DEFAULT_REPOSITORY_TYPE) || repository.getRepositoryType().equals("maven")) {
+            if (repository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS) || repository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN)) {
                 repositoryUrls.add(repository.getConfigManager().getLocation());
             } else {
                 for (NutsRepository mirror : repository.getMirrors()) {
-                    if (mirror.getRepositoryType().equals(NutsConstants.DEFAULT_REPOSITORY_TYPE) || repository.getRepositoryType().equals("maven")) {
+                    if (mirror.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS) || repository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN)) {
                         repositoryUrls.add(mirror.getConfigManager().getLocation());
                     }
                 }
@@ -546,7 +550,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         String repositoriesPath = CoreStringUtils.join(";", repositoryUrls);
         bootProperties.setProperty("repositories", repositoriesPath);
         File r = new File(bootstrapNutsRepository.getConfigManager().getLocationFolder());
-        IOUtils.storeProperties(bootProperties, new File(r, CoreNutsUtils.getPath(runtimeIdFile, ".properties", File.separator)));
+        IOUtils.saveProperties(bootProperties, null,new File(r, CoreNutsUtils.getPath(runtimeIdFile, ".properties", File.separator)));
 
         Properties coreProperties = new Properties();
         List<String> dependencies = new ArrayList<>();
@@ -557,7 +561,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         coreProperties.put("project.version", runtimeIdFile.getVersion().toString());
         coreProperties.put("project.repositories", repositoriesPath);
         coreProperties.put("project.dependencies.compile", CoreStringUtils.join(";", dependencies));
-        IOUtils.storeProperties(coreProperties, new File(r, CoreNutsUtils.getPath(runtimeIdFile, ".properties", File.separator)));
+        IOUtils.saveProperties(coreProperties, null,new File(r, CoreNutsUtils.getPath(runtimeIdFile, ".properties", File.separator)));
 
         List<NutsFile> updatedExtensions = new ArrayList<>();
         for (NutsId ext : getConfigManager().getExtensions()) {
@@ -640,7 +644,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public boolean uninstall(String id, NutsSession session) {
+    public boolean uninstall(String id, boolean deleteData, NutsSession session) {
         session = validateSession(session);
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_UNINSTALL)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_UNINSTALL);
@@ -655,14 +659,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         }
         NutsDescriptor descriptor = nutToInstall.getDescriptor();
         NutsExecutorDescriptor installer = descriptor.getInstaller();
-        String installFolder = getStoreRoot(nutToInstall.getId());
+        String installFolder = getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS);
         NutsExecutionContext executionContext = new NutsExecutionContextImpl(
                 nutToInstall, new String[0],
                 installer == null ? null : installer.getArgs(), installer == null ? null : installer.getProperties(),
                 new Properties(),
                 installFolder,
                 session, self());
-        ii.uninstall(executionContext);
+        ii.uninstall(executionContext, deleteData);
+        IOUtils.delete(new File(getStoreRoot(id, RootFolderType.PROGRAMS)));
+        IOUtils.delete(new File(getStoreRoot(id, RootFolderType.TEMP)));
+        IOUtils.delete(new File(getStoreRoot(id, RootFolderType.LOGS)));
+        IOUtils.delete(new File(getStoreRoot(id, RootFolderType.VAR)));
+        IOUtils.delete(new File(getStoreRoot(id, RootFolderType.CONFIG)));
         return true;
     }
 
@@ -1527,7 +1536,14 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (ii == null) {
             return true;
         }
-        return ii.isInstalled(nutToInstall, self(), session);
+
+        NutsExecutorDescriptor installer = nutToInstall.getDescriptor().getInstaller();
+        NutsExecutionContext executionContext = new NutsExecutionContextImpl(
+                nutToInstall, new String[0], installer == null ? null : installer.getArgs(), null,
+                installer == null ? null : installer.getProperties(),
+                getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS),
+                session, this);
+        return ii.isInstalled(executionContext);
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
@@ -1887,7 +1903,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 props = installer.getProperties();
 
             }
-            String installFolder = getStoreRoot(nutToInstall.getId());
+            String installFolder = getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS);
             Properties env = new Properties();
             NutsExecutionContext executionContext = new NutsExecutionContextImpl(nutToInstall, new String[0], args, env, props, installFolder, session, self());
             if (!nutsInstallerComponent.isInstalled(executionContext)) {
@@ -2247,15 +2263,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public String getStoreRoot(String id) {
-        return getStoreRoot(getExtensionManager().parseNutsId(id));
+    public String getStoreRoot(String id, RootFolderType folderType) {
+        return getStoreRoot(getExtensionManager().parseNutsId(id), folderType);
     }
 
-    public String getStoreRoot(NutsId id) {
+    public String getStoreRoot(NutsId id, RootFolderType folderType) {
         if (CoreStringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
-        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getStoreRoot(folderType), id.getGroup().replaceAll("\\.", File.separator));
         if (CoreStringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
@@ -2266,8 +2282,45 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return new File(artifactFolder, id.getVersion().getValue()).getPath();
     }
 
-    public String getStoreRoot() {
-        return CoreIOUtils.resolvePath(getConfigManager().getEnv(NutsConstants.ENV_STORE, NutsConstants.DEFAULT_STORE_ROOT),
+    public String getStoreRoot(RootFolderType folderType) {
+        if(folderType==null){
+            folderType=RootFolderType.PROGRAMS;
+        }
+        String k=null;
+        String v=null;
+        switch (folderType){
+            case PROGRAMS:{
+                k=NutsConstants.ENV_STORE_PROGRAMS;
+                v=NutsConstants.DEFAULT_STORE_PROGRAM;
+                break;
+            }
+            case VAR:{
+                k=NutsConstants.ENV_STORE_VAR;
+                v=NutsConstants.DEFAULT_STORE_VAR;
+                break;
+            }
+            case LOGS:{
+                k=NutsConstants.ENV_STORE_LOGS;
+                v=NutsConstants.DEFAULT_STORE_LOG;
+                break;
+            }
+            case TEMP:{
+                k=NutsConstants.ENV_STORE_TEMP;
+                v=NutsConstants.DEFAULT_STORE_TEMP;
+                break;
+            }
+            case CONFIG:{
+                k=NutsConstants.ENV_STORE_CONFIG;
+                v=NutsConstants.DEFAULT_STORE_CONFIG;
+                break;
+            }
+            default:{
+                k=NutsConstants.ENV_STORE_TEMP;
+                v=NutsConstants.DEFAULT_STORE_TEMP;
+                break;
+            }
+        }
+        return CoreIOUtils.resolvePath(getConfigManager().getEnv(k, v),
                 new File(resolvePath(getConfigManager().getWorkspaceLocation())),
                 getConfigManager().getNutsHomeLocation()).getPath();
     }
@@ -2350,7 +2403,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (CoreStringUtils.isEmpty(path)) {
             return path;
         }
-        return FileUtils.getAbsolutePath(path, new File(getConfigManager().getCwd()));
+        return FileUtils.getAbsolutePath(new File(getConfigManager().getCwd()), path);
     }
 
     @Override

@@ -29,6 +29,8 @@
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-ext-compress/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-osapi/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-compress/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

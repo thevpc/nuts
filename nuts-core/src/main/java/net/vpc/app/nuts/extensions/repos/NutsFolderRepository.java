@@ -35,9 +35,7 @@ import net.vpc.common.IteratorList;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,8 +47,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     public static final Logger log = Logger.getLogger(NutsFolderRepository.class.getName());
 
-    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository,
+    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
                 workspace.resolveRepositoryPath(CoreStringUtils.isEmpty(repositoryLocation) ? repositoryId : repositoryLocation),
                 SPEED_FAST);
         extensions.put("src", "-src.zip");
@@ -285,7 +283,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             for (String location : nutsDescFile.getDescriptor().getLocations()) {
                 if(!CoreStringUtils.isEmpty(location)){
                     try {
-                        CoreIOUtils.downloadPath(localFile, location, location, getWorkspace(), session);
+                        CoreIOUtils.downloadPath(location, localFile, location, getWorkspace(), session);
                         return prepareInstall(localFile,nutsDescFile,id);
                     }catch (Exception ex){
                         //ignore
@@ -700,7 +698,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             n = NutsConstants.FOLDER_NAME_COMPONENTS;
         }
         n = n.trim();
-        return FileUtils.createFileByCwd(n, new File(getConfigManager().getLocationFolder())).getPath();
+        return FileUtils.getAbsolutePath(new File(getConfigManager().getLocationFolder()), n);
     }
 
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
@@ -728,4 +726,39 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return super.findLatestVersion(id, filter, session);
     }
 
+    public void reindexFolder(){
+        reindexFolder(new File(getStoreRoot()));
+    }
+
+    private void reindexFolder(File folder){
+        File[] children = folder.listFiles();
+        TreeSet<String> files=new TreeSet<>();
+        TreeSet<String> folders=new TreeSet<>();
+        if(children!=null){
+            for (File child : children) {
+                if(!child.getName().startsWith(".")) {
+                    if (child.isDirectory()) {
+                        reindexFolder(child);
+                        folders.add(child.getName());
+                    } else if (child.isFile()) {
+                        files.add(child.getName());
+                    }
+                }
+            }
+        }
+        try(PrintStream p=new PrintStream(new File(folder,".files"))){
+            for (String file : files) {
+                p.println(file);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        try(PrintStream p=new PrintStream(new File(folder,".folders"))){
+            for (String file : folders) {
+                p.println(file);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

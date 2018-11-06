@@ -37,9 +37,7 @@ public interface NutsInstallerComponent extends NutsComponent<NutsFile> {
 
     void install(NutsExecutionContext executionContext);
 
-    void uninstall(NutsExecutionContext executionContext);
+    void uninstall(NutsExecutionContext executionContext, boolean deleteData);
 
     boolean isInstalled(NutsExecutionContext executionContext);
-
-    boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session);
 }

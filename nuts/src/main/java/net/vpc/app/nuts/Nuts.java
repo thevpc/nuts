@@ -57,35 +57,41 @@ public class Nuts {
         }
     }
 
-    public static NutsBootWorkspace openBootWorkspace() {
+    private static NutsBootWorkspace openBootWorkspace() {
         return openBootWorkspace(null);
     }
 
-    public static NutsBootWorkspace openBootWorkspace(NutsBootOptions bootOptions) {
+    private static NutsBootWorkspace openBootWorkspace(NutsBootOptions bootOptions) {
         return new DefaultNutsBootWorkspace(bootOptions);
     }
 
-    public static NutsWorkspace openWorkspace(String[] args) {
-        String workspace = null;
-        NutsBootOptions nutsBootOptions = new NutsBootOptions();
-        NutsWorkspaceCreateOptions workspaceCreateOptions = new NutsWorkspaceCreateOptions();
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("--nuts-no-more-args")) {
-                break;
-            } else if (args[i].startsWith("--nuts-")) {
-                if (args[i].startsWith("--nuts-workspace=")) {
-                    workspace = args[i].substring("--nuts-workspace=".length());
-                } else if (args[i].startsWith("--nuts-runtimeId=")) {
-                    nutsBootOptions.setRuntimeId(args[i].substring("--nuts-runtimeId=".length()));
-                } else if (args[i].startsWith("--nuts-home=")) {
-                    nutsBootOptions.setHome(args[i].substring("--nuts-home=".length()));
+    private static String[][] splitArgs(String[] args) {
+        if (args.length > 0 && args[0].equals("--nuts-args")) {
+            List<String> nutsArgs = new ArrayList<>();
+            List<String> appArgs = new ArrayList<>();
+            boolean nutsArgsOk = true;
+            for (int i = 1; i < args.length; i++) {
+                if (nutsArgsOk) {
+                    if (args[i].equals("--nuts-no-more-args")) {
+                        nutsArgsOk = false;
+                    } else {
+                        nutsArgs.add(args[i]);
+                    }
+                } else {
+                    appArgs.add(args[i]);
                 }
-                //ok
-            } else {
-                break;
             }
+            return new String[][]{
+                    nutsArgs.toArray(new String[nutsArgs.size()]),
+                    appArgs.toArray(new String[nutsArgs.size()]),
+            };
         }
-        return openWorkspace(workspace, workspaceCreateOptions, nutsBootOptions);
+        return new String[][]{{}, args};
+    }
+
+    public static NutsWorkspace openWorkspace(String[] args) {
+        NutsArgOptions nutsArgOptions = parseNutsArgOptions(splitArgs(args)[0]);
+        return openWorkspace(nutsArgOptions.workspace, nutsArgOptions.workspaceCreateOptions.setCreateIfNotFound(true), nutsArgOptions.bootOptions);
     }
 
     public static NutsWorkspace openWorkspace() {
@@ -104,45 +110,18 @@ public class Nuts {
         return openBootWorkspace(bootOptions).openWorkspace(workspace, options);
     }
 
-    public static void uncheckedMain(String[] args) {
-        long startTime = System.currentTimeMillis();
-        args = checkDistinctBootVersionRequest(args);
-        if (args == null) {
-            return;
-        }
-        int startAppArgs = 0;
-        String nutsHome = null;
-        String workspace = null;
-        String archetype = null;
-        String login = null;
-        String password = null;
-        String logFolder = null;
-        String runtimeId = null;
-        String runtimeSourceURL = null;
-        Level logLevel = null;
-        int logSize = 0;
-        int logCount = 0;
-        boolean save = true;
-        boolean version = false;
-        boolean doupdate = false;
-        boolean checkupdates = false;
-        String applyUpdatesFile = null;
-        boolean perf = false;
-        boolean showHelp = false;
-        boolean showLicense = false;
-        boolean nocolors = false;
+    private static NutsArgOptions parseNutsArgOptions(String[] args) {
         List<String> showError = new ArrayList<>();
-        Set<String> excludedExtensions = new HashSet<>();
-        Set<String> excludedRepositories = new HashSet<>();
-        List<String> extraEnv = new ArrayList<>();
-        boolean runShell = false;
+        NutsArgOptions o = new NutsArgOptions();
+        int startAppArgs = 0;
+        o.workspaceCreateOptions.setSaveIfCreated(true);
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
             if (a.startsWith("-")) {
                 switch (a) {
                     //dash (startAppArgs) should be the very last argument
                     case "-": {
-                        runShell = true;
+                        o.args.add(0, NutsConstants.NUTS_SHELL);
                         startAppArgs = i + 1;
                         //force exit loop
                         i = args.length;
@@ -153,144 +132,150 @@ public class Nuts {
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
-                        nutsHome = args[i];
+                        o.bootOptions.setHome(args[i]);
                         break;
                     case "--workspace":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
-                        workspace = args[i];
+                        o.workspace = args[i];
                         break;
                     case "--archetype":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for archetype");
                         }
-                        archetype = args[i];
+                        o.workspaceCreateOptions.setArchetype(args[i]);
                         break;
                     case "--login":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for login ");
                         }
-                        login = args[i];
+                        o.workspaceCreateOptions.setLogin(args[i]);
                         break;
                     case "--password":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for password");
                         }
-                        password = args[i];
+                        o.workspaceCreateOptions.setPassword(args[i]);
                         break;
                     case "--apply-updates":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for apply-updates");
                         }
-                        applyUpdatesFile = args[i];
+                        o.applyUpdatesFile = args[i];
                         break;
                     case "--runtime-id":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for runtime-id");
                         }
-                        runtimeId = args[i];
+                        o.bootOptions.setRuntimeId(args[i]);
                         break;
                     case "--runtime-source-url":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for boot-url");
                         }
-                        runtimeSourceURL = args[i];
+                        o.bootOptions.setRuntimeSourceURL(args[i]);
                         break;
                     case "--save":
-                        save = true;
+                        o.workspaceCreateOptions.setSaveIfCreated(true);
                         break;
                     case "--no-colors":
-                        nocolors = true;
+                        o.workspaceCreateOptions.setNoColors(true);
                         break;
                     case "--nosave":
-                        save = false;
+                        o.workspaceCreateOptions.setSaveIfCreated(false);
                         break;
                     case "-version":
                     case "--version":
-                        version = true;
+                        o.version = true;
                         break;
                     case "--update":
-                        doupdate = true;
+                        o.doupdate = true;
                         break;
                     case "--check-updates":
-                        checkupdates = true;
+                        o.checkupdates = true;
                         break;
                     case "--verbose":
                     case "--log-finest":
-                        logLevel = Level.FINEST;
+                        o.bootOptions.setLogLevel(Level.FINEST);
                         break;
                     case "--info":
                     case "--log-info":
-                        logLevel = Level.INFO;
+                        o.bootOptions.setLogLevel(Level.INFO);
                         break;
                     case "--log-fine":
-                        logLevel = Level.FINE;
+                        o.bootOptions.setLogLevel(Level.FINE);
                         break;
                     case "--log-finer":
-                        logLevel = Level.FINER;
+                        o.bootOptions.setLogLevel(Level.FINER);
                         break;
                     case "--log-all":
-                        logLevel = Level.ALL;
+                        o.bootOptions.setLogLevel(Level.ALL);
                         break;
                     case "--log-off":
-                        logLevel = Level.OFF;
+                        o.bootOptions.setLogLevel(Level.OFF);
                         break;
                     case "--log-severe":
-                        logLevel = Level.SEVERE;
+                        o.bootOptions.setLogLevel(Level.SEVERE);
                         break;
                     case "--log-size":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-size");
                         }
-                        logSize = Integer.parseInt(args[i]);
+                        o.bootOptions.setLogSize(Integer.parseInt(args[i]));
                         break;
                     case "--log-count":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-count");
                         }
-                        logCount = Integer.parseInt(args[i]);
+                        o.bootOptions.setLogCount(Integer.parseInt(args[i]));
                         break;
                     case "--exclude-extensions":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-extensions");
                         }
-                        excludedExtensions.addAll(NutsStringUtils.split(args[i], " ,;"));
+                        if (o.workspaceCreateOptions.getExcludedExtensions() == null) {
+                            o.workspaceCreateOptions.setExcludedExtensions(new HashSet<>());
+                        }
+                        o.workspaceCreateOptions.getExcludedExtensions().addAll(NutsStringUtils.split(args[i], " ,;"));
                         break;
                     case "--exclude-repositories":
                         i++;
                         if (i >= args.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-repositories");
                         }
-                        excludedRepositories.addAll(NutsStringUtils.split(args[i], " ,;"));
+                        if (o.workspaceCreateOptions.getExcludedRepositories() == null) {
+                            o.workspaceCreateOptions.setExcludedRepositories(new HashSet<>());
+                        }
+                        o.workspaceCreateOptions.getExcludedRepositories().addAll(NutsStringUtils.split(args[i], " ,;"));
                         break;
                     case "--help": {
-                        showHelp = true;
+                        o.showHelp = true;
                         break;
                     }
                     case "--license": {
-                        showLicense = true;
+                        o.showLicense = true;
                         break;
                     }
                     case "--perf": {
-                        perf = true;
+                        o.perf = true;
                         break;
                     }
                     default: {
                         if (a.startsWith("-J")) {
-                            extraEnv.add(a);
+                            o.args.add(a);
                         } else if (a.startsWith("--nuts")) {
-                            extraEnv.add(a);
+                            o.args.add(a);
                         } else {
                             showError.add("nuts: invalid option [[" + a + "]]");
                         }
@@ -302,101 +287,61 @@ public class Nuts {
                 break;
             }
         }
-
-        LogUtils.prepare(logLevel, logFolder, logSize, logCount);
-        NutsBootWorkspace bws = openBootWorkspace(
-                new NutsBootOptions()
-                        .setHome(nutsHome)
-                        .setRuntimeId(runtimeId)
-                        .setRuntimeSourceURL(runtimeSourceURL)
-        );
-        if (!showError.isEmpty()) {
-            if (showHelp) {
-                //dont show any error, just show help as requested!
-                showStaticHelp();
-                return;
+        o.args.addAll(Arrays.asList(Arrays.copyOfRange(args, startAppArgs, args.length)));
+        if (!o.showHelp) {
+            if (!showError.isEmpty()) {
+                for (String s : showError) {
+                    System.err.printf("%s·\n", s);
+                }
+                System.err.printf("Try 'nuts --help' for more information.\n");
+                throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
             }
-            for (String s : showError) {
-                System.err.printf("%s·\n", s);
-            }
-            System.err.printf("Try 'nuts --help' for more information.\n");
-            throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
         }
+        return o;
+    }
+
+    public static void uncheckedMain(String[] args) {
+        long startTime = System.currentTimeMillis();
+        args = checkDistinctBootVersionRequest(args);
+        if (args == null) {
+            return;
+        }
+        NutsArgOptions o = parseNutsArgOptions(args);
+
+        NutsWorkspace ws = openWorkspace(o.workspace, o.workspaceCreateOptions.setCreateIfNotFound(true), o.bootOptions);
         boolean someProcessing = false;
 
-        List<String> argsList = new ArrayList<>(extraEnv);
-        argsList.addAll(Arrays.asList(args).subList(startAppArgs, args.length));
-        String[] commandArguments = argsList.toArray(new String[argsList.size()]);
-
-        NutsWorkspace ws;
-        long startWSTime = System.currentTimeMillis();
-        try {
-            ws = bws.openWorkspace(workspace, new NutsWorkspaceCreateOptions()
-                    .setArchetype(archetype)
-                    .setCreateIfNotFound(true)
-                    .setSaveIfCreated(save)
-                    .setExcludedRepositories(excludedRepositories)
-                    .setExcludedExtensions(excludedExtensions)
-            );
-        } catch (Exception ex) {
-            if (version) {
-                System.err.printf("workspace-location   : %s\n", (workspace == null ? "" : workspace));
-                System.err.printf("nuts-boot            : %s\n", bws.getBootId());
-                System.err.printf("nuts-runtime         : %s\n", bws.getRuntimeId());
-                System.err.printf("nuts-home            : %s\n", bws.getNutsHomeLocation());
-                System.err.printf("java-version         : %s\n", System.getProperty("java.version"));
-                System.err.printf("java-executable      : %s\n", System.getProperty("java.home") + "/bin/java");
-                System.err.printf("java-class-path      : %s\n", System.getProperty("java.class.path"));
-                System.err.printf("java-library-path    : %s\n", System.getProperty("java.library.path"));
-            }
-            if (showHelp) {
-                showStaticHelp();
-            }
-            System.err.printf("Unable to locate nuts-core components.\n");
-            System.err.printf("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...\n");
-            System.err.printf("Exiting nuts, Bye!\n");
-            throw new NutsIllegalArgumentException("Unable to locate nuts-core components", ex);
-        }
+        String[] commandArguments = o.args.toArray(new String[o.args.size()]);
         NutsSession session = ws.createSession();
-        if (nocolors) {
-            session.getTerminal().getFormattedOut().print("`disable-formats`");
-            session.getTerminal().getFormattedErr().print("`disable-formats`");
-        }
-        if (showHelp) {
-            perf = showPerf(System.currentTimeMillis() - startTime, perf, session);
-            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null,session);
+        if (o.showHelp) {
+            o.perf = showPerf(System.currentTimeMillis() - startTime, o.perf, session);
+            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
             someProcessing = true;
         }
-        if (showLicense) {
-            perf = showPerf(System.currentTimeMillis() - startTime, perf, session);
-            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help", "--license"}, null, null,session);
+        if (o.showLicense) {
+            o.perf = showPerf(System.currentTimeMillis() - startTime, o.perf, session);
+            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help", "--license"}, null, null, session);
             someProcessing = true;
-        }
-        if (login != null && login.trim().length() > 0) {
-            if (NutsStringUtils.isEmpty(password)) {
-                password = session.getTerminal().readPassword("Password : ");
-            }
-            ws.getSecurityManager().login(login, password);
         }
 
-        if (applyUpdatesFile != null) {
-            ws.exec(applyUpdatesFile, args, false, false, session);
+        if (o.applyUpdatesFile != null) {
+            ws.exec(o.applyUpdatesFile, args, false, false, session);
             return;
         }
 
-        if (checkupdates || doupdate) {
-            if (ws.checkWorkspaceUpdates(doupdate, args, session).length > 0) {
+        if (o.checkupdates || o.doupdate) {
+            if (ws.checkWorkspaceUpdates(o.doupdate, args, session).length > 0) {
                 return;
             }
             someProcessing = true;
         }
 
-        if (version) {
+        if (o.version) {
             NutsPrintStream out = session.getTerminal().getFormattedOut();
             out.printf("workspace-location   : [[%s]]\n", ws.getConfigManager().getWorkspaceLocation());
             out.printf("nuts-boot            : [[%s]]\n", ws.getConfigManager().getWorkspaceBootId());
             out.printf("nuts-runtime         : [[%s]]\n", ws.getConfigManager().getWorkspaceRuntimeId());
-            out.printf("nuts-home            : [[%s]]\n", bws.getNutsHomeLocation());
+            out.printf("nuts-home            : [[%s]]\n", ws.getConfigManager().getNutsHomeLocation());
             out.printf("java-version         : [[%s]]\n", System.getProperty("java.version"));
             out.printf("java-executable      : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
             out.printf("java-class-path      : [[%s]]\n", System.getProperty("java.class.path"));
@@ -416,25 +361,22 @@ public class Nuts {
             }
             out.printf("runtime-class-path   : [[%s]]\n", runtimeClasPath.toString());
 
-            perf = showPerf(System.currentTimeMillis() - startTime, perf, session);
+            o.perf = showPerf(System.currentTimeMillis() - startTime, o.perf, session);
             someProcessing = true;
         }
 
         if (someProcessing && commandArguments.length == 0) {
             return;
         }
-        if (commandArguments.length == 0 && !showHelp) {
+        if (commandArguments.length == 0 && !o.showHelp) {
             /*perf = */
-            showPerf(System.currentTimeMillis() - startTime, perf, session);
-            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null,session);
+            showPerf(System.currentTimeMillis() - startTime, o.perf, session);
+            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
             return;
         }
         /*perf = */
-        showPerf(System.currentTimeMillis() - startTime, perf, session);
+        showPerf(System.currentTimeMillis() - startTime, o.perf, session);
         List<String> consoleArguments = new ArrayList<>();
-        if (runShell) {
-            consoleArguments.add(NutsConstants.NUTS_SHELL);
-        }
         consoleArguments.addAll(Arrays.asList(commandArguments));
         ws.exec(consoleArguments.toArray(new String[consoleArguments.size()]), null, null, session);
     }
@@ -523,7 +465,7 @@ public class Nuts {
             }
         }
         if (configureLog) {
-            LogUtils.prepare(logLevel, logFolder, logSize, logCount);
+            NutsLogUtils.prepare(logLevel, logFolder, logSize, logCount);
         }
         args = goodArgs.toArray(new String[goodArgs.size()]);
 
@@ -709,19 +651,7 @@ public class Nuts {
     }
 
     public static String[] skipNutsArgs(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("--nuts-no-more-args")) {
-                if (i + 1 >= args.length) {
-                    break;
-                }
-                return Arrays.copyOfRange(args, i + 1, args.length);
-            } else if (args[i].startsWith("--nuts-")) {
-                //ok
-            } else {
-                return Arrays.copyOfRange(args, i, args.length);
-            }
-        }
-        return new String[0];
+        return splitArgs(args)[1];
     }
 
 }

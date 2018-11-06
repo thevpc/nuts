@@ -2,7 +2,6 @@ net.vpc.app.nuts.extensions.core.DefaultHttpTransportComponent
 net.vpc.app.nuts.extensions.core.DefaultNutsWorkspace
 
 net.vpc.app.nuts.extensions.repos.DefaultNutsRepositoryFactoryComponent
-net.vpc.app.nuts.extensions.repos.DefaultNutsRemoteRepositoryFactoryComponent
 
 
 net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal

@@ -5,8 +5,8 @@ import net.vpc.app.nuts.toolbox.nsh.DefaultNutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.AdminServerConfig;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
-import net.vpc.app.nuts.toolbox.nsh.cmdline.ArchitectureNonOption;
-import net.vpc.app.nuts.toolbox.nsh.cmdline.ServerNonOption;
+import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
+import net.vpc.app.nuts.toolbox.nsh.options.ServerNonOption;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.commandline.CommandLine;
@@ -174,7 +174,7 @@ public class NutsServerMain {
                                 if (server.sslCertificate == null) {
                                     throw new NutsIllegalArgumentException("Missing SSL Certificate");
                                 }
-                                config.setSslKeystoreCertificate(IOUtils.readStreamAsBytes(new File(context.resolvePath(server.sslCertificate))));
+                                config.setSslKeystoreCertificate(IOUtils.loadByteArray(new File(context.resolvePath(server.sslCertificate))));
                                 if (server.sslPassphrase == null) {
                                     throw new NutsIllegalArgumentException("Missing SSL Passphrase");
                                 }

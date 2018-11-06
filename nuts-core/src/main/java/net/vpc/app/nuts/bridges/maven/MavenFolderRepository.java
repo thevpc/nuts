@@ -48,7 +48,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
     public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, "maven"), workspace, parentRepository,
+        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN), workspace, parentRepository,
                 CoreIOUtils.resolvePath(repositoryId,
                         root != null ? new File(root) : CoreIOUtils.createFile(
                                 workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
@@ -376,7 +376,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //            byte[] bytes = null;
 //            try {
 //                stream = getStream(id, ".pom");
-//                bytes = IOUtils.readStreamAsBytes(stream, true);
+//                bytes = IOUtils.loadByteArray(stream, true);
 //                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session);
 //            } finally {
 //                if (stream != null) {

@@ -82,6 +82,11 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     public String getComponentsLocation() {
         return getConfig().getComponentsLocation();
     }
+    @Override
+    public void setComponentsLocation(String location) {
+        getConfig().setComponentsLocation(location);
+    }
+
 
     //@Override
     public NutsRepositoryConfig getConfig() {

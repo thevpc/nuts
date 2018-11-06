@@ -45,6 +45,9 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
     private String archetype;
     private Set<String> excludedExtensions;
     private Set<String> excludedRepositories;
+    private String login = null;
+    private String password = null;
+    boolean noColors = false;
 
     public boolean isIgnoreIfFound() {
         return ignoreIfFound;
@@ -117,6 +120,33 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
 
     public NutsWorkspaceCreateOptions setExcludedRepositories(Set<String> excludedRepositories) {
         this.excludedRepositories = excludedRepositories;
+        return this;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public NutsWorkspaceCreateOptions setLogin(String login) {
+        this.login = login;
+        return this;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public NutsWorkspaceCreateOptions setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public boolean isNoColors() {
+        return noColors;
+    }
+
+    public NutsWorkspaceCreateOptions setNoColors(boolean noColors) {
+        this.noColors = noColors;
         return this;
     }
 

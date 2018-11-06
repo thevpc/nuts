@@ -478,6 +478,9 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             return (NutsPrintStream) out;
         }
         if(formatted){
+            if("true".equals(ws.getProperties().getProperty("nocolors"))){
+                return objectFactory.createSupported(NutsNonFormattedPrintStream.class, out, new Class[]{OutputStream.class}, new Object[]{out});
+            }
             NutsFormattedPrintStream p = objectFactory.createSupported(NutsFormattedPrintStream.class, out, new Class[]{OutputStream.class}, new Object[]{out});
             if(p!=null) {
                 return p;

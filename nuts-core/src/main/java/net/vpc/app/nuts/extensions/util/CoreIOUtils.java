@@ -35,14 +35,8 @@ import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
 import net.vpc.common.io.*;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -136,7 +130,7 @@ public class CoreIOUtils {
         }
         args = args2.toArray(new String[args2.size()]);
 
-        File file = FileUtils.createFileByCwd(args[0], new File(workspace.getConfigManager().getCwd()));
+        File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), args[0]);
         if (file.exists() && !file.canExecute()) {
             if (!file.setExecutable(true)) {
                 if (log.isLoggable(Level.WARNING)) {
@@ -151,7 +145,7 @@ public class CoreIOUtils {
         if (directory == null) {
             directory = new File(workspace.getConfigManager().getCwd());
         } else {
-            directory = FileUtils.createFileByCwd(directory.getPath(), new File(workspace.getConfigManager().getCwd()));
+            directory = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), directory.getPath());
         }
         int x = Integer.MIN_VALUE;
         try {
@@ -215,7 +209,7 @@ public class CoreIOUtils {
             }
         }
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
-            File file = FileUtils.createFileByCwd(bestJavaPath, new File(workspace.getConfigManager().getCwd()));
+            File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), bestJavaPath);
             if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
                 bestJavaPath = CoreIOUtils.createFile(bestJavaPath, "bin/java").getPath();
             }
@@ -415,8 +409,8 @@ public class CoreIOUtils {
         return new File(path);
     }
 
-    public static void downloadPath(File to,String path, Object source, NutsWorkspace workspace,NutsSession session){
-        IOUtils.copy(openStream(path, source, workspace,session),to,true,true);
+    public static void downloadPath(String from, File to, Object source, NutsWorkspace workspace, NutsSession session){
+        IOUtils.copy(openStream(from, source, workspace,session),to,true,true);
     }
 
     public static InputStream openStream(String path, Object source, NutsWorkspace workspace,NutsSession session){
@@ -438,7 +432,7 @@ public class CoreIOUtils {
         }
         if (stream != null) {
             if (!path.toLowerCase().startsWith("file://")) {
-                log.log(Level.FINE, "downloading url {0}", new Object[]{path});
+                log.log(Level.FINE, "downloading file {0}", new Object[]{path});
             } else {
                 log.log(Level.FINEST, "downloading url {0}", new Object[]{path});
             }

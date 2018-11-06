@@ -30,17 +30,12 @@
 package net.vpc.app.nuts.extensions.installers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsExecutionContextImpl;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -60,7 +55,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId()));
+        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId(), RootFolderType.PROGRAMS));
 
         String skipRoot = (String) executionContext.getExecProperties().remove("unzip-skip-root");
         ZipUtils.unzip((executionContext.getNutsFile().getFile()),
@@ -83,29 +78,13 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public boolean isInstalled(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId()));
+        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId(), RootFolderType.PROGRAMS));
         File log = new File(installFolder, ".nuts-install.log");
         return log.exists();
     }
 
     @Override
-    public void uninstall(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId()));
-        try {
-            IOUtils.delete(installFolder);
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
-    public boolean isInstalled(NutsFile nutToInstall, NutsWorkspace workspace, NutsSession session) {
-        NutsExecutorDescriptor installer = nutToInstall.getDescriptor().getInstaller();
-        NutsExecutionContext executionContext = new NutsExecutionContextImpl(
-                nutToInstall, new String[0], installer == null ? null : installer.getArgs(), null,
-                installer == null ? null : installer.getProperties(),
-                workspace.getStoreRoot(nutToInstall.getId()),
-                session, workspace);
-        return isInstalled(executionContext);
+    public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
     }
 
 }

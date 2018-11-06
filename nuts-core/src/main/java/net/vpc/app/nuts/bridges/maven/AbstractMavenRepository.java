@@ -73,7 +73,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
             }
         }
-        return IOUtils.readStreamAsString(openStream(url, id.setFace(face), session), true);
+        return IOUtils.loadString(openStream(url, id.setFace(face), session), true);
     }
 
     protected void checkSHA1Hash(NutsId id, String extension, String face, InputStream stream, NutsSession session) throws IOException {
@@ -128,7 +128,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             byte[] bytes = null;
             try {
                 stream = getStream(id, ".pom", CoreNutsUtils.FACE_PACKAGE_HASH, session);
-                bytes = IOUtils.readStreamAsBytes(stream, true);
+                bytes = IOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
                 if (stream != null) {

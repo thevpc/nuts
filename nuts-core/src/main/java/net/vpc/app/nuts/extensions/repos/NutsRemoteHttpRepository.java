@@ -48,7 +48,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     private NutsId remoteId;
 
     public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.DEFAULT_REPOSITORY_TYPE), workspace, parentRepository,
+        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
                 root!=null?root:CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
                         workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
                         workspace.getConfigManager().getNutsHomeLocation()).getPath()
@@ -289,7 +289,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     private String httpGetString(String url) {
         log.log(Level.FINEST, "call url {0}", url);
         try {
-            return IOUtils.readStreamAsString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
+            return IOUtils.loadString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
         } catch (IOException e) {
             throw new NutsIOException(e);
         }

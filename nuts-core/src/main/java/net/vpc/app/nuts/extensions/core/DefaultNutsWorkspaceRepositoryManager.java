@@ -74,7 +74,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate) {
-        NutsRepository proxy = addRepository(repositoryId, repositoryId, NutsConstants.DEFAULT_REPOSITORY_TYPE, autoCreate);
+        NutsRepository proxy = addRepository(repositoryId, repositoryId, NutsConstants.REPOSITORY_TYPE_NUTS, autoCreate);
         return proxy.addMirror(repositoryId + "-ref", location, type, autoCreate);
     }
 
@@ -108,7 +108,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         }
 
         if (CoreStringUtils.isEmpty(type)) {
-            type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
+            type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         ws.checkSupportedRepositoryType(type);
         NutsRepositoryLocation old = ws.getConfigManager().getRepository(repositoryId);
@@ -158,7 +158,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
     @Override
     public boolean isSupportedRepositoryType(String repositoryType) {
         if (CoreStringUtils.isEmpty(repositoryType)) {
-            repositoryType = NutsConstants.DEFAULT_REPOSITORY_TYPE;
+            repositoryType = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         return ws.getExtensionManager().createAllSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(repositoryType, null)).size() > 0;
     }
@@ -190,7 +190,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
     @Override
     public NutsRepository openRepository(String repositoryId, String location, String type, String repositoryRoot, boolean autoCreate) {
         if (CoreStringUtils.isEmpty(type)) {
-            type = NutsConstants.DEFAULT_REPOSITORY_TYPE;
+            type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         NutsRepositoryFactoryComponent factory_ = ws.getExtensionManager().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
         if (factory_ != null) {

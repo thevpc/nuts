@@ -136,7 +136,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
 
     @Override
     public String resolvePath(String path) {
-        return FileUtils.getAbsolutePath(path, new File(getCwd()));
+        return FileUtils.getAbsolutePath(new File(getCwd()), path);
     }
 
     @Override

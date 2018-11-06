@@ -87,7 +87,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     boolean isInstalled(String id, boolean checkDependencies, NutsSession session);
 
-    boolean uninstall(String id, NutsSession session);
+    boolean uninstall(String id, boolean deleteData, NutsSession session);
 
     void push(String id, String repoId, boolean force, NutsSession session);
 
@@ -131,6 +131,8 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceRepositoryManager getRepositoryManager();
 
+    Properties getProperties();
+
     NutsSession createSession();
 
     NutsWorkspaceExtensionManager getExtensionManager();
@@ -139,11 +141,11 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceSecurityManager getSecurityManager();
 
-    String getStoreRoot();
+    String getStoreRoot(RootFolderType folderType);
 
-    String getStoreRoot(NutsId id);
+    String getStoreRoot(NutsId id, RootFolderType folderType);
 
-    String getStoreRoot(String id);
+    String getStoreRoot(String id, RootFolderType folderType);
 
     NutsFile fetchBootFile(NutsSession session);
 

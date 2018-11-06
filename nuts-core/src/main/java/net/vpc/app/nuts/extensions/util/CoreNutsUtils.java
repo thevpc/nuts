@@ -45,7 +45,6 @@ import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterOr;
 import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
 import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
 
@@ -807,7 +806,7 @@ public class CoreNutsUtils {
             try {
                 s = cls.getResourceAsStream(resource);
                 if (s != null) {
-                    help = IOUtils.readStreamAsString(s, true);
+                    help = IOUtils.loadString(s, true);
                 }
             } finally {
                 if (s != null) {

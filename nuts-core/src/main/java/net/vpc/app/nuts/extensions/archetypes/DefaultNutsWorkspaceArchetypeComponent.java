@@ -49,9 +49,9 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, null, NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
+        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, null, NutsConstants.REPOSITORY_TYPE_NUTS, true);
         defaultRepo.getConfigManager().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
-//        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.DEFAULT_REPOSITORY_TYPE, true);
+//        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
 
         for (NutsRepositoryDefinition nutsRepositoryDefinition : workspace.getRepositoryManager().getDefaultRepositories()) {
             if (nutsRepositoryDefinition.isProxied()) {

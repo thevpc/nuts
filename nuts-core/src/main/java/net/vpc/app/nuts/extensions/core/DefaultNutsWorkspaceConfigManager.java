@@ -374,7 +374,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             throw new NutsIllegalArgumentException("Invalid Repository Id");
         }
         if (CoreStringUtils.isEmpty(repository.getType())) {
-            repository.setType(NutsConstants.DEFAULT_REPOSITORY_TYPE);
+            repository.setType(NutsConstants.REPOSITORY_TYPE_NUTS);
         }
         if (getConfig().containsRepository(repository.getId())) {
             throw new NutsIllegalArgumentException("Duplicate Repository Id " + repository.getId());

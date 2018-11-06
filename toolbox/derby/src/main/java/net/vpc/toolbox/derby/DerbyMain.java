@@ -168,7 +168,7 @@ public class DerbyMain {
             ws = Nuts.openWorkspace();
         }
         session = ws.createSession();
-        derbyBinHome = new File(ws.getStoreRoot(resolveNutsId()), "lib");
+        derbyBinHome = new File(ws.getStoreRoot(resolveNutsId(), RootFolderType.PROGRAMS), "lib");
         String v = derbyVersion;
         String h = derbyDataHome;
         if (v == null) {
@@ -232,7 +232,7 @@ public class DerbyMain {
         ws.exec(command.toArray(new String[command.size()]), null, null,null);
     }
 
-    private File download(String id) throws IOException {
+    private File download(String id) {
         final NutsId iid = ws.getExtensionManager().parseNutsId(id);
         File downloadBaseFolder = new File(derbyBinHome, iid.getVersion().getValue());
         File targetFile = new File(downloadBaseFolder, iid.getName() + ".jar");

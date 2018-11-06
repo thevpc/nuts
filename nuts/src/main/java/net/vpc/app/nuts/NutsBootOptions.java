@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.logging.Level;
 
 /**
  *
@@ -41,6 +42,11 @@ public class NutsBootOptions implements Serializable {
     private String home;
     private String runtimeId;
     private String runtimeSourceURL;
+    private String logFolder = null;
+    private Level logLevel = null;
+    private int logSize = 0;
+    private int logCount = 0;
+
     private NutsClassLoaderProvider classLoaderProvider;
 
     public String getHome() {
@@ -79,6 +85,15 @@ public class NutsBootOptions implements Serializable {
         return this;
     }
 
+    public String getLogFolder() {
+        return logFolder;
+    }
+
+    public NutsBootOptions setLogFolder(String logFolder) {
+        this.logFolder = logFolder;
+        return this;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb=new StringBuilder("NutsBootOptions(");
@@ -110,6 +125,33 @@ public class NutsBootOptions implements Serializable {
         }
         sb.append(")");
         return sb.toString();
+    }
+
+    public Level getLogLevel() {
+        return logLevel;
+    }
+
+    public NutsBootOptions setLogLevel(Level logLevel) {
+        this.logLevel = logLevel;
+        return this;
+    }
+
+    public int getLogSize() {
+        return logSize;
+    }
+
+    public NutsBootOptions setLogSize(int logSize) {
+        this.logSize = logSize;
+        return this;
+    }
+
+    public int getLogCount() {
+        return logCount;
+    }
+
+    public NutsBootOptions setLogCount(int logCount) {
+        this.logCount = logCount;
+        return this;
     }
 
     @Override

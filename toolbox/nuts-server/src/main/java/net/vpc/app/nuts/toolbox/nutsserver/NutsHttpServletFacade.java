@@ -198,16 +198,16 @@ public class NutsHttpServletFacade {
                     String name = info.resolveVarInHeader("Content-Disposition", "name");
                     switch (name) {
                         case "root":
-                            root = IOUtils.readStreamAsString(info.getContent(), true).trim();
+                            root = IOUtils.loadString(info.getContent(), true).trim();
                             break;
                         case "transitive":
-                            transitive = Boolean.parseBoolean(IOUtils.readStreamAsString(info.getContent(), true).trim());
+                            transitive = Boolean.parseBoolean(IOUtils.loadString(info.getContent(), true).trim());
                             break;
                         case "pattern":
-                            pattern = IOUtils.readStreamAsString(info.getContent(), true).trim();
+                            pattern = IOUtils.loadString(info.getContent(), true).trim();
                             break;
                         case "js":
-                            js = IOUtils.readStreamAsString(info.getContent(), true).trim();
+                            js = IOUtils.loadString(info.getContent(), true).trim();
                             break;
                     }
                 }
