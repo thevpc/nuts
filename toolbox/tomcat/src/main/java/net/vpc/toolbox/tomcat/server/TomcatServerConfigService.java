@@ -201,8 +201,8 @@ public class TomcatServerConfigService {
 
     private NutsFile getCatalinaNutsFile() {
         String catalinaVersion = getCatalinaVersion();
-        if(catalinaNutsFile==null || !Objects.equals(catalinaVersion,this.catalinaVersion)) {
-            this.catalinaVersion=catalinaVersion;
+        if (catalinaNutsFile == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
+            this.catalinaVersion = catalinaVersion;
             catalinaNutsFile = context.ws.install("org.apache.catalina:tomcat#" + catalinaVersion + "*", false, context.session);
         }
         return catalinaNutsFile;
@@ -272,7 +272,7 @@ public class TomcatServerConfigService {
     }
 
     public boolean restart() {
-        return restart(null,false);
+        return restart(null, false);
     }
 
     public boolean restart(String[] deployApps, boolean deleteLogs) {
@@ -399,10 +399,12 @@ public class TomcatServerConfigService {
             }
 
             File log = FileUtils.getAbsoluteFile(new File(catalinaBase), logFile);
+            if (!log.exists()) {
+                return AppStatus.STOPPED;
+            }
             LineSource lineSource = TextFiles.create(log.getPath());
             TomcatServerLogLineVisitor visitor = new TomcatServerLogLineVisitor(startupMessage, shutdownMessage);
             TextFiles.visit(lineSource, visitor);
-
             if (visitor.outOfMemoryError) {
                 return AppStatus.OUT_OF_MEMORY;
             } else if (visitor.started == null) {

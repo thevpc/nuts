@@ -8,58 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="379c9d86-ad5b-40ff-bfba-0e47cd4149f7" name="Default" comment="v0.4.3&#10;skrink base nuts dependencies&#10;expose nsh as external command">
-      <change beforePath="" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/ConfigNutsArguments.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NewInstanceNutsArguments.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsArgumentsParser.java" />
       <change beforePath="" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java/src/main/java/net/vpc/scholar/hadrumaths/plot/ValuesPlotModelImpl.java" />
       <change beforePath="" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test/hadruwaves-java-test.iml" />
       <change beforePath="" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test/src/main/java/TT.java" />
       <change beforePath="" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java/src/main/java/net/vpc/scholar/hadruwaves/interop/CstMwsUtils.java" />
       <change beforePath="" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java/src/main/java/net/vpc/scholar/hadruwaves/interop/CstPlotDoubleColumn.java" />
-      <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/nuts-0.log" afterPath="$PROJECT_DIR$/nuts-0.log" />
-      <change beforePath="$PROJECT_DIR$/nuts-bootstrap/nuts.jar" afterPath="$PROJECT_DIR$/nuts-bootstrap/nuts.jar" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenFolderRepository.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenFolderRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenRemoteRepository.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenRemoteRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/core/DefaultNutsWorkspace.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/core/DefaultNutsWorkspace.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/AbstractNutsRepository.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/AbstractNutsRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/NutsFolderRepository.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/NutsFolderRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/NutsRemoteFolderHttpRepository.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/NutsRemoteFolderHttpRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/NutsRemoteHttpRepository.java" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/repos/NutsRemoteHttpRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/src/main/java/net/vpc/app/nuts/extensions/servers/NutsHttpServlet.java" afterPath="$PROJECT_DIR$/nuts-servlet/src/main/java/net/vpc/app/nuts/extensions/servers/NutsHttpServlet.java" />
-      <change beforePath="$PROJECT_DIR$/nuts-tomcat-classloader/src/main/java/net/vpc/app/nuts/tomcatclassloader/NutsTomcatClassLoader.java" afterPath="$PROJECT_DIR$/nuts-tomcat-classloader/src/main/java/net/vpc/app/nuts/tomcatclassloader/NutsTomcatClassLoader.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/BootNutsId.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/BootNutsId.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/DefaultNutsBootWorkspace.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/DefaultNutsBootWorkspace.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NullInputStream.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NullInputStream.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsArgOptions.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsArguments.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootOptions.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootOptions.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootWorkspace.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootWorkspace.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsConstants.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsConstants.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIOUtils.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIOUtils.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsLogUtils.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsLogUtils.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepository.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepository.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsStringUtils.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsStringUtils.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsUpdate.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsUpdate.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsUserConfig.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsUserConfig.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspace.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspace.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceClassPath.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceClassPath.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceConfig.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceConfig.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceCreateOptions.java" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceCreateOptions.java" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/ServerConfig.java" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/ServerConfig.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/ndesc-ed/src/main/java/net/vpc/app/nuts/toolbox/ndesced/NdedMain.java" afterPath="$PROJECT_DIR$/toolbox/ndesc-ed/src/main/java/net/vpc/app/nuts/toolbox/ndesced/NdedMain.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/ndi/src/main/java/net/vpc/app/nuts/toolbox/ndi/NdiMain.java" afterPath="$PROJECT_DIR$/toolbox/ndi/src/main/java/net/vpc/app/nuts/toolbox/ndi/NdiMain.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/AdminServerConfig.java" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/AdminServerConfig.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/Nsh.java" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/Nsh.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/cmds/config/WorkspaceConfigSubCommand.java" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/cmds/config/WorkspaceConfigSubCommand.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsHttpServerConfig.java" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsHttpServerConfig.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsServerComponent.java" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsServerComponent.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsServerMain.java" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsServerMain.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsWorkspaceServerManager.java" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsWorkspaceServerManager.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/TomcatMain.java" afterPath="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/TomcatMain.java" />
       <change beforePath="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java" afterPath="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java" />
-      <change beforePath="$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java" afterPath="$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java" />
       <change beforePath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/compiler.xml" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/compiler.xml" />
       <change beforePath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/encodings.xml" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/encodings.xml" />
       <change beforePath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/libraries/Maven__net_vpc_common_vpc_common_strings_1_2_6.xml" afterPath="" />
@@ -345,7 +300,117 @@
     <favorites_list name="nuts-root" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="Nuts.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="442">
+              <caret line="85" column="5" lean-forward="true" selection-start-line="85" selection-start-column="5" selection-end-line="85" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MavenNutsRepositoryFactoryComponent.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenNutsRepositoryFactoryComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="459">
+              <caret line="58" column="30" lean-forward="true" selection-start-line="58" selection-start-column="30" selection-end-line="58" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestTomcatMain.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DefaultLineSourceFactory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/src/main/java/net/vpc/common/io/DefaultLineSourceFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="113">
+              <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TextFiles.java" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/src/main/java/net/vpc/common/io/TextFiles.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="113">
+              <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+              <folding>
+                <element signature="e#3628#3629#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TomcatServerConfigService.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="215">
+              <caret line="406" column="49" lean-forward="true" selection-start-line="406" selection-start-column="49" selection-end-line="406" selection-end-column="49" />
+              <folding>
+                <element signature="e#17000#17001#0" expanded="true" />
+                <element signature="e#17045#17046#0" expanded="true" />
+                <element signature="e#18071#18072#0" expanded="true" />
+                <element signature="e#18122#18123#0" expanded="true" />
+                <element signature="e#19280#19281#0" expanded="true" />
+                <element signature="e#19338#19339#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CustomNutsExecutorComponent.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/executors/CustomNutsExecutorComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="44" column="21" lean-forward="true" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NutsWorkspace.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspace.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="37" column="17" lean-forward="false" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NutsNotFoundException.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsNotFoundException.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="34" column="13" lean-forward="false" selection-start-line="34" selection-start-column="13" selection-end-line="34" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NutsParseException.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsParseException.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="31" column="13" lean-forward="false" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -358,7 +423,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>wbootId.getArtifactId()+&quot;.properties&quot;</find>
       <find>store b</find>
       <find>&quot;maven-vpc-public&quot;</find>
       <find>Store boot</find>
@@ -388,6 +452,7 @@
       <find>iterator</find>
       <find>Fetch</find>
       <find>Failed to load runtime props file from</find>
+      <find>central</find>
     </findStrings>
     <replaceStrings>
       <replace>log</replace>
@@ -479,8 +544,6 @@
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsConstants.java" />
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/CurrentInstanceNutsArguments.java" />
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/ConfigNutsArguments.java" />
-        <option value="$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java" />
-        <option value="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java" />
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepository.java" />
         <option value="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenFolderRepository.java" />
         <option value="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenRemoteRepository.java" />
@@ -492,6 +555,8 @@
         <option value="$PROJECT_DIR$/nuts-0.log.1" />
         <option value="$PROJECT_DIR$/nuts-0.log" />
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/DefaultNutsBootWorkspace.java" />
+        <option value="$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java" />
+        <option value="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java" />
       </list>
     </option>
   </component>
@@ -565,7 +630,115 @@
             <path>
               <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
               <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+              <item name="vpc" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+              <item name="vpc" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+              <item name="vpc" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="net" type="462c0819:PsiDirectoryNode" />
+              <item name="vpc" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -1056,7 +1229,7 @@
       <workItem from="1541439510841" duration="8385000" />
       <workItem from="1541447932548" duration="17097000" />
       <workItem from="1541499685207" duration="34174000" />
-      <workItem from="1541619736970" duration="10624000" />
+      <workItem from="1541619736970" duration="11670000" />
     </task>
     <task id="LOCAL-00001" summary="added version command">
       <created>1504116893614</created>
@@ -1219,11 +1392,18 @@
       <option name="project" value="LOCAL" />
       <updated>1541544688017</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="v0.5.0&#10;Cleaned Bootsrap sequence&#10;introduced workspace.getBootOptions().getApplicationArguments()">
+      <created>1541631806225</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1541631806225</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="728975000" />
+    <option name="totallyTimeSpent" value="730021000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1243,6 +1423,7 @@
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22678763" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32870865" sideWeight="0.4875" order="13" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="18" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18463181" sideWeight="0.8102894" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2497332" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
@@ -1255,9 +1436,9 @@
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50482315" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43613708" sideWeight="0.78655285" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.61786085" sideWeight="0.78655285" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16684492" sideWeight="0.49359658" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18569905" sideWeight="0.61627907" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2945571" sideWeight="0.61627907" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.317053" sideWeight="0.16565657" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28556594" sideWeight="0.49573106" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1267,7 +1448,6 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6514658" sideWeight="0.6862327" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925338" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.45583424" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.0832444" sideWeight="0.4875" order="13" side_tool="false" content_ui="combo" />
       <window_info id="JSF" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3954109" sideWeight="0.5" order="16" side_tool="false" content_ui="tabs" />
       <window_info id="DSM" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" x="-4" y="0" width="1928" height="1048" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" x="798" y="192" width="1034" height="760" />
@@ -1369,7 +1549,8 @@
     <MESSAGE value="v0.4.2&#10;added back and forward version execution" />
     <MESSAGE value="v0.4.3&#10;This should be a major version revision. Will export to 0.5 when it stabilises&#10;skrink base nuts dependencies&#10;expose nsh as external command&#10;expose mvn as external command&#10;expose nuts-server as external command&#10;added ndi (nuts desktop integration)&#10;added tomcat (tomcat helper to download configure catalin base and run multople tomcat instances&#10;added ndesc-ed to edit descriptor file from command line&#10;added feenoo to search into jar classes&#10;move ot gson" />
     <MESSAGE value="v0.5.0&#10;srink base nuts dependencies&#10;expose nsh as external command&#10;added tomcat client part (remote/ssh deploy)&#10;added ssh support to cp command&#10;added ssh exec command&#10;fixed nuts folder remote repository&#10;added &quot;locations&quot; to descriptor&#10;ported to latest common-io" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.5.0&#10;srink base nuts dependencies&#10;expose nsh as external command&#10;added tomcat client part (remote/ssh deploy)&#10;added ssh support to cp command&#10;added ssh exec command&#10;fixed nuts folder remote repository&#10;added &quot;locations&quot; to descriptor&#10;ported to latest common-io" />
+    <MESSAGE value="v0.5.0&#10;Cleaned Bootsrap sequence&#10;introduced workspace.getBootOptions().getApplicationArguments()" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.5.0&#10;Cleaned Bootsrap sequence&#10;introduced workspace.getBootOptions().getApplicationArguments()" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1806,94 +1987,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/nuts-tomcat-classloader/src/main/java/net/vpc/app/nuts/tomcatclassloader/NutsTomcatClassLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="151" column="64" lean-forward="false" selection-start-line="151" selection-start-column="64" selection-end-line="151" selection-end-column="64" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/ObjectFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="36" column="25" lean-forward="false" selection-start-line="36" selection-start-column="25" selection-end-line="36" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Prototype.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="41" column="18" lean-forward="false" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Singleton.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="41" column="18" lean-forward="false" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/StringMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="34" column="17" lean-forward="false" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NullOutputStream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="36" column="19" lean-forward="false" selection-start-line="36" selection-start-column="19" selection-end-line="36" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NullInputStream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootOptions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="40" column="13" lean-forward="false" selection-start-line="40" selection-start-column="13" selection-end-line="40" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NewInstanceNutsArguments.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="17" column="24" lean-forward="false" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/MapListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="34" column="23" lean-forward="false" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/JsonSerializer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="33" column="17" lean-forward="false" selection-start-line="33" selection-start-column="17" selection-end-line="33" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/EnvProvider.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -2078,22 +2171,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/util/CoreVersionUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
@@ -2107,25 +2184,6 @@
         <state relative-caret-position="115">
           <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="204" column="49" lean-forward="false" selection-start-line="204" selection-start-column="49" selection-end-line="204" selection-end-column="49" />
-          <folding>
-            <element signature="e#9909#9910#0" expanded="false" />
-            <element signature="e#9951#9952#0" expanded="false" />
-            <element signature="e#12756#12757#0" expanded="false" />
-            <element signature="e#12800#12801#0" expanded="false" />
-            <element signature="e#16905#16906#0" expanded="false" />
-            <element signature="e#16950#16951#0" expanded="false" />
-            <element signature="e#17976#17977#0" expanded="false" />
-            <element signature="e#18027#18028#0" expanded="false" />
-            <element signature="e#19185#19186#0" expanded="false" />
-            <element signature="e#19243#19244#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2234,6 +2292,127 @@
         <state relative-caret-position="291">
           <caret line="381" column="47" lean-forward="false" selection-start-line="381" selection-start-column="47" selection-end-line="381" selection-end-column="47" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/executors/JavaNutsExecutorComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="43" column="64" lean-forward="false" selection-start-line="43" selection-start-column="64" selection-end-line="43" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsExecutorComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="35" column="17" lean-forward="false" selection-start-line="35" selection-start-column="17" selection-end-line="35" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/executors/ProcessNutsExecutorComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="44" column="13" lean-forward="false" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/executors/NutsShellNutsExecutorComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="42" column="13" lean-forward="false" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/extensions/executors/CustomNutsExecutorComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="44" column="21" lean-forward="true" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspace.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="37" column="17" lean-forward="false" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsNotFoundException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="34" column="13" lean-forward="false" selection-start-line="34" selection-start-column="13" selection-end-line="34" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsParseException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="31" column="13" lean-forward="false" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="85" column="5" lean-forward="true" selection-start-line="85" selection-start-column="5" selection-end-line="85" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/bridges/maven/MavenNutsRepositoryFactoryComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="58" column="30" lean-forward="true" selection-start-line="58" selection-start-column="30" selection-end-line="58" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toolbox/tomcat/src/test/java/net/vpc/toolbox/tomcat/test/TestTomcatMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/src/main/java/net/vpc/common/io/DefaultLineSourceFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/src/main/java/net/vpc/common/io/TextFiles.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="113">
+          <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+          <folding>
+            <element signature="e#3628#3629#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/server/TomcatServerConfigService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="215">
+          <caret line="406" column="49" lean-forward="true" selection-start-line="406" selection-start-column="49" selection-end-line="406" selection-end-column="49" />
+          <folding>
+            <element signature="e#17000#17001#0" expanded="true" />
+            <element signature="e#17045#17046#0" expanded="true" />
+            <element signature="e#18071#18072#0" expanded="true" />
+            <element signature="e#18122#18123#0" expanded="true" />
+            <element signature="e#19280#19281#0" expanded="true" />
+            <element signature="e#19338#19339#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
