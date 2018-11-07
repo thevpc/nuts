@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Created by vpc on 1/14/17.
  */
-public class NutsConstants {
+public final class NutsConstants {
 
     /**
      * Default workspace root folder. Workspaces are created as plain folders
@@ -174,5 +174,8 @@ public class NutsConstants {
         _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_OS, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_OSDIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_PLATFORM, null);
+    }
+
+    private NutsConstants() {
     }
 }

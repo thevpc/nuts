@@ -10,7 +10,7 @@ public class NdiMain {
     public static void main(String[] args) {
         NutsWorkspace ws = Nuts.openWorkspace(args);
         NutsSession session = ws.createSession();
-        args=Nuts.skipNutsArgs(args);
+        args=ws.getBootOptions().getApplicationArguments();
         if(args.length>0){
             if(args[0].equals("in") || args[0].equals("install")){
                 LinuxNdi ndi=null;

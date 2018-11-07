@@ -22,6 +22,8 @@ public class TomcatServerConfigService {
     TomcatServer app;
     TomcatServerConfig config;
     NutsContext context;
+    NutsFile catalinaNutsFile;
+    String catalinaVersion;
 
     public TomcatServerConfigService(String name, TomcatServer app) {
         this.app = app;
@@ -198,7 +200,12 @@ public class TomcatServerConfigService {
     }
 
     private NutsFile getCatalinaNutsFile() {
-        return context.ws.install("org.apache.catalina:tomcat#" + getCatalinaVersion() + "*", false, context.session);
+        String catalinaVersion = getCatalinaVersion();
+        if(catalinaNutsFile==null || !Objects.equals(catalinaVersion,this.catalinaVersion)) {
+            this.catalinaVersion=catalinaVersion;
+            catalinaNutsFile = context.ws.install("org.apache.catalina:tomcat#" + catalinaVersion + "*", false, context.session);
+        }
+        return catalinaNutsFile;
     }
 
 

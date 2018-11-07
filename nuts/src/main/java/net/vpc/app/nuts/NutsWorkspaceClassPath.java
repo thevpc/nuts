@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-class NutsWorkspaceClassPath {
+final class NutsWorkspaceClassPath {
 
     private BootNutsId id;
     private String dependencies;

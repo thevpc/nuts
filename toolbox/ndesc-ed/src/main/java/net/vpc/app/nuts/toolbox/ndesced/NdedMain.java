@@ -20,7 +20,7 @@ public class NdedMain {
 
     public static void main(String[] args) {
         NutsWorkspace ws = Nuts.openWorkspace(args);
-        args = Nuts.skipNutsArgs(args);
+        args = ws.getBootOptions().getApplicationArguments();
         new NdedMain(ws, args).main();
     }
 

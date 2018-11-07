@@ -37,7 +37,7 @@ import java.util.*;
 @Prototype
 public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
-    NutsWorkspace openWorkspace(String workspace, NutsWorkspaceCreateOptions options);
+    NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options);
 
     Iterator<NutsId> findIterator(NutsSearch search, NutsSession session);
 
@@ -180,4 +180,9 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     String resolvePath(String path);
 
     String resolveRepositoryPath(String location);
+
+    NutsWorkspaceCreateOptions getOptions();
+
+    NutsBootOptions getBootOptions();
+
 }

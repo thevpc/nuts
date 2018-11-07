@@ -41,7 +41,10 @@ import static net.vpc.app.nuts.DefaultNutsBootWorkspace.log;
 /**
  * IO Utils helper Created by vpc on 1/15/17.
  */
-class NutsIOUtils {
+final class NutsIOUtils {
+
+    private NutsIOUtils() {
+    }
 
     public static File createFile(String path) {
         return new File(getAbsolutePath(path));

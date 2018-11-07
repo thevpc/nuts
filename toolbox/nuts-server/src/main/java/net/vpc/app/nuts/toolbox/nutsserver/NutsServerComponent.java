@@ -31,7 +31,6 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.ServerConfig;
 import net.vpc.app.nuts.Singleton;
 
 /**

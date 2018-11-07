@@ -76,7 +76,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public Iterator<NutsId> findVersionsImpl(final NutsId id, NutsIdFilter idFilter, final NutsSession session) {
+    public List<NutsId> findVersionsImpl(final NutsId id, NutsIdFilter idFilter, final NutsSession session) {
         //maven-metadata.xml
 
         String groupId = id.getGroup();
@@ -85,10 +85,12 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         List<NutsId> ret = new ArrayList<>();
         try {
             String metadataURL = URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
-            log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
+
             try {
                 metadataStream = openStream(metadataURL, id.setFace(CoreNutsUtils.FACE_CATALOG), session);
+                log.log(Level.FINEST, "[SUCCESS] {0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
             } catch (Exception ex) {
+                log.log(Level.FINEST, "[ERROR  ] {0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
                 throw new NutsNotFoundException(id);
             }
             MavenUtils.MavenMetadataInfo info = MavenUtils.parseMavenMetaData(metadataStream);
@@ -119,7 +121,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 }
             }
         }
-        return ret.iterator();
+        return ret;
     }
 
     @Override

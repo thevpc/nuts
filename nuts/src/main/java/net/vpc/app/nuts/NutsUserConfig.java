@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NutsUserConfig implements Serializable {
+public final class NutsUserConfig implements Serializable {
 
     private static transient final long serialVersionUID = 1;
     private String user;

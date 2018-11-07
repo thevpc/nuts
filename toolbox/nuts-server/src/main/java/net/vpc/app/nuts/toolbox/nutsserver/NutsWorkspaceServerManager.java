@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nutsserver;
 
-import net.vpc.app.nuts.ServerConfig;
-
 import java.util.List;
 
 /**

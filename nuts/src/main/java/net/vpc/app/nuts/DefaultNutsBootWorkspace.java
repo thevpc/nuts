@@ -42,7 +42,7 @@ import java.util.zip.ZipFile;
 /**
  * Default Bootstrap implementation. This class is responsible of loading
  * initial nuts-core.jar and its dependencies and for creating workspaces using
- * the method {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}.
+ * the method {@link #openWorkspace(NutsWorkspaceCreateOptions)}.
  * <p>
  * Created by vpc on 1/6/17.
  */
@@ -53,6 +53,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     private final String runtimeSourceURL;
     private BootNutsId runtimeId;
     private final NutsClassLoaderProvider contextClassLoaderProvider;
+    private NutsBootOptions bootOptions;
 
     public DefaultNutsBootWorkspace() {
         this(null);
@@ -62,12 +63,18 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
         if (bootOptions == null) {
             bootOptions = new NutsBootOptions();
         }
+        this.bootOptions=bootOptions;
         NutsLogUtils.prepare(bootOptions.getLogLevel(), bootOptions.getLogFolder(), bootOptions.getLogSize(), bootOptions.getLogCount());
         log.log(Level.CONFIG, "Create boot workspace with options {0}", new Object[]{bootOptions});
         this.rootLocation = NutsStringUtils.isEmpty(bootOptions.getHome()) ? NutsConstants.DEFAULT_NUTS_HOME : bootOptions.getHome();
         this.runtimeSourceURL = bootOptions.getRuntimeSourceURL();
         this.runtimeId = NutsStringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : BootNutsId.parse(bootOptions.getRuntimeId());
         this.contextClassLoaderProvider = bootOptions.getClassLoaderProvider() == null ? DefaultNutsClassLoaderProvider.INSTANCE : bootOptions.getClassLoaderProvider();
+    }
+
+    @Override
+    public NutsBootOptions getBootOptions() {
+        return bootOptions.copy();
     }
 
     /**
@@ -96,14 +103,19 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      * {@inheritDoc}
      */
     @Override
-    public NutsWorkspace openWorkspace(String workspaceLocation, NutsWorkspaceCreateOptions options) {
+    public NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options) {
         try {
-            long startTime = System.currentTimeMillis();
+
+            long startTime = options.getCreationTime();
             if (options == null) {
                 options = new NutsWorkspaceCreateOptions()
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true);
             }
+            if(startTime==0){
+                options.setCreationTime(startTime=System.currentTimeMillis());
+            }
+            String workspaceLocation=options.getWorkspace();
             workspaceLocation = resolveWorkspacePath(workspaceLocation, NutsConstants.DEFAULT_WORKSPACE_NAME);
             log.log(Level.CONFIG, "Open Workspace {0} with options {1}", new Object[]{workspaceLocation, options});
             if (workspaceLocation.equals(NutsConstants.BOOTSTRAP_REPOSITORY_NAME) || new File(workspaceLocation).equals(new File(rootLocation, NutsConstants.DEFAULT_WORKSPACE_NAME))) {
@@ -157,8 +169,6 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     workspaceClassLoader, options.copy().setIgnoreIfFound(true))) {
                 log.log(Level.FINE, "Workspace created {0}", workspaceLocation);
             }
-            long endTime = System.currentTimeMillis();
-            log.log(Level.FINE, "Workspace created in {0}ms", (endTime - startTime));
 
             if (options.getLogin() != null && options.getLogin().trim().length() > 0) {
                 String password = options.getPassword();
@@ -167,10 +177,16 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 }
                 nutsWorkspace.getSecurityManager().login(options.getLogin(), password);
             }
-
+            long endTime = System.currentTimeMillis();
+            log.log(Level.FINE, "Nuts Workspace loaded in {0}ms", (endTime - startTime));
+            if (bootOptions.isPerf()) {
+                nutsWorkspace.createSession().getTerminal().getFormattedOut().printf("**Nuts** Workspace loaded in [[%s]]ms\n",
+                        (endTime - startTime)
+                );
+            }
             return nutsWorkspace;
         }catch (Exception ex){
-            System.err.printf("workspace-location   : %s\n", (workspaceLocation == null ? "" : workspaceLocation));
+            System.err.printf("workspace-location   : %s\n", (options.getWorkspace() == null ? "" : options.getWorkspace()));
             System.err.printf("nuts-boot            : %s\n", getBootId());
             System.err.printf("nuts-runtime         : %s\n", getRuntimeId());
             System.err.printf("nuts-home            : %s\n", getNutsHomeLocation());
@@ -356,14 +372,14 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 try {
                     cp = new NutsWorkspaceClassPath(NutsIOUtils.loadURLProperties(urlString));
                 } catch (Exception ex) {
-                    log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", urlString);
+                    log.log(Level.CONFIG, "[ERROR  ] Failed to load runtime props file from  {0}", urlString);
                     //ignore
                 }
             } else {
-                log.log(Level.CONFIG, "Failed to load runtime props file from  {0}", (u + "/" + getPathFile(_runtimeId, "nuts.properties")));
+                log.log(Level.CONFIG, "[ERROR  ] Failed to load runtime props file from  {0}", (u + "/" + getPathFile(_runtimeId, "nuts.properties")));
             }
             if (cp != null) {
-                log.log(Level.CONFIG, "Loaded runtime id {0} from runtime props file {1}", new Object[]{cp.getId(), u});
+                log.log(Level.CONFIG, "[SUCCESS] Loaded runtime id {0} from runtime props file {1}", new Object[]{cp.getId(), u});
                 all.add(cp);
                 if (first) {
                     break;

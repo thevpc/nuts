@@ -80,8 +80,8 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                     String ws = cmdLine.readNonOptionOrError(new DefaultNonOption("NewWorkspaceName")).getString();
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getWorkspace().openWorkspace(
-                                ws,
                                 new NutsWorkspaceCreateOptions()
+                                        .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setCreateIfNotFound(true)
                                         .setSaveIfCreated(save)
@@ -129,8 +129,9 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                     cmdLine.requireEmpty();
                     processed = true;
                     if (cmdLine.isExecMode()) {
-                        NutsWorkspace workspace = context.getValidWorkspace().openWorkspace(ws,
+                        NutsWorkspace workspace = context.getValidWorkspace().openWorkspace(
                                 new NutsWorkspaceCreateOptions()
+                                        .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setSaveIfCreated(save)
                                         .setCreateIfNotFound(createIfNotFound)

@@ -35,7 +35,7 @@ import java.util.Objects;
  * simple dummy implementation of NutsId base functionalities
  * @author vpc
  */
-class BootNutsId {
+final class BootNutsId {
 
     String groupId;
     String artifactId;

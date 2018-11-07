@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class Nsh {
     public static void main(String[] args) {
         NutsWorkspace ws = Nuts.openWorkspace(args);
-        args=Nuts.skipNutsArgs(args);
+        args=ws.getBootOptions().getApplicationArguments();
         DefaultNutsConsole c=new DefaultNutsConsole(ws);
         c.run(args);
     }

@@ -5,13 +5,14 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.toolbox.tomcat.client.TomcatClient;
 import net.vpc.toolbox.tomcat.server.TomcatServer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class TomcatMain {
     public static void main(String[] args) {
         NutsWorkspace ws = Nuts.openWorkspace(args);
-        List<String> argsList= Arrays.asList(Nuts.skipNutsArgs(args));
+        List<String> argsList= new ArrayList<>(Arrays.asList(ws.getBootOptions().getApplicationArguments()));
         if(argsList.size()==0){
             throw new IllegalArgumentException("Expected --client or --server");
         }

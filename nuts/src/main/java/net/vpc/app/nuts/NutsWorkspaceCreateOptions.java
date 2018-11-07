@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -39,15 +40,26 @@ import java.util.Set;
  */
 public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable {
 
+    private String workspace = null;
     private boolean ignoreIfFound;
     private boolean createIfNotFound;
     private boolean saveIfCreated;
     private String archetype;
-    private Set<String> excludedExtensions;
-    private Set<String> excludedRepositories;
+    private String[] excludedExtensions;
+    private String[] excludedRepositories;
     private String login = null;
     private String password = null;
-    boolean noColors = false;
+    private boolean noColors = false;
+    private long creationTime;
+
+    public String getWorkspace() {
+        return workspace;
+    }
+
+    public NutsWorkspaceCreateOptions setWorkspace(String workspace) {
+        this.workspace = workspace;
+        return this;
+    }
 
     public boolean isIgnoreIfFound() {
         return ignoreIfFound;
@@ -85,40 +97,20 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return this;
     }
 
-    public NutsWorkspaceCreateOptions copy() {
-        try {
-            return clone();
-        } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException("Should never Happen", e);
-        }
-    }
-
-    @Override
-    protected NutsWorkspaceCreateOptions clone() throws CloneNotSupportedException {
-        NutsWorkspaceCreateOptions clone = (NutsWorkspaceCreateOptions) super.clone();
-        if (clone.excludedExtensions != null) {
-            clone.excludedExtensions = new HashSet<>(clone.excludedExtensions);
-        }
-        if (clone.excludedRepositories != null) {
-            clone.excludedRepositories = new HashSet<>(clone.excludedRepositories);
-        }
-        return clone;
-    }
-
-    public Set<String> getExcludedExtensions() {
+    public String[] getExcludedExtensions() {
         return excludedExtensions;
     }
 
-    public NutsWorkspaceCreateOptions setExcludedExtensions(Set<String> excludedExtensions) {
+    public NutsWorkspaceCreateOptions setExcludedExtensions(String[] excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
 
-    public Set<String> getExcludedRepositories() {
+    public String[] getExcludedRepositories() {
         return excludedRepositories;
     }
 
-    public NutsWorkspaceCreateOptions setExcludedRepositories(Set<String> excludedRepositories) {
+    public NutsWorkspaceCreateOptions setExcludedRepositories(String[] excludedRepositories) {
         this.excludedRepositories = excludedRepositories;
         return this;
     }
@@ -200,4 +192,23 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return true;
     }
 
+    public NutsWorkspaceCreateOptions copy() {
+        try {
+            NutsWorkspaceCreateOptions t = (NutsWorkspaceCreateOptions) clone();
+            t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
+            t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
+            return t;
+        } catch (CloneNotSupportedException e) {
+            throw new NutsUnsupportedOperationException("Should never Happen", e);
+        }
+    }
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public NutsWorkspaceCreateOptions setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+        return this;
+    }
 }

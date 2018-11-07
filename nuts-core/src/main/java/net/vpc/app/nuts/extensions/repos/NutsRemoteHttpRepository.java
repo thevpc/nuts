@@ -34,6 +34,7 @@ import net.vpc.app.nuts.extensions.core.NutsAuthenticationAgent;
 import net.vpc.app.nuts.extensions.util.*;
 import java.io.*;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
@@ -41,6 +42,7 @@ import net.vpc.common.IteratorFilter;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
+import net.vpc.common.util.CollectionUtils;
 
 public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
@@ -222,7 +224,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 //        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
 //    }
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
+    public List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
@@ -234,7 +236,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         if (idFilter != null) {
             it = new IteratorFilter<NutsId>(it,CoreNutsUtils.createFilter(idFilter));
         }
-        return it;
+        return CollectionUtils.toList(it);
     }
 
     @Override

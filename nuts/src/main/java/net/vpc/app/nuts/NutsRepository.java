@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by vpc on 1/5/17.
@@ -81,7 +82,7 @@ public interface NutsRepository {
 
     Iterator<NutsId> find(NutsIdFilter filter, NutsSession session);
 
-    Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session);
+    List<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session);
 
     int getSupportLevel(NutsId id, NutsSession session);
 

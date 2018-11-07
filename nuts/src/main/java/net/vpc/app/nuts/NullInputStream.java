@@ -11,7 +11,7 @@ import java.io.InputStream;
  *
  * @author vpc
  */
-public class NullInputStream extends InputStream {
+public final class NullInputStream extends InputStream {
 
     public static final NullInputStream INSTANCE = new NullInputStream();
 

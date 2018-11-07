@@ -73,6 +73,8 @@ public interface NutsBootWorkspace {
      */
     String getRuntimeId();
 
+    NutsBootOptions getBootOptions();
+
     /**
      * nuts root folder. It defaults to "~/.nuts"
      *
@@ -97,9 +99,8 @@ public interface NutsBootWorkspace {
      * workspace will be created and saved it not found null     (<code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
      * Please note that it may not be safe to create several instances of the same workspace.
      *
-     * @param workspaceLocation workspace location
      * @param options creation options
      * @return a valid and initialized Workspace implementation
      */
-    NutsWorkspace openWorkspace(String workspaceLocation, NutsWorkspaceCreateOptions options);
+    NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options);
 }

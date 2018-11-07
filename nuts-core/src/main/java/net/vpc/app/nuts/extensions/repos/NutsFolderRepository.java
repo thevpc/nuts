@@ -34,6 +34,7 @@ import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.common.IteratorList;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.util.CollectionUtils;
 
 import java.io.*;
 import java.util.*;
@@ -575,8 +576,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
-        Iterator<NutsId> namedNutIdIterator = null;
+    protected List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
+        List<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             try {
@@ -584,24 +585,24 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     NutsFile localGroupAndArtifactAndVersionFile = getLocalGroupAndArtifactAndVersionFile(id, true);
                     File localFile = CoreIOUtils.fileByPath(localGroupAndArtifactAndVersionFile.getFile());
                     if (localFile != null) {
-                        return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId()))).iterator();
+                        return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId())));
                     }
-                    return Collections.emptyIterator();
+                    return Collections.emptyList();
                 }
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session);
+                namedNutIdIterator = CollectionUtils.toList(findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session));
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
         }
         if (!session.isTransitive()) {
             if (namedNutIdIterator == null) {
-                return Collections.emptyIterator();
+                return Collections.emptyList();
             }
             return namedNutIdIterator;
         }
-        IteratorList<NutsId> list = new IteratorList<>();
+        List<NutsId> list = new ArrayList<>();
         if (namedNutIdIterator != null) {
-            list.addNonEmpty(namedNutIdIterator);
+            list.addAll(namedNutIdIterator);
         }
         for (NutsRepository repo : getMirrors()) {
             int sup = 0;
@@ -612,14 +613,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
 
             if (sup > 0) {
-                Iterator<NutsId> vers = null;
+                List<NutsId> vers = null;
                 try {
                     vers = repo.findVersions(id, idFilter, session);
                 } catch (NutsNotFoundException ex) {
 //                    errors.append(ex).append(" \n");
                 }
                 if (vers != null) {
-                    list.addNonEmpty(vers);
+                    list.addAll(vers);
                 }
             }
         }

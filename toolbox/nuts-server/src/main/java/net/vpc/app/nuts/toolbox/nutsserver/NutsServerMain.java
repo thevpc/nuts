@@ -2,7 +2,6 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.DefaultNutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.AdminServerConfig;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
 import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
@@ -24,7 +23,7 @@ import java.util.Map;
 public class NutsServerMain {
     public static void main(String[] args) {
         NutsWorkspace ws = Nuts.openWorkspace(args);
-        args=Nuts.skipNutsArgs(args);
+        args=ws.getBootOptions().getApplicationArguments();
         int ret = 1;
         try {
             ret = main(args, new DefaultNutsCommandContext(ws));
@@ -145,8 +144,9 @@ public class NutsServerMain {
                         } else {
                             nutsWorkspace = allWorkspaces.get(entry.getValue());
                             if (nutsWorkspace == null) {
-                                nutsWorkspace = context.getValidWorkspace().openWorkspace(entry.getValue(),
+                                nutsWorkspace = context.getValidWorkspace().openWorkspace(
                                         new NutsWorkspaceCreateOptions()
+                                                .setWorkspace(entry.getValue())
                                                 .setCreateIfNotFound(autocreate)
                                                 .setSaveIfCreated(save)
                                                 .setArchetype(archetype)

@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 6/23/17.
  */
-public class NutsUpdate {
+public final class NutsUpdate {
 
     private String oldIdFile;
     private String availableIdFile;

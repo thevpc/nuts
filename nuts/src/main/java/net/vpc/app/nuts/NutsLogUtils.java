@@ -42,7 +42,10 @@ import java.util.logging.*;
  * @author Taha BEN SALAH <taha.bensalah@gmail.com>
  * @creationdate 9/16/12 10:00 PM
  */
-public class NutsLogUtils {
+public final class NutsLogUtils {
+
+    private NutsLogUtils() {
+    }
 
     public static void prepare(Level level, String pattern, int maxSize, int count) {
         Logger rootLogger = Logger.getLogger("");//"net.vpc.app.nuts"

@@ -232,7 +232,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
 //        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
 //    }
     @Override
-    public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
+    public List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
@@ -246,9 +246,9 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
                     }
                 }
             }
-            return n.iterator();
+            return n;
         } catch (Exception ex) {
-            return Collections.EMPTY_LIST.iterator();
+            return Collections.emptyList();
         }
 //        boolean transitive = session.isTransitive();
 //        InputStream ret = null;
@@ -288,10 +288,12 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
     }
 
     private String httpGetString(String url) {
-        log.log(Level.FINEST, "call url {0}", url);
         try {
-            return IOUtils.loadString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
+            String s = IOUtils.loadString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
+            log.log(Level.FINEST, "[SUCCESS] call url {0}", url);
+            return s;
         } catch (IOException e) {
+            log.log(Level.FINEST, "[ERROR  ] call url {0}", url);
             throw new NutsIOException(e);
         }
     }

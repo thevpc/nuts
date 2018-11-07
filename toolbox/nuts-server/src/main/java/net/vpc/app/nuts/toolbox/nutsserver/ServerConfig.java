@@ -27,65 +27,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nsh;
-
-import java.net.InetAddress;
-import java.util.concurrent.Executor;
-import net.vpc.app.nuts.ServerConfig;
+package net.vpc.app.nuts.toolbox.nutsserver;
 
 /**
  * Created by vpc on 1/23/17.
  */
-public final class AdminServerConfig extends ServerConfig {
-
-    private String serverId;
-    private InetAddress address;
-    private int port;
-    private int backlog;
-    private Executor executor;
-
-    public String getServerId() {
-        return serverId;
-    }
-
-    public AdminServerConfig setServerId(String serverId) {
-        this.serverId = serverId;
-        return this;
-    }
-
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    public AdminServerConfig setAddress(InetAddress address) {
-        this.address = address;
-        return this;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public AdminServerConfig setPort(int port) {
-        this.port = port;
-        return this;
-    }
-
-    public int getBacklog() {
-        return backlog;
-    }
-
-    public AdminServerConfig setBacklog(int backlog) {
-        this.backlog = backlog;
-        return this;
-    }
-
-    public Executor getExecutor() {
-        return executor;
-    }
-
-    public AdminServerConfig setExecutor(Executor executor) {
-        this.executor = executor;
-        return this;
-    }
+public abstract class ServerConfig {
 }

@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.extensions.servers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.AdminServerConfig;
+import net.vpc.app.nuts.toolbox.nutsserver.AdminServerConfig;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.toolbox.nutsserver.AbstractNutsHttpServletFacadeContext;
@@ -81,10 +81,11 @@ public class NutsHttpServlet extends HttpServlet {
                 .setRuntimeId(runtimeId)
                 .setRuntimeSourceURL(runtimeSourceURL);
         NutsWorkspace workspace = Nuts.openWorkspace(
-                workspaceLocation, new NutsWorkspaceCreateOptions()
-                .setCreateIfNotFound(true)
-                .setSaveIfCreated(true)
-                .setArchetype("server"),
+                new NutsWorkspaceCreateOptions()
+                        .setWorkspace(workspaceLocation)
+                        .setCreateIfNotFound(true)
+                        .setSaveIfCreated(true)
+                        .setArchetype("server"),
                 bootOptions
         );
         DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
@@ -101,10 +102,11 @@ public class NutsHttpServlet extends HttpServlet {
             }
             NutsWorkspace ws = workspacesByLocation.get(location);
             if (ws == null) {
-                ws = Nuts.openWorkspace(location, new NutsWorkspaceCreateOptions()
+                ws = Nuts.openWorkspace(new NutsWorkspaceCreateOptions()
+                        .setWorkspace(location)
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true)
-                        .setArchetype("server"),bootOptions
+                        .setArchetype("server"), bootOptions
                 );
                 workspacesByLocation.put(location, ws);
             }
@@ -142,11 +144,11 @@ public class NutsHttpServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        if(log.isLoggable(Level.INFO)) {
+        if (log.isLoggable(Level.INFO)) {
             log.log(Level.INFO, "Starting Nuts Http Server at url http://<your-server>" + config.getServletContext().getContextPath() + "/service");
         }
         if (adminServer) {
-            if(log.isLoggable(Level.INFO)) {
+            if (log.isLoggable(Level.INFO)) {
                 log.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? NutsConstants.DEFAULT_HTTP_SERVER_PORT : adminServerPort));
             }
         }
@@ -157,7 +159,7 @@ public class NutsHttpServlet extends HttpServlet {
         runtimeSourceURL = config.getInitParameter("nuts-source-url");
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
-            workspaces = CoreJsonUtils.get().read(new StringReader(config.getInitParameter("nuts-workspaces-map")),Map.class);
+            workspaces = CoreJsonUtils.get().read(new StringReader(config.getInitParameter("nuts-workspaces-map")), Map.class);
         } catch (Exception e) {
             //
         }

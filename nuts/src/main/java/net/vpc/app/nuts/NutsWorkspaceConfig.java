@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 import java.io.Serializable;
 import java.util.*;
 
-public class NutsWorkspaceConfig implements Serializable {
+public final class NutsWorkspaceConfig implements Serializable {
 
     private static final long serialVersionUID = 1;
     private boolean secure = false;

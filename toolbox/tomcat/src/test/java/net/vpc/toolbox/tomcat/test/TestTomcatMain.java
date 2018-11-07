@@ -14,7 +14,7 @@ public class TestTomcatMain {
     public void testLinux() {
         String[] args = new String[]{"--nuts-args", "--verbose", "--nuts-no-more-args"};
         NutsWorkspace ws = Nuts.openWorkspace(args);
-        args = Nuts.skipNutsArgs(args);
+        args = ws.getBootOptions().getApplicationArguments();
         TomcatServer m = new TomcatServer(ws);
         m.removeAllConfigs();
         TomcatServerConfigService s = m.loadOrCreateTomcatConfig("intertek");

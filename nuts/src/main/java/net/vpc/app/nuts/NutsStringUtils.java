@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/15/17.
  */
-class NutsStringUtils {
+final class NutsStringUtils {
 
     public static boolean isEmpty(String str) {
         return str == null || str.trim().length() == 0;

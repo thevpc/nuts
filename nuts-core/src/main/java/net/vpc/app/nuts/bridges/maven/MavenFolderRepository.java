@@ -31,12 +31,10 @@ package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.util.CollectionUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -261,25 +259,25 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
-        Iterator<NutsId> namedNutIdIterator = null;
+    protected List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
+        List<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             if (id.getVersion().isSingleValue()) {
                 final NutsDescriptor d = parsePomDescriptor(id, session);
                 if (d != null) {
-                    return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId()))).iterator();
+                    return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId())));
                 }
-                return Collections.emptyIterator();
+                return Collections.emptyList();
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session);
+                namedNutIdIterator = CollectionUtils.toList(findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session));
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
         }
         if (namedNutIdIterator == null) {
-            return Collections.emptyIterator();
+            return Collections.emptyList();
         }
         return namedNutIdIterator;
     }
