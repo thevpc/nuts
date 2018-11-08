@@ -58,17 +58,21 @@ public class CpCommand extends AbstractNutsCommand {
     public static class Options {
         String keyPassword = null;
         String keyFilePath = null;
+        boolean mkdir;
     }
+
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
         List<FilePath> files = new ArrayList<>();
-        Options o=new Options();
+        Options o = new Options();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.isOption()) {
                 if (cmdLine.isOption(null, "password")) {
                     o.keyPassword = cmdLine.readValue();
                 } else if (cmdLine.isOption(null, "cert")) {
                     o.keyFilePath = cmdLine.readValue();
+                } else if (cmdLine.isOption(null, "mkdir")) {
+                    o.mkdir = true;
                 }
             } else {
                 files.add(new FilePath(cmdLine.readValue()));
@@ -85,41 +89,53 @@ public class CpCommand extends AbstractNutsCommand {
 
     public void copy(FilePath from, FilePath to, Options o) {
         if (from.getProtocol().equals("file") && to.getProtocol().equals("file")) {
-            File from1=new File(from.getPath());
-            File to1=new File(to.getPath());
-            if(from1.isFile()){
-                if(to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")){
-                    to1=new File(to1,from1.getName());
+            File from1 = new File(from.getPath());
+            File to1 = new File(to.getPath());
+            if (from1.isFile()) {
+                if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
+                    to1 = new File(to1, from1.getName());
                 }
-            }else if(from1.isDirectory()){
-                if(to.getPath().endsWith("/") || to.getPath().endsWith("\\")){
-                    to1=new File(to1,from1.getName());
+            } else if (from1.isDirectory()) {
+                if (to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
+                    to1 = new File(to1, from1.getName());
                 }
 
+            }
+            if (o.mkdir) {
+                FileUtils.createParents(to1);
             }
             IOUtils.copy(from1, to1);
         } else if (from.getProtocol().equals("file") && to.getProtocol().equals("ssh")) {
-            String p=to.getPath();
-            if(p.endsWith("/") || p.endsWith("\\")){
-                p=p+"/"+FileUtils.getFileName(from.getPath());
+            String p = to.getPath();
+            if (p.endsWith("/") || p.endsWith("\\")) {
+                p = p + "/" + FileUtils.getFileName(from.getPath());
             }
 
             SShConnection session = new SShConnection(to.getUser(), to.getServer(), to.getPort(), o.keyFilePath, o.keyPassword);
+            if (o.mkdir) {
+                //session.mkdir;
+            }
             copyLocalToRemote(new File(from.getPath()), p, session);
             session.close();
         } else if (from.getProtocol().equals("ssh") && to.getProtocol().equals("file")) {
-            File to1=new File(to.getPath());
-            if(to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")){
-                to1=new File(to1,FileUtils.getFileName(from.getPath()));
+            File to1 = new File(to.getPath());
+            if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
+                to1 = new File(to1, FileUtils.getFileName(from.getPath()));
             }
             SShConnection session = new SShConnection(from.getUser(), from.getServer(), from.getPort(), o.keyFilePath, o.keyPassword);
+            if (o.mkdir) {
+                FileUtils.createParents(to1);
+            }
             session.copyRemoteToLocal(from.getPath(), to1.getPath());
             session.close();
         } else if (from.getProtocol().equals("url") && to.getProtocol().equals("file")) {
             try {
-                File to1=new File(to.getPath());
-                if(to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")){
-                    to1=new File(to1,FileUtils.getFileName(from.getPath()));
+                File to1 = new File(to.getPath());
+                if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
+                    to1 = new File(to1, FileUtils.getFileName(from.getPath()));
+                }
+                if (o.mkdir) {
+                    FileUtils.createParents(to1);
                 }
                 IOUtils.copy(new URL(from.getPath()), to1);
             } catch (MalformedURLException e) {
@@ -140,7 +156,6 @@ public class CpCommand extends AbstractNutsCommand {
             session.copyLocalToRemote(from.getPath(), to);
         }
     }
-
 
 
 }

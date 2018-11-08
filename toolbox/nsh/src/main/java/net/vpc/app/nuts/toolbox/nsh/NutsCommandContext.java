@@ -29,9 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 
 import java.util.Map;
 import java.util.Properties;
@@ -81,4 +79,11 @@ public interface NutsCommandContext {
 
     NutsCommandContext copy();
 
+    NutsFormattedPrintStream getFormattedOut();
+
+    NutsFormattedPrintStream getFormattedErr();
+
+    NutsPrintStream getOut();
+
+    NutsPrintStream getErr();
 }

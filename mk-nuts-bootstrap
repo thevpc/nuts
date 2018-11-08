@@ -23,11 +23,12 @@ mkdir -p $bootLatestPath
 cp $bootPath/nuts.properties $bootLatestPath/nuts.properties
 
 mkdir -p $vpc_public_nuts/net/vpc/app/nuts/nuts-core/LATEST
-cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $vpc_public_nuts/net/vpc/app/nuts/nuts-core/LATEST/nuts-core.properties
+cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $vpc_public_nuts/net/vpc/app/nuts/nuts-core/LATEST/nuts.properties
 
 mkdir -p $vpc_public_nuts/net/vpc/app/nuts/nuts-core/$runtimeVersion
-cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $vpc_public_nuts/net/vpc/app/nuts/nuts-core/$runtimeVersion/nuts-core.properties
+cp $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties $vpc_public_nuts/net/vpc/app/nuts/nuts-core/$runtimeVersion/nuts.properties
 
+nuts
 ##################################################################"
 
 cp $base/nuts/target/nuts-$bootVersion.jar $base/nuts-bootstrap/nuts.jar

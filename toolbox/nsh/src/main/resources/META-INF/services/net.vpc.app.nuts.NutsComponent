@@ -36,7 +36,9 @@ net.vpc.app.nuts.toolbox.nsh.cmds.CpCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.UndeclareCommandCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.SshCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.RmCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.AdminCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.NutsAdminCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.PropertiesCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.MkdirCommand
 
 
 net.vpc.app.nuts.toolbox.nsh.cmds.config.ArchietypeConfigSubCommand

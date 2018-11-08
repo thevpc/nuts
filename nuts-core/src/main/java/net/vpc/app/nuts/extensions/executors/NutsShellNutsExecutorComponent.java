@@ -35,6 +35,8 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static net.vpc.app.nuts.NutsConstants.NUTS_SHELL;
+
 /**
  * Created by vpc on 1/7/17.
  */
@@ -74,7 +76,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(envAndApp[1]));
 
         app.add(0,nutMainFile.getFile());
-        app.add(0,"sh");
+        app.add(0,NUTS_SHELL);
         return executionContext.getWorkspace().exec(
                 app.toArray(new String[app.size()]),
                 null,

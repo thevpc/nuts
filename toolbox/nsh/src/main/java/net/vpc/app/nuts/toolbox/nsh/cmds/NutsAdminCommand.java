@@ -43,10 +43,10 @@ import java.util.List;
  * ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class AdminCommand extends AbstractNutsCommand {
+public class NutsAdminCommand extends AbstractNutsCommand {
 
-    public AdminCommand() {
-        super("admin", DEFAULT_SUPPORT);
+    public NutsAdminCommand() {
+        super("nutsadmin", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {

@@ -1,9 +1,14 @@
 package net.vpc.app.nuts.toolbox.nsh.util;
 
+import net.vpc.app.nuts.toolbox.nsh.cmds.CpCommand;
+import net.vpc.common.io.FileUtils;
+import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
 import net.vpc.common.io.URLUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -19,8 +24,8 @@ public class FilePath {
             this.protocol = "ssh";
             path = path.substring("ssh://".length());
             int x = path.indexOf("/");
-            String userAndServerAndPort = path.substring(0, x);
-            path = path.substring(x);
+            String userAndServerAndPort = x<0?path:path.substring(0, x);
+            path = x<0?"":path.substring(x);
             x = userAndServerAndPort.indexOf(':');
             if (x > 0) {
                 this.server = userAndServerAndPort.substring(0, x);

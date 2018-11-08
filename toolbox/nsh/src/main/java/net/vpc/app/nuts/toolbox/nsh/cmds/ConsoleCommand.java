@@ -42,7 +42,7 @@ import net.vpc.common.javashell.InterrupShellException;
 public class ConsoleCommand extends AbstractNutsCommand {
 
     public ConsoleCommand() {
-        super("sh", DEFAULT_SUPPORT);
+        super("nsh", DEFAULT_SUPPORT);
     }
 
     @Override

@@ -171,4 +171,23 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     public void setAutoComplete(NutsCommandAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
     }
+
+    @Override
+    public NutsFormattedPrintStream getFormattedOut() {
+        return getTerminal().getFormattedOut();
+    }
+
+    @Override
+    public NutsFormattedPrintStream getFormattedErr() {
+        return getTerminal().getFormattedErr();
+    }
+    @Override
+    public NutsPrintStream getOut() {
+        return getTerminal().getOut();
+    }
+
+    @Override
+    public NutsPrintStream getErr() {
+        return getTerminal().getErr();
+    }
 }

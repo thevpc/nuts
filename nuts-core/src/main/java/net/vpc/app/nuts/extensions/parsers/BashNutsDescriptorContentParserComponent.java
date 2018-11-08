@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.JsonStringBuffer;
@@ -46,7 +45,7 @@ import java.util.*;
  */
 public class BashNutsDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
-    public static final NutsId SH = CoreNutsUtils.parseNutsId("sh");
+    public static final NutsId BASH = CoreNutsUtils.parseNutsId("bash");
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("sh", "bash"));//, "war", "ear"
 
     @Override
@@ -131,7 +130,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                         .setExecutable(true)
                         .setExt("sh")
                         .setPackaging("sh")
-                        .setExecutor(new NutsExecutorDescriptor(SH))
+                        .setExecutor(new NutsExecutorDescriptor(BASH))
                         .build();
             }
             return CoreNutsUtils.parseNutsDescriptor(comment.getValidString());
