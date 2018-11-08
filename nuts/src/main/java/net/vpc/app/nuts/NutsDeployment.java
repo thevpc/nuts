@@ -41,10 +41,10 @@ public class NutsDeployment {
     private String sha1;
     private String descSHA1;
     private String repositoryId;
-    private boolean force;
+    private NutsConfirmAction foundAction;
 
-    public NutsDeployment setForce(boolean force) {
-        this.force = force;
+    public NutsDeployment setFoundAction(NutsConfirmAction force) {
+        this.foundAction = force;
         return this;
     }
 
@@ -83,8 +83,8 @@ public class NutsDeployment {
         return this;
     }
 
-    public boolean isForce() {
-        return force;
+    public NutsConfirmAction getFoundAction() {
+        return foundAction;
     }
 
     public String getSha1() {
@@ -140,7 +140,7 @@ public class NutsDeployment {
         hash = 19 * hash + Objects.hashCode(this.sha1);
         hash = 19 * hash + Objects.hashCode(this.descSHA1);
         hash = 19 * hash + Objects.hashCode(this.repositoryId);
-        hash = 19 * hash + (this.force ? 1 : 0);
+        hash = 19 * hash + Objects.hashCode(this.foundAction);
         return hash;
     }
 
@@ -156,7 +156,7 @@ public class NutsDeployment {
             return false;
         }
         final NutsDeployment other = (NutsDeployment) obj;
-        if (this.force != other.force) {
+        if (this.foundAction != other.foundAction) {
             return false;
         }
         if (!Objects.equals(this.sha1, other.sha1)) {
@@ -179,7 +179,7 @@ public class NutsDeployment {
 
     @Override
     public String toString() {
-        return "NutsDeployment{" + "content=" + content + ", descriptor=" + descriptor + ", sha1=" + sha1 + ", descSHA1=" + descSHA1 + ", repositoryId=" + repositoryId + ", force=" + force + '}';
+        return "NutsDeployment{" + "content=" + content + ", descriptor=" + descriptor + ", sha1=" + sha1 + ", descSHA1=" + descSHA1 + ", repositoryId=" + repositoryId + ", foundAction=" + foundAction + '}';
     }
     
 }

@@ -30,10 +30,7 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsAuthenticationAgent;
-import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.extensions.util.*;
-import net.vpc.common.IteratorFilter;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
@@ -69,7 +66,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
 
 
     @Override
-    public void pushImpl(NutsId id, String repoId, boolean force, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -84,7 +81,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
 
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 

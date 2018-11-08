@@ -1,7 +1,6 @@
 package net.vpc.toolbox.tomcat.server;
 
-import net.vpc.app.nuts.JsonSerializer;
-import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.*;
 import net.vpc.common.io.*;
 import net.vpc.common.io.osapi.JpsResult;
 import net.vpc.common.io.osapi.PosApis;
@@ -25,6 +24,14 @@ public class TomcatServerConfigService {
     NutsFile catalinaNutsFile;
     String catalinaVersion;
 
+    public TomcatServerConfigService(File file, TomcatServer app) {
+        this(
+                file.getName().substring(0, file.getName().length() - TomcatServerConfigService.SERVER_CONFIG_EXT.length()),
+                app
+        );
+        loadConfig();
+    }
+
     public TomcatServerConfigService(String name, TomcatServer app) {
         this.app = app;
         setName(name);
@@ -32,11 +39,7 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerConfigService setName(String name) {
-        this.name = name;
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Invalid name");
-        }
-        this.name = name.trim();
+        this.name = TomcatUtils.toValidFileName(name, "default");
         return this;
     }
 
@@ -54,7 +57,7 @@ public class TomcatServerConfigService {
 
     public TomcatServerConfigService saveConfig() {
         JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
-        File f = new File(context.configFolder, name + SERVER_CONFIG_EXT);
+        File f = new File(context.configFolder, getName() + SERVER_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
             jsonSerializer.write(config, r, true);
@@ -65,7 +68,7 @@ public class TomcatServerConfigService {
     }
 
     public boolean existsConfig() {
-        File f = new File(context.configFolder, name + SERVER_CONFIG_EXT);
+        File f = new File(context.configFolder, getName() + SERVER_CONFIG_EXT);
         return (f.exists());
     }
 
@@ -73,7 +76,7 @@ public class TomcatServerConfigService {
         TomcatServerConfig c = getConfig();
         String catalinaBase = c.getCatalinaBase();
         if (catalinaBase == null) {
-            catalinaBase = name;
+            catalinaBase = getName();
         }
         NutsFile nf = getCatalinaNutsFile();
         String v = nf.getId().getVersion().toString();
@@ -82,7 +85,7 @@ public class TomcatServerConfigService {
         if (x2 > 0) {
             v = v.substring(0, x2);
         }
-        return catalinaBase == null ? null : FileUtils.getAbsoluteFile(new File(context.varFolder, "catalina-base-" + v), catalinaBase).getPath();
+        return FileUtils.getAbsoluteFile(new File(context.varFolder, "catalina-base-" + v), catalinaBase).getPath();
     }
 
     public String getCatalinaVersion() {
@@ -90,6 +93,9 @@ public class TomcatServerConfigService {
         String v = c.getCatalinaVersion();
         if (v == null) {
             v = "";
+        }
+        if (v.isEmpty()) {
+            v = "8.5";
         }
         return v;
     }
@@ -103,15 +109,15 @@ public class TomcatServerConfigService {
     public void printStatus() {
         switch (getStatus()) {
             case RUNNING: {
-                context.out.printf("==Running==\n");
+                context.out.printf("==[%s]== Tomcat {{Running}}.\n", getName());
                 break;
             }
             case STOPPED: {
-                context.out.printf("<<<Stopped>>>\n");
+                context.out.printf("==[%s]== Tomcat @@Stopped@@.\n", getName());
                 break;
             }
             case OUT_OF_MEMORY: {
-                context.out.printf("[[OutOfMemory]]\n");
+                context.out.printf("==[%s]== Tomcat [[OutOfMemory]].\n", getName());
                 break;
             }
         }
@@ -137,63 +143,77 @@ public class TomcatServerConfigService {
         return start(null, false);
     }
 
-    public boolean start(String[] deployApps, boolean deleteLogs) throws RuntimeIOException {
-        TomcatServerConfig c = getConfig();
-        JpsResult jpsResult = getJpsResult();
-        if (jpsResult != null) {
-            context.out.printf("[[%s]] Already running ...\n", "[Start Tomcat]");
-            return false;
-        }
-        for (String app : new HashSet<String>(Arrays.asList(parseApps(deployApps)))) {
-            getApp(app).deploy();
-        }
-        if (deleteLogs) {
-            deleteOutLog();
-        }
+    public ProcessBuilder2 invokeCatalina(String catalinaCommand) throws RuntimeIOException {
         NutsFile f = getCatalinaNutsFile();
         String catalinaHome = f.getInstallFolder();
         String catalinaBase = getCatalinaBase();
-        if (catalinaBase != null) {
-            new File(catalinaBase).mkdirs();
-        }
+        boolean catalinaBaseUpdated = false;
+        catalinaBaseUpdated |= new File(catalinaBase).mkdirs();
         ProcessBuilder2 b = new ProcessBuilder2();
         String ext = context.ws.getPlatformOs().startsWith("windows") ? "bat" : "sh";
-        checkExec(catalinaHome + "/bin/startup." + ext);
-        checkExec(catalinaHome + "/bin/catalina." + ext);
-        b.addCommand(catalinaHome + "/bin/startup." + ext);
-        if (catalinaHome != null) {
-            b.addCommand("-Dcatalina.home=" + catalinaHome);
-        }
-        if (catalinaBase != null) {
-            b.addCommand("-Dcatalina.base=" + catalinaBase);
-        }
+        catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
+        b.addCommand(catalinaHome + "/bin/catalina." + ext);
+        b.addCommand(catalinaCommand);
+//        if (catalinaHome != null) {
+//            b.addCommand("-Dcatalina.home=" + catalinaHome);
+//        }
+//        b.addCommand("-Dcatalina.base=" + catalinaBase);
         b.setDirectory(new File(catalinaBase));
+        TomcatServerConfig c = getConfig();
         String javaHome = c.getJavaHome();
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }
         b.setEnv("JAVA_HOME", javaHome);
         b.setEnv("JRE_HOME", javaHome);
-        if (catalinaBase != null) {
-            b.setEnv("CATALINA_BASE", catalinaBase);
-            b.setEnv("CATALINA_OUT", FileUtils.getNativePath(catalinaBase + "/logs/catalina.out"));
-            b.setEnv("CATALINA_TMPDIR", FileUtils.getNativePath(catalinaBase + "/temp"));
-            new File(catalinaBase, "logs").mkdirs();
-            new File(catalinaBase, "temp").mkdirs();
-            new File(catalinaBase, "conf").mkdirs();
-            for (File conf : new File(catalinaHome, "conf").listFiles()) {
-                if (conf.isFile() && !new File(catalinaBase, "conf/" + conf.getName()).exists()) {
-                    try {
-                        Files.copy(conf.toPath(), new File(catalinaBase, "conf/" + conf.getName()).toPath());
-                    } catch (IOException e) {
-                        throw new RuntimeIOException(e);
-                    }
+        StringBuilder javaOptions = new StringBuilder();
+        javaOptions.append("-Dnuts-config-name=").append((getName() == null ? "" : getName()));
+        if (getConfig().getJavaOptions() != null) {
+            javaOptions.append(" ").append(getConfig().getJavaOptions());
+        }
+        b.setEnv("JAVA_OPTS", javaOptions.toString());
+
+        b.setEnv("CATALINA_HOME", catalinaHome);
+        b.setEnv("CATALINA_BASE", catalinaBase);
+        b.setEnv("CATALINA_OUT", FileUtils.getNativePath(catalinaBase + "/logs/catalina.out"));
+        b.setEnv("CATALINA_TMPDIR", FileUtils.getNativePath(catalinaBase + "/temp"));
+        catalinaBaseUpdated |= new File(catalinaBase, "logs").mkdirs();
+        catalinaBaseUpdated |= new File(catalinaBase, "temp").mkdirs();
+        catalinaBaseUpdated |= new File(catalinaBase, "conf").mkdirs();
+        for (File conf : new File(catalinaHome, "conf").listFiles()) {
+            File confFile = new File(catalinaBase, "conf/" + conf.getName());
+            if (conf.isFile() && !confFile.exists()) {
+                catalinaBaseUpdated = true;
+                try {
+                    Files.copy(conf.toPath(), confFile.toPath());
+                } catch (IOException e) {
+                    throw new RuntimeIOException(e);
                 }
             }
         }
+        if (catalinaBaseUpdated) {
+            context.out.printf("==[%s]== Updated catalina base ==%s==\n", getName(), catalinaBase);
+        }
         b.setOut(context.session.getTerminal().getOut());
         b.setErr(context.session.getTerminal().getErr());
-        context.out.printf("[[ [Start Tomcat] ]] %s\n", b.getCommand());
+        return b;
+    }
+
+    public boolean start(String[] deployApps, boolean deleteLogs) throws RuntimeIOException {
+        TomcatServerConfig c = getConfig();
+        JpsResult jpsResult = getJpsResult();
+        if (jpsResult != null) {
+            context.out.printf("==[%s]== Tomcat Already started.\n", getName());
+            return false;
+        }
+        for (String app : new HashSet<String>(Arrays.asList(parseApps(deployApps)))) {
+            getApp(app).deploy(null);
+        }
+        if (deleteLogs) {
+            deleteOutLog();
+        }
+        ProcessBuilder2 b = invokeCatalina("start");
+        context.out.printf("==[%s]== Starting Tomcat. CMD=%s.\n", getName(), b.getCommand());
         b.waitFor();
         waitForRunningStatus(null, null, c.getStartupWaitTime());
         return true;
@@ -203,44 +223,40 @@ public class TomcatServerConfigService {
         String catalinaVersion = getCatalinaVersion();
         if (catalinaNutsFile == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            catalinaNutsFile = context.ws.install("org.apache.catalina:tomcat#" + catalinaVersion + "*", false, context.session);
+            catalinaNutsFile = context.ws.install("org.apache.catalina:tomcat#" + catalinaVersion + "*", NutsConfirmAction.IGNORE, context.session.copy().addListeners(new NutsInstallListener() {
+                @Override
+                public void onInstall(NutsFile nutsFile, boolean update, NutsSession session) {
+                    context.out.printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsFile.getInstallFolder());
+                }
+            }));
         }
         return catalinaNutsFile;
     }
 
 
-    public boolean shutdown() {
+    public void deployFile(File file, String contextName, String domain) {
+        if (file.getName().endsWith(".war")) {
+            if (TomcatUtils.isEmpty(contextName)) {
+                contextName = file.getName().substring(0, file.getName().length() - ".war".length());
+            }
+            File c = new File(getDefaulDeployFolder(domain), contextName + ".war");
+            context.out.printf("==[%s]== Deploy file file [[%s]] to [[%s]].\n", getName(),file.getPath(), c);
+            IOUtils.copy(file, c);
+        } else {
+            throw new RuntimeException("Expected war file");
+        }
+    }
+
+    public boolean stop() {
         if (getJpsResult() == null) {
-            context.out.printf("[[ [Stop Tomcat] ]] Already stopped");
+            context.out.printf("==[%s]== Tomcat already stopped.\n", getName());
+            return false;
         }
         TomcatServerConfig c = getConfig();
-        NutsFile f = getCatalinaNutsFile();
-        String catalinaHome = f.getInstallFolder();
-        String catalinaBase = getCatalinaBase();
-        ProcessBuilder2 b = new ProcessBuilder2();
-        String javaHome = c.getJavaHome();
-        if (javaHome == null) {
-            javaHome = System.getProperty("java.home");
-        }
-        b.setEnv("JAVA_HOME", javaHome);
-        b.setEnv("JRE_HOME", javaHome);
-        String ext = context.ws.getPlatformOs().startsWith("windows") ? "bat" : "sh";
-        checkExec(catalinaHome + "/bin/shutdown." + ext);
-        checkExec(catalinaHome + "/bin/catalina." + ext);
-        b.addCommand(catalinaHome + "/bin/shutdown." + ext);
-        if (catalinaHome != null) {
-            b.addCommand("-Dcatalina.home=" + catalinaHome);
-        }
-        if (catalinaBase != null) {
-            b.addCommand("-Dcatalina.base=" + catalinaBase);
-            b.setEnv("CATALINA_BASE", catalinaBase);
-            b.setEnv("CATALINA_OUT", FileUtils.getNativePath(catalinaBase + "/logs/catalina.out"));
-            b.setEnv("CATALINA_TMPDIR", FileUtils.getNativePath(catalinaBase + "/temp"));
-        }
-        context.out.printf("[[ [Stop Tomcat] ]] %s\n", b.getCommand());
+        ProcessBuilder2 b = invokeCatalina("stop");
+        context.out.printf("==[%s]== Stopping Tomcat. CMD=%s.\n", getName(), b.getCommand());
         b.waitFor();
-        waitForStoppedStatus(c.getShutdownWaitTime(), c.isKill());
-        return getJpsResult() != null;
+        return waitForStoppedStatus(c.getShutdownWaitTime(), c.isKill());
     }
 
     public JpsResult getJpsResult() throws RuntimeIOException {
@@ -261,14 +277,16 @@ public class TomcatServerConfigService {
     }
 
 
-    private TomcatServerConfigService checkExec(String pathname) {
+    private boolean checkExec(String pathname) {
         File file = new File(FileUtils.getNativePath(pathname));
         if (!file.canExecute()) {
             if (!file.setExecutable(true)) {
-                context.out.println(file.canExecute());
+                //context.out.println(file.canExecute());
+            } else {
+                return true;
             }
         }
-        return this;
+        return false;
     }
 
     public boolean restart() {
@@ -276,8 +294,8 @@ public class TomcatServerConfigService {
     }
 
     public boolean restart(String[] deployApps, boolean deleteLogs) {
-        if (!shutdown()) {
-            throw new IllegalArgumentException("Server " + name + " is running. It cannot be stopped!");
+        if (!stop()) {
+            throw new IllegalArgumentException("Server " + getName() + " is running. It cannot be stopped!");
         }
         start(deployApps, deleteLogs);
         return true;
@@ -288,13 +306,13 @@ public class TomcatServerConfigService {
 
         AppStatus y = getStatus(domain, app);
         if (y == AppStatus.RUNNING) {
-            this.context.out.printf("==Tomcat started==\n");
+            context.out.printf("==[%s]== Tomcat started.\n", getName());
             return y;
         }
         if (timeout <= 0) {
             JpsResult ps = getJpsResult();
             if (ps != null) {
-                this.context.out.printf("==Tomcat started==\n");
+                context.out.printf("==[%s]== Tomcat started.\n", getName());
                 return AppStatus.RUNNING;
             }
             throw new IllegalArgumentException("Unable to start tomcat");
@@ -307,26 +325,26 @@ public class TomcatServerConfigService {
             }
             y = getStatus(domain, app);
             if (y == AppStatus.RUNNING) {
-                this.context.out.printf("==Tomcat started==\n");
+                context.out.printf("==[%s]== Tomcat started.\n", getName());
                 return y;
             }
         }
         if (y == AppStatus.OUT_OF_MEMORY) {
-            this.context.out.printf("==Tomcat out of memory==\n");
+            context.out.printf("==[%s]== Tomcat out of memory.\n", getName());
             return y;
         }
         throw new IllegalArgumentException("Unable to start tomcat");
     }
 
-    public TomcatServerConfigService waitForStoppedStatus(int timeout, boolean kill) {
+    public boolean waitForStoppedStatus(int timeout, boolean kill) {
 
         JpsResult ps = getJpsResult();
         if (ps == null) {
-            context.out.printf("==Tomcat stopped==\n");
-            return this;
+            context.out.printf("==[%s]== Tomcat stopped.\n", getName());
+            return true;
         }
         for (int i = 0; i < timeout; i++) {
-            context.out.println("Waiting for process to die");
+            context.out.printf("==[%s]== Waiting Tomcat process to die.\n", getName());
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -334,26 +352,29 @@ public class TomcatServerConfigService {
             }
             ps = getJpsResult();
             if (ps == null) {
-                context.out.printf("==Tomcat stopped==\n");
-                return this;
+                context.out.printf("==[%s]== Tomcat stopped.\n", getName());
+                return true;
             }
         }
         if (kill && PosApis.get().isSupportedKillProcess()) {
             ps = getJpsResult();
             if (ps != null) {
                 if (PosApis.get().killProcess(ps.getPid())) {
-                    context.out.printf("[[ [Stop Tomcat] ]] Force kill : %s\n", ps.getPid());
+                    context.out.printf("==[%s]== Tomcat process killed (%s).\n", getName(), ps.getPid());
+                    return true;
                 } else {
-                    context.out.printf("[[ [Stop Tomcat] ]] unable to kill : %s\n", ps.getPid());
+                    context.out.printf("==[%s]== Tomcat process could not be killed ( %s).\n", getName(), ps.getPid());
+                    return false;
                 }
             }
         }
         ps = getJpsResult();
         if (ps != null) {
-            throw new IllegalArgumentException("Unable to stop tomcat");
+            context.out.printf("==[%s]== Tomcat process could not be terminated (%s).\n", getName(), ps.getPid());
+            return true;
         }
         context.out.printf("==Tomcat stopped==\n");
-        return this;
+        return true;
     }
 
 
@@ -420,37 +441,34 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerConfigService loadConfig() {
-        if (name == null) {
-            throw new IllegalArgumentException("Missing config name");
-        }
+        String name = getName();
         File f = new File(context.configFolder, name + SERVER_CONFIG_EXT);
         if (f.exists()) {
             JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
             try (FileReader r = new FileReader(f)) {
                 TomcatServerConfig i = jsonSerializer.read(r, TomcatServerConfig.class);
-                if (i.getCatalinaVersion() == null) {
-                    i.setCatalinaVersion("8.5");
-                }
                 config = i;
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else if ("default".equals(name)) {
+            //auto create default config
+            config = new TomcatServerConfig();
+            saveConfig();
+            return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
     }
 
     public TomcatServerConfigService removeConfig() {
-        File f = new File(context.configFolder, name + SERVER_CONFIG_EXT);
+        File f = new File(context.configFolder, getName() + SERVER_CONFIG_EXT);
         f.delete();
         return this;
     }
 
     public TomcatServerConfigService write(PrintStream out) {
-        JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
-        PrintWriter w = new PrintWriter(out);
-        jsonSerializer.write(getConfig(), new PrintWriter(out), true);
-        w.flush();
+        TomcatUtils.writeJson(out, getConfig(), context.ws);
         return this;
     }
 
@@ -465,6 +483,7 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerAppConfigService getAppOrNull(String appName) {
+        appName = TomcatUtils.toValidFileName(appName, "default");
         TomcatServerAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
             return null;
@@ -473,20 +492,22 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerAppConfigService getAppOrError(String appName) {
-        TomcatServerAppConfig a = getConfig().getApps().get(appName);
+        TomcatServerAppConfigService a = getAppOrNull(appName);
         if (a == null) {
             throw new IllegalArgumentException("App not found :" + appName);
         }
-        return new TomcatServerAppConfigService(appName, a, this);
+        return a;
     }
 
     public TomcatServerAppConfigService getAppOrCreate(String appName) {
-        TomcatServerAppConfig a = getConfig().getApps().get(appName);
+        appName = TomcatUtils.toValidFileName(appName, "default");
+        TomcatServerAppConfigService a = getAppOrNull(appName);
         if (a == null) {
-            a = new TomcatServerAppConfig();
-            getConfig().getApps().put(appName, a);
+            TomcatServerAppConfig c = new TomcatServerAppConfig();
+            getConfig().getApps().put(appName, c);
+            a = getAppOrNull(appName);
         }
-        return new TomcatServerAppConfigService(appName, a, this);
+        return a;
     }
 
     public TomcatServerDomainConfigService getDomain(String domainName) {
@@ -494,6 +515,7 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerDomainConfigService getDomainOrError(String domainName) {
+        domainName = TomcatUtils.toValidFileName(domainName, "default");
         TomcatServerDomainConfigService d = getDomainOrNull(domainName);
         if (d == null) {
             throw new IllegalArgumentException("Domain not found :" + domainName);
@@ -502,9 +524,7 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerDomainConfigService getDomainOrNull(String domainName) {
-        if (domainName == null) {
-            domainName = "";
-        }
+        domainName = TomcatUtils.toValidFileName(domainName, "");
         TomcatServerDomainConfig a = getConfig().getDomains().get(domainName);
         if (a == null) {
             return null;
@@ -513,9 +533,7 @@ public class TomcatServerConfigService {
     }
 
     public TomcatServerDomainConfigService getDomainOrCreate(String domainName) {
-        if (domainName == null) {
-            domainName = "";
-        }
+        domainName = TomcatUtils.toValidFileName(domainName, "");
         TomcatServerDomainConfig a = getConfig().getDomains().get(domainName);
         if (a == null) {
             a = new TomcatServerDomainConfig();
@@ -530,7 +548,49 @@ public class TomcatServerConfigService {
 
     public void deleteOutLog() {
         //get it from config?
-        IOUtils.delete(new File(getLogsFolder(), "catalina.out"));
+        File file = new File(getLogsFolder(), "catalina.out");
+        if(file.isFile()) {
+            context.out.printf("==[%s]== Delete log file %s.\n", getName(), file.getPath());
+            IOUtils.delete(file);
+        }
+    }
+
+    public File getOutLogFile() {
+        return new File(getLogsFolder(), "catalina.out");
+    }
+
+    public void showOutLog(int tail) {
+        //get it from config?
+        File file = getOutLogFile();
+        if(tail<=0){
+            IOUtils.copy(file,context.out,false);
+            return;
+        }
+        if(file.isFile()) {
+            TextFiles.tail(file.getPath(),tail,context.out);
+        }
+    }
+
+    public void deleteAllLog() {
+        //get it from config?
+        File[] files = getLogsFolder().listFiles();
+        if(files!=null){
+            for (File file : files) {
+                if(file.isFile()){
+                    String n=file.getName();
+                    if(
+                            n.endsWith(".out")
+                            || n.endsWith(".txt")
+                            || n.endsWith(".log")
+                            ) {
+                        //this is a log file, will delete it
+                    }{
+                        context.out.printf("==[%s]== Delete log file %s.\n", getName(),file.getPath());
+                        IOUtils.delete(file);
+                    }
+                }
+            }
+        }
     }
 
     public List<TomcatServerAppConfigService> getApps() {
@@ -539,5 +599,16 @@ public class TomcatServerConfigService {
             a.add(new TomcatServerAppConfigService(s, getConfig().getApps().get(s), this));
         }
         return a;
+    }
+
+    public String getDefaulDeployFolder(String domainName) {
+        String p = "webapps";
+        if (domainName == null) {
+            domainName = "";
+        }
+        if (!domainName.equals("")) {
+            p += ("/" + domainName);
+        }
+        return getCatalinaBase()+"/"+p;
     }
 }

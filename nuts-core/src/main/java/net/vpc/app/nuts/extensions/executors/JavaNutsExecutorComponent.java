@@ -129,6 +129,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         List<String> jvmArgs = new ArrayList<String>();
+
+        HashMap<String, String> osEnv = new HashMap<>();
+        String bootArgumentsString = executionContext.getWorkspace().getBootOptions().getBootArgumentsString();
+        osEnv.put("nuts_boot_args",bootArgumentsString);
+
+        jvmArgs.add("-Dnuts.boot.args="+ bootArgumentsString);
         String javaVersion = null;//runnerProps.getProperty("java.version");
         String javaHome = null;//runnerProps.getProperty("java.version");
         String mainClass = null;
@@ -286,7 +292,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 args.toArray(new String[args.size()]),
-                null, directory
+                osEnv, directory
                 , executionContext.getTerminal(), showCommand
         );
 

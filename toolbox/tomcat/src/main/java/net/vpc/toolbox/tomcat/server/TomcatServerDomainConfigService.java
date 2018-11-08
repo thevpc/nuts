@@ -6,6 +6,7 @@ import net.vpc.toolbox.tomcat.util.TomcatUtils;
 import net.vpc.toolbox.tomcat.server.config.TomcatServerDomainConfig;
 
 import java.io.File;
+import java.io.PrintStream;
 
 public class TomcatServerDomainConfigService {
     private String name;
@@ -39,10 +40,7 @@ public class TomcatServerDomainConfigService {
         }
         String p = config.getDeployPath();
         if(TomcatUtils.isEmpty(p)){
-            p="webapps";
-            if(!name.equals("")){
-                p+=("/"+name);
-            }
+            p=tomcat.getDefaulDeployFolder(name);
         }
         return FileUtils.getAbsolutePath(new File(b), p);
     }
@@ -52,4 +50,10 @@ public class TomcatServerDomainConfigService {
         context.out.printf("==[%s]== domain removed.\n",name);
         return this;
     }
+
+    public TomcatServerDomainConfigService write(PrintStream out) {
+        TomcatUtils.writeJson(out, getConfig(), context.ws);
+        return this;
+    }
+
 }

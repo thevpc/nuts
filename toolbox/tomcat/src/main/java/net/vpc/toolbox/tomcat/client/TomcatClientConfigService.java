@@ -27,11 +27,7 @@ public class TomcatClientConfigService {
     }
 
     public TomcatClientConfigService setName(String name) {
-        this.name = name;
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Invalid name");
-        }
-        this.name = name.trim();
+        this.name=TomcatUtils.toValidFileName(name,"default");
         return this;
     }
 
@@ -73,10 +69,11 @@ public class TomcatClientConfigService {
         );
     }
 
-    public boolean start(String[] redeploy,boolean deleteOutLog) throws RuntimeIOException {
+    public int start(String[] redeploy,boolean deleteOutLog) throws RuntimeIOException {
         List<String> arg=new ArrayList<>();
         arg.add("net.vpc.app.nuts.toolbox:tomcat");
         arg.add("--start");
+        arg.add("--instance");
         arg.add(getName());
         StringBuilder sb=new StringBuilder();
         for (String s : redeploy) {
@@ -92,20 +89,19 @@ public class TomcatClientConfigService {
         if(deleteOutLog) {
             arg.add("--deleteOutLog");
         }
-        execRemoteNuts(arg.toArray(new String[arg.size()]));
-        return true;
+        return execRemoteNuts(arg.toArray(new String[arg.size()]));
     }
 
-    public boolean shutdown() {
-        execRemoteNuts(
+    public int shutdown() {
+        return execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:tomcat",
                 "--stop",
+                "--instance",
                 getName()
         );
-        return true;
     }
 
-    public boolean restart(String[] redeploy,boolean deleteOutLog) {
+    public int restart(String[] redeploy,boolean deleteOutLog) {
         List<String> arg=new ArrayList<>();
         arg.add("net.vpc.app.nuts.toolbox:tomcat");
         arg.add("--restart");
@@ -124,8 +120,7 @@ public class TomcatClientConfigService {
         if(deleteOutLog) {
             arg.add("--deleteOutLog");
         }
-        execRemoteNuts(arg.toArray(new String[arg.size()]));
-        return true;
+        return execRemoteNuts(arg.toArray(new String[arg.size()]));
     }
 
 
@@ -214,7 +209,7 @@ public class TomcatClientConfigService {
         return a;
     }
 
-    public void execRemoteNuts(String... cmd) {
+    public int execRemoteNuts(String... cmd) {
         TomcatClientConfig cconfig = getConfig();
         String serverPassword = TomcatUtils.isEmpty(cconfig.getServerPassword()) ? "" : cconfig.getServerPassword();
         String serverCertificate = TomcatUtils.isEmpty(cconfig.getServerCertificateFile()) ? "" : cconfig.getServerCertificateFile();
@@ -230,7 +225,7 @@ public class TomcatClientConfigService {
                 "nuts"
         ));
         cmdList.addAll(Arrays.asList(cmd));
-        context.ws.exec(
+        return context.ws.exec(
                 new String[]{
 
                 }, null, null, context.session

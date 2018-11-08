@@ -263,6 +263,7 @@ final class NutsIOUtils {
     }
 
     public static Properties loadURLProperties(URL url) {
+        long startTime=System.currentTimeMillis();
         Properties props = new Properties();
         InputStream inputStream = null;
         try {
@@ -270,6 +271,12 @@ final class NutsIOUtils {
                 if (url != null) {
                     inputStream = url.openStream();
                     props.load(inputStream);
+                    long time = System.currentTimeMillis() - startTime;
+                    if(time>0) {
+                        log.log(Level.CONFIG, "[SUCCESS] Loading props file from  {0} (time {1})", new Object[]{(url == null) ? "<null>" : url.toString(), time + "ms"});
+                    }else{
+                        log.log(Level.CONFIG, "[SUCCESS] Loading props file from  {0}", new Object[]{(url == null) ? "<null>" : url.toString()});
+                    }
                 }
             } finally {
                 if (inputStream != null) {
@@ -277,6 +284,12 @@ final class NutsIOUtils {
                 }
             }
         } catch (Exception e) {
+            long time = System.currentTimeMillis() - startTime;
+            if(time>0) {
+                log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0} (time {1})", new Object[]{(url == null) ? "<null>" : url.toString(), time + "ms"});
+            }else{
+                log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}", new Object[]{(url == null) ? "<null>" : url.toString()});
+            }
             //e.printStackTrace();
         }
         return props;

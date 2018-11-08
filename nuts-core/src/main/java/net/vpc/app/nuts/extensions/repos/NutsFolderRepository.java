@@ -133,16 +133,23 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
+        if(foundAction==null){
+            foundAction= NutsConfirmAction.ERROR;
+        }
         NutsFile idFile = getLocalGroupAndArtifactAndVersionFile(id, true);
         File nutDescFile = idFile.getFile() == null ? null : new File(idFile.getFile());
         if (nutDescFile == null) {
             throw new NutsIllegalArgumentException("Invalid descriptor");
         }
         boolean deployed = false;
-        if (force || !nutDescFile.exists()) {
+        if (foundAction== NutsConfirmAction.ERROR && nutDescFile.exists()) {
+            throw new NutsAlreadytDeployedException(id.toString());
+        }else if(foundAction== NutsConfirmAction.IGNORE && nutDescFile.exists()){
+            //do nothing
+        }else{
             if (nutDescFile.exists()) {
-                log.log(Level.FINE, "Nuts descriptor file Ovrerridden {0}", nutDescFile.getPath());
+                log.log(Level.FINE, "Nuts descriptor file Overridden {0}", nutDescFile.getPath());
             }
             descriptor.write(nutDescFile);
             try {
@@ -152,10 +159,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
         }
         File localFile = CoreIOUtils.fileByPath(getLocalGroupAndArtifactAndVersionFile(id, false).getFile());
-        if (force || !localFile.exists()) {
+        if (foundAction== NutsConfirmAction.ERROR && localFile.exists()) {
+            throw new NutsAlreadytDeployedException(id.toString());
+        }else if(foundAction== NutsConfirmAction.IGNORE && localFile.exists()){
+            //do nothing
+        }else{
             try {
                 if (localFile.exists()) {
-                    log.log(Level.FINE, "Nuts component  file Ovrerridden {0}", localFile.getPath());
+                    log.log(Level.FINE, "Nuts component  file Overridden {0}", localFile.getPath());
                 }
                 IOUtils.copy(file, localFile, true);
                 IOUtils.copy(CoreSecurityUtils.evalSHA1(localFile), CoreIOUtils.createFile(localFile.getParent(), localFile.getName() + ".sha1"), true);
@@ -164,8 +175,6 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
             NutsFile nutsFile = new NutsFile(id, descriptor, localFile.getPath(), true, false, null);
             fireOnDeploy(nutsFile);
-        } else {
-            throw new NutsAlreadytDeployedException(id);
         }
         return idFile.getId();
     }
@@ -176,7 +185,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void pushImpl(NutsId id, String repoId, boolean force, NutsSession session) {
+    protected void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
         NutsSession nonTransitiveSession = session.copy().setTransitive(false);
         NutsFile local = fetch(id, nonTransitiveSession);
         if (local == null) {
@@ -195,10 +204,10 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             } else if (all.size() > 1) {
                 throw new NutsRepositoryAmbiguousException("Unable to perform push. Two Repositories provides the same nuts " + id);
             }
-            all.get(0).deploy(id, local.getDescriptor(), local.getFile(), force, session);
+            all.get(0).deploy(id, local.getDescriptor(), local.getFile(), foundAction, session);
         } else {
             NutsRepository repo = getMirror(repoId);
-            repo.deploy(id, local.getDescriptor(), local.getFile(), force, session);
+            repo.deploy(id, local.getDescriptor(), local.getFile(), foundAction, session);
         }
         fireOnPush(local);
     }

@@ -41,7 +41,7 @@ nuts \[Nuts Options\] \[Nuts Command\]
 
 @@Nuts Options:@@
 
- [[--run-version]] {{\<boo-versino\>}}
+ [[--run-version]] {{\<boo-version\>}}
       run another **nuts** version
  [[--home]] {{\<workspaces-home-location\>}}
       root location containing all workspaces.

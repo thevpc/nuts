@@ -250,7 +250,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     public void onInitializeWorkspace(NutsBootWorkspace workspaceBoot,
                                       String workspaceRoot,
-                                      NutsWorkspaceObjectFactory factory,
+                                      NutsWorkspaceFactory factory,
                                       NutsId workspaceBootId, NutsId workspaceRuntimeId, String workspace,
                                       URL[] bootClassWorldURLs,
                                       ClassLoader bootClassLoader) {

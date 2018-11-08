@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsConfirmAction;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
@@ -48,13 +49,13 @@ public class PushCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         String repo = null;
         cmdLine.requireNonEmpty();
-        boolean force = false;
+        NutsConfirmAction force = NutsConfirmAction.IGNORE;
         NutsPrintStream out = context.getTerminal().getFormattedOut();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.readOnce("--repo", "-r")) {
                 repo = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else if (cmdLine.readOnce("--force", "-f")) {
-                force = true;
+                force = NutsConfirmAction.FORCE;
             } else {
                 String id = cmdLine.readNonOptionOrError(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {

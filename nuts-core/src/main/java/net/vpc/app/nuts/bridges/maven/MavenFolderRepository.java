@@ -64,7 +64,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected InputStream openStream(String path, Object source, NutsSession session) {
+    protected InputStream openStream(NutsId id, String path, Object source, NutsSession session) {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {

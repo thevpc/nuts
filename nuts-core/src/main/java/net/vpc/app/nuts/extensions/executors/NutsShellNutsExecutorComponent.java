@@ -32,9 +32,7 @@ package net.vpc.app.nuts.extensions.executors;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -65,6 +63,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         NutsFile nutMainFile = executionContext.getNutsFile();
         String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
         String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
+
 
         List<String> env = new ArrayList<>();
         env.addAll(Arrays.asList(envAndApp0[0]));

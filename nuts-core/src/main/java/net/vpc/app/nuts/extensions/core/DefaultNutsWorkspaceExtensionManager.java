@@ -57,9 +57,9 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     private ListMap<String, String> defaultWiredComponents = new ListMap<>();
     private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<NutsId, NutsWorkspaceExtension>();
     private final NutsWorkspace ws;
-    private final NutsWorkspaceObjectFactory objectFactory;
+    private final NutsWorkspaceFactory objectFactory;
 
-    protected DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsWorkspaceObjectFactory objectFactory) {
+    protected DefaultNutsWorkspaceExtensionManager(NutsWorkspace ws, NutsWorkspaceFactory objectFactory) {
         this.ws = ws;
         this.objectFactory = objectFactory;
     }

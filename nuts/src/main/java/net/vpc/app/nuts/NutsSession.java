@@ -43,6 +43,14 @@ public interface NutsSession {
 
     NutsSession copy();
 
+    NutsSession addListeners(NutsListener listener);
+
+    NutsSession removeListeners(NutsListener listener);
+
+    <T extends NutsListener> T[] getListeners(Class<T> type);
+
+    NutsListener[] getListeners();
+
     Map<String, Object> getProperties();
 
     void setProperties(Map<String, Object> properties);

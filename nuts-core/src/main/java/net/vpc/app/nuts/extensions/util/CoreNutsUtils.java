@@ -411,11 +411,6 @@ public class CoreNutsUtils {
         }
     }
 
-    public static void main(String[] args) {
-        NutsDescriptor d = parseOrNullNutsDescriptor(new File("/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts-bootstrap/org/apache/catalina/tomcat/7.0.91/nuts.json"));
-        System.out.println(d);
-    }
-
     public static NutsDescriptor parseOrNullNutsDescriptor(File file) {
         if (!file.exists()) {
             return null;

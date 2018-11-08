@@ -16,7 +16,7 @@ public class TestTomcatMain {
         NutsWorkspace ws = Nuts.openWorkspace(args);
         args = ws.getBootOptions().getApplicationArguments();
         TomcatServer m = new TomcatServer(ws);
-        m.removeAllConfigs();
+        m.reset();
         TomcatServerConfigService s = m.loadOrCreateTomcatConfig("intertek");
         s.getConfig().setCatalinaBase("intertek");
         s.getConfig().setCatalinaVersion("8.5");
@@ -32,6 +32,6 @@ public class TestTomcatMain {
 //        s.start();
         s.printStatus();
         //s.start();
-//        s.shutdown();
+//        s.stop();
     }
 }

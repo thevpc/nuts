@@ -340,6 +340,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(id.setFace("nuts"), session);
+        long startTime = System.currentTimeMillis();
         try {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
@@ -365,12 +366,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 throw new NutsNotFoundException(id);
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch descriptor", 24) + " " + id);
+                traceMessage(session, id, TraceResult.SUCCESS, "Fetch descriptor", startTime);
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch descriptor", 24) + " " + id);
+                traceMessage(session, id, TraceResult.ERROR, "Fetch descriptor", startTime);
             }
             throw ex;
         }
@@ -379,7 +380,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
         List<NutsId> allVersions = findVersions(id, filter, session);
         NutsId a = null;
-        for (NutsId next:allVersions) {
+        for (NutsId next : allVersions) {
             if (a == null || next.getVersion().compareTo(a.getVersion()) > 0) {
                 a = next;
             }
@@ -394,21 +395,63 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(id.setFace("hash"), session);
+        long startTime = System.currentTimeMillis();
         try {
             String d = fetchHashImpl(id, session);
             if (d == null) {
                 throw new NutsNotFoundException(id);
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component hash", 24) + " " + id);
+                traceMessage(session, id, TraceResult.SUCCESS, "Fetch comp hash", startTime);
             }
             return d;
-        }catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component hash", 24) + " " + id);
+                traceMessage(session, id, TraceResult.ERROR, "Fetch comp hash", startTime);
             }
             throw ex;
         }
+    }
+
+    protected void traceMessage(NutsSession session, NutsId id, TraceResult tracePhase, String title, long startTime) {
+        String timeMessage = "";
+        if (startTime != 0) {
+            long time = System.currentTimeMillis() - startTime;
+            if (time > 0) {
+                timeMessage = " (" + time + "ms)";
+            }
+        }
+        String tracePhaseString = "";
+        switch (tracePhase) {
+            case ERROR: {
+                tracePhaseString = "[ERROR  ] ";
+                break;
+            }
+            case SUCCESS: {
+                tracePhaseString = "[SUCCESS] ";
+                break;
+            }
+            case START: {
+                tracePhaseString = "[START  ] ";
+                break;
+            }
+        }
+        String fetchString = "";
+        switch (session.getFetchMode()) {
+            case OFFLINE: {
+                fetchString = "[OFFLINE] ";
+                break;
+            }
+            case ONLINE: {
+                fetchString = "[ONLINE ] ";
+                break;
+            }
+            case REMOTE: {
+                fetchString = "[REMOTE ] ";
+                break;
+            }
+        }
+        log.log(Level.FINEST, tracePhaseString + fetchString + CoreStringUtils.alignLeft(title, 18) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + (id == null ? "" : id.toString()) + timeMessage);
     }
 
     @Override
@@ -418,25 +461,26 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(id.setFace("nutshash"), session);
+        long startTime = System.currentTimeMillis();
         try {
             String d = fetchDescriptorHashImpl(id, session);
             if (d == null) {
                 throw new NutsNotFoundException(id);
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc hash", 24) + " " + id);
+                traceMessage(session, id, TraceResult.SUCCESS, "Fetch desc hash", startTime);
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc hash", 24) + " " + id);
+                traceMessage(session, id, TraceResult.ERROR, "Fetch desc hash", startTime);
             }
             throw ex;
         }
     }
 
     @Override
-    public NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session) {
+    public NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_DEPLOY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_DEPLOY);
         }
@@ -462,7 +506,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         try {
             id = id.unsetQuery();
             id = id.setFace(descriptor.getFace());
-            NutsId d = deployImpl(id, descriptor, file, force, session);
+            NutsId d = deployImpl(id, descriptor, file, foundAction, session);
             if (log.isLoggable(Level.FINEST)) {
                 log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
             }
@@ -476,13 +520,13 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public void push(NutsId id, String repoId, boolean force, NutsSession session) {
+    public void push(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
         checkSession(session);
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_PUSH)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_PUSH);
         }
         try {
-            pushImpl(id, repoId, force, session);
+            pushImpl(id, repoId, foundAction, session);
             if (log.isLoggable(Level.FINEST)) {
                 log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
             }
@@ -553,18 +597,19 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
         checkAllowedFetch(id.setFace("content"), session);
+        long startTime = System.currentTimeMillis();
         try {
             NutsFile f = fetchImpl(id, session);
             if (f == null) {
                 throw new NutsNotFoundException(id);
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component", 24) + " " + id);
+                traceMessage(session, id, TraceResult.SUCCESS, "Fetch component", startTime);
             }
             return f;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component", 24) + " " + id);
+                traceMessage(session, id, TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         }
@@ -576,16 +621,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_CONTENT);
         }
         checkAllowedFetch(id.setFace("content"), session);
+        long startTime = System.currentTimeMillis();
         try {
             String d = copyToImpl(id, localPath, session);
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component (local)", 24) + " " + id);
+                traceMessage(session, id, TraceResult.SUCCESS, "Fetch comp (local)", startTime);
             }
             return d;
-        }catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             //"[SUCCESS] " +
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch component (local)", 24) + " " + id);
+                traceMessage(session, id, TraceResult.ERROR, "Fetch comp (local)", startTime);
             }
             throw ex;
         }
@@ -598,18 +644,19 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
         }
         checkAllowedFetch(id.setFace("descriptor"), session);
+        long startTime = System.currentTimeMillis();
         try {
             if (new File(localPath).isDirectory()) {
                 localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom")).getPath();
             }
             String d = copyDescriptorToImpl(id, localPath, session);
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc (local)", 24) + " " + id);
+                traceMessage(session, id, TraceResult.SUCCESS, "Fetch desc (local)", startTime);
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch desc (local)", 24) + " " + id);
+                traceMessage(session, id, TraceResult.ERROR, "Fetch desc (local)", startTime);
             }
             throw ex;
         }
@@ -621,11 +668,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         checkAllowedFetch(id.setFace("content"), session);
         try {
             List<NutsId> d = findVersionsImpl(id, idFilter, session);
-            if(d.isEmpty()){
+            if (d.isEmpty()) {
                 if (log.isLoggable(Level.FINEST)) {
                     log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
                 }
-            }else {
+            } else {
                 if (log.isLoggable(Level.FINEST)) {
                     log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
                 }
@@ -649,7 +696,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             if (log.isLoggable(Level.FINEST)) {
                 log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
             }
-        }catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
                 log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
             }
@@ -684,9 +731,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     //    protected abstract NutsId resolveIdImpl(NutsId id, NutsSession session);
     protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session);
 
-    protected abstract void pushImpl(NutsId id, String repoId, boolean force, NutsSession session);
+    protected abstract void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session);
 
-    protected abstract NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session);
+    protected abstract NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session);
 
     protected abstract String fetchDescriptorHashImpl(NutsId id, NutsSession session);
 

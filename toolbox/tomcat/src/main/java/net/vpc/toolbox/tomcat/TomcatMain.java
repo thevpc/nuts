@@ -1,6 +1,6 @@
 package net.vpc.toolbox.tomcat;
 
-import net.vpc.app.nuts.Nuts;
+import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.toolbox.tomcat.client.TomcatClient;
 import net.vpc.toolbox.tomcat.server.TomcatServer;
@@ -9,23 +9,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TomcatMain {
+public class TomcatMain extends NutsApplication {
     public static void main(String[] args) {
-        NutsWorkspace ws = Nuts.openWorkspace(args);
-        List<String> argsList= new ArrayList<>(Arrays.asList(ws.getBootOptions().getApplicationArguments()));
-        if(argsList.size()==0){
+        new TomcatMain().launchAndExit(args);
+    }
+
+    @Override
+    public int launch(String[] args, NutsWorkspace ws) {
+        if (args.length == 0) {
             throw new IllegalArgumentException("Expected --client or --server");
         }
-        if (argsList.get(0).equals("--client")) {
-            argsList.remove(0);
+        if (args[0].equals("--client") || args[0].equals("-c")) {
             TomcatClient m = new TomcatClient(ws);
-            m.runArgs(args);
-            return;
+            return m.runArgs(Arrays.copyOfRange(args, 1, args.length));
         }
-        if (argsList.get(0).equals("--server")) {
-            argsList.remove(0);
+        if (args[0].equals("--server") || args[0].equals("-s")) {
+            TomcatServer m = new TomcatServer(ws);
+            return m.runArgs(Arrays.copyOfRange(args, 1, args.length));
+        } else {
+            TomcatServer m = new TomcatServer(ws);
+            return m.runArgs(args);
         }
-        TomcatServer m = new TomcatServer(ws);
-        m.runArgs(args);
     }
 }

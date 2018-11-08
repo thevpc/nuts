@@ -17,21 +17,21 @@ import java.util.List;
  *
  * @author vpc
  */
-public class DerbyMain {
+public class DerbyMain extends NutsApplication{
 
     private File derbyBinHome = new File(".");
     private String derbyVersion = null;
     private String derbyDataHome = null;
     private Command cmd = Command.start;
-    private NutsWorkspace ws;
     private NutsSession session;
     private String host = null;
     private int port = -1;
     private SSLMode sslmode = null;
     private String extraArg = null;
     private boolean verbose = false;
+    private NutsWorkspace ws;
 
-    public static enum SSLMode {
+    public enum SSLMode {
         off, basic, peerAuthentication
     }
 
@@ -39,13 +39,19 @@ public class DerbyMain {
         start, shutdown, sysinfo, help, ping, trace, runtimeinfo, maxthreads, timeslice, logconnections
     }
 
-    public static void main(String[] args) throws IOException {
-        final DerbyMain app = new DerbyMain();
-        app.parseArgs(args);
-        app.main();
+    public static void main(String[] args) {
+        new DerbyMain().launchAndExit(args);
     }
 
-    public NutsId resolveNutsId() throws IOException {
+    @Override
+    public int launch(String[] args, NutsWorkspace ws) {
+        this.ws = ws;
+        session = ws.createSession();
+        parseArgs(ws.getBootOptions().getApplicationArguments());
+        return main();
+    }
+
+    public NutsId resolveNutsId(){
         if (ws == null) {
             ws = Nuts.openWorkspace();
         }
@@ -56,7 +62,7 @@ public class DerbyMain {
         return r;
     }
 
-    public void parseArgs(String[] args) throws IOException {
+    public void parseArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             switch (arg) {
@@ -163,11 +169,7 @@ public class DerbyMain {
         }
     }
 
-    public void main() throws IOException {
-        if (ws == null) {
-            ws = Nuts.openWorkspace();
-        }
-        session = ws.createSession();
+    public int main() {
         derbyBinHome = new File(ws.getStoreRoot(resolveNutsId(), RootFolderType.PROGRAMS), "lib");
         String v = derbyVersion;
         String h = derbyDataHome;
@@ -229,7 +231,7 @@ public class DerbyMain {
         if (extraArg != null) {
             command.add(extraArg);
         }
-        ws.exec(command.toArray(new String[command.size()]), null, null,null);
+        return ws.exec(command.toArray(new String[command.size()]), null, null,null);
     }
 
     private File download(String id) {

@@ -12,7 +12,8 @@ public class ConfigNutsArguments extends NutsArguments{
     private boolean showLicense = false;
     private List<String> args = new ArrayList<>();
     private NutsBootOptions bootOptions = new NutsBootOptions();
-    private NutsWorkspaceCreateOptions workspaceCreateOptions = new NutsWorkspaceCreateOptions();
+    private NutsWorkspaceCreateOptions workspaceCreateOptions = new NutsWorkspaceCreateOptions()
+            .setCreateIfNotFound(true);
 
     public boolean isVersion() {
         return version;

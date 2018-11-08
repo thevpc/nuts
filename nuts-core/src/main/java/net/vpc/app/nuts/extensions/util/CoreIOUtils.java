@@ -226,12 +226,14 @@ public class CoreIOUtils {
     }
 
     public static int execAndWait(String[] args, Map<String, String> env, File directory, InputStream in, PrintStream out, PrintStream err, boolean showCommand) throws InterruptedException, IOException {
-        StringBuilder logged=new StringBuilder();
-        logged.append("[exec]");
-        for (String arg : args) {
-            logged.append(" " + arg);
+        if(log.isLoggable(Level.FINE)) {
+            StringBuilder logged = new StringBuilder();
+            logged.append("[exec]");
+            for (String arg : args) {
+                logged.append(" " + arg);
+            }
+            log.log(Level.FINE, logged.toString());
         }
-        log.log(Level.FINE, logged.toString());
         if (showCommand) {
             if (out instanceof NutsPrintStream) {
                 out.print("==[exec]==");

@@ -25,6 +25,6 @@ net.vpc.app.nuts.extensions.executors.NutsShellNutsExecutorComponent
 net.vpc.app.nuts.extensions.executors.ProcessNutsExecutorComponent
 
 net.vpc.app.nuts.bridges.maven.MavenNutsRepositoryFactoryComponent
-net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceObjectFactory
+net.vpc.app.nuts.extensions.core.DefaultNutsWorkspaceFactory
 
 net.vpc.app.nuts.extensions.core.DefaultNutsAuthenticationAgent

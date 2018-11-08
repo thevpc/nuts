@@ -78,7 +78,9 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         }
         app.addAll(Arrays.asList(envAndApp[1]));
 
-        Map<String, String> envMap = new HashMap<>();
+        Map<String, String> osEnv = new HashMap<>();
+        String bootArgumentsString = executionContext.getWorkspace().getBootOptions().getBootArgumentsString();
+        osEnv.put("nuts_boot_args",bootArgumentsString);
         File directory  = null;
         boolean showCommand = false;
         for (Iterator<String> iterator = env.iterator(); iterator.hasNext();) {
@@ -92,7 +94,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 if (endIndex >= 0) {
                     String n = nv.substring(0, endIndex);
                     String v = nv.substring(endIndex + 1);
-                    envMap.put(n, v);
+                    osEnv.put(n, v);
                 }
                 iterator.remove();
             } else if (e.equals("-show-command")) {
@@ -106,7 +108,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         }
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 app.toArray(new String[app.size()]),
-                envMap, directory, executionContext.getTerminal(), showCommand
+                osEnv, directory, executionContext.getTerminal(), showCommand
         );
     }
 }

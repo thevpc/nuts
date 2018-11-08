@@ -33,10 +33,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.URLUtils;
 
 import java.io.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,24 +54,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
-        if (URLUtils.isRemoteURL(url)) {
-            String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
-            if(log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
-            }
-        }
-        return openStream(url, id.setFace(face), session);
+        return openStream(id, url, id.setFace(face), session);
     }
 
     protected String getStreamAsString(NutsId id, String extension, String face, NutsSession session) {
         String url = getPath(id, extension);
-        if (URLUtils.isRemoteURL(url)) {
-            String message = URLUtils.isRemoteURL(url) ? "downloading maven" : "open local file";
-            if(log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
-            }
-        }
-        return IOUtils.loadString(openStream(url, id.setFace(face), session), true);
+        return IOUtils.loadString(openStream(id, url, id.setFace(face), session), true);
     }
 
     protected void checkSHA1Hash(NutsId id, String extension, String face, InputStream stream, NutsSession session) throws IOException {
@@ -98,7 +84,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputStream openStream(String path, Object source, NutsSession session);
+    protected abstract InputStream openStream(NutsId id, String path, Object source, NutsSession session);
 
     @Override
     public boolean isSupportedMirroring() {
@@ -106,12 +92,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, boolean force, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession context) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession context) {
         throw new NutsUnsupportedOperationException();
     }
 

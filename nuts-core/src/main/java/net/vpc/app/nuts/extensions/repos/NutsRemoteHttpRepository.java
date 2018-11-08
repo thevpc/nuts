@@ -72,7 +72,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
 
     @Override
-    public void pushImpl(NutsId id, String repoId, boolean force, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -97,7 +97,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession session) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
             throw new NutsIllegalArgumentException("Offline");
         }
@@ -110,7 +110,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
                 new NutsTransportParamBinaryFilePart("content", file1.getName(), file1),
                 new NutsTransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
                 new NutsTransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(file1)),
-                new NutsTransportParamParamPart("force", String.valueOf(force))
+                new NutsTransportParamParamPart("force", String.valueOf(foundAction))
         );
         //TODO should read the id
         return id;

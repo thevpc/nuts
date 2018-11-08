@@ -1,10 +1,13 @@
 package net.vpc.toolbox.tomcat.client;
 
+import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.common.io.IOUtils;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientAppConfig;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientConfig;
 import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
+
+import java.io.PrintStream;
 
 public class TomcatClientAppConfigService {
     private TomcatClientAppConfig config;
@@ -63,5 +66,13 @@ public class TomcatClientAppConfigService {
         context.out.printf("==[%s]== app removed.\n",name);
         return this;
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void write(PrintStream out) {
+        TomcatUtils.writeJson(out, getConfig(), context.ws);
     }
 }

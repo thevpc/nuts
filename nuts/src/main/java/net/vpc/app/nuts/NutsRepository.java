@@ -62,11 +62,12 @@ public interface NutsRepository {
      * (id is variable or inherited)
      * @param descriptor
      * @param file
+     * @param foundAction
      * @return
      */
-    NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, boolean force, NutsSession context);
+    NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession context);
 
-    void push(NutsId id, String repoId, boolean force, NutsSession session);
+    void push(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session);
 
     NutsFile fetch(NutsId id, NutsSession session);
 

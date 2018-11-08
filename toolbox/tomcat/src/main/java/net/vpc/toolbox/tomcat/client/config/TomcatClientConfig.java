@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TomcatClientConfig {
-    private String serverConfName;
+    private String serverInstance;
     private String server;
     private String serverCertificateFile;
     private String serverPassword;
     private String serverTempPath;
     private Map<String,TomcatClientAppConfig> apps=new HashMap<>();
 
-    public String getServerConfName() {
-        return serverConfName;
+    public String getServerInstance() {
+        return serverInstance;
     }
 
-    public void setServerConfName(String serverConfName) {
-        this.serverConfName = serverConfName;
+    public void setServerInstance(String serverInstance) {
+        this.serverInstance = serverInstance;
     }
 
     public String getServer() {

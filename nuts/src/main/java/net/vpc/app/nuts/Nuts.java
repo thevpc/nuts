@@ -47,10 +47,22 @@ public class Nuts {
 
     public static void main(String[] args) {
         try {
-            uncheckedMain(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+            System.exit(uncheckedMain(args));
+        } catch (Exception ex) {
+            int errorCode=204;
+            //inherit error code from exception
+            if(ex instanceof NutsExecutionException){
+                errorCode = ((NutsExecutionException) ex).getErrorCode();
+            }
+            String m = ex.getMessage();
+            if (m == null || m.isEmpty()) {
+                m = ex.toString();
+            }
+            if (m == null || m.isEmpty()) {
+                m = ex.getClass().getName();
+            }
+            System.err.println(m);
+            System.exit(errorCode);
         }
     }
 
@@ -63,9 +75,23 @@ public class Nuts {
     }
 
 
-    public static NutsWorkspace openWorkspace(String[] args) {
+    public static NutsWorkspace openInheritedWorkspace(String[] args) {
         long startTime = System.currentTimeMillis();
         NutsArguments nutsArguments = NutsArgumentsParser.parseNutsArguments(args, true);
+        if (nutsArguments instanceof NewInstanceNutsArguments) {
+            NewInstanceNutsArguments i = (NewInstanceNutsArguments) nutsArguments;
+            throw new IllegalArgumentException("Unable to open a distinct version " + i.getBootFile() + "<>" + i.getRequiredVersion());
+        }
+        ConfigNutsArguments a = (ConfigNutsArguments) nutsArguments;
+        if (a.getWorkspaceCreateOptions().getCreationTime() == 0) {
+            a.getWorkspaceCreateOptions().setCreationTime(startTime);
+        }
+        return openWorkspace(a.getWorkspaceCreateOptions().setCreateIfNotFound(true), a.getBootOptions());
+    }
+
+    public static NutsWorkspace openWorkspace(String[] args) {
+        long startTime = System.currentTimeMillis();
+        NutsArguments nutsArguments = NutsArgumentsParser.parseNutsArguments(args, false);
         if (nutsArguments instanceof NewInstanceNutsArguments) {
             NewInstanceNutsArguments i = (NewInstanceNutsArguments) nutsArguments;
             throw new IllegalArgumentException("Unable to open a distinct version " + i.getBootFile() + "<>" + i.getRequiredVersion());
@@ -113,37 +139,38 @@ public class Nuts {
         }
     }
 
-    public static void uncheckedMain(String[] args) {
+    public static int uncheckedMain(String[] args) {
         long startTime = System.currentTimeMillis();
         NutsArguments a = NutsArgumentsParser.parseNutsArguments(args, false);
         if (a instanceof NewInstanceNutsArguments) {
             startNewProcess((NewInstanceNutsArguments) a);
-            return;
+            return 0;
         }
         ConfigNutsArguments o = (ConfigNutsArguments) a;
         o.getWorkspaceCreateOptions().setCreationTime(startTime);
-        NutsWorkspace ws = openWorkspace(o.getWorkspaceCreateOptions().setCreateIfNotFound(true), o.getBootOptions());
+        NutsWorkspace ws = openWorkspace(o.getWorkspaceCreateOptions(), o.getBootOptions());
         boolean someProcessing = false;
 
         String[] commandArguments = o.getArgs().toArray(new String[o.getArgs().size()]);
         NutsSession session = ws.createSession();
+        int errorCode=0;
         if (o.isShowHelp()) {
-            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
+            errorCode=ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
             someProcessing = true;
         }
         if (o.isShowLicense()) {
-            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help", "--license"}, null, null, session);
+            errorCode=ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help", "--license"}, null, null, session);
             someProcessing = true;
         }
 
         if (o.getApplyUpdatesFile() != null) {
-            ws.exec(o.getApplyUpdatesFile(), args, false, false, session);
-            return;
+            errorCode=ws.exec(o.getApplyUpdatesFile(), args, false, false, session);
+            return errorCode;
         }
 
         if (o.isCheckupdates() || o.isDoupdate()) {
             if (ws.checkWorkspaceUpdates(o.isDoupdate(), args, session).length > 0) {
-                return;
+                return 0;
             }
             someProcessing = true;
         }
@@ -176,15 +203,14 @@ public class Nuts {
         }
 
         if (someProcessing && commandArguments.length == 0) {
-            return;
+            return 0;
         }
         if (commandArguments.length == 0 && !o.isShowHelp()) {
-            ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
-            return;
+            return ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
         }
         List<String> consoleArguments = new ArrayList<>();
         consoleArguments.addAll(Arrays.asList(commandArguments));
-        ws.exec(consoleArguments.toArray(new String[consoleArguments.size()]), null, null, session);
+        return ws.exec(consoleArguments.toArray(new String[consoleArguments.size()]), null, null, session);
     }
 
     private static boolean showPerf(long overallTimeMillis, boolean perf, NutsSession session) {

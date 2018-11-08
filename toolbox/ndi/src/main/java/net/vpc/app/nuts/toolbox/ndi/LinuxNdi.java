@@ -34,7 +34,7 @@ public class LinuxNdi {
                 out.printf("Script already exists ==%s==\n", ff.getPath());
             } else {
                 String idContent = "RUN : " + nutsId;
-                createScript(n, nutsId.toString(), idContent, "nuts " + nutsId);
+                createScript(n, nutsId.toString(), idContent, "nuts \"" + nutsId+"\" \"$@\"");
             }
         }
     }

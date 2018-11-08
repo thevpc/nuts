@@ -12,6 +12,7 @@ public class TomcatServerConfig {
     private String shutdownMessage;
     private String logFile;
     private String javaHome;
+    private String javaOptions;
     private int startupWaitTime=20;
     private int shutdownWaitTime=20;
     private boolean kill=true;
@@ -125,5 +126,14 @@ public class TomcatServerConfig {
 
     public void setKill(boolean kill) {
         this.kill = kill;
+    }
+
+    public String getJavaOptions() {
+        return javaOptions;
+    }
+
+    public TomcatServerConfig setJavaOptions(String javaOptions) {
+        this.javaOptions = javaOptions;
+        return this;
     }
 }

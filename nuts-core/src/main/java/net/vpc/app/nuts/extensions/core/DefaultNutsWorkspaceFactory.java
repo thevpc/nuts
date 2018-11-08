@@ -43,16 +43,16 @@ import net.vpc.common.util.ListMap;
 /**
  * Created by vpc on 1/5/17.
  */
-public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFactory {
+public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
-    private static final Logger log = Logger.getLogger(DefaultNutsWorkspaceObjectFactory.class.getName());
+    private static final Logger log = Logger.getLogger(DefaultNutsWorkspaceFactory.class.getName());
 
     private final ListMap<Class, Class> classes = new ListMap<>();
     private final ListMap<Class, Object> instances = new ListMap<>();
     private final Map<Class, Object> singletons = new HashMap<>();
     private final Map<ClassLoader, List<Class>> discoveredCache = new HashMap<>();
 
-    public DefaultNutsWorkspaceObjectFactory() {
+    public DefaultNutsWorkspaceFactory() {
         initialize();
     }
 
@@ -116,7 +116,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
         if (isRegisteredInstance(extensionPoint, implementation)) {
             throw new NutsIllegalArgumentException("Already Registered Extension " + implementation + " for " + extensionPoint.getName());
         }
-        log.log(Level.FINER, "Registering {0} for impl instance {1}", new Object[]{extensionPoint, implementation.getClass().getName()});
+        log.log(Level.FINER, "Registering {0} for impl instance {1}", new Object[]{extensionPoint.getName(), implementation.getClass().getName()});
         instances.add(extensionPoint, implementation);
     }
 
@@ -237,12 +237,12 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
             if (o == null) {
                 o = instantiate0(type);
                 singletons.put(type, o);
-                log.log(Level.FINER, "Resolve {0} to singleton instance {1}", new Object[]{baseType, o.getClass().getName()});
+                log.log(Level.FINEST, "Resolve {0} to singleton instance {1}", new Object[]{baseType.getName(), o.getClass().getName()});
             }
             return (T) o;
         } else {
             T o = instantiate0(type);
-            log.log(Level.FINER, "Resolve {0} to prototype instance {1}", new Object[]{baseType, o.getClass().getName()});
+            log.log(Level.FINEST,     "Resolve {0} to prototype instance {1}", new Object[]{baseType.getName(), o.getClass().getName()});
             return o;
         }
     }
@@ -398,7 +398,7 @@ public class DefaultNutsWorkspaceObjectFactory implements NutsWorkspaceObjectFac
     }
 
     @Override
-    public int getSupportLevel(NutsWorkspaceObjectFactory criteria) {
+    public int getSupportLevel(NutsWorkspaceFactory criteria) {
         return DEFAULT_SUPPORT;
     }
 

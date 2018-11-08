@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="Maven 1" modules="hadrumaths-scala-helloworld,hadruwaves-scala-helloworld,hadrumaths-scala,hadruwaves-scala-examples,hadrumaths-scala-examples,hadruwaves-scala" />
+    <profile name="Maven 1" modules="hadruwaves-scala,hadrumaths-scala-helloworld,hadruwaves-scala-examples,hadrumaths-scala-examples,hadrumaths-scala,hadruwaves-scala-helloworld" />
   </component>
 </project>

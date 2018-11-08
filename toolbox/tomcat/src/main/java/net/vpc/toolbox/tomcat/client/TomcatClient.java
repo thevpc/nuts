@@ -8,6 +8,7 @@ import net.vpc.toolbox.tomcat.util.TomcatUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TomcatClient {
@@ -21,166 +22,224 @@ public class TomcatClient {
         this.context = context;
     }
 
-    public void runArgs(String[] args) {
+    public int runArgs(String[] args) {
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-l") || args[i].equals("--list")) {
-                List<String> names = new ArrayList<>();
-                for (int j = i + 1; j < args.length; j++) {
-                    if (args[j].startsWith("-")) {
-                        throw new IllegalArgumentException("Unsupported " + args[i]);
-                    } else {
-                        names.add(args[j]);
-                    }
-                }
-                if (names.isEmpty()) {
-                    for (TomcatClientConfigService tomcatConfig : listConfig()) {
-                        context.out.println(tomcatConfig.getName());
-                    }
-                } else {
-                    for (String n : names) {
-                        String confName = null;
-                        String propName1 = null;
-                        String propName2 = null;
-                        if (n.contains(".")) {
-                            confName = n;
-                            propName1 = null;
-                            propName2 = null;
-                        } else {
-                            String[] split = n.split("\\.");
-                            confName = split[0];
-                            propName1 = split[1];
-                            if (split.length > 2) {
-                                propName2 = split[2];
-                            }
-                        }
-                        try {
-                            TomcatClientConfigService c = loadTomcatConfig(confName);
-                            if (propName1 == null) {
-                                c.write(context.out);
-                            } else {
-                                try {
-                                    Object o1 = TomcatUtils.getPropertyValue(c, propName1);
-                                    if (propName2 != null) {
-                                        o1 = TomcatUtils.getPropertyValue(o1, propName2);
-                                    }
-                                    context.out.println(o1);
-                                } catch (Exception ex) {
-                                    context.err.println("Property Not Found " + n);
-                                }
-                            }
-                        } catch (Exception ex) {
-                            context.err.println(n + "   :  Not found");
-                        }
-                    }
-                }
-                return;
-            } else if (args[i].equals("-a") || args[i].equals("--add") || args[i].equals("--set")) {
-                i++;
-                String n = args[i];
-                TomcatClientConfigService c = loadOrCreateTomcatConfig(n);
-                String appName = null;
-                for (int j = i + 1; j < args.length; j++) {
-                    if (args[j].equals("--server")) {
-                        j++;
-                        c.getConfig().setServer(args[j]);
-                    } else if (args[j].equals("--cert")) {
-                        j++;
-                        c.getConfig().setServerCertificateFile(args[j]);
-                    } else if (args[j].equals("--password")) {
-                        j++;
-                        c.getConfig().setServerPassword(args[j]);
-                    } else if (args[j].equals("--temp-path")) {
-                        j++;
-                        c.getConfig().setServerTempPath(args[j]);
-                    } else if (args[j].equals("--instance")) {
-                        j++;
-                        c.getConfig().setServerConfName(args[j]);
-                    } else if (args[j].equals("--app")) {
-                        j++;
-                        appName = args[j];
-                        c.getAppOrCreate(appName);
-                    } else if (args[j].equals("--app.path")) {
-                        j++;
-                        String value = args[j];
-                        TomcatClientAppConfigService tomcatAppConfig = c.getAppOrError(appName);
-                        tomcatAppConfig.getConfig().setPath(value);
-                    } else if (args[j].equals("--app.version")) {
-                        j++;
-                        String value = args[j];
-                        TomcatClientAppConfigService tomcatAppConfig = c.getAppOrError(appName);
-                        tomcatAppConfig.getConfig().setVersion(value);
-                    } else {
-                        throw new IllegalArgumentException("Unsupported " + args[i]);
-                    }
-                }
-                c.saveConfig();
-                return;
-            } else if (args[i].equals("--remove")) {
-                String conf = null;
-                String appName = null;
-                for (int j = i + 1; j < args.length; j++) {
-                    if (args[j].equals("--app")) {
-                        j++;
-                        appName = args[j];
-                    } else if (args[j].equals("--instance")) {
-                        j++;
-                        conf = args[j];
-                    } else {
-                        throw new IllegalArgumentException("Unsupported " + args[i]);
-                    }
-                }
-                if (appName == null) {
-                    loadTomcatConfig(conf).removeConfig();
-                } else if (appName != null) {
-                    TomcatClientConfigService c = loadTomcatConfig(conf);
-                    try {
-                        c.getAppOrError(appName).remove();
-                        c.saveConfig();
-                    } catch (Exception ex) {
-                        //
-                    }
-                } else {
-                    throw new IllegalArgumentException("Invalid parameters");
-                }
-                return;
-            } else if (args[i].equals("-s") || args[i].equals("--start")) {
-                restart(args, false, i + 1);
-                return;
-            } else if (args[i].equals("-x") || args[i].equals("--stop") || args[i].equals("--shutdown")) {
-                String name = null;
-                for (int j = i + 1; j < args.length; j++) {
-                    name = args[j];
-                }
-                TomcatClientConfigService c = loadTomcatConfig(name);
-                c.shutdown();
-                return;
-            } else if (args[i].equals("--restart")) {
-                restart(args, true, i + 1);
-                return;
-            } else if (args[i].equals("--install")) {
-                String conf = null;
-                String app = null;
-                for (int j = i + 1; j < args.length; j++) {
-                    if (args[j].equals("--instance")) {
-                        j++;
-                        conf = args[j];
-                    } else if (args[j].equals("--app")) {
-                        j++;
-                        app = args[j];
-                    } else {
-                        throw new IllegalArgumentException("Unsupported " + args[i]);
-                    }
-                }
-                TomcatClientConfigService c = loadTomcatConfig(conf);
-                c.getApp(app).install();
-                return;
-            } else if (args[i].equals("--remove-all-configs")) {
-                removeAllConfigs();
+            switch (args[i]) {
+                case "list":
+                    return list(Arrays.copyOfRange(args, 1, args.length));
+                case "add":
+                case "set":
+                    return add(Arrays.copyOfRange(args, 1, args.length));
+                case "remove":
+                    return remove(Arrays.copyOfRange(args, 1, args.length));
+                case "start":
+                    return restart(args, false, i + 1);
+                case "stop":
+                    return stop(Arrays.copyOfRange(args, 1, args.length));
+                case "restart":
+                    return restart(args, true, i + 1);
+                case "install":
+                    return install(Arrays.copyOfRange(args, 1, args.length));
+                case "reset":
+                    return reset();
+                default:
+                    throw new RuntimeException("Unsupported action " + args[i]);
             }
         }
+        return 0;
     }
 
-    public void restart(String[] args, boolean shutdown, int i) {
+    public int list(String[] args) {
+        boolean json = false;
+        String instance = null;
+        String app = null;
+        String property = null;
+        for (int j = 0; j < args.length; j++) {
+            if (args[j].equals("--json")) {
+                json = true;
+            } else if (args[j].equals("--instance")) {
+                if (j + 1 < args.length && args[j + 1].startsWith("--")) {
+                    j++;
+                    instance = args[j];
+                } else {
+                    instance = "";
+                }
+            } else if (args[j].equals("--app")) {
+                j++;
+                app = args[j];
+            } else if (args[j].equals("--property")) {
+                j++;
+                property = args[j];
+            } else {
+                throw new IllegalArgumentException("Unsupported " + args[j]);
+            }
+        }
+        if (property == null) {
+            if (app != null) {
+                TomcatClientConfigService c = loadOrCreateTomcatConfig(instance);
+                TomcatClientAppConfigService a = c.getApp(app);
+                if (json) {
+                    context.out.printf("[[%s]] :\n", a.getName());
+                    a.write(context.out);
+                    context.out.println();
+                } else {
+                    context.out.println(a.getName());
+                }
+            } else {
+                for (TomcatClientConfigService tomcatConfig : listConfig()) {
+                    if (json) {
+                        context.out.printf("[[%s]] :\n", tomcatConfig.getName());
+                        tomcatConfig.write(context.out);
+                        context.out.println();
+                    } else {
+                        context.out.println(tomcatConfig.getName());
+                    }
+                }
+            }
+        } else {
+            TomcatClientConfigService c = loadOrCreateTomcatConfig(instance);
+            if (app != null) {
+                context.out.printf("%s\n", TomcatUtils.getPropertyValue(c.getApp(app).getConfig(), property));
+            } else {
+                for (TomcatClientAppConfigService a : c.getApps()) {
+                    context.out.printf("[%s] %s\n", TomcatUtils.getPropertyValue(a.getConfig(), property));
+                }
+            }
+        }
+        return 0;
+    }
+
+    private int add(String[] args) {
+        TomcatClientConfigService c = null;
+        String appName = null;
+        for (int j = 0; j < args.length; j++) {
+            if (args[j].equals("--instance")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(args[j]);
+                }else{
+                    throw new IllegalArgumentException("instance already defined");
+                }
+            }else if (args[j].equals("--server")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setServer(args[j]);
+            } else if (args[j].equals("--cert")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setServerCertificateFile(args[j]);
+            } else if (args[j].equals("--password")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setServerPassword(args[j]);
+            } else if (args[j].equals("--temp-path")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setServerTempPath(args[j]);
+            } else if (args[j].equals("--server-instance")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setServerInstance(args[j]);
+            } else if (args[j].equals("--app")) {
+                j++;
+                appName = args[j];
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getAppOrCreate(appName);
+            } else if (args[j].equals("--app.path")) {
+                j++;
+                String value = args[j];
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                TomcatClientAppConfigService tomcatAppConfig = c.getAppOrError(appName);
+                tomcatAppConfig.getConfig().setPath(value);
+            } else if (args[j].equals("--app.version")) {
+                j++;
+                String value = args[j];
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                TomcatClientAppConfigService tomcatAppConfig = c.getAppOrError(appName);
+                tomcatAppConfig.getConfig().setVersion(value);
+            } else {
+                throw new IllegalArgumentException("Unsupported " + args[j]);
+            }
+        }
+        if(c==null){
+            c=loadOrCreateTomcatConfig(null);
+        }
+        c.saveConfig();
+        return 0;
+    }
+    private int remove(String[] args) {
+        String instance = null;
+        String appName = null;
+        for (int j = 0; j < args.length; j++) {
+            if (args[j].equals("--app")) {
+                j++;
+                appName = args[j];
+            } else if (args[j].equals("--instance")) {
+                j++;
+                instance = args[j];
+            } else {
+                throw new IllegalArgumentException("Unsupported " + args[j]);
+            }
+        }
+        if (appName == null) {
+            loadTomcatConfig(instance).removeConfig();
+        } else {
+            TomcatClientConfigService c = loadTomcatConfig(instance);
+            try {
+                c.getAppOrError(appName).remove();
+                c.saveConfig();
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return 0;
+    }
+    private int install(String[] args) {
+        String conf = null;
+        String app = null;
+        for (int j = 0; j < args.length; j++) {
+            if (args[j].equals("--instance")) {
+                j++;
+                conf = args[j];
+            } else if (args[j].equals("--app")) {
+                j++;
+                app = args[j];
+            } else {
+                throw new IllegalArgumentException("Unsupported " + args[j]);
+            }
+        }
+        TomcatClientConfigService c = loadTomcatConfig(conf);
+        c.getApp(app).install();
+        return 0;
+    }
+
+    private int stop(String[] args) {
+        String name = null;
+        for (int j = 0; j < args.length; j++) {
+            name = args[j];
+        }
+        TomcatClientConfigService c = loadTomcatConfig(name);
+        c.shutdown();
+        return 0;
+    }
+
+    public int restart(String[] args, boolean shutdown, int i) {
         String name = null;
         boolean deleteLog = false;
         List<String> apps = new ArrayList<>();
@@ -196,17 +255,17 @@ public class TomcatClient {
         }
         TomcatClientConfigService c = loadTomcatConfig(name);
         if(shutdown) {
-            c.restart(apps.toArray(new String[apps.size()]), deleteLog);
+            return c.restart(apps.toArray(new String[apps.size()]), deleteLog);
         }else{
-            c.start(apps.toArray(new String[apps.size()]), deleteLog);
+            return c.start(apps.toArray(new String[apps.size()]), deleteLog);
         }
-        return;
     }
 
-    public void removeAllConfigs() {
+    public int reset() {
         for (TomcatClientConfigService tomcatConfig : listConfig()) {
             tomcatConfig.removeConfig();
         }
+        return 0;
     }
 
 

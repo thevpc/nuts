@@ -5,7 +5,7 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.util.Arrays;
 
-public class NdedMain {
+public class NdedMain extends NutsApplication{
 
     private NutsWorkspace ws;
     private String[] args;
@@ -19,19 +19,7 @@ public class NdedMain {
     private boolean interactive = false;
 
     public static void main(String[] args) {
-        NutsWorkspace ws = Nuts.openWorkspace(args);
-        args = ws.getBootOptions().getApplicationArguments();
-        new NdedMain(ws, args).main();
-    }
-
-    public NdedMain(NutsWorkspace ws, String[] args) {
-        this.ws = ws;
-        this.args = args;
-        f = ws.getExtensionManager();
-        session = ws.createSession();
-        terminal = session.getTerminal();
-        out = terminal.getFormattedOut();
-        err = terminal.getFormattedErr();
+        new NdedMain().launch(args);
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
@@ -219,7 +207,14 @@ public class NdedMain {
         }
     }
 
-    public void main() {
+    public int launch(String[] args, NutsWorkspace ws) {
+        this.ws = ws;
+        this.args = ws.getBootOptions().getApplicationArguments();
+        f = ws.getExtensionManager();
+        session = ws.createSession();
+        terminal = session.getTerminal();
+        out = terminal.getFormattedOut();
+        err = terminal.getFormattedErr();
         NutsDescriptorBuilder b = f.createDescriptorBuilder();
         fillArgs(b);
         out.printf("[[Creating new Nuts descriptor...]]\n");
@@ -234,7 +229,7 @@ public class NdedMain {
                 //
             }
             if (confirm("Abort?")) {
-                return;
+                return 1;
             }
         }
         String path = b.getId().getGroup().replace('.', '/')
@@ -255,10 +250,11 @@ public class NdedMain {
             }
         }
         if (!confirm("Confirm ?")) {
-            return;
+            return 1;
         }
         desc.write(file);
         desc.write(out);
+        return 0;
 //        if (!home.equals("stdout")) {
 //            return;
 //        }

@@ -51,14 +51,14 @@ public class InstallCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         cmdLine.requireNonEmpty();
-        boolean force = false;
+        NutsConfirmAction foundAction = NutsConfirmAction.IGNORE;
         boolean deployOnly = false;
         boolean bundleOnly = false;
         String repositoryId = null;
         String descriptorFile = null;
         do {
             if (cmdLine.readOnce("-f", "--force")) {
-                force = true;
+                foundAction = NutsConfirmAction.FORCE;
             } else if (cmdLine.readOnce("-r", "--repository")) {
                 repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else if (cmdLine.readOnce("-s", "--descriptor")) {
@@ -111,7 +111,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                 out.printf("File %s deployed successfully as %s\n", s, deployedId);
                                 s = deployedId.toString();
                             }
-                            logInstallStatus(s, context, force);
+                            logInstallStatus(s, context, foundAction);
                         }
                     }
                 }
@@ -121,12 +121,12 @@ public class InstallCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private NutsFile logInstallStatus(String s, NutsCommandContext context, boolean force) {
+    private NutsFile logInstallStatus(String s, NutsCommandContext context, NutsConfirmAction foundAction) {
         NutsTerminal terminal = context.getTerminal();
         NutsFile file = null;
         NutsPrintStream out = terminal.getFormattedOut();
         try {
-            file = context.getValidWorkspace().install(s, force, context.getSession());
+            file = context.getValidWorkspace().install(s, foundAction, context.getSession());
         } catch (NutsAlreadytInstalledException ex) {
             out.printf("%s already installed\n", s);
             return null;

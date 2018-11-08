@@ -18,16 +18,156 @@ public final class NutsArgumentsParser {
     private NutsArgumentsParser() {
     }
 
+    public static String[] uncompressBootArguments(String compressedArgsString) {
+        if(compressedArgsString==null){
+            return new String[0];
+        }
+        List<String> args = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        final int START = 0;
+        final int IN_WORD = 1;
+        final int IN_QUOTED_WORD = 2;
+        int status = START;
+        char[] charArray = compressedArgsString.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            switch (status) {
+                case START: {
+                    switch (c) {
+                        case ' ': {
+                            //ignore
+                            break;
+                        }
+                        case '\'': {
+                            status = IN_QUOTED_WORD;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            throw new IllegalArgumentException("Illegal char " + c);
+                        }
+                        default: {
+                            sb.append(c);
+                            status = IN_WORD;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_WORD: {
+                    switch (c) {
+                        case ' ': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            break;
+                        }
+                        case '\'': {
+                            throw new IllegalArgumentException("Illegal char " + c);
+                        }
+                        case '\\': {
+                            throw new IllegalArgumentException("Illegal char " + c);
+                        }
+                        default: {
+                            sb.append(c);
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_QUOTED_WORD: {
+                    switch (c) {
+                        case '\'': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            i++;
+                            sb.append(charArray[i]);
+                            //ignore
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            //ignore
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        switch (status) {
+            case START: {
+                break;
+            }
+            case IN_WORD: {
+                args.add(sb.toString());
+                sb.delete(0, sb.length());
+                break;
+            }
+            case IN_QUOTED_WORD: {
+                throw new IllegalArgumentException("Expected '");
+            }
+        }
+        return args.toArray(new String[args.size()]);
+    }
+
+    private static String compressBootArgument(String arg) {
+        StringBuilder sb = new StringBuilder();
+        boolean s = false;
+        if (arg != null) {
+            for (char c : arg.toCharArray()) {
+                switch (c) {
+                    case '\'':
+                    case '\\': {
+                        sb.append('\\');
+                        sb.append(c);
+                        s = true;
+                        break;
+                    }
+                    case ' ': {
+                        s = true;
+                        sb.append(c);
+                        break;
+                    }
+                    default:{
+                        sb.append(c);
+                    }
+                }
+            }
+        }
+        if (s || sb.length() == 0) {
+            sb.insert(0, '\'');
+            sb.append('\'');
+        }
+        return sb.toString();
+    }
+
+    public static String compressBootArguments(String[] args) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (i > 0) {
+                sb.append(" ");
+            }
+            sb.append(compressBootArgument(arg));
+        }
+        return sb.toString();
+    }
+
     public static NutsArguments parseNutsArguments(String[] args, boolean expectedNutsArgs) {
-        String[] nargs=null;
-        String[] aargs=null;
-        if(expectedNutsArgs){
-            String[][] s = splitArgs(args);
-            nargs=s[0];
-            aargs=s[1];
-        }else{
-            nargs=args;
-            aargs=null;
+        String[] nargs = null;
+        String[] aargs = null;
+        if (expectedNutsArgs) {
+            String[][] s = resolveBootAndAppArgs(args);
+            nargs = s[0];
+            aargs = s[1];
+        } else {
+            nargs = args;
+            aargs = null;
         }
 
         NewInstanceNutsArguments a = parseNewInstanceNutsArguments(nargs);
@@ -406,27 +546,31 @@ public final class NutsArgumentsParser {
 //        return args;
     }
 
-    private static String[][] splitArgs(String[] args) {
-        if (args.length > 0 && args[0].equals("--nuts-args")) {
-            List<String> nutsArgs = new ArrayList<>();
-            List<String> appArgs = new ArrayList<>();
-            boolean nutsArgsOk = true;
-            for (int i = 1; i < args.length; i++) {
-                if (nutsArgsOk) {
-                    if (args[i].equals("--nuts-no-more-args")) {
-                        nutsArgsOk = false;
-                    } else {
-                        nutsArgs.add(args[i]);
-                    }
-                } else {
-                    appArgs.add(args[i]);
-                }
+    private static String[][] resolveBootAndAppArgs(String[] args) {
+        if (args.length > 0 && args[0].startsWith("--nuts-boot-args=")) {
+            return new String[][]{
+                    uncompressBootArguments(args[0].substring("--nuts-boot-args=".length())),
+                    Arrays.copyOfRange(args,1,args.length)
+            };
+        }else{
+            String s = System.getProperty("nuts.boot.args");
+            if(s!=null){
+                return new String[][]{
+                        uncompressBootArguments(s),
+                        args
+                };
+            }
+            s = System.getenv("nuts_boot_args");
+            if(s!=null){
+                return new String[][]{
+                        uncompressBootArguments(s),
+                        args
+                };
             }
             return new String[][]{
-                    nutsArgs.toArray(new String[nutsArgs.size()]),
-                    appArgs.toArray(new String[nutsArgs.size()]),
+                    new String[0],
+                    args
             };
         }
-        return new String[][]{{}, args};
     }
 }

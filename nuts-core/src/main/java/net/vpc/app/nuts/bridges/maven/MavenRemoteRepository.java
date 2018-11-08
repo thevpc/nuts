@@ -69,8 +69,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     @Override
     protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
-        switch (session.getFetchMode()){
-            case OFFLINE:return 0;
+        switch (session.getFetchMode()) {
+            case OFFLINE:
+                return 0;
         }
         return super.getSupportLevelCurrent(id, session);
     }
@@ -87,11 +88,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             String metadataURL = URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
 
             try {
-                metadataStream = openStream(metadataURL, id.setFace(CoreNutsUtils.FACE_CATALOG), session);
-                log.log(Level.FINEST, "[SUCCESS] {0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
+                metadataStream = openStream(id, metadataURL, id.setFace(CoreNutsUtils.FACE_CATALOG), session);
             } catch (Exception ex) {
-                log.log(Level.FINEST, "[ERROR  ] {0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'maven-metadata\'", 20), metadataURL});
-                throw new NutsNotFoundException(id);
+                throw new NutsNotFoundException(id,ex);
             }
             MavenUtils.MavenMetadataInfo info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
@@ -127,8 +126,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     @Override
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         String url = URLUtils.buildUrl(getConfigManager().getLocation(), "/archetype-catalog.xml");
-        log.log(Level.FINEST, "{0} downloading maven {1} url {2}", new Object[]{CoreStringUtils.alignLeft(getRepositoryId(), 20), CoreStringUtils.alignLeft("\'archetype-catalog\'", 20), url});
-        return parseArchetypeCatalog(openStream(url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace(CoreNutsUtils.FACE_CATALOG), session), filter);
+        return parseArchetypeCatalog(openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace(CoreNutsUtils.FACE_CATALOG), session), filter);
     }
 
     private NutsRepository getLocalMavenRepo() {
@@ -364,8 +362,28 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected InputStream openStream(String path, Object source, NutsSession session) {
-        return CoreIOUtils.openStream(path,source,getWorkspace(),session);
+    protected InputStream openStream(NutsId id, String path, Object source, NutsSession session) {
+        long startTime = System.currentTimeMillis();
+        try {
+            InputStream in = CoreIOUtils.openStream(path, source, getWorkspace(), session);
+            if (log.isLoggable(Level.FINEST)) {
+                if (URLUtils.isRemoteURL(path)) {
+                    String message = URLUtils.isRemoteURL(path) ? "Downloading maven" : "Open local file";
+                    message += " url=" + path;
+                    traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
+                }
+            }
+            return in;
+        } catch (RuntimeException ex) {
+            if (log.isLoggable(Level.FINEST)) {
+                if (URLUtils.isRemoteURL(path)) {
+                    String message = URLUtils.isRemoteURL(path) ? "Downloading maven" : "Open local file";
+                    message += " url=" + path;
+                    traceMessage(session, id, TraceResult.ERROR, message, startTime);
+                }
+            }
+            throw ex;
+        }
     }
 
     @Override

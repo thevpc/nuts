@@ -1,5 +1,8 @@
 package net.vpc.toolbox.tomcat.server;
 
+import net.vpc.app.nuts.JsonSerializer;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
 import net.vpc.toolbox.tomcat.util.NutsContext;
@@ -7,6 +10,8 @@ import net.vpc.toolbox.tomcat.util.TomcatUtils;
 import net.vpc.toolbox.tomcat.server.config.TomcatServerAppConfig;
 
 import java.io.File;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 public class TomcatServerAppConfigService {
     private String name;
@@ -66,11 +71,11 @@ public class TomcatServerAppConfigService {
         if (version == null || version.trim().isEmpty()) {
             getVersionFile().delete();
             getRunningFile().delete();
-            context.out.printf("==[%s]== unset version.\n",name);
+            context.out.printf("==[%s]== unset version.\n",getFullName());
         } else {
             IOUtils.saveString(version, getVersionFile());
             IOUtils.copy(getArchiveFile(version), getRunningFile());
-            context.out.printf("==[%s]== set version [[%s]].\n",name,version);
+            context.out.printf("==[%s]== set version [[%s]].\n",getFullName(),version);
         }
         return this;
     }
@@ -95,16 +100,19 @@ public class TomcatServerAppConfigService {
     public TomcatServerAppConfigService resetDeployment() {
         File deployFile = getDeployFile();
         File deployFolder = getDeployFolder();
-        context.out.printf("==[%s]== reset deployment (delete [[%s]] ).\n",name,deployFile);
+        context.out.printf("==[%s]== reset deployment (delete [[%s]] ).\n",getFullName(),deployFile);
         IOUtils.delete(deployFile);
         IOUtils.delete(deployFolder);
         return this;
     }
 
-    public TomcatServerAppConfigService deploy() {
+    public TomcatServerAppConfigService deploy(String version) {
+        if(TomcatUtils.isEmpty(version)){
+            version=getCurrentVersion();
+        }
         File runningFile = getRunningFile();
         File deployFile = getDeployFile();
-        context.out.printf("==[%s]== deploy [[%s]] as file [[%s]] to [[%s]].\n",name,getCurrentVersion(),runningFile,deployFile);
+        context.out.printf("==[%s]== deploy [[%s]] as file [[%s]] to [[%s]].\n",getFullName(),version,runningFile,deployFile);
         IOUtils.copy(runningFile, deployFile);
         return this;
     }
@@ -116,7 +124,7 @@ public class TomcatServerAppConfigService {
         }
         File domainDeployPath = getArchiveFile(version);
         domainDeployPath.getParentFile().mkdirs();
-        context.out.printf("==[%s]== install version [[%s]] as [[%s]].\n",name,version,domainDeployPath);
+        context.out.printf("==[%s]== install version [[%s]] as [[%s]].\n",getFullName(),version,domainDeployPath);
         IOUtils.copy(f, domainDeployPath);
         if (setVersion) {
             setCurrentVersion(version);
@@ -138,8 +146,21 @@ public class TomcatServerAppConfigService {
 
     public TomcatServerAppConfigService remove() {
         tomcat.getConfig().getApps().remove(name);
-        context.out.printf("==[%s]== app removed.\n",name);
+        context.out.printf("==[%s]== app removed.\n",getFullName());
         return this;
     }
+    public String getFullName(){
+        return tomcat.getName()+"/"+getName();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public TomcatServerAppConfigService write(PrintStream out) {
+        TomcatUtils.writeJson(out, getConfig(), context.ws);
+        return this;
+    }
+
 
 }

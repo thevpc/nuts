@@ -51,14 +51,14 @@ public class UpdateCommand extends AbstractNutsCommand {
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        boolean force = false;
+        NutsConfirmAction force = NutsConfirmAction.IGNORE;
         String version = null;
         List<String> ids = new ArrayList<>();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.readOnce("--force", "-f")) {
-                force = true;
+                force = NutsConfirmAction.FORCE;
             } else if (cmdLine.readOnce("--version", "-v")) {
-                force = true;
+                force = NutsConfirmAction.FORCE;
                 version = cmdLine.readNonOptionOrError(new ValueNonOption("Version", context)).getString();
             } else {
                 String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
@@ -78,9 +78,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private void update(String id, boolean force, NutsCommandContext context) throws IOException {
+    private void update(String id, NutsConfirmAction uptoDateAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getValidWorkspace();
-        NutsFile file = ws.update(id, force, context.getSession());
+        NutsFile file = ws.update(id, uptoDateAction, context.getSession());
         NutsPrintStream out = context.getTerminal().getFormattedOut();
         if (file.isCached()) {
             out.printf("%s **already installed**\n", file.getId());
@@ -89,9 +89,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         }
     }
 
-    private void updateWorkspace(String version, boolean force, NutsCommandContext context) throws IOException {
+    private void updateWorkspace(String version, NutsConfirmAction foundAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getValidWorkspace();
-        NutsFile file = ws.updateWorkspace(version, force, context.getSession());
+        NutsFile file = ws.updateWorkspace(version, foundAction, context.getSession());
         NutsPrintStream out = context.getTerminal().getFormattedOut();
         if (file.isCached()) {
             out.printf("%s **already installed**\n", file.getId());

@@ -39,7 +39,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
             return true;
         }
         if (cmdLine.readOnce("update")) {
-            boolean force = true;
+            NutsConfirmAction force = NutsConfirmAction.FORCE;
             String version = null;
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();

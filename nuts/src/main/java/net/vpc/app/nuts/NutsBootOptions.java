@@ -158,6 +158,13 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
+    public String getBootArgumentsString() {
+        if(bootArguments==null){
+            return "";
+        }
+        return NutsArgumentsParser.compressBootArguments(bootArguments);
+    }
+
     public String[] getBootArguments() {
         return bootArguments;
     }

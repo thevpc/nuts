@@ -144,12 +144,12 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             URL[] bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
             log.log(Level.CONFIG, "Loading Nuts ClassWorld from {0}", Arrays.asList(bootClassWorldURLs));
             ClassLoader workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new URLClassLoader(bootClassWorldURLs, getContextClassLoader());
-            ServiceLoader<NutsWorkspaceObjectFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceObjectFactory.class, workspaceClassLoader);
+            ServiceLoader<NutsWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsWorkspaceFactory.class, workspaceClassLoader);
 
             NutsWorkspace nutsWorkspace = null;
             NutsWorkspaceImpl nutsWorkspaceImpl = null;
-            NutsWorkspaceObjectFactory factoryInstance = null;
-            for (NutsWorkspaceObjectFactory a : serviceLoader) {
+            NutsWorkspaceFactory factoryInstance = null;
+            for (NutsWorkspaceFactory a : serviceLoader) {
                 factoryInstance = a;
                 nutsWorkspace = a.createSupported(NutsWorkspace.class, this);
                 nutsWorkspaceImpl = (NutsWorkspaceImpl) nutsWorkspace;
@@ -370,9 +370,12 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             URL urlString = buildURL(u, getPathFile(_runtimeId, "nuts.properties"));
             if (urlString != null) {
                 try {
-                    cp = new NutsWorkspaceClassPath(NutsIOUtils.loadURLProperties(urlString));
+                    Properties p= NutsIOUtils.loadURLProperties(urlString);
+                    if(p!=null && !p.isEmpty()) {
+                        cp = new NutsWorkspaceClassPath(p);
+                    }
                 } catch (Exception ex) {
-                    log.log(Level.CONFIG, "[ERROR  ] Failed to load runtime props file from  {0}", urlString);
+                    log.log(Level.CONFIG, "[ERROR  ] Failed to load runtime props file from  {0}", new Object[]{urlString});
                     //ignore
                 }
             } else {
@@ -420,7 +423,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 cp.getDependenciesString(),
                 repositoriesToStore);
 
-        File runtimePropLocation = getBootFileLocation(cp.getId(), cp.getId().getArtifactId()+".properties");
+        File runtimePropLocation = getBootFileLocation(cp.getId(), "nuts.properties");
         if (!runtimePropLocation.exists() || runtimePropLocation.length() <= 0) {
             runtimePropLocation.getParentFile().mkdirs();
             Properties p = new Properties();
