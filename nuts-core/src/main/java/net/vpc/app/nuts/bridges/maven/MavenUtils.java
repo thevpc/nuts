@@ -33,8 +33,11 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
+import net.vpc.app.nuts.extensions.util.MapStringMapper;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -43,7 +46,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -130,20 +136,20 @@ public class MavenUtils {
                         String qName = startElement.getName().getLocalPart();
                         nodePath.push(qName);
                         if (isStackSubPath(nodePath, 1, "project", "properties")) {
-                            CoreStringUtils.clear(propertyValue);
+                            StringUtils.clear(propertyValue);
                         }
                         if (isStackPath(nodePath, "project", "dependencies", "dependency")) {
-                            CoreStringUtils.clear(d_groupId);
-                            CoreStringUtils.clear(d_artifactId);
-                            CoreStringUtils.clear(d_scope);
-                            CoreStringUtils.clear(d_version);
-                            CoreStringUtils.clear(d_optional);
+                            StringUtils.clear(d_groupId);
+                            StringUtils.clear(d_artifactId);
+                            StringUtils.clear(d_scope);
+                            StringUtils.clear(d_version);
+                            StringUtils.clear(d_optional);
                             exclusions.clear();
                         }
                         if (isStackPath(nodePath, "project", "dependencies", "dependency", "exclusions", "exclusion")) {
-                            CoreStringUtils.clear(e_groupId);
-                            CoreStringUtils.clear(e_artifactId);
-                            CoreStringUtils.clear(e_version);
+                            StringUtils.clear(e_groupId);
+                            StringUtils.clear(e_artifactId);
+                            StringUtils.clear(e_version);
                         }
                         break;
                     }
@@ -325,7 +331,7 @@ public class MavenUtils {
                         StartElement startElement = event.asStartElement();
                         String qName = startElement.getName().getLocalPart();
                         nodePath.push(qName);
-                        CoreStringUtils.clear(ver);
+                        StringUtils.clear(ver);
                         break;
                     }
                     case XMLStreamConstants.CHARACTERS: {
@@ -370,6 +376,9 @@ public class MavenUtils {
 
     public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsSession session, String urlDesc) throws IOException {
         NutsDescriptor nutsDescriptor = null;
+        if(session==null){
+            session=ws.createSession();
+        }
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
@@ -406,10 +415,10 @@ public class MavenUtils {
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (CoreStringUtils.isEmpty(thisId.getGroup())) {
+                        if (StringUtils.isEmpty(thisId.getGroup())) {
                             thisId = thisId.setGroup(parentId.getGroup());
                         }
-                        if (CoreStringUtils.isEmpty(thisId.getVersion().getValue())) {
+                        if (StringUtils.isEmpty(thisId.getVersion().getValue())) {
                             thisId = thisId.setVersion(parentId.getVersion().getValue());
                         }
                     }
@@ -448,7 +457,7 @@ public class MavenUtils {
                     nutsDescriptor = nutsDescriptor.setId(thisId);
                 }
                 String nutsPackaging = nutsDescriptor.getProperties().get("nuts-packaging");
-                if (!CoreStringUtils.isEmpty(nutsPackaging)) {
+                if (!StringUtils.isEmpty(nutsPackaging)) {
                     nutsDescriptor = nutsDescriptor.setPackaging(nutsPackaging);
                 }
                 properties.put("pom.groupId", thisId.getGroup());

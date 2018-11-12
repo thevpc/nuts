@@ -29,11 +29,14 @@
  */
 package net.vpc.app.nuts.extensions.executors;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsExecutionContext;
+import net.vpc.app.nuts.NutsExecutorComponent;
+import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.io.FileUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.util.*;
@@ -103,7 +106,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         if(directory==null) {
-            directory = CoreStringUtils.isEmpty(executionContext.getCwd()) ? null :
+            directory = StringUtils.isEmpty(executionContext.getCwd()) ? null :
                     new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         }
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),

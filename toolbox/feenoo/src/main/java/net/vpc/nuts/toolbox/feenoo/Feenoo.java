@@ -5,12 +5,13 @@
  */
 package net.vpc.nuts.toolbox.feenoo;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import net.vpc.common.strings.StringComparator;
 import net.vpc.common.strings.StringComparators;
 import net.vpc.nuts.toolbox.feenoo.sources.SourceFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.vpc.nuts.toolbox.feenoo.SourceNavigator.navigate;
 

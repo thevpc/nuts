@@ -70,11 +70,22 @@
             <artifactId>nuts</artifactId>
             <version>0.5.0</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>net.vpc.app.nuts</groupId>-->
+            <!--<artifactId>nuts-core</artifactId>-->
+            <!--<version>0.5.0.0</version>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
-            <artifactId>nuts-core</artifactId>
-            <version>0.5.0.0</version>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-strings</artifactId>
+            <version>1.2.14</version>
         </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-mvn</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-commandline</artifactId>
@@ -89,6 +100,11 @@
             <groupId>org.jline</groupId>
             <artifactId>jline</artifactId>
             <version>3.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.whitesource</groupId>
+            <artifactId>pecoff4j</artifactId>
+            <version>0.0.2.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

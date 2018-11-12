@@ -29,12 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
-import java.util.Objects;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.extensions.util.Simplifiable;
-
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.Objects;
 
 /**
  * Created by vpc on 2/20/17.
@@ -61,7 +62,7 @@ public class NutsDescriptorFilterOsdist implements NutsDescriptorFilter, Simplif
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (CoreStringUtils.isEmpty(osdist)) {
+        if (StringUtils.isEmpty(osdist)) {
             return null;
         }
         return this;

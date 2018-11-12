@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.JsonStringBuffer;
@@ -39,7 +38,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by vpc on 1/15/17.

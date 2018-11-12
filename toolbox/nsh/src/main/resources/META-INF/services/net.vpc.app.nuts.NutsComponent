@@ -37,8 +37,9 @@ net.vpc.app.nuts.toolbox.nsh.cmds.UndeclareCommandCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.SshCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.RmCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.NutsAdminCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.PropertiesCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.PropsCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.MkdirCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.FileVersionCommand
 
 
 net.vpc.app.nuts.toolbox.nsh.cmds.config.ArchietypeConfigSubCommand
@@ -49,3 +50,4 @@ net.vpc.app.nuts.toolbox.nsh.cmds.config.LogConfigSubCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.config.RepositoryConfigSubCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.config.UserConfigSubCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.config.WorkspaceConfigSubCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.config.JavaConfigSubCommand

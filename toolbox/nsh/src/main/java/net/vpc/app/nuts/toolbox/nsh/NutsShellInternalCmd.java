@@ -29,10 +29,11 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.terminals.NutsTerminalDelegate;
-import net.vpc.common.javashell.cmds.JavaShellInternalCmd;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceExtensionManager;
 import net.vpc.common.javashell.JavaShellEvalContext;
+import net.vpc.common.javashell.cmds.JavaShellInternalCmd;
 
 class NutsShellInternalCmd implements JavaShellInternalCmd {
 
@@ -48,13 +49,16 @@ class NutsShellInternalCmd implements JavaShellInternalCmd {
     public int exec(String[] command, JavaShellEvalContext shell) throws Exception {
         NutsJavaShellEvalContext ncontext = (NutsJavaShellEvalContext) shell;
         NutsCommandContext commandContext = ncontext.getCommandContext();
-        NutsSession session = component.getContext().getSession().copy();
-        session.setTerminal(new NutsTerminalDelegate(
-                component.getContext().getTerminal(),
+        NutsCommandContext context = component.getContext();
+        NutsSession session = context.getSession().copy();
+        NutsWorkspace workspace = context.getWorkspace();
+        NutsWorkspaceExtensionManager extensionManager = workspace.getExtensionManager();
+        session.setTerminal(
+                context.getTerminal(),
                 shell.getIn(),
-                component.getContext().getWorkspace().getExtensionManager().createPrintStream(shell.getOut(),true),
-                component.getContext().getWorkspace().getExtensionManager().createPrintStream(shell.getErr(),true)
-        ));
+                extensionManager.createPrintStream(shell.getOut(),true),
+                extensionManager.createPrintStream(shell.getErr(),true)
+        );
         commandContext.setSession(session);
         commandContext.setEnv(shell.getEnv().getEnv());
         return ncommand.exec(command, commandContext);

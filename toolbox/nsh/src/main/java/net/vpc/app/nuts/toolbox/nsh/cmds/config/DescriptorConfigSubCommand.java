@@ -5,18 +5,19 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsDescriptorBuilder;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.ValueNonOption;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.Ref;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.CommandLine;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,7 +30,8 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
         boolean newDesc = false;
         String file = null;
         boolean save = false;
-        final Ref<NutsDescriptor> desc = new Ref<>();
+        NutsWorkspace ws = context.getWorkspace();
+        final NutsDescriptorBuilder desc = ws.createDescriptorBuilder();
         if (cmdLine.read("new descriptor", "nd")) {
             newDesc = true;
         } else if (cmdLine.read("update descriptor", "ud")) {
@@ -45,7 +47,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setExecutable(value));
+                        desc.setExecutable(value);
                     }
                 });
             } else if (cmdLine.read("-ext")) {
@@ -53,7 +55,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setExt(value));
+                        desc.setExt(value);
                     }
                 });
             } else if (cmdLine.read("-packaging")) {
@@ -61,7 +63,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setPackaging(value));
+                        desc.setPackaging(value);
                     }
                 });
             } else if (cmdLine.read("-name")) {
@@ -69,7 +71,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setId(desc.get().getId().setName(value)));
+                        desc.setId(desc.getId().setName(value));
                     }
                 });
             } else if (cmdLine.read("-group")) {
@@ -77,7 +79,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setId(desc.get().getId().setGroup(value)));
+                        desc.setId(desc.getId().setGroup(value));
                     }
                 });
             } else if (cmdLine.read("-id")) {
@@ -85,7 +87,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().setId(context.getValidWorkspace().getExtensionManager().parseNutsId(value)));
+                        desc.setId(context.getValidWorkspace().getExtensionManager().parseNutsId(value));
                     }
                 });
 
@@ -94,7 +96,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().addOs(value));
+                        desc.addOs(value);
                     }
                 });
             } else if (cmdLine.read("-remove-os")) {
@@ -102,7 +104,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().removeOs(value));
+                        desc.removeOs(value);
                     }
                 });
 
@@ -111,7 +113,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().addOsdist(value));
+                        desc.addOsdist(value);
                     }
                 });
             } else if (cmdLine.read("-remove-osdist")) {
@@ -119,7 +121,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().removeOsdist(value));
+                        desc.removeOsdist(value);
                     }
                 });
 
@@ -128,7 +130,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().addPlatform(value));
+                        desc.addPlatform(value);
                     }
                 });
             } else if (cmdLine.read("-remove-platform")) {
@@ -136,7 +138,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().removePlatform(value));
+                        desc.removePlatform(value);
                     }
                 });
 
@@ -145,7 +147,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().addArch(value));
+                        desc.addArch(value);
                     }
                 });
             } else if (cmdLine.read("-remove-arch")) {
@@ -153,17 +155,17 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().removeArch(value));
+                        desc.removeArch(value);
                     }
                 });
             } else if (cmdLine.read("-add-property")) {
                 String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
-                final String[] nv = CoreNutsUtils.splitNameAndValue(value);
+                final String[] nv = ShellHelper.splitNameAndValue(value);
                 if (nv != null) {
                     all.add(new Runnable() {
                         @Override
                         public void run() {
-                            desc.set(desc.get().addProperty(nv[0], nv[1]));
+                            desc.addProperty(nv[0], nv[1]);
                         }
                     });
                 }
@@ -172,7 +174,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().removeProperty(value));
+                        desc.removeProperty(value);
                     }
                 });
 
@@ -181,7 +183,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().addDependency(CoreNutsUtils.parseNutsDependency(value)));
+                        desc.addDependency(ws.parseDependency(value));
                     }
                 });
             } else if (cmdLine.read("-remove-dependency")) {
@@ -189,7 +191,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.set(desc.get().removeDependency(CoreNutsUtils.parseNutsDependency(value)));
+                        desc.removeDependency(ws.parseDependency(value));
                     }
                 });
             } else if (cmdLine.read("-file")) {
@@ -204,10 +206,10 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
         }
         if (cmdLine.isExecMode()) {
             if (newDesc) {
-                desc.set(CoreNutsUtils.createNutsDescriptor());
+                desc.set(ws.createDescriptorBuilder().build());
             } else {
                 if (file != null) {
-                    desc.set(CoreNutsUtils.parseNutsDescriptor(new File(file)));
+                    desc.set(ws.parseDescriptor(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("-file missing");
@@ -220,14 +222,14 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
             }
             if (save) {
                 if (file != null) {
-                    desc.get().write(new File(file));
+                    desc.build().write(new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("-file missing");
                     }
                 }
             } else {
-                context.getTerminal().getFormattedOut().printf("%s\n", desc.get().toString(true));
+                context.getTerminal().getFormattedOut().printf("%s\n", desc.build().toString(true));
             }
         }
         return true;

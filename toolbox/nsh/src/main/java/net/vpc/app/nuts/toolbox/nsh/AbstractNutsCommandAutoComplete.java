@@ -31,13 +31,13 @@ package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsArgumentCandidate;
 import net.vpc.app.nuts.toolbox.nsh.options.DefaultNutsArgumentCandidate;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.CommandAutoComplete;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import net.vpc.common.commandline.ArgumentCandidate;
-import net.vpc.common.commandline.CommandAutoComplete;
 
 /**
  * Created by vpc on 3/7/17.
@@ -53,20 +53,20 @@ public abstract class AbstractNutsCommandAutoComplete implements NutsCommandAuto
 
     @Override
     public void addCandidate(String value, String display) {
-        if (!CoreStringUtils.isEmpty(value)) {
+        if (!StringUtils.isEmpty(value)) {
             candidates.put(value, new DefaultNutsArgumentCandidate(value));
         }
     }
 
     public void addCandidate(NutsArgumentCandidate value) {
-        if (!CoreStringUtils.isEmpty(value.getValue())) {
+        if (!StringUtils.isEmpty(value.getValue())) {
             candidates.put(value.getValue(), (ArgumentCandidate) value);
         }
     }
 
     @Override
     public void addCandidate(ArgumentCandidate value) {
-        if (!CoreStringUtils.isEmpty(value.getValue())) {
+        if (!StringUtils.isEmpty(value.getValue())) {
             candidates.put(value.getValue(), value);
         }
     }

@@ -29,20 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.options;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsEffectiveUser;
+import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
+
+import java.util.*;
 
 /**
  *

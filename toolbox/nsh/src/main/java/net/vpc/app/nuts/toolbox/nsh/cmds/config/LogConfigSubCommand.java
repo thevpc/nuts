@@ -5,13 +5,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsWorkspaceConfigManager;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
+import net.vpc.common.commandline.CommandLine;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
-import net.vpc.app.nuts.extensions.util.CoreLogUtils;
-import net.vpc.common.commandline.CommandLine;
 
 /**
  *
@@ -22,41 +23,42 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
     @Override
     public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
         if (cmdLine.read("set loglevel", "sll")) {
+            NutsWorkspaceConfigManager configManager = context.getWorkspace().getConfigManager();
             if (cmdLine.read("verbose", "finest")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.FINEST);
+                    configManager.setLogLevel(Level.FINEST);
                 }
             } else if (cmdLine.read("fine")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.FINE);
+                    configManager.setLogLevel(Level.FINE);
                 }
             } else if (cmdLine.read("finer")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.FINER);
+                    configManager.setLogLevel(Level.FINER);
                 }
             } else if (cmdLine.read("info")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.INFO);
+                    configManager.setLogLevel(Level.INFO);
                 }
             } else if (cmdLine.read("warning")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.WARNING);
+                    configManager.setLogLevel(Level.WARNING);
                 }
             } else if (cmdLine.read("severe", "error")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.SEVERE);
+                    configManager.setLogLevel(Level.SEVERE);
                 }
             } else if (cmdLine.read("config")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.CONFIG);
+                    configManager.setLogLevel(Level.CONFIG);
                 }
             } else if (cmdLine.read("off")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.OFF);
+                    configManager.setLogLevel(Level.OFF);
                 }
             } else if (cmdLine.read("all")) {
                 if (cmdLine.isExecMode()) {
-                    CoreLogUtils.setLevel(Level.ALL);
+                    configManager.setLogLevel(Level.ALL);
                 }
             } else {
                 if (cmdLine.isExecMode()) {

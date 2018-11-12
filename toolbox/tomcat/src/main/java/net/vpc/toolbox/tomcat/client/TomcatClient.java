@@ -4,6 +4,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientConfig;
 import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
+import net.vpc.toolbox.tomcat.util.UserCancelException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -112,11 +113,13 @@ public class TomcatClient {
     private int add(String[] args) {
         TomcatClientConfigService c = null;
         String appName = null;
+        String instanceName = null;
         for (int j = 0; j < args.length; j++) {
             if (args[j].equals("--instance")) {
                 j++;
                 if(c==null){
-                    c=loadOrCreateTomcatConfig(args[j]);
+                    instanceName = args[j];
+                    c=loadOrCreateTomcatConfig(instanceName);
                 }else{
                     throw new IllegalArgumentException("instance already defined");
                 }
@@ -126,6 +129,18 @@ public class TomcatClient {
                     c=loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setServer(args[j]);
+            }else if (args[j].equals("--remote-instance")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setRemoteInstance(args[j]);
+            }else if (args[j].equals("--remote-temp-path")) {
+                j++;
+                if(c==null){
+                    c=loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setRemoteTempPath(args[j]);
             } else if (args[j].equals("--cert")) {
                 j++;
                 if(c==null){
@@ -138,18 +153,6 @@ public class TomcatClient {
                     c=loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setServerPassword(args[j]);
-            } else if (args[j].equals("--temp-path")) {
-                j++;
-                if(c==null){
-                    c=loadOrCreateTomcatConfig(null);
-                }
-                c.getConfig().setServerTempPath(args[j]);
-            } else if (args[j].equals("--server-instance")) {
-                j++;
-                if(c==null){
-                    c=loadOrCreateTomcatConfig(null);
-                }
-                c.getConfig().setServerInstance(args[j]);
             } else if (args[j].equals("--app")) {
                 j++;
                 appName = args[j];
@@ -172,7 +175,7 @@ public class TomcatClient {
                     c=loadOrCreateTomcatConfig(null);
                 }
                 TomcatClientAppConfigService tomcatAppConfig = c.getAppOrError(appName);
-                tomcatAppConfig.getConfig().setVersion(value);
+                tomcatAppConfig.getConfig().setVersionCommand(value);
             } else {
                 throw new IllegalArgumentException("Unsupported " + args[j]);
             }
@@ -180,9 +183,42 @@ public class TomcatClient {
         if(c==null){
             c=loadOrCreateTomcatConfig(null);
         }
+        boolean ok=false;
+        while (!ok) {
+            try {
+                ok = true;
+                if (TomcatUtils.isEmpty(c.getConfig().getServer())) {
+                    ok = false;
+                    c.getConfig().setServer(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?","ssh://login@myserver",c.getName(),"--server"));
+                }
+                if (TomcatUtils.isEmpty(c.getConfig().getRemoteInstance())) {
+                    ok = false;
+                    c.getConfig().setRemoteInstance(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?","default",c.getName(),"--remote-instance"));
+                }
+                if (TomcatUtils.isEmpty(c.getConfig().getRemoteTempPath())) {
+                    ok = false;
+                    c.getConfig().setRemoteTempPath(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?","/tmp",c.getName(),"--remote-temp-path"));
+                }
+                for (TomcatClientAppConfigService a : c.getApps()) {
+                    if (TomcatUtils.isEmpty(a.getConfig().getPath())) {
+                        ok = false;
+                        a.getConfig().setPath(context.readOrCancel("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?",null,c.getName(),a.getName(),"-app.path"));
+                    }
+                    if (TomcatUtils.isEmpty(a.getConfig().getVersionCommand())) {
+                        ok = false;
+                        a.getConfig().setVersionCommand(context.readOrCancel("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?","nsh file-version %file",c.getName(),a.getName(),"-app.version"));
+                    }
+
+                }
+            }catch (UserCancelException ex){
+                return 1;
+            }
+        }
         c.saveConfig();
         return 0;
     }
+
+
     private int remove(String[] args) {
         String instance = null;
         String appName = null;

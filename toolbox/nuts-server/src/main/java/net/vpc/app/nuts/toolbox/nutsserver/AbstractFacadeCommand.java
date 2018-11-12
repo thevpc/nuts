@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nutsserver;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
 import javax.security.auth.login.LoginException;
@@ -58,10 +55,9 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         ListMap<String, String> parameters = context.getParameters();
         String userLogin = parameters.getOne("ul");
         String userPassword = parameters.getOne("up");
-        String passphrase = context.getWorkspace().getConfigManager().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
-        userLogin = CoreStringUtils.isEmpty(userLogin) ? "" : new String(CoreSecurityUtils.httpDecrypt(userLogin, passphrase));
-        userPassword = CoreStringUtils.isEmpty(userPassword) ? "" : new String(CoreSecurityUtils.httpDecrypt(userPassword, passphrase));
-        if (!CoreStringUtils.isEmpty(userLogin)) {
+        userLogin = new String(context.getWorkspace().getConfigManager().decryptString(userLogin==null?null:userLogin.getBytes()));
+        userPassword = new String(context.getWorkspace().getConfigManager().decryptString(userPassword==null?null:userPassword.getBytes()));
+        if (!StringUtils.isEmpty(userLogin)) {
             boolean loggedId = false;
             try {
                 context.getWorkspace().getSecurityManager().login(userLogin, userPassword);

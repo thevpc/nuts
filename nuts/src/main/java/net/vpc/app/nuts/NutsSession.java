@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.InputStream;
 import java.util.Map;
 
 public interface NutsSession {
@@ -58,4 +59,5 @@ public interface NutsSession {
     NutsTerminal getTerminal();
 
     NutsSession setTerminal(NutsTerminal terminal);
+    NutsSession setTerminal(NutsTerminal base, InputStream inReplace, NutsPrintStream outReplace, NutsPrintStream errReplace);
 }

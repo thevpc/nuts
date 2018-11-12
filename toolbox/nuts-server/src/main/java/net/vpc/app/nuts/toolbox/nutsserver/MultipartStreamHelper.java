@@ -29,13 +29,16 @@
  */
 package net.vpc.app.nuts.toolbox.nutsserver;
 
-import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsException;
 import net.vpc.app.nuts.NutsIOException;
-
-import java.io.*;
-import java.util.*;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * Created by vpc on 1/23/17.

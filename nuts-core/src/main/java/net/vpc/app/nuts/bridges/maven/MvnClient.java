@@ -44,14 +44,16 @@ public class MvnClient {
             }
         }
         try {
-            NutsExecResult r = ws.execToString(new String[]{
-                    NET_VPC_APP_NUTS_MVN,
-                    "--json",
-                    "get",
-                    id.toString(),
-                    repoURL == null ? "" : repoURL
-            }, null, null,session);
-            return (r.getCode() == 0);
+            NutsCommandExecBuilder b = ws
+                    .createExecBuilder()
+                    .addCommand(
+                            NET_VPC_APP_NUTS_MVN,
+                            "--json",
+                            "get",
+                            id.toString(),
+                            repoURL == null ? "" : repoURL
+                    ).setSession(session).exec();
+            return (b.getResult() == 0);
         }catch (Exception ex){
             return false;
         }

@@ -32,7 +32,10 @@ package net.vpc.app.nuts.extensions.terminals;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Created by vpc on 2/20/17.
@@ -65,8 +68,8 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public String readLine(String prompt) {
-        getOut().print(prompt);
+    public String readLine(String promptFormat, Object[] params) {
+        getOut().printf(promptFormat,params);
         getIn();
         if (inReplaceReader != null) {
             try {

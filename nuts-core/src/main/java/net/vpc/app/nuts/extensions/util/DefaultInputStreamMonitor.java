@@ -5,11 +5,12 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import java.text.DecimalFormat;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.common.io.InputStreamEvent;
 import net.vpc.common.io.InputStreamMonitor;
 import net.vpc.common.util.BytesSizeFormat;
+
+import java.text.DecimalFormat;
 
 /**
  *

@@ -31,7 +31,13 @@ package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
+import net.vpc.app.nuts.extensions.util.TraceResult;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.io.URLUtils;
+import net.vpc.common.strings.StringUtils;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -46,9 +52,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.URLUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -189,10 +192,10 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     protected NutsFile getNutsFile(NutsId id, NutsSession session) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
         if (id.getVersion().isEmpty()) {
@@ -219,7 +222,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
 
             String ext2 = nutsDescriptor == null ? null : nutsDescriptor.getExt();
-            if (CoreStringUtils.isEmpty(ext)) {
+            if (StringUtils.isEmpty(ext)) {
                 ext2 = "jar";
             }
             File localFile = nutsDescriptor == null ? new File(versionFolder,
@@ -272,9 +275,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                                 String qName = startElement.getName().getLocalPart();
                                 nodePath.push(qName);
                                 if (MavenUtils.isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype")) {
-                                    CoreStringUtils.clear(groupId);
-                                    CoreStringUtils.clear(artifactId);
-                                    CoreStringUtils.clear(version);
+                                    StringUtils.clear(groupId);
+                                    StringUtils.clear(artifactId);
+                                    StringUtils.clear(version);
                                 }
                                 break;
                             }

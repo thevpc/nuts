@@ -91,7 +91,7 @@ public class InstallCommand extends AbstractNutsCommand {
                             NutsFile deployedId = context.getValidWorkspace().createBundle(
                                     FileUtils.getAbsolutePath(new File(context.getCwd()), s),
                                     descriptorFile == null ? null :
-                                            new File(context.resolvePath(descriptorFile)).getPath(),
+                                            new File(context.getAbsolutePath(descriptorFile)).getPath(),
                                     context.getSession()
                             );
                             out.printf("File %s bundled successfully as %s to %s\n", s, deployedId.getId(), deployedId.getFile());

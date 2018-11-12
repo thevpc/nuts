@@ -29,14 +29,16 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 /**
  * @author vpc
  */
-public interface NutsWorkspaceConfigManager extends EnvProvider{
+public interface NutsWorkspaceConfigManager extends EnvProvider {
 
     NutsBootWorkspace getBoot();
 
@@ -122,5 +124,35 @@ public interface NutsWorkspaceConfigManager extends EnvProvider{
     void setUsers(NutsUserConfig[] users);
 
     String getComponentsLocation();
+
+    boolean addSdk(String name, NutsSdkLocation location);
+
+    NutsSdkLocation findSdkByName(String name, String locationName);
+
+    NutsSdkLocation findSdkByPath(String name, String path);
+
+    NutsSdkLocation findSdkByVersion(String name, String version);
+
+    NutsSdkLocation removeSdk(String name, NutsSdkLocation location);
+
+    NutsSdkLocation findSdk(String name, NutsSdkLocation location);
+
+    String[] getSdkTypes();
+
+    NutsSdkLocation getSdk(String type, String requestedVersion);
+
+    NutsSdkLocation[] getSdks(String type);
+
+    void setLogLevel(Level levek);
+
+    NutsSdkLocation[] searchJdkLocations(PrintStream out);
+
+    NutsSdkLocation[] searchJdkLocations(String path, PrintStream out);
+
+    NutsSdkLocation resolveJdkLocation(String path);
+
+    byte[] decryptString(byte[] input);
+
+    byte[] encryptString(byte[] input);
 }
 

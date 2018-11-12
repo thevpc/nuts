@@ -30,12 +30,18 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
+import net.vpc.common.strings.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -90,7 +96,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         if (URLUtils.isRemoteURL(url)) {
             String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + CoreStringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
+                log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + StringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
             }
         }
         return openStream(url, id.setFace(face), session);
@@ -101,7 +107,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         if (URLUtils.isRemoteURL(url)) {
             String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " url " + url);
+                log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " url " + url);
             }
         }
         return openStream(url, id.setFace(face), session);
@@ -236,7 +242,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
             String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId)+"/.folders").split("\n");
             List<NutsId> n=new ArrayList<>();
             for (String s : all) {
-                if(!CoreStringUtils.isEmpty(s)){
+                if(!StringUtils.isEmpty(s)){
                     NutsId id2 = id.builder().setVersion(s).build();
                     if(idFilter==null|| idFilter.accept(id2)) {
                         n.add(id2);

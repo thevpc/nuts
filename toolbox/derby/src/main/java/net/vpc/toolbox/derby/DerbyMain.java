@@ -8,7 +8,6 @@ package net.vpc.toolbox.derby;
 import net.vpc.app.nuts.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +56,7 @@ public class DerbyMain extends NutsApplication{
         }
         NutsId r = ws.resolveNutsIdForClass(getClass());
         if (r == null) {
-            r = ws.parseNutsId("net.vpc.app.nuts.toolbox:derby#1.2");
+            r = ws.createNutsId("net.vpc.app.nuts.toolbox:derby#1.2");
         }
         return r;
     }
@@ -231,7 +230,10 @@ public class DerbyMain extends NutsApplication{
         if (extraArg != null) {
             command.add(extraArg);
         }
-        return ws.exec(command.toArray(new String[command.size()]), null, null,null);
+        return ws
+                .createExecBuilder()
+                .setCommand(command)
+                .exec().getResult();
     }
 
     private File download(String id) {

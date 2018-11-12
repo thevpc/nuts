@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.extensions.repos.NutsFolderRepository;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.CommandLine;
@@ -46,7 +44,7 @@ import java.util.List;
 public class NutsAdminCommand extends AbstractNutsCommand {
 
     public NutsAdminCommand() {
-        super("nutsadmin", DEFAULT_SUPPORT);
+        super("nuts-admin", DEFAULT_SUPPORT);
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
@@ -71,28 +69,10 @@ public class NutsAdminCommand extends AbstractNutsCommand {
         }
         if (reindex) {
             if (repos.isEmpty()) {
-                for (NutsRepository nutsRepository : context.getWorkspace().getRepositoryManager().getRepositories()) {
-                    if (nutsRepository instanceof NutsFolderRepository) {
-                        ((NutsFolderRepository) nutsRepository).reindexFolder();
-                    }
-                }
+                context.getValidWorkspace().reindexAll();
             } else {
                 for (String repo : repos) {
-                    if(repo.contains("/") || repo.contains("\\")){
-                        NutsFolderRepository r=new NutsFolderRepository(
-                                "temp",
-                                repo,
-                                context.getWorkspace(),
-                                null
-                        );
-                        r.getConfigManager().setComponentsLocation(".");
-                        ((NutsFolderRepository) r).reindexFolder();
-                    }else{
-                        NutsRepository r = context.getWorkspace().getRepositoryManager().findRepository(repo);
-                        if(r!=null){
-                            ((NutsFolderRepository) r).reindexFolder();
-                        }
-                    }
+                    context.getValidWorkspace().reindex(repo);
                 }
             }
         }

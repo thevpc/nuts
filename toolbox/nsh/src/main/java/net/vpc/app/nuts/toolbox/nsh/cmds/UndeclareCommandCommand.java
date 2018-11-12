@@ -41,7 +41,7 @@ public class UndeclareCommandCommand extends AbstractNutsCommand {
 
 
     public UndeclareCommandCommand() {
-        super("undeclarecommand", DEFAULT_SUPPORT);
+        super("undeclare-command", DEFAULT_SUPPORT);
     }
 
       public int exec(String[] args, NutsCommandContext context) throws Exception {

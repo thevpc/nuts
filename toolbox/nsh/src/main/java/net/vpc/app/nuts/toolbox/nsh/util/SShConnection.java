@@ -3,19 +3,45 @@ package net.vpc.app.nuts.toolbox.nsh.util;
 import com.jcraft.jsch.*;
 import net.vpc.common.io.DynamicInputStream;
 import net.vpc.common.io.FileUtils;
-import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
+import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SShConnection implements AutoCloseable {
     private Session session;
 
 
-    public SShConnection(String path, String keyFilePath, String keyPassword) {
-        FilePath p = new FilePath(path);
-        init(p.getPath(),p.getServer(),p.getPort(),keyFilePath,keyPassword);
+    public SShConnection(String fullPath) {
+        Matcher m = Pattern.compile("^(?<protocol>(([a-zA-Z0-9_-]+)://))?((?<user>([^:?]+))@)?(?<host>[^:?]+)(:(?<port>[0-9]+))?(\\?(?<query>.+))?$").matcher(fullPath);
+        String user=null;
+        String host=null;
+        String password=null;
+        String keyFile=null;
+        int port=-1;
+        if(m.find()){
+            user=m.group("user");
+            host =m.group("host");
+            port =m.group("port")==null?-1:Integer.parseInt(m.group("port"));
+            String q=m.group("query");
+            Map<String, String> qm = StringUtils.parseMap(q, "&");
+            password=qm.get("password");
+            keyFile=qm.get("key-file");
+        }else{
+            throw new IllegalArgumentException("Illegal ssh protocol format "+fullPath);
+        }
+        init(user,host,port,keyFile,password);
+    }
+
+    public SShConnection(FilePath path) {
+        if(!"ssh".equals(path.getProtocol())){
+            throw new IllegalArgumentException("Expected ssh url");
+        }
+        init(path.getUser(),path.getHost(),path.getPort(),path.getKeyFile(),path.getPassword());
     }
 
     public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword) {
@@ -129,13 +155,24 @@ public class SShConnection implements AutoCloseable {
         exec("rm " + (R ? "-R" : ""));
     }
 
-    public void copyRemoteToLocal(String from, String to) {
+    public void mkdir(String from, boolean p) {
+        exec("mkdir " + (p ? "-p" : "")+" "+from);
+    }
+
+    public void copyRemoteToLocal(String from, String to,boolean mkdir) {
         try {
+            if (mkdir) {
+                String pp = FileUtils.getFileParentPath(to);
+                if(pp!=null) {
+                    mkdir(pp, true);
+                }
+            }
+
             String prefix = null;
 
-            if (new File(to).isDirectory()) {
-                prefix = to + File.separator;
-            }
+//            if (new File(to).isDirectory()) {
+//                prefix = to + File.separator;
+//            }
 
             // exec 'scp -f rfile' remotely
             String command = "scp -f " + from;

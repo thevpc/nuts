@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.*;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -105,7 +106,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     }
                     if (t != null && (filter == null || filter.accept(t.getId()))) {
                         NutsId nutsId = t.getId().setNamespace(repositoryId);
-                        nutsId = nutsId.setFace(CoreStringUtils.isEmpty(t.getFace()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : t.getFace());
+                        nutsId = nutsId.setFace(StringUtils.isEmpty(t.getFace()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : t.getFace());
                         last = nutsId;
                         break;
                     }

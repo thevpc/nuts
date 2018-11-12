@@ -29,23 +29,17 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import net.vpc.app.nuts.NutsDependency;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsParseException;
-import net.vpc.app.nuts.NutsVersion;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.extensions.filters.version.NutsVersionJavascriptFilter;
+import net.vpc.common.strings.StringUtils;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -77,8 +71,8 @@ public class JavascriptHelper {
                 }
                 return value.toString().matches(CoreStringUtils.simpexpToRegexp(pattern, true));
             }
-            if (CoreStringUtils.isEmpty(pattern)) {
-                return CoreStringUtils.isEmpty(value.toString());
+            if (StringUtils.isEmpty(pattern)) {
+                return StringUtils.isEmpty(value.toString());
             }
             if (value instanceof NutsId) {
                 return NutsJavascriptIdFilter.valueOf(pattern).accept((NutsId) value);
@@ -93,7 +87,7 @@ public class JavascriptHelper {
         }
 
         public String trim(String s) {
-            return CoreStringUtils.trim(s);
+            return StringUtils.trim(s);
         }
 
         public int compareVersions(String v1, String v2) {
@@ -131,7 +125,7 @@ public class JavascriptHelper {
             engine = createManagerJdk();
         }
         try {
-            if (CoreStringUtils.isEmpty(initExprs)) {
+            if (StringUtils.isEmpty(initExprs)) {
                 initExprs = "";
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");

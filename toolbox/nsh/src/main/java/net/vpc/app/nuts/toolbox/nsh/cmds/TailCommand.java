@@ -30,9 +30,9 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.ArgVal;
 import net.vpc.common.io.TextFiles;
 
@@ -62,14 +62,14 @@ public class TailCommand extends AbstractNutsCommand {
         while (!cmdLine.isEmpty()) {
             ArgVal a = cmdLine.read();
             if (a.isOption()) {
-                if(CoreStringUtils.isInt(a.getString().substring(1))){
+                if(ShellHelper.isInt(a.getString().substring(1))){
                     options.max=Integer.parseInt(a.getString().substring(1));
                 }else{
                     throw new IllegalArgumentException("Not yet supported");
                 }
             } else {
                 String path = a.getString();
-                File file = new File(context.resolvePath(path));
+                File file = new File(context.getAbsolutePath(path));
                     files.add(file.getPath());
             }
         }

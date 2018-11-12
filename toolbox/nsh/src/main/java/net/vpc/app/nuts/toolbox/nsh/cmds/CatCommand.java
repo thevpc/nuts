@@ -33,8 +33,8 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class CatCommand extends AbstractNutsCommand {
                 return 0;
             } else {
                 String path = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-                File file = new File(context.resolvePath(path));
+                File file = new File(context.getAbsolutePath(path));
                 files.add(file);
             }
         }
@@ -101,7 +101,7 @@ public class CatCommand extends AbstractNutsCommand {
                         String line = null;
                         while ((line = r.readLine()) != null) {
                             if(options.n){
-                                out.print(CoreStringUtils.alignRight(String.valueOf(nn),6));
+                                out.print(StringUtils.alignRight(String.valueOf(nn),6));
                                 out.print("  ");
                             }
                             if(options.T){

@@ -5,9 +5,10 @@
  */
 package net.vpc.nuts.toolbox.feenoo;
 
-import java.io.File;
 import net.vpc.nuts.toolbox.feenoo.sources.JavaTypeSource;
 import net.vpc.nuts.toolbox.feenoo.sources.SourceFactory;
+
+import java.io.File;
 
 /**
  *

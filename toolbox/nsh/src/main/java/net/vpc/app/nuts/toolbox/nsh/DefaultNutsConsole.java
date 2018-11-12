@@ -30,15 +30,18 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.javashell.Env;
 import net.vpc.common.javashell.InterrupShellException;
+import net.vpc.common.javashell.JavaShellEvalContext;
 import net.vpc.common.javashell.QuitShellException;
 import net.vpc.common.javashell.cmds.*;
-import net.vpc.common.javashell.Env;
-import net.vpc.common.javashell.JavaShellEvalContext;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,9 +85,9 @@ public class DefaultNutsConsole implements NutsConsole {
         installCommand(new ShellToNutsCommand(new EnvCmd()));
         installCommand(new ShellToNutsCommand(new AliasCmd()));
         installCommand(new ShellToNutsCommand(new ExitCmd()));
-        installCommand(new ShellToNutsCommand(new PropsCmd()));
+//        installCommand(new ShellToNutsCommand(new PropsCmd()));
         installCommand(new ShellToNutsCommand(new SetCmd()));
-        installCommand(new ShellToNutsCommand(new SetPropCmd()));
+//        installCommand(new ShellToNutsCommand(new SetPropCmd()));
         installCommand(new ShellToNutsCommand(new ShowerrCmd()));
         installCommand(new ShellToNutsCommand(new UnsetCmd()));
         installCommand(new ShellToNutsCommand(new UnaliasCmd()));
@@ -197,13 +200,13 @@ public class DefaultNutsConsole implements NutsConsole {
 
             terminal = context.getTerminal();
             NutsWorkspace ws = context.getWorkspace();
-            String wss = ws == null ? "" :new File(context.resolvePath(ws.getConfigManager().getWorkspaceLocation())).getName();
+            String wss = ws == null ? "" :new File(context.getAbsolutePath(ws.getConfigManager().getWorkspaceLocation())).getName();
             String login = null;
             if (ws != null) {
                 login = ws.getSecurityManager().getCurrentLogin();
             }
             String prompt = login + "@" + wss;
-            if (!CoreStringUtils.isEmpty(context.getServiceName())) {
+            if (!StringUtils.isEmpty(context.getServiceName())) {
                 prompt = prompt + "@" + context.getServiceName();
             }
             prompt += "> ";

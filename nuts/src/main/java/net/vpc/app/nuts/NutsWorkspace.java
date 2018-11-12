@@ -29,7 +29,14 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by vpc on 1/5/17.
@@ -105,15 +112,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
 
-    /**
-     * out and err are copied to string result
-     *
-     * @param cmd
-     * @param env
-     * @param session
-     * @return
-     */
-    public NutsExecResult execToString(String[] cmd, Properties env, String dir, NutsSession session);
+    NutsCommandExecBuilder createExecBuilder();
 
     int exec(String[] cmd, Properties env, String dir, NutsSession session);
 
@@ -163,15 +162,21 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsId[] resolveNutsIdsForClass(Class clazz);
 
-    NutsId parseNutsId(String id);
+    NutsId createNutsId(String id);
 
-    String getPlatformOs();
+    NutsId createNutsId(String namespace, String group, String name, String version, String query);
 
-    String getPlatformOsDist();
+    NutsId createNutsId(String namespace, String group, String name, String version, Map<String, String> query);
 
-    String getPlatformOsLib();
+    NutsId createNutsId(String groupId, String name, String version);
 
-    String getPlatformArch();
+    NutsId getPlatformOs();
+
+    NutsId getPlatformOsDist();
+
+    NutsId getPlatformOsLib();
+
+    NutsId getPlatformArch();
 
     ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
 
@@ -184,5 +189,52 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     NutsWorkspaceCreateOptions getOptions();
 
     NutsBootOptions getBootOptions();
+
+    NutsDescriptorBuilder createDescriptorBuilder();
+
+    NutsIdBuilder createIdBuilder();
+
+    //    public NutsVesionBuilder createNutsVersionBuilder() {
+//        return new DefaultVersionBuilder();
+//    }
+    NutsDescriptor parseDescriptor(URL url);
+
+    NutsDescriptor parseDescriptor(File file);
+
+    NutsDescriptor parseDescriptor(InputStream stream);
+
+    NutsDescriptor parseDescriptor(String descriptorString);
+
+    NutsDependency parseDependency(String dependency);
+
+    NutsVersion createVersion(String version);
+
+    NutsId parseOrErrorNutsId(String nutFormat);
+
+    NutsSearchBuilder createSearchBuilder();
+
+    String getNutsFileName(NutsId id, String ext);
+
+    String filterText(String value);
+
+    String escapeText(String str);
+
+    String resolveJavaMainClass(File file);
+
+    NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out);
+
+    NutsTerminal createTerminal();
+
+    String simpexpToRegexp(String pattern, boolean contains);
+
+    String getResourceString(String resource, Class cls, String defaultValue);
+
+    void reindex(String path);
+
+    void reindexAll();
+
+    void downloadPath(String from, File to, NutsSession session);
+
+    String evalContentHash(InputStream input);
 
 }

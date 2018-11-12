@@ -2,8 +2,6 @@ package net.vpc.toolbox.tomcat.util;
 
 import net.vpc.app.nuts.JsonSerializer;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.toolbox.tomcat.server.config.TomcatServerAppConfig;
-import net.vpc.toolbox.tomcat.server.config.TomcatServerConfig;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;

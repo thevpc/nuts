@@ -31,8 +31,7 @@ package net.vpc.app.nuts.extensions.executors;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.io.FileUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.util.*;
@@ -153,7 +152,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             } else if (k.equals("-nuts-path") || k.equals("-np") || k.equals("-nutspath")) {
                 NutsSearch ns = new NutsSearch().setLastestVersions(true);
                 for (String n : CoreStringUtils.split(value, "; ")) {
-                    if (!CoreStringUtils.isEmpty(n)) {
+                    if (!StringUtils.isEmpty(n)) {
                         ns.addId(n);
                     }
                 }
@@ -177,7 +176,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         if (javaHome == null) {
-            if (!CoreStringUtils.isEmpty(javaVersion)) {
+            if (!StringUtils.isEmpty(javaVersion)) {
                 javaHome = "${java#" + javaVersion + "}";
             } else {
                 javaHome = "${java}";
@@ -222,7 +221,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     }else {
                         List<String> classes = CorePlatformUtils.resolveMainClasses(file);
                         if(classes.size()>0) {
-                            mainClass = CoreStringUtils.join(":", classes);
+                            mainClass = StringUtils.join(":", classes);
                         }
                     }
                 }
@@ -259,7 +258,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                             for (int i = 0; i < possibleClasses.size(); i++) {
                                 out.printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
                             }
-                            String line = executionContext.getTerminal().readLine("Enter class # or name to run it. Type 'cancel' to cancel : ");
+                            String line = executionContext.getTerminal().readLine("Enter class ==%s== or ==%s== to run it. Type @@%s@@ to cancel : ", "#","name","cancel");
                             if (line != null) {
                                 if (line.equals("cancel")) {
                                     return -1;
@@ -288,7 +287,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         args.addAll(app);
 
-        File directory = CoreStringUtils.isEmpty(executionContext.getCwd()) ? null :
+        File directory = StringUtils.isEmpty(executionContext.getCwd()) ? null :
                 new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 args.toArray(new String[args.size()]),

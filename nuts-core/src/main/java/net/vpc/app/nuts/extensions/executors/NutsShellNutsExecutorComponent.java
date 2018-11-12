@@ -29,10 +29,15 @@
  */
 package net.vpc.app.nuts.extensions.executors;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsExecutionContext;
+import net.vpc.app.nuts.NutsExecutorComponent;
+import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static net.vpc.app.nuts.NutsConstants.NUTS_SHELL;
@@ -77,12 +82,13 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
         app.add(0,nutMainFile.getFile());
         app.add(0,NUTS_SHELL);
-        return executionContext.getWorkspace().exec(
-                app.toArray(new String[app.size()]),
-                null,
-                executionContext.getCwd(),
-                executionContext.getSession()
-        );
+        return executionContext.getWorkspace()
+                .createExecBuilder()
+                .setCommand(app)
+                .setSession(executionContext.getSession())
+                .setEnv(executionContext.getEnv())
+                .setDirectory(executionContext.getCwd())
+                .exec().getResult();
     }
 
 }

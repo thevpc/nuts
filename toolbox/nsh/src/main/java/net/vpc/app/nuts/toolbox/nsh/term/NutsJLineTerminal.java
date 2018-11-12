@@ -34,47 +34,44 @@ import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommandAutoComplete;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandAutoComplete;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.extensions.terminals.AbstractNutsTerminal;
-import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.io.FileUtils;
+import net.vpc.common.javashell.InterrupShellException;
+import net.vpc.common.strings.StringUtils;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.javashell.InterrupShellException;
-import net.vpc.common.commandline.ArgumentCandidate;
-import org.jline.terminal.TerminalBuilder;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsJLineTerminal extends AbstractNutsTerminal {
+public class NutsJLineTerminal implements NutsTerminal {
 
     private Terminal terminal;
     private LineReader reader;
     private NutsPrintStream out;
     private NutsPrintStream err;
     private NutsCommandContext nutsCommandContext;
-    private DefaultNutsTerminal fallback;
+    private NutsTerminal fallback;
     private NutsPrintStream outReplace;
     private NutsPrintStream errReplace;
     private InputStream inReplace;
     private BufferedReader inReplaceReader;
+    private NutsWorkspace workspace;
 
     public NutsJLineTerminal() {
     }
 
     public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
+        this.workspace=workspace;
         if (in != null || out != null || err != null || System.console() == null) {
-            fallback = new DefaultNutsTerminal();
+            fallback = workspace.createTerminal();
             fallback.install(workspace, in, out, err);
         } else {
             TerminalBuilder builder = TerminalBuilder.builder();
@@ -135,7 +132,7 @@ public class NutsJLineTerminal extends AbstractNutsTerminal {
                                                 if (cmdCandidate != null) {
                                                     String value = cmdCandidate.getValue();
                                                     String display = cmdCandidate.getDisplay();
-                                                    if (!CoreStringUtils.isEmpty(value) || !CoreStringUtils.isEmpty(display)) {
+                                                    if (!StringUtils.isEmpty(value) || !StringUtils.isEmpty(display)) {
                                                         candidates.add(new Candidate(
                                                                 value,
                                                                 display,
@@ -154,7 +151,7 @@ public class NutsJLineTerminal extends AbstractNutsTerminal {
                     //                .completer(completer)
                     //                .parser(parser)
                     .build();
-            reader.setVariable(LineReader.HISTORY_FILE, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), "history"));
+            reader.setVariable(LineReader.HISTORY_FILE, FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), "history"));
             this.out = workspace.getExtensionManager().createPrintStream(reader.getTerminal().output(),true);
             this.err = workspace.getExtensionManager().createPrintStream(reader.getTerminal().output(),true);//.setColor(NutsPrintStream.RED);
         }
@@ -166,10 +163,10 @@ public class NutsJLineTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public String readLine(String prompt) {
+    public String readLine(String promptFormat, Object ... params) {
         if (inReplace != null) {
             if (outReplace != null) {
-                outReplace.print(prompt);
+                outReplace.print(promptFormat);
             }
             if (inReplaceReader == null) {
                 inReplaceReader = new BufferedReader(new InputStreamReader(inReplace));
@@ -183,11 +180,11 @@ public class NutsJLineTerminal extends AbstractNutsTerminal {
             }
         }
         if (fallback != null) {
-            return fallback.readLine(prompt);
+            return fallback.readLine(promptFormat, params);
         }
         String readLine = null;
         try {
-            readLine = reader.readLine(prompt);
+            readLine = reader.readLine(promptFormat);
         } catch (UserInterruptException e) {
             throw new InterrupShellException();
         }
@@ -262,152 +259,13 @@ public class NutsJLineTerminal extends AbstractNutsTerminal {
         return err;
     }
 
-//    private static class AdapterTerminal implements Terminal{
-//        private Terminal base;
-//        private Map<Signal,SignalHandler> sig=new HashMap<Signal, SignalHandler>();
-//        private Map<Signal,SignalHandler> raisable=new HashMap<Signal, SignalHandler>();
-//
-//        public AdapterTerminal(Terminal base) {
-//            this.base = base;
-//            for (Signal value : Signal.values()) {
-//                base.handle(value, new )
-//            }
-//        }
-//        
-//        @Override
-//        public String getName() {
-//            return base.getName();
-//        }
-//
-//        @Override
-//        public SignalHandler handle(Signal signal, SignalHandler handler) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public void raise(Signal signal) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public NonBlockingReader reader() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public PrintWriter writer() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public Charset encoding() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public InputStream input() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public OutputStream output() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public Attributes enterRawMode() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public boolean echo() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public boolean echo(boolean echo) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public Attributes getAttributes() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public void setAttributes(Attributes attr) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public Size getSize() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public void setSize(Size size) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public void flush() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public String getType() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public boolean puts(InfoCmp.Capability capability, Object... params) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public boolean getBooleanCapability(InfoCmp.Capability capability) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public Integer getNumericCapability(InfoCmp.Capability capability) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public String getStringCapability(InfoCmp.Capability capability) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public Cursor getCursorPosition(IntConsumer discarded) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public boolean hasMouseSupport() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public boolean trackMouse(MouseTracking tracking) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public MouseEvent readMouseEvent() {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public MouseEvent readMouseEvent(IntSupplier reader) {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//
-//        @Override
-//        public void close() throws IOException {
-//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        }
-//        
-//    }
+    @Override
+    public NutsFormattedPrintStream getFormattedOut() {
+        return workspace.createsFormattedPrintStream(getOut());
+    }
+
+    @Override
+    public NutsFormattedPrintStream getFormattedErr() {
+        return workspace.createsFormattedPrintStream(getErr());
+    }
 }

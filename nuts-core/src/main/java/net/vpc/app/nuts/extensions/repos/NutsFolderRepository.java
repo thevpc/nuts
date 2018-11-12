@@ -31,10 +31,11 @@ package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
-import net.vpc.common.IteratorList;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.CollectionUtils;
+import net.vpc.common.util.IteratorList;
 
 import java.io.*;
 import java.util.*;
@@ -50,7 +51,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
-                workspace.resolveRepositoryPath(CoreStringUtils.isEmpty(repositoryLocation) ? repositoryId : repositoryLocation),
+                workspace.resolveRepositoryPath(StringUtils.isEmpty(repositoryLocation) ? repositoryId : repositoryLocation),
                 SPEED_FAST);
         extensions.put("src", "-src.zip");
     }
@@ -291,7 +292,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id);
         } else if (!localFile.exists()) {
             for (String location : nutsDescFile.getDescriptor().getLocations()) {
-                if(!CoreStringUtils.isEmpty(location)){
+                if(!StringUtils.isEmpty(location)){
                     try {
                         CoreIOUtils.downloadPath(location, localFile, location, getWorkspace(), session);
                         return prepareInstall(localFile,nutsDescFile,id);
@@ -351,11 +352,11 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     protected File getLocalVersionFolder(NutsId id) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
         File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
         File artifactFolder = new File(groupFolder, id.getName());
@@ -376,7 +377,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 String platform = (query.get("platform"));
                 if (d.matchesEnv(arch, os, dist, platform)) {
                     String face = d.getFace();
-                    if (CoreStringUtils.isEmpty(face)) {
+                    if (StringUtils.isEmpty(face)) {
                         face = NutsConstants.QUERY_FACE_DEFAULT_VALUE;
                     }
                     return
@@ -405,7 +406,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     true, true, null
             );
         }
-        if (!CoreStringUtils.isEmpty(face)) {
+        if (!StringUtils.isEmpty(face)) {
             File altFile = new File(versionFolder, face);
             return new NutsFile(
                     id.setFace(face), null,
@@ -451,10 +452,10 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     protected NutsFile getLocalGroupAndArtifactAndVersionFile(NutsId id, boolean desc) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
         if (id.getVersion().isEmpty()) {
@@ -485,10 +486,10 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     protected File getLocalGroupAndArtifactFile(NutsId id) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
         File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
@@ -704,7 +705,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     protected String getStoreRoot() {
         String n = getConfigManager().getComponentsLocation();
-        if (CoreStringUtils.isEmpty(n)) {
+        if (StringUtils.isEmpty(n)) {
             n = NutsConstants.FOLDER_NAME_COMPONENTS;
         }
         n = n.trim();

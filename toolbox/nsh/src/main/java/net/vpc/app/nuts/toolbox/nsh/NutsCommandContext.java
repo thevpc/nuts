@@ -49,7 +49,7 @@ public interface NutsCommandContext {
 
     NutsTerminal getTerminal();
 
-    String resolvePath(String path);
+    String getAbsolutePath(String path);
 
     String getCwd();
 

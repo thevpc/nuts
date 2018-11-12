@@ -5,28 +5,22 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.io.URLUtils;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author vpc
@@ -135,7 +129,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         if (oldId == null) {
             NutsId nutsId = ws.resolveId(id, session);
             NutsId eid = CoreNutsUtils.parseOrErrorNutsId(id);
-            if (CoreStringUtils.isEmpty(eid.getGroup())) {
+            if (StringUtils.isEmpty(eid.getGroup())) {
                 eid = eid.setGroup(nutsId.getGroup());
             }
             ws.getConfigManager().addExtension(eid);
@@ -325,7 +319,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
                 + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE;
         List<String> urls = new ArrayList<>();
         for (String r : CoreStringUtils.split(repos, "; ")) {
-            if (!CoreStringUtils.isEmpty(r)) {
+            if (!StringUtils.isEmpty(r)) {
                 urls.add(r);
             }
         }

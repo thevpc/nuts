@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -112,6 +111,10 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder setPackaging(String packaging);
 
     NutsDescriptorBuilder setId(NutsId id);
+
+    NutsDescriptorBuilder set(NutsDescriptorBuilder other);
+
+    NutsDescriptorBuilder set(NutsDescriptor other);
 
     NutsDescriptorBuilder setId(String id);
 

@@ -1,13 +1,16 @@
 package net.vpc.toolbox.tomcat.client;
 
-import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsCommandExecBuilder;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientAppConfig;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientConfig;
 import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class TomcatClientAppConfigService {
     private TomcatClientAppConfig config;
@@ -24,11 +27,12 @@ public class TomcatClientAppConfigService {
 
     public void install(){
         TomcatClientConfig cconfig = client.getConfig();
-        String remoteFilePath = IOUtils.concatPath('/', cconfig.getServerTempPath() + "test.war");
+        String remoteFilePath = IOUtils.concatPath('/', cconfig.getRemoteTempPath() + "test.war");
         String serverPassword = TomcatUtils.isEmpty(cconfig.getServerPassword()) ? "" : cconfig.getServerPassword();
         String serverCertificate = TomcatUtils.isEmpty(cconfig.getServerCertificateFile()) ? "" : cconfig.getServerCertificateFile();
-        context.ws.exec(
-                new String[]{
+        context.ws.
+                createExecBuilder()
+                .setCommand(
                         "nsh",
                         "cp",
                         "--password",
@@ -36,25 +40,46 @@ public class TomcatClientAppConfigService {
                         "--cert",
                         serverCertificate,
                         this.config.getPath(),
-                        "ssh://" + IOUtils.concatPath('/', cconfig.getServer() ,remoteFilePath),
-                }, null,null,context.session
-        );
-        client.execRemoteNuts(
-                "net.vpc.app.nuts.toolbox:tomcat",
-                "--install",
-                "--instance",
-                client.getName(),
-                "--app",
-                name,
-                "--version",
-                config.getVersion(),
-                remoteFilePath
-        );
-        client.execRemoteNuts(
-                "nsh",
-                "-rm",
-                remoteFilePath
-        );
+                        "ssh://" + IOUtils.concatPath('/', cconfig.getServer() ,remoteFilePath)
+                ).setSession(context.session)
+                .exec();
+        String v=config.getVersionCommand();
+        if(StringUtils.isEmpty(v)){
+            v="nsh file-version %file";
+        }
+        List<String> cmd = Arrays.asList(StringUtils.parseCommandline(v));
+        boolean fileAdded=false;
+        for (int i = 0; i < cmd.size(); i++) {
+            if("%file".equals(cmd.get(i))){
+                cmd.set(i,config.getPath());
+                fileAdded=true;
+            }
+        }
+        if(!fileAdded){
+            cmd.add(config.getPath());
+        }
+        NutsCommandExecBuilder s = context.ws
+                .createExecBuilder()
+                .setOutAndErrStringBuffer()
+                .setCommand(cmd).exec();
+        if(s.getResult()==0) {
+            client.execRemoteNuts(
+                    "net.vpc.app.nuts.toolbox:tomcat",
+                    "--install",
+                    "--instance",
+                    client.getName(),
+                    "--app",
+                    name,
+                    "--version",
+                    s.getOutString(),
+                    remoteFilePath
+            );
+            client.execRemoteNuts(
+                    "nsh",
+                    "-rm",
+                    remoteFilePath
+            );
+        }
     }
 
     public TomcatClientAppConfig getConfig() {

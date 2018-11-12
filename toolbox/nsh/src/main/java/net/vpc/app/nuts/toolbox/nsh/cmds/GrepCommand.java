@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.io.*;
@@ -92,7 +91,7 @@ public class GrepCommand extends AbstractNutsCommand {
                     expression = cmdLine.readNonOptionOrError(new DefaultNonOption("expression")).getString();
                 } else {
                     String path = cmdLine.readNonOptionOrError(new FileNonOption("file")).getString();
-                    File file = new File(context.resolvePath(path));
+                    File file = new File(context.getAbsolutePath(path));
                     files.add(file);
                 }
             }
@@ -103,7 +102,7 @@ public class GrepCommand extends AbstractNutsCommand {
         if (expression == null) {
             throw new IllegalArgumentException("Missing Expression");
         }
-        String baseExpr = options.regexp ? CoreStringUtils.simpexpToRegexp(expression) : expression;
+        String baseExpr = options.regexp ? context.getValidWorkspace().simpexpToRegexp(expression,false) : expression;
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
         }

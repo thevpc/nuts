@@ -31,7 +31,7 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreCollectionUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 
@@ -99,17 +99,17 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
         this.id = id;
         this.face = face;
-        this.packaging = CoreStringUtils.trim(packaging);
+        this.packaging = StringUtils.trim(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
         if (parents != null) {
             System.arraycopy(parents, 0, this.parents, 0, this.parents.length);
         }
         this.executable = executable;
-        this.description = CoreStringUtils.trim(description);
-        this.name = CoreStringUtils.trim(name);
+        this.description = StringUtils.trim(description);
+        this.name = StringUtils.trim(name);
         this.executor = executor;
         this.installer = installer;
-        this.ext = CoreStringUtils.trim(ext);
+        this.ext = StringUtils.trim(ext);
         this.arch = CoreCollectionUtils.toArraySet(arch);
         this.os = CoreCollectionUtils.toArraySet(os);
         this.osdist = CoreCollectionUtils.toArraySet(osdist);

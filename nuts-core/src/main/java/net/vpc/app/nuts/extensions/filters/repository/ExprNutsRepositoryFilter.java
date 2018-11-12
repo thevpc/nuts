@@ -1,12 +1,13 @@
 package net.vpc.app.nuts.extensions.filters.repository;
 
-import java.util.Objects;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
-import net.vpc.app.nuts.extensions.util.Simplifiable;
-
-import java.util.regex.Pattern;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class ExprNutsRepositoryFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
 
@@ -15,7 +16,7 @@ public class ExprNutsRepositoryFilter implements NutsRepositoryFilter, Simplifia
 
     public ExprNutsRepositoryFilter(String repos) {
         this.repos = repos;
-        if (CoreStringUtils.isEmpty(repos)) {
+        if (StringUtils.isEmpty(repos)) {
             reposPattern = Pattern.compile(".*");
             this.repos = "";
         } else {
@@ -25,12 +26,12 @@ public class ExprNutsRepositoryFilter implements NutsRepositoryFilter, Simplifia
 
     @Override
     public boolean accept(NutsRepository repository) {
-        return repos.isEmpty() || reposPattern.matcher(CoreStringUtils.trim(repository.getRepositoryId())).matches();
+        return repos.isEmpty() || reposPattern.matcher(StringUtils.trim(repository.getRepositoryId())).matches();
     }
 
     @Override
     public NutsRepositoryFilter simplify() {
-        if (CoreStringUtils.isEmpty(repos)) {
+        if (StringUtils.isEmpty(repos)) {
             return null;
         }
         return this;

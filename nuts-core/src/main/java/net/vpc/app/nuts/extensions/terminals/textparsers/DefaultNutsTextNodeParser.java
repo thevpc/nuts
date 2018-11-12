@@ -5,9 +5,11 @@
  */
 package net.vpc.app.nuts.extensions.terminals.textparsers;
 
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  *
@@ -54,7 +56,7 @@ public class DefaultNutsTextNodeParser {
                                     i++;
                                 }
                             }
-                            String type = CoreStringUtils.repeat(c, cc);
+                            String type = StringUtils.fillString(c, cc);
                             all.add(new NutsDocNode.Escaped(
                                     type,
                                     type,
@@ -88,8 +90,8 @@ public class DefaultNutsTextNodeParser {
                     for (int cc = d.max; cc >= d.min; cc--) {
                         if (isSuite(s, i, c, cc, true, null)) {
                             consumePhrase(curr, all);
-                            String start2 = CoreStringUtils.repeat(c, cc);
-                            String exit2 = CoreStringUtils.repeat(d.end, cc);
+                            String start2 = StringUtils.fillString(c, cc);
+                            String exit2 = StringUtils.fillString(d.end, cc);
                             TokResult v = parse(s, i + cc, exit2);
                             all.add(new NutsDocNode.Typed(start2, exit2, v.node));
                             i = i + cc + v.consumedCount - 1;

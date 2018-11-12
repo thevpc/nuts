@@ -29,23 +29,19 @@
  */
 package net.vpc.app.nuts.toolbox.nutsserver;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsIdImpl;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.io.FileUtils;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
+import net.vpc.common.util.ListMap;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.util.ListMap;
 
 /**
  * Created by vpc on 1/7/17.
@@ -63,7 +59,15 @@ public class NutsHttpServletFacade {
         register(new AbstractFacadeCommand("version") {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
-                context.sendResponseText(200, new NutsIdImpl(context.getServerId(), "net.vpc.app.nuts", "nuts-server", context.getWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString(), "").toString());
+                context.sendResponseText(200,
+                        context.getWorkspace()
+                        .createIdBuilder()
+                                .setNamespace(context.getServerId())
+                        .setGroup("net.vpc.app.nuts")
+                        .setName("nuts-server")
+                        .setVersion(context.getWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString())
+                        .build().toString()
+                );
             }
         });
         register(new AbstractFacadeCommand("fetch") {
@@ -185,7 +189,7 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 //Content-type
                 String boundary = context.getRequestHeaderFirstValue("Content-type");
-                if (CoreStringUtils.isEmpty(boundary)) {
+                if (StringUtils.isEmpty(boundary)) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
                     return;
                 }
@@ -212,7 +216,7 @@ public class NutsHttpServletFacade {
                     }
                 }
                 Iterator<NutsId> it = context.getWorkspace().findIterator(
-                        new NutsSearchBuilder().addJs(js).addId(pattern).build(),
+                        context.getWorkspace().createSearchBuilder().addJs(js).addId(pattern).build(),
                         context.getSession().copy().setTransitive(transitive));
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                 context.sendResponseText(200, iteratorNutsIdToString(it));
@@ -227,7 +231,7 @@ public class NutsHttpServletFacade {
             @Override
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 String boundary = context.getRequestHeaderFirstValue("Content-type");
-                if (CoreStringUtils.isEmpty(boundary)) {
+                if (StringUtils.isEmpty(boundary)) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
                     return;
                 }
@@ -240,13 +244,21 @@ public class NutsHttpServletFacade {
                     String name = info.resolveVarInHeader("Content-Disposition", "name");
                     switch (name) {
                         case "descriptor":
-                            descriptor = CoreNutsUtils.parseNutsDescriptor(info.getContent(), true);
+                            try {
+                                descriptor = context.getWorkspace().parseDescriptor(info.getContent());
+                            }finally{
+                                info.getContent().close();
+                            }
                             break;
                         case "content-hash":
-                            receivedContentHash = CoreSecurityUtils.evalSHA1(info.getContent(), true);
+                            try {
+                                receivedContentHash = context.getWorkspace().evalContentHash(info.getContent());
+                            }finally {
+                                info.getContent().close();
+                            }
                             break;
                         case "content":
-                            contentFile = CoreIOUtils.createTempFile(descriptor, false);
+                            contentFile = createTempFile(descriptor,null);
                             IOUtils.copy(info.getContent(), contentFile, true, true);
                             break;
                     }
@@ -268,7 +280,7 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
 
 //                String boundary = context.getRequestHeaderFirstValue("Content-type");
-//                if (CoreStringUtils.isEmpty(boundary)) {
+//                if (StringUtils.isEmpty(boundary)) {
 //                    context.sendError(400, "Invalid Command Arguments : " + getName() + " . Invalid format.");
 //                    return;
 //                }
@@ -304,7 +316,11 @@ public class NutsHttpServletFacade {
                 session.getTerminal().setOut(ws.getExtensionManager().createPrintStream(out,false));
                 session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
-                int result=ws.exec(cmd.toArray(new String[cmd.size()]), null, null,session);
+                int result=ws.
+                        createExecBuilder()
+                        .setCommand(cmd)
+                        .setSession(session)
+                        .exec().getResult();
                 
                 context.sendResponseText(200, String.valueOf(result)+"\n"+new String(out.toByteArray()));
             }
@@ -438,6 +454,32 @@ public class NutsHttpServletFacade {
         String context;
         String command;
         String path;
+    }
+
+    public static File createTempFile(NutsDescriptor descriptor, File directory) {
+        String prefix = "temp-";
+        String ext = null;
+        if (descriptor != null) {
+            ext = StringUtils.trim(descriptor.getExt());
+            prefix = StringUtils.trim(descriptor.getId().getGroup()) + "-" + StringUtils.trim(descriptor.getId().getName()) + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
+            if (prefix.length() < 3) {
+                prefix = prefix + "tmp";
+            }
+            if (!ext.isEmpty()) {
+                ext = "." + ext;
+                if (ext.length() < 3) {
+                    ext = ".tmp" + ext;
+                }
+            } else {
+                ext = "-nuts";
+            }
+        }
+        ext = ext + ".nuts";
+        try {
+            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), directory);
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
     }
 
 //    private List<String> parsePath(String requestURI) {

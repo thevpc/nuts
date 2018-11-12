@@ -2,8 +2,8 @@ package net.vpc.toolbox.tomcat.test;
 
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.toolbox.tomcat.server.TomcatServerConfigService;
 import net.vpc.toolbox.tomcat.server.TomcatServer;
+import net.vpc.toolbox.tomcat.server.TomcatServerConfigService;
 
 public class TestTomcatMain {
     public static void main(String[] args) {

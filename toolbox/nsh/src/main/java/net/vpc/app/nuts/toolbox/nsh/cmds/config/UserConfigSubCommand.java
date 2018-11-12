@@ -5,17 +5,17 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
-import java.util.Arrays;
-
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.GroupNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RightNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.DefaultNonOption;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.Arrays;
 
 /**
  *
@@ -78,7 +78,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                     }
                     for (NutsEffectiveUser u : security) {
                         out.printf("User: %s\n", u.getUser());
-                        if (!CoreStringUtils.isEmpty(u.getMappedUser())) {
+                        if (!StringUtils.isEmpty(u.getMappedUser())) {
                             out.printf("   Mapper to  : %s\n", u.getMappedUser());
                         }
                         out.printf("   Password   : %s\n", (u.hasCredentials() ? "Set" : "None"));

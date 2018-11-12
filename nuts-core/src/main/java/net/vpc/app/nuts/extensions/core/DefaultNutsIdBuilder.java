@@ -32,6 +32,7 @@ package net.vpc.app.nuts.extensions.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,30 +59,30 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     public DefaultNutsIdBuilder(String namespace, String group, String name, String version, Map<String, String> query) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
     }
 
     public DefaultNutsIdBuilder(String namespace, String group, String name, String version, String query) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
-        this.query = CoreStringUtils.trimToNull(query);
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.query = StringUtils.trimToNull(query);
     }
 
 
     @Override
     public NutsIdBuilder setGroup(String group) {
-        this.group = CoreStringUtils.trimToNull(group);
+        this.group = StringUtils.trimToNull(group);
         return this;
     }
 
     @Override
     public NutsIdBuilder setNamespace(String namespace) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
+        this.namespace = StringUtils.trimToNull(namespace);
         return this;
     }
 
@@ -93,25 +94,25 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(String version) {
-        this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
+        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
         return this;
     }
 
     @Override
     public DefaultNutsIdBuilder setName(String name) {
-        this.name = CoreStringUtils.trimToNull(name);
+        this.name = StringUtils.trimToNull(name);
         return this;
     }
 
     @Override
     public String getFace() {
         String s = getQueryMap().get(NutsConstants.QUERY_FACE);
-        return CoreStringUtils.trimToNull(s);
+        return StringUtils.trimToNull(s);
     }
 
     @Override
     public NutsIdBuilder setFace(String value) {
-        return setQueryProperty(NutsConstants.QUERY_FACE, CoreStringUtils.trimToNull(value))
+        return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value))
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
@@ -189,7 +190,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public Map<String, String> getQueryMap() {
-        return CoreStringUtils.parseMap(getQuery(), "&");
+        return StringUtils.parseMap(getQuery(), "&");
     }
 
     @Override
@@ -204,10 +205,10 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getFullName() {
-        if (CoreStringUtils.isEmpty(group)) {
-            return CoreStringUtils.trim(name);
+        if (StringUtils.isEmpty(group)) {
+            return StringUtils.trim(name);
         }
-        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
+        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
     }
 
     @Override
@@ -223,17 +224,17 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isEmpty(namespace)) {
+        if (!StringUtils.isEmpty(namespace)) {
             sb.append(namespace).append("://");
         }
-        if (!CoreStringUtils.isEmpty(group)) {
+        if (!StringUtils.isEmpty(group)) {
             sb.append(group).append(":");
         }
         sb.append(name);
-        if (!CoreStringUtils.isEmpty(version.getValue())) {
+        if (!StringUtils.isEmpty(version.getValue())) {
             sb.append("#").append(version);
         }
-        if (!CoreStringUtils.isEmpty(query)) {
+        if (!StringUtils.isEmpty(query)) {
             sb.append("?");
             sb.append(query);
         }

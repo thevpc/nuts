@@ -30,22 +30,24 @@
 package net.vpc.app.nuts.extensions.parsers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
+import net.vpc.app.nuts.bridges.maven.MavenUtils;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.Ref;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.PathFilter;
-import net.vpc.app.nuts.bridges.maven.MavenUtils;
+import net.vpc.common.io.ZipUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.io.ZipUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -147,7 +149,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             return null;
         } else {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                "--nuts-main-class=" + CoreStringUtils.join(":", classes)}, null)).setExecutable(true);
+                "--nuts-main-class=" + StringUtils.join(":", classes)}, null)).setExecutable(true);
         }
     }
 }

@@ -5,9 +5,6 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author vpc

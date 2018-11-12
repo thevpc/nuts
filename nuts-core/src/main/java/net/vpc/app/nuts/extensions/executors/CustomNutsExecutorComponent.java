@@ -29,7 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.executors;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsExecutionContext;
+import net.vpc.app.nuts.NutsExecutorComponent;
+import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,12 +65,14 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         List<String> args = new ArrayList<>();
         args.add(id.toString());
         args.addAll(Arrays.asList(executionContext.getArgs()));
-        return executionContext.getWorkspace().exec(
-                args.toArray(new String[args.size()]),
-                executionContext.getEnv(),
-                executionContext.getCwd(),
-                executionContext.getSession()
-        );
+        return executionContext.getWorkspace()
+                .createExecBuilder()
+                .setCommand(args)
+                .setSession(executionContext.getSession())
+                .setEnv(executionContext.getEnv())
+                .setDirectory(executionContext.getCwd())
+                .exec().getResult()
+        ;
     }
 
 }

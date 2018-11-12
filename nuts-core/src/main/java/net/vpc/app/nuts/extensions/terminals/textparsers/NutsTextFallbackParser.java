@@ -29,13 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.terminals.textparsers;
 
+import net.vpc.app.nuts.extensions.terminals.*;
+
 import java.util.Objects;
-import net.vpc.app.nuts.extensions.terminals.NutsTextFormat;
-import net.vpc.app.nuts.extensions.terminals.NutsTextFormats;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodePlain;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodeStyled;
 
 /**
  * Created by vpc on 5/23/17.

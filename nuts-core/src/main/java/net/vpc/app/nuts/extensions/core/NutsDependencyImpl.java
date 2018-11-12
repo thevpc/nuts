@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -52,13 +53,13 @@ public class NutsDependencyImpl implements NutsDependency {
     private final NutsId[] exclusions;
 
     public NutsDependencyImpl(String namespace, String group, String name, String version, String scope, String optional, NutsId[] exclusions) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
-        String s = CoreStringUtils.trimToNull(scope);
-        this.scope = CoreStringUtils.isEmpty(s) ? "compile" : s;
-        this.optional = CoreStringUtils.isEmpty(optional) ? "false" : CoreStringUtils.trim(optional);
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        String s = StringUtils.trimToNull(scope);
+        this.scope = StringUtils.isEmpty(s) ? "compile" : s;
+        this.optional = StringUtils.isEmpty(optional) ? "false" : StringUtils.trim(optional);
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
     }
 
@@ -105,10 +106,10 @@ public class NutsDependencyImpl implements NutsDependency {
 
     @Override
     public String getFullName() {
-        if (CoreStringUtils.isEmpty(group)) {
-            return CoreStringUtils.trim(name);
+        if (StringUtils.isEmpty(group)) {
+            return StringUtils.trim(name);
         }
-        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
+        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
     }
 
     @Override
@@ -133,23 +134,23 @@ public class NutsDependencyImpl implements NutsDependency {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isEmpty(namespace)) {
+        if (!StringUtils.isEmpty(namespace)) {
             sb.append(namespace).append("://");
         }
-        if (!CoreStringUtils.isEmpty(group)) {
+        if (!StringUtils.isEmpty(group)) {
             sb.append(group).append(":");
         }
         sb.append(name);
-        if (!CoreStringUtils.isEmpty(version.getValue())) {
+        if (!StringUtils.isEmpty(version.getValue())) {
             sb.append("#").append(version);
         }
         Map<String, String> p = new TreeMap<>();
-        if (!CoreStringUtils.isEmpty(scope)) {
+        if (!StringUtils.isEmpty(scope)) {
             if (!scope.equals("compile")) {
                 p.put("scope", scope);
             }
         }
-        if (!CoreStringUtils.isEmpty(optional)) {
+        if (!StringUtils.isEmpty(optional)) {
             if (!optional.equals("false")) {
                 p.put("optional", optional);
             }

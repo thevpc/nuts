@@ -29,31 +29,21 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Stack;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.*;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 /**
  *
@@ -153,7 +143,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (!isAllowed(NutsConstants.RIGHT_SET_PASSWORD)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SET_PASSWORD);
         }
-        if (CoreStringUtils.isEmpty(login)) {
+        if (StringUtils.isEmpty(login)) {
             if (!NutsConstants.USER_ANONYMOUS.equals(getCurrentLogin())) {
                 login = getCurrentLogin();
             } else {
@@ -178,15 +168,15 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                             ws.getConfigManager()
                     );
 //
-//            if (CoreStringUtils.isEmpty(password)) {
+//            if (StringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
 //            }
 //            //check old password
-//            if (CoreStringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
+//            if (StringUtils.isEmpty(u.getCredentials()) || u.getCredentials().equals(CoreSecurityUtils.evalSHA1(password))) {
 //                throw new NutsSecurityException("Invalid password");
 //            }
         }
-        if (CoreStringUtils.isEmpty(password)) {
+        if (StringUtils.isEmpty(password)) {
             throw new NutsIllegalArgumentException("Missing password");
         }
         ws.getConfigManager().setUser(u);
@@ -208,7 +198,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                 security.removeRight(right);
             }
             for (String right : rights) {
-                if (!CoreStringUtils.isEmpty(right)) {
+                if (!StringUtils.isEmpty(right)) {
                     security.addRight(right);
                 }
             }
@@ -221,7 +211,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (rights != null) {
             NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : rights) {
-                if (!CoreStringUtils.isEmpty(right)) {
+                if (!StringUtils.isEmpty(right)) {
                     security.addRight(right);
                 }
             }
@@ -294,7 +284,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (groups != null) {
             NutsUserConfig usr = ws.getConfigManager().getUser(user);
             for (String grp : groups) {
-                if (!CoreStringUtils.isEmpty(grp)) {
+                if (!StringUtils.isEmpty(grp)) {
                     usr.addGroup(grp);
                 }
             }
@@ -315,7 +305,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
 
     @Override
     public void addUser(String user, String credentials, String... rights) {
-        if (CoreStringUtils.isEmpty(user)) {
+        if (StringUtils.isEmpty(user)) {
             throw new NutsIllegalArgumentException("Invalid user");
         }
         ws.getConfigManager().setUser(new NutsUserConfig(user, null, null, null, null));
@@ -323,7 +313,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (rights != null) {
             NutsUserConfig security = ws.getConfigManager().getUser(user);
             for (String right : rights) {
-                if (!CoreStringUtils.isEmpty(right)) {
+                if (!StringUtils.isEmpty(right)) {
                     security.addRight(right);
                 }
             }
@@ -337,7 +327,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (security == null) {
             throw new NutsIllegalArgumentException("User not found " + user);
         }
-        if (CoreStringUtils.isEmpty(authenticationAgent)) {
+        if (StringUtils.isEmpty(authenticationAgent)) {
             authenticationAgent = null;
         }
         security.setAuthenticationAgent(authenticationAgent);
@@ -362,7 +352,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             return true;
         }
         String name = getCurrentLogin();
-        if (CoreStringUtils.isEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             return false;
         }
         if (NutsConstants.USER_ADMIN.equals(name)) {
@@ -425,8 +415,8 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (currentSubject != null) {
             for (Principal principal : currentSubject.getPrincipals()) {
                 name = principal.getName();
-                if (!CoreStringUtils.isEmpty(name)) {
-                    if (!CoreStringUtils.isEmpty(name)) {
+                if (!StringUtils.isEmpty(name)) {
+                    if (!StringUtils.isEmpty(name)) {
                         return name;
                     }
                 }

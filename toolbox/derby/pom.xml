@@ -81,25 +81,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>net.vpc.common.maven</groupId>
-                <artifactId>writer-maven-plugin</artifactId>
-                <version>1.0.4</version>
-                <configuration>
-                    <outputFile>${project.build.outputDirectory}/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties</outputFile>
-                    <text>
-                        out.printProjectProperties();
-                        out.printlnf("project.repositories=%s","~/.m2/repository;http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
-                    </text>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>write-bsh</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>

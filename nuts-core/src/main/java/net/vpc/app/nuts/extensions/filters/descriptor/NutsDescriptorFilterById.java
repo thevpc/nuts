@@ -29,12 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
-import java.util.Objects;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.extensions.util.Simplifiable;
 import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
+import net.vpc.app.nuts.extensions.util.Simplifiable;
+
+import java.util.Objects;
 
 /**
  *

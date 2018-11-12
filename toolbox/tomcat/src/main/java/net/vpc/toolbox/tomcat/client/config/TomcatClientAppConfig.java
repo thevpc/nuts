@@ -2,7 +2,7 @@ package net.vpc.toolbox.tomcat.client.config;
 
 public class TomcatClientAppConfig {
     private String path;
-    private String version;
+    private String versionCommand;
 
 
     public String getPath() {
@@ -14,12 +14,12 @@ public class TomcatClientAppConfig {
     }
 
 
-    public String getVersion() {
-        return version;
+    public String getVersionCommand() {
+        return versionCommand;
     }
 
-    public void setVersion(String appVersion) {
-        this.version = appVersion;
+    public void setVersionCommand(String appVersion) {
+        this.versionCommand = appVersion;
     }
 
 }

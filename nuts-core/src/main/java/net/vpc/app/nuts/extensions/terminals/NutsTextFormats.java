@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  *

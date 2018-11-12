@@ -29,16 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
+
+import java.io.File;
+import java.util.*;
 
 /**
  *
@@ -107,16 +104,16 @@ public class NutsWorkspaceHelper {
     public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
         Map<String, String> face = id.getQueryMap();
         if (face.get(NutsConstants.QUERY_FACE) == null && face.get("arch") == null && face.get("os") == null && face.get("osdist") == null && face.get("platform") == null) {
-            face.put("arch", ws.getPlatformArch());
-            face.put("os", ws.getPlatformOs());
-            face.put("osdist", ws.getPlatformOsDist());
+            face.put("arch", ws.getPlatformArch().toString());
+            face.put("os", ws.getPlatformOs().toString());
+            face.put("osdist", ws.getPlatformOsDist().toString());
             return id.setQuery(face);
         }
         return id;
     }
 
     public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
-        if (CoreStringUtils.isEmpty(workspace)) {
+        if (StringUtils.isEmpty(workspace)) {
             File file = CoreIOUtils.resolvePath(workspaceRoot + "/" + defaultName, null, workspaceRoot);
             workspace = file == null ? null : file.getPath();
         } else {

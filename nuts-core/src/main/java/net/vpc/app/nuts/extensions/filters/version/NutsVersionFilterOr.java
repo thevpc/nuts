@@ -2,15 +2,16 @@ package net.vpc.app.nuts.extensions.filters.version;
 
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
 public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
 
@@ -71,7 +72,7 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
             if (id instanceof NutsJsAwareIdFilter) {
                 NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
-                if (CoreStringUtils.isEmpty(expr)) {
+                if (StringUtils.isEmpty(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");
@@ -112,7 +113,7 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
     
     @Override
     public String toString() {
-        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return StringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
 }

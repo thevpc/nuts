@@ -29,10 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.URLHeader;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
 import net.vpc.common.io.*;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -99,7 +99,7 @@ public class CoreIOUtils {
             public String get(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
                     String javaVer = skey.substring(4);
-                    if (CoreStringUtils.isEmpty(javaVer)) {
+                    if (StringUtils.isEmpty(javaVer)) {
                         return defaultJavaCommand;
                     }
                     return resolveJavaCommand(javaVer, workspace);
@@ -121,9 +121,9 @@ public class CoreIOUtils {
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = CoreStringUtils.trim(CoreStringUtils.replaceVars(arg, mapper));
+            String s = StringUtils.trim(CoreStringUtils.replaceVars(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, CoreStringUtils.parseCommandline(s));
+                Collections.addAll(args2, StringUtils.parseCommandline(s));
             } else {
                 args2.add(s);
             }
@@ -162,52 +162,7 @@ public class CoreIOUtils {
     }
 
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
-        requestedJavaVersion = CoreStringUtils.trim(requestedJavaVersion);
-        NutsVersionFilter javaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
-        String defaultJavaPath = null;
-        String bestJavaPath = null;
-        String bestJavaVersion = null;
-        for (Map.Entry<Object, Object> entry : workspace.getConfigManager().getEnv().entrySet()) {
-            String key = (String) entry.getKey();
-            if (key.startsWith("java#")) {
-                String javaVersion = key.substring("java#".length());
-                if (javaVersionFilter.accept(new NutsVersionImpl(javaVersion))) {
-                    if (bestJavaVersion == null || CoreVersionUtils.compareVersions(bestJavaVersion, javaVersion) < 0) {
-                        bestJavaVersion = javaVersion;
-                        bestJavaPath = (String) entry.getValue();
-                    }
-                }
-            } else if (key.equals("java")) {
-                defaultJavaPath = (String) entry.getValue();
-            }
-        }
-        if (CoreStringUtils.isEmpty(bestJavaPath)) {
-            if (!CoreStringUtils.isEmpty(requestedJavaVersion)) {
-                if(log.isLoggable(Level.FINE)) {
-                    log.log(Level.FINE, "No valid JRE found. recommended " + requestedJavaVersion + " . using default");
-                }
-                if (!CoreStringUtils.isEmpty(defaultJavaPath)) {
-                    if(log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "Using default JRE.");
-                    }
-                    bestJavaPath = defaultJavaPath;
-                } else {
-                    bestJavaPath = System.getProperty("java.home");
-                }
-            } else {
-                if (!CoreStringUtils.isEmpty(defaultJavaPath)) {
-                    if(log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "Using default JRE at " + defaultJavaPath);
-                    }
-                    bestJavaPath = defaultJavaPath;
-                } else {
-                    if(log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "Using java.home at " + System.getProperty("java.home"));
-                    }
-                    bestJavaPath = System.getProperty("java.home");
-                }
-            }
-        }
+        String bestJavaPath=resolveJdkLocation(requestedJavaVersion,workspace).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
             File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), bestJavaPath);
             if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
@@ -215,6 +170,34 @@ public class CoreIOUtils {
             }
         }
         return bestJavaPath;
+    }
+
+    public static NutsSdkLocation resolveJdkLocation(String requestedJavaVersion, NutsWorkspace workspace) {
+        requestedJavaVersion = StringUtils.trim(requestedJavaVersion);
+        NutsSdkLocation bestJava = workspace.getConfigManager().getSdk("java",requestedJavaVersion);
+        if (bestJava==null) {
+            NutsSdkLocation current = new NutsSdkLocation(
+                    "java.home",
+                    System.getProperty("java.home"),
+                    System.getProperty("java.version")
+            );
+            if(CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion).accept(new NutsVersionImpl(current.getVersion()))){
+                bestJava=current;
+            }
+            if(bestJava==null) {
+                if (!StringUtils.isEmpty(requestedJavaVersion)) {
+                    if (log.isLoggable(Level.FINE)) {
+                        log.log(Level.FINE, "No valid JRE found. recommended " + requestedJavaVersion + " . Using default java.home at " + System.getProperty("java.home"));
+                    }
+                } else {
+                    if (log.isLoggable(Level.FINE)) {
+                        log.log(Level.FINE, "No valid JRE found. Using default java.home at " + System.getProperty("java.home"));
+                    }
+                }
+                bestJava = current;
+            }
+        }
+        return bestJava;
     }
 
 
@@ -313,7 +296,7 @@ public class CoreIOUtils {
 
 
     public static File resolvePath(String path, File baseFolder, String workspaceRoot) {
-        if (CoreStringUtils.isEmpty(workspaceRoot)) {
+        if (StringUtils.isEmpty(workspaceRoot)) {
             workspaceRoot = NutsConstants.DEFAULT_NUTS_HOME;
         }
         if (path != null && path.length() > 0) {
@@ -348,8 +331,8 @@ public class CoreIOUtils {
         String prefix = "temp-";
         String ext = null;
         if (descriptor != null) {
-            ext = CoreStringUtils.trim(descriptor.getExt());
-            prefix = CoreStringUtils.trim(descriptor.getId().getGroup()) + "-" + CoreStringUtils.trim(descriptor.getId().getName()) + "-" + CoreStringUtils.trim(descriptor.getId().getVersion().getValue());
+            ext = StringUtils.trim(descriptor.getExt());
+            prefix = StringUtils.trim(descriptor.getId().getGroup()) + "-" + StringUtils.trim(descriptor.getId().getName()) + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
             if (prefix.length() < 3) {
                 prefix = prefix + "tmp";
             }

@@ -30,10 +30,11 @@
 package net.vpc.app.nuts.extensions.core;
 
 import com.sun.security.auth.UserPrincipal;
+import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsEnvironmentContext;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -42,7 +43,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.util.Map;
-import net.vpc.app.nuts.NutsConstants;
 
 public class NutsWorkspaceLoginModule implements LoginModule {
 
@@ -117,9 +117,9 @@ public class NutsWorkspaceLoginModule implements LoginModule {
 
                 }
 
-//                if(!CoreStringUtils.isEmpty(registeredUser.getCredentials())){
-//                    if ((CoreStringUtils.isEmpty(password) && CoreStringUtils.isEmpty(registeredUser.getCredentials()))
-//                            || (!CoreStringUtils.isEmpty(password) && !CoreStringUtils.isEmpty(registeredUser.getCredentials())
+//                if(!StringUtils.isEmpty(registeredUser.getCredentials())){
+//                    if ((StringUtils.isEmpty(password) && StringUtils.isEmpty(registeredUser.getCredentials()))
+//                            || (!StringUtils.isEmpty(password) && !StringUtils.isEmpty(registeredUser.getCredentials())
 //                            && registeredUser.getCredentials().equals(CoreSecurityUtils.evalSHA1(password)))) {
 //                        this.login = name;
 //                        return true;
@@ -131,9 +131,9 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             throw new LoginException("Authentication failed");
 
         } catch (IOException e) {
-            throw new LoginException(CoreStringUtils.exceptionToString(e));
+            throw new LoginException(StringUtils.exceptionToString(e));
         } catch (UnsupportedCallbackException e) {
-            throw new LoginException(CoreStringUtils.exceptionToString(e));
+            throw new LoginException(StringUtils.exceptionToString(e));
         }
 
     }

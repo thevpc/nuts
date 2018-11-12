@@ -4,6 +4,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.util.Properties;
@@ -28,11 +29,11 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     @Override
     public String getEnv(String key, String defaultValue, boolean inherit) {
         String t = getConfig().getEnv(key, null);
-        if (!CoreStringUtils.isEmpty(t)) {
+        if (!StringUtils.isEmpty(t)) {
             return t;
         }
         t = abstractNutsRepository.getWorkspace().getConfigManager().getEnv(key, null);
-        if (!CoreStringUtils.isEmpty(t)) {
+        if (!StringUtils.isEmpty(t)) {
             return t;
         }
         return defaultValue;
@@ -167,9 +168,9 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         }
         if(log.isLoggable(Level.CONFIG)) {
             if (created) {
-                log.log(Level.CONFIG, CoreStringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Created repository " + abstractNutsRepository.getRepositoryId() + " at " + getLocationFolder());
+                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Created repository " + abstractNutsRepository.getRepositoryId() + " at " + getLocationFolder());
             } else {
-                log.log(Level.CONFIG, CoreStringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Updated repository " + abstractNutsRepository.getRepositoryId() + " at " + getLocationFolder());
+                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Updated repository " + abstractNutsRepository.getRepositoryId() + " at " + getLocationFolder());
             }
         }
         return saved;

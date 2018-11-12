@@ -29,10 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.ObjectFilter;
+import net.vpc.common.strings.StringUtils;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class CoreCollectionUtils {
 
@@ -50,8 +50,8 @@ public class CoreCollectionUtils {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
-                a = CoreStringUtils.trim(a);
-                if (!CoreStringUtils.isEmpty(a) && !set.contains(a)) {
+                a = StringUtils.trim(a);
+                if (!StringUtils.isEmpty(a) && !set.contains(a)) {
                     set.add(a);
                 }
             }

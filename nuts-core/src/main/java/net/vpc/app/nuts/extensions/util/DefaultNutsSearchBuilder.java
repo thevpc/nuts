@@ -29,22 +29,21 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsSearch;
-import net.vpc.app.nuts.extensions.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterArch;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPackaging;
 import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorJavascriptFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
+import net.vpc.app.nuts.extensions.filters.repository.DefaultNutsRepositoryFilter;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.*;
+
 import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.And;
 import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.simplify;
 
@@ -52,7 +51,7 @@ import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.simplify;
  *
  * @author vpc
  */
-public class NutsSearchBuilder {
+public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuilder{
 
     private final List<String> js = new ArrayList<>();
     private final List<String> ids = new ArrayList<>();
@@ -60,14 +59,16 @@ public class NutsSearchBuilder {
     private final List<String> packagings = new ArrayList<>();
     private final List<String> repos = new ArrayList<>();
 
-    public NutsSearchBuilder addJs(Collection<String> value) {
+    @Override
+    public DefaultNutsSearchBuilder addJs(Collection<String> value) {
         if (value != null) {
             addJs(value.toArray(new String[value.size()]));
         }
         return this;
     }
 
-    public NutsSearchBuilder addJs(String... value) {
+    @Override
+    public DefaultNutsSearchBuilder addJs(String... value) {
         if (value != null) {
             js.addAll(Arrays.asList(value));
         }
@@ -75,62 +76,71 @@ public class NutsSearchBuilder {
 
     }
 
-    public NutsSearchBuilder addId(Collection<String> value) {
+    @Override
+    public DefaultNutsSearchBuilder addId(Collection<String> value) {
         if (value != null) {
             addId(value.toArray(new String[value.size()]));
         }
         return this;
     }
 
-    public NutsSearchBuilder addId(String... value) {
+    @Override
+    public DefaultNutsSearchBuilder addId(String... value) {
         if (value != null) {
             ids.addAll(Arrays.asList(value));
         }
         return this;
     }
 
-    public NutsSearchBuilder addArch(Collection<String> value) {
+    @Override
+    public DefaultNutsSearchBuilder addArch(Collection<String> value) {
         if (value != null) {
             addArch(value.toArray(new String[value.size()]));
         }
         return this;
     }
 
-    public NutsSearchBuilder addArch(String... value) {
+    @Override
+    public DefaultNutsSearchBuilder addArch(String... value) {
         if (value != null) {
             arch.addAll(Arrays.asList(value));
         }
         return this;
     }
 
-    public NutsSearchBuilder addPackaging(Collection<String> value) {
+    @Override
+    public DefaultNutsSearchBuilder addPackaging(Collection<String> value) {
         if (value != null) {
             addPackaging(value.toArray(new String[value.size()]));
         }
         return this;
     }
 
-    public NutsSearchBuilder addPackaging(String... value) {
+    @Override
+    public DefaultNutsSearchBuilder addPackaging(String... value) {
         if (value != null) {
             packagings.addAll(Arrays.asList(value));
         }
         return this;
     }
 
-    public NutsSearchBuilder addRepository(Collection<String> value) {
+    @Override
+    public DefaultNutsSearchBuilder addRepository(Collection<String> value) {
         if (value != null) {
             addRepository(value.toArray(new String[value.size()]));
         }
         return this;
     }
 
-    public NutsSearchBuilder addRepository(String... value) {
+    @Override
+    public DefaultNutsSearchBuilder addRepository(String... value) {
         if (value != null) {
             repos.addAll(Arrays.asList(value));
         }
         return this;
     }
 
+    @Override
     public NutsSearch build() {
         NutsSearch search = new NutsSearch();
 
@@ -138,7 +148,7 @@ public class NutsSearchBuilder {
         NutsIdFilter idFilter = null;
         NutsDependencyFilter depFilter = null;
         for (String j : js) {
-            if (!CoreStringUtils.isEmpty(j)) {
+            if (!StringUtils.isEmpty(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
                     dFilter = simplify(And(dFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {

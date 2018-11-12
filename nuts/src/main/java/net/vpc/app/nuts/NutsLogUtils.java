@@ -65,7 +65,7 @@ public final class NutsLogUtils {
         }
         int MEGA = 1024 * 1024;
         if (pattern == null || NutsStringUtils.isEmpty(pattern)) {
-            pattern = System.getProperty("user.home") +"/.nuts/default-workspace/log/nuts-%g.log";
+            pattern = System.getProperty("user.home") +"/.nuts/default-workspace/log/net/vpc/app/nuts/nuts/LATEST/nuts-%g.log";
         }
         if (maxSize <= 0) {
             maxSize = 5;

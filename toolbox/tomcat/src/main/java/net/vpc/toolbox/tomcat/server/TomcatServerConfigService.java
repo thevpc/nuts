@@ -4,11 +4,11 @@ import net.vpc.app.nuts.*;
 import net.vpc.common.io.*;
 import net.vpc.common.io.osapi.JpsResult;
 import net.vpc.common.io.osapi.PosApis;
-import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.server.config.TomcatServerAppConfig;
 import net.vpc.toolbox.tomcat.server.config.TomcatServerConfig;
 import net.vpc.toolbox.tomcat.server.config.TomcatServerDomainConfig;
 import net.vpc.toolbox.tomcat.util.AppStatus;
+import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.*;
@@ -150,7 +150,7 @@ public class TomcatServerConfigService {
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= new File(catalinaBase).mkdirs();
         ProcessBuilder2 b = new ProcessBuilder2();
-        String ext = context.ws.getPlatformOs().startsWith("windows") ? "bat" : "sh";
+        String ext = context.ws.getPlatformOs().getName().equals("windows") ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);

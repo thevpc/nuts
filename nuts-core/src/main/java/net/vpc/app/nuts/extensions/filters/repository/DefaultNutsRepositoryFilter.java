@@ -1,10 +1,10 @@
 package net.vpc.app.nuts.extensions.filters.repository;
 
-import java.util.Objects;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {

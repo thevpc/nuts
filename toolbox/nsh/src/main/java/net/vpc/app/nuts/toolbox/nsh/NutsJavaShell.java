@@ -29,19 +29,23 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.javashell.JavaShell;
-import net.vpc.common.javashell.cmds.JavaShellInternalCmd;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.javashell.Env;
+import net.vpc.common.javashell.JavaShell;
 import net.vpc.common.javashell.JavaShellEvalContext;
+import net.vpc.common.javashell.cmds.JavaShellInternalCmd;
 import net.vpc.common.javashell.parser.nodes.BinoOp;
 import net.vpc.common.javashell.parser.nodes.InstructionNode;
 import net.vpc.common.javashell.parser.nodes.Node;
 import net.vpc.common.javashell.util.JavaShellNonBlockingInputStream;
 import net.vpc.common.javashell.util.JavaShellNonBlockingInputStreamAdapter;
+import net.vpc.common.strings.StringUtils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,7 +119,7 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public String errorToMessage(Throwable th) {
-        return CoreStringUtils.exceptionToString(th);
+        return StringUtils.exceptionToString(th);
     }
 
     @Override

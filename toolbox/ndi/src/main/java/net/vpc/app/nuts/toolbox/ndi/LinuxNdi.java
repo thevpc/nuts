@@ -22,7 +22,7 @@ public class LinuxNdi {
             createBootScript(forceBoot||force,false);
         } else {
             createBootScript(forceBoot,true);
-            NutsId nutsId = ws.parseNutsId(id);
+            NutsId nutsId = ws.createNutsId(id);
             if(fetch){
                 NutsFile fetched = ws.fetch(id, null);
                 out.printf("==%s== resolved as ==%s==\n", id,fetched.getId());

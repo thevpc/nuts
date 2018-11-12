@@ -39,7 +39,7 @@ public interface NutsTerminal extends NutsComponent<Object> {
 
     void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err);
 
-    String readLine(String prompt);
+    String readLine(String promptFormat, Object... params);
 
     String readPassword(String prompt);
 

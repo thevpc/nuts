@@ -29,12 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.options;
 
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.ArgumentCandidate;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.commandline.ArgumentCandidate;
 
 /**
  *

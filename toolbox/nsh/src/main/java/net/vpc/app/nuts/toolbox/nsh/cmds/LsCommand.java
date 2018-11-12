@@ -35,7 +35,6 @@ import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +78,7 @@ public class LsCommand extends AbstractNutsCommand {
                 options.l = true;
             } else {
                 String path = cmdLine.readNonOptionOrError(new FileNonOption("FileOrFolder")).getString();
-                File file = new File(context.resolvePath(path));;
+                File file = new File(context.getAbsolutePath(path));;
                 if (file.isDirectory()) {
                     folders.add(file);
                 } else if (file.exists()) {
@@ -120,10 +119,12 @@ public class LsCommand extends AbstractNutsCommand {
                 NutsPrintStream out = terminal.getFormattedOut();
                 out.printf("%s:\n", path.getName());
             }
-            File[] arr = CoreIOUtils.nonNullArray(path.listFiles());
-            Arrays.sort(arr, FILE_SORTER);
-            for (File file1 : arr) {
-                ls0(file1, options, terminal);
+            File[] arr = path.listFiles();
+            if(arr!=null) {
+                Arrays.sort(arr, FILE_SORTER);
+                for (File file1 : arr) {
+                    ls0(file1, options, terminal);
+                }
             }
         } else {
             ls0(path, options, terminal);

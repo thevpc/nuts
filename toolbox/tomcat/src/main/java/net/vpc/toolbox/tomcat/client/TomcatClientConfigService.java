@@ -225,11 +225,10 @@ public class TomcatClientConfigService {
                 "nuts"
         ));
         cmdList.addAll(Arrays.asList(cmd));
-        return context.ws.exec(
-                new String[]{
-
-                }, null, null, context.session
-        );
+        return context.ws.createExecBuilder()
+                .setSession(context.session)
+                .setCommand(cmdList)
+                .exec().getResult();
 
     }
 }

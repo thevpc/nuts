@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.JsonSerializer;
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.extensions.core.GsonSerializer;
-import net.vpc.app.nuts.JsonSerializer;
 import net.vpc.common.io.FileUtils;
 
 import java.io.*;

@@ -5,10 +5,12 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  *
@@ -44,14 +46,14 @@ public class AnsiStyle {
     }
 
     public String resolveEscapeString() {
-        if (!blink && !underlined && !italic && !striked && !reversed && !blink && CoreStringUtils.isEmpty(foreground) && CoreStringUtils.isEmpty(background)) {
+        if (!blink && !underlined && !italic && !striked && !reversed && !blink && StringUtils.isEmpty(foreground) && StringUtils.isEmpty(background)) {
             return "\u001B[0m";
         }
         StringBuilder sb = new StringBuilder("\u001B[");
         if (foreground != null) {
             sb.append(foreground);
         }
-        if (!CoreStringUtils.isEmpty(background)) {
+        if (!StringUtils.isEmpty(background)) {
             if (sb.charAt(sb.length() - 1) != '[') {
                 sb.append(';');
             }

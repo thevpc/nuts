@@ -31,8 +31,11 @@ package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.repos.AbstractNutsRepository;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
+import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -153,7 +156,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected String resolveExtension(NutsDescriptor d) {
         String ee = d.getExt();
-        if (!CoreStringUtils.isEmpty(ee)) {
+        if (!StringUtils.isEmpty(ee)) {
             if ("bundle".equals(ee)) {
                 return ".jar";
             }
@@ -163,7 +166,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             return "." + ee;
         }
         String ext = "";
-        if (CoreStringUtils.isEmpty(d.getPackaging())) {
+        if (StringUtils.isEmpty(d.getPackaging())) {
             ext = ".jar";
         } else if (d.getPackaging().equals("maven-archetype")) {
             ext = ".jar";

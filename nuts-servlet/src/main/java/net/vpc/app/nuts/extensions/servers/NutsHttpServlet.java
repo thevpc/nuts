@@ -30,13 +30,8 @@
 package net.vpc.app.nuts.extensions.servers;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nutsserver.AdminServerConfig;
-import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.toolbox.nutsserver.AbstractNutsHttpServletFacadeContext;
-import net.vpc.app.nuts.toolbox.nutsserver.DefaultNutsWorkspaceServerManager;
-import net.vpc.app.nuts.toolbox.nutsserver.NutsHttpServletFacade;
-import net.vpc.app.nuts.toolbox.nutsserver.NutsServer;
+import net.vpc.app.nuts.toolbox.nutsserver.*;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
 import javax.servlet.ServletConfig;
@@ -47,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -113,7 +107,7 @@ public class NutsHttpServlet extends HttpServlet {
             workspacesByWebContextPath.put(webContext, ws);
         }
 
-        if (CoreStringUtils.isEmpty(serverId)) {
+        if (StringUtils.isEmpty(serverId)) {
             String serverName = NutsConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -152,14 +146,30 @@ public class NutsHttpServlet extends HttpServlet {
                 log.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? NutsConstants.DEFAULT_HTTP_SERVER_PORT : adminServerPort));
             }
         }
-        adminServerPort = CoreStringUtils.parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
+        adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
         workspaceLocation = config.getInitParameter("nuts-workspace-location");
         root = config.getInitParameter("nuts-workspace-root");
         runtimeId = config.getInitParameter("nuts-runtime-id");
         runtimeSourceURL = config.getInitParameter("nuts-source-url");
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
-            workspaces = CoreJsonUtils.get().read(new StringReader(config.getInitParameter("nuts-workspaces-map")), Map.class);
+            String s = config.getInitParameter("nuts-workspaces-map");
+            if(s==null){
+                s="";
+            }
+            workspaces=new HashMap<>();
+            for (String s1 : s.split("\n|;")) {
+                s1=s1.trim();
+                if(s1.startsWith("#") || s1.isEmpty() || ! s1.contains("=")){
+                    //ignore
+                }else {
+                    String[] kv = s1.split("=");
+                    workspaces.put(
+                            kv[0].trim(),
+                            kv[1].trim()
+                    );
+                }
+            }
         } catch (Exception e) {
             //
         }
@@ -262,4 +272,16 @@ public class NutsHttpServlet extends HttpServlet {
             }
         });
     }
+
+    public static int parseInt(String v1, int defaultValue) {
+        try {
+            if (StringUtils.isEmpty(v1)) {
+                return defaultValue;
+            }
+            return Integer.parseInt(StringUtils.trim(v1));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
 }

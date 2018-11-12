@@ -29,11 +29,12 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.common.io.InputStreamSource;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.common.io.InputStreamSource;
 
 /**
  *

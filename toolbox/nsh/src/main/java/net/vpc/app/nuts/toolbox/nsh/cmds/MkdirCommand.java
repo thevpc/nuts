@@ -32,15 +32,8 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
-import net.vpc.app.nuts.toolbox.nsh.util.SShConnection;
 import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.io.FileUtils;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.RuntimeIOException;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +49,6 @@ public class MkdirCommand extends AbstractNutsCommand {
     }
 
     public static class Options {
-        String keyPassword = null;
-        String keyFilePath = null;
         boolean p;
     }
 
@@ -67,11 +58,7 @@ public class MkdirCommand extends AbstractNutsCommand {
         Options o = new Options();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.isOption()) {
-                if (cmdLine.isOption(null, "password")) {
-                    o.keyPassword = cmdLine.readValue();
-                } else if (cmdLine.isOption(null, "cert")) {
-                    o.keyFilePath = cmdLine.readValue();
-                } else if (cmdLine.isOption("p", null)) {
+                if (cmdLine.isOption("p", null)) {
                     o.p = true;
                 }
             } else {
@@ -82,26 +69,8 @@ public class MkdirCommand extends AbstractNutsCommand {
             throw new IllegalArgumentException("Missing parameters");
         }
         for (int i = 0; i < files.size() ; i++) {
-            mkdir(files.get(i), o);
+            files.get(i).mkdir(o.p);
         }
         return 0;
     }
-
-    public void mkdir(FilePath from, Options o) {
-        if (from.getProtocol().equals("file")) {
-            File from1 = new File(from.getPath());
-            if(o.p){
-                from1.mkdirs();
-            }else{
-                from1.mkdir();
-            }
-        } else if (from.getProtocol().equals("ssh")) {
-            throw new RuntimeIOException("Unsupported protocols " + from.getProtocol());
-        } else if (from.getProtocol().equals("url")) {
-            throw new RuntimeIOException("Unsupported protocols " + from.getProtocol());
-        } else {
-            throw new RuntimeIOException("Unsupported protocols " + from.getProtocol());
-        }
-    }
-
 }

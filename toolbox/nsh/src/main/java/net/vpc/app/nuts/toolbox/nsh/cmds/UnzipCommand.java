@@ -30,13 +30,13 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class UnzipCommand extends AbstractNutsCommand {
                 throw new IllegalArgumentException("Not yet supported");
             } else {
                 String path = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-                File file = new File(context.resolvePath(path));
+                File file = new File(context.getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }
@@ -92,11 +92,11 @@ public class UnzipCommand extends AbstractNutsCommand {
                 });
             } else {
                 String dir = options.dir;
-                if (CoreStringUtils.isEmpty(dir)) {
+                if (StringUtils.isEmpty(dir)) {
                     dir = context.getCwd();
                 }
-                dir = context.resolvePath(dir);
-                ZipUtils.unzip(context.resolvePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
+                dir = context.getAbsolutePath(dir);
+                ZipUtils.unzip(context.getAbsolutePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
             }
         }
         return 0;

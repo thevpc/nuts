@@ -32,10 +32,12 @@ package net.vpc.app.nuts.extensions.core;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdBuilder;
+import net.vpc.app.nuts.StringMapper;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.StringMapper;
+import net.vpc.common.strings.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,19 +61,19 @@ public class NutsIdImpl implements NutsId {
                 sb.append(entry.getKey()).append("=").append(entry.getValue());
             }
         }
-        this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
-        this.query = CoreStringUtils.trimToNull(sb.toString());
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.query = StringUtils.trimToNull(sb.toString());
     }
 
     public NutsIdImpl(String namespace, String group, String name, String version, String query) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
-        this.group = CoreStringUtils.trimToNull(group);
-        this.name = CoreStringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(CoreStringUtils.trimToNull(version));
-        this.query = CoreStringUtils.trimToNull(query);
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.query = StringUtils.trimToNull(query);
     }
 
     @Override
@@ -79,8 +81,8 @@ public class NutsIdImpl implements NutsId {
         if (other == null) {
             return false;
         }
-        return CoreStringUtils.trim(name).equals(CoreStringUtils.trim(other.getName()))
-                && CoreStringUtils.trim(group).equals(CoreStringUtils.trim(other.getGroup()));
+        return StringUtils.trim(name).equals(StringUtils.trim(other.getName()))
+                && StringUtils.trim(group).equals(StringUtils.trim(other.getGroup()));
     }
 
     @Override
@@ -88,16 +90,16 @@ public class NutsIdImpl implements NutsId {
         if (value == null) {
             return true;
         }
-        if (CoreStringUtils.trim(namespace).contains(value)) {
+        if (StringUtils.trim(namespace).contains(value)) {
             return true;
         }
-        if (CoreStringUtils.trim(name).contains(value)) {
+        if (StringUtils.trim(name).contains(value)) {
             return true;
         }
-        if (CoreStringUtils.trim(version.getValue()).contains(value)) {
+        if (StringUtils.trim(version.getValue()).contains(value)) {
             return true;
         }
-        return CoreStringUtils.trim(query).contains(value);
+        return StringUtils.trim(query).contains(value);
     }
 
     @Override
@@ -105,16 +107,16 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        if (CoreStringUtils.trim(namespace).matches(pattern)) {
+        if (StringUtils.trim(namespace).matches(pattern)) {
             return true;
         }
-        if (CoreStringUtils.trim(name).matches(pattern)) {
+        if (StringUtils.trim(name).matches(pattern)) {
             return true;
         }
-        if (CoreStringUtils.trim(version.getValue()).matches(pattern)) {
+        if (StringUtils.trim(version.getValue()).matches(pattern)) {
             return true;
         }
-        return CoreStringUtils.trim(query).matches(pattern);
+        return StringUtils.trim(query).matches(pattern);
     }
 
     @Override
@@ -138,7 +140,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(namespace).matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return StringUtils.trim(namespace).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -146,7 +148,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(name).matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return StringUtils.trim(name).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -154,7 +156,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(group).matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return StringUtils.trim(group).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -162,7 +164,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(version.getValue()).matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return StringUtils.trim(version.getValue()).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -170,7 +172,7 @@ public class NutsIdImpl implements NutsId {
         if (pattern == null) {
             return true;
         }
-        return CoreStringUtils.trim(query).matches(CoreStringUtils.simpexpToRegexp(pattern));
+        return StringUtils.trim(query).matches(CoreStringUtils.simpexpToRegexp(pattern));
     }
 
     @Override
@@ -220,12 +222,12 @@ public class NutsIdImpl implements NutsId {
     @Override
     public String getFace() {
         String s = getQueryMap().get(NutsConstants.QUERY_FACE);
-        return CoreStringUtils.trimToNull(s);
+        return StringUtils.trimToNull(s);
     }
 
     @Override
     public NutsId setFace(String value) {
-        return setQueryProperty(NutsConstants.QUERY_FACE, CoreStringUtils.trimToNull(value))
+        return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value))
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
@@ -295,7 +297,11 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public Map<String, String> getQueryMap() {
-        return CoreStringUtils.parseMap(getQuery(), "&");
+        String q = getQuery();
+        if(q==null){
+            return new HashMap<>();
+        }
+        return StringUtils.parseMap(q, "&");
     }
 
     @Override
@@ -310,10 +316,10 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public String getFullName() {
-        if (CoreStringUtils.isEmpty(group)) {
-            return CoreStringUtils.trim(name);
+        if (StringUtils.isEmpty(group)) {
+            return StringUtils.trim(name);
         }
-        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
+        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
     }
 
     @Override
@@ -329,17 +335,17 @@ public class NutsIdImpl implements NutsId {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isEmpty(namespace)) {
+        if (!StringUtils.isEmpty(namespace)) {
             sb.append(namespace).append("://");
         }
-        if (!CoreStringUtils.isEmpty(group)) {
+        if (!StringUtils.isEmpty(group)) {
             sb.append(group).append(":");
         }
         sb.append(name);
-        if (!CoreStringUtils.isEmpty(version.getValue())) {
+        if (!StringUtils.isEmpty(version.getValue())) {
             sb.append("#").append(version);
         }
-        if (!CoreStringUtils.isEmpty(query)) {
+        if (!StringUtils.isEmpty(query)) {
             sb.append("?");
             sb.append(query);
         }

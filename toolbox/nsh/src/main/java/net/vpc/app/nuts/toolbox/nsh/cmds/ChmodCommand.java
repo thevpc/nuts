@@ -34,7 +34,7 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,7 +171,7 @@ public class ChmodCommand extends AbstractNutsCommand {
                     throw new IllegalArgumentException("Unsupported option" + s);
                 }
             } else {
-                files.add(new File(context.resolvePath(s)));
+                files.add(new File(context.getAbsolutePath(s)));
             }
         }
         if (files.isEmpty()) {

@@ -41,7 +41,8 @@ public final class NutsWorkspaceConfig implements Serializable {
     private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
     private List<NutsId> extensions = new ArrayList<>();
     private Properties env = new Properties();
-    private final Map<String, NutsUserConfig> security = new HashMap<>();
+    private Map<String, NutsUserConfig> security = new HashMap<>();
+    private Map<String, List<NutsSdkLocation>> sdk = new HashMap<>();
     private String[] imports = new String[0];
 
     public NutsWorkspaceConfig() {
@@ -56,6 +57,10 @@ public final class NutsWorkspaceConfig implements Serializable {
         }
         for (NutsUserConfig repository : other.getSecurity()) {
             this.security.put(repository.getUser(), repository);
+        }
+        for (Map.Entry<String, List<NutsSdkLocation>> e : other.getSdk().entrySet()) {
+            List<NutsSdkLocation> value = e.getValue();
+            this.sdk.put(e.getKey(), value==null?new ArrayList<>() : new ArrayList<>(value));
         }
         this.extensions.addAll(Arrays.asList(other.getExtensions()));
         this.env.putAll(other.getEnv());
@@ -159,6 +164,10 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsUserConfig[] getSecurity() {
         return security.values().toArray(new NutsUserConfig[security.size()]);
+    }
+
+    public Map<String, List<NutsSdkLocation>> getSdk() {
+        return sdk==null?new HashMap<>() :sdk;
     }
 
 

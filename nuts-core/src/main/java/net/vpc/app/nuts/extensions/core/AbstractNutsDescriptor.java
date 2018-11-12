@@ -30,8 +30,12 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
+import net.vpc.app.nuts.extensions.util.MapStringMapper;
 import net.vpc.common.io.FileUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.*;
@@ -60,10 +64,10 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesPackaging(String packaging) {
-        if (CoreStringUtils.isEmpty(packaging)) {
+        if (StringUtils.isEmpty(packaging)) {
             return true;
         }
-        if (CoreStringUtils.isEmpty(getPackaging())) {
+        if (StringUtils.isEmpty(getPackaging())) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(packaging);
@@ -81,14 +85,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesArch(String arch) {
-        if (CoreStringUtils.isEmpty(arch)) {
+        if (StringUtils.isEmpty(arch)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(arch);
         String[] all = getArch();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isEmpty(v)) {
+                if (StringUtils.isEmpty(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
@@ -106,14 +110,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesOs(String os) {
-        if (CoreStringUtils.isEmpty(os)) {
+        if (StringUtils.isEmpty(os)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(os);
         String[] all = getOs();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isEmpty(v)) {
+                if (StringUtils.isEmpty(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
@@ -131,14 +135,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesOsdist(String osdist) {
-        if (CoreStringUtils.isEmpty(osdist)) {
+        if (StringUtils.isEmpty(osdist)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(osdist);
         String[] all = getOsdist();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isEmpty(v)) {
+                if (StringUtils.isEmpty(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
@@ -157,14 +161,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesPlatform(String platform) {
-        if (CoreStringUtils.isEmpty(platform)) {
+        if (StringUtils.isEmpty(platform)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(platform);
         String[] all = getPlatform();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isEmpty(v)) {
+                if (StringUtils.isEmpty(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
@@ -438,19 +442,19 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             String name = child.getName();
             String version = child.getVersion().getValue();
             Map<String, String> face = child.getQueryMap();
-            if (CoreStringUtils.isEmpty(namespace)) {
+            if (StringUtils.isEmpty(namespace)) {
                 modified = true;
                 namespace = parent.getNamespace();
             }
-            if (CoreStringUtils.isEmpty(group)) {
+            if (StringUtils.isEmpty(group)) {
                 modified = true;
                 group = parent.getGroup();
             }
-            if (CoreStringUtils.isEmpty(name)) {
+            if (StringUtils.isEmpty(name)) {
                 modified = true;
                 name = parent.getName();
             }
-            if (CoreStringUtils.isEmpty(version)) {
+            if (StringUtils.isEmpty(version)) {
                 modified = true;
                 version = parent.getVersion().getValue();
             }
@@ -574,7 +578,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor setExt(String ext) {
-        if (CoreStringUtils.trim(ext).equals(getExt())) {
+        if (StringUtils.trim(ext).equals(getExt())) {
             return this;
         }
         return builder().setExt(ext).build();
@@ -582,7 +586,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor setPackaging(String packaging) {
-        if (CoreStringUtils.trim(packaging).equals(getPackaging())) {
+        if (StringUtils.trim(packaging).equals(getPackaging())) {
             return this;
         }
         return builder().setPackaging(packaging).build();

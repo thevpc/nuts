@@ -7,7 +7,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.common.commandline.CommandLine;
 
 /**

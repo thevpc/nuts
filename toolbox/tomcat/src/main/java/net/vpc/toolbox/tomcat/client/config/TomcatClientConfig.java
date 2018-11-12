@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TomcatClientConfig {
-    private String serverInstance;
+    private String remoteInstance;
     private String server;
     private String serverCertificateFile;
     private String serverPassword;
-    private String serverTempPath;
+    private String remoteTempPath;
     private Map<String,TomcatClientAppConfig> apps=new HashMap<>();
 
-    public String getServerInstance() {
-        return serverInstance;
+    public String getRemoteInstance() {
+        return remoteInstance;
     }
 
-    public void setServerInstance(String serverInstance) {
-        this.serverInstance = serverInstance;
+    public void setRemoteInstance(String remoteInstance) {
+        this.remoteInstance = remoteInstance;
     }
 
     public String getServer() {
@@ -44,12 +44,12 @@ public class TomcatClientConfig {
         this.serverPassword = serverPassword;
     }
 
-    public String getServerTempPath() {
-        return serverTempPath;
+    public String getRemoteTempPath() {
+        return remoteTempPath;
     }
 
-    public void setServerTempPath(String serverTempPath) {
-        this.serverTempPath = serverTempPath;
+    public void setRemoteTempPath(String remoteTempPath) {
+        this.remoteTempPath = remoteTempPath;
     }
 
     public Map<String, TomcatClientAppConfig> getApps() {

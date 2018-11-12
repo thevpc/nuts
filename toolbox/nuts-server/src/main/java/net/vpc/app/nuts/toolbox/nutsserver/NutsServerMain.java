@@ -2,15 +2,14 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.DefaultNutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
 import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.ServerNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -133,7 +132,7 @@ public class NutsServerMain extends NutsApplication {
                         Map<String, NutsWorkspace> workspaces = new HashMap<>();
                         for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
                             NutsWorkspace nutsWorkspace = null;
-                            if (CoreStringUtils.isEmpty(entry.getValue())) {
+                            if (StringUtils.isEmpty(entry.getValue())) {
                                 if (context.getValidWorkspace() == null) {
                                     throw new NutsIllegalArgumentException("Missing workspace");
                                 }
@@ -171,7 +170,7 @@ public class NutsServerMain extends NutsApplication {
                                     if (server.sslCertificate == null) {
                                         throw new NutsIllegalArgumentException("Missing SSL Certificate");
                                     }
-                                    config.setSslKeystoreCertificate(IOUtils.loadByteArray(new File(context.resolvePath(server.sslCertificate))));
+                                    config.setSslKeystoreCertificate(IOUtils.loadByteArray(new File(context.getAbsolutePath(server.sslCertificate))));
                                     if (server.sslPassphrase == null) {
                                         throw new NutsIllegalArgumentException("Missing SSL Passphrase");
                                     }

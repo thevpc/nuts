@@ -33,12 +33,11 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.FolderNonOption;
-
-import java.io.File;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.io.FileUtils;
-import net.vpc.common.util.ArrayUtils;
-import net.vpc.common.util.Filter;
+
+import java.io.File;
+import java.io.FileFilter;
 
 /**
  * Created by vpc on 1/7/17.
@@ -53,11 +52,10 @@ public class CdCommand extends AbstractNutsCommand {
         CommandLine cmdLine = cmdLine(args, context);
         cmdLine.requireNonEmpty();
         String folder = cmdLine.readNonOptionOrError(new FolderNonOption("Folder")).getString();
-        File[] validFiles = ArrayUtils.filterArray(File.class, FileUtils.findFilesOrError(folder, new File(context.getCwd())),
-                new Filter<File>() {
+        File[] validFiles = FileUtils.findFilesOrError(folder, new File(context.getCwd()), new FileFilter() {
             @Override
-            public boolean accept(File value) {
-                return value.isDirectory();
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
             }
         });
         NutsPrintStream out = context.getTerminal().getFormattedOut();

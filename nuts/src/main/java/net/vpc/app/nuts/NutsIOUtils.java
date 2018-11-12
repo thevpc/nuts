@@ -32,8 +32,10 @@ package net.vpc.app.nuts;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Properties;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 import static net.vpc.app.nuts.DefaultNutsBootWorkspace.log;

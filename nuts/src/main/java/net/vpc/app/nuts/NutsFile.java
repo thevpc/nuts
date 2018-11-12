@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/6/17.
  */
-public class NutsFile implements Serializable{
+public class NutsFile implements Serializable,Comparable{
 
     private NutsDescriptor descriptor;
     private String file;
@@ -167,5 +167,26 @@ public class NutsFile implements Serializable{
         }
         return true;
     }
-    
+
+    @Override
+    public int compareTo(Object n2) {
+        if (n2 == null) {
+            return 1;
+        }
+        if (!(n2 instanceof NutsFile)) {
+            return -1;
+        }
+        NutsId o1=getId();
+        NutsId o2=((NutsFile)n2).getId();
+        if (o1 == null || o2 == null) {
+            if (o1 == o2) {
+                return 0;
+            }
+            if (o1 == null) {
+                return -1;
+            }
+            return 1;
+        }
+        return o1.toString().compareTo(o2.toString());
+    }
 }

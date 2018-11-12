@@ -5,17 +5,10 @@
  */
 package net.vpc.app.nuts.extensions.terminals.textparsers;
 
-import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
-import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

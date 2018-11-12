@@ -29,18 +29,17 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
+import net.vpc.app.nuts.NutsFormattedPrintStream;
+import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.io.NullOutputStream;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.io.NullOutputStream;
 
 /**
  * Created by vpc on 2/20/17.

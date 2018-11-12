@@ -29,18 +29,18 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import java.util.ArrayList;
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -69,11 +69,11 @@ public class HelpCommand extends AbstractNutsCommand {
         }
         if (cmdLine.isExecMode()) {
             if (showLicense) {
-                String licenseText = CoreNutsUtils.getResourceString("/net/vpc/app/nuts/nuts.license", context.getValidWorkspace(), HelpCommand.class);
+                String licenseText = context.getValidWorkspace().getResourceString("/net/vpc/app/nuts/nuts.license", HelpCommand.class,"no help found");
                 out.println(licenseText);
             } else {
                 if (commandNames.isEmpty()) {
-                    String helpText = CoreNutsUtils.getResourceString("/net/vpc/app/nuts/nuts-help.help", context.getValidWorkspace(), HelpCommand.class);
+                    String helpText = context.getValidWorkspace().getResourceString("/net/vpc/app/nuts/nuts-help.help", HelpCommand.class,"no help found");
                     out.println(helpText);
                     out.println("@@AVAILABLE COMMANDS ARE:@@");
                     NutsCommand[] commands = context.getConsole().getCommands();
@@ -84,7 +84,7 @@ public class HelpCommand extends AbstractNutsCommand {
                         }
                     });
                     for (NutsCommand cmd : commands) {
-                        out.printf("##%s## : ", CoreStringUtils.alignLeft(cmd.getName(), 15));
+                        out.printf("##%s## : ", StringUtils.alignLeft(cmd.getName(), 15));
                         out.println(cmd.getHelpHeader()); //formatted
                     }
                 } else {

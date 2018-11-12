@@ -5,8 +5,8 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.common.commandline.CommandLine;
 

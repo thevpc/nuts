@@ -29,24 +29,23 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.extensions.filters.dependency.OptionalNutsDependencyFilter;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPackaging;
-import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyFilterAnd;
-import net.vpc.app.nuts.extensions.filters.repository.DefaultNutsRepositoryFilter;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterAnd;
-import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyFilterOr;
-import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterAnd;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorJavascriptFilter;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOr;
-import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterOr;
-import net.vpc.app.nuts.extensions.filters.dependency.ScopeNutsDependencyFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterOr;
-import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.extensions.filters.dependency.*;
+import net.vpc.app.nuts.extensions.filters.descriptor.*;
+import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterAnd;
+import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterOr;
+import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
+import net.vpc.app.nuts.extensions.filters.repository.DefaultNutsRepositoryFilter;
+import net.vpc.app.nuts.extensions.filters.repository.ExprNutsRepositoryFilter;
+import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterAnd;
+import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterOr;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
+import net.vpc.common.util.Filter;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -56,17 +55,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.vpc.app.nuts.extensions.filters.dependency.NutsDependencyJavascriptFilter;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterArch;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterById;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOs;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterOsdist;
-import net.vpc.app.nuts.extensions.filters.descriptor.NutsDescriptorFilterPlatform;
-import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
-import net.vpc.app.nuts.extensions.filters.repository.ExprNutsRepositoryFilter;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.util.Filter;
 
 /**
  * Created by vpc on 5/16/17.
@@ -99,7 +87,7 @@ public class CoreNutsUtils {
     public static final String FACE_PACKAGE_HASH = "package-hash";
 
     //    private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
-    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
+    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = new OptionalNutsDependencyFilter(true);
@@ -265,7 +253,7 @@ public class CoreNutsUtils {
         if (imports != null) {
             String[] groupsArr = imports.split(":");
             for (String grp : groupsArr) {
-                String grp2 = CoreStringUtils.trim(grp);
+                String grp2 = StringUtils.trim(grp);
                 if (grp2.length() > 0) {
                     if (!all.contains(grp2)) {
                         all.add(grp2);
@@ -277,11 +265,11 @@ public class CoreNutsUtils {
     }
 
     public static File getNutsFolder(NutsId id, File root) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
         File groupFolder = new File(root, id.getGroup().replaceAll("\\.", File.separator));
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
         File artifactFolder = new File(groupFolder, id.getName());
@@ -290,7 +278,7 @@ public class CoreNutsUtils {
         }
         File versionFolder = new File(artifactFolder, id.getVersion().getValue());
         String face = id.getFace();
-        if (CoreStringUtils.isEmpty(face)) {
+        if (StringUtils.isEmpty(face)) {
             face = NutsConstants.QUERY_FACE_DEFAULT_VALUE;
         }
         return new File(versionFolder, face);
@@ -342,8 +330,8 @@ public class CoreNutsUtils {
      *
      * @return
      */
-//    public static NutsId parseNutsId(String nutFormat) {
-//        return parseNutsId(nutFormat);
+//    public static NutsId createNutsId(String nutFormat) {
+//        return createNutsId(nutFormat);
 //    }
 //    public static NutsId parseOrErrorNutsId(String nutFormat) {
 //        return parseOrErrorNutsId(nutFormat);
@@ -394,7 +382,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean isEffectiveValue(String value) {
-        return (!CoreStringUtils.isEmpty(value) && !CoreStringUtils.containsVars(value));
+        return (!StringUtils.isEmpty(value) && !CoreStringUtils.containsVars(value));
     }
 
     public static boolean isEffectiveId(NutsId id) {
@@ -455,7 +443,7 @@ public class CoreNutsUtils {
     }
 
     public static NutsDescriptor parseNutsDescriptor(String str) {
-        if (CoreStringUtils.isEmpty(str)) {
+        if (StringUtils.isEmpty(str)) {
             return null;
         }
         return parseNutsDescriptor(new ByteArrayInputStream(str.getBytes()), true);
@@ -493,7 +481,7 @@ public class CoreNutsUtils {
             String group = m.group(3);
             String artifact = m.group(5);
             String version = m.group(7);
-            String face = m.group(9);
+            String query = m.group(9);
             if (artifact == null) {
                 artifact = group;
                 group = null;
@@ -503,7 +491,7 @@ public class CoreNutsUtils {
                     group,
                     artifact,
                     version,
-                    face
+                    query
             );
         }
         return null;
@@ -518,7 +506,7 @@ public class CoreNutsUtils {
     }
 
     public static NutsId parseNullableOrErrorNutsId(String nutFormat) {
-        if (CoreStringUtils.isEmpty(nutFormat)) {
+        if (StringUtils.isEmpty(nutFormat)) {
             return null;
         }
         NutsId id = parseNutsId(nutFormat);
@@ -529,7 +517,7 @@ public class CoreNutsUtils {
     }
 
     public static String getNutsFileName(NutsId id, String ext) {
-        if (CoreStringUtils.isEmpty(ext)) {
+        if (StringUtils.isEmpty(ext)) {
             ext = "jar";
         }
         if (!ext.startsWith(".")) {
@@ -555,15 +543,15 @@ public class CoreNutsUtils {
     }
 
     public static String applyStringProperties(String child, StringMapper properties) {
-        if (CoreStringUtils.isEmpty(child)) {
+        if (StringUtils.isEmpty(child)) {
             return null;
         }
         return CoreStringUtils.replaceVars(child, properties);
     }
 
     public static String applyStringInheritance(String child, String parent) {
-        child = CoreStringUtils.trimToNull(child);
-        parent = CoreStringUtils.trimToNull(parent);
+        child = StringUtils.trimToNull(child);
+        parent = StringUtils.trimToNull(parent);
         if (child == null) {
             return parent;
         }
@@ -588,8 +576,8 @@ public class CoreNutsUtils {
             String group = m.group(3);
             String name = m.group(5);
             String version = m.group(7);
-            String face = CoreStringUtils.trim(m.group(9));
-            Map<String, String> scope = CoreStringUtils.parseMap(face, "&");
+            String face = StringUtils.trim(m.group(9));
+            Map<String, String> scope = StringUtils.parseMap(face, "&");
             for (String s : scope.keySet()) {
                 if (!DEPENDENCY_SUPPORTED_PARAMS.contains(s)) {
                     throw new NutsIllegalArgumentException("Unsupported parameter " + CoreStringUtils.simpleQuote(s, false, "") + " in " + nutFormat);
@@ -759,7 +747,7 @@ public class CoreNutsUtils {
         NutsDependencyFilter depFilter = null;
         if (js != null) {
             for (String j : js) {
-                if (!CoreStringUtils.isEmpty(j)) {
+                if (!StringUtils.isEmpty(j)) {
                     if (CoreStringUtils.containsTopWord(j, "descriptor")) {
                         dFilter = simplify(And(dFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
                     } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
@@ -861,7 +849,7 @@ public class CoreNutsUtils {
     }
 
     public static String expandPath(String path, String nutsHome) {
-        if (CoreStringUtils.isEmpty(nutsHome)) {
+        if (StringUtils.isEmpty(nutsHome)) {
             nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
         }
         if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {

@@ -3,8 +3,8 @@ package net.vpc.app.nuts.extensions.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreCollectionUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.MapStringMapper;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 
@@ -61,46 +61,62 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setProperties(properties, false);
     }
 
-    public DefaultNutsDescriptorBuilder(NutsDescriptorBuilder other) {
-        setId(other.getId());
-        setFace(other.getFace());
-        setPackaging(other.getPackaging());
-        setParents(other.getParents());
-        setExecutable(other.isExecutable());
-        setDescription(other.getDescription());
-        setName(other.getName());
-        setExecutor(other.getExecutor());
-        setInstaller(other.getInstaller());
-        setExt(other.getExt());
-        setArch(other.getArch());
-        setOs(other.getOs());
-        setOsdist(other.getOsdist());
-        setPlatform(other.getPlatform());
-        setLocations(other.getLocations());
-        setDependencies(other.getDependencies());
-        setProperties(other.getProperties(), false);
-    }
-
     public DefaultNutsDescriptorBuilder(NutsDescriptor other) {
-        setId(other.getId());
-        setFace(other.getFace());
-        setPackaging(other.getPackaging());
-        setParents(other.getParents());
-        setExecutable(other.isExecutable());
-        setDescription(other.getDescription());
-        setName(other.getName());
-        setExecutor(other.getExecutor());
-        setInstaller(other.getInstaller());
-        setExt(other.getExt());
-        setArch(other.getArch());
-        setOs(other.getOs());
-        setOsdist(other.getOsdist());
-        setPlatform(other.getPlatform());
-        setLocations(other.getLocations());
-        setDependencies(other.getDependencies());
-        setProperties(other.getProperties(), false);
+        set(other);
     }
 
+    public DefaultNutsDescriptorBuilder(NutsDescriptorBuilder other) {
+        set(other);
+    }
+
+
+    @Override
+    public NutsDescriptorBuilder set(NutsDescriptorBuilder other){
+        if(other!=null){
+            setId(other.getId());
+            setFace(other.getFace());
+            setPackaging(other.getPackaging());
+            setParents(other.getParents());
+            setExecutable(other.isExecutable());
+            setDescription(other.getDescription());
+            setName(other.getName());
+            setExecutor(other.getExecutor());
+            setInstaller(other.getInstaller());
+            setExt(other.getExt());
+            setArch(other.getArch());
+            setOs(other.getOs());
+            setOsdist(other.getOsdist());
+            setPlatform(other.getPlatform());
+            setLocations(other.getLocations());
+            setDependencies(other.getDependencies());
+            setProperties(other.getProperties(), false);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder set(NutsDescriptor other){
+        if(other!=null){
+            setId(other.getId());
+            setFace(other.getFace());
+            setPackaging(other.getPackaging());
+            setParents(other.getParents());
+            setExecutable(other.isExecutable());
+            setDescription(other.getDescription());
+            setName(other.getName());
+            setExecutor(other.getExecutor());
+            setInstaller(other.getInstaller());
+            setExt(other.getExt());
+            setArch(other.getArch());
+            setOs(other.getOs());
+            setOsdist(other.getOsdist());
+            setPlatform(other.getPlatform());
+            setLocations(other.getLocations());
+            setDependencies(other.getDependencies());
+            setProperties(other.getProperties(), false);
+        }
+        return this;
+    }
     @Override
     public NutsDescriptorBuilder setId(String id) {
         this.id = CoreNutsUtils.parseOrErrorNutsId(id);
@@ -115,7 +131,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setName(String name) {
-        this.name = CoreStringUtils.trim(name);
+        this.name = StringUtils.trim(name);
         return this;
     }
 
@@ -139,7 +155,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setDescription(String description) {
-        this.description = CoreStringUtils.trim(description);
+        this.description = StringUtils.trim(description);
         return this;
     }
 
@@ -151,7 +167,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setExt(String ext) {
-        this.ext = CoreStringUtils.trim(ext);
+        this.ext = StringUtils.trim(ext);
         return this;
     }
 
@@ -229,7 +245,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setPackaging(String packaging) {
-        this.packaging = CoreStringUtils.trim(packaging);
+        this.packaging = StringUtils.trim(packaging);
         return this;
     }
 
@@ -608,19 +624,19 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             String name = child.getName();
             String version = child.getVersion().getValue();
             Map<String, String> face = child.getQueryMap();
-            if (CoreStringUtils.isEmpty(namespace)) {
+            if (StringUtils.isEmpty(namespace)) {
                 modified = true;
                 namespace = parent.getNamespace();
             }
-            if (CoreStringUtils.isEmpty(group)) {
+            if (StringUtils.isEmpty(group)) {
                 modified = true;
                 group = parent.getGroup();
             }
-            if (CoreStringUtils.isEmpty(name)) {
+            if (StringUtils.isEmpty(name)) {
                 modified = true;
                 name = parent.getName();
             }
-            if (CoreStringUtils.isEmpty(version)) {
+            if (StringUtils.isEmpty(version)) {
                 modified = true;
                 version = parent.getVersion().getValue();
             }

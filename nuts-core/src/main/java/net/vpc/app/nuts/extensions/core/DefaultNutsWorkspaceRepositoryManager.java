@@ -29,20 +29,15 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
+
+import java.io.File;
+import java.util.*;
 
 /**
  *
@@ -83,8 +78,8 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_ADD_REPOSITORY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_ADD_REPOSITORY);
         }
-        if(CoreStringUtils.isEmpty(repositoryId)){
-            if(CoreStringUtils.isEmpty(location)){
+        if(StringUtils.isEmpty(repositoryId)){
+            if(StringUtils.isEmpty(location)){
                 throw new IllegalArgumentException("You should consider specifying location and/or repositoryId");
             }
             File file=new File(ws.resolveRepositoryPath(location));
@@ -93,7 +88,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
                     NutsRepositoryConfig c=CoreJsonUtils.loadJson(new File(file,NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME),NutsRepositoryConfig.class);
                     if(c!=null){
                         repositoryId=c.getId();
-                        if (CoreStringUtils.isEmpty(type)) {
+                        if (StringUtils.isEmpty(type)) {
                             type=c.getType();
                         }else if(!type.equals(c.getType())){
                             throw new IllegalArgumentException("Invalid repository type "+type+". expected "+c.getType());
@@ -103,11 +98,11 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
                     repositoryId=file.getName();
                 }
             }
-        }else if(CoreStringUtils.isEmpty(location)){
+        }else if(StringUtils.isEmpty(location)){
             //no pbm!
         }
 
-        if (CoreStringUtils.isEmpty(type)) {
+        if (StringUtils.isEmpty(type)) {
             type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         ws.checkSupportedRepositoryType(type);
@@ -127,7 +122,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public NutsRepository findRepository(String repositoryIdPath) {
-        if (!CoreStringUtils.isEmpty(repositoryIdPath)) {
+        if (!StringUtils.isEmpty(repositoryIdPath)) {
             while (repositoryIdPath.startsWith("/")) {
                 repositoryIdPath = repositoryIdPath.substring(1);
             }
@@ -157,7 +152,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public boolean isSupportedRepositoryType(String repositoryType) {
-        if (CoreStringUtils.isEmpty(repositoryType)) {
+        if (StringUtils.isEmpty(repositoryType)) {
             repositoryType = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         return ws.getExtensionManager().createAllSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(repositoryType, null)).size() > 0;
@@ -189,7 +184,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public NutsRepository openRepository(String repositoryId, String location, String type, String repositoryRoot, boolean autoCreate) {
-        if (CoreStringUtils.isEmpty(type)) {
+        if (StringUtils.isEmpty(type)) {
             type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         NutsRepositoryFactoryComponent factory_ = ws.getExtensionManager().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));

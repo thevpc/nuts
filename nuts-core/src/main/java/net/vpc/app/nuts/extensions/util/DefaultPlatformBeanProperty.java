@@ -29,8 +29,8 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsException;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.extensions.core.JsonTransient;
 
 import java.beans.Transient;

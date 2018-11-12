@@ -29,17 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.NutsHttpConnectionFacade;
-import net.vpc.app.nuts.NutsTransportComponent;
-import net.vpc.app.nuts.NutsTransportParamPart;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsUnsupportedOperationException;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.URLHeader;
 
 /**
  * Created by vpc on 1/21/17.

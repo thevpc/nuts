@@ -1,18 +1,19 @@
 package net.vpc.app.nuts.extensions.filters;
 
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.filters.descriptor.JsNutsDescriptorFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
+import net.vpc.app.nuts.extensions.filters.version.JsNutsVersionFilter;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.common.strings.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.Simplifiable;
-
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.filters.descriptor.JsNutsDescriptorFilter;
-import net.vpc.app.nuts.extensions.filters.version.JsNutsVersionFilter;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
 public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
@@ -142,7 +143,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (id.value instanceof NutsJsAwareIdFilter) {
                     NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id.value;
                     String expr = b.toJsNutsIdFilterExpr();
-                    if (CoreStringUtils.isEmpty(expr)) {
+                    if (StringUtils.isEmpty(expr)) {
                         return null;
                     }
                     sb.append("(").append(expr).append("')");
@@ -153,7 +154,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (id.value instanceof JsNutsVersionFilter) {
                     JsNutsVersionFilter b = (JsNutsVersionFilter) id.value;
                     String expr = b.toJsNutsVersionFilterExpr();
-                    if (CoreStringUtils.isEmpty(expr)) {
+                    if (StringUtils.isEmpty(expr)) {
                         return null;
                     }
                     sb.append("(").append(expr).append("')");
@@ -164,7 +165,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (id.value instanceof JsNutsDescriptorFilter) {
                     JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id.value;
                     String expr = b.toJsNutsDescriptorFilterExpr();
-                    if (CoreStringUtils.isEmpty(expr)) {
+                    if (StringUtils.isEmpty(expr)) {
                         return null;
                     }
                     sb.append("(").append(expr).append("')");

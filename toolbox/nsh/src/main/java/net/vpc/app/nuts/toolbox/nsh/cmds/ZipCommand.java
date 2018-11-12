@@ -35,7 +35,7 @@ import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class ZipCommand extends AbstractNutsCommand {
                 throw new IllegalArgumentException("Not yet supported");
             } else {
                 String path = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
-                File file = new File(context.resolvePath(path));
+                File file = new File(context.getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;
                 }else {

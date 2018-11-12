@@ -29,12 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.*;
-import net.vpc.common.javashell.QuitShellException;
-
 import net.vpc.common.javashell.InterrupShellException;
+import net.vpc.common.javashell.QuitShellException;
+import net.vpc.common.strings.StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -70,13 +71,13 @@ public class ConsoleCommand extends AbstractNutsCommand {
 
             terminal = context.getTerminal();
             NutsWorkspace ws = context.getWorkspace();
-            String wss = ws == null ? "" : context.resolvePath(ws.getConfigManager().getWorkspaceLocation());
+            String wss = ws == null ? "" : context.getAbsolutePath(ws.getConfigManager().getWorkspaceLocation());
             String login = null;
             if (ws != null) {
                 login = ws.getSecurityManager().getCurrentLogin();
             }
             String prompt = login + "@" + wss;
-            if (!CoreStringUtils.isEmpty(context.getServiceName())) {
+            if (!StringUtils.isEmpty(context.getServiceName())) {
                 prompt = prompt + "@" + context.getServiceName();
             }
             prompt += "> ";

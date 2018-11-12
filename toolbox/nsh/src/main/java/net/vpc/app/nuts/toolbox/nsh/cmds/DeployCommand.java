@@ -34,12 +34,11 @@ import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
+import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
-
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -95,7 +94,7 @@ public class DeployCommand extends AbstractNutsCommand {
         }
         NutsPrintStream out = context.getTerminal().getFormattedOut();
         if (fileMode) {
-            if (CoreStringUtils.isEmpty(contentFile)) {
+            if (StringUtils.isEmpty(contentFile)) {
                 throw new NutsCommandSyntaxError("Missing File");
             }
             for (String s : context.expandPath(contentFile)) {
@@ -110,7 +109,7 @@ public class DeployCommand extends AbstractNutsCommand {
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
             }
         } else if (idMode) {
-            if (CoreStringUtils.isEmpty(id)) {
+            if (StringUtils.isEmpty(id)) {
                 throw new NutsCommandSyntaxError("Missing Id");
             }
             for (NutsId nutsId : context.getValidWorkspace().find(new NutsSearch(id).setLastestVersions(true).setRepositoryFilter(from), context.getSession())) {

@@ -29,7 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.*;
+import net.vpc.common.io.*;
+import net.vpc.common.strings.StringUtils;
+import org.objectweb.asm.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -46,18 +49,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.common.io.*;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 /**
  * Created by vpc on 5/16/17.
@@ -113,7 +104,7 @@ public class CorePlatformUtils {
             }
             case "windows": {
                 String pf = System.getenv("ProgramFiles");
-                if (CoreStringUtils.isEmpty(pf)) {
+                if (StringUtils.isEmpty(pf)) {
                     pf = "C:\\Program Files";
                 }
                 return pf;
@@ -170,7 +161,7 @@ public class CorePlatformUtils {
             }
         }
         if (osVersion.toString().trim().isEmpty()) {
-            CoreStringUtils.clear(osVersion);
+            StringUtils.clear(osVersion);
             try {
                 osVersion.append(
                         new ProcessBuilder2().setCommand("uname", "-r")
@@ -225,7 +216,7 @@ public class CorePlatformUtils {
                                 disVersion = v;
                                 break;
                         }
-                        if (!CoreStringUtils.isEmpty(disVersion) && !CoreStringUtils.isEmpty(disName) && !CoreStringUtils.isEmpty(disId)) {
+                        if (!StringUtils.isEmpty(disVersion) && !StringUtils.isEmpty(disName) && !StringUtils.isEmpty(disId)) {
                             break;
                         }
 //                        System.out.println(f.getName() + " : " + strLine);
@@ -250,8 +241,8 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
-            if (!CoreStringUtils.isEmpty(distId)) {
-                if (!CoreStringUtils.isEmpty(distId)) {
+            if (!StringUtils.isEmpty(distId)) {
+                if (!StringUtils.isEmpty(distId)) {
                     return distId + "#" + distVersion;
                 } else {
                     return distId;
@@ -272,7 +263,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (CoreStringUtils.isEmpty(v)) {
+            if (StringUtils.isEmpty(v)) {
                 return "linux";
             }
             return "linux#" + v;
@@ -311,7 +302,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (CoreStringUtils.isEmpty(v)) {
+            if (StringUtils.isEmpty(v)) {
                 return "sunos";
             }
             return "sunos#" + v;
@@ -320,7 +311,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (CoreStringUtils.isEmpty(v)) {
+            if (StringUtils.isEmpty(v)) {
                 return "freebsd";
             }
             return "freebsd#" + v;
@@ -330,7 +321,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedArch(String arch) {
-        if (CoreStringUtils.isEmpty(arch)) {
+        if (StringUtils.isEmpty(arch)) {
             return true;
         }
         if (SUPPORTED_ARCH.contains(arch)) {
@@ -340,7 +331,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedOs(String os) {
-        if (CoreStringUtils.isEmpty(os)) {
+        if (StringUtils.isEmpty(os)) {
             return true;
         }
         if (SUPPORTED_OS.contains(os)) {
@@ -578,10 +569,10 @@ public class CorePlatformUtils {
                     return null;
                 }
                 String mainClass = manifest.getMainAttributes().getValue("Main-Class");
-//            if(!CoreStringUtils.isEmpty(mainClass)) {
+//            if(!StringUtils.isEmpty(mainClass)) {
 //                System.out.println(">> " + mainClass + " : " + file);
 //            }
-                return !CoreStringUtils.isEmpty(mainClass) ? mainClass : null;
+                return !StringUtils.isEmpty(mainClass) ? mainClass : null;
             }
         } catch (Exception ex) {
             //invalid file
@@ -804,6 +795,63 @@ public class CorePlatformUtils {
             }
         });
         return classes;
+    }
+
+    public static NutsId resolveNutsIdFromPomProperties(InputStream stream) {
+        Properties prop = new Properties();
+        try {
+            prop.load(stream);
+        } catch (IOException e) {
+            //
+        }
+        String version = prop.getProperty("version");
+        String groupId = prop.getProperty("groupId");
+        String artifactId = prop.getProperty("artifactId");
+        if (version != null && version.trim().length() != 0) {
+            return CoreNutsUtils.parseOrErrorNutsId(groupId + ":" + artifactId + "#" + version);
+        }
+        return null;
+    }
+
+    public static void main(String[] args) throws Exception {
+        try (InputStream s = new FileInputStream(new File("/data/vpc/Data/eniso/projects/Current/2017-2018/Giz-Intertek/git/Dev/Web/intertek-application/app/intertek-app-web/target/intertek.war"))) {
+            for (NutsId nutsId : resolveNutsIdArrayForJarOrWarMavenVersion(s)) {
+                System.out.println(nutsId);
+            }
+        }
+    }
+
+    public static NutsId resolveNutsIdForJarOrWarMavenVersion(InputStream jarStream) {
+        NutsId[] v = resolveNutsIdArrayForJarOrWarMavenVersion(jarStream);
+        if (v.length == 0) {
+            return null;
+        }
+        if (v.length >= 2) {
+            throw new IllegalArgumentException("Too many Ids");
+        }
+        return v[0];
+    }
+
+    public static NutsId[] resolveNutsIdArrayForJarOrWarMavenVersion(InputStream jarStream) {
+        final List<NutsId> list = new ArrayList<>();
+        ZipUtils.visitZipStream(jarStream, new PathFilter() {
+            @Override
+            public boolean accept(String path) {
+                System.out.println(path);
+                return path.startsWith("META-INF/")
+                        && path.endsWith("/pom.properties");
+            }
+        }, new InputStreamVisitor() {
+            @Override
+            public boolean visit(String path, InputStream inputStream) throws IOException {
+                NutsId id = resolveNutsIdFromPomProperties(inputStream);
+                if (id != null) {
+                    list.add(id);
+                }
+                return true;
+            }
+        });
+        return list.toArray(new NutsId[list.size()]);
     }
 
     /**

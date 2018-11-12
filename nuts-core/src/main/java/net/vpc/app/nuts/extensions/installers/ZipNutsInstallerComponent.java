@@ -29,7 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.installers;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsExecutionContext;
+import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsInstallerComponent;
+import net.vpc.app.nuts.RootFolderType;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -67,12 +70,14 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         executionContext.getNutsFile().setInstallFolder(installFolder.getPath());
         executionContext.getNutsFile().setInstalled(true);
         if (executionContext.getExecArgs().length > 0) {
-            executionContext.getWorkspace().exec(
-                    executionContext.getExecArgs(),
-                    executionContext.getExecProperties(),
-                    installFolder.getPath(),
-                    executionContext.getSession()
-            );
+            executionContext.getWorkspace()
+                    .createExecBuilder()
+                    .setCommand(executionContext.getExecArgs())
+                    .setSession(executionContext.getSession())
+                    .setEnv(executionContext.getExecProperties())
+                    .setDirectory(installFolder.getPath())
+                    .exec().getResult()
+            ;
         }
     }
 

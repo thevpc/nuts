@@ -31,18 +31,15 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 
 import com.sun.net.httpserver.*;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
 import javax.net.ssl.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.List;
@@ -82,7 +79,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         int port = httpConfig.getPort();
         int backlog = httpConfig.getBacklog();
         Executor executor = httpConfig.getExecutor();
-        if (CoreStringUtils.isEmpty(serverId)) {
+        if (StringUtils.isEmpty(serverId)) {
             String serverName = NutsConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -219,7 +216,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     }
 
                     public ListMap<String, String> getParameters() {
-                        return CoreHttpUtils.queryToMap(httpExchange.getRequestURI().getQuery());
+                        return queryToMap(httpExchange.getRequestURI().getQuery());
                     }
                 });
             }
@@ -265,4 +262,37 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         };
 //        System.out.println("Type [CTRL]+[C] to quit!");
     }
+
+    /**
+     * returns the url parameters in a map
+     *
+     * @param query
+     * @return map
+     */
+    public static ListMap<String, String> queryToMap(String query) {
+        ListMap<String, String> result = new ListMap<String, String>();
+        if (query != null) {
+            for (String param : query.split("&")) {
+                String pair[] = param.split("=");
+                if (pair.length > 1) {
+                    result.add(urlDecodeString(pair[0]), urlDecodeString(pair[1]));
+                } else {
+                    result.add(urlDecodeString(pair[0]), "");
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String urlDecodeString(String s) {
+        if (s == null || s.trim().length() == 0) {
+            return s;
+        }
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new NutsIOException(e);
+        }
+    }
+
 }

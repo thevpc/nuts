@@ -65,10 +65,15 @@
             <artifactId>nuts</artifactId>
             <version>0.5.0</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>net.vpc.app.nuts</groupId>-->
+            <!--<artifactId>nuts-core</artifactId>-->
+            <!--<version>0.5.0.0</version>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
-            <artifactId>nuts-core</artifactId>
-            <version>0.5.0.0</version>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-utils</artifactId>
+            <version>1.22</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts.toolbox</groupId>

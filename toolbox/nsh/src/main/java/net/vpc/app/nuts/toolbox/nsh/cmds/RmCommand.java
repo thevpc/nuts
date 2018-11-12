@@ -32,13 +32,8 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
-import net.vpc.app.nuts.toolbox.nsh.util.SShConnection;
 import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.io.RuntimeIOException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +49,6 @@ public class RmCommand extends AbstractNutsCommand {
     }
 
     public static class Options {
-        String keyPassword = null;
-        String keyFilePath = null;
         boolean R = false;
 
     }
@@ -66,11 +59,7 @@ public class RmCommand extends AbstractNutsCommand {
         Options o = new Options();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.isOption()) {
-                if (cmdLine.isOption(null, "password")) {
-                    o.keyPassword = cmdLine.readValue();
-                } else if (cmdLine.isOption(null, "cert")) {
-                    o.keyFilePath = cmdLine.readValue();
-                } else if (cmdLine.isOption("R", null)) {
+                if (cmdLine.isOption("R", null)) {
                     o.R = true;
                 }
             } else {
@@ -81,40 +70,11 @@ public class RmCommand extends AbstractNutsCommand {
             throw new IllegalArgumentException("Missing parameters");
         }
         for (int i = 0; i < files.size(); i++) {
-            rm(files.get(i), o);
+            files.get(i).rm(o.R);
         }
         return 0;
     }
 
-    public void rm(FilePath from, Options o) {
-        if (from.getProtocol().equals("file")) {
-            File from1 = new File(from.getPath());
-            if (from1.isFile()) {
-                try {
-                    Files.delete(from1.toPath());
-                } catch (IOException e) {
-                    throw new RuntimeIOException(e);
-                }
-            } else if (from1.isDirectory()) {
-                if (o.R) {
-                    for (File file : from1.listFiles()) {
-                        rm(new FilePath("file", file.getPath()), o);
-                    }
-                }
-                try {
-                    Files.delete(from1.toPath());
-                } catch (IOException e) {
-                    throw new RuntimeIOException(e);
-                }
-            }
-        } else if (from.getProtocol().equals("ssh")) {
-            SShConnection session = new SShConnection(from.getUser(), from.getServer(), from.getPort(), o.keyFilePath, o.keyPassword);
-            session.rm(from.getPath(), o.R);
-            session.close();
-        } else {
-            throw new RuntimeIOException("Unsupported protocols " + from.getProtocol());
-        }
-    }
 
 
 }

@@ -30,12 +30,12 @@
 package net.vpc.app.nuts.toolbox.nsh.options;
 
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.vpc.common.commandline.ArgumentCandidate;
-import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  *

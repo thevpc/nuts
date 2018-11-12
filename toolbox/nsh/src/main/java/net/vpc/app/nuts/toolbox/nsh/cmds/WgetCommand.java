@@ -30,13 +30,13 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.URLUtils;
+import net.vpc.common.strings.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +86,10 @@ public class WgetCommand extends AbstractNutsCommand {
         String output2=output;
         URL url=new URL(path);
         String urlName = URLUtils.getURLName(url);
-        if(!CoreStringUtils.isEmpty(output2)){
+        if(!StringUtils.isEmpty(output2)){
             output2=output2.replace("{}",urlName);
         }
-        File file= new File(context.resolvePath(CoreStringUtils.isEmpty(output2)?urlName:output2));
-        CoreIOUtils.downloadPath(path, file, url,context.getValidWorkspace(),context.getSession());
+        File file= new File(context.getAbsolutePath(StringUtils.isEmpty(output2)?urlName:output2));
+        context.getValidWorkspace().downloadPath(path, file, context.getSession());
     }
 }

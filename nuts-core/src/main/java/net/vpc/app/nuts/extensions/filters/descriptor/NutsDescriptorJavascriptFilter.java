@@ -29,16 +29,17 @@
  */
 package net.vpc.app.nuts.extensions.filters.descriptor;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptor;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.Simplifiable;
-
-import java.util.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.JavascriptHelper;
+import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * Created by vpc on 1/7/17.
@@ -52,7 +53,7 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Sim
     private static final WeakHashMap<String, NutsDescriptorJavascriptFilter> cached = new WeakHashMap<>();
 
     public static NutsDescriptorJavascriptFilter valueOf(String value) {
-        if (CoreStringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             return null;
         }
         synchronized (cached) {

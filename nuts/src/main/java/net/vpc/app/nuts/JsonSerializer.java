@@ -29,7 +29,8 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.*;
+import java.io.Reader;
+import java.io.Writer;
 
 public interface JsonSerializer {
 

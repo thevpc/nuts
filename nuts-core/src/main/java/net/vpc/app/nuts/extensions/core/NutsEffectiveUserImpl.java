@@ -5,10 +5,12 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import java.util.Arrays;
-import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsEffectiveUser;
+import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.Arrays;
 
 /**
  *
@@ -26,7 +28,7 @@ public class NutsEffectiveUserImpl implements NutsEffectiveUser {
     public NutsEffectiveUserImpl(NutsUserConfig config, String[] inheritedRights) {
         user = config.getUser();
         mappedUser = config.getMappedUser();
-        credentials = !CoreStringUtils.isEmpty(config.getCredentials());
+        credentials = !StringUtils.isEmpty(config.getCredentials());
 
         String[] rights0 = config.getRights();
         rights = Arrays.copyOf(rights0, rights0.length);

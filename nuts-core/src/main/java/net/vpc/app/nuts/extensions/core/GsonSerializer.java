@@ -1,13 +1,15 @@
 package net.vpc.app.nuts.extensions.core;
 
 import com.google.gson.*;
-import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.JsonSerializer;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.SerializeOptions;
 import net.vpc.common.io.RuntimeIOException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Type;
 
 public class GsonSerializer implements JsonSerializer {

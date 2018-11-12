@@ -29,12 +29,11 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.DefaultNonOption;
+import net.vpc.common.strings.StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -51,7 +50,7 @@ public class LoginCommand extends AbstractNutsCommand {
         String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
         cmdLine.requireEmpty();
         if (cmdLine.isExecMode()) {
-            if (!NutsConstants.USER_ANONYMOUS.equals(login) && CoreStringUtils.isEmpty(password)) {
+            if (!NutsConstants.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {
                 password = context.getTerminal().readPassword("Password:");
             }
             context.getValidWorkspace().getSecurityManager().login(login, password);

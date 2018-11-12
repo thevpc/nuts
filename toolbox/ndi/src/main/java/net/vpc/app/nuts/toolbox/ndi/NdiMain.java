@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.toolbox.ndi;
 
-import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -19,7 +18,7 @@ public class NdiMain extends NutsApplication {
         if (args.length > 0) {
             if (args[0].equals("in") || args[0].equals("install")) {
                 LinuxNdi ndi = null;
-                if (ws.getPlatformOs().startsWith("linux#")) {
+                if (ws.getPlatformOs().getName().equals("linux#")) {
                     ndi = new LinuxNdi(ws, session);
                 }
                 if (ndi == null) {

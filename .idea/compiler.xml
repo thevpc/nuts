@@ -52,6 +52,7 @@
         <module name="vpc-common-io-compress" />
         <module name="vpc-common-io-ext-compress" />
         <module name="vpc-common-io-osapi" />
+        <module name="vpc-common-mvn" />
         <module name="vpc-common-sql" />
         <module name="vpc-common-strings" />
         <module name="vpc-common-swings" />
@@ -65,6 +66,8 @@
       <module name="feenoo" target="1.7" />
       <module name="feenoo (1)" target="1.7" />
       <module name="feenoo (2)" target="1.7" />
+      <module name="file-version" target="1.8" />
+      <module name="file-version (1)" target="1.8" />
       <module name="hadrumaths" target="1.8" />
       <module name="hadrumaths-scala" target="1.8" />
       <module name="hadrumaths-scala-examples" target="1.8" />
@@ -112,6 +115,7 @@
       <module name="vpc-common-io-compress" target="1.7" />
       <module name="vpc-common-io-ext-compress" target="1.7" />
       <module name="vpc-common-io-osapi" target="1.7" />
+      <module name="vpc-common-mvn" target="1.8" />
       <module name="vpc-common-sql" target="1.7" />
       <module name="vpc-common-strings" target="1.8" />
       <module name="vpc-common-swings" target="1.8" />

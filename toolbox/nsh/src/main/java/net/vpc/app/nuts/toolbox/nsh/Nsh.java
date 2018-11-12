@@ -1,10 +1,7 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsApplication;
 import net.vpc.app.nuts.NutsWorkspace;
-
-import java.util.Arrays;
 
 public class Nsh extends NutsApplication{
     public static void main(String[] args) {

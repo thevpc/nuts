@@ -29,7 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,16 +67,16 @@ public class NutsTerminalDelegate extends AbstractNutsTerminal {
     }
 
     @Override
-    public String readLine(String prompt) {
+    public String readLine(String promptFormat, Object[] params) {
         if (inReplaceReader != null) {
-            getOut().print(prompt);
+            getOut().printf(promptFormat,params);
             try {
                 return inReplaceReader.readLine();
             } catch (IOException e) {
                 throw new NutsIOException(e);
             }
         }
-        return base.readLine(prompt);
+        return base.readLine(promptFormat, params);
     }
 
     @Override

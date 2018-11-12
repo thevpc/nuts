@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 
 import java.io.File;
 
@@ -63,6 +65,7 @@ public class FetchCommand extends AbstractNutsCommand {
             } else if (cmdLine.read("-e", "--effective")) {
                 effective = true;
             } else {
+                NutsWorkspace ws = context.getValidWorkspace();
                 String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
                     if (descMode) {
@@ -70,18 +73,18 @@ public class FetchCommand extends AbstractNutsCommand {
                         if (lastLocationFile == null) {
                             context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
                             file = new NutsFile(context.getValidWorkspace().getExtensionManager().parseNutsId(id), null, null, false, false, null);
-                        } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.resolvePath(lastLocationFile)).isDirectory()) {
-                            File folder = new File(context.resolvePath(lastLocationFile));
+                        } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getAbsolutePath(lastLocationFile)).isDirectory()) {
+                            File folder = new File(context.getAbsolutePath(lastLocationFile));
                             folder.mkdirs();
                             NutsDescriptor descriptor = context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
-                            File target = new File(folder, CoreNutsUtils.getNutsFileName(context.getValidWorkspace().getExtensionManager().parseNutsId(id), ".effective.nuts"));
+                            File target = new File(folder, ws.getNutsFileName(context.getValidWorkspace().getExtensionManager().parseNutsId(id), ".effective.nuts"));
                             descriptor.write(target, true);
-                            file = new NutsFile(CoreNutsUtils.parseOrErrorNutsId(id), descriptor, target.getPath(), false, true, null);
+                            file = new NutsFile(ws.parseOrErrorNutsId(id), descriptor, target.getPath(), false, true, null);
                         } else {
-                            File target = new File(context.resolvePath(lastLocationFile));
+                            File target = new File(context.getAbsolutePath(lastLocationFile));
                             NutsDescriptor descriptor = context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
                             descriptor.write(target, true);
-                            file = new NutsFile(CoreNutsUtils.parseOrErrorNutsId(id), descriptor, target.getPath(), false, true, null);
+                            file = new NutsFile(ws.parseOrErrorNutsId(id), descriptor, target.getPath(), false, true, null);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);
@@ -89,15 +92,15 @@ public class FetchCommand extends AbstractNutsCommand {
                         NutsFile file = null;
                         if (lastLocationFile == null) {
                             file = context.getValidWorkspace().fetch(id, context.getSession());
-                        } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.resolvePath(lastLocationFile)).isDirectory()) {
-                            File folder = new File(context.resolvePath(lastLocationFile));
+                        } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getAbsolutePath(lastLocationFile)).isDirectory()) {
+                            File folder = new File(context.getAbsolutePath(lastLocationFile));
                             folder.mkdirs();
                             String fetched = context.getValidWorkspace().copyTo(id, folder.getPath(), context.getSession());
-                            file = new NutsFile(CoreNutsUtils.parseOrErrorNutsId(id), null, fetched, false, true, null);
+                            file = new NutsFile(ws.parseOrErrorNutsId(id), null, fetched, false, true, null);
                         } else {
-                            File simpleFile = new File(context.resolvePath(lastLocationFile));
+                            File simpleFile = new File(context.getAbsolutePath(lastLocationFile));
                             String fetched = context.getValidWorkspace().copyTo(id, simpleFile.getPath(), context.getSession());
-                            file = new NutsFile(CoreNutsUtils.parseOrErrorNutsId(id), null, fetched, false, true, null);
+                            file = new NutsFile(ws.parseOrErrorNutsId(id), null, fetched, false, true, null);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);

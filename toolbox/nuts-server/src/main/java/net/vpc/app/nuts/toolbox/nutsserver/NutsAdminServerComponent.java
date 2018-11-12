@@ -30,8 +30,11 @@
 package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.toolbox.nsh.*;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.DefaultNutsConsole;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsole;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -71,7 +74,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (executor == null) {
             executor = new ThreadPoolExecutor(2, 10, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
         }
-        if (CoreStringUtils.isEmpty(serverId)) {
+        if (StringUtils.isEmpty(serverId)) {
             String serverName = NutsConstants.DEFAULT_ADMIN_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();

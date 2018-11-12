@@ -29,7 +29,10 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsComponent;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.Prototype;
 
 import java.util.List;
 

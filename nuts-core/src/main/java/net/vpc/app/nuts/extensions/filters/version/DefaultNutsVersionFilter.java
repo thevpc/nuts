@@ -32,9 +32,11 @@ package net.vpc.app.nuts.extensions.filters.version;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
+import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,7 +44,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 
 /**
  * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
@@ -70,7 +71,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     }
 
     public static DefaultNutsVersionFilter parse(String version) {
-        if (CoreStringUtils.isEmpty(version)) {
+        if (StringUtils.isEmpty(version)) {
             return new DefaultNutsVersionFilter();
         }
         DefaultNutsVersionFilter d = new DefaultNutsVersionFilter();
@@ -101,7 +102,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
                 String v3 = y.group("V3");
                 if(v3.endsWith("*")){
                     String min = v3.substring(0, v3.length() - 1);
-                    String max = CoreVersionUtils.incVersion(min,-1);
+                    String max = new NutsVersionImpl(min).inc(-1).getValue();
                     d.add(new NutsVersionInterval(true, false, min, max));
                 }else {
                     d.add(new NutsVersionInterval(true, true, v3, v3));

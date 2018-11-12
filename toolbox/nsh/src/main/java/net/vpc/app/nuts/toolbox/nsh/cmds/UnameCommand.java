@@ -29,11 +29,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.strings.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vpc on 1/7/17.
@@ -66,48 +70,31 @@ public class UnameCommand extends AbstractNutsCommand {
         }
         if (cmdLine.isExecMode()) {
             NutsWorkspace ws = context.getWorkspace();
-            String osdist = ws.getPlatformOsDist();
-            String os = ws.getPlatformOs();
-            String arch = ws.getPlatformArch();
+            NutsId osdist = ws.getPlatformOsDist();
+            NutsId os = ws.getPlatformOs();
+            NutsId arch = ws.getPlatformArch();
 
             NutsPrintStream out = context.getTerminal().getFormattedOut();
-            StringBuilder sb = new StringBuilder();
+            List<String> sb = new ArrayList<>();
             if (!farch && !fos && !fdist) {
-                if (!CoreStringUtils.isEmpty(osdist)) {
-                    sb.append(osdist);
-                } else if (!CoreStringUtils.isEmpty(os)) {
-                    sb.append(os);
-                } else if (!CoreStringUtils.isEmpty(arch)) {
-                    sb.append(arch);
-                }
-
+                sb.add(osdist.toString());
+                sb.add(os.toString());
+                sb.add(arch.toString());
             } else {
                 if (farch) {
-                    if (!CoreStringUtils.isEmpty(arch)) {
-                        sb.append(arch);
-                    }
+                    sb.add(arch.toString());
                 }
                 if (fos) {
-                    if (!CoreStringUtils.isEmpty(os)) {
-                        if (sb.length() > 0) {
-                            sb.append(" ");
-                        }
-                        sb.append(os);
-                    }
+                    sb.add(os.toString());
                 }
                 if (fdist) {
-                    if (!CoreStringUtils.isEmpty(osdist)) {
-                        if (sb.length() > 0) {
-                            sb.append(" ");
-                        }
-                        sb.append(osdist);
-                    }
+                    sb.add(osdist.toString());
                 }
             }
-            if (sb.length() == 0) {
-                sb.append("<UNKNOWN>");
+            if (sb.isEmpty()) {
+                sb.add("<UNKNOWN>");
             }
-            out.println(sb);
+            out.println(StringUtils.join(" ",sb));
         }
         return 0;
     }

@@ -32,9 +32,9 @@ package net.vpc.app.nuts.extensions.core;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
-import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
 import net.vpc.app.nuts.extensions.filters.version.DefaultNutsVersionFilter;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
+import net.vpc.common.strings.StringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -43,6 +43,10 @@ public class NutsVersionImpl implements NutsVersion {
     private static final long serialVersionUID=1l;
     private final String value;
 
+    public NutsVersionImpl(String value) {
+        this.value = StringUtils.trim(value);
+    }
+
     @Override
     public String getValue() {
         return value;
@@ -50,12 +54,9 @@ public class NutsVersionImpl implements NutsVersion {
 
     @Override
     public boolean isEmpty() {
-        return CoreStringUtils.isEmpty(value);
+        return StringUtils.isEmpty(value);
     }
 
-    public NutsVersionImpl(String value) {
-        this.value = CoreStringUtils.trim(value);
-    }
 
     @Override
     public int compareTo(String other) {
@@ -115,6 +116,16 @@ public class NutsVersionImpl implements NutsVersion {
     }
 
     @Override
+    public NutsVersion inc() {
+        return inc(-1);
+    }
+
+    @Override
+    public NutsVersion inc(int level) {
+        return new NutsVersionImpl(CoreVersionUtils.incVersion(getValue(),level));
+    }
+
+    @Override
     public String toString() {
         return value == null ? "" : String.valueOf(value);
     }
@@ -141,7 +152,7 @@ public class NutsVersionImpl implements NutsVersion {
 
     @Override
     public boolean matches(String expression) {
-        if (CoreStringUtils.isEmpty(expression)) {
+        if (StringUtils.isEmpty(expression)) {
             return true;
         }
         return DefaultNutsVersionFilter.parse(expression).accept(this);

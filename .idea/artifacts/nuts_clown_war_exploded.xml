@@ -14,19 +14,11 @@
             <element id="module-output" name="nuts-servlet" />
           </element>
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1.0" />
-          <element id="archive" name="nuts-core-0.5.0.0.jar">
-            <element id="module-output" name="nuts-core" />
+          <element id="archive" name="nuts-server-0.5.0.0.jar">
+            <element id="module-output" name="nuts-server" />
           </element>
           <element id="archive" name="vpc-common-utils-1.22.jar">
             <element id="module-output" name="vpc-common-utils" />
-          </element>
-          <element id="archive" name="vpc-common-io-1.3.6.jar">
-            <element id="module-output" name="vpc-common-io" />
-          </element>
-          <element id="library" level="project" name="Maven: org.ow2.asm:asm:5.2" />
-          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.5" />
-          <element id="archive" name="nuts-server-0.5.0.0.jar">
-            <element id="module-output" name="nuts-server" />
           </element>
           <element id="archive" name="nsh-0.5.0.0.jar">
             <element id="module-output" name="nsh" />
@@ -34,15 +26,25 @@
           <element id="archive" name="java-shell-0.6.jar">
             <element id="module-output" name="java-shell" />
           </element>
+          <element id="archive" name="vpc-common-strings-1.2.14.jar">
+            <element id="module-output" name="vpc-common-strings" />
+          </element>
+          <element id="archive" name="vpc-common-mvn-1.0.jar">
+            <element id="module-output" name="vpc-common-mvn" />
+          </element>
           <element id="archive" name="vpc-common-commandline-1.1.1.jar">
             <element id="module-output" name="vpc-common-commandline" />
           </element>
           <element id="archive" name="vpc-common-io-compress-1.3.6.jar">
             <element id="module-output" name="vpc-common-io-compress" />
           </element>
+          <element id="archive" name="vpc-common-io-1.3.6.jar">
+            <element id="module-output" name="vpc-common-io" />
+          </element>
           <element id="library" level="project" name="Maven: org.apache.commons:commons-compress:1.16.1" />
           <element id="library" level="project" name="Maven: org.objenesis:objenesis:2.6" />
           <element id="library" level="project" name="Maven: org.jline:jline:3.5.2" />
+          <element id="library" level="project" name="Maven: org.whitesource:pecoff4j:0.0.2.1" />
           <element id="library" level="project" name="Maven: com.jcraft:jsch:0.1.50" />
         </element>
       </element>

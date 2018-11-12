@@ -31,9 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Created by vpc on 1/23/17.

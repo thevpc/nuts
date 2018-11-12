@@ -1,9 +1,9 @@
 package net.vpc.toolbox.tomcat.server;
 
 import net.vpc.common.io.FileUtils;
+import net.vpc.toolbox.tomcat.server.config.TomcatServerDomainConfig;
 import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
-import net.vpc.toolbox.tomcat.server.config.TomcatServerDomainConfig;
 
 import java.io.File;
 import java.io.PrintStream;

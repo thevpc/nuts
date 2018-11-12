@@ -29,13 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import java.util.Arrays;
-
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.strings.StringUtils;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -100,7 +99,7 @@ public class WhoCommand extends AbstractNutsCommand {
                 NutsEffectiveUser ruser = repository.getSecurityManager().getEffectiveUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
-                        || !CoreStringUtils.isEmpty(ruser.getMappedUser()))) {
+                        || !StringUtils.isEmpty(ruser.getMappedUser()))) {
                     out.printf("[ [[%s]] ]: \n", repository.getRepositoryId());
                     Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));

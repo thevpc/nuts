@@ -38,7 +38,7 @@ import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
 
-import java.io.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -56,8 +56,6 @@ public class CpCommand extends AbstractNutsCommand {
     }
 
     public static class Options {
-        String keyPassword = null;
-        String keyFilePath = null;
         boolean mkdir;
     }
 
@@ -67,11 +65,7 @@ public class CpCommand extends AbstractNutsCommand {
         Options o = new Options();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.isOption()) {
-                if (cmdLine.isOption(null, "password")) {
-                    o.keyPassword = cmdLine.readValue();
-                } else if (cmdLine.isOption(null, "cert")) {
-                    o.keyFilePath = cmdLine.readValue();
-                } else if (cmdLine.isOption(null, "mkdir")) {
+                if (cmdLine.isOption(null, "mkdir")) {
                     o.mkdir = true;
                 }
             } else {
@@ -111,23 +105,17 @@ public class CpCommand extends AbstractNutsCommand {
                 p = p + "/" + FileUtils.getFileName(from.getPath());
             }
 
-            SShConnection session = new SShConnection(to.getUser(), to.getServer(), to.getPort(), o.keyFilePath, o.keyPassword);
-            if (o.mkdir) {
-                //session.mkdir;
+            try (SShConnection session = new SShConnection(to)) {
+                copyLocalToRemote(new File(from.getPath()), p, o.mkdir, session);
             }
-            copyLocalToRemote(new File(from.getPath()), p, session);
-            session.close();
         } else if (from.getProtocol().equals("ssh") && to.getProtocol().equals("file")) {
             File to1 = new File(to.getPath());
             if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                 to1 = new File(to1, FileUtils.getFileName(from.getPath()));
             }
-            SShConnection session = new SShConnection(from.getUser(), from.getServer(), from.getPort(), o.keyFilePath, o.keyPassword);
-            if (o.mkdir) {
-                FileUtils.createParents(to1);
+            try (SShConnection session = new SShConnection(from)) {
+                session.copyRemoteToLocal(from.getPath(), to1.getPath(), o.mkdir);
             }
-            session.copyRemoteToLocal(from.getPath(), to1.getPath());
-            session.close();
         } else if (from.getProtocol().equals("url") && to.getProtocol().equals("file")) {
             try {
                 File to1 = new File(to.getPath());
@@ -146,13 +134,19 @@ public class CpCommand extends AbstractNutsCommand {
         }
     }
 
-    private void copyLocalToRemote(File from, String to, SShConnection session) {
+    private void copyLocalToRemote(File from, String to, boolean mkdir, SShConnection session) {
         if (from.isDirectory()) {
-            session.exec("mkdir -p " + to);
+            if (mkdir) {
+                session.mkdir(to, true);
+            }
             for (File file : from.listFiles()) {
-                copyLocalToRemote(file, to + "/" + file.getName(), session);
+                copyLocalToRemote(file, to + "/" + file.getName(), mkdir, session);
             }
         } else if (from.isFile()) {
+            String p = FileUtils.getFileParentPath(to);
+            if (p != null) {
+                session.mkdir(p, true);
+            }
             session.copyLocalToRemote(from.getPath(), to);
         }
     }

@@ -1,17 +1,13 @@
 package net.vpc.toolbox.tomcat.server;
 
-import net.vpc.app.nuts.JsonSerializer;
-import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
+import net.vpc.toolbox.tomcat.server.config.TomcatServerAppConfig;
 import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
-import net.vpc.toolbox.tomcat.server.config.TomcatServerAppConfig;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 
 public class TomcatServerAppConfigService {
     private String name;

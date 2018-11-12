@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,18 +29,13 @@
  */
 package net.vpc.app.nuts.extensions.terminals.textparsers;
 
+import net.vpc.app.nuts.extensions.terminals.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.terminals.NutsTextFormat;
-import net.vpc.app.nuts.extensions.terminals.NutsTextFormats;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodeList;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNode;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodeCommand;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodePlain;
-import net.vpc.app.nuts.extensions.terminals.NutsTextNodeStyled;
 
 /**
  * Created by vpc on 5/23/17.
@@ -72,11 +67,10 @@ public class DefaultNutsTextParser {
                 switch (p.getStart()) {
                     case "\"":
                     case "\"\"":
-                    case "\"\"\"": 
+                    case "\"\"\"":
                     case "'":
                     case "''":
-                    case "'''": 
-                    {
+                    case "'''": {
                         return wrap(convert(new NutsDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), NutsTextFormats.FG_GREEN);
                     }
                     case "``": {
@@ -108,7 +102,7 @@ public class DefaultNutsTextParser {
             if (n instanceof NutsDocNode.List) {
                 NutsDocNode.List p = (NutsDocNode.List) n;
                 NutsDocNode[] children = p.getValues();
-                if(children.length==1){
+                if (children.length == 1) {
                     return convert(children[0]);
                 }
                 return convert(Arrays.asList(children));
@@ -234,6 +228,37 @@ public class DefaultNutsTextParser {
 
     NutsDocNode parseTextNode(String text) {
         return DefaultNutsTextNodeParser.INSTANCE.parse(text);
+    }
+
+    private void escape(NutsDocNode tn, StringBuilder sb) {
+        if (tn instanceof NutsDocNode.Plain) {
+            sb.append(((NutsDocNode.Plain) tn).getValue());
+        } else if (tn instanceof NutsDocNode.List) {
+            for (NutsDocNode nutsDocNode : ((NutsDocNode.List) tn).getValues()) {
+                escape(nutsDocNode,sb);
+            }
+        } else if (tn instanceof NutsDocNode.Typed) {
+            escape(((NutsDocNode.Typed)tn).getNode(),sb);
+        } else if (tn instanceof NutsDocNode.Escaped) {
+            sb.append(((NutsDocNode.Escaped)tn).getValue());
+        }else{
+            throw new IllegalArgumentException("Unsupported");
+        }
+    }
+
+    public String filterText(String text) {
+        if(text==null){
+            text="";
+        }
+        StringBuilder sb = new StringBuilder();
+        try {
+            NutsDocNode tn = DefaultNutsTextNodeParser.INSTANCE.parse(text);
+            escape(tn,sb);
+            return sb.toString();
+        } catch (Exception ex) {
+            log.log(Level.FINEST, "Error parsing : \n" + text, ex);
+            return text;
+        }
     }
 
     public NutsTextNode parse(String text) {

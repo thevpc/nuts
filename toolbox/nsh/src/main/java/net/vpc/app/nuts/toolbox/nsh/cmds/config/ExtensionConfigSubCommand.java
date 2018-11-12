@@ -5,12 +5,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsExtensionInfo;
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsWorkspaceExtension;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.ExtensionNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.strings.StringUtils;
 
 /**
  * @author vpc
@@ -43,7 +46,7 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensionManager().getWorkspaceExtensions()) {
                         NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getWiredId().toString(), false, context.getSession());
-                        String extDesc = CoreStringUtils.trim(desc.getName());
+                        String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
                             extDesc = " : " + extDesc;
                         }
@@ -60,7 +63,7 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
                 if (cmdLine.isExecMode()) {
                     for (NutsExtensionInfo extension : context.getValidWorkspace().getExtensionManager().findWorkspaceExtensions(context.getSession())) {
                         NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getId().toString(), false, context.getSession());
-                        String extDesc = CoreStringUtils.trim(desc.getName());
+                        String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
                             extDesc = " : " + extDesc;
                         }

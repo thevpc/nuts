@@ -31,8 +31,8 @@ package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-
 import net.vpc.common.io.FileUtils;
+import net.vpc.common.strings.StringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -50,7 +50,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
                 ) {
             return NO_SUPPORT;
         }
-        if (CoreStringUtils.isEmpty(location)) {
+        if (StringUtils.isEmpty(location)) {
             return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {

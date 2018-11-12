@@ -29,7 +29,9 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -397,6 +399,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     getBootId() + ";"
                             + "net.vpc.common:vpc-common-utils#1.22;"
                             + "net.vpc.common:vpc-common-io#1.3.6;"
+                            + "net.vpc.common:vpc-common-strings#1.2.14;"
                             + "org.ow2.asm:asm#5.2;"
                             + "com.google.code.gson:gson#2.8.5"
                     ,

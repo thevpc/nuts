@@ -29,17 +29,15 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.strings.StringUtils;
+
 import java.io.File;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.*;
-
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreIOUtils;
-import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.extensions.util.ObservableMap;
+import java.util.logging.Level;
 
 /**
  * @author vpc
@@ -132,7 +130,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                     s = "";
                 }
                 s = s.trim();
-                if (!CoreStringUtils.isEmpty(s)) {
+                if (!StringUtils.isEmpty(s)) {
                     simports.add(s);
                 }
             }
@@ -185,6 +183,139 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return config;
     }
 
+    @Override
+    public boolean addSdk(String name, NutsSdkLocation location) {
+        if (location != null) {
+            if (StringUtils.isEmpty(location.getName())) {
+                throw new IllegalArgumentException("Sdk Name should not be null");
+            }
+            if (StringUtils.isEmpty(location.getVersion())) {
+                throw new IllegalArgumentException("Sdk Version should not be null");
+            }
+            if (StringUtils.isEmpty(location.getPath())) {
+                throw new IllegalArgumentException("Sdk Path should not be null");
+            }
+            List<NutsSdkLocation> list = config.getSdk().get(name);
+            if (list == null) {
+                list = new ArrayList<>();
+                config.getSdk().put(name, list);
+            }
+            if (list.contains(location)) {
+                return false;
+            }
+            list.add(location);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public NutsSdkLocation findSdkByName(String name, String locationName) {
+        if (locationName != null) {
+            List<NutsSdkLocation> list = config.getSdk().get(name);
+            if (list != null) {
+                for (NutsSdkLocation location : list) {
+                    if (location.getName().equals(locationName)) {
+                        return location;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NutsSdkLocation findSdkByPath(String name, String path) {
+        if (path != null) {
+            List<NutsSdkLocation> list = config.getSdk().get(name);
+            if (list != null) {
+                for (NutsSdkLocation location : list) {
+                    if (location.getPath().equals(path)) {
+                        return location;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NutsSdkLocation findSdkByVersion(String name, String version) {
+        if (version != null) {
+            List<NutsSdkLocation> list = config.getSdk().get(name);
+            if (list != null) {
+                for (NutsSdkLocation location : list) {
+                    if (location.getVersion().equals(version)) {
+                        return location;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NutsSdkLocation removeSdk(String name, NutsSdkLocation location) {
+        if (location != null) {
+            List<NutsSdkLocation> list = config.getSdk().get(name);
+            if (list != null) {
+                for (Iterator<NutsSdkLocation> iterator = list.iterator(); iterator.hasNext(); ) {
+                    NutsSdkLocation location2 = iterator.next();
+                    if (location2.equals(location)) {
+                        iterator.remove();
+                        return location2;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NutsSdkLocation findSdk(String name, NutsSdkLocation location) {
+        if (location != null) {
+            List<NutsSdkLocation> list = config.getSdk().get(name);
+            if (list != null) {
+                for (NutsSdkLocation location2 : list) {
+                    if (location2.equals(location)) {
+                        return location2;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String[] getSdkTypes() {
+        Set<String> s = config.getSdk().keySet();
+        return s.toArray(new String[s.size()]);
+    }
+
+    @Override
+    public NutsSdkLocation getSdk(String type, String requestedVersion) {
+        NutsVersionFilter javaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedVersion);
+        NutsSdkLocation best = null;
+        for (NutsSdkLocation jdk : getSdks("java")) {
+            String currVersion = jdk.getVersion();
+            if (javaVersionFilter.accept(new NutsVersionImpl(currVersion))) {
+                if (best == null || CoreVersionUtils.compareVersions(best.getVersion(), currVersion) < 0) {
+                    best = jdk;
+                }
+            }
+        }
+        return best;
+    }
+
+    @Override
+    public NutsSdkLocation[] getSdks(String type) {
+        List<NutsSdkLocation> list = config.getSdk().get(type);
+        if (list == null) {
+            return new NutsSdkLocation[0];
+        }
+        return list.toArray(new NutsSdkLocation[list.size()]);
+    }
+
     public boolean addExtension(NutsId extensionId) {
         if (extensionId == null) {
             throw new NutsIllegalArgumentException("Invalid Extension");
@@ -221,7 +352,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         }
         File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         CoreJsonUtils.storeJson(config, file, true);
-        NutsRepositoryFilter repositoryFilter=null;
+        NutsRepositoryFilter repositoryFilter = null;
         for (NutsRepository repo : ws.getEnabledRepositories(repositoryFilter)) {
             repo.save();
         }
@@ -342,7 +473,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         NutsUserConfig config = getConfig().getSecurity(userId);
         if (config == null) {
             if (NutsConstants.USER_ADMIN.equals(userId) || NutsConstants.USER_ANONYMOUS.equals(userId)) {
-                config = new NutsUserConfig(userId, null, null,null, null);
+                config = new NutsUserConfig(userId, null, null, null, null);
                 setUser(config);
             }
         }
@@ -351,7 +482,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public void setUser(NutsUserConfig config) {
-        if(config!=null) {
+        if (config != null) {
             getConfig().setSecurity(config);
         }
     }
@@ -370,10 +501,10 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (repository == null) {
             throw new NutsIllegalArgumentException("Invalid Repository");
         }
-        if (CoreStringUtils.isEmpty(repository.getId())) {
+        if (StringUtils.isEmpty(repository.getId())) {
             throw new NutsIllegalArgumentException("Invalid Repository Id");
         }
-        if (CoreStringUtils.isEmpty(repository.getType())) {
+        if (StringUtils.isEmpty(repository.getType())) {
             repository.setType(NutsConstants.REPOSITORY_TYPE_NUTS);
         }
         if (getConfig().containsRepository(repository.getId())) {
@@ -421,7 +552,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
 
     public void setEnv(String property, String value) {
-        if (CoreStringUtils.isEmpty(value)) {
+        if (StringUtils.isEmpty(value)) {
             getConfig().getEnv().remove(property);
         } else {
             getConfig().getEnv().setProperty(property, value);
@@ -431,7 +562,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     public String getEnv(String property, String defaultValue) {
         String o = getConfig().getEnv().getProperty(property);
-        if (CoreStringUtils.isEmpty(o)) {
+        if (StringUtils.isEmpty(o)) {
             return defaultValue;
         }
         return o;
@@ -454,4 +585,44 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public String getComponentsLocation() {
         return getConfig().getComponentsLocation();
     }
+
+    @Override
+    public void setLogLevel(Level levek) {
+        CoreLogUtils.setLevel(Level.FINEST);
+    }
+
+    @Override
+    public NutsSdkLocation[] searchJdkLocations(PrintStream out) {
+        return JavaHelper.searchJdkLocations(ws, out);
+    }
+
+    @Override
+    public NutsSdkLocation[] searchJdkLocations(String path, PrintStream out) {
+        return JavaHelper.searchJdkLocations(ws, path, out);
+    }
+
+    @Override
+    public NutsSdkLocation resolveJdkLocation(String path) {
+        return JavaHelper.resolveJdkLocation(path,ws);
+    }
+
+
+    @Override
+    public byte[] decryptString(byte[] input) {
+        if(input==null || input.length==0){
+            return new byte[0];
+        }
+        String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        return CoreSecurityUtils.httpDecrypt(input, passphrase);
+    }
+
+    @Override
+    public byte[] encryptString(byte[] input) {
+        if(input==null || input.length==0){
+            return new byte[0];
+        }
+        String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        return CoreSecurityUtils.httpEncrypt(input, passphrase);
+    }
+
 }

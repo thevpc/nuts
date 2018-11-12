@@ -29,18 +29,18 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.NonBlockingInputStreamAdapter;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -79,7 +79,7 @@ public class ConnectCommand extends AbstractNutsCommand {
             port = Integer.parseInt(server.substring(server.indexOf(":") + 1));
             server = server.substring(0, server.indexOf(":"));
         }
-        if (!CoreStringUtils.isEmpty(login) && CoreStringUtils.isEmpty(password)) {
+        if (!StringUtils.isEmpty(login) && StringUtils.isEmpty(password)) {
             password = context.getTerminal().readPassword("Password:");
         }
         Socket socket = null;
@@ -88,7 +88,7 @@ public class ConnectCommand extends AbstractNutsCommand {
             socket = new Socket(InetAddress.getByName(server), validPort);
             IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getTerminal().getOut());
             PrintStream out = new PrintStream(socket.getOutputStream());
-            if (!CoreStringUtils.isEmpty(login)) {
+            if (!StringUtils.isEmpty(login)) {
                 out.printf("connect ==%s %s== \n",login,password);
             }
             while (true) {

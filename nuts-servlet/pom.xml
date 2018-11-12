@@ -70,11 +70,11 @@
             <artifactId>nuts</artifactId>
             <version>0.5.0</version>
         </dependency>
-        <dependency>
-            <groupId>net.vpc.app.nuts</groupId>
-            <artifactId>nuts-core</artifactId>
-            <version>0.5.0.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>net.vpc.app.nuts</groupId>-->
+            <!--<artifactId>nuts-core</artifactId>-->
+            <!--<version>0.5.0.0</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>net.vpc.app.nuts.toolbox</groupId>
             <artifactId>nuts-server</artifactId>

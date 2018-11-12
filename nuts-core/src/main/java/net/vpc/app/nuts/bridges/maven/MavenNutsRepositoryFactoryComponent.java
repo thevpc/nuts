@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.strings.StringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -58,7 +58,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
         if (!NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN.equals(repositoryType)) {
             return NO_SUPPORT;
         }
-        if (CoreStringUtils.isEmpty(location)) {
+        if (StringUtils.isEmpty(location)) {
             return DEFAULT_SUPPORT;
         }
         if (location.startsWith("http://") || location.startsWith("https://")) {

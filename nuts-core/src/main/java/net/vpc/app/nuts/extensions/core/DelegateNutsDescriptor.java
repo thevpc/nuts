@@ -29,7 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsDependency;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsExecutorDescriptor;
+import net.vpc.app.nuts.NutsId;
 
 import java.util.Map;
 

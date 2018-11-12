@@ -32,51 +32,21 @@ package net.vpc.app.nuts.extensions.util;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.extensions.filters.version.AllNutsVersionFilter;
 import net.vpc.app.nuts.extensions.filters.version.DefaultNutsVersionFilter;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CoreVersionUtils {
 
     public static final NutsVersionFilter ALL_VERSIONS = new AllNutsVersionFilter();
 
     public static boolean versionMatches(String version, String pattern) {
-        if (pattern == null || CoreStringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
+        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
             return true;
         }
         return pattern.equals(version);
     }
-
-    public static String incVersion(String oldVersion) {
-        return incVersion(oldVersion, -1);
-    }
-
-//    public static void main(String[] args) {
-//        System.out.println(splitVersionParts2("3-3.SNAPSHOT"));
-//        System.out.println(incVersion("3-3.SNAPSHOT",1));
-//    }
-
-//    public static String incVersionPart(String part) {
-//        Matcher m = Pattern.compile("^(<C>.+)(?<N>[0-9]+)$").matcher(part);
-//        if (m.find()) {
-//            return m.group("C") + String.valueOf(Long.parseLong(m.group("N")) + 1);
-//        }
-//        m = Pattern.compile("^(?<N>[0-9]+)(?<C>.+)$").matcher(part);
-//        if (m.find()) {
-//            return m.group("C") + String.valueOf(Long.parseLong(m.group("N")) + 1);
-//        }
-//        m = Pattern.compile("^(?<C1>.+)(?<N>[0-9]+)(?<C2>.+)$").matcher(part);
-//        if (m.find()) {
-//            return m.group("C1") + String.valueOf(Long.parseLong(m.group("N")) + 1) + m.group("C2");
-//        }
-//        if (CoreStringUtils.isLong(part)) {
-//            return String.valueOf(Long.parseLong(part) + 1L);
-//        }
-//        return part + 1;
-//    }
 
     public static String incVersion(String oldVersion, int level) {
         VersionParts parts = splitVersionParts2(oldVersion);
@@ -198,7 +168,7 @@ public class CoreVersionUtils {
         }
     }
     private static VersionParts splitVersionParts2(String v1) {
-        v1 = CoreStringUtils.trim(v1);
+        v1 = StringUtils.trim(v1);
         List<VersionPart> parts = new ArrayList<>();
         StringBuilder last = new StringBuilder();
         boolean digit = false;
@@ -209,7 +179,7 @@ public class CoreVersionUtils {
                     last.append(c);
                 } else {
                     parts.add(new VersionPart(last.toString(), false));
-                    CoreStringUtils.clear(last);
+                    StringUtils.clear(last);
                     digit = true;
                     last.append(c);
                 }
@@ -221,7 +191,7 @@ public class CoreVersionUtils {
                     last.append(c);
                 } else {
                     parts.add(new VersionPart(last.toString(), true));
-                    CoreStringUtils.clear(last);
+                    StringUtils.clear(last);
                     digit = false;
                     last.append(c);
                 }
@@ -234,7 +204,7 @@ public class CoreVersionUtils {
     }
 
     private static String[] splitVersionParts(String v1) {
-        v1 = CoreStringUtils.trim(v1);
+        v1 = StringUtils.trim(v1);
         List<String> parts = new ArrayList<>();
         StringBuilder last = new StringBuilder();
         for (char c : v1.toCharArray()) {
@@ -244,7 +214,7 @@ public class CoreVersionUtils {
                 last.append(c);
             } else {
                 parts.add(last.toString());
-                CoreStringUtils.clear(last);
+                StringUtils.clear(last);
             }
         }
         if (last.length() > 0) {
@@ -274,7 +244,7 @@ public class CoreVersionUtils {
     }
 
     public static boolean isStaticVersionPattern(String pattern) {
-        if (CoreStringUtils.isEmpty(pattern)) {
+        if (StringUtils.isEmpty(pattern)) {
             return false;
         }
         if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",") || pattern.contains("*")) {
@@ -285,7 +255,7 @@ public class CoreVersionUtils {
     }
 
     public static NutsVersionFilter createNutsVersionFilter(String pattern) {
-        if (pattern == null || CoreStringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
+        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
             return ALL_VERSIONS;
         }
         return DefaultNutsVersionFilter.parse(pattern);

@@ -27,8 +27,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.extensions.core;
 
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.terminals.NutsTerminalDelegate;
+
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -171,6 +175,11 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
     public NutsSession setTerminal(NutsTerminal terminal) {
         this.terminal = terminal;
         return this;
+    }
+
+    @Override
+    public NutsSession setTerminal(NutsTerminal base, InputStream inReplace, NutsPrintStream outReplace, NutsPrintStream errReplace) {
+        return setTerminal(new NutsTerminalDelegate(base, inReplace, outReplace, errReplace));
     }
 
     @Override

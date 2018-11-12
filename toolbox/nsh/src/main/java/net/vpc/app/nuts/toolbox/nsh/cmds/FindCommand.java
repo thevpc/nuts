@@ -30,17 +30,23 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.*;
+//import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+//import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
+//import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+//import net.vpc.app.nuts.extensions.util.NutsSearchBuilder;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsIdExt;
-import net.vpc.app.nuts.toolbox.nsh.options.*;
-import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
+import net.vpc.app.nuts.toolbox.nsh.options.PackagingNonOption;
+import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.common.commandline.ArgVal;
+import net.vpc.common.commandline.DefaultNonOption;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import net.vpc.common.commandline.ArgVal;
-import net.vpc.common.commandline.DefaultNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -54,6 +60,7 @@ public class FindCommand extends AbstractNutsCommand {
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
+        NutsWorkspace ws = context.getWorkspace();
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();
@@ -254,7 +261,7 @@ public class FindCommand extends AbstractNutsCommand {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        NutsSearch search = new NutsSearchBuilder().addJs(findWhat.jsCode)
+        NutsSearch search = findContext.context.getValidWorkspace().createSearchBuilder().addJs(findWhat.jsCode)
                 .addId(findWhat.nonjs)
                 .addArch(findContext.arch)
                 .addPackaging(findContext.pack)
@@ -461,13 +468,13 @@ public class FindCommand extends AbstractNutsCommand {
                         findContext.out.print(" ");
                         findContext.out.print(Arrays.asList(descriptor == null ? new String[0] : descriptor.getArch()));
                         findContext.out.print(" ");
-                        if (CoreStringUtils.isEmpty(info.nuts.getNamespace())) {
+                        if (StringUtils.isEmpty(info.nuts.getNamespace())) {
                             findContext.out.print("?");
                         } else {
                             findContext.out.print(info.nuts.getNamespace());
                         }
                         findContext.out.print(" ");
-                        findContext.out.print(format(info.nuts, info.desc, imports));
+                        findContext.out.print(format(info.nuts, info.desc, imports,ws));
                         if (findContext.showFile) {
                             findContext.out.print(" ");
                             if (info.getFile() == null) {
@@ -481,7 +488,7 @@ public class FindCommand extends AbstractNutsCommand {
                             if (info.getFile() == null) {
                                 findContext.out.print("?");
                             } else {
-                                String cls = CorePlatformUtils.getMainClass(info.getFile());
+                                String cls = ws.resolveJavaMainClass(info.getFile());
                                 if (cls == null) {
                                     findContext.out.print("?");
                                 } else {
@@ -489,11 +496,11 @@ public class FindCommand extends AbstractNutsCommand {
                                 }
                             }
                         }
-                        if (!CoreStringUtils.isEmpty(descriptorError)) {
+                        if (!StringUtils.isEmpty(descriptorError)) {
                             findContext.out.print(" [[" + descriptorError + "]]");
                         }
                     } else {
-                        findContext.out.print(format(info.nuts, info.desc, imports));
+                        findContext.out.print(format(info.nuts, info.desc, imports,ws));
                         if (findContext.showFile) {
                             findContext.out.print(" ");
                             if (info.getFile() == null) {
@@ -507,7 +514,7 @@ public class FindCommand extends AbstractNutsCommand {
                             if (info.getFile() == null) {
                                 findContext.out.print("?");
                             } else {
-                                String cls = CorePlatformUtils.getMainClass(info.getFile());
+                                String cls = ws.resolveJavaMainClass(info.getFile());
                                 if (cls == null) {
                                     findContext.out.print("?");
                                 } else {
@@ -559,7 +566,7 @@ public class FindCommand extends AbstractNutsCommand {
                                 findContext.context.getSession().copy().setTransitive(true)
                                         .setFetchMode(m)
                         );
-                        Arrays.sort(depsFiles, CoreNutsUtils.NUTS_FILE_COMPARATOR);
+                        Arrays.sort(depsFiles);
                         for (NutsFile dd : depsFiles) {
                             NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(), null), findContext.context);
                             dinfo.descriptor = dd.getDescriptor();
@@ -574,10 +581,10 @@ public class FindCommand extends AbstractNutsCommand {
                                 findContext.out.print(" ");
                                 findContext.out.printf("%s", Arrays.asList(dinfo.getDescriptor().getArch()));
                                 findContext.out.print(" ");
-                                findContext.out.println(format(dinfo.nuts, info.desc, imports));
+                                findContext.out.println(format(dinfo.nuts, info.desc, imports,ws));
                             } else {
                                 findContext.out.print("\t");
-                                findContext.out.println(format(dinfo.nuts, info.desc, imports));
+                                findContext.out.println(format(dinfo.nuts, info.desc, imports,ws));
                             }
                         }
                     }
@@ -617,7 +624,7 @@ public class FindCommand extends AbstractNutsCommand {
                     break;
                 }
                 case "class": {
-                    String fullName = CorePlatformUtils.getMainClass(info.getFile());
+                    String fullName = ws.resolveJavaMainClass(info.getFile());
                     if (fullName != null && !visitedItems.contains(fullName)) {
                         visitedItems.add(fullName);
                         findContext.out.printf("%s\n", fullName);
@@ -633,7 +640,7 @@ public class FindCommand extends AbstractNutsCommand {
                     }
                     if (d != null) {
                         String p = d.getPackaging();
-                        if (!CoreStringUtils.isEmpty(p) && !visitedPackaging.contains(p)) {
+                        if (!StringUtils.isEmpty(p) && !visitedPackaging.contains(p)) {
                             visitedPackaging.add(p);
                             findContext.out.printf("%s\n", p);
                         }
@@ -649,7 +656,7 @@ public class FindCommand extends AbstractNutsCommand {
                     }
                     if (d != null) {
                         for (String p : d.getArch()) {
-                            if (!CoreStringUtils.isEmpty(p) && !visitedArchs.contains(p)) {
+                            if (!StringUtils.isEmpty(p) && !visitedArchs.contains(p)) {
                                 visitedArchs.add(p);
                                 findContext.out.printf("%s\n", p);
                             }
@@ -668,40 +675,40 @@ public class FindCommand extends AbstractNutsCommand {
         }
     }
 
-    private String format(NutsId id, String desc, Set<String> imports) {
+    private String format(NutsId id, String desc, Set<String> imports,NutsWorkspace ws) {
         id = id.builder()
                 .setNamespace(null)
                 .setQueryProperty(NutsConstants.QUERY_FACE, null)
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true)
         .build();
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isEmpty(id.getNamespace())) {
+        if (!StringUtils.isEmpty(id.getNamespace())) {
             sb.append(id.getNamespace()).append("://");
         }
-        if (!CoreStringUtils.isEmpty(id.getGroup())) {
+        if (!StringUtils.isEmpty(id.getGroup())) {
             if (imports.contains(id.getGroup())) {
                 sb.append("==");
-                sb.append(CoreStringUtils.nescape(id.getGroup()));
+                sb.append(ws.escapeText(id.getGroup()));
                 sb.append("==");
             } else {
-                sb.append(CoreStringUtils.nescape(id.getGroup()));
+                sb.append(ws.escapeText(id.getGroup()));
             }
             sb.append(":");
         }
         sb.append("[[");
-        sb.append(CoreStringUtils.nescape(id.getName()));
+        sb.append(ws.escapeText(id.getName()));
         sb.append("]]");
-        if (!CoreStringUtils.isEmpty(id.getVersion().getValue())) {
+        if (!StringUtils.isEmpty(id.getVersion().getValue())) {
             sb.append("#");
-            sb.append(CoreStringUtils.nescape(id.getVersion().toString()));
+            sb.append(ws.escapeText(id.getVersion().toString()));
         }
-        if (!CoreStringUtils.isEmpty(id.getQuery())) {
+        if (!StringUtils.isEmpty(id.getQuery())) {
             sb.append("?");
-            sb.append(CoreStringUtils.nescape(id.getQuery()));
+            sb.append(ws.escapeText(id.getQuery()));
         }
-        if (!CoreStringUtils.isEmpty(desc)) {
+        if (!StringUtils.isEmpty(desc)) {
             sb.append(" **");
-            sb.append(CoreStringUtils.nescape(desc));
+            sb.append(ws.escapeText(desc));
             sb.append("**");
         }
         return sb.toString();
@@ -805,7 +812,7 @@ public class FindCommand extends AbstractNutsCommand {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            if (!CoreStringUtils.isEmpty(jsCode)) {
+            if (!StringUtils.isEmpty(jsCode)) {
                 sb.append("js::'").append(jsCode).append('\'');
             }
             for (String v : nonjs) {

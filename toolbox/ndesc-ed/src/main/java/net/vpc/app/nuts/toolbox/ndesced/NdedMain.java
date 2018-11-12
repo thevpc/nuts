@@ -84,7 +84,7 @@ public class NdedMain extends NutsApplication{
     }
 
     public String checkParam(String name, String lastValue) {
-        return terminal.readLine("Enter " + name + (lastValue == null ? "" : (" " + lastValue)) + " : ");
+        return terminal.readLine("Enter %s%s : ",name,(lastValue == null ? "" : (" " + lastValue)));
     }
 
     public void fillInteractive(NutsDescriptorBuilder b, boolean nullOnly) {

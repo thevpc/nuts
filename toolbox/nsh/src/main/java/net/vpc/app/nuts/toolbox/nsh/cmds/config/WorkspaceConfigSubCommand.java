@@ -6,14 +6,14 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
+import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.FolderNonOption;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.DefaultNonOption;
+import net.vpc.common.strings.StringUtils;
 
 /**
  *
@@ -87,7 +87,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                                         .setSaveIfCreated(save)
                                         .setCreateIfNotFound(ignoreIdFound)
                         );
-                        if (!CoreStringUtils.isEmpty(login)) {
+                        if (!StringUtils.isEmpty(login)) {
                             workspace.getSecurityManager().login(login, password);
                         }
                         ConfigCommand.trySave(context, workspace, null, autoSave, cmdLine);
@@ -136,7 +136,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                                         .setSaveIfCreated(save)
                                         .setCreateIfNotFound(createIfNotFound)
                         );
-                        if (!CoreStringUtils.isEmpty(login)) {
+                        if (!StringUtils.isEmpty(login)) {
                             workspace.getSecurityManager().login(login, password);
                         }
                         context.setWorkspace(workspace);

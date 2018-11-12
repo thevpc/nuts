@@ -34,7 +34,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -155,11 +157,18 @@ public class Nuts {
         NutsSession session = ws.createSession();
         int errorCode=0;
         if (o.isShowHelp()) {
-            errorCode=ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
+            errorCode=ws.createExecBuilder()
+                    .setSession(session)
+                    .setCommand(NutsConstants.NUTS_SHELL, "help")
+                    .exec().getResult();
             someProcessing = true;
         }
         if (o.isShowLicense()) {
-            errorCode=ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help", "--license"}, null, null, session);
+            errorCode=ws.createExecBuilder()
+                    .setSession(session)
+                    .setCommand(NutsConstants.NUTS_SHELL, "help", "--license")
+                    .exec().getResult()
+            ;
             someProcessing = true;
         }
 
@@ -206,11 +215,17 @@ public class Nuts {
             return 0;
         }
         if (commandArguments.length == 0 && !o.isShowHelp()) {
-            return ws.exec(new String[]{NutsConstants.NUTS_SHELL, "help"}, null, null, session);
+            return ws.createExecBuilder()
+                    .setSession(session)
+                    .setCommand(NutsConstants.NUTS_SHELL, "help")
+                    .exec().getResult();
         }
         List<String> consoleArguments = new ArrayList<>();
         consoleArguments.addAll(Arrays.asList(commandArguments));
-        return ws.exec(consoleArguments.toArray(new String[consoleArguments.size()]), null, null, session);
+        return ws.createExecBuilder()
+                .setSession(session)
+                .setCommand(consoleArguments)
+                .exec().getResult();
     }
 
     private static boolean showPerf(long overallTimeMillis, boolean perf, NutsSession session) {

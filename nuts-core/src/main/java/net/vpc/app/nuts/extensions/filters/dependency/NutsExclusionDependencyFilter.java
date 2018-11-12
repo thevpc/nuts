@@ -1,12 +1,13 @@
 package net.vpc.app.nuts.extensions.filters.dependency;
 
-import java.util.Arrays;
-import java.util.Objects;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 

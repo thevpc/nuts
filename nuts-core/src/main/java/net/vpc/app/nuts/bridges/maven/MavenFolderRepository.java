@@ -31,6 +31,7 @@ package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.CollectionUtils;
 
 import java.io.*;
@@ -135,14 +136,14 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        return nutsDescriptor;
 //    }
 //    protected File getLocalNutDescriptorFile(NutsId id, boolean nullIfInvalidName) {
-//        if (CoreStringUtils.isEmpty(id.getGroup())) {
+//        if (StringUtils.isEmpty(id.getGroup())) {
 //            if (nullIfInvalidName) {
 //                return null;
 //            }
 //            throw new NutsIdInvalidFormatException("Missing group for " + id);
 //        }
 //        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
-//        if (CoreStringUtils.isEmpty(id.getName())) {
+//        if (StringUtils.isEmpty(id.getName())) {
 //            if (nullIfInvalidName) {
 //                return null;
 //            }
@@ -163,10 +164,10 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        return new File(versionFolder, name + ext);
 //    }
     protected NutsFile getNutsFile(NutsId id, NutsSession session) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
         if (id.getVersion().isEmpty()) {
@@ -192,7 +193,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             }
 
             String ext2 = nutsDescriptor == null ? null : nutsDescriptor.getExt();
-            if (CoreStringUtils.isEmpty(ext)) {
+            if (StringUtils.isEmpty(ext)) {
                 ext2 = "jar";
             }
             File localFile = nutsDescriptor == null ? new File(versionFolder,
@@ -209,10 +210,10 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     //    protected File getLocalGroupAndArtifactAndVersionFile(NutsId id, boolean desc, NutsSession session) throws IOException {
-//        if (CoreStringUtils.isEmpty(id.getGroup())) {
+//        if (StringUtils.isEmpty(id.getGroup())) {
 //            return null;
 //        }
-//        if (CoreStringUtils.isEmpty(id.getName())) {
+//        if (StringUtils.isEmpty(id.getName())) {
 //            return null;
 //        }
 //        if (id.getVersion().isEmpty()) {
@@ -248,10 +249,10 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        return new File(versionFolder, getQueryFilename(fid, d));
 //    }
     protected File getLocalGroupAndArtifactFile(NutsId id) {
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
         File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));

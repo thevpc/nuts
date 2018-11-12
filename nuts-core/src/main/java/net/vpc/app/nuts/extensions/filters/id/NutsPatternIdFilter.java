@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.extensions.filters.id;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**

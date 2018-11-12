@@ -5,9 +5,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.toolbox.tomcat.client.TomcatClient;
 import net.vpc.toolbox.tomcat.server.TomcatServer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class TomcatMain extends NutsApplication {
     public static void main(String[] args) {

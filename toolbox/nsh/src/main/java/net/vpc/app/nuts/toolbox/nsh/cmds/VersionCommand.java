@@ -29,18 +29,18 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsPrintStream;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceConfigManager;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.io.URLUtils;
+import net.vpc.common.strings.StringUtils;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.vpc.app.nuts.NutsPrintStream;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceConfigManager;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.io.URLUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -68,7 +68,7 @@ public class VersionCommand extends AbstractNutsCommand {
         out.printf("platform-os          : [[%s]]\n", ws.getPlatformOs()+" ("+System.getProperty("os.name")+")");
         out.printf("platform-os-dist     : [[%s]]\n", ws.getPlatformOsDist());
         out.printf("platform-arch        : [[%s]]\n", ws.getPlatformArch());
-        out.printf("platform-os-lib       : [[%s]]\n", ws.getPlatformOsLib());
+        out.printf("platform-os-lib      : [[%s]]\n", ws.getPlatformOsLib());
 
 
 
@@ -112,7 +112,7 @@ public class VersionCommand extends AbstractNutsCommand {
                 out.printf("                       [[%s]]\n", s);
             }
         } else {
-            out.printf("runtime-class-path   : [[%s]]\n", CoreStringUtils.join(":", runtimeClasPath));
+            out.printf("runtime-class-path   : [[%s]]\n", StringUtils.join(":", runtimeClasPath));
         }
         return 0;
     }

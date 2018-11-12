@@ -29,8 +29,11 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.common.commandline.CommandAutoComplete;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,9 +41,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.CommandAutoComplete;
-import net.vpc.common.io.IOUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -87,7 +87,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
             if (line == null) {
                 break;
             }
-            if (!CoreStringUtils.isEmpty(line)) {
+            if (!StringUtils.isEmpty(line)) {
                 return line;
             }
         }

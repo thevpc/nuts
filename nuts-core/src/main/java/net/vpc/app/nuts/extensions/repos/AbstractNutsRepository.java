@@ -30,15 +30,15 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
+import net.vpc.app.nuts.extensions.filters.id.NutsSimpleIdFilter;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsSimpleIdFilter;
 
 /**
  * Created by vpc on 1/18/17.
@@ -129,7 +129,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     protected NutsRepository openRepository(String repositoryId, String location, String type, String repositoryRoot, boolean autoCreate) {
-        if (CoreStringUtils.isEmpty(type)) {
+        if (StringUtils.isEmpty(type)) {
             type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         NutsRepositoryFactoryComponent factory_ = getWorkspace().getExtensionManager().createSupported(NutsRepositoryFactoryComponent.class, new NutsRepoInfo(type, location));
@@ -175,7 +175,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
         String groups = getConfigManager().getGroups();
-        if (CoreStringUtils.isEmpty(groups)) {
+        if (StringUtils.isEmpty(groups)) {
             return 1;
         }
         return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
@@ -235,7 +235,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsRepositoryNotFoundException(repositoryId);
         }
         if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " remove repo " + repositoryId);
+            log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " remove repo " + repositoryId);
         }
         getConfigManager().removeMirror(repositoryId);
         if (repo != null) {
@@ -279,7 +279,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!isSupportedMirroring()) {
             throw new NutsUnsupportedOperationException();
         }
-        if (CoreStringUtils.isEmpty(type)) {
+        if (StringUtils.isEmpty(type)) {
             type = NutsConstants.REPOSITORY_TYPE_NUTS;
         }
         boolean supported = false;
@@ -299,7 +299,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsRepositoryAlreadyRegisteredException(repositoryId);
         }
         if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, CoreStringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
+            log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " add repo " + repositoryId);
         }
         getConfigManager().addMirror(newConf);
 
@@ -310,7 +310,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public String toString() {
         return "id=" + getRepositoryId()
-                + " ; impl=" + getClass().getSimpleName() + " ; folder=" + getConfigManager().getLocation() + (CoreStringUtils.isEmpty(getConfigManager().getLocation()) ? "" : (" ; location=" + getConfigManager().getLocation()));
+                + " ; impl=" + getClass().getSimpleName() + " ; folder=" + getConfigManager().getLocation() + (StringUtils.isEmpty(getConfigManager().getLocation()) ? "" : (" ; location=" + getConfigManager().getLocation()));
     }
 
     public void checkAllowedFetch(NutsId id, NutsSession session) {
@@ -344,8 +344,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         try {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
-            if (CoreVersionUtils.isStaticVersionPattern(versionString) || CoreStringUtils.isEmpty(versionString)) {
-                if (CoreStringUtils.isEmpty(versionString) || "LATEST".equals(versionString)) {
+            if (CoreVersionUtils.isStaticVersionPattern(versionString) || StringUtils.isEmpty(versionString)) {
+                if (StringUtils.isEmpty(versionString) || "LATEST".equals(versionString)) {
                     NutsId a = findLatestVersion(id.setVersion(null), null, session);
                     if (a == null) {
                         throw new NutsNotFoundException(id.toString());
@@ -451,7 +451,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 break;
             }
         }
-        log.log(Level.FINEST, tracePhaseString + fetchString + CoreStringUtils.alignLeft(title, 18) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + (id == null ? "" : id.toString()) + timeMessage);
+        log.log(Level.FINEST, tracePhaseString + fetchString + StringUtils.alignLeft(title, 18) + " " + StringUtils.alignLeft(getRepositoryId(), 20) + " " + (id == null ? "" : id.toString()) + timeMessage);
     }
 
     @Override
@@ -484,10 +484,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_DEPLOY)) {
             throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_DEPLOY);
         }
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsIllegalArgumentException("Empty group");
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             throw new NutsIllegalArgumentException("Empty name");
         }
         if ((id.getVersion().isEmpty())) {
@@ -499,7 +499,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsIllegalArgumentException("Invalid version " + id.getVersion());
         }
 //        if (descriptor.getArch().length > 0 || descriptor.getOs().length > 0 || descriptor.getOsdist().length > 0 || descriptor.getPlatform().length > 0) {
-//            if (CoreStringUtils.isEmpty(descriptor.getFace())) {
+//            if (StringUtils.isEmpty(descriptor.getFace())) {
 //                throw new NutsIllegalArgumentException("face property '" + NutsConstants.QUERY_FACE + "' could not be null if env {arch,os,osdist,platform} is specified");
 //            }
 //        }
@@ -508,12 +508,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             id = id.setFace(descriptor.getFace());
             NutsId d = deployImpl(id, descriptor, file, foundAction, session);
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
+                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
+                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Deploy " + id);
             }
             throw ex;
         }
@@ -528,12 +528,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         try {
             pushImpl(id, repoId, foundAction, session);
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
+                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
             }
         } catch (RuntimeException ex) {
 
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
+                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Push " + id);
             }
         }
     }
@@ -546,12 +546,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         checkAllowedFetch(null, session);
         try {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Find components");
+                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Find components");
             }
             return findImpl(filter, session);
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Find components");
+                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Find components");
             }
             throw ex;
         }
@@ -670,17 +670,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             List<NutsId> d = findVersionsImpl(id, idFilter, session);
             if (d.isEmpty()) {
                 if (log.isLoggable(Level.FINEST)) {
-                    log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+                    log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + StringUtils.alignLeft(getRepositoryId(), 20) + " " + StringUtils.alignLeft("Fetch versions for", 24) + " " + id);
                 }
             } else {
                 if (log.isLoggable(Level.FINEST)) {
-                    log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+                    log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + StringUtils.alignLeft(getRepositoryId(), 20) + " " + StringUtils.alignLeft("Fetch versions for", 24) + " " + id);
                 }
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " " + CoreStringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(session.getFetchMode().toString(), 7) + " " + StringUtils.alignLeft(getRepositoryId(), 20) + " " + StringUtils.alignLeft("Fetch versions for", 24) + " " + id);
             }
             throw ex;
         }
@@ -694,11 +694,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         try {
             undeployImpl(id, session);
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
+                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
             }
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + CoreStringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
+                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getRepositoryId(), 20) + " Undeploy " + id);
             }
         }
     }
@@ -709,7 +709,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         String ext = "";
         String file = query.get(NutsConstants.QUERY_FILE);
         if (file == null) {
-            if (!CoreStringUtils.isEmpty(descriptor.getExt())) {
+            if (!StringUtils.isEmpty(descriptor.getExt())) {
                 ext = "." + descriptor.getExt();
             }
         } else {
@@ -754,10 +754,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (!getSecurityManager().isAllowed(right)) {
             throw new NutsSecurityException("Not Allowed " + right);
         }
-        if (CoreStringUtils.isEmpty(id.getGroup())) {
+        if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsIllegalArgumentException("Missing group for " + id);
         }
-        if (CoreStringUtils.isEmpty(id.getName())) {
+        if (StringUtils.isEmpty(id.getName())) {
             throw new NutsIllegalArgumentException("Missing name for " + id);
         }
     }
@@ -788,13 +788,13 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     private void checkNutsRepositoryConfig(NutsRepositoryConfig config) {
-        if (CoreStringUtils.isEmpty(config.getType())) {
+        if (StringUtils.isEmpty(config.getType())) {
             throw new NutsIllegalArgumentException("Empty Repository Type");
         }
-        if (CoreStringUtils.isEmpty(config.getId())) {
+        if (StringUtils.isEmpty(config.getId())) {
             throw new NutsIllegalArgumentException("Empty Repository Id");
         }
-//        if (CoreStringUtils.isEmpty(config.getLocation())) {
+//        if (StringUtils.isEmpty(config.getLocation())) {
 //            throw new NutsIllegalArgumentException("Empty Repository Id");
 //        }
     }

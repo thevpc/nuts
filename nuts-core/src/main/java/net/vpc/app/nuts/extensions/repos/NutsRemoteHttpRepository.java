@@ -31,18 +31,20 @@ package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsAuthenticationAgent;
+import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.io.FileUtils;
+import net.vpc.common.io.IOUtils;
+import net.vpc.common.io.URLUtils;
+import net.vpc.common.strings.StringUtils;
+import net.vpc.common.util.CollectionUtils;
+import net.vpc.common.util.IteratorFilter;
+
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
-import net.vpc.common.IteratorFilter;
-import net.vpc.common.io.FileUtils;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.URLUtils;
-import net.vpc.common.util.CollectionUtils;
 
 public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
@@ -321,13 +323,13 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             credentials = "anonymous";
         } else {
             newLogin = security.getMappedUser();
-            if (CoreStringUtils.isEmpty(newLogin)) {
+            if (StringUtils.isEmpty(newLogin)) {
                 NutsEffectiveUser security2 = getWorkspace().getSecurityManager().findUser(login);
                 if (security2 != null) {
                     newLogin = security2.getMappedUser();
                 }
             }
-            if (CoreStringUtils.isEmpty(newLogin)) {
+            if (StringUtils.isEmpty(newLogin)) {
                 newLogin = login;
             }
             credentials = getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class,security.getAuthenticationAgent())
@@ -336,8 +338,8 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         }
 
         String passphrase = getConfigManager().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE, true);
-        newLogin = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase);
-        credentials = CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase);
+        newLogin = new String(CoreSecurityUtils.httpEncrypt(StringUtils.trim(newLogin).getBytes(), passphrase));
+        credentials = new String(CoreSecurityUtils.httpEncrypt(StringUtils.trim(credentials).getBytes(), passphrase));
         return new String[]{newLogin, credentials};
     }
 
