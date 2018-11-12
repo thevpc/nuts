@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
+import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
 

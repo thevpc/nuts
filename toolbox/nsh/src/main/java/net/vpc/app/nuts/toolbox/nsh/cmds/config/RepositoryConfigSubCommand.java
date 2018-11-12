@@ -8,14 +8,12 @@ package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
-import net.vpc.app.nuts.toolbox.nsh.options.DefaultNutsArgumentCandidate;
-import net.vpc.app.nuts.toolbox.nsh.options.FolderNonOption;
+import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
+import net.vpc.common.commandline.*;
+import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryTypeNonOption;
-import net.vpc.app.nuts.toolbox.nsh.util.TableFormatter;
-import net.vpc.common.commandline.ArgumentCandidate;
-import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.DefaultNonOption;
+import net.vpc.common.javashell.util.TableFormatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,9 +81,9 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                             public List<ArgumentCandidate> getValues() {
                                 ArrayList<ArgumentCandidate> arrayList = new ArrayList<>();
                                 for (Map.Entry<String, NutsRepositoryDefinition> e : repoPatterns.entrySet()) {
-                                    arrayList.add(new DefaultNutsArgumentCandidate(e.getKey()));
+                                    arrayList.add(new DefaultArgumentCandidate(e.getKey()));
                                 }
-                                arrayList.add(new DefaultNutsArgumentCandidate("<RepositoryId>"));
+                                arrayList.add(new DefaultArgumentCandidate("<RepositoryId>"));
                                 return arrayList;
                             }
 
@@ -129,7 +127,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
 
             } else if (cmdLine.read("list repos", "lr")) {
                 if (cmdLine.isExecMode()) {
-                    TableFormatter t = new TableFormatter(ws)
+                    TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                             .setColumnsConfig("id","enabled","type","location")
                             .addHeaderCells("==Id==","==Enabled==","==Type==","==Location==")
                             ;
@@ -207,7 +205,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
                     NutsRepository[] linkRepositories = editedRepo.getMirrors();
                     out.printf("%s sub repositories.\n", linkRepositories.length);
-                    TableFormatter t = new TableFormatter(ws)
+                    TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                             .setColumnsConfig("id","enabled","type","location")
                             .addHeaderCells("==Id==","==Enabled==","==Type==","==Location==")
                             ;

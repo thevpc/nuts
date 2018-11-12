@@ -41,7 +41,6 @@ import net.vpc.app.nuts.extensions.filters.id.NutsSimpleIdFilter;
 import net.vpc.app.nuts.extensions.repos.NutsBootFolderRepository;
 import net.vpc.app.nuts.extensions.repos.NutsFolderRepository;
 import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
-import net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
 import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.common.io.*;
@@ -2467,7 +2466,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public NutsId resolveNutsIdForClass(Class clazz) {
-        PomId u = PomIdResolver.resolveArtifact(clazz, null);
+        PomId u = PomIdResolver.resolvePomId(clazz, null);
         if (u == null) {
             return null;
         }
@@ -2476,7 +2475,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public NutsId[] resolveNutsIdsForClass(Class clazz) {
-        PomId[] u = PomIdResolver.resolveArtifacts(clazz);
+        PomId[] u = PomIdResolver.resolvePomIds(clazz);
         NutsId[] all = new NutsId[u.length];
         for (int i = 0; i < all.length; i++) {
             all[i] = createNutsId(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());
@@ -2628,27 +2627,21 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public String resolveJavaMainClass(File file) {
-        return CorePlatformUtils.getMainClass(file);
+        return CorePlatformUtils.resolveMainClass(file);
     }
 
     @Override
-    public NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out) {
-        if (out == null) {
-            out = IOUtils.NULL_PRINT_STREAM;
-        }
-        if (out instanceof NutsFormattedPrintStream) {
-            return (NutsFormattedPrintStream) out;
-        }
-        return new NutsDefaultFormattedPrintStream(out);
+    public String[] resolveJavaMainClasses(File file) {
+        return CorePlatformUtils.resolveMainClasses(file);
     }
 
     @Override
-    public NutsTerminal createTerminal() {
-        return new DefaultNutsTerminal();
+    public String[] resolveJavaMainClasses(InputStream inputStream) {
+        return CorePlatformUtils.resolveMainClasses(inputStream);
     }
 
     @Override
-    public String simpexpToRegexp(String pattern, boolean contains) {
+    public String createRegex(String pattern, boolean contains) {
         return CoreStringUtils.simpexpToRegexp(pattern, contains);
     }
 

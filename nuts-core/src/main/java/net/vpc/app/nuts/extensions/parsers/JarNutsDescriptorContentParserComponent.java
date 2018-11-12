@@ -144,8 +144,8 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                     .setPackaging("jar")
                     .build();
         }
-        List<String> classes = CorePlatformUtils.resolveMainClasses(parserContext.getFullStream());
-        if (classes.isEmpty()) {
+        String[] classes = CorePlatformUtils.resolveMainClasses(parserContext.getFullStream());
+        if (classes.length==0) {
             return null;
         } else {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{

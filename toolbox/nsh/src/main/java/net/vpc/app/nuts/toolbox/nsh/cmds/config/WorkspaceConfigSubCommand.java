@@ -10,7 +10,7 @@ import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
-import net.vpc.app.nuts.toolbox.nsh.options.FolderNonOption;
+import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.strings.StringUtils;

@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.HistoryElement;
+import net.vpc.common.javashell.HistoryElement;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.CommandLine;
 

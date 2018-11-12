@@ -58,7 +58,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     }
 
     protected CommandLine cmdLine(String[] args, NutsCommandContext context) {
-        CommandAutoComplete autoComplete = (CommandAutoComplete) context.getAutoComplete();
+        CommandAutoComplete autoComplete = context.getAutoComplete();
         CommandLine cmdLine = new CommandLine(args, autoComplete);
         return cmdLine;
     }
@@ -120,8 +120,8 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     }
 
     @Override
-    public void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete) {
-            NutsCommandAutoComplete oldAutoComplete = context.getAutoComplete();
+    public void autoComplete(NutsCommandContext context, CommandAutoComplete autoComplete) {
+            CommandAutoComplete oldAutoComplete = context.getAutoComplete();
         context.setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {

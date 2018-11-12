@@ -29,12 +29,10 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
-import net.vpc.app.nuts.toolbox.nsh.util.PropertiesFormatter;
-import net.vpc.common.strings.StringUtils;
+import net.vpc.common.javashell.util.PropertiesFormatter;
 
 import java.io.*;
 import java.util.*;

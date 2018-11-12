@@ -68,6 +68,10 @@ public class NutsIdImpl implements NutsId {
         this.query = StringUtils.trimToNull(sb.toString());
     }
 
+    public NutsIdImpl(String group, String name, String version) {
+        this(null,group,name,version,(String) null);
+    }
+
     public NutsIdImpl(String namespace, String group, String name, String version, String query) {
         this.namespace = StringUtils.trimToNull(namespace);
         this.group = StringUtils.trimToNull(group);

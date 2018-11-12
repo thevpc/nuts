@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsRepositoryDefinition;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
         }
         List<ArgumentCandidate> all = new ArrayList<>();
         for (String v : allValid) {
-            all.add(new DefaultNutsArgumentCandidate(v));
+            all.add(new DefaultArgumentCandidate(v));
         }
         return all;
     }

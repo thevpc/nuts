@@ -142,45 +142,7 @@ public class NutsAnsiUnixTermPrintStream extends NutsDefaultFormattedPrintStream
 //        defineEscape(NutsTextFormats.REVERSED, "\u001b[7m", "\u001B[0m");
     }
 
-//    public static void main(String[] args) {
-//        System.out.println("\u001b[38;2;255;100;0mTRUECOLOR\u001b[0m\n");
-//        NutsAnsiUnixTermPrintStream out = new NutsAnsiUnixTermPrintStream(System.out);
-//        for (int i = 0; i < 200; i++) {
-//
-//            System.out.print("\u001b[" + i + ";0m");
-//            System.out.print("      " + i + "      ");
-//            System.out.print("\u001B[0m");
-//            System.out.print("  ");
-//
-//            System.out.print("\u001b[" + i + ";1m");
-//            System.out.print("      " + i + "      ");
-//            System.out.print("\u001B[0m");
-//            System.out.print("  ");
-//
-//            System.out.print("\u001b[" + i + "m");
-//            System.out.print("      " + i + "      ");
-//            System.out.print("\u001B[0m");
-//            System.out.print("  ");
-//            System.out.print("\u001b[" + i + ";2m");
-//            System.out.print("      " + i + "      ");
-//            System.out.print("\u001B[0m");
-//            System.out.print("\u001b[4;" + i + "m");
-//            System.out.print("      " + i + "      ");
-//            System.out.print("\u001B[0m");
-//            System.out.println();
-//        }
-//        Scanner s = new Scanner(System.in);
-//        s.nextLine();
-////        out.print(NutsTextFormats.BG_YELLOW,"Hello");
-////        System.out.println("\u001b[44mAA\u001B[0m");
-////        for (NutsTextFormat k : out.escapesStart.keySet()) {
-//////            System.out.println(k);
-////            System.out.print(out.escapesStart.get(k));
-////            System.out.println("  "+k+"  ");
-////            System.out.print(out.escapesStop.get(k));
-////            System.out.println();
-////        }
-//    }
+
 
     public NutsAnsiUnixTermPrintStream() {
     }

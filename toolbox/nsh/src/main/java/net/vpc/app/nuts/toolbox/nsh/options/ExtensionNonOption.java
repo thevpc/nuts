@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class ExtensionNonOption extends DefaultNonOption {
     @Override
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultNutsArgumentCandidate(NutsConstants.NUTS_ID_RUNTIME));
+        all.add(new DefaultArgumentCandidate(NutsConstants.NUTS_ID_RUNTIME));
         //should find all nuts with packaging "nuts-extension"
         return all;
     }

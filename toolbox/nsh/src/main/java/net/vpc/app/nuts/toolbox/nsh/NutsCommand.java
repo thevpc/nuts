@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.Singleton;
+import net.vpc.common.commandline.CommandAutoComplete;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,5 +47,5 @@ public interface NutsCommand extends NutsComponent<Object> {
 
     String getHelpHeader();
 
-    void autoComplete(NutsCommandContext context, NutsCommandAutoComplete autoComplete);
+    void autoComplete(NutsCommandContext context, CommandAutoComplete autoComplete);
 }

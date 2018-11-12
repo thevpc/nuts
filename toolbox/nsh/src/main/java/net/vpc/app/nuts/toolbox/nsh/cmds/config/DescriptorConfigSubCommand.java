@@ -10,8 +10,8 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
-import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
-import net.vpc.app.nuts.toolbox.nsh.options.ValueNonOption;
+import net.vpc.common.commandline.FileNonOption;
+import net.vpc.common.commandline.ValueNonOption;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.CommandLine;
 
@@ -43,7 +43,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
         List<Runnable> all = new ArrayList<>();
         while (!cmdLine.isEmpty()) {
             if (cmdLine.read("-executable")) {
-                final boolean value = cmdLine.readNonOptionOrError(new ValueNonOption("executable", null, "true", "false")).getBoolean();
+                final boolean value = cmdLine.readNonOptionOrError(new ValueNonOption("executable", "true", "false")).getBoolean();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -51,7 +51,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-ext")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("ext", null, "jar")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("ext", "jar")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -59,7 +59,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-packaging")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("packaging", null, "jar")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("packaging",  "jar")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -67,7 +67,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-name")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("name", null, "my-name")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("name",  "my-name")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -75,7 +75,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-group")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("group", null, "my-group")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("group", "my-group")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -83,7 +83,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-id")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("id", null, "my-group:my-name#1.0")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("id", "my-group:my-name#1.0")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -92,7 +92,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 });
 
             } else if (cmdLine.read("-add-os")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os",  "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -100,7 +100,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-remove-os")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -109,7 +109,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 });
 
             } else if (cmdLine.read("-add-osdist")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os",  "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -117,7 +117,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-remove-osdist")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os",  "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -126,7 +126,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 });
 
             } else if (cmdLine.read("-add-platform")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -134,7 +134,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-remove-platform")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -143,7 +143,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 });
 
             } else if (cmdLine.read("-add-arch")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -151,7 +151,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-remove-arch")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os",  "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -159,7 +159,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-add-property")) {
-                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", "os")).getString();
                 final String[] nv = ShellHelper.splitNameAndValue(value);
                 if (nv != null) {
                     all.add(new Runnable() {
@@ -170,7 +170,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     });
                 }
             } else if (cmdLine.read("-remove-property")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os", null, "os")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("os",  "os")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -179,7 +179,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 });
 
             } else if (cmdLine.read("-add-dependency")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency",  "my-group:my-name#1.0")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -187,7 +187,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 });
             } else if (cmdLine.read("-remove-dependency")) {
-                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", null, "my-group:my-name#1.0")).getString();
+                final String value = cmdLine.readNonOptionOrError(new ValueNonOption("dependency", "my-group:my-name#1.0")).getString();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -197,7 +197,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
             } else if (cmdLine.read("-file")) {
                 file = cmdLine.readNonOptionOrError(new FileNonOption("file")).getString();
             } else if (cmdLine.read("-save")) {
-                save = cmdLine.readNonOptionOrError(new ValueNonOption("save", null, "true", "false")).getBoolean();
+                save = cmdLine.readNonOptionOrError(new ValueNonOption("save",  "true", "false")).getBoolean();
             } else {
                 if (!cmdLine.isExecMode()) {
                     throw new NutsIllegalArgumentException("Unsupported");

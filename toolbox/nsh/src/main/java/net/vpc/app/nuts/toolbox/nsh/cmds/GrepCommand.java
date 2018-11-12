@@ -32,7 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
+import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.io.*;
@@ -102,7 +102,7 @@ public class GrepCommand extends AbstractNutsCommand {
         if (expression == null) {
             throw new IllegalArgumentException("Missing Expression");
         }
-        String baseExpr = options.regexp ? context.getValidWorkspace().simpexpToRegexp(expression,false) : expression;
+        String baseExpr = options.regexp ? context.getValidWorkspace().createRegex(expression,false) : expression;
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
         }

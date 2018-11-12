@@ -551,33 +551,11 @@ public class CorePlatformUtils {
         if (file == null || !file.isFile()) {
             return null;
         }
-        return getMainClass(file) != null;
+        return resolveMainClass(file) != null;
     }
 
     public static boolean isExecutableJar(File file) {
-        return file.getName().toLowerCase().endsWith(".jar") && getMainClass(file) != null;
-    }
-
-    public static String getMainClass(File file) {
-        if (file == null || !file.isFile()) {
-            return null;
-        }
-        try {
-            try (JarFile f = new JarFile(file)) {
-                Manifest manifest = f.getManifest();
-                if (manifest == null) {
-                    return null;
-                }
-                String mainClass = manifest.getMainAttributes().getValue("Main-Class");
-//            if(!StringUtils.isEmpty(mainClass)) {
-//                System.out.println(">> " + mainClass + " : " + file);
-//            }
-                return !StringUtils.isEmpty(mainClass) ? mainClass : null;
-            }
-        } catch (Exception ex) {
-            //invalid file
-            return null;
-        }
+        return file.getName().toLowerCase().endsWith(".jar") && resolveMainClass(file) != null;
     }
 
     public static String[] getMainClassAndLibs(File jarFile, boolean foreComponentNames) throws IOException {
@@ -762,10 +740,33 @@ public class CorePlatformUtils {
         return ref.get();
     }
 
-    public static List<String> resolveMainClasses(File jarFile) {
+    public static String resolveMainClass(File file) {
+        if (file == null || !file.isFile()) {
+            return null;
+        }
         try {
-            FileInputStream in = new FileInputStream(jarFile);
+            try (JarFile f = new JarFile(file)) {
+                Manifest manifest = f.getManifest();
+                if (manifest == null) {
+                    return null;
+                }
+                String mainClass = manifest.getMainAttributes().getValue("Main-Class");
+//            if(!StringUtils.isEmpty(mainClass)) {
+//                System.out.println(">> " + mainClass + " : " + file);
+//            }
+                return !StringUtils.isEmpty(mainClass) ? mainClass : null;
+            }
+        } catch (Exception ex) {
+            //invalid file
+            return null;
+        }
+    }
+
+    public static String[] resolveMainClasses(File jarFile) {
+        try {
+            FileInputStream in=null;
             try {
+                in = new FileInputStream(jarFile);
                 return resolveMainClasses(in);
             } finally {
                 if (in != null) {
@@ -777,7 +778,7 @@ public class CorePlatformUtils {
         }
     }
 
-    public static List<String> resolveMainClasses(InputStream jarStream) {
+    public static String[] resolveMainClasses(InputStream jarStream) {
         final List<String> classes = new ArrayList<>();
         ZipUtils.visitZipStream(jarStream, new PathFilter() {
             @Override
@@ -794,64 +795,7 @@ public class CorePlatformUtils {
                 return true;
             }
         });
-        return classes;
-    }
-
-    public static NutsId resolveNutsIdFromPomProperties(InputStream stream) {
-        Properties prop = new Properties();
-        try {
-            prop.load(stream);
-        } catch (IOException e) {
-            //
-        }
-        String version = prop.getProperty("version");
-        String groupId = prop.getProperty("groupId");
-        String artifactId = prop.getProperty("artifactId");
-        if (version != null && version.trim().length() != 0) {
-            return CoreNutsUtils.parseOrErrorNutsId(groupId + ":" + artifactId + "#" + version);
-        }
-        return null;
-    }
-
-    public static void main(String[] args) throws Exception {
-        try (InputStream s = new FileInputStream(new File("/data/vpc/Data/eniso/projects/Current/2017-2018/Giz-Intertek/git/Dev/Web/intertek-application/app/intertek-app-web/target/intertek.war"))) {
-            for (NutsId nutsId : resolveNutsIdArrayForJarOrWarMavenVersion(s)) {
-                System.out.println(nutsId);
-            }
-        }
-    }
-
-    public static NutsId resolveNutsIdForJarOrWarMavenVersion(InputStream jarStream) {
-        NutsId[] v = resolveNutsIdArrayForJarOrWarMavenVersion(jarStream);
-        if (v.length == 0) {
-            return null;
-        }
-        if (v.length >= 2) {
-            throw new IllegalArgumentException("Too many Ids");
-        }
-        return v[0];
-    }
-
-    public static NutsId[] resolveNutsIdArrayForJarOrWarMavenVersion(InputStream jarStream) {
-        final List<NutsId> list = new ArrayList<>();
-        ZipUtils.visitZipStream(jarStream, new PathFilter() {
-            @Override
-            public boolean accept(String path) {
-                System.out.println(path);
-                return path.startsWith("META-INF/")
-                        && path.endsWith("/pom.properties");
-            }
-        }, new InputStreamVisitor() {
-            @Override
-            public boolean visit(String path, InputStream inputStream) throws IOException {
-                NutsId id = resolveNutsIdFromPomProperties(inputStream);
-                if (id != null) {
-                    list.add(id);
-                }
-                return true;
-            }
-        });
-        return list.toArray(new NutsId[list.size()]);
+        return classes.toArray(new String[classes.size()]);
     }
 
     /**

@@ -34,9 +34,9 @@
     <orderEntry type="module" module-name="vpc-common-utils" />
     <orderEntry type="module" module-name="nsh" />
     <orderEntry type="module" module-name="java-shell" />
+    <orderEntry type="module" module-name="vpc-common-commandline" />
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-mvn" />
-    <orderEntry type="module" module-name="vpc-common-commandline" />
     <orderEntry type="module" module-name="vpc-common-io-compress" />
     <orderEntry type="module" module-name="vpc-common-io" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.16.1" level="project" />

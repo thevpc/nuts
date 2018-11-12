@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.Prototype;
+import net.vpc.common.javashell.HistoryElement;
 
 import java.util.List;
 

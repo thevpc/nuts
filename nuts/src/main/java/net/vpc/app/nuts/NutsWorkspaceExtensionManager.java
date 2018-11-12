@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 
@@ -101,6 +102,8 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsSession createSession();
 
+    NutsTerminal createDefaultTerminal();
+
     NutsTerminal createTerminal();
 
     NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
@@ -126,4 +129,6 @@ public interface NutsWorkspaceExtensionManager {
     NutsDependencyBuilder createDependencyBuilder();
 
     JsonSerializer createJsonSerializer();
+
+    NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out);
 }

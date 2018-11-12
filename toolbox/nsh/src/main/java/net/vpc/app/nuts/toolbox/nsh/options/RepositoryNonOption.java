@@ -32,6 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.options;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
@@ -61,12 +62,12 @@ public class RepositoryNonOption extends DefaultNonOption {
         List<ArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
             for (NutsRepository repository : workspace.getRepositoryManager().getRepositories()) {
-                all.add(new DefaultNutsArgumentCandidate(repository.getRepositoryId()));
+                all.add(new DefaultArgumentCandidate(repository.getRepositoryId()));
             }
         }
         if (repository != null) {
             for (NutsRepository repository : repository.getMirrors()) {
-                all.add(new DefaultNutsArgumentCandidate(repository.getRepositoryId()));
+                all.add(new DefaultArgumentCandidate(repository.getRepositoryId()));
             }
         }
         return all;

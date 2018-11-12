@@ -32,7 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
+import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 

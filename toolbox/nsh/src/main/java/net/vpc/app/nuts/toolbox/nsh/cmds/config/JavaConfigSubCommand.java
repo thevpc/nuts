@@ -6,7 +6,8 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.util.TableFormatter;
+import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
+import net.vpc.common.javashell.util.TableFormatter;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.common.commandline.CommandLine;
@@ -81,7 +82,7 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
             }
             return true;
         } else if (cmdLine.read("list java")) {
-            TableFormatter t = new TableFormatter(ws)
+            TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                     .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true)
                     .setColumnsConfig("name", "version", "path")

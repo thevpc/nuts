@@ -32,6 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.options;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class CommandNonOption extends DefaultNonOption {
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
         for (NutsCommand command : context.getConsole().getCommands()) {
-            all.add(new DefaultNutsArgumentCandidate(command.getName()));
+            all.add(new DefaultArgumentCandidate(command.getName()));
         }
         return all;
     }

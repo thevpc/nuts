@@ -33,7 +33,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.ValueNonOption;
+import net.vpc.common.commandline.ValueNonOption;
 import net.vpc.common.commandline.ArgVal;
 
 /**
@@ -69,9 +69,9 @@ public class EchoCommand extends AbstractNutsCommand {
                         out.print(" ");
                     }
                     if (plain) {
-                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value", context)).getString());
+                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value")).getString());
                     } else {
-                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value", context)).getString());
+                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value")).getString());
                     }
                 }
             }

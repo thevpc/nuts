@@ -34,7 +34,7 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
+import net.vpc.common.commandline.FileNonOption;
 
 import java.io.File;
 import java.io.IOException;

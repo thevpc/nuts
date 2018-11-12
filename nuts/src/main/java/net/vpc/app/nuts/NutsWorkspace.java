@@ -194,9 +194,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsIdBuilder createIdBuilder();
 
-    //    public NutsVesionBuilder createNutsVersionBuilder() {
-//        return new DefaultVersionBuilder();
-//    }
     NutsDescriptor parseDescriptor(URL url);
 
     NutsDescriptor parseDescriptor(File file);
@@ -221,11 +218,11 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String resolveJavaMainClass(File file);
 
-    NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out);
+    String[] resolveJavaMainClasses(File file);
 
-    NutsTerminal createTerminal();
+    String[] resolveJavaMainClasses(InputStream inputStream);
 
-    String simpexpToRegexp(String pattern, boolean contains);
+    String createRegex(String pattern, boolean contains);
 
     String getResourceString(String resource, Class cls, String defaultValue);
 

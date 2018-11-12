@@ -32,6 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.options;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
@@ -53,14 +54,14 @@ public class PackagingNonOption extends DefaultNonOption {
     @Override
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultNutsArgumentCandidate("jar"));
-        all.add(new DefaultNutsArgumentCandidate("war"));
-        all.add(new DefaultNutsArgumentCandidate("war"));
-        all.add(new DefaultNutsArgumentCandidate("ear"));
-        all.add(new DefaultNutsArgumentCandidate("nuts-extension"));
-        all.add(new DefaultNutsArgumentCandidate("elf"));
-        all.add(new DefaultNutsArgumentCandidate("pe"));
-        all.add(new DefaultNutsArgumentCandidate("bin"));
+        all.add(new DefaultArgumentCandidate("jar"));
+        all.add(new DefaultArgumentCandidate("war"));
+        all.add(new DefaultArgumentCandidate("war"));
+        all.add(new DefaultArgumentCandidate("ear"));
+        all.add(new DefaultArgumentCandidate("nuts-extension"));
+        all.add(new DefaultArgumentCandidate("elf"));
+        all.add(new DefaultArgumentCandidate("pe"));
+        all.add(new DefaultArgumentCandidate("bin"));
         return all;
     }
 

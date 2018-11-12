@@ -61,7 +61,7 @@ public class NutsJavaShell extends JavaShell {
     }
 
     @Override
-    public JavaShellInternalCmd getInternalCommand(String n) {
+    public JavaShellInternalCmd getCommand(String n) {
         NutsCommand ncommand = null;
         try {
             ncommand = component.getCommand(n);
@@ -96,7 +96,7 @@ public class NutsJavaShell extends JavaShell {
     @Override
     public int execExternalCommand(String[] command, JavaShellEvalContext context) {
         try {
-            JavaShellInternalCmd exec = getInternalCommand("exec");
+            JavaShellInternalCmd exec = getCommand("exec");
             return exec.exec(command, context);
         } catch (Exception ex) {
             return onResult(1, ex);

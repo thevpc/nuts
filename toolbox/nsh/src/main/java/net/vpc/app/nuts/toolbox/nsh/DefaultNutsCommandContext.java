@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
+import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
@@ -45,7 +46,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     private NutsSession session;
     private Map<String, Object> userProperties = new HashMap<>();
     private Properties env = new Properties();
-    private NutsCommandAutoComplete autoComplete;
+    private CommandAutoComplete autoComplete;
 
     public DefaultNutsCommandContext() {
     }
@@ -163,12 +164,12 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public NutsCommandAutoComplete getAutoComplete() {
+    public CommandAutoComplete getAutoComplete() {
         return autoComplete;
     }
 
     @Override
-    public void setAutoComplete(NutsCommandAutoComplete autoComplete) {
+    public void setAutoComplete(CommandAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
     }
 

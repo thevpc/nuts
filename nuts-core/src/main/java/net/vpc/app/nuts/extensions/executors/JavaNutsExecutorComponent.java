@@ -215,12 +215,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 File file = CoreIOUtils.fileByPath(nutMainFile.getFile());
                 if (file != null) {
                     //check manifest!
-                    String mainClassFromManifest = CorePlatformUtils.getMainClass(file);
+                    String mainClassFromManifest = CorePlatformUtils.resolveMainClass(file);
                     if(mainClassFromManifest!=null){
                         mainClass = mainClassFromManifest;
                     }else {
-                        List<String> classes = CorePlatformUtils.resolveMainClasses(file);
-                        if(classes.size()>0) {
+                        String[] classes = CorePlatformUtils.resolveMainClasses(file);
+                        if(classes.length>0) {
                             mainClass = StringUtils.join(":", classes);
                         }
                     }

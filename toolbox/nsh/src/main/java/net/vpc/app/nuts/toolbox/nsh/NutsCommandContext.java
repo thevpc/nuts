@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.*;
+import net.vpc.common.commandline.CommandAutoComplete;
 
 import java.util.Map;
 import java.util.Properties;
@@ -73,9 +74,9 @@ public interface NutsCommandContext {
 
     NutsCommandContext setEnv(Properties env);
 
-    NutsCommandAutoComplete getAutoComplete();
+    CommandAutoComplete getAutoComplete();
 
-    void setAutoComplete(NutsCommandAutoComplete value);
+    void setAutoComplete(CommandAutoComplete value);
 
     NutsCommandContext copy();
 

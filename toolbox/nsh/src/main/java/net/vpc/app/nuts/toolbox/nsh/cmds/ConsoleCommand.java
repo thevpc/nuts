@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.*;
+import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.javashell.InterrupShellException;
 import net.vpc.common.javashell.QuitShellException;
 import net.vpc.common.strings.StringUtils;
@@ -48,7 +49,7 @@ public class ConsoleCommand extends AbstractNutsCommand {
 
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsCommandAutoComplete autoComplete = context.getAutoComplete();
+        CommandAutoComplete autoComplete = context.getAutoComplete();
         if (autoComplete != null) {
             return -1;
         }

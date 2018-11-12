@@ -6,10 +6,12 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
 import net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
@@ -419,6 +421,11 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     @Override
+    public NutsTerminal createDefaultTerminal() {
+        return new DefaultNutsTerminal();
+    }
+
+    @Override
     public NutsTerminal createTerminal() {
         return createTerminal(null, null, null);
     }
@@ -530,5 +537,16 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     @Override
     public JsonSerializer createJsonSerializer() {
         return new GsonSerializer();
+    }
+
+    @Override
+    public NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out) {
+        if (out == null) {
+            out = IOUtils.NULL_PRINT_STREAM;
+        }
+        if (out instanceof NutsFormattedPrintStream) {
+            return (NutsFormattedPrintStream) out;
+        }
+        return new NutsDefaultFormattedPrintStream(out);
     }
 }

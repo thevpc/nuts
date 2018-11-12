@@ -35,7 +35,7 @@ import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.FileNonOption;
+import net.vpc.common.commandline.FileNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 
 import java.io.File;

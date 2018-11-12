@@ -35,6 +35,7 @@ import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.util.ArrayList;
@@ -76,15 +77,15 @@ public class GroupNonOption extends DefaultNonOption {
         List<ArgumentCandidate> all = new ArrayList<>();
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(new DefaultNutsArgumentCandidate(n));
+                all.add(new DefaultArgumentCandidate(n));
             }
         } else if (repository != null) {
             for (NutsEffectiveUser nutsSecurityEntityConfig : repository.getSecurityManager().findUsers()) {
-                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else if (workspace != null) {
             for (NutsEffectiveUser nutsSecurityEntityConfig : workspace.getSecurityManager().findUsers()) {
-                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;
