@@ -1,6 +1,6 @@
 package net.vpc.toolbox.tomcat.client;
 
-import net.vpc.app.nuts.JsonSerializer;
+import net.vpc.app.nuts.JsonIO;
 import net.vpc.common.io.RuntimeIOException;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientAppConfig;
 import net.vpc.toolbox.tomcat.client.config.TomcatClientConfig;
@@ -44,7 +44,7 @@ public class TomcatClientConfigService {
 
 
     public TomcatClientConfigService saveConfig() {
-        JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
         File f = new File(context.configFolder, name + CLIENT_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
@@ -130,7 +130,7 @@ public class TomcatClientConfigService {
         }
         File f = new File(context.configFolder, name + CLIENT_CONFIG_EXT);
         if (f.exists()) {
-            JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+            JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
             try (FileReader r = new FileReader(f)) {
                 TomcatClientConfig i = jsonSerializer.read(r, TomcatClientConfig.class);
                 config = i;
@@ -149,7 +149,7 @@ public class TomcatClientConfigService {
     }
 
     public TomcatClientConfigService write(PrintStream out) {
-        JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
         PrintWriter w = new PrintWriter(out);
         jsonSerializer.write(getConfig(), new PrintWriter(out), true);
         w.flush();

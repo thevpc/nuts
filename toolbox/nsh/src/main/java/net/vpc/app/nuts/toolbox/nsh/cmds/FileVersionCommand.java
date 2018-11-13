@@ -36,7 +36,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
-import net.vpc.common.javashell.util.PropertiesFormatter;
+import net.vpc.common.commandline.format.PropertiesFormatter;
 import net.vpc.common.io.*;
 import net.vpc.common.mvn.Pom;
 import net.vpc.common.mvn.PomXmlParser;

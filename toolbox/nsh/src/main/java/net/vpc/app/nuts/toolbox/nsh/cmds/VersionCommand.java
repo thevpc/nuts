@@ -68,7 +68,7 @@ public class VersionCommand extends AbstractNutsCommand {
         out.printf("platform-os          : [[%s]]\n", ws.getPlatformOs()+" ("+System.getProperty("os.name")+")");
         out.printf("platform-os-dist     : [[%s]]\n", ws.getPlatformOsDist());
         out.printf("platform-arch        : [[%s]]\n", ws.getPlatformArch());
-        out.printf("platform-os-lib      : [[%s]]\n", ws.getPlatformOsLib());
+        out.printf("platform-os-lib      : [[%s]]\n", ws.getPlatformOsLibPath());
 
 
 

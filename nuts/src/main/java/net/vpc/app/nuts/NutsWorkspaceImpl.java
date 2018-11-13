@@ -40,7 +40,7 @@ public interface NutsWorkspaceImpl {
 
     boolean initializeWorkspace(NutsBootWorkspace workspaceBoot, NutsWorkspaceFactory factory,
             String workspaceBootId, String workspaceRuntimeId, String workspace, URL[] bootClassWorldURLs, 
-            ClassLoader workspaceClassLoader, NutsWorkspaceCreateOptions options);
+            ClassLoader workspaceClassLoader, NutsWorkspaceOptions options);
 
     NutsWorkspace self();
 }

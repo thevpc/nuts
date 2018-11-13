@@ -19,7 +19,8 @@
         <module>toolbox/derby</module>
         <module>toolbox/feenoo</module>
         <module>toolbox/tomcat</module>
-        <module>toolbox/ndesc-ed</module>
+        <module>toolbox/nde</module>
+        <module>toolbox/worky</module>
         <module>nuts-clown</module>
         <module>nuts-tomcat-classloader</module>
     </modules>

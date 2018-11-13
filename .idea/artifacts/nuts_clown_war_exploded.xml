@@ -29,7 +29,7 @@
           <element id="archive" name="vpc-common-commandline-1.1.1.jar">
             <element id="module-output" name="vpc-common-commandline" />
           </element>
-          <element id="archive" name="vpc-common-strings-1.2.14.jar">
+          <element id="archive" name="vpc-common-strings-1.2.15.jar">
             <element id="module-output" name="vpc-common-strings" />
           </element>
           <element id="archive" name="vpc-common-mvn-1.0.jar">

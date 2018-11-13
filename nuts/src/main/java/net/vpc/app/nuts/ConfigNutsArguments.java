@@ -12,7 +12,7 @@ public class ConfigNutsArguments extends NutsArguments{
     private boolean showLicense = false;
     private List<String> args = new ArrayList<>();
     private NutsBootOptions bootOptions = new NutsBootOptions();
-    private NutsWorkspaceCreateOptions workspaceCreateOptions = new NutsWorkspaceCreateOptions()
+    private NutsWorkspaceOptions workspaceCreateOptions = new NutsWorkspaceOptions()
             .setCreateIfNotFound(true);
 
     public boolean isVersion() {
@@ -87,11 +87,11 @@ public class ConfigNutsArguments extends NutsArguments{
         return this;
     }
 
-    public NutsWorkspaceCreateOptions getWorkspaceCreateOptions() {
+    public NutsWorkspaceOptions getWorkspaceCreateOptions() {
         return workspaceCreateOptions;
     }
 
-    public NutsArguments setWorkspaceCreateOptions(NutsWorkspaceCreateOptions workspaceCreateOptions) {
+    public NutsArguments setWorkspaceCreateOptions(NutsWorkspaceOptions workspaceCreateOptions) {
         this.workspaceCreateOptions = workspaceCreateOptions;
         return this;
     }

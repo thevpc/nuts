@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.toolbox.nsh.util;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.javashell.util.TableFormatter;
+import net.vpc.common.commandline.format.TableFormatter;
 
 public class DefaultWorkspaceCellFormatter implements TableFormatter.CellFormatter {
     private NutsWorkspace ws;

@@ -170,7 +170,7 @@ final class NutsIOUtils {
                 }
             }
             if (firstItem.equals("~~")) {
-                return resolvePath(nutsHome + "/" + path.substring(2), null, nutsHome);
+                return resolvePath(nutsHome + "/" + path.substring(2), null, null);
             } else if (firstItem.equals("~")) {
                 return new File(System.getProperty("user.home"), path.substring(1));
             } else if (isAbsolutePath(path)) {
@@ -303,5 +303,20 @@ final class NutsIOUtils {
         }
         url = url.toLowerCase();
         return (url.startsWith("http://") || url.startsWith("https://"));
+    }
+
+    public static String resolveWorkspaceLocation(String home,String workspace){
+        if (home == null) {
+            home = NutsConstants.DEFAULT_NUTS_HOME;
+        }
+        if (workspace == null) {
+            workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
+        }
+        String baseFolder = (new File(workspace).isAbsolute() ? workspace : (home + "/" + workspace));
+        baseFolder = baseFolder.replace('\\', '/');
+        if (baseFolder.startsWith("~/")) {
+            baseFolder = System.getProperty("user.home") + baseFolder.substring(1);
+        }
+        return baseFolder.replace('/', File.separatorChar);
     }
 }

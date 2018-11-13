@@ -32,6 +32,8 @@
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-osapi/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-compress/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-mvn/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/pom.xml" />
+        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

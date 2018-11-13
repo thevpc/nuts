@@ -80,7 +80,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                     String ws = cmdLine.readNonOptionOrError(new DefaultNonOption("NewWorkspaceName")).getString();
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getWorkspace().openWorkspace(
-                                new NutsWorkspaceCreateOptions()
+                                new NutsWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setCreateIfNotFound(true)
@@ -102,6 +102,16 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                 }
             }
             return true;
+        } else if (cmdLine.read("set workspace version", "swv")) {
+            while (!cmdLine.isEmpty()) {
+                String version = cmdLine.readNonOptionOrError("version").getString();
+                Nuts.setConfigCurrentVersion(version,context.getWorkspace().getConfigManager().getNutsHomeLocation(),context.getWorkspace().getConfigManager().getWorkspaceLocation());
+                cmdLine.requireEmpty();
+            }
+        } else if (cmdLine.read("get workspace version", "gwv")) {
+            cmdLine.requireEmpty();
+            String s=Nuts.getConfigCurrentVersion(context.getWorkspace().getConfigManager().getNutsHomeLocation(),context.getWorkspace().getConfigManager().getWorkspaceLocation());
+            context.getFormattedOut().printf("%s\n",s==null?"":s);
         } else if (cmdLine.read("set workspace", "sw")) {
             boolean createIfNotFound = false;
             boolean save = true;
@@ -130,7 +140,7 @@ public class WorkspaceConfigSubCommand extends AbstractConfigSubCommand {
                     processed = true;
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getValidWorkspace().openWorkspace(
-                                new NutsWorkspaceCreateOptions()
+                                new NutsWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setSaveIfCreated(save)

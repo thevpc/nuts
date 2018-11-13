@@ -32,7 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
-import net.vpc.common.javashell.util.PropertiesFormatter;
+import net.vpc.common.commandline.format.PropertiesFormatter;
 
 import java.io.*;
 import java.util.*;

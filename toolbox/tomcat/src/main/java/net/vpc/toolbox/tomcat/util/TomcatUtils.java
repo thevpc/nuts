@@ -1,6 +1,6 @@
 package net.vpc.toolbox.tomcat.util;
 
-import net.vpc.app.nuts.JsonSerializer;
+import net.vpc.app.nuts.JsonIO;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.PrintStream;
@@ -64,7 +64,7 @@ public class TomcatUtils {
     }
 
     public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
-        JsonSerializer jsonSerializer = ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = ws.getExtensionManager().createJsonSerializer();
         PrintWriter w = new PrintWriter(out);
         jsonSerializer.write(config, new PrintWriter(out), true);
         w.flush();

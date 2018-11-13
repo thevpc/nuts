@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/23/17.
  */
-public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable {
+public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     private String workspace = null;
     private boolean ignoreIfFound;
@@ -48,13 +48,14 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
     private String login = null;
     private String password = null;
     private boolean noColors = false;
+    private boolean readOnly = false;
     private long creationTime;
 
     public String getWorkspace() {
         return workspace;
     }
 
-    public NutsWorkspaceCreateOptions setWorkspace(String workspace) {
+    public NutsWorkspaceOptions setWorkspace(String workspace) {
         this.workspace = workspace;
         return this;
     }
@@ -63,7 +64,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return ignoreIfFound;
     }
 
-    public NutsWorkspaceCreateOptions setIgnoreIfFound(boolean ignoreIfFound) {
+    public NutsWorkspaceOptions setIgnoreIfFound(boolean ignoreIfFound) {
         this.ignoreIfFound = ignoreIfFound;
         return this;
     }
@@ -72,7 +73,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return createIfNotFound;
     }
 
-    public NutsWorkspaceCreateOptions setCreateIfNotFound(boolean createIfNotFound) {
+    public NutsWorkspaceOptions setCreateIfNotFound(boolean createIfNotFound) {
         this.createIfNotFound = createIfNotFound;
         return this;
     }
@@ -81,7 +82,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return saveIfCreated;
     }
 
-    public NutsWorkspaceCreateOptions setSaveIfCreated(boolean saveIfCreated) {
+    public NutsWorkspaceOptions setSaveIfCreated(boolean saveIfCreated) {
         this.saveIfCreated = saveIfCreated;
         return this;
     }
@@ -90,7 +91,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return archetype;
     }
 
-    public NutsWorkspaceCreateOptions setArchetype(String archetype) {
+    public NutsWorkspaceOptions setArchetype(String archetype) {
         this.archetype = archetype;
         return this;
     }
@@ -99,7 +100,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return excludedExtensions;
     }
 
-    public NutsWorkspaceCreateOptions setExcludedExtensions(String[] excludedExtensions) {
+    public NutsWorkspaceOptions setExcludedExtensions(String[] excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
@@ -108,7 +109,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return excludedRepositories;
     }
 
-    public NutsWorkspaceCreateOptions setExcludedRepositories(String[] excludedRepositories) {
+    public NutsWorkspaceOptions setExcludedRepositories(String[] excludedRepositories) {
         this.excludedRepositories = excludedRepositories;
         return this;
     }
@@ -117,7 +118,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return login;
     }
 
-    public NutsWorkspaceCreateOptions setLogin(String login) {
+    public NutsWorkspaceOptions setLogin(String login) {
         this.login = login;
         return this;
     }
@@ -126,7 +127,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return password;
     }
 
-    public NutsWorkspaceCreateOptions setPassword(String password) {
+    public NutsWorkspaceOptions setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -135,14 +136,14 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return noColors;
     }
 
-    public NutsWorkspaceCreateOptions setNoColors(boolean noColors) {
+    public NutsWorkspaceOptions setNoColors(boolean noColors) {
         this.noColors = noColors;
         return this;
     }
 
     @Override
     public String toString() {
-        return "NutsWorkspaceCreateOptions(" + "ignoreIfFound=" + ignoreIfFound + ", createIfNotFound=" + createIfNotFound
+        return "NutsWorkspaceOptions(" + "ignoreIfFound=" + ignoreIfFound + ", createIfNotFound=" + createIfNotFound
                 + ", saveIfCreated=" + saveIfCreated + ", archetype=" + archetype
                 + ", excludedExtensions=" + Arrays.toString(excludedExtensions==null?new String[0]:excludedExtensions )
                 + ", excludedRepositories=" + Arrays.toString(excludedRepositories==null?new String[0]:excludedRepositories) + ')';
@@ -171,7 +172,7 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsWorkspaceCreateOptions other = (NutsWorkspaceCreateOptions) obj;
+        final NutsWorkspaceOptions other = (NutsWorkspaceOptions) obj;
         if (this.ignoreIfFound != other.ignoreIfFound) {
             return false;
         }
@@ -193,9 +194,9 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return true;
     }
 
-    public NutsWorkspaceCreateOptions copy() {
+    public NutsWorkspaceOptions copy() {
         try {
-            NutsWorkspaceCreateOptions t = (NutsWorkspaceCreateOptions) clone();
+            NutsWorkspaceOptions t = (NutsWorkspaceOptions) clone();
             t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
             t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
             return t;
@@ -208,8 +209,17 @@ public final class NutsWorkspaceCreateOptions implements Serializable, Cloneable
         return creationTime;
     }
 
-    public NutsWorkspaceCreateOptions setCreationTime(long creationTime) {
+    public NutsWorkspaceOptions setCreationTime(long creationTime) {
         this.creationTime = creationTime;
+        return this;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public NutsWorkspaceOptions setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
         return this;
     }
 }

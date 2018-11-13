@@ -23,8 +23,9 @@
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test/hadruwaves-test.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test/hadruwaves-test.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/inspector-gadget.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/inspector-gadget.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../common/java-shell/java-shell.iml" filepath="$PROJECT_DIR$/../../common/java-shell/java-shell.iml" />
+      <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/mvn/mvn.iml" filepath="$PROJECT_DIR$/toolbox/mvn/mvn.iml" />
-      <module fileurl="file://$PROJECT_DIR$/toolbox/ndesc-ed/ndesc-ed.iml" filepath="$PROJECT_DIR$/toolbox/ndesc-ed/ndesc-ed.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nde/nde.iml" filepath="$PROJECT_DIR$/toolbox/nde/nde.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/ndi/ndi.iml" filepath="$PROJECT_DIR$/toolbox/ndi/ndi.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nsh/nsh.iml" filepath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" />
@@ -48,6 +49,8 @@
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings/vpc-common-strings.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings/vpc-common-strings.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings/vpc-common-swings.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings/vpc-common-swings.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils/vpc-common-utils.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils/vpc-common-utils.iml" />
+      <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/worky.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/worky.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/worky/worky (1).iml" filepath="$PROJECT_DIR$/toolbox/worky/worky (1).iml" />
       <module fileurl="file://$PROJECT_DIR$/../../common/maven/writer-maven-plugin/writer-maven-plugin.iml" filepath="$PROJECT_DIR$/../../common/maven/writer-maven-plugin/writer-maven-plugin.iml" />
     </modules>
   </component>

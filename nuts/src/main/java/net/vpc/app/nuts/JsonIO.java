@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 import java.io.Reader;
 import java.io.Writer;
 
-public interface JsonSerializer {
+public interface JsonIO {
 
     void write(Object obj, Writer out, boolean pretty);
 

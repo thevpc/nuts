@@ -202,7 +202,7 @@ public class DefaultNutsConsole implements NutsConsole {
             if (ws != null) {
                 login = ws.getSecurityManager().getCurrentLogin();
             }
-            String prompt = login + "@" + wss;
+            String prompt = ((login!=null && login.length()>0 && ! "anonymous".equals(login)) ?(login + "@"):"") + wss;
             if (!StringUtils.isEmpty(context.getServiceName())) {
                 prompt = prompt + "@" + context.getServiceName();
             }

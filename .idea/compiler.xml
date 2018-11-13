@@ -27,9 +27,11 @@
         <module name="hadruwaves-test" />
         <module name="inspector-gadget" />
         <module name="java-shell" />
+        <module name="jvmon" />
         <module name="mvn" />
         <module name="mvn-box" />
         <module name="nb-launcher" />
+        <module name="nde" />
         <module name="ndesc-ed" />
         <module name="ndesc-ed (1)" />
         <module name="ndi" />
@@ -57,6 +59,8 @@
         <module name="vpc-common-strings" />
         <module name="vpc-common-swings" />
         <module name="vpc-common-utils" />
+        <module name="worky" />
+        <module name="worky (1)" />
         <module name="writer-maven-plugin" />
       </profile>
     </annotationProcessing>
@@ -87,10 +91,12 @@
       <module name="hadruwaves-test" target="1.8" />
       <module name="inspector-gadget" target="1.8" />
       <module name="java-shell" target="1.8" />
+      <module name="jvmon" target="1.8" />
       <module name="maven-archiver" target="1.5" />
       <module name="mvn" target="1.8" />
       <module name="mvn-box" target="1.8" />
       <module name="nb-launcher" target="1.8" />
+      <module name="nde" target="1.8" />
       <module name="ndesc-ed" target="1.8" />
       <module name="ndesc-ed (1)" target="1.8" />
       <module name="ndi" target="1.8" />
@@ -120,6 +126,8 @@
       <module name="vpc-common-strings" target="1.8" />
       <module name="vpc-common-swings" target="1.8" />
       <module name="vpc-common-utils" target="1.8" />
+      <module name="worky" target="1.8" />
+      <module name="worky (1)" target="1.8" />
       <module name="writer-maven-plugin" target="1.8" />
     </bytecodeTargetLevel>
   </component>

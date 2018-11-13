@@ -66,6 +66,8 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
 
+    JsonIO getJsonIO();
+
     NutsWorkspaceExtension[] getWorkspaceExtensions();
 
     URLLocation[] getExtensionURLLocations(String id, String appId, String extensionType);
@@ -128,7 +130,7 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsDependencyBuilder createDependencyBuilder();
 
-    JsonSerializer createJsonSerializer();
+    JsonIO createJsonSerializer();
 
     NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out);
 }

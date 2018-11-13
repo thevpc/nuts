@@ -7,7 +7,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
-import net.vpc.common.javashell.util.TableFormatter;
+import net.vpc.common.commandline.format.TableFormatter;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.common.commandline.CommandLine;

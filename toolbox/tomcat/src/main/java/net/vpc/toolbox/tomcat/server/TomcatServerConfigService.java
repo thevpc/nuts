@@ -56,7 +56,7 @@ public class TomcatServerConfigService {
 
 
     public TomcatServerConfigService saveConfig() {
-        JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
         File f = new File(context.configFolder, getName() + SERVER_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
@@ -444,7 +444,7 @@ public class TomcatServerConfigService {
         String name = getName();
         File f = new File(context.configFolder, name + SERVER_CONFIG_EXT);
         if (f.exists()) {
-            JsonSerializer jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+            JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
             try (FileReader r = new FileReader(f)) {
                 TomcatServerConfig i = jsonSerializer.read(r, TomcatServerConfig.class);
                 config = i;

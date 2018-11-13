@@ -56,6 +56,13 @@ public class Nuts {
             if(ex instanceof NutsExecutionException){
                 errorCode = ((NutsExecutionException) ex).getErrorCode();
             }
+            boolean showTrace=false;
+            boolean showErrorClass=false;
+            if(ex.getClass().getName().startsWith("java.lang.")){
+                //this is a common error
+                showTrace=true;
+                showErrorClass=true;
+            }
             String m = ex.getMessage();
             if (m == null || m.isEmpty()) {
                 m = ex.toString();
@@ -63,7 +70,13 @@ public class Nuts {
             if (m == null || m.isEmpty()) {
                 m = ex.getClass().getName();
             }
+            if(showErrorClass){
+                m=ex.toString();
+            }
             System.err.println(m);
+            if(showTrace){
+                ex.printStackTrace(System.err);
+            }
             System.exit(errorCode);
         }
     }
@@ -110,16 +123,16 @@ public class Nuts {
     }
 
     public static NutsWorkspace openWorkspace(String workspace) {
-        return openWorkspace(new NutsWorkspaceCreateOptions().setWorkspace(workspace), null);
+        return openWorkspace(new NutsWorkspaceOptions().setWorkspace(workspace), null);
     }
 
-    public static NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options) {
+    public static NutsWorkspace openWorkspace(NutsWorkspaceOptions options) {
         return openWorkspace(options, null);
     }
 
-    public static NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options, NutsBootOptions bootOptions) {
+    public static NutsWorkspace openWorkspace(NutsWorkspaceOptions options, NutsBootOptions bootOptions) {
         if (options == null) {
-            options = new NutsWorkspaceCreateOptions();
+            options = new NutsWorkspaceOptions();
         }
         if (options.getCreationTime() == 0) {
             options.setCreationTime(System.currentTimeMillis());
@@ -238,12 +251,9 @@ public class Nuts {
     }
 
 
-    public static String getConfigCurrentVersion(String nutsHome) {
-        if (nutsHome == null) {
-            nutsHome = System.getProperty("user.home") + File.separator + ".nuts";
-        }
+    public static String getConfigCurrentVersion(String nutsHome,String workspace) {
         String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-        File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome,workspace), versionUrl);
         try {
             if (versionFile.isFile()) {
                 String str = NutsIOUtils.readStringFromFile(versionFile);
@@ -253,22 +263,17 @@ public class Nuts {
                         return str;
                     }
                 }
+                log.log(Level.CONFIG, "Reading nuts version file " + versionUrl + ".\n");
             }
         } catch (Exception ex) {
-            System.err.printf("Unable to load nuts version from " + versionUrl + ".\n");
+            log.log(Level.CONFIG, "Unable to load nuts version file " + versionUrl + ".\n",ex);
         }
         return null;
     }
 
-    public static boolean setConfigCurrentVersion(String version, String nutsHome) {
-        if (nutsHome == null) {
-            //System.getProperty("user.home") + File.separator + ".nuts"
-            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
-        }
-        nutsHome = NutsIOUtils.expandPath(nutsHome);
-
+    public static boolean setConfigCurrentVersion(String version, String nutsHome,String workspace) {
         String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-        File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
+        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome,workspace), versionUrl);
         if (version != null) {
             version = version.trim();
             if (version.isEmpty()) {
@@ -276,6 +281,9 @@ public class Nuts {
             }
         }
         if (version == null) {
+            if(versionFile.exists()){
+                log.log(Level.CONFIG, "Deleting nuts version file " + versionUrl + ".\n");
+            }
             return versionFile.delete();
         } else {
             if (versionFile.getParentFile() != null) {
@@ -286,7 +294,7 @@ public class Nuts {
                 try {
                     ps = new PrintStream(versionFile);
                     ps.println(version);
-                    ps.close();
+                    log.log(Level.CONFIG, "Updating nuts version file " + version+" => "+versionUrl + ".\n");
                 } finally {
                     if (ps != null) {
                         ps.close();
@@ -294,7 +302,7 @@ public class Nuts {
                 }
                 return true;
             } catch (FileNotFoundException ex) {
-                log.log(Level.SEVERE, null, ex);
+                log.log(Level.CONFIG, "Unable to store nuts version file " + versionUrl + ".\n",ex);
             }
         }
         return false;

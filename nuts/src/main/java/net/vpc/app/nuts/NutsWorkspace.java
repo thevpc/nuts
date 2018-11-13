@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +43,7 @@ import java.util.Properties;
 @Prototype
 public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
-    NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options);
+    NutsWorkspace openWorkspace(NutsWorkspaceOptions options);
 
     Iterator<NutsId> findIterator(NutsSearch search, NutsSession session);
 
@@ -174,7 +173,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsId getPlatformOsDist();
 
-    NutsId getPlatformOsLib();
+    String getPlatformOsLibPath();
 
     NutsId getPlatformArch();
 
@@ -186,7 +185,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String resolveRepositoryPath(String location);
 
-    NutsWorkspaceCreateOptions getOptions();
+    NutsWorkspaceOptions getOptions();
 
     NutsBootOptions getBootOptions();
 
@@ -226,9 +225,9 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String getResourceString(String resource, Class cls, String defaultValue);
 
-    void reindex(String path);
+    void updateIndex(String path);
 
-    void reindexAll();
+    void updateAllIndices();
 
     void downloadPath(String from, File to, NutsSession session);
 

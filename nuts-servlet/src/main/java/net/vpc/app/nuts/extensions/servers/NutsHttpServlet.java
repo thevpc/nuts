@@ -75,7 +75,7 @@ public class NutsHttpServlet extends HttpServlet {
                 .setRuntimeId(runtimeId)
                 .setRuntimeSourceURL(runtimeSourceURL);
         NutsWorkspace workspace = Nuts.openWorkspace(
-                new NutsWorkspaceCreateOptions()
+                new NutsWorkspaceOptions()
                         .setWorkspace(workspaceLocation)
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true)
@@ -96,7 +96,7 @@ public class NutsHttpServlet extends HttpServlet {
             }
             NutsWorkspace ws = workspacesByLocation.get(location);
             if (ws == null) {
-                ws = Nuts.openWorkspace(new NutsWorkspaceCreateOptions()
+                ws = Nuts.openWorkspace(new NutsWorkspaceOptions()
                         .setWorkspace(location)
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true)

@@ -159,6 +159,11 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         return extensions.values().toArray(new NutsWorkspaceExtension[extensions.size()]);
     }
 
+    @Override
+    public JsonIO getJsonIO() {
+        return CoreJsonUtils.get();
+    }
+
     protected NutsWorkspaceExtension wireExtension(NutsId id, NutsSession session) {
         session = validateSession(session);
         if (id == null) {
@@ -535,8 +540,8 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     @Override
-    public JsonSerializer createJsonSerializer() {
-        return new GsonSerializer();
+    public JsonIO createJsonSerializer() {
+        return new GsonIO();
     }
 
     @Override

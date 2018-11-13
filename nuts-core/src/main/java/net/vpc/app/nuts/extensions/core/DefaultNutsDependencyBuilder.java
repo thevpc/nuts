@@ -56,6 +56,32 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public DefaultNutsDependencyBuilder() {
     }
 
+    public DefaultNutsDependencyBuilder(NutsDependencyBuilder other) {
+        if (other != null) {
+            setNamespace(other.getNamespace());
+            setGroup(other.getGroup());
+            setName(other.getNamespace());
+            setVersion(other.getVersion());
+            setScope(other.getScope());
+            setOptional(other.getOptional());
+            setExclusions(other.getExclusions());
+            setName(other.getName());
+        }
+    }
+
+    public DefaultNutsDependencyBuilder(NutsDependency other) {
+        if (other != null) {
+            setNamespace(other.getNamespace());
+            setGroup(other.getGroup());
+            setName(other.getNamespace());
+            setVersion(other.getVersion());
+            setScope(other.getScope());
+            setOptional(other.getOptional());
+            setExclusions(other.getExclusions());
+            setName(other.getName());
+        }
+    }
+
     @Override
     public NutsDependencyBuilder setNamespace(String namespace) {
         this.namespace = StringUtils.trimToNull(namespace);
@@ -101,6 +127,9 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setExclusions(NutsId[] exclusions) {
+        if (exclusions != null) {
+            exclusions = Arrays.copyOf(exclusions, exclusions.length);
+        }
         this.exclusions = exclusions;
         return this;
     }
@@ -134,8 +163,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependency build() {
         return new NutsDependencyImpl(
-                getNamespace(),getGroup(),getName(),
-                getVersion()==null?null:getVersion().getValue(),
+                getNamespace(), getGroup(), getName(),
+                getVersion() == null ? null : getVersion().getValue(),
                 getScope(),
                 getOptional(),
                 getExclusions()
@@ -214,6 +243,6 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsId[] getExclusions() {
-        return exclusions==null?new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
+        return exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
     }
 }

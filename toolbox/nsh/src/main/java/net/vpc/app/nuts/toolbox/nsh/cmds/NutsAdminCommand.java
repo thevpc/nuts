@@ -29,10 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.RootFolderType;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.io.IOUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,33 +52,42 @@ public class NutsAdminCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
-        CpCommand.Options o = new CpCommand.Options();
-        boolean reindex = false;
-        List<String> repos = new ArrayList<>();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.isOption()) {
-                if (cmdLine.isOption(null, "reindex")) {
-                    cmdLine.read();
-                    reindex = true;
-                    while (!cmdLine.isEmpty()) {
-                        repos.add(cmdLine.readValue());
-                    }
-                }else{
-                    cmdLine.read();
-                }
-            }else{
-                cmdLine.requireEmpty();
+        cmdLine.requireNonEmpty();
+        if (cmdLine.read("update-index")) {
+            List<String> repos = new ArrayList<>();
+            while (!cmdLine.isEmpty()) {
+                repos.add(cmdLine.readValue());
             }
-        }
-        if (reindex) {
             if (repos.isEmpty()) {
-                context.getValidWorkspace().reindexAll();
+                context.getFormattedOut().printf("[[%s]] Updating all indices\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation());
+                context.getValidWorkspace().updateAllIndices();
             } else {
                 for (String repo : repos) {
-                    context.getValidWorkspace().reindex(repo);
+                    context.getFormattedOut().printf("[[%s]] Updating index %s\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation(),repo);
+                    context.getValidWorkspace().updateIndex(repo);
                 }
             }
+        }else if (cmdLine.read("delete-all-logs")) {
+            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.LOGS));
+            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
+            IOUtils.delete(file);
+            file = new File(context.getValidWorkspace().getConfigManager().getNutsHomeLocation(),"log");
+            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
+            IOUtils.delete(file);
+        }else if (cmdLine.read("delete-all-vars")) {
+            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.VAR));
+            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
+            IOUtils.delete(file);
+        }else if (cmdLine.read("delete-all-programs")) {
+            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.PROGRAMS));
+            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
+            IOUtils.delete(file);
+        }else if (cmdLine.read("delete-all-configs")) {
+            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.CONFIG));
+            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
+            IOUtils.delete(file);
         }
+        cmdLine.requireEmpty();
         return 0;
     }
 }

@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.JsonSerializer;
+import net.vpc.app.nuts.JsonIO;
 import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.extensions.core.GsonSerializer;
+import net.vpc.app.nuts.extensions.core.GsonIO;
 import net.vpc.common.io.FileUtils;
 
 import java.io.*;
@@ -45,8 +45,8 @@ public class CoreJsonUtils {
             .setIgnoreEmptyArrays(true)
             .setPretty(true);
 
-    public static JsonSerializer get() {
-        return GsonSerializer.INSTANCE;
+    public static JsonIO get() {
+        return GsonIO.INSTANCE;
     }
 
     public static void readJsonPartialString(String str, JsonStatus s) {

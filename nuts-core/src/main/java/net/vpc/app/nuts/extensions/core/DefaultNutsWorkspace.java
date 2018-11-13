@@ -40,7 +40,6 @@ import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsSimpleIdFilter;
 import net.vpc.app.nuts.extensions.repos.NutsBootFolderRepository;
 import net.vpc.app.nuts.extensions.repos.NutsFolderRepository;
-import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
 import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
 import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.common.io.*;
@@ -83,9 +82,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     private NutsId platformOs;
     private NutsId platformArch;
     private NutsId platformOsdist;
-    private NutsId platformOsLib;
+    private String platformOsLibPath;
     private Properties properties = new Properties();
-    private NutsWorkspaceCreateOptions options;
+    private NutsWorkspaceOptions options;
 
     public DefaultNutsWorkspace() {
 
@@ -137,9 +136,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options) {
+    public NutsWorkspace openWorkspace(NutsWorkspaceOptions options) {
         if (options == null) {
-            options = new NutsWorkspaceCreateOptions();
+            options = new NutsWorkspaceOptions();
         }
         NutsWorkspaceFactory newFactory = getExtensionManager().createSupported(NutsWorkspaceFactory.class, self());
         NutsWorkspace nutsWorkspace = getExtensionManager().createSupported(NutsWorkspace.class, self());
@@ -159,7 +158,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return nutsWorkspace;
     }
 
-    public NutsWorkspaceCreateOptions getOptions() {
+    public NutsWorkspaceOptions getOptions() {
         return options.copy();
     }
 
@@ -170,10 +169,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public boolean initializeWorkspace(NutsBootWorkspace workspaceBoot, NutsWorkspaceFactory factory, String workspaceBootId, String workspaceRuntimeId, String workspace,
                                        URL[] bootClassWorldURLs, ClassLoader bootClassLoader,
-                                       NutsWorkspaceCreateOptions options) {
+                                       NutsWorkspaceOptions options) {
 
         if (options == null) {
-            options = new NutsWorkspaceCreateOptions();
+            options = new NutsWorkspaceOptions();
         }
         this.options = options;
         extensionManager = new DefaultNutsWorkspaceExtensionManager(self(), factory);
@@ -2500,11 +2499,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsId getPlatformOsLib() {
-        if (platformOsLib == null) {
-            platformOsLib = getExtensionManager().parseNutsId(CorePlatformUtils.getPlatformOsLib());
+    public String getPlatformOsLibPath() {
+        if (platformOsLibPath == null) {
+            platformOsLibPath = CorePlatformUtils.getPlatformOsLib();
         }
-        return platformOsLib;
+        return platformOsLibPath;
     }
 
     @Override
@@ -2674,7 +2673,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public void reindex(String path) {
+    public void updateIndex(String path) {
         if (path.contains("/") || path.contains("\\")) {
             NutsFolderRepository r = new NutsFolderRepository(
                     "temp",
@@ -2693,7 +2692,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public void reindexAll() {
+    public void updateAllIndices() {
         for (NutsRepository nutsRepository : getRepositoryManager().getRepositories()) {
             if (nutsRepository instanceof NutsFolderRepository) {
                 ((NutsFolderRepository) nutsRepository).reindexFolder();

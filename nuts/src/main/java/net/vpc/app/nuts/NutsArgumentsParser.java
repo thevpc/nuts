@@ -363,13 +363,12 @@ public final class NutsArgumentsParser {
                 throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
             }
         }
-        o.getBootOptions().setBootArguments(bootArgs);
+        o.getBootOptions().setBootArguments(Arrays.copyOfRange(bootArgs, 0,startAppArgs));
         o.getBootOptions().setApplicationArguments(appArgs == null ? new String[0] : appArgs);
         return o;
     }
 
     private static NewInstanceNutsArguments parseNewInstanceNutsArguments(String[] args) {
-        List<String> goodArgs = new ArrayList<>();
         String requiredBootVersion = null;
         boolean configureLog = false;
         Level logLevel = null;
@@ -377,81 +376,103 @@ public final class NutsArgumentsParser {
         int logCount = 0;
         String logFolder = null;
         String nutsHome = null;
+        String workspace = null;
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
-            if (a.equals("--run-version")) {
-                i++;
-                if (i >= args.length) {
-                    throw new NutsIllegalArgumentException("Missing argument for archetype");
-                }
-                requiredBootVersion = args[i];
-            } else if (a.equals("--home")) {
-                i++;
-                if (i >= args.length) {
-                    throw new NutsIllegalArgumentException("Missing argument for workspace");
-                }
-                nutsHome = args[i];
-            } else if (a.equals("--verbose") || a.equals("--log-finest")) {
-                configureLog = true;
-                logLevel = Level.FINEST;
-                goodArgs.add(a);
-            } else if (a.equals("--info") || a.equals("--log-info")) {
-                configureLog = true;
-                logLevel = Level.INFO;
-                goodArgs.add(a);
-            } else if (a.equals("--log-fine")) {
-                configureLog = true;
-                logLevel = Level.FINE;
-                goodArgs.add(a);
-            } else if (a.equals("--log-finer")) {
-                configureLog = true;
-                logLevel = Level.FINER;
-                goodArgs.add(a);
-            } else if (a.equals("--log-all")) {
-                configureLog = true;
-                logLevel = Level.ALL;
-                goodArgs.add(a);
-            } else if (a.equals("--log-off")) {
-                configureLog = true;
-                logLevel = Level.OFF;
-                goodArgs.add(a);
-            } else if (a.equals("--log-severe")) {
-                configureLog = true;
-                logLevel = Level.SEVERE;
-                goodArgs.add(a);
-            } else if (a.equals("--log-size")) {
-                configureLog = true;
-                goodArgs.add(a);
-                i++;
-                if (i >= args.length) {
-                    throw new NutsIllegalArgumentException("Missing argument for log-size");
-                }
-                logSize = Integer.parseInt(args[i]);
-                a = args[i];
-                goodArgs.add(a);
-            } else if (a.equals("--log-count")) {
-                goodArgs.add(a);
-                i++;
-                if (i >= args.length) {
-                    throw new NutsIllegalArgumentException("Missing argument for log-count");
-                }
-                logCount = Integer.parseInt(args[i]);
-                a = args[i];
-                goodArgs.add(a);
-            } else {
-                goodArgs.add(a);
+            switch (a) {
+                case "--run-version":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for archetype");
+                    }
+                    requiredBootVersion = args[i];
+                    break;
+                case "--workspace-version":
+                    requiredBootVersion = "@workspace-version";
+                    break;
+                case "--boot-version":
+                    requiredBootVersion = null;
+                    break;
+                case "--home":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for workspace");
+                    }
+                    nutsHome = args[i];
+                    break;
+                case "--verbose":
+                case "--log-finest":
+                    configureLog = true;
+                    logLevel = Level.FINEST;
+                    break;
+                case "--info":
+                case "--log-info":
+                    configureLog = true;
+                    logLevel = Level.INFO;
+                    break;
+                case "--log-fine":
+                    configureLog = true;
+                    logLevel = Level.FINE;
+                    break;
+                case "--log-finer":
+                    configureLog = true;
+                    logLevel = Level.FINER;
+                    break;
+                case "--log-all":
+                    configureLog = true;
+                    logLevel = Level.ALL;
+                    break;
+                case "--log-off":
+                    configureLog = true;
+                    logLevel = Level.OFF;
+                    break;
+                case "--log-severe":
+                    configureLog = true;
+                    logLevel = Level.SEVERE;
+                    break;
+                case "--log-size":
+                    configureLog = true;
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for log-size");
+                    }
+                    logSize = Integer.parseInt(args[i]);
+                    break;
+                case "--log-count":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for log-count");
+                    }
+                    logCount = Integer.parseInt(args[i]);
+                    break;
+                case "--workspace":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for workspace");
+                    }
+                    workspace=args[i];
+                    break;
+                default:
+                    break;
             }
         }
-        if (configureLog) {
-            NutsLogUtils.prepare(logLevel, logFolder, logSize, logCount);
-        }
-        args = goodArgs.toArray(new String[goodArgs.size()]);
 
         String actualVersion = Nuts.getActualVersion();
         if (nutsHome == null) {
             nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
         }
+        if (requiredBootVersion != null){
+            switch (requiredBootVersion){
+                case "@workspace-version":{
+                    requiredBootVersion=Nuts.getConfigCurrentVersion(nutsHome,workspace);
+                    break;
+                }
+            }
+        }
         if (requiredBootVersion != null && !requiredBootVersion.equals(actualVersion)) {
+            if (configureLog) {
+                NutsLogUtils.prepare(logLevel, logFolder, logSize, logCount,nutsHome,workspace);
+            }
             log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
             if ("CURRENT".equalsIgnoreCase(requiredBootVersion)) {
                 String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
@@ -532,7 +553,7 @@ public final class NutsArgumentsParser {
             a.setBootFile(bootFile);
             //should read from params
             a.setJavaCommand(System.getProperty("java.home") + "/bin/java");
-            a.setArgs(goodArgs.toArray(new String[goodArgs.size()]));
+            a.setArgs(args);
             a.setBootVersion(actualVersion);
             a.setRequiredVersion(requiredBootVersion);
             return a;

@@ -49,7 +49,7 @@ public class LinuxNdi {
             }
         } else {
             String idContent = "BOOT : " + f.getId().toString();
-            createScript("nuts", f.getId().toString(), idContent, "java -jar " + f.getFile());
+            createScript("nuts", f.getId().toString(), idContent, "java -jar \"" + f.getFile()+"\" --workspace-version \"$@\"");
         }
     }
 

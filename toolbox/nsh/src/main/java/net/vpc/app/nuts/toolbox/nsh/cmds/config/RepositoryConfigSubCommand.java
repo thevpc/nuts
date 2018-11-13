@@ -13,7 +13,7 @@ import net.vpc.common.commandline.*;
 import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryTypeNonOption;
-import net.vpc.common.javashell.util.TableFormatter;
+import net.vpc.common.commandline.format.TableFormatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

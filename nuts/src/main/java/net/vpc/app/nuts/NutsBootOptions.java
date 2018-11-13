@@ -233,7 +233,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         try {
             NutsBootOptions t = (NutsBootOptions) clone();
             t.setBootArguments(t.getBootArguments() == null ? null : Arrays.copyOf(t.getBootArguments(), t.getBootArguments().length));
-            t.setBootArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
+            t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
             return t;
         } catch (CloneNotSupportedException e) {
             throw new NutsUnsupportedOperationException("Should never Happen", e);

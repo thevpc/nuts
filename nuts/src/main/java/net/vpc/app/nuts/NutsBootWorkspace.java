@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its
  * dependencies and for creating workspaces using the method
- * {@link #openWorkspace(String, NutsWorkspaceCreateOptions)}. NutsBootWorkspace
+ * {@link #openWorkspace(String, NutsWorkspaceOptions)}. NutsBootWorkspace
  * is also responsible of managing local jar cache folder located at
  * $root/bootstrap where $root is the nuts root folder (~/.nuts) defined by
  * {@link #getNutsHomeLocation()}.
@@ -96,11 +96,11 @@ public interface NutsBootWorkspace {
      * creation options. workspaceLocation may be absolute or relative in which
      * case it will be resolved as a sub folder of nuts root folder (see
      * {@link #getNutsHomeLocation()}). If no options are provided (options==null)
-     * workspace will be created and saved it not found null     (<code>new NutsWorkspaceCreateOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
+     * workspace will be created and saved it not found null     (<code>new NutsWorkspaceOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
      * Please note that it may not be safe to create several instances of the same workspace.
      *
      * @param options creation options
      * @return a valid and initialized Workspace implementation
      */
-    NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options);
+    NutsWorkspace openWorkspace(NutsWorkspaceOptions options);
 }

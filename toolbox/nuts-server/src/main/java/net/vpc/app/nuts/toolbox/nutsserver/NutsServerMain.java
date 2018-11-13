@@ -141,7 +141,7 @@ public class NutsServerMain extends NutsApplication {
                                 nutsWorkspace = allWorkspaces.get(entry.getValue());
                                 if (nutsWorkspace == null) {
                                     nutsWorkspace = context.getValidWorkspace().openWorkspace(
-                                            new NutsWorkspaceCreateOptions()
+                                            new NutsWorkspaceOptions()
                                                     .setWorkspace(entry.getValue())
                                                     .setCreateIfNotFound(autocreate)
                                                     .setSaveIfCreated(save)

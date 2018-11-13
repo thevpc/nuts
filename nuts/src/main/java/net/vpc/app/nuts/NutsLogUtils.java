@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.*;
+import java.util.logging.Formatter;
 
 /**
  * Log util helper
@@ -58,14 +58,18 @@ public final class NutsLogUtils {
     private NutsLogUtils() {
     }
 
-    public static void prepare(Level level, String pattern, int maxSize, int count) {
+    public static void prepare(Level level, String pattern, int maxSize, int count, String home, String workspace) {
+        Logger olderLog = Logger.getLogger(NutsLogUtils.class.getName());
+        boolean logged = false;
         Logger rootLogger = Logger.getLogger("");//"net.vpc.app.nuts"
         if (level == null) {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
         if (pattern == null || NutsStringUtils.isEmpty(pattern)) {
-            pattern = System.getProperty("user.home") +"/.nuts/default-workspace/log/net/vpc/app/nuts/nuts/LATEST/nuts-%g.log";
+            String baseFolder = NutsIOUtils.resolveWorkspaceLocation(home,workspace);
+            pattern = baseFolder + "/log/net/vpc/app/nuts/nuts/LATEST/nuts-%g.log";
+            pattern = pattern.replace('/', File.separatorChar);
         }
         if (maxSize <= 0) {
             maxSize = 5;
@@ -73,54 +77,101 @@ public final class NutsLogUtils {
         if (count <= 0) {
             count = 3;
         }
+        boolean updatedHandler = false;
+        boolean updatedLoglevel = false;
         try {
-            boolean found=false;
+            boolean found = false;
+            List<MyFileHandler> removeMe = new ArrayList<>();
             for (Handler handler : rootLogger.getHandlers()) {
-                if(handler instanceof MyFileHandler){
-                    found=true;
+                if (handler instanceof MyFileHandler) {
+                    MyFileHandler mh = (MyFileHandler) handler;
+                    if (mh.pattern.equals(pattern) && mh.count == count && mh.limit == maxSize * MEGA) {
+                        found = true;
+                    } else {
+                        if (!logged) {
+                            logged = true;
+                            olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+                        }
+                        rootLogger.removeHandler(mh);
+                        mh.close();
+                    }
                 }
             }
-            if(!found) {
+            if (!found) {
+                if (!logged) {
+                    logged = true;
+                    olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+                }
                 if (pattern.contains("/")) {
                     NutsIOUtils.createFile(pattern.substring(0, pattern.lastIndexOf('/'))).mkdirs();
                 }
+                updatedHandler = true;
                 rootLogger.addHandler(new MyFileHandler(pattern, maxSize * MEGA, count, true));
             }
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
-        rootLogger.setLevel(level);
-        for (Handler handler : rootLogger.getHandlers()) {
-            handler.setLevel(level);
-            handler.setFormatter(LOG_FORMATTER);
-            handler.setFilter(LOG_FILTER);
+        if (updatedHandler) {
+            Level oldLevel = rootLogger.getLevel();
+            if (oldLevel == null || !oldLevel.equals(level)) {
+                updatedLoglevel = true;
+                rootLogger.setLevel(level);
+            }
+            for (Handler handler : rootLogger.getHandlers()) {
+                oldLevel = handler.getLevel();
+                if (oldLevel == null || !oldLevel.equals(level)) {
+                    updatedLoglevel = true;
+                    handler.setLevel(level);
+                }
+                Formatter oldLogFormatter = handler.getFormatter();
+                if (oldLogFormatter == null || oldLogFormatter != LOG_FORMATTER) {
+                    updatedLoglevel = true;
+                    handler.setFormatter(LOG_FORMATTER);
+                }
+                Filter oldFilter = handler.getFilter();
+                if (oldFilter == null || oldFilter != LOG_FILTER) {
+                    updatedLoglevel = true;
+                    handler.setFilter(LOG_FILTER);
+                }
+            }
         }
+//        if (updatedHandler || updatedLoglevel) {
+//            olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+//        }
     }
 
     private static final class MyFileHandler extends FileHandler {
+        String pattern;
+        int limit;
+        int count;
 
         public MyFileHandler(String pattern, int limit, int count, boolean append) throws IOException, SecurityException {
             super(pattern, limit, count, append);
+            this.pattern = pattern;
+            this.limit = limit;
+            this.count = count;
         }
     }
+
     private static final class LogFormatter extends Formatter {
 
         private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-        Map<Level,String> logLevelCache=new HashMap<>();
-        Map<String,String> classNameCache=new HashMap<>();
-        private String logLevel(Level l){
+        Map<Level, String> logLevelCache = new HashMap<>();
+        Map<String, String> classNameCache = new HashMap<>();
+
+        private String logLevel(Level l) {
             String v = logLevelCache.get(l);
-            if(v==null) {
-                v=ensureSize(l.getLocalizedName(),6);
-                logLevelCache.put(l,v);
+            if (v == null) {
+                v = ensureSize(l.getLocalizedName(), 6);
+                logLevelCache.put(l, v);
             }
             return v;
         }
 
-        public String ensureSize(String className,int size) {
+        public String ensureSize(String className, int size) {
             StringBuilder sb = new StringBuilder(size);
             sb.append(className);
-            while (sb.length()<6){
+            while (sb.length() < 6) {
                 sb.append(' ');
             }
             return sb.toString();
@@ -131,21 +182,21 @@ public final class NutsLogUtils {
                 return "";
             }
             String v = classNameCache.get(className);
-            if(v==null) {
-                StringBuilder sb=new StringBuilder();
+            if (v == null) {
+                StringBuilder sb = new StringBuilder();
                 String[] split = className.split("\\.");
                 for (int i = 0; i < split.length - 1; i++) {
                     sb.append(split[i].charAt(0));
                     sb.append('.');
                 }
-                if(split.length>0){
-                    sb.append(split[split.length-1]);
+                if (split.length > 0) {
+                    sb.append(split[split.length - 1]);
                 }
-                while (sb.length()<45){
+                while (sb.length() < 45) {
                     sb.append(' ');
                 }
-                v=sb.toString();
-                classNameCache.put(className,v);
+                v = sb.toString();
+                classNameCache.put(className, v);
             }
             return v;
         }

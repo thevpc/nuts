@@ -44,14 +44,14 @@ import java.util.zip.ZipFile;
 /**
  * Default Bootstrap implementation. This class is responsible of loading
  * initial nuts-core.jar and its dependencies and for creating workspaces using
- * the method {@link #openWorkspace(NutsWorkspaceCreateOptions)}.
+ * the method {@link #openWorkspace(NutsWorkspaceOptions)}.
  * <p>
  * Created by vpc on 1/6/17.
  */
 public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     public static final Logger log = Logger.getLogger(DefaultNutsBootWorkspace.class.getName());
-    private final String rootLocation;
+    private final String home;
     private final String runtimeSourceURL;
     private BootNutsId runtimeId;
     private final NutsClassLoaderProvider contextClassLoaderProvider;
@@ -66,9 +66,10 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             bootOptions = new NutsBootOptions();
         }
         this.bootOptions=bootOptions;
-        NutsLogUtils.prepare(bootOptions.getLogLevel(), bootOptions.getLogFolder(), bootOptions.getLogSize(), bootOptions.getLogCount());
+        String home = NutsStringUtils.isEmpty(bootOptions.getHome()) ? NutsConstants.DEFAULT_NUTS_HOME : bootOptions.getHome();
+        NutsLogUtils.prepare(bootOptions.getLogLevel(), bootOptions.getLogFolder(), bootOptions.getLogSize(), bootOptions.getLogCount(), home,"bootstrap");
         log.log(Level.CONFIG, "Create boot workspace with options {0}", new Object[]{bootOptions});
-        this.rootLocation = NutsStringUtils.isEmpty(bootOptions.getHome()) ? NutsConstants.DEFAULT_NUTS_HOME : bootOptions.getHome();
+        this.home = home;
         this.runtimeSourceURL = bootOptions.getRuntimeSourceURL();
         this.runtimeId = NutsStringUtils.isEmpty(bootOptions.getRuntimeId()) ? null : BootNutsId.parse(bootOptions.getRuntimeId());
         this.contextClassLoaderProvider = bootOptions.getClassLoaderProvider() == null ? DefaultNutsClassLoaderProvider.INSTANCE : bootOptions.getClassLoaderProvider();
@@ -84,7 +85,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      */
     @Override
     public String getNutsHomeLocation() {
-        return rootLocation;
+        return home;
     }
 
     @Override
@@ -97,7 +98,12 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      */
     @Override
     public String getBootId() {
-        return NutsConstants.NUTS_ID_BOOT + "#" + NutsIOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"))
+        return NutsConstants.NUTS_ID_BOOT + "#" + getBootVersion();
+    }
+
+
+    public String getBootVersion() {
+        return NutsIOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"))
                 .getProperty("project.version", "0.0.0");
     }
 
@@ -105,12 +111,12 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
      * {@inheritDoc}
      */
     @Override
-    public NutsWorkspace openWorkspace(NutsWorkspaceCreateOptions options) {
+    public NutsWorkspace openWorkspace(NutsWorkspaceOptions options) {
         try {
 
             long startTime = options.getCreationTime();
             if (options == null) {
-                options = new NutsWorkspaceCreateOptions()
+                options = new NutsWorkspaceOptions()
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true);
             }
@@ -119,8 +125,9 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
             String workspaceLocation=options.getWorkspace();
             workspaceLocation = resolveWorkspacePath(workspaceLocation, NutsConstants.DEFAULT_WORKSPACE_NAME);
+            NutsLogUtils.prepare(bootOptions.getLogLevel(), bootOptions.getLogFolder(), bootOptions.getLogSize(), bootOptions.getLogCount(), home,workspaceLocation);
             log.log(Level.CONFIG, "Open Workspace {0} with options {1}", new Object[]{workspaceLocation, options});
-            if (workspaceLocation.equals(NutsConstants.BOOTSTRAP_REPOSITORY_NAME) || new File(workspaceLocation).equals(new File(rootLocation, NutsConstants.DEFAULT_WORKSPACE_NAME))) {
+            if (workspaceLocation.equals(NutsConstants.BOOTSTRAP_REPOSITORY_NAME) || new File(workspaceLocation).equals(new File(home, NutsConstants.DEFAULT_WORKSPACE_NAME))) {
                 throw new NutsInvalidWorkspaceException(NutsConstants.BOOTSTRAP_REPOSITORY_NAME, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + " is not a valid workspace name");
             }
             LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
@@ -129,7 +136,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                 throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load ClassPath");
             }
 
-            File repoFolder = createFile(rootLocation, NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
+            File repoFolder = createFile(home, NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
             File f = getBootFile(workspaceClassPath.getId(), getFileName(workspaceClassPath.getId(), "jar"), workspaceClassPath.getRepositoriesArray(), repoFolder, true);
             if (f == null) {
                 throw new NutsInvalidWorkspaceException(workspaceLocation, "Unable to load " + workspaceClassPath.getId());
@@ -188,17 +195,29 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
             return nutsWorkspace;
         }catch (Exception ex){
-            System.err.printf("workspace-location   : %s\n", (options.getWorkspace() == null ? "" : options.getWorkspace()));
-            System.err.printf("nuts-boot            : %s\n", getBootId());
-            System.err.printf("nuts-runtime         : %s\n", getRuntimeId());
-            System.err.printf("nuts-home            : %s\n", getNutsHomeLocation());
-            System.err.printf("java-version         : %s\n", System.getProperty("java.version"));
-            System.err.printf("java-executable      : %s\n", System.getProperty("java.home") + "/bin/java");
-            System.err.printf("java-class-path      : %s\n", System.getProperty("java.class.path"));
-            System.err.printf("java-library-path    : %s\n", System.getProperty("java.library.path"));
-            System.err.printf("Unable to locate nuts-core components.\n");
-            System.err.printf("You need internet connexion to initialize nuts configuration. Once components are downloaded, you may work offline...\n");
-            System.err.printf("Exiting nuts, Bye!\n");
+            String bootVersion = getBootVersion();
+            System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.\n");
+            System.err.printf("This component needs Internet connexion to initialize Nuts configuration.\n");
+            System.err.printf("Don't panic, once components are downloaded, you will be able to work offline...\n");
+            System.err.printf("Here after current environment info :\n");
+            System.err.printf("  nuts-version         : %s\n", bootVersion ==null?"<?> Not Found!": bootVersion);
+            System.err.printf("  nuts-boot            : %s\n", getBootId()==null?"<?> Not Found!":getBootId());
+            System.err.printf("  nuts-runtime         : %s\n", getRuntimeId()==null?"<?> Not Found!":getRuntimeId());
+            System.err.printf("  nuts-home            : %s\n", getNutsHomeLocation());
+            System.err.printf("  workspace-location   : %s\n", (options.getWorkspace() == null ? "<default-location>" : options.getWorkspace()));
+            System.err.printf("  java-version         : %s\n", System.getProperty("java.version"));
+            System.err.printf("  java-executable      : %s\n", System.getProperty("java.home") + "/bin/java");
+            System.err.printf("  java-class-path      : %s\n", System.getProperty("java.class.path"));
+            System.err.printf("  java-library-path    : %s\n", System.getProperty("java.library.path"));
+            System.err.printf("  os-name              : %s\n", System.getProperty("os.name"));
+            System.err.printf("  os-arch              : %s\n", System.getProperty("os.arch"));
+            System.err.printf("  os-version           : %s\n", System.getProperty("os.version"));
+            System.err.printf("  user-name            : %s\n", System.getProperty("user.name"));
+            System.err.printf("  user-home            : %s\n", System.getProperty("user.home"));
+            System.err.printf("  user-dir             : %s\n", System.getProperty("user.dir"));
+            System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' argument :\n");
+            System.err.printf("  java -jar nuts.jar --verbose [...]\n");
+            System.err.printf("Now exiting Nuts, Bye!\n");
             if(ex instanceof NutsException){
                 throw (NutsException) ex;
             }
@@ -235,7 +254,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     private String[] resolveBootConfigRepositories(String... possibilities) {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
-        initial.add(rootLocation + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
+        initial.add(home + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
         }
@@ -246,7 +265,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     private String[] resolveBootClassPathRepositories(String... possibilities) {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
-        initial.add(rootLocation + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
+        initial.add(home + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
         initial.add(NutsConstants.URL_COMPONENTS_LOCAL);
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
@@ -257,7 +276,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
     }
 
     private File getBootFileLocation(BootNutsId id, String name) {
-        return new File(createFile(rootLocation, NutsConstants.BOOTSTRAP_REPOSITORY_NAME), getPathFile(id, name));
+        return new File(createFile(home, NutsConstants.BOOTSTRAP_REPOSITORY_NAME), getPathFile(id, name));
     }
 
     private NutsWorkspaceClassPath loadWorkspaceClassPath(boolean first) {
@@ -399,7 +418,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
                     getBootId() + ";"
                             + "net.vpc.common:vpc-common-utils#1.22;"
                             + "net.vpc.common:vpc-common-io#1.3.6;"
-                            + "net.vpc.common:vpc-common-strings#1.2.14;"
+                            + "net.vpc.common:vpc-common-strings#1.2.15;"
                             + "org.ow2.asm:asm#5.2;"
                             + "com.google.code.gson:gson#2.8.5"
                     ,
@@ -449,14 +468,14 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     protected String expandPath0(String path) {
         if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
-            path = rootLocation + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
+            path = home + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
         }
         return path;
     }
 
     protected String expandPath(String path) {
         if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
-            path = rootLocation + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
+            path = home + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
         }
         if (path.startsWith("~/")) {
             path = System.getProperty("user.home") + path.substring(1);
@@ -585,7 +604,7 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
             }
             return ok;
         } else {
-            File repoFolder = createFile(rootLocation, repository);
+            File repoFolder = createFile(home, repository);
             File ff=resolveFileForRepository(path,repoFolder,repository);
             if(ff!=null){
                 return ff;
@@ -681,10 +700,10 @@ public class DefaultNutsBootWorkspace implements NutsBootWorkspace {
 
     private String resolveWorkspacePath(String workspace, String defaultName) {
         if (NutsStringUtils.isEmpty(workspace)) {
-            File file = NutsIOUtils.resolvePath(rootLocation + "/" + defaultName, null, rootLocation);
+            File file = NutsIOUtils.resolvePath(home + "/" + defaultName, new File(home), home);
             workspace = file == null ? null : file.getPath();
         } else {
-            File file = NutsIOUtils.resolvePath(workspace, null, rootLocation);
+            File file = NutsIOUtils.resolvePath(workspace, new File(home), home);
             workspace = file == null ? null : file.getPath();
         }
         return workspace;

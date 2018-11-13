@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.strings.StringUtils;
 
@@ -85,7 +84,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return new NutsRepositoryDefinition[]{
-                new NutsRepositoryDefinition("system", workspace.getPlatformOsLib() + FileUtils.getNativePath("/nuts/system-repository"), "nuts", false)
+                new NutsRepositoryDefinition("system", workspace.getPlatformOsLibPath() + FileUtils.getNativePath("/nuts/system-repository"), "nuts", false)
         };
     }
 }
