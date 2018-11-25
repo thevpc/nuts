@@ -38,7 +38,7 @@ public class TextParserTest {
 //    @Test
 //    public void case1() {
 //        String text = "``3052`` ok ``2``";
-//        NutsDocNode y = DefaultNutsTextParser.INSTANCE.parseTextNode(text);
+//        FDocNode y = FormattedPrintStreamParser.INSTANCE.parseTextNode(text);
 //        display(y, "");
 //    }
 
@@ -46,13 +46,13 @@ public class TextParserTest {
 //    public void case2() throws ParseException {
 //        String text = "Nuts loaded in [[``3052``]] ms (boot in [[``2``]] ms, create workspace in [[``3002``]] ms))";
 //        TextNode y;
-//        y = DefaultNutsTextParser.INSTANCE.parseTextNode(text);
+//        y = FormattedPrintStreamParser.INSTANCE.parseTextNode(text);
 //        display(y, "");
 //    }
 
-//    protected void display(NutsDocNode n, String prefix) {
+//    protected void display(FDocNode n, String prefix) {
 //        System.out.printf(prefix + "%s : %s\n", n.getType(), n.getValue());
-//        for (NutsDocNode node : n.getNodes()) {
+//        for (FDocNode node : n.getNodes()) {
 //            display(node, prefix + "  ");
 //        }
 //    }

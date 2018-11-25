@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
-import net.vpc.common.commandline.ArgVal;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.io.TextFiles;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,9 +58,9 @@ public class HeadCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        NutsPrintStream out = context.getTerminal().getOut();
-        while (!cmdLine.isEmpty()) {
-            ArgVal a = cmdLine.read();
+        PrintStream out = context.getTerminal().getOut();
+        while (cmdLine.hasNext()) {
+            Argument a = cmdLine.read();
             if (a.isOption()) {
                 if(ShellHelper.isInt(a.getString().substring(1))){
                     options.max=Integer.parseInt(a.getString().substring(1));

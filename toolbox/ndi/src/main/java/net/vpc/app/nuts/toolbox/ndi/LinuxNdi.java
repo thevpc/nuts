@@ -5,11 +5,12 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class LinuxNdi {
     private NutsWorkspace ws;
     private NutsSession session;
-    private NutsFormattedPrintStream out;
+    private PrintStream out;
 
     public LinuxNdi(NutsWorkspace ws, NutsSession session) {
         this.ws = ws;
@@ -22,7 +23,7 @@ public class LinuxNdi {
             createBootScript(forceBoot||force,false);
         } else {
             createBootScript(forceBoot,true);
-            NutsId nutsId = ws.createNutsId(id);
+            NutsId nutsId = ws.parseId(id);
             if(fetch){
                 NutsFile fetched = ws.fetch(id, null);
                 out.printf("==%s== resolved as ==%s==\n", id,fetched.getId());

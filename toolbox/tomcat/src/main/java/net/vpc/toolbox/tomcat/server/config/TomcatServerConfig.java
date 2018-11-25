@@ -6,6 +6,7 @@ import java.util.Map;
 public class TomcatServerConfig {
     private String catalinaVersion;
     private String catalinaBase;
+    private String catalinaHome;
     private String archiveFolder;
     private String runningFolder;
     private String startupMessage;
@@ -68,64 +69,72 @@ public class TomcatServerConfig {
         return apps;
     }
 
-    public void setApps(Map<String, TomcatServerAppConfig> apps) {
+    public TomcatServerConfig setApps(Map<String, TomcatServerAppConfig> apps) {
         this.apps = apps;
+        return this;
     }
 
     public Map<String, TomcatServerDomainConfig> getDomains() {
         return domains;
     }
 
-    public void setDomains(Map<String, TomcatServerDomainConfig> domains) {
+    public TomcatServerConfig setDomains(Map<String, TomcatServerDomainConfig> domains) {
         this.domains = domains;
+        return this;
     }
 
     public String getStartupMessage() {
         return startupMessage;
     }
 
-    public void setStartupMessage(String startupMessage) {
+    public TomcatServerConfig setStartupMessage(String startupMessage) {
         this.startupMessage = startupMessage;
+        return this;
     }
 
     public String getShutdownMessage() {
         return shutdownMessage;
     }
 
-    public void setShutdownMessage(String shutdownMessage) {
+    public TomcatServerConfig setShutdownMessage(String shutdownMessage) {
         this.shutdownMessage = shutdownMessage;
+        return this;
     }
 
     public String getLogFile() {
         return logFile;
     }
 
-    public void setLogFile(String logFile) {
+    public TomcatServerConfig setLogFile(String logFile) {
         this.logFile = logFile;
+        return this;
     }
 
     public String getJavaHome() {
         return javaHome;
     }
 
-    public void setJavaHome(String javaHome) {
+    public TomcatServerConfig setJavaHome(String javaHome) {
         this.javaHome = javaHome;
+        return this;
     }
 
     public int getStartupWaitTime() {
         return startupWaitTime;
     }
 
-    public void setStartupWaitTime(int startupWaitTime) {
+    public TomcatServerConfig setStartupWaitTime(int startupWaitTime) {
         this.startupWaitTime = startupWaitTime;
+        return this;
     }
 
     public boolean isKill() {
         return kill;
     }
 
-    public void setKill(boolean kill) {
+    public TomcatServerConfig setKill(boolean kill) {
         this.kill = kill;
+        return this;
     }
 
     public String getJavaOptions() {
@@ -134,6 +143,15 @@ public class TomcatServerConfig {
 
     public TomcatServerConfig setJavaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
+        return this;
+    }
+
+    public String getCatalinaHome() {
+        return catalinaHome;
+    }
+
+    public TomcatServerConfig setCatalinaHome(String catalinaHome) {
+        this.catalinaHome = catalinaHome;
         return this;
     }
 }

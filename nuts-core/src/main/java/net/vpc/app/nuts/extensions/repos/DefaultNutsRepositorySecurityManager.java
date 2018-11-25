@@ -211,7 +211,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         for (NutsUserConfig secu : repo.getConfigManager().getUsers()) {
             all.add(getEffectiveUser(secu.getUser()));
         }
-        return all.toArray(new NutsEffectiveUser[all.size()]);
+        return all.toArray(new NutsEffectiveUser[0]);
     }
 
     @Override
@@ -237,7 +237,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
                 }
             }
         }
-        return u == null ? null : new NutsEffectiveUserImpl(u, inherited.toArray(new String[inherited.size()]));
+        return u == null ? null : new NutsEffectiveUserImpl(u, inherited.toArray(new String[0]));
     }
 
 }

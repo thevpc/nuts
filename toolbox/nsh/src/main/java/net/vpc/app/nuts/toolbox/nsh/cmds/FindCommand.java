@@ -30,23 +30,25 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.*;
-//import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-//import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-//import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-//import net.vpc.app.nuts.extensions.util.NutsSearchBuilder;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsIdExt;
 import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.PackagingNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
-import net.vpc.common.commandline.ArgVal;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
+
+//import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+//import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
+//import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+//import net.vpc.app.nuts.extensions.util.NutsSearchBuilder;
 
 /**
  * Created by vpc on 1/7/17.
@@ -67,8 +69,8 @@ public class FindCommand extends AbstractNutsCommand {
         findContext.context = context;
         findContext.out = context.getTerminal().getFormattedOut();
         findContext.err = context.getTerminal().getFormattedErr();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.readOnce("-js", "--javascript")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAllOnce("-js", "--javascript")) {
                 if (currentFindWhat + 1 >= findWhats.size()) {
                     findWhats.add(new FindWhat());
                 }
@@ -79,84 +81,84 @@ public class FindCommand extends AbstractNutsCommand {
                     throw new NutsIllegalArgumentException("Unsupported");
                 }
                 findContext.jsflag = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-x", "--expression")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-x", "--expression")) {
                 findContext.jsflag = false;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-l", "--long")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-l", "--long")) {
                 findContext.longflag = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-f", "--file")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-f", "--file")) {
                 findContext.showFile = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-c", "--class")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-c", "--class")) {
                 findContext.showClass = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-F", "--offline")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-F", "--offline")) {
                 findContext.fecthMode = SearchMode.OFFLINE;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-O", "--online")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-O", "--online")) {
                 findContext.fecthMode = SearchMode.ONLINE;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-R", "--remote")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-R", "--remote")) {
                 findContext.fecthMode = SearchMode.REMOTE;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-M", "--commitable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-M", "--commitable")) {
                 findContext.fecthMode = SearchMode.COMMIT;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-U", "--updatable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-U", "--updatable")) {
                 findContext.fecthMode = SearchMode.UPDATE;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-T", "--status")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-T", "--status")) {
                 findContext.fecthMode = SearchMode.STATUS;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-e", "--exec")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-e", "--exec")) {
                 findContext.executable = true;
                 findContext.library = false;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-!e", "--lib")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-!e", "--lib")) {
                 findContext.executable = false;
                 findContext.library = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-s", "--descriptor")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-s", "--descriptor")) {
                 findContext.desc = true;
                 findContext.eff = false;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-g", "--installed-dependencies")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-g", "--installed-dependencies")) {
                 findContext.installedDependencies = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-d", "--dependencies")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-d", "--dependencies")) {
                 findContext.display = "dependencies";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-i", "--installed")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-i", "--installed")) {
                 findContext.installed = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-!i", "--non-installed")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-!i", "--non-installed")) {
                 findContext.installed = false;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-u", "--updatable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-u", "--updatable")) {
                 findContext.updatable = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-!u", "--non-updatable")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-!u", "--non-updatable")) {
                 findContext.updatable = false;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-b", "--effective-descriptor")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-b", "--effective-descriptor")) {
                 findContext.desc = true;
                 findContext.eff = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-I", "--display-id")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-I", "--display-id")) {
                 findContext.display = "id";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-N", "--display-name")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-N", "--display-name")) {
                 findContext.display = "name";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-P", "--display-packaging")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-P", "--display-packaging")) {
                 findContext.display = "packaging";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-A", "--display-arch")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-A", "--display-arch")) {
                 findContext.display = "arch";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-L", "--display-file")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-L", "--display-file")) {
                 findContext.display = "file";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-C", "--display-class")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-C", "--display-class")) {
                 findContext.display = "class";
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-h", "-?", "--help")) {
-                cmdLine.requireEmpty();
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-h", "-?", "--help")) {
+                cmdLine.unexpectedArgument();
                 if (cmdLine.isExecMode()) {
                     String help = getHelp();
                     findContext.out.printf("Command %s\n", this);
                     findContext.out.println(help);
                 }
                 return 0;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-p", "--pkg")) {
-                findContext.pack.add(cmdLine.readNonOptionOrError(new PackagingNonOption("Packaging", context)).getString());
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-a", "--arch")) {
-                findContext.arch.add(cmdLine.readNonOptionOrError(new ArchitectureNonOption("Architecture", context)).getString());
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-r", "--repo")) {
-                findContext.repos.add(cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-V", "--last-version")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-p", "--pkg")) {
+                findContext.pack.add(cmdLine.readRequiredNonOption(new PackagingNonOption("Packaging", context)).getString());
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-a", "--arch")) {
+                findContext.arch.add(cmdLine.readRequiredNonOption(new ArchitectureNonOption("Architecture", context)).getString());
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-r", "--repo")) {
+                findContext.repos.add(cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString());
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-V", "--last-version")) {
                 findContext.latestVersions = true;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-v", "--all-versions")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-v", "--all-versions")) {
                 findContext.latestVersions = false;
-            } else if (currentFindWhat == 0 && cmdLine.readOnce("-Y", "--summary")) {
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-Y", "--summary")) {
                 findContext.showSummary = true;
             } else {
-                ArgVal val = cmdLine.readNonOptionOrError(new DefaultNonOption("Expression"));
+                Argument val = cmdLine.readRequiredNonOption(new DefaultNonOption("Expression"));
                 if (currentFindWhat + 1 >= findWhats.size()) {
                     findWhats.add(new FindWhat());
                 }
@@ -488,11 +490,13 @@ public class FindCommand extends AbstractNutsCommand {
                             if (info.getFile() == null) {
                                 findContext.out.print("?");
                             } else {
-                                String cls = ws.resolveJavaMainClass(info.getFile());
-                                if (cls == null) {
+                                ExecutionEntry[] cls = ws.resolveExecutionEntries(info.getFile());
+                                if (cls.length == 0) {
                                     findContext.out.print("?");
+                                } else if(cls.length==1){
+                                    findContext.out.print(cls[0].getName());
                                 } else {
-                                    findContext.out.print(cls);
+                                    findContext.out.print(Arrays.toString(cls));
                                 }
                             }
                         }
@@ -514,11 +518,13 @@ public class FindCommand extends AbstractNutsCommand {
                             if (info.getFile() == null) {
                                 findContext.out.print("?");
                             } else {
-                                String cls = ws.resolveJavaMainClass(info.getFile());
-                                if (cls == null) {
+                                ExecutionEntry[] cls = ws.resolveExecutionEntries(info.getFile());
+                                if (cls.length == 0) {
                                     findContext.out.print("?");
+                                } else if(cls.length==1){
+                                    findContext.out.print(cls[0].getName());
                                 } else {
-                                    findContext.out.print(cls);
+                                    findContext.out.print(Arrays.toString(cls));
                                 }
                             }
                         }
@@ -624,10 +630,11 @@ public class FindCommand extends AbstractNutsCommand {
                     break;
                 }
                 case "class": {
-                    String fullName = ws.resolveJavaMainClass(info.getFile());
-                    if (fullName != null && !visitedItems.contains(fullName)) {
-                        visitedItems.add(fullName);
-                        findContext.out.printf("%s\n", fullName);
+                    for (ExecutionEntry entry : ws.resolveExecutionEntries(info.getFile())) {
+                        if (!visitedItems.contains(entry.getName())) {
+                            visitedItems.add(entry.getName());
+                            findContext.out.printf("%s\n", entry.getName());
+                        }
                     }
                     break;
                 }
@@ -845,8 +852,8 @@ public class FindCommand extends AbstractNutsCommand {
         Boolean installedDependencies = null;
         Boolean updatable = null;
         boolean latestVersions = true;
-        NutsPrintStream out;
-        NutsPrintStream err;
+        PrintStream out;
+        PrintStream err;
         String display = "id";
         boolean showSummary = false;
         NutsCommandContext context;

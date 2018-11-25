@@ -33,7 +33,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,17 +53,17 @@ public class Nuts {
         try {
             System.exit(uncheckedMain(args));
         } catch (Exception ex) {
-            int errorCode=204;
+            int errorCode = 204;
             //inherit error code from exception
-            if(ex instanceof NutsExecutionException){
+            if (ex instanceof NutsExecutionException) {
                 errorCode = ((NutsExecutionException) ex).getErrorCode();
             }
-            boolean showTrace=false;
-            boolean showErrorClass=false;
-            if(ex.getClass().getName().startsWith("java.lang.")){
+            boolean showTrace = false;
+            boolean showErrorClass = false;
+            if (ex.getClass().getName().startsWith("java.lang.")) {
                 //this is a common error
-                showTrace=true;
-                showErrorClass=true;
+                showTrace = true;
+                showErrorClass = true;
             }
             String m = ex.getMessage();
             if (m == null || m.isEmpty()) {
@@ -70,11 +72,11 @@ public class Nuts {
             if (m == null || m.isEmpty()) {
                 m = ex.getClass().getName();
             }
-            if(showErrorClass){
-                m=ex.toString();
+            if (showErrorClass) {
+                m = ex.toString();
             }
             System.err.println(m);
-            if(showTrace){
+            if (showTrace) {
                 ex.printStackTrace(System.err);
             }
             System.exit(errorCode);
@@ -166,18 +168,18 @@ public class Nuts {
         NutsWorkspace ws = openWorkspace(o.getWorkspaceCreateOptions(), o.getBootOptions());
         boolean someProcessing = false;
 
-        String[] commandArguments = o.getArgs().toArray(new String[o.getArgs().size()]);
+        String[] commandArguments = o.getArgs().toArray(new String[0]);
         NutsSession session = ws.createSession();
-        int errorCode=0;
+        int errorCode = 0;
         if (o.isShowHelp()) {
-            errorCode=ws.createExecBuilder()
+            errorCode = ws.createExecBuilder()
                     .setSession(session)
                     .setCommand(NutsConstants.NUTS_SHELL, "help")
                     .exec().getResult();
             someProcessing = true;
         }
         if (o.isShowLicense()) {
-            errorCode=ws.createExecBuilder()
+            errorCode = ws.createExecBuilder()
                     .setSession(session)
                     .setCommand(NutsConstants.NUTS_SHELL, "help", "--license")
                     .exec().getResult()
@@ -186,7 +188,7 @@ public class Nuts {
         }
 
         if (o.getApplyUpdatesFile() != null) {
-            errorCode=ws.exec(o.getApplyUpdatesFile(), args, false, false, session);
+            errorCode = ws.exec(o.getApplyUpdatesFile(), args, false, false, session);
             return errorCode;
         }
 
@@ -198,29 +200,8 @@ public class Nuts {
         }
 
         if (o.isVersion()) {
-            NutsPrintStream out = session.getTerminal().getFormattedOut();
-            out.printf("workspace-location   : [[%s]]\n", ws.getConfigManager().getWorkspaceLocation());
-            out.printf("nuts-boot            : [[%s]]\n", ws.getConfigManager().getWorkspaceBootId());
-            out.printf("nuts-runtime         : [[%s]]\n", ws.getConfigManager().getWorkspaceRuntimeId());
-            out.printf("nuts-home            : [[%s]]\n", ws.getConfigManager().getNutsHomeLocation());
-            out.printf("java-version         : [[%s]]\n", System.getProperty("java.version"));
-            out.printf("java-executable      : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
-            out.printf("java-class-path      : [[%s]]\n", System.getProperty("java.class.path"));
-            out.printf("java-library-path    : [[%s]]\n", System.getProperty("java.library.path"));
-            URL[] cl = ws.getConfigManager().getBootClassWorldURLs();
-            StringBuilder runtimeClassPath = new StringBuilder("?");
-            if (cl != null) {
-                runtimeClassPath = new StringBuilder();
-                for (URL url : cl) {
-                    if (url != null) {
-                        if (runtimeClassPath.length() > 0) {
-                            runtimeClassPath.append(":");
-                        }
-                        runtimeClassPath.append(url);
-                    }
-                }
-            }
-            out.printf("runtime-class-path   : [[%s]]\n", runtimeClassPath.toString());
+            PrintStream out = session.getTerminal().getFormattedOut();
+            ws.printVersion(out,null,o.getVersionOptions());
             someProcessing = true;
         }
 
@@ -251,9 +232,9 @@ public class Nuts {
     }
 
 
-    public static String getConfigCurrentVersion(String nutsHome,String workspace) {
+    public static String getConfigCurrentVersion(String nutsHome, String workspace) {
         String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome,workspace), versionUrl);
+        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome, workspace), versionUrl);
         try {
             if (versionFile.isFile()) {
                 String str = NutsIOUtils.readStringFromFile(versionFile);
@@ -266,14 +247,14 @@ public class Nuts {
                 log.log(Level.CONFIG, "Reading nuts version file " + versionUrl + ".\n");
             }
         } catch (Exception ex) {
-            log.log(Level.CONFIG, "Unable to load nuts version file " + versionUrl + ".\n",ex);
+            log.log(Level.CONFIG, "Unable to load nuts version file " + versionUrl + ".\n", ex);
         }
         return null;
     }
 
-    public static boolean setConfigCurrentVersion(String version, String nutsHome,String workspace) {
+    public static boolean setConfigCurrentVersion(String version, String nutsHome, String workspace) {
         String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome,workspace), versionUrl);
+        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome, workspace), versionUrl);
         if (version != null) {
             version = version.trim();
             if (version.isEmpty()) {
@@ -281,7 +262,7 @@ public class Nuts {
             }
         }
         if (version == null) {
-            if(versionFile.exists()){
+            if (versionFile.exists()) {
                 log.log(Level.CONFIG, "Deleting nuts version file " + versionUrl + ".\n");
             }
             return versionFile.delete();
@@ -294,7 +275,7 @@ public class Nuts {
                 try {
                     ps = new PrintStream(versionFile);
                     ps.println(version);
-                    log.log(Level.CONFIG, "Updating nuts version file " + version+" => "+versionUrl + ".\n");
+                    log.log(Level.CONFIG, "Updating nuts version file " + version + " => " + versionUrl + ".\n");
                 } finally {
                     if (ps != null) {
                         ps.close();
@@ -302,7 +283,7 @@ public class Nuts {
                 }
                 return true;
             } catch (FileNotFoundException ex) {
-                log.log(Level.CONFIG, "Unable to store nuts version file " + versionUrl + ".\n",ex);
+                log.log(Level.CONFIG, "Unable to store nuts version file " + versionUrl + ".\n", ex);
             }
         }
         return false;

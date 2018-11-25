@@ -732,6 +732,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     }
                 }
             }
+            for (NutsRepository mirror : getMirrors()) {
+                try {
+                    NutsDescriptor fetch = mirror.fetchDescriptor(id, session);
+                    return fetch.getId();
+                }catch (Exception ex){
+                    //ignore
+                }
+            }
             return bestId;
         }
         return super.findLatestVersion(id, filter, session);

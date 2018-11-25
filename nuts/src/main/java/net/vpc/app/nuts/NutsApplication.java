@@ -1,5 +1,7 @@
 package net.vpc.app.nuts;
 
+import java.io.PrintStream;
+
 public abstract class NutsApplication {
 
     public void launchAndExit(String[] args) {
@@ -9,10 +11,11 @@ public abstract class NutsApplication {
             int r = launch(ws.getBootOptions().getApplicationArguments(), ws);
             System.exit(r);
         } catch (Exception ex) {
+            ex.printStackTrace();
             boolean extraError = false;
             try {
-                NutsSession s = ws.createSession();
-                NutsFormattedPrintStream formattedErr = s.getTerminal().getFormattedErr();
+                NutsSession s = ws==null?null:ws.createSession();
+                PrintStream formattedErr = s==null?System.err:s.getTerminal().getFormattedErr();
                 String m = ex.getMessage();
                 if(m==null || m.isEmpty()){
                     m=ex.toString();

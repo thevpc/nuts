@@ -63,7 +63,12 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>java-shell</artifactId>
-            <version>0.6</version>
+            <version>0.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-commandline</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
@@ -83,7 +88,7 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-mvn</artifactId>
-            <version>1.0</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>
@@ -113,9 +118,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.50</version>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-ssh</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
     <build>

@@ -69,7 +69,12 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-utils</artifactId>
-            <version>1.22</version>
+            <version>1.22.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-fprint</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>
@@ -79,7 +84,7 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-mvn</artifactId>
-            <version>1.0</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>

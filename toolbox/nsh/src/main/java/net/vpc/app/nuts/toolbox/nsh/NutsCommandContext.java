@@ -29,9 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsFormattedPrintStream;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.CommandAutoComplete;
 
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.Properties;
 
@@ -80,11 +84,11 @@ public interface NutsCommandContext {
 
     NutsCommandContext copy();
 
-    NutsFormattedPrintStream getFormattedOut();
+    PrintStream getFormattedOut();
 
-    NutsFormattedPrintStream getFormattedErr();
+    PrintStream getFormattedErr();
 
-    NutsPrintStream getOut();
+    PrintStream getOut();
 
-    NutsPrintStream getErr();
+    PrintStream getErr();
 }

@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.StringMapper;
+import net.vpc.app.nuts.ObjectConverter;
 
 import java.util.Map;
 
 /**
  * Created by vpc on 1/17/17.
  */
-public class MapStringMapper implements StringMapper {
+public class MapStringMapper implements ObjectConverter<String,String> {
 
     private Map<String, String> map;
 
@@ -45,7 +45,7 @@ public class MapStringMapper implements StringMapper {
     }
 
     @Override
-    public String get(String key) {
+    public String convert(String key) {
         return map.get(key);
     }
 }

@@ -55,12 +55,12 @@ public class ConnectCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         String password = null;
         String server = null;
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.readOnce("--password")) {
-                password = cmdLine.readNonOptionOrError(new DefaultNonOption("Password")).getStringOrError();
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAllOnce("--password")) {
+                password = cmdLine.readRequiredNonOption(new DefaultNonOption("Password")).getStringOrError();
             } else {
-                server = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerAddress")).getStringOrError();
-                cmdLine.requireEmpty();
+                server = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerAddress")).getStringOrError();
+                cmdLine.unexpectedArgument();
             }
         }
         if (!cmdLine.isExecMode()) {

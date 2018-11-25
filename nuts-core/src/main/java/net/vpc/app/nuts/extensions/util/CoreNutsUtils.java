@@ -315,8 +315,8 @@ public class CoreNutsUtils {
             }
         }
         return new String[][]{
-                env.toArray(new String[env.size()]),
-                app.toArray(new String[app.size()]),};
+                env.toArray(new String[0]),
+                app.toArray(new String[0]),};
     }
 
     public static NutsDescriptor createNutsDescriptor() {
@@ -330,11 +330,11 @@ public class CoreNutsUtils {
      *
      * @return
      */
-//    public static NutsId createNutsId(String nutFormat) {
-//        return createNutsId(nutFormat);
+//    public static NutsId parseId(String nutFormat) {
+//        return parseId(nutFormat);
 //    }
-//    public static NutsId parseOrErrorNutsId(String nutFormat) {
-//        return parseOrErrorNutsId(nutFormat);
+//    public static NutsId parseRequiredNutsId(String nutFormat) {
+//        return parseRequiredNutsId(nutFormat);
 //    }
 //    public static NutsId parseNullableOrErrorNutsId(String nutFormat) {
 //        return parseNullableOrErrorNutsId(nutFormat);
@@ -354,11 +354,11 @@ public class CoreNutsUtils {
 //    public static NutsDescriptor parseNutsDescriptor(InputStream in) throws IOException {
 //        return parseNutsDescriptor(in);
 //    }
-    public static NutsId finNutsIdByFullNameInStrings(NutsId id, Collection<String> all) {
+    public static NutsId findNutsIdByFullNameInStrings(NutsId id, Collection<String> all) {
         if (all != null) {
             for (String nutsId : all) {
                 if (nutsId != null) {
-                    NutsId nutsId2 = CoreNutsUtils.parseOrErrorNutsId(nutsId);
+                    NutsId nutsId2 = CoreNutsUtils.parseRequiredNutsId(nutsId);
                     if (nutsId2.isSameFullName(id)) {
                         return nutsId2;
                     }
@@ -368,7 +368,7 @@ public class CoreNutsUtils {
         return null;
     }
 
-    public static NutsId finNutsIdByFullNameInIds(NutsId id, Collection<NutsId> all) {
+    public static NutsId findNutsIdByFullNameInIds(NutsId id, Collection<NutsId> all) {
         if (all != null) {
             for (NutsId nutsId : all) {
                 if (nutsId != null) {
@@ -497,7 +497,7 @@ public class CoreNutsUtils {
         return null;
     }
 
-    public static NutsId parseOrErrorNutsId(String nutFormat) {
+    public static NutsId parseRequiredNutsId(String nutFormat) {
         NutsId id = parseNutsId(nutFormat);
         if (id == null) {
             throw new NutsParseException("Invalid Id format : " + nutFormat);
@@ -526,7 +526,7 @@ public class CoreNutsUtils {
         return id.getName() + "-" + id.getVersion() + ext;
     }
 
-    public static String[] applyStringProperties(String[] child, StringMapper properties) {
+    public static String[] applyStringProperties(String[] child, ObjectConverter<String,String> properties) {
         String[] vals = new String[child.length];
         for (int i = 0; i < vals.length; i++) {
             vals[i] = applyStringProperties(child[i], properties);
@@ -534,7 +534,7 @@ public class CoreNutsUtils {
         return vals;
     }
 
-    public static Map<String, String> applyMapProperties(Map<String, String> child, StringMapper properties) {
+    public static Map<String, String> applyMapProperties(Map<String, String> child, ObjectConverter<String,String> properties) {
         Map<String, String> m2 = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : child.entrySet()) {
             m2.put(applyStringProperties(entry.getKey(), properties), applyStringProperties(entry.getValue(), properties));
@@ -542,7 +542,7 @@ public class CoreNutsUtils {
         return m2;
     }
 
-    public static String applyStringProperties(String child, StringMapper properties) {
+    public static String applyStringProperties(String child, ObjectConverter<String,String> properties) {
         if (StringUtils.isEmpty(child)) {
             return null;
         }
@@ -736,7 +736,7 @@ public class CoreNutsUtils {
         if (!updates) {
             return null;
         }
-        return all.toArray((T[]) Array.newInstance(cls, all.size()));
+        return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
     public static NutsSearch createSearch(String[] js, String[] ids, String[] arch, String[] packagings, String[] repos) {

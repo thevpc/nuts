@@ -44,7 +44,7 @@ public class TomcatClientConfigService {
 
 
     public TomcatClientConfigService saveConfig() {
-        JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = context.ws.getJsonIO();
         File f = new File(context.configFolder, name + CLIENT_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
@@ -89,7 +89,7 @@ public class TomcatClientConfigService {
         if(deleteOutLog) {
             arg.add("--deleteOutLog");
         }
-        return execRemoteNuts(arg.toArray(new String[arg.size()]));
+        return execRemoteNuts(arg.toArray(new String[0]));
     }
 
     public int shutdown() {
@@ -120,7 +120,7 @@ public class TomcatClientConfigService {
         if(deleteOutLog) {
             arg.add("--deleteOutLog");
         }
-        return execRemoteNuts(arg.toArray(new String[arg.size()]));
+        return execRemoteNuts(arg.toArray(new String[0]));
     }
 
 
@@ -130,7 +130,7 @@ public class TomcatClientConfigService {
         }
         File f = new File(context.configFolder, name + CLIENT_CONFIG_EXT);
         if (f.exists()) {
-            JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+            JsonIO jsonSerializer = context.ws.getJsonIO();
             try (FileReader r = new FileReader(f)) {
                 TomcatClientConfig i = jsonSerializer.read(r, TomcatClientConfig.class);
                 config = i;
@@ -149,7 +149,7 @@ public class TomcatClientConfigService {
     }
 
     public TomcatClientConfigService write(PrintStream out) {
-        JsonIO jsonSerializer = context.ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = context.ws.getJsonIO();
         PrintWriter w = new PrintWriter(out);
         jsonSerializer.write(getConfig(), new PrintWriter(out), true);
         w.flush();
@@ -219,7 +219,7 @@ public class TomcatClientConfigService {
                 "ssh",
                 "--password",
                 serverPassword,
-                "--cert",
+                "--key-file",
                 serverCertificate,
                 this.config.getServer(),
                 "nuts"

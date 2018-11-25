@@ -29,13 +29,38 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 
 public interface JsonIO {
 
     void write(Object obj, Writer out, boolean pretty);
 
     <T> T read(Reader reader, Class<T> cls);
+
+    default <T> T read(File file, Class<T> cls) {
+        try (FileReader r = new FileReader(file)) {
+            return read(r, cls);
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
+        }
+    }
+
+    default <T> void write(Object obj, File file, boolean pretty) {
+        try (FileWriter w = new FileWriter(file)) {
+            write(obj, w, pretty);
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
+        }
+    }
+
+    default <T> void write(Object obj, PrintStream printStream, boolean pretty) {
+        Writer w = new PrintWriter(printStream);
+        write(obj, w, pretty);
+        try {
+            w.flush();
+        } catch (IOException ex) {
+            throw new NutsIOException(ex);
+        }
+    }
 
 }

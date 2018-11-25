@@ -220,7 +220,7 @@ public class CoreVersionUtils {
         if (last.length() > 0) {
             parts.add(last.toString());
         }
-        return parts.toArray(new String[parts.size()]);
+        return parts.toArray(new String[0]);
     }
 
     private static int compareVersionItem(String v1, String v2) {

@@ -5,13 +5,16 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
-import net.vpc.common.commandline.format.TableFormatter;
+import net.vpc.app.nuts.NutsSdkLocation;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
+import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.format.TableFormatter;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,12 +31,12 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
             autoSave = false;
         }
         NutsWorkspace ws = context.getWorkspace();
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
-        if (cmdLine.read("add java")) {
-            if (cmdLine.read("--search")) {
+        PrintStream out = context.getTerminal().getFormattedOut();
+        if (cmdLine.readAll("add java")) {
+            if (cmdLine.readAll("--search")) {
                 List<String> extraLocations = new ArrayList<>();
-                while (cmdLine.isEmpty()) {
-                    extraLocations.add(cmdLine.readValue());
+                while (cmdLine.hasNext()) {
+                    extraLocations.add(cmdLine.read().getExpression());
                 }
                 if (extraLocations.isEmpty()) {
                     for (NutsSdkLocation loc : ws.getConfigManager().searchJdkLocations(out)) {
@@ -46,13 +49,13 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
                         }
                     }
                 }
-                cmdLine.requireEmpty();
+                cmdLine.unexpectedArgument();
                 if (autoSave) {
                     ws.getConfigManager().save();
                 }
             } else {
-                while (cmdLine.isEmpty()) {
-                    NutsSdkLocation loc = ws.getConfigManager().resolveJdkLocation(cmdLine.readValue());
+                while (cmdLine.hasNext()) {
+                    NutsSdkLocation loc = ws.getConfigManager().resolveJdkLocation(cmdLine.read().getExpression());
                     if (loc != null) {
                         ws.getConfigManager().addSdk("java", loc);
                     }
@@ -62,10 +65,10 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.read("remove java")) {
+        } else if (cmdLine.readAll("remove java")) {
             NutsWorkspaceConfigManager cm = ws.getConfigManager();
-            while (cmdLine.isEmpty()) {
-                String name = cmdLine.readValue();
+            while (cmdLine.hasNext()) {
+                String name = cmdLine.read().getExpression();
                 NutsSdkLocation loc = cm.findSdkByName("java", name);
                 if (loc == null) {
                     loc = cm.findSdkByPath("java", name);
@@ -81,15 +84,15 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
                 ws.getConfigManager().save();
             }
             return true;
-        } else if (cmdLine.read("list java")) {
+        } else if (cmdLine.readAll("list java")) {
             TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                     .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true)
                     .setColumnsConfig("name", "version", "path")
                     .addHeaderCells("==Name==", "==Version==", "==Path==");
-            while (!cmdLine.isEmpty()) {
+            while (cmdLine.hasNext()) {
                 if (!t.configure(cmdLine)) {
-                    cmdLine.requireEmpty();
+                    cmdLine.unexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {

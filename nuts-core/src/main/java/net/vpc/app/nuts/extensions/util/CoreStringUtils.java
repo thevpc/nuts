@@ -30,8 +30,7 @@
 package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.NutsParseException;
-import net.vpc.app.nuts.StringMapper;
+import net.vpc.app.nuts.ObjectConverter;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
@@ -144,11 +143,14 @@ public class CoreStringUtils {
         return sb.toString();
     }
 
-    public static String replaceVars(String format, StringMapper map) {
+    public static String replaceVars(String format, ObjectConverter<String,String> map) {
         return replaceVars(format, map, new HashSet());
     }
 
-    private static String replaceVars(String format, StringMapper map, Set<String> visited) {
+    private static String replaceVars(String format, ObjectConverter<String,String> map, Set<String> visited) {
+        if(format==null){
+            return null;
+        }
         StringBuffer sb = new StringBuffer();
         Matcher m = pattern.matcher(format);
         while (m.find()) {
@@ -158,7 +160,7 @@ public class CoreStringUtils {
             } else {
                 Set<String> visited2 = new HashSet<>(visited);
                 visited2.add(key);
-                String replacement = map.get(key);
+                String replacement = map.convert(key);
                 if (replacement != null) {//replace if founded key exists in map
                     replacement = replaceVars(replacement, map, visited2);
                     m.appendReplacement(sb, escapeReplacementStrings(replacement));
@@ -299,47 +301,7 @@ public class CoreStringUtils {
     }
 
 
-    // %[argument_index$][flags][width][.precision][t]conversion
-    private static final Pattern printfPattern = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
 
-    private static String format0(Locale locale, String format0, Object arg) {
-        StringBuilder sb = new StringBuilder();
-        new Formatter(sb, locale).format(format0, new Object[]{arg});
-        return sb.toString();
-    }
 
-    public static String nescape(String str) {
-        if (str == null) {
-            str = "";
-        }
-        str = str.replace("`", "\\`");
-        return "``" + str + "``";
-    }
-
-    public static String format(Locale locale, String format, Object... args) {
-
-        StringBuilder sb = new StringBuilder();
-        Matcher m = printfPattern.matcher(format);
-        int x = 0;
-        for (int i = 0, len = format.length(); i < len; ) {
-            if (m.find(i)) {
-                // Anything between the start of the string and the beginning
-                // of the format specifier is either fixed text or contains
-                // an invalid format string.
-                if (m.start() != i) {
-                    //checkText(s, i, m.start());
-                    sb.append(format.substring(i, m.start()));
-                }
-                Object arg = x<args.length?args[x]:"MISSING_ARG_"+x;
-                sb.append(nescape(format0(locale, m.group(), arg)));
-                x++;
-                i = m.end();
-            } else {
-                sb.append(format.substring(i));
-                break;
-            }
-        }
-        return sb.toString();
-    }
 
 }

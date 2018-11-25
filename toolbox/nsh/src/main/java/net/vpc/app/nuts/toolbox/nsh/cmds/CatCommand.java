@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.FileNonOption;
@@ -61,24 +60,24 @@ public class CatCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
-        NutsPrintStream out = context.getTerminal().getOut();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-")) {
+        PrintStream out = context.getTerminal().getOut();
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-")) {
                 files.add(null);
-            } else if (cmdLine.read("-n", "--number")) {
+            } else if (cmdLine.readAll("-n", "--number")) {
                 options.n = true;
-            } else if (cmdLine.read("-t", "--show-tabs")) {
+            } else if (cmdLine.readAll("-t", "--show-tabs")) {
                 options.T = true;
-            } else if (cmdLine.read("-E", "--show-ends")) {
+            } else if (cmdLine.readAll("-E", "--show-ends")) {
                 options.E = true;
-            } else if (cmdLine.read("--version")) {
+            } else if (cmdLine.readAll("--version")) {
                 out.printf("%s\n", "1.0");
                 return 0;
-            } else if (cmdLine.read("--help")) {
+            } else if (cmdLine.readAll("--help")) {
                 out.printf("%s\n", getHelp());
                 return 0;
             } else {
-                String path = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                 File file = new File(context.getAbsolutePath(path));
                 files.add(file);
             }

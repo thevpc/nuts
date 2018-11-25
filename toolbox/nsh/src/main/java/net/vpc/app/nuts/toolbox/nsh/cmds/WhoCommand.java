@@ -29,11 +29,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsEffectiveUser;
+import net.vpc.app.nuts.NutsRepository;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.strings.StringUtils;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,11 +54,11 @@ public class WhoCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean argAll = false;
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.readOnce("--all", "-a")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAllOnce("--all", "-a")) {
                 argAll = true;
             } else {
-                cmdLine.requireEmpty();
+                cmdLine.unexpectedArgument();
             }
         }
         if (!cmdLine.isExecMode()) {
@@ -62,7 +66,7 @@ public class WhoCommand extends AbstractNutsCommand {
         }
         NutsWorkspace validWorkspace = context.getValidWorkspace();
         String login = validWorkspace.getSecurityManager().getCurrentLogin();
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
 
         out.printf("%s\n", login);
 

@@ -61,7 +61,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         if (classLoader instanceof URLClassLoader) {
             all.addAll(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
         }
-        return all.toArray(new URL[all.size()]);
+        return all.toArray(new URL[0]);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    nutsClassLoader = resolveNutsWorkspace().getExtensionManager().createClassLoader(pathList, null, null);
+                    nutsClassLoader = resolveNutsWorkspace().createClassLoader(pathList, null, null);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();
@@ -283,7 +283,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 all.add(s);
             }
         }
-        return all.toArray(new String[all.size()]);
+        return all.toArray(new String[0]);
     }
 
     private File resolveFileCodeBase(URL url) {

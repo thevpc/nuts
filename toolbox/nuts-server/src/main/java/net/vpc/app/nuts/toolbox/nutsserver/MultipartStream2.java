@@ -99,7 +99,7 @@ import java.io.*;
  * headers // create some output stream multipartStream.readBodyData(output);
  * nextPart = multipartStream.readBoundary(); } }
  * catch(MultipartStream.MalformedStreamException e) { // the stream failed to
- * follow required syntax } catch(IOException e) { // a read or write error
+ * follow required syntax } catch(IOException e) { // a readAll or write error
  * occurred }
  * </pre>
  */
@@ -121,12 +121,12 @@ public class MultipartStream2 {
         private final long contentLength;
 
         /**
-         * Number of bytes, which have been read so far.
+         * Number of bytes, which have been readAll so far.
          */
         private long bytesRead;
 
         /**
-         * Number of items, which have been read so far.
+         * Number of items, which have been readAll so far.
          */
         private int items;
 
@@ -142,12 +142,12 @@ public class MultipartStream2 {
         }
 
         /**
-         * Called to indicate that bytes have been read.
+         * Called to indicate that bytes have been readAll.
          *
-         * @param pBytes Number of bytes, which have been read.
+         * @param pBytes Number of bytes, which have been readAll.
          */
         void noteBytesRead(int pBytes) {
-            /* Indicates, that the given number of bytes have been read from
+            /* Indicates, that the given number of bytes have been readAll from
              * the input stream.
              */
             bytesRead += pBytes;
@@ -225,7 +225,7 @@ public class MultipartStream2 {
 
     // ----------------------------------------------------------- Data members
     /**
-     * The input stream from which data is read.
+     * The input stream from which data is readAll.
      */
     private final InputStream input;
 
@@ -360,7 +360,7 @@ public class MultipartStream2 {
      * individual part. When not specified, or <code>null</code>, the platform
      * default encoding is used.
      *
-     * @return The encoding used to read part headers.
+     * @return The encoding used to readAll part headers.
      */
     public String getHeaderEncoding() {
         return headerEncoding;
@@ -371,7 +371,7 @@ public class MultipartStream2 {
      * individual parts. When not specified, or <code>null</code>, the platform
      * default encoding is used.
      *
-     * @param encoding The encoding used to read part headers.
+     * @param encoding The encoding used to readAll part headers.
      */
     public void setHeaderEncoding(String encoding) {
         headerEncoding = encoding;
@@ -406,7 +406,7 @@ public class MultipartStream2 {
      *
      * @return <code>true</code> if there are more encapsulations in this
      * stream; <code>false</code> otherwise.
-     * @throws FileUploadIOException if the bytes read from the stream exceeded
+     * @throws FileUploadIOException if the bytes readAll from the stream exceeded
      * the size limits
      * @throws MalformedStreamException if the stream ends unexpectedly or fails
      * to follow required syntax.
@@ -515,7 +515,7 @@ public class MultipartStream2 {
      * against abuse.
      *
      * @return The <code>header-part</code> of the current encapsulation.
-     * @throws FileUploadIOException if the bytes read from the stream exceeded
+     * @throws FileUploadIOException if the bytes readAll from the stream exceeded
      * the size limits.
      * @throws MalformedStreamException if the stream ends unexpectedly.
      */
@@ -775,7 +775,7 @@ public class MultipartStream2 {
     public class ItemInputStream extends InputStream implements Closeable {
 
         /**
-         * The number of bytes, which have been read so far.
+         * The number of bytes, which have been readAll so far.
          */
         private long total;
 
@@ -817,9 +817,9 @@ public class MultipartStream2 {
         }
 
         /**
-         * Returns the number of bytes, which have been read by the stream.
+         * Returns the number of bytes, which have been readAll by the stream.
          *
-         * @return Number of bytes, which have been read so far.
+         * @return Number of bytes, which have been readAll so far.
          */
         public long getBytesRead() {
             return total;
@@ -873,8 +873,8 @@ public class MultipartStream2 {
          *
          * @param b The destination buffer, where to write to.
          * @param off Offset of the first byte in the buffer.
-         * @param len Maximum number of bytes to read.
-         * @return Number of bytes, which have been actually read, or -1 for
+         * @param len Maximum number of bytes to readAll.
+         * @return Number of bytes, which have been actually readAll, or -1 for
          * EOF.
          * @throws IOException An I/O error occurred.
          */
@@ -964,7 +964,7 @@ public class MultipartStream2 {
         }
 
         /**
-         * Attempts to read more data.
+         * Attempts to readAll more data.
          *
          * @return Number of available bytes
          * @throws IOException An I/O error occurred.

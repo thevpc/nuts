@@ -46,7 +46,7 @@ public class JavaHelper {
         for (String s : conf) {
             all.addAll(Arrays.asList(searchJdkLocations(ws,s,out)));
         }
-        return all.toArray(new NutsSdkLocation[all.size()]);
+        return all.toArray(new NutsSdkLocation[0]);
     }
 
     public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, String s, PrintStream out) {
@@ -63,7 +63,7 @@ public class JavaHelper {
                 }
             }
         }
-        return all.toArray(new NutsSdkLocation[all.size()]);
+        return all.toArray(new NutsSdkLocation[0]);
     }
 
     public static NutsSdkLocation resolveJdkLocation(String path, NutsWorkspace ws) {
@@ -84,10 +84,11 @@ public class JavaHelper {
             NutsCommandExecBuilder b = ws.createExecBuilder()
                     .setNativeCommand(true)
                     .setCommand(javaExePath.getPath(), "-version")
-                    .setOutAndErrStringBuffer()
+                    .setRedirectErrorStream()
+                    .grabOutputString()
                     .exec();
             if (b.getResult() == 0) {
-                String s = b.getOutString();
+                String s = b.getOutputString();
                 if (s.length() > 0) {
                     String prefix = "java version \"";
                     int i = s.indexOf(prefix);

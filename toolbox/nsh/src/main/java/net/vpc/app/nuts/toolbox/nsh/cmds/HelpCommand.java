@@ -30,13 +30,13 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
 import net.vpc.common.strings.StringUtils;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -53,11 +53,11 @@ public class HelpCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         boolean showLicense = false;
         List<String> commandNames = new ArrayList<>();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-l", "--license")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-l", "--license")) {
                 showLicense = true;
             } else if (cmdLine.isOption()) {
                 if (cmdLine.isExecMode()) {
@@ -83,8 +83,15 @@ public class HelpCommand extends AbstractNutsCommand {
                             return o1.getName().compareTo(o2.getName());
                         }
                     });
+                    int max=1;
                     for (NutsCommand cmd : commands) {
-                        out.printf("##%s## : ", StringUtils.alignLeft(cmd.getName(), 15));
+                        int x=cmd.getName().length();
+                        if(x>max){
+                            max=x;
+                        }
+                    }
+                    for (NutsCommand cmd : commands) {
+                        out.printf("##%s## : ", StringUtils.alignLeft(cmd.getName(), max));
                         out.println(cmd.getHelpHeader()); //formatted
                     }
                 } else {

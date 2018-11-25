@@ -7,13 +7,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExtensionInfo;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspaceExtension;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.ExtensionNonOption;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
+
+import java.io.PrintStream;
 
 /**
  * @author vpc
@@ -25,13 +26,13 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        if (cmdLine.read("add extension", "ax")) {
-            String extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
+        if (cmdLine.readAll("add extension", "ax")) {
+            String extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context)).getString();
             if (cmdLine.isExecMode()) {
                 context.getValidWorkspace().getExtensionManager().addWorkspaceExtension(extensionId, context.getSession());
             }
-            while (!cmdLine.isEmpty()) {
-                extensionId = cmdLine.readNonOptionOrError(new ExtensionNonOption("ExtensionNutsId", context)).getString();
+            while (cmdLine.hasNext()) {
+                extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().getExtensionManager().addWorkspaceExtension(extensionId, context.getSession());
                 }
@@ -41,8 +42,8 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
             }
             return true;
         } else {
-            NutsPrintStream out = context.getTerminal().getFormattedOut();
-            if (cmdLine.read("list extensions", "lx")) {
+            PrintStream out = context.getTerminal().getFormattedOut();
+            if (cmdLine.readAll("list extensions", "lx")) {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getValidWorkspace().getExtensionManager().getWorkspaceExtensions()) {
                         NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getWiredId().toString(), false, context.getSession());
@@ -59,7 +60,7 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 }
                 return true;
-            } else if (cmdLine.read("find extensions", "fx")) {
+            } else if (cmdLine.readAll("find extensions", "fx")) {
                 if (cmdLine.isExecMode()) {
                     for (NutsExtensionInfo extension : context.getValidWorkspace().getExtensionManager().findWorkspaceExtensions(context.getSession())) {
                         NutsDescriptor desc = context.getValidWorkspace().fetchDescriptor(extension.getId().toString(), false, context.getSession());
@@ -72,7 +73,7 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
                     }
                 }
                 return true;
-            } else if (cmdLine.read("list extension points", "lxp")) {
+            } else if (cmdLine.readAll("list extension points", "lxp")) {
                 if (cmdLine.isExecMode()) {
                     for (Class extension : context.getValidWorkspace().getExtensionManager().getExtensionPoints()) {
                         out.printf("[[%s]]:\n", extension.getName());

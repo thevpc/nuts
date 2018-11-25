@@ -7,6 +7,21 @@ import java.util.Map;
 import java.util.Properties;
 
 public interface NutsCommandExecBuilder {
+    NutsCommandExecBuilder setFailFast();
+    /**
+     * when the execution returns a non zero result, an exception is thrown.
+     * Particularly, if grabOutputString is used, error exception will state the output message
+     *
+     * @return this instance
+     */
+    NutsCommandExecBuilder setFailFast(boolean failFast);
+
+    /**
+     * failFast value
+     * @return true if failFast is armed
+     */
+    boolean isFailFast();
+
     NutsSession getSession();
 
     NutsCommandExecBuilder setSession(NutsSession session);
@@ -39,33 +54,40 @@ public interface NutsCommandExecBuilder {
 
     NutsCommandExecBuilder setIn(InputStream in);
 
-    NutsPrintStream getOut();
+    PrintStream getOut();
 
     NutsCommandExecBuilder setOutAndErrStringBuffer();
 
-    NutsCommandExecBuilder setOutStringBuffer();
+    NutsCommandExecBuilder grabOutputString();
 
-    NutsCommandExecBuilder setErrStringBuffer();
+    NutsCommandExecBuilder grabErrorString();
 
-    String getOutString();
+    String getOutputString();
 
-    String getErrString();
-
-    NutsCommandExecBuilder setOut(NutsPrintStream out);
+    String getErrorString();
 
     NutsCommandExecBuilder setOut(PrintStream out);
 
     NutsCommandExecBuilder setErr(PrintStream err);
 
-    NutsPrintStream getErr();
-
-    NutsCommandExecBuilder setErr(NutsPrintStream err);
+    PrintStream getErr();
 
     NutsCommandExecBuilder exec();
 
     boolean isNativeCommand();
 
+    boolean isRedirectErrorStream();
+
+    NutsCommandExecBuilder setRedirectErrorStream();
+
+    NutsCommandExecBuilder setRedirectErrorStream(boolean redirectErrorStream);
+
+
     NutsCommandExecBuilder setNativeCommand(boolean nativeCommand);
 
     int getResult();
+
+    String getCommandString();
+
+    String getCommandString(NutsCommandStringFormatter f);
 }

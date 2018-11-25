@@ -65,6 +65,12 @@ public class CorePlatformUtils {
         SUPPORTED_ARCH_ALIASES.put("i386", "x86");
     }
 
+    public static void main(String[] args) {
+        ExecutionEntry[] strings = resolveMainClasses(new File("/data/vpc/Data/xprojects/net/vpc/apps/nuts/nuts/target/nuts-0.5.0.jar"));
+        for (ExecutionEntry string : strings) {
+            System.out.println(string);
+        }
+    }
     public static Map<String, String> getOsDistMap() {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
@@ -165,9 +171,10 @@ public class CorePlatformUtils {
             try {
                 osVersion.append(
                         new ProcessBuilder2().setCommand("uname", "-r")
-                                .setOutAndErrStringBuffer()
+                                .setRedirectErrorStream(true)
+                                .grabOutputString()
                                 .setSleepMillis(50)
-                                .waitFor().getOutString()
+                                .waitFor().getOutputString()
                 );
             } catch (Exception e) {
                 e.printStackTrace();
@@ -451,7 +458,7 @@ public class CorePlatformUtils {
             }
             curr = curr.getSuperclass();
         }
-        return visited.values().toArray(new PlatformBeanProperty[visited.size()]);
+        return visited.values().toArray(new PlatformBeanProperty[0]);
     }
 
     public static PlatformBeanProperty findPlatformBeanProperty(String field, Class platformType) {
@@ -528,7 +535,7 @@ public class CorePlatformUtils {
                 propertyType = getter.getReturnType();
             }
             if (getter == null && setter == null && setters.size() > 0) {
-                Method[] settersArray = setters.values().toArray(new Method[setters.size()]);
+                Method[] settersArray = setters.values().toArray(new Method[0]);
                 setter = settersArray[0];
                 if (settersArray.length > 1) {
                     //TODO log?
@@ -586,7 +593,7 @@ public class CorePlatformUtils {
             }
         }
         clsAndLibs.add(main);
-        return clsAndLibs.toArray(new String[clsAndLibs.size()]);
+        return clsAndLibs.toArray(new String[0]);
     }
 
     public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
@@ -656,7 +663,7 @@ public class CorePlatformUtils {
 
     public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NutsTerminal terminal) {
 //    private boolean isLoadedClassPath(NutsFile nutsFile) {
-//        if (file.getId().isSameFullName(NutsId.parseOrErrorNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
+//        if (file.getId().isSameFullName(NutsId.parseRequiredNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
 //            return true;
 //        }
         try {
@@ -762,7 +769,7 @@ public class CorePlatformUtils {
         }
     }
 
-    public static String[] resolveMainClasses(File jarFile) {
+    public static ExecutionEntry[] resolveMainClasses(File jarFile) {
         try {
             FileInputStream in=null;
             try {
@@ -778,24 +785,56 @@ public class CorePlatformUtils {
         }
     }
 
-    public static String[] resolveMainClasses(InputStream jarStream) {
+    public static ExecutionEntry[] resolveMainClasses(InputStream jarStream) {
         final List<String> classes = new ArrayList<>();
+        final List<String> manfiestClass = new ArrayList<>();
         ZipUtils.visitZipStream(jarStream, new PathFilter() {
             @Override
-            public boolean accept(String value) {
-                return value.endsWith(".class");
+            public boolean accept(String path) {
+                return
+                        path.endsWith(".class")
+                        ||path.equals("META-INF/MANIFEST.MF")
+                        ;
             }
         }, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) throws IOException {
-                boolean mainClass = isMainClass(inputStream);
-                if (mainClass) {
-                    classes.add(path.replace('/', '.').substring(0, path.length() - ".class".length()));
+                if (path.endsWith(".class")) {
+                    boolean mainClass = isMainClass(inputStream);
+                    if (mainClass) {
+                        classes.add(path.replace('/', '.').substring(0, path.length() - ".class".length()));
+                    }
+                }else {
+                    try(BufferedReader b=new BufferedReader(new InputStreamReader(inputStream))){
+                        String line=null;
+                        while((line=b.readLine())!=null){
+                            if (line.startsWith("Main-Class:")) {
+                                String c = line.substring("Main-Class:".length()).trim();
+                                if(c.length()>0){
+                                    manfiestClass.add(c);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
                 return true;
             }
         });
-        return classes.toArray(new String[classes.size()]);
+        List<ExecutionEntry> entries=new ArrayList<>();
+        String defaultEntry=null;
+        if(manfiestClass.size()>0){
+            defaultEntry = manfiestClass.get(0);
+            entries.add(new ExecutionEntry(defaultEntry,true));
+        }
+        for (String entry : classes) {
+            if(defaultEntry!=null && defaultEntry.equals(entry)){
+                //ignore
+            }else{
+                entries.add(new ExecutionEntry(entry,false));
+            }
+        }
+        return entries.toArray(new ExecutionEntry[0]);
     }
 
     /**

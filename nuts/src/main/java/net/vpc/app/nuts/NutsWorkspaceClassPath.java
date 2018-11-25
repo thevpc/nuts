@@ -87,7 +87,7 @@ final class NutsWorkspaceClassPath {
                 ts.add(BootNutsId.parse(s));
             }
         }
-        return ts.toArray(new BootNutsId[ts.size()]);
+        return ts.toArray(new BootNutsId[0]);
     }
 
     public String[] getRepositoriesArray() {
@@ -95,6 +95,6 @@ final class NutsWorkspaceClassPath {
         for (int i = 0; i < ts.size(); i++) {
             ts.set(i, ts.get(i).trim());
         }
-        return ts.toArray(new String[ts.size()]);
+        return ts.toArray(new String[0]);
     }
 }

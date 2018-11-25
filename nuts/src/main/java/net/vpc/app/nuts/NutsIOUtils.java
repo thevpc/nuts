@@ -115,6 +115,19 @@ final class NutsIOUtils {
         }
     }
 
+    public static void copy(File from, File to, boolean mkdirs) throws IOException {
+        File parentFile = to.getParentFile();
+        if (mkdirs && parentFile != null) {
+            parentFile.mkdirs();
+        }
+        File temp = new File(to.getPath() + "~");
+        try {
+            Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            temp.delete();
+        }
+    }
+
     public static boolean isAbsolutePath(String location) {
         return new File(location).isAbsolute();
     }

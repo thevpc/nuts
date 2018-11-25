@@ -96,7 +96,7 @@ public class CoreIOUtils {
         }
         MapStringMapper mapper = new MapStringMapper(map) {
             @Override
-            public String get(String skey) {
+            public String convert(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
                     String javaVer = skey.substring(4);
                     if (StringUtils.isEmpty(javaVer)) {
@@ -107,11 +107,11 @@ public class CoreIOUtils {
                     NutsFile nutsFile = null;
                     nutsFile = workspace.fetch(NutsConstants.NUTS_ID_BOOT, session);
                     if (nutsFile.getFile() != null) {
-                        return ("<::expand::> " + get("java") + " -jar " + nutsFile.getFile());
+                        return ("<::expand::> " + convert("java") + " -jar " + nutsFile.getFile());
                     }
                     return null;
                 }
-                return super.get(skey);
+                return super.convert(skey);
             }
         };
         for (Map.Entry<String, String> e : map.entrySet()) {
@@ -128,7 +128,7 @@ public class CoreIOUtils {
                 args2.add(s);
             }
         }
-        args = args2.toArray(new String[args2.size()]);
+        args = args2.toArray(new String[0]);
 
         File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), args[0]);
         if (file.exists() && !file.canExecute()) {
@@ -202,8 +202,8 @@ public class CoreIOUtils {
 
 
     public static int execAndWait(String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand) throws InterruptedException, IOException {
-        NutsPrintStream out = terminal.getOut();
-        NutsPrintStream err = terminal.getErr();
+        PrintStream out = terminal.getOut();
+        PrintStream err = terminal.getErr();
         InputStream in = terminal.getIn();
         return execAndWait(args, env, directory, in, out, err, showCommand);
     }
@@ -218,7 +218,7 @@ public class CoreIOUtils {
             log.log(Level.FINE, logged.toString());
         }
         if (showCommand) {
-            if (out instanceof NutsPrintStream) {
+            if (out instanceof NutsFormattedPrintStream) {
                 out.print("==[exec]==");
             } else {
                 out.print("exec");
@@ -233,7 +233,7 @@ public class CoreIOUtils {
                 .setCommand(args)
                 .setEnv(env)
                 .setIn(in)
-                .setOut(out)
+                .setOutput(out)
                 .setErr(err)
                 .setDirectory(directory)
                 .start().waitFor().getResult();

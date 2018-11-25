@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.javashell.Env;
 import net.vpc.common.javashell.JavaShell;
@@ -42,10 +41,7 @@ import net.vpc.common.javashell.util.JavaShellNonBlockingInputStream;
 import net.vpc.common.javashell.util.JavaShellNonBlockingInputStreamAdapter;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -143,13 +139,13 @@ public class NutsJavaShell extends JavaShell {
 
 
     protected int evalBinaryPipeOperation(InstructionNode left, InstructionNode right, JavaShellEvalContext context) {
-        final NutsPrintStream nout;
+        final PrintStream nout;
         final PipedOutputStream out;
         final PipedInputStream in;
         final JavaShellNonBlockingInputStream in2;
         try {
             out = new PipedOutputStream();
-            nout = workspace.getExtensionManager().createPrintStream(out, false);
+            nout = workspace.createPrintStream(out, false);
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {

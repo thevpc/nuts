@@ -95,7 +95,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 if (StringUtils.isEmpty(v)) {
                     return true;
                 }
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
@@ -120,7 +120,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 if (StringUtils.isEmpty(v)) {
                     return true;
                 }
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
@@ -145,7 +145,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 if (StringUtils.isEmpty(v)) {
                     return true;
                 }
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
                 if (y.isSameFullName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
@@ -171,7 +171,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 if (StringUtils.isEmpty(v)) {
                     return true;
                 }
-                NutsId y = CoreNutsUtils.parseOrErrorNutsId(v);
+                NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
                 if (y.getFullName().equals("java")) {
                     //should accept any platform !!!
                     return true;
@@ -352,11 +352,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setInstaller(n_installer)
                 .setName(n_name)
                 .setDescription(n_desc)
-                .setArch(n_archs.toArray(new String[n_archs.size()]))
-                .setOs(n_os.toArray(new String[n_os.size()]))
-                .setOsdist(n_osdist.toArray(new String[n_osdist.size()]))
-                .setPlatform(n_platform.toArray(new String[n_platform.size()]))
-                .setDependencies(n_deps.toArray(new NutsDependency[n_deps.size()]))
+                .setArch(n_archs.toArray(new String[0]))
+                .setOs(n_os.toArray(new String[0]))
+                .setOsdist(n_osdist.toArray(new String[0]))
+                .setPlatform(n_platform.toArray(new String[0]))
+                .setDependencies(n_deps.toArray(new NutsDependency[0]))
                 .setProperties(n_props)
                 .build()
                 ;
@@ -402,13 +402,13 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setOs(CoreNutsUtils.applyStringProperties(getOs(), map))
                 .setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map))
                 .setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map))
-                .setDependencies(n_deps.toArray(new NutsDependency[n_deps.size()]))
+                .setDependencies(n_deps.toArray(new NutsDependency[0]))
                 .setProperties(n_props)
                 .build()
                 ;
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, StringMapper properties) {
+    private NutsId applyNutsIdProperties(NutsId child, ObjectConverter<String,String> properties) {
         return new NutsIdImpl(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -418,7 +418,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringMapper properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, ObjectConverter<String,String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
@@ -483,7 +483,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
         ArrayList<NutsDependency> dependencies = new ArrayList<>(Arrays.asList(getDependencies()));
         dependencies.add(dependency);
-        return setDependencies(dependencies.toArray(new NutsDependency[dependencies.size()]));
+        return setDependencies(dependencies.toArray(new NutsDependency[0]));
     }
 
     @Override
@@ -501,7 +501,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 dependenciesList.add(d);
             }
         }
-        return setDependencies(dependenciesList.toArray(new NutsDependency[dependenciesList.size()]));
+        return setDependencies(dependenciesList.toArray(new NutsDependency[0]));
     }
 
     @Override
@@ -511,7 +511,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
         ArrayList<NutsDependency> dependenciesList = new ArrayList<>(Arrays.asList(getDependencies()));
         dependenciesList.addAll(Arrays.asList(dependencies));
-        return setDependencies(dependenciesList.toArray(new NutsDependency[dependenciesList.size()]));
+        return setDependencies(dependenciesList.toArray(new NutsDependency[0]));
     }
 
     @Override

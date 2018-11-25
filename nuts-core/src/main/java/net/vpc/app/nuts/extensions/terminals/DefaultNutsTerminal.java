@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -32,10 +32,7 @@ package net.vpc.app.nuts.extensions.terminals;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * Created by vpc on 2/20/17.
@@ -44,10 +41,10 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
 
     private BufferedReader reader;
     private InputStream in;
-    private NutsPrintStream out;
-    private NutsPrintStream err;
-    private NutsPrintStream outReplace;
-    private NutsPrintStream errReplace;
+    private PrintStream out;
+    private PrintStream err;
+    private PrintStream outReplace;
+    private PrintStream errReplace;
     private InputStream inReplace;
     private BufferedReader inReplaceReader;
 
@@ -55,10 +52,16 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
+    public void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err) {
         this.in = in == null ? System.in : in;
-        this.out = out == null ? (workspace == null ? new NutsNonFormattedPrintStream(System.out) : workspace.getExtensionManager().createPrintStream(System.out,true)) : out;
-        this.err = err == null ? (workspace == null ? new NutsNonFormattedPrintStream(System.err) : workspace.getExtensionManager().createPrintStream(System.err,true)) : err;
+        if (workspace == null) {
+            this.out = out == null ? System.out : out;
+            this.err = err == null ? System.err : out;
+        } else {
+            NutsWorkspaceExtensionManager wem = workspace.getExtensionManager();
+            this.out = out == null ? workspace.createPrintStream(System.out, true) : out;
+            this.err = err == null ? workspace.createPrintStream(System.err, true) : err;
+        }
         reader = new BufferedReader(new InputStreamReader(this.in));
     }
 
@@ -69,7 +72,7 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
 
     @Override
     public String readLine(String promptFormat, Object[] params) {
-        getOut().printf(promptFormat,params);
+        getOut().printf(promptFormat, params);
         getIn();
         if (inReplaceReader != null) {
             try {
@@ -106,25 +109,25 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public NutsFormattedPrintStream getFormattedOut() {
-        NutsPrintStream o = getOut();
-        if(o instanceof NutsFormattedPrintStream){
-            return (NutsFormattedPrintStream) o;
+    public PrintStream getFormattedOut() {
+        PrintStream o = getOut();
+        if (o instanceof NutsFormattedPrintStream) {
+            return o;
         }
         return new NutsDefaultFormattedPrintStream(o);
     }
 
     @Override
-    public NutsFormattedPrintStream getFormattedErr() {
-        NutsPrintStream o = getErr();
-        if(o instanceof NutsFormattedPrintStream){
-            return (NutsFormattedPrintStream) o;
+    public PrintStream getFormattedErr() {
+        PrintStream o = getErr();
+        if (o instanceof NutsFormattedPrintStream) {
+            return o;
         }
         return new NutsDefaultFormattedPrintStream(o);
     }
 
     @Override
-    public NutsPrintStream getOut() {
+    public PrintStream getOut() {
         if (outReplace != null) {
             return outReplace;
         }
@@ -132,7 +135,7 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public NutsPrintStream getErr() {
+    public PrintStream getErr() {
         if (errReplace != null) {
             return errReplace;
         }
@@ -140,7 +143,7 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public void setOut(NutsPrintStream out) {
+    public void setOut(PrintStream out) {
         outReplace = out;
     }
 
@@ -155,7 +158,7 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
-    public void setErr(NutsPrintStream err) {
+    public void setErr(PrintStream err) {
         errReplace = err;
     }
 

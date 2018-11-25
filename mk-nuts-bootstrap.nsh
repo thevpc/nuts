@@ -21,7 +21,7 @@ properties set "repositories" "http://repo.maven.apache.org/maven2/;https://raw.
 cp --mkdir "$bootPath/nuts.properties $bootLatestPath/nuts.properties"
 cp --mkdir "$base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties" "$vpc_public_nuts/net/vpc/app/nuts/nuts-core/LATEST/nuts.properties"
 cp --mkdir "$base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties" "$vpc_public_nuts/net/vpc/app/nuts/nuts-core/$runtimeVersion/nuts.properties"
-nutsadmin reindex "$vpc_public_nuts"
+nuts-admin reindex "$vpc_public_nuts"
 
 ##################################################################"
 

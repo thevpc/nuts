@@ -30,6 +30,7 @@
         <module name="jvmon" />
         <module name="mvn" />
         <module name="mvn-box" />
+        <module name="mysql" />
         <module name="nb-launcher" />
         <module name="nde" />
         <module name="ndesc-ed" />
@@ -46,21 +47,21 @@
         <module name="nuts-sh" />
         <module name="nuts-tomcat-classloader" />
         <module name="tomcat" />
-        <module name="tomcat (1)" />
         <module name="vpc-common-classpath" />
         <module name="vpc-common-commandline" />
         <module name="vpc-common-desktop-automation" />
+        <module name="vpc-common-fprint" />
         <module name="vpc-common-io" />
         <module name="vpc-common-io-compress" />
         <module name="vpc-common-io-ext-compress" />
-        <module name="vpc-common-io-osapi" />
         <module name="vpc-common-mvn" />
         <module name="vpc-common-sql" />
+        <module name="vpc-common-ssh" />
         <module name="vpc-common-strings" />
         <module name="vpc-common-swings" />
         <module name="vpc-common-utils" />
+        <module name="vpc-pheromone-app" />
         <module name="worky" />
-        <module name="worky (1)" />
         <module name="writer-maven-plugin" />
       </profile>
     </annotationProcessing>
@@ -95,6 +96,7 @@
       <module name="maven-archiver" target="1.5" />
       <module name="mvn" target="1.8" />
       <module name="mvn-box" target="1.8" />
+      <module name="mysql" target="1.8" />
       <module name="nb-launcher" target="1.8" />
       <module name="nde" target="1.8" />
       <module name="ndesc-ed" target="1.8" />
@@ -113,19 +115,21 @@
       <module name="nuts-tomcat-classloader" target="1.8" />
       <module name="scholar-mw" target="1.5" />
       <module name="tomcat" target="1.8" />
-      <module name="tomcat (1)" target="1.8" />
       <module name="vpc-common-classpath" target="1.7" />
       <module name="vpc-common-commandline" target="1.7" />
       <module name="vpc-common-desktop-automation" target="1.7" />
+      <module name="vpc-common-fprint" target="1.7" />
       <module name="vpc-common-io" target="1.8" />
       <module name="vpc-common-io-compress" target="1.7" />
       <module name="vpc-common-io-ext-compress" target="1.7" />
       <module name="vpc-common-io-osapi" target="1.7" />
       <module name="vpc-common-mvn" target="1.8" />
       <module name="vpc-common-sql" target="1.7" />
+      <module name="vpc-common-ssh" target="1.7" />
       <module name="vpc-common-strings" target="1.8" />
       <module name="vpc-common-swings" target="1.8" />
       <module name="vpc-common-utils" target="1.8" />
+      <module name="vpc-pheromone-app" target="1.6" />
       <module name="worky" target="1.8" />
       <module name="worky (1)" target="1.8" />
       <module name="writer-maven-plugin" target="1.8" />

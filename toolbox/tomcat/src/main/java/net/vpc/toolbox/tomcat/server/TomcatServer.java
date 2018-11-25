@@ -1,6 +1,8 @@
 package net.vpc.toolbox.tomcat.server;
 
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 import net.vpc.toolbox.tomcat.server.config.TomcatServerConfig;
 import net.vpc.toolbox.tomcat.util.NutsContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
@@ -8,11 +10,10 @@ import net.vpc.toolbox.tomcat.util.TomcatUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TomcatServer {
-    NutsContext context;
+    private NutsContext context;
 
 
     public TomcatServer(NutsWorkspace ws) {
@@ -20,159 +21,216 @@ public class TomcatServer {
     }
 
     public TomcatServer(NutsContext ws) {
-        this.context = ws;
+        this.setContext(ws);
     }
 
 
     public int runArgs(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            switch (args[i]) {
+        CommandLine cmd = new CommandLine(args);
+        while (cmd.hasNext()) {
+            Argument val = cmd.readNonOption();
+            switch (val.getExpression()) {
                 case "list":
-                    return list(Arrays.copyOfRange(args, i + 1, args.length));
+                    return list(cmd);
                 case "add":
                 case "set":
-                    return add(Arrays.copyOfRange(args, i + 1, args.length));
+                    return add(cmd);
+                case "show":
+                case "describe":
+                    return show(cmd);
                 case "remove":
-                    return remove(Arrays.copyOfRange(args, i + 1, args.length));
+                    return remove(cmd);
                 case "start":
-                    return restart(Arrays.copyOfRange(args, i + 1, args.length), false);
+                    return restart(cmd, false);
                 case "stop":
-                    return stop(Arrays.copyOfRange(args, 1, args.length));
+                    return stop(cmd);
                 case "status":
-                    return status(Arrays.copyOfRange(args, 1, args.length));
+                    return status(cmd);
                 case "restart":
-                    return restart(Arrays.copyOfRange(args, i + 1, args.length), true);
+                    return restart(cmd, true);
                 case "install":
-                    return install(Arrays.copyOfRange(args, 1, args.length));
+                    return install(cmd);
                 case "reset":
                     return reset();
                 case "deploy":
-                    return deploy(Arrays.copyOfRange(args, 1, args.length));
+                    return deploy(cmd);
                 case "delete-log":
-                    return deleteLog(Arrays.copyOfRange(args, 1, args.length));
+                    return deleteLog(cmd);
+                case "delete-temp":
+                    return deleteTemp(cmd);
+                case "delete-work":
+                    return deleteWork(cmd);
                 case "show-log":
-                    return showLog(Arrays.copyOfRange(args, 1, args.length));
+                    return showLog(cmd);
                 default:
-                    throw new RuntimeException("Unsupported action " + args[i]);
+                    throw new RuntimeException("Unsupported action " + val.getExpression());
             }
         }
         return 0;
     }
 
-    public int list(String[] args) {
+    public int list(CommandLine args) {
         boolean json = false;
         String instance = null;
         String app = null;
         String property = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--json")) {
-                json = true;
-            } else if (args[j].equals("--instance")) {
-                if (j + 1 < args.length && args[j + 1].startsWith("--")) {
-                    j++;
-                    instance = args[j];
-                } else {
-                    instance = "";
-                }
-            } else if (args[j].equals("--app")) {
-                j++;
-                app = args[j];
-            } else if (args[j].equals("--property")) {
-                j++;
-                property = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readBooleanOption("--json")) != null) {
+                json = a.getBooleanValue();
+            } else if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else if ((a = args.readStringOption("--app")) != null) {
+                app = a.getStringValue();
+            } else if ((a = args.readStringOption("--property")) != null) {
+                property = a.getStringValue();
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         if (property == null) {
             if (app != null) {
                 TomcatServerConfigService c = loadOrCreateTomcatConfig(instance);
-                TomcatServerAppConfigService a = c.getApp(app);
+                TomcatServerAppConfigService aa = c.getApp(app);
                 if (json) {
-                    context.out.printf("[[%s]] :\n", a.getName());
-                    a.write(context.out);
-                    context.out.println();
+                    getContext().out.printf("[[%s]] :\n", aa.getName());
+                    aa.write(getContext().out);
+                    getContext().out.println();
                 } else {
-                    context.out.println(a.getName());
+                    getContext().out.println(aa.getName());
                 }
             } else {
                 for (TomcatServerConfigService tomcatConfig : listConfig()) {
                     if (json) {
-                        context.out.printf("[[%s]] :\n", tomcatConfig.getName());
-                        tomcatConfig.write(context.out);
-                        context.out.println();
+                        getContext().out.printf("[[%s]] :\n", tomcatConfig.getName());
+                        tomcatConfig.write(getContext().out);
+                        getContext().out.println();
                     } else {
-                        context.out.println(tomcatConfig.getName());
+                        getContext().out.println(tomcatConfig.getName());
                     }
                 }
             }
         } else {
             TomcatServerConfigService c = loadOrCreateTomcatConfig(instance);
             if (app != null) {
-                context.out.printf("%s\n", TomcatUtils.getPropertyValue(c.getApp(app).getConfig(), property));
+                getContext().out.printf("%s\n", TomcatUtils.getPropertyValue(c.getApp(app).getConfig(), property));
             } else {
-                for (TomcatServerAppConfigService a : c.getApps()) {
-                    context.out.printf("[%s] %s\n", TomcatUtils.getPropertyValue(a.getConfig(), property));
+                for (TomcatServerAppConfigService aa : c.getApps()) {
+                    getContext().out.printf("[%s] %s\n", TomcatUtils.getPropertyValue(aa.getConfig(), property));
                 }
             }
         }
         return 0;
     }
 
-    public int add(String[] args) {
+    public void show(TomcatServerAppConfigService aa, boolean json) {
+        if (json) {
+            getContext().out.printf("[[%s]] :\n", aa.getName());
+            aa.write(getContext().out);
+            getContext().out.println();
+        } else {
+            getContext().out.printf("[[%s]] :\n", aa.getName());
+            aa.write(getContext().out);
+            getContext().out.println();
+        }
+    }
+
+    public void show(TomcatServerConfigService tomcatConfig, boolean json) {
+        if (json) {
+            getContext().out.printf("[[%s]] :\n", tomcatConfig.getName());
+            tomcatConfig.write(getContext().out);
+            getContext().out.println();
+        } else {
+            getContext().out.printf("[[%s]] :\n", tomcatConfig.getName());
+            tomcatConfig.write(getContext().out);
+            getContext().out.println();
+        }
+    }
+
+    public int show(CommandLine args) {
+        boolean json = false;
+        String instance = null;
+        String app = null;
+        Argument a;
+
+        while (args.hasNext()) {
+            if ((a = args.readBooleanOption("--json")) != null) {
+                json = a.getBooleanValue();
+            } else if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else if ((a = args.readStringOption("--app")) != null) {
+                app = a.getStringValue();
+            } else {
+                args.unexpectedArgument();
+            }
+        }
+
+        if (app != null) {
+            TomcatServerConfigService c = loadOrCreateTomcatConfig(instance);
+            TomcatServerAppConfigService aa = c.getApp(app);
+            show(aa,json);
+        } else {
+            show(loadOrCreateTomcatConfig(instance),json);
+        }
+
+        return 0;
+    }
+
+    public int add(CommandLine args) {
         TomcatServerConfigService c = null;
         String appName = null;
         String domainName = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--instance")) {
-                j++;
+        String instance = null;
+
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
                 if (c == null) {
-                    c = loadOrCreateTomcatConfig(args[j]);
+                    c = loadOrCreateTomcatConfig(instance);
                 } else {
                     throw new IllegalArgumentException("Instance name already defined");
                 }
-            } else if (args[j].equals("--catalinaVersion")) {
-                j++;
+            } else if ((a = args.readStringOption("--catalinaVersion")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setCatalinaVersion(args[j]);
-            } else if (args[j].equals("--catalinaBase")) {
-                j++;
+                c.getConfig().setCatalinaVersion(a.getStringValue());
+            } else if ((a = args.readStringOption("--catalinaBase")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setCatalinaBase(args[j]);
-            } else if (args[j].equals("--shutdownWaitTime")) {
-                j++;
+                c.getConfig().setCatalinaBase(a.getStringValue());
+            } else if ((a = args.readStringOption("--catalinaHome")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setShutdownWaitTime(Integer.parseInt(args[j]));
-            } else if (args[j].equals("--app")) {
-                j++;
-                appName = args[j];
+                c.getConfig().setCatalinaHome(a.getStringValue());
+            } else if ((a = args.readStringOption("--shutdownWaitTime")) != null) {
+                if (c == null) {
+                    c = loadOrCreateTomcatConfig(null);
+                }
+                c.getConfig().setShutdownWaitTime(a.getIntValue());
+            } else if ((a = args.readStringOption("--app")) != null) {
+                appName = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getAppOrCreate(appName);
-            } else if (args[j].equals("--domain")) {
-                j++;
-                domainName = args[j];
+            } else if ((a = args.readStringOption("--domain")) != null) {
+                domainName = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getDomainOrCreate(domainName);
-            } else if (args[j].equals("--domain.log")) {
-                j++;
+            } else if ((a = args.readStringOption("--domain.log")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getDomainOrCreate(domainName).getConfig().setLogFile(args[j]);
+                c.getDomainOrCreate(domainName).getConfig().setLogFile(a.getStringValue());
 
-            } else if (args[j].equals("--app.source")) {
-                j++;
-                String value = args[j];
+            } else if ((a = args.readStringOption("--app.source")) != null) {
+                String value = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -181,36 +239,32 @@ public class TomcatServer {
                     throw new IllegalArgumentException("Missing --app.name");
                 }
                 tomcatAppConfig.getConfig().setSourceFilePath(value);
-            } else if (args[j].equals("--app.deploy")) {
-                j++;
-                String value = args[j];
+            } else if ((a = args.readStringOption("--app.deploy")) != null) {
+                String value = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 TomcatServerAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setDeployName(value);
-            } else if (args[j].equals("--app.domain")) {
-                j++;
-                String value = args[j];
+            } else if ((a = args.readStringOption("--app.domain")) != null) {
+                String value = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 TomcatServerAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setDomain(value);
-            } else if (args[j].equals("--archiveFolder")) {
-                j++;
+            } else if ((a = args.readStringOption("--archiveFolder")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setArchiveFolder(args[j]);
-            } else if (args[j].equals("--runningFolder")) {
-                j++;
+                c.getConfig().setArchiveFolder(a.getStringValue());
+            } else if ((a = args.readStringOption("--runningFolder")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setRunningFolder(args[j]);
+                c.getConfig().setRunningFolder(a.getStringValue());
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         if (c != null) {
@@ -219,22 +273,20 @@ public class TomcatServer {
         return 0;
     }
 
-    public int remove(String[] args) {
+    public int remove(CommandLine args) {
         String conf = null;
         String appName = null;
         String domName = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--app")) {
-                j++;
-                appName = args[j];
-            } else if (args[j].equals("--instance")) {
-                j++;
-                conf = args[j];
-            } else if (args[j].equals("--domain")) {
-                j++;
-                domName = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--app")) != null) {
+                appName = a.getStringValue();
+            } else if ((a = args.readStringOption("--instance")) != null) {
+                conf = a.getStringValue();
+            } else if ((a = args.readStringOption("--domain")) != null) {
+                domName = a.getStringValue();
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         if (appName == null && domName == null) {
@@ -251,9 +303,9 @@ public class TomcatServer {
             TomcatServerConfigService c = loadTomcatConfig(conf);
             try {
                 c.getDomainOrError(domName).remove();
-                for (TomcatServerAppConfigService a : c.getApps()) {
-                    if (domName.equals(a.getConfig().getDomain())) {
-                        a.remove();
+                for (TomcatServerAppConfigService aa : c.getApps()) {
+                    if (domName.equals(aa.getConfig().getDomain())) {
+                        aa.remove();
                     }
                 }
                 c.saveConfig();
@@ -266,24 +318,28 @@ public class TomcatServer {
         return 0;
     }
 
-    public int stop(String[] args) {
+    public int stop(CommandLine args) {
         String instance = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else {
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
         return c.stop() ? 0 : 1;
     }
 
-    public int status(String[] args) {
+    public int status(CommandLine args) {
         String instance = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else {
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
@@ -291,26 +347,23 @@ public class TomcatServer {
         return 0;
     }
 
-    public int install(String[] args) {
+    public int install(CommandLine args) {
         String instance = null;
         String app = null;
         String version = null;
         String file = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--version")) {
-                j++;
-                version = args[j];
-            } else if (args[j].equals("--file")) {
-                j++;
-                file = args[j];
-            } else if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
-            } else if (args[j].equals("--app")) {
-                j++;
-                app = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--version")) != null) {
+                version = a.getStringValue();
+            } else if ((a = args.readStringOption("--file")) != null) {
+                file = a.getStringValue();
+            } else if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else if ((a = args.readStringOption("--app")) != null) {
+                app = a.getStringValue();
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
@@ -318,21 +371,20 @@ public class TomcatServer {
         return 0;
     }
 
-    public int deleteLog(String[] args) {
+    public int deleteLog(CommandLine args) {
         String instance = null;
         String domain = null;
         boolean all = false;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--all")) {
-                all = true;
-            } else if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
-            } else if (args[j].equals("--domain")) {
-                j++;
-                domain = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readBooleanOption("--all")) != null) {
+                all = a.getBooleanValue();
+            } else if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else if ((a = args.readStringOption("--domain")) != null) {
+                domain = a.getStringValue();
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
@@ -344,64 +396,88 @@ public class TomcatServer {
         return 0;
     }
 
-    public int showLog(String[] args) {
+    public int deleteTemp(CommandLine args) {
+        String instance = null;
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else {
+                args.unexpectedArgument();
+            }
+        }
+        TomcatServerConfigService c = loadTomcatConfig(instance);
+        c.deleteTemp();
+        return 0;
+    }
+
+    public int deleteWork(CommandLine args) {
+        String instance = null;
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else {
+                args.unexpectedArgument();
+            }
+        }
+        TomcatServerConfigService c = loadTomcatConfig(instance);
+        c.deleteWork();
+        return 0;
+    }
+
+    public int showLog(CommandLine args) {
         String instance = null;
         String domain = null;
         boolean path = false;
         boolean all = false;
         int count = -1;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
-            } else if (args[j].equals("--domain")) {
-                j++;
-                domain = args[j];
-            } else if (args[j].equals("--path")) {
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else if ((a = args.readStringOption("--domain")) != null) {
+                domain = a.getStringValue();
+            } else if ((a = args.readStringOption("--path")) != null) {
                 path = true;
-            } else if (args[j].startsWith("-") && TomcatUtils.isPositiveInt(args[j].substring(1))) {
-                count = Integer.parseInt(args[j].substring(1));
+            } else if (args.isOption() && TomcatUtils.isPositiveInt(args.get().getExpression().substring(1))) {
+                count = Integer.parseInt(args.read().getExpression().substring(1));
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
         if (path) {
-            context.out.printf("%s\n", c.getOutLogFile().getPath());
+            getContext().out.printf("%s\n", c.getOutLogFile().getPath());
         } else {
             c.showOutLog(count);
         }
         return 0;
     }
 
-    public int deploy(String[] args) {
+    public int deploy(CommandLine args) {
         String instance = null;
         String version = null;
         String file = null;
         String app = null;
         String domain = null;
         String contextName = null;
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--version")) {
-                j++;
-                version = args[j];
-            } else if (args[j].equals("--file")) {
-                j++;
-                file = args[j];
-            } else if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
-            } else if (args[j].equals("--app")) {
-                j++;
-                app = args[j];
-            } else if (args[j].equals("--context")) {
-                j++;
-                contextName = args[j];
-            } else if (args[j].equals("--domain")) {
-                j++;
-                domain = args[j];
+        Argument a;
+        while (args.hasNext()) {
+            if ((a = args.readStringOption("--version")) != null) {
+                version = a.getStringValue();
+            } else if ((a = args.readStringOption("--file")) != null) {
+                file = a.getValue();
+            } else if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getStringValue();
+            } else if ((a = args.readStringOption("--app")) != null) {
+                app = a.getStringValue();
+            } else if ((a = args.readStringOption("--context")) != null) {
+                contextName = a.getStringValue();
+            } else if ((a = args.readStringOption("--domain")) != null) {
+                domain = a.getStringValue();
             } else {
-                throw new IllegalArgumentException("Unsupported " + args[j]);
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
@@ -413,26 +489,27 @@ public class TomcatServer {
         return 0;
     }
 
-    public int restart(String[] args, boolean shutdown) {
+    public int restart(CommandLine args, boolean shutdown) {
         boolean deleteLog = false;
         String instance = null;
         List<String> apps = new ArrayList<>();
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].equals("--instance")) {
-                j++;
-                instance = args[j];
-            } else if (args[j].equals("--deleteOutLog")) {
-                deleteLog = true;
-            } else if (args[j].equals("--deploy")) {
-                j++;
-                apps.add(args[j]);
+        while (args.hasNext()) {
+            Argument a = null;
+            if ((a = args.readStringOption("--instance")) != null) {
+                instance = a.getValue();
+            } else if ((a = args.readBooleanOption("--deleteOutLog")) != null) {
+                deleteLog = a.getBooleanValue();
+            } else if ((a = args.readStringOption("--deploy")) != null) {
+                apps.add(a.getValue());
+            } else {
+                args.unexpectedArgument();
             }
         }
         TomcatServerConfigService c = loadTomcatConfig(instance);
         if (shutdown) {
-            c.restart(apps.toArray(new String[apps.size()]), deleteLog);
+            c.restart(apps.toArray(new String[0]), deleteLog);
         } else {
-            c.start(apps.toArray(new String[apps.size()]), deleteLog);
+            c.start(apps.toArray(new String[0]), deleteLog);
         }
         return 0;
     }
@@ -447,7 +524,7 @@ public class TomcatServer {
 
     public TomcatServerConfigService[] listConfig() {
         List<TomcatServerConfigService> all = new ArrayList<>();
-        File[] configFiles = new File(context.configFolder).listFiles(new FileFilter() {
+        File[] configFiles = new File(getContext().configFolder).listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.getName().endsWith(TomcatServerConfigService.SERVER_CONFIG_EXT);
@@ -463,7 +540,7 @@ public class TomcatServer {
                 }
             }
         }
-        return all.toArray(new TomcatServerConfigService[all.size()]);
+        return all.toArray(new TomcatServerConfigService[0]);
     }
 
 
@@ -493,5 +570,13 @@ public class TomcatServer {
             t.setConfig(new TomcatServerConfig());
         }
         return t;
+    }
+
+    public NutsContext getContext() {
+        return context;
+    }
+
+    public void setContext(NutsContext context) {
+        this.context = context;
     }
 }

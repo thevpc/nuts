@@ -138,7 +138,7 @@ public class NutsRepositoryConfig implements Serializable {
 
 
     public NutsRepositoryLocation[] getMirrors() {
-        return mirrors.values().toArray(new NutsRepositoryLocation[mirrors.size()]);
+        return mirrors.values().toArray(new NutsRepositoryLocation[0]);
     }
 
 
@@ -208,7 +208,7 @@ public class NutsRepositoryConfig implements Serializable {
 
 
     public NutsUserConfig[] getUsers() {
-        return users.values().toArray(new NutsUserConfig[users.size()]);
+        return users.values().toArray(new NutsUserConfig[0]);
     }
 
 

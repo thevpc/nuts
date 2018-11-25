@@ -59,7 +59,7 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
     }
 
     public MapListener<K, V>[] getListeners() {
-        return listeners.toArray(new MapListener[listeners.size()]);
+        return listeners.toArray(new MapListener[0]);
     }
 
     @Override

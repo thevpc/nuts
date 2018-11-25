@@ -29,10 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 
@@ -65,8 +61,6 @@ public interface NutsWorkspaceExtensionManager {
     NutsWorkspaceExtension addWorkspaceExtension(String id, NutsSession session);
 
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
-
-    JsonIO getJsonIO();
 
     NutsWorkspaceExtension[] getWorkspaceExtensions();
 
@@ -102,35 +96,4 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
-    NutsSession createSession();
-
-    NutsTerminal createDefaultTerminal();
-
-    NutsTerminal createTerminal();
-
-    NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
-
-    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
-
-    ClassLoader createClassLoader(String[] nutsIds, NutsDependencyScope scope, ClassLoader parentClassLoader, NutsSession session);
-
-    NutsPrintStream createPrintStream(OutputStream out, boolean formatted);
-
-    NutsPrintStream createPrintStream(File out);
-
-    InputStream createNullInputStream();
-
-    NutsPrintStream createNullPrintStream();
-
-    NutsId parseNutsId(String nutsId);
-
-    NutsDescriptorBuilder createDescriptorBuilder();
-
-    NutsIdBuilder createIdBuilder();
-
-    NutsDependencyBuilder createDependencyBuilder();
-
-    JsonIO createJsonSerializer();
-
-    NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out);
 }

@@ -29,18 +29,23 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.Nsh;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.URLUtils;
+import net.vpc.common.mvn.PomIdResolver;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
+import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by vpc on 1/7/17.
@@ -52,68 +57,20 @@ public class VersionCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         NutsWorkspace ws = context.getWorkspace();
-        NutsWorkspaceConfigManager config = ws.getConfigManager();
-        boolean longFormat = false;
+        boolean fancy = false;
+        boolean min = false;
         for (int i = 0; i < args.length; i++) {
-            if(args[i].equals("-l") || args[i].equals("--long")){
-                longFormat=true;
+            if (args[i].equals("-f") || args[i].equals("--fancy")) {
+                fancy = true;
+            } else if (args[i].equals("-m") || args[i].equals("--min")) {
+                min = true;
             }
         }
-        out.printf("workspace-location   : [[%s]]\n", config.getWorkspaceLocation());
-        out.printf("nuts-boot            : [[%s]]\n", config.getWorkspaceBootId());
-        out.printf("nuts-runtime         : [[%s]]\n", config.getWorkspaceRuntimeId());
-        out.printf("nuts-home            : [[%s]]\n", ws.getConfigManager().getNutsHomeLocation());
-        out.printf("platform-os          : [[%s]]\n", ws.getPlatformOs()+" ("+System.getProperty("os.name")+")");
-        out.printf("platform-os-dist     : [[%s]]\n", ws.getPlatformOsDist());
-        out.printf("platform-arch        : [[%s]]\n", ws.getPlatformArch());
-        out.printf("platform-os-lib      : [[%s]]\n", ws.getPlatformOsLibPath());
-
-
-
-        out.printf("boot-java-version    : [[%s]]\n", System.getProperty("java.version"));
-        out.printf("boot-java-executable : [[%s]]\n", System.getProperty("java.home") + "/bin/java");
-        if (longFormat) {
-            out.printf("java.class.path      : \n");
-            for (String s : System.getProperty("java.class.path").split(File.pathSeparator)) {
-                out.printf("                       [[%s]]\n", s);
-            }
-        } else {
-            out.printf("java.class.path      : [[%s]]\n", System.getProperty("java.class.path"));
-        }
-        if (longFormat) {
-            out.printf("java.library.path    : \n");
-            if(System.getProperty("java.library.path")!=null) {
-                for (String s : System.getProperty("java.library.path").split(File.pathSeparator)) {
-                    out.printf("                       [[%s]]\n", s);
-                }
-            }
-        } else {
-            out.printf("java.library.path    : [[%s]]\n", System.getProperty("java.library.path"));
-        }
-
-        URL[] cl = ws.getConfigManager().getBootClassWorldURLs();
-        List<String> runtimeClasPath = new ArrayList<>();
-        if (cl != null) {
-            for (URL url : cl) {
-                if (url != null) {
-                    if (URLUtils.isFileURL(url)) {
-                        runtimeClasPath.add(URLUtils.toFile(url).getPath());
-                    } else {
-                        runtimeClasPath.add(url.toString());
-                    }
-                }
-            }
-        }
-        if (longFormat) {
-            out.printf("runtime-class-path   : \n");
-            for (String s : runtimeClasPath) {
-                out.printf("                       [[%s]]\n", s);
-            }
-        } else {
-            out.printf("runtime-class-path   : [[%s]]\n", StringUtils.join(":", runtimeClasPath));
-        }
+        Properties extra = new Properties();
+        extra.put("nsh-version",PomIdResolver.resolvePomId(getClass()).toString());
+        ws.printVersion(out, extra, ((fancy ? "fancy" : "") + "," + (min ? "min" : "")));
         return 0;
     }
 }

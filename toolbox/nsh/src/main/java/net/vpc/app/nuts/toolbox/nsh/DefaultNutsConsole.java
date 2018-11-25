@@ -29,12 +29,16 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.javashell.*;
 import net.vpc.common.javashell.cmds.*;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,8 +137,8 @@ public class DefaultNutsConsole implements NutsConsole {
     @Override
     public int run(String[] args) {
         NutsTerminal terminal = context.getTerminal();
-        NutsPrintStream out = terminal.getFormattedOut();
-        NutsPrintStream err = terminal.getFormattedErr();
+        PrintStream out = terminal.getFormattedOut();
+        PrintStream err = terminal.getFormattedErr();
         List<String> nonOptions=new ArrayList<>();
         boolean interactive=false;
         String command=null;
@@ -149,6 +153,10 @@ public class DefaultNutsConsole implements NutsConsole {
                     }
                     case "-i":{
                         interactive=true;
+                        break;
+                    }
+                    case "-x":{
+                        sh.getOptions().setXtrace(true);
                         break;
                     }
                     case "--version":{
@@ -170,16 +178,16 @@ public class DefaultNutsConsole implements NutsConsole {
             interactive=true;
         }
         if(command!=null){
-            javaShellContext.setArgs(nonOptions.toArray(new String[nonOptions.size()]));
+            javaShellContext.setArgs(nonOptions.toArray(new String[0]));
             ret=sh.executeLine(command, javaShellContext);
         }else if(nonOptions.size()>0){
             String c=nonOptions.get(0);
             if(c.contains("/") || c.contains("\\")){
                 nonOptions.remove(0);
-                javaShellContext.setArgs(nonOptions.toArray(new String[nonOptions.size()]));
+                javaShellContext.setArgs(nonOptions.toArray(new String[0]));
                 ret=sh.executeFile(c,javaShellContext,false);
             }else {
-                ret = sh.executeArguments(nonOptions.toArray(new String[nonOptions.size()]), javaShellContext);
+                ret = sh.executeArguments(nonOptions.toArray(new String[0]), javaShellContext);
             }
         }
         if(interactive) {
@@ -188,7 +196,7 @@ public class DefaultNutsConsole implements NutsConsole {
         return ret;
     }
 
-    protected int runInteractive(NutsPrintStream out){
+    protected int runInteractive(PrintStream out){
         NutsTerminal terminal = null;
         out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n",
                 context.getValidWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString());

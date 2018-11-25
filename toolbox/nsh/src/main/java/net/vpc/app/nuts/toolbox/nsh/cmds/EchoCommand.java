@@ -30,11 +30,12 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.ValueNonOption;
-import net.vpc.common.commandline.ArgVal;
+
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -50,16 +51,16 @@ public class EchoCommand extends AbstractNutsCommand {
         boolean noTrailingNewLine = false;
         boolean plain = false;
         boolean first = true;
-        NutsPrintStream out = context.getTerminal().getOut();
-        while (!cmdLine.isEmpty()) {
+        PrintStream out = context.getTerminal().getOut();
+        while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-                ArgVal option = cmdLine.read();
-                if (option.isAny("-n")) {
-                    noTrailingNewLine = true;
-                } else if (option.isAny("-p")) {
-                    plain = true;
+                Argument a;
+                if ((a=cmdLine.readBooleanOption("-n"))!=null) {
+                    noTrailingNewLine = a.getBooleanValue();
+                }else if ((a=cmdLine.readBooleanOption("-p"))!=null) {
+                    plain = a.getBooleanValue();
                 } else {
-                    throw new NutsIllegalArgumentException("Unsupported option " + option);
+                    throw new NutsIllegalArgumentException("Unsupported option " + a);
                 }
             } else {
                 if (cmdLine.isExecMode()) {
@@ -69,9 +70,9 @@ public class EchoCommand extends AbstractNutsCommand {
                         out.print(" ");
                     }
                     if (plain) {
-                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value")).getString());
+                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getString());
                     } else {
-                        out.print(cmdLine.readNonOptionOrError(new ValueNonOption("value")).getString());
+                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getString());
                     }
                 }
             }

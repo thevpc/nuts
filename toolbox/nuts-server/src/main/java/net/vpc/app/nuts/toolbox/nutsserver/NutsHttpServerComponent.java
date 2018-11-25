@@ -95,7 +95,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
-        NutsTerminal terminal = invokerWorkspace.getExtensionManager().createTerminal();
+        NutsTerminal terminal = invokerWorkspace.createTerminal();
 
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
@@ -222,7 +222,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         });
         server.start();
-        NutsPrintStream out = terminal.getFormattedOut();
+        PrintStream out = terminal.getFormattedOut();
         out.printf("Nuts Http Service '%s' running at %s\n", serverId, inetSocketAddress);
         out.printf("Serving workspaces: \n");
         for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {

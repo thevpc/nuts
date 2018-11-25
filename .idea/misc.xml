@@ -29,17 +29,20 @@
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-ext-compress/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql/pom.xml" />
-        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-osapi/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-compress/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-mvn/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/pom.xml" />
+        <option value="$PROJECT_DIR$/../../common/vpc-common/vpc-common-fprint/pom.xml" />
+        <option value="$PROJECT_DIR$/../../common/pheromone/vpc-pheromone-app/pom.xml" />
+        <option value="$PROJECT_DIR$/../../common/vpc-common/vpc-common-ssh/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/toolbox/feenoo/pom.xml" />
         <option value="$PROJECT_DIR$/toolbox/file-version/pom.xml" />
+        <option value="$PROJECT_DIR$/toolbox/worky/pom.xml" />
       </set>
     </option>
   </component>

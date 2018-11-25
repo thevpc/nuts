@@ -29,15 +29,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -51,14 +51,14 @@ public class CdCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
         cmdLine.requireNonEmpty();
-        String folder = cmdLine.readNonOptionOrError(new FolderNonOption("Folder")).getString();
+        String folder = cmdLine.readRequiredNonOption(new FolderNonOption("Folder")).getString();
         File[] validFiles = FileUtils.findFilesOrError(folder, new File(context.getCwd()), new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 return pathname.isDirectory();
             }
         });
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         int result = 0;
         switch (validFiles.length) {
             case 1:
@@ -76,7 +76,7 @@ public class CdCommand extends AbstractNutsCommand {
                 result = 0;
                 break;
         }
-        cmdLine.requireEmpty();
+        cmdLine.unexpectedArgument();
         return result;
     }
 }

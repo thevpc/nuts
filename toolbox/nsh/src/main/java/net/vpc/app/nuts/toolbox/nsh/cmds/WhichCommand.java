@@ -34,6 +34,7 @@ import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 
+import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ public class WhichCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
         NutsWorkspace validWorkspace = context.getValidWorkspace();
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         if (cmdLine.isEmpty()) {
             if (cmdLine.isExecMode()) {
                 Map<String, String> runtimeProperties = getRuntimeProperties(context.getValidWorkspace(), context.getSession());
@@ -123,7 +124,7 @@ public class WhichCommand extends AbstractNutsCommand {
         }
         int ret = 0;
         do {
-            String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
+            String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context)).getString();
             if (cmdLine.isExecMode()) {
                 NutsId found = validWorkspace.resolveId(id, context.getSession());
                 if (found == null) {
@@ -134,7 +135,7 @@ public class WhichCommand extends AbstractNutsCommand {
                     ret = 0;
                 }
             }
-        } while (!cmdLine.isEmpty());
+        } while (cmdLine.hasNext());
         return ret;
     }
 }

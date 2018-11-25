@@ -18,7 +18,7 @@ public class NdiMain extends NutsApplication {
         if (args.length > 0) {
             if (args[0].equals("in") || args[0].equals("install")) {
                 LinuxNdi ndi = null;
-                if (ws.getPlatformOs().getName().equals("linux#")) {
+                if (ws.getPlatformOs().getName().equals("linux")) {
                     ndi = new LinuxNdi(ws, session);
                 }
                 if (ndi == null) {

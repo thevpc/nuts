@@ -29,16 +29,20 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsDeployment;
+import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.NutsSearch;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
-import net.vpc.common.commandline.FileNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -59,20 +63,20 @@ public class DeployCommand extends AbstractNutsCommand {
         String id = null;
         String contentFile = null;
         String descriptorFile = null;
-        while (!cmdLine.isEmpty()) {
-            if (contentFile == null && id == null && cmdLine.readOnce("--file", "-f")) {
+        while (cmdLine.hasNext()) {
+            if (contentFile == null && id == null && cmdLine.readAllOnce("--file", "-f")) {
                 fileMode = true;
-            } else if (!idMode && cmdLine.readOnce("--desc", "-d")) {
+            } else if (!idMode && cmdLine.readAllOnce("--desc", "-d")) {
                 descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
-            } else if (cmdLine.readOnce("--id", "-i")) {
+            } else if (cmdLine.readAllOnce("--id", "-i")) {
                 idMode = true;
-            } else if (!fileMode && cmdLine.readOnce("--source", "-s")) {
+            } else if (!fileMode && cmdLine.readAllOnce("--source", "-s")) {
                 from = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
-            } else if (cmdLine.readOnce("--to", "-t")) {
+            } else if (cmdLine.readAllOnce("--to", "-t")) {
                 to = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
             } else {
                 if (contentFile != null || id != null) {
-                    cmdLine.requireEmpty();
+                    cmdLine.unexpectedArgument();
                 } else {
                     if (!idMode && !fileMode) {
                         if (cmdLine.isAutoCompleteMode()) {
@@ -82,9 +86,9 @@ public class DeployCommand extends AbstractNutsCommand {
                         }
                     }
                     if (fileMode) {
-                        contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
+                        contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                     } else if (idMode) {
-                        id = cmdLine.readNonOptionOrError(new NutsIdNonOption("Nuts", context)).getString();
+                        id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context)).getString();
                     }
                 }
             }
@@ -92,7 +96,7 @@ public class DeployCommand extends AbstractNutsCommand {
         if (cmdLine.isAutoCompleteMode()) {
             return 0;
         }
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         if (fileMode) {
             if (StringUtils.isEmpty(contentFile)) {
                 throw new NutsCommandSyntaxError("Missing File");

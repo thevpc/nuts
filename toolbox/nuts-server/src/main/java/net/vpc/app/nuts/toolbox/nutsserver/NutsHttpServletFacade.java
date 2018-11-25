@@ -313,7 +313,7 @@ public class NutsHttpServletFacade {
 
                 NutsSession session = ws.createSession();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                session.getTerminal().setOut(ws.getExtensionManager().createPrintStream(out,false));
+                session.getTerminal().setOut(ws.createPrintStream(out,false));
                 session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
                 int result=ws.
@@ -429,7 +429,7 @@ public class NutsHttpServletFacade {
         } else {
             try {
                 try {
-                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.getExtensionManager().createSession()));
+                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.createSession()));
                 } catch (SecurityException ex) {
                     log.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();

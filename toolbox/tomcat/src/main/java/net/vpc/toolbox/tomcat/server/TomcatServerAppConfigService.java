@@ -19,7 +19,7 @@ public class TomcatServerAppConfigService {
         this.name = name;
         this.config = config;
         this.tomcat = tomcat;
-        this.context = tomcat.app.context;
+        this.context = tomcat.getTomcatServer().getContext();
     }
 
     public TomcatServerAppConfig getConfig() {

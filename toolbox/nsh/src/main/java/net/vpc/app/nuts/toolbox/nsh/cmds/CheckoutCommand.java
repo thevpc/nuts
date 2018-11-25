@@ -32,8 +32,8 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
+import net.vpc.common.commandline.FolderNonOption;
 
 /**
  * Created by vpc on 1/7/17.
@@ -46,8 +46,8 @@ public class CheckoutCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
-        String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("Nuts", context)).getString();
-        String contentFile = cmdLine.readNonOptionOrError(new FolderNonOption("folder")).getString();
+        String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context)).getString();
+        String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getString();
         if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }

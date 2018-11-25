@@ -31,10 +31,11 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -111,10 +112,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
 
-    NutsCommandExecBuilder createExecBuilder();
-
-    int exec(String[] cmd, Properties env, String dir, NutsSession session);
-
     /**
      * exec another instance of nuts
      *
@@ -129,7 +126,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceRepositoryManager getRepositoryManager();
 
-    Properties getProperties();
+    Properties getRuntimeProperties();
 
     NutsSession createSession();
 
@@ -147,6 +144,8 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsFile fetchBootFile(NutsSession session);
 
+    JsonIO getJsonIO();
+
     void removeWorkspaceListener(NutsWorkspaceListener listener);
 
     void addWorkspaceListener(NutsWorkspaceListener listener);
@@ -160,14 +159,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     NutsId resolveNutsIdForClass(Class clazz);
 
     NutsId[] resolveNutsIdsForClass(Class clazz);
-
-    NutsId createNutsId(String id);
-
-    NutsId createNutsId(String namespace, String group, String name, String version, String query);
-
-    NutsId createNutsId(String namespace, String group, String name, String version, Map<String, String> query);
-
-    NutsId createNutsId(String groupId, String name, String version);
 
     NutsId getPlatformOs();
 
@@ -193,6 +184,12 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsIdBuilder createIdBuilder();
 
+    NutsSearchBuilder createSearchBuilder();
+
+    NutsCommandExecBuilder createExecBuilder();
+
+    NutsId parseId(String id);
+
     NutsDescriptor parseDescriptor(URL url);
 
     NutsDescriptor parseDescriptor(File file);
@@ -203,34 +200,73 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsDependency parseDependency(String dependency);
 
-    NutsVersion createVersion(String version);
+    NutsVersion parseVersion(String version);
 
-    NutsId parseOrErrorNutsId(String nutFormat);
+    NutsId parseRequiredNutsId(String nutFormat);
 
-    NutsSearchBuilder createSearchBuilder();
 
     String getNutsFileName(NutsId id, String ext);
 
+
+    /**
+     * this method removes all  {@link NutsFormattedPrintStream}'s special formatting sequences and returns the raw
+     * string to be printed on an ordinary {@link PrintStream}
+     * @param value input string
+     * @return string without any escape sequences so that the text printed correctly on any non formatted {@link PrintStream}
+     */
     String filterText(String value);
 
-    String escapeText(String str);
+    /**
+     * This method escapes all special characters that are interpreted by {@link NutsFormattedPrintStream} so that
+     * this exact string is printed on such print streams
+     * When str is null, an empty string is return
+     * @param value input string
+     * @return string with escaped characters so that the text printed correctly on {@link NutsFormattedPrintStream}
+     */
+    String escapeText(String value);
 
-    String resolveJavaMainClass(File file);
+    /**
+     * resolveExecutionEntries
+     * @param file
+     * @return
+     */
+    ExecutionEntry[] resolveExecutionEntries(File file);
 
-    String[] resolveJavaMainClasses(File file);
-
-    String[] resolveJavaMainClasses(InputStream inputStream);
+    ExecutionEntry[] resolveExecutionEntries(InputStream inputStream, String type);
 
     String createRegex(String pattern, boolean contains);
 
     String getResourceString(String resource, Class cls, String defaultValue);
 
-    void updateIndex(String path);
+    void updateRepositoryIndex(String path);
 
-    void updateAllIndices();
+    void updateAllRepositoryIndices();
 
     void downloadPath(String from, File to, NutsSession session);
 
     String evalContentHash(InputStream input);
 
+    void printVersion(PrintStream out,Properties extraProperties,String options);
+
+
+    NutsTerminal createDefaultTerminal();
+
+    NutsTerminal createTerminal();
+
+    NutsTerminal createTerminal(InputStream in, PrintStream out, PrintStream err);
+
+    PrintStream createPrintStream(OutputStream out, boolean formatted);
+
+    PrintStream createPrintStream(File out);
+
+    InputStream createNullInputStream();
+
+    PrintStream createNullPrintStream();
+
+    NutsId parseNutsId(String nutsId);
+
+    InputStream monitorInputStream(String path, String name, NutsSession session);
+    InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session);
+
 }
+

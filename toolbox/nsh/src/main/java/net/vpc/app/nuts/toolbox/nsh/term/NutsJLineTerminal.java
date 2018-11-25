@@ -29,12 +29,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.term;
 
-import net.vpc.app.nuts.*;
-import net.vpc.common.commandline.AbstractCommandAutoComplete;
+import net.vpc.app.nuts.NutsFormattedPrintStream;
+import net.vpc.app.nuts.NutsIOException;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
-import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.AbstractCommandAutoComplete;
 import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.javashell.InterrupShellException;
 import net.vpc.common.strings.StringUtils;
@@ -55,12 +58,12 @@ public class NutsJLineTerminal implements NutsTerminal {
 
     private Terminal terminal;
     private LineReader reader;
-    private NutsPrintStream out;
-    private NutsPrintStream err;
+    private PrintStream out;
+    private PrintStream err;
     private NutsCommandContext nutsCommandContext;
     private NutsTerminal fallback;
-    private NutsPrintStream outReplace;
-    private NutsPrintStream errReplace;
+    private PrintStream outReplace;
+    private PrintStream errReplace;
     private InputStream inReplace;
     private BufferedReader inReplaceReader;
     private NutsWorkspace workspace;
@@ -68,10 +71,10 @@ public class NutsJLineTerminal implements NutsTerminal {
     public NutsJLineTerminal() {
     }
 
-    public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
+    public void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err) {
         this.workspace=workspace;
         if (in != null || out != null || err != null || System.console() == null) {
-            fallback = workspace.getExtensionManager().createDefaultTerminal();
+            fallback = workspace.createDefaultTerminal();
             fallback.install(workspace, in, out, err);
         } else {
             TerminalBuilder builder = TerminalBuilder.builder();
@@ -152,8 +155,8 @@ public class NutsJLineTerminal implements NutsTerminal {
                     //                .parser(parser)
                     .build();
             reader.setVariable(LineReader.HISTORY_FILE, FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), "history"));
-            this.out = workspace.getExtensionManager().createPrintStream(reader.getTerminal().output(),true);
-            this.err = workspace.getExtensionManager().createPrintStream(reader.getTerminal().output(),true);//.setColor(NutsPrintStream.RED);
+            this.out = workspace.createPrintStream(reader.getTerminal().output(),true);
+            this.err = workspace.createPrintStream(reader.getTerminal().output(),true);//.setColor(NutsPrintStream.RED);
         }
     }
 
@@ -223,7 +226,7 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     @Override
-    public void setOut(NutsPrintStream out) {
+    public void setOut(PrintStream out) {
         outReplace = out;
     }
 
@@ -233,12 +236,12 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     @Override
-    public void setErr(NutsPrintStream err) {
+    public void setErr(PrintStream err) {
         errReplace = err;
     }
 
     @Override
-    public NutsPrintStream getOut() {
+    public PrintStream getOut() {
         if (outReplace != null) {
             return outReplace;
         }
@@ -249,7 +252,7 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     @Override
-    public NutsPrintStream getErr() {
+    public PrintStream getErr() {
         if (errReplace != null) {
             return errReplace;
         }
@@ -260,12 +263,12 @@ public class NutsJLineTerminal implements NutsTerminal {
     }
 
     @Override
-    public NutsFormattedPrintStream getFormattedOut() {
-        return workspace.getExtensionManager().createsFormattedPrintStream(getOut());
+    public PrintStream getFormattedOut() {
+        return workspace.createPrintStream(getOut(),true);
     }
 
     @Override
-    public NutsFormattedPrintStream getFormattedErr() {
-        return workspace.getExtensionManager().createsFormattedPrintStream(getErr());
+    public PrintStream getFormattedErr() {
+        return workspace.createPrintStream(getErr(),true);
     }
 }

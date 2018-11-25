@@ -38,7 +38,7 @@ import net.vpc.common.strings.StringUtils;
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     private static final NutsRepositoryDefinition[] DEFAULTS = {
-            new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, false),
+            new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, Boolean.getBoolean("nuts.cache.cache-local-files")),
             new NutsRepositoryDefinition("maven-central", "http://repo.maven.apache.org/maven2/", NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, true),
             new NutsRepositoryDefinition("vpc-public-maven", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, true),
             new NutsRepositoryDefinition("vpc-public-nuts", "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master", NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER, true)

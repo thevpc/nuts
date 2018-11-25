@@ -112,7 +112,7 @@ public final class NutsArgumentsParser {
                 throw new IllegalArgumentException("Expected '");
             }
         }
-        return args.toArray(new String[args.size()]);
+        return args.toArray(new String[0]);
     }
 
     private static String compressBootArgument(String arg) {
@@ -182,6 +182,7 @@ public final class NutsArgumentsParser {
         List<String> showError = new ArrayList<>();
         ConfigNutsArguments o = new ConfigNutsArguments();
         int startAppArgs = 0;
+        String requiredBootVersion=null;
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
         o.getWorkspaceCreateOptions().setSaveIfCreated(true);
@@ -210,6 +211,9 @@ public final class NutsArgumentsParser {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
                         o.getWorkspaceCreateOptions().setWorkspace(bootArgs[i]);
+                        break;
+                    case "--workspace-version":
+                        requiredBootVersion = "@workspace-version";
                         break;
                     case "--archetype":
                         i++;
@@ -302,6 +306,20 @@ public final class NutsArgumentsParser {
                         }
                         o.getBootOptions().setLogSize(Integer.parseInt(bootArgs[i]));
                         break;
+                    case "--log-folder":
+                        i++;
+                        if (i >= bootArgs.length) {
+                            throw new NutsIllegalArgumentException("Missing argument for log-size");
+                        }
+                        o.getBootOptions().setLogFolder(bootArgs[i]);
+                        break;
+                    case "--log-name":
+                        i++;
+                        if (i >= bootArgs.length) {
+                            throw new NutsIllegalArgumentException("Missing argument for log-name");
+                        }
+                        o.getBootOptions().setLogName(bootArgs[i]);
+                        break;
                     case "--log-count":
                         i++;
                         if (i >= bootArgs.length) {
@@ -336,7 +354,10 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     default: {
-                        if (a.startsWith("-J")) {
+                        if (a.startsWith("--version=")) {
+                            o.setVersion(true);
+                            o.setVersionOptions(a.substring("--version=".length()));
+                        }else if (a.startsWith("-J")) {
                             o.getArgs().add(a);
                         } else if (a.startsWith("--nuts")) {
                             o.getArgs().add(a);
@@ -351,8 +372,8 @@ public final class NutsArgumentsParser {
                 break;
             }
         }
-        o.getWorkspaceCreateOptions().setExcludedExtensions(excludedExtensions.toArray(new String[excludedExtensions.size()]));
-        o.getWorkspaceCreateOptions().setExcludedRepositories(excludedRepositories.toArray(new String[excludedRepositories.size()]));
+        o.getWorkspaceCreateOptions().setExcludedExtensions(excludedExtensions.toArray(new String[0]));
+        o.getWorkspaceCreateOptions().setExcludedRepositories(excludedRepositories.toArray(new String[0]));
         o.getArgs().addAll(Arrays.asList(Arrays.copyOfRange(bootArgs, startAppArgs, bootArgs.length)));
         if (!o.isShowHelp()) {
             if (!showError.isEmpty()) {
@@ -374,6 +395,7 @@ public final class NutsArgumentsParser {
         Level logLevel = null;
         int logSize = 0;
         int logCount = 0;
+        String logName = null;
         String logFolder = null;
         String nutsHome = null;
         String workspace = null;
@@ -445,6 +467,20 @@ public final class NutsArgumentsParser {
                     }
                     logCount = Integer.parseInt(args[i]);
                     break;
+                case "--log-folder":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for log-folder");
+                    }
+                    logFolder = args[i];
+                    break;
+                case "--log-name":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for log-name");
+                    }
+                    logName = args[i];
+                    break;
                 case "--workspace":
                     i++;
                     if (i >= args.length) {
@@ -471,7 +507,7 @@ public final class NutsArgumentsParser {
         }
         if (requiredBootVersion != null && !requiredBootVersion.equals(actualVersion)) {
             if (configureLog) {
-                NutsLogUtils.prepare(logLevel, logFolder, logSize, logCount,nutsHome,workspace);
+                NutsLogUtils.prepare(logLevel, logFolder, logName,logSize, logCount,nutsHome,workspace);
             }
             log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
             if ("CURRENT".equalsIgnoreCase(requiredBootVersion)) {

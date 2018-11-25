@@ -37,7 +37,7 @@ public class TomcatClientAppConfigService {
                         "cp",
                         "--password",
                         serverPassword,
-                        "--cert",
+                        "--key-file",
                         serverCertificate,
                         this.config.getPath(),
                         "ssh://" + IOUtils.concatPath('/', cconfig.getServer() ,remoteFilePath)
@@ -71,7 +71,7 @@ public class TomcatClientAppConfigService {
                     "--app",
                     name,
                     "--version",
-                    s.getOutString(),
+                    s.getOutputString(),
                     remoteFilePath
             );
             client.execRemoteNuts(

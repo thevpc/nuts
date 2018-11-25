@@ -5,11 +5,11 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.common.io.InputStreamEvent;
 import net.vpc.common.io.InputStreamMonitor;
 import net.vpc.common.util.BytesSizeFormat;
 
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 /**
@@ -20,9 +20,9 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
 
     private static DecimalFormat df = new DecimalFormat("##0.00");
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
-    private NutsPrintStream out;
+    private PrintStream out;
 
-    public DefaultInputStreamMonitor(NutsPrintStream out) {
+    public DefaultInputStreamMonitor(PrintStream out) {
         this.out = out;
     }
 

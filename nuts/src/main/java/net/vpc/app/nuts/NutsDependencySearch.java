@@ -78,7 +78,7 @@ public class NutsDependencySearch {
     }
 
     public String[] getIds() {
-        return this.ids.toArray(new String[this.ids.size()]);
+        return this.ids.toArray(new String[0]);
     }
 
     public boolean isIncludeMain() {

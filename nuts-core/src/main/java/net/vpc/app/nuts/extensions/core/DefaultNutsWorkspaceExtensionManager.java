@@ -34,16 +34,12 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
                     //order is important!!because autowiring should follow this very order
                     NutsDefaultFormattedPrintStream.class,
                     NutsNonFormattedPrintStream.class,
-                    NutsPrintStream.class,
+                    NutsFormattedPrintStream.class,
                     NutsTerminal.class,
                     NutsDescriptorContentParserComponent.class,
                     NutsExecutorComponent.class,
                     NutsInstallerComponent.class,
                     NutsRepositoryFactoryComponent.class,
-//                    NutsCommandAutoCompleteComponent.class
-//                    NutsCommand.class,
-//                    NutsConsole.class,
-//                    NutsServerComponent.class,
                     NutsTransportComponent.class,
                     NutsWorkspace.class,
                     NutsWorkspaceArchetypeComponent.class
@@ -76,7 +72,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     @Override
     public List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session) {
-        NutsId nid = parseNutsId(id);
+        NutsId nid = ws.parseNutsId(id);
         if (nid.getVersion().isEmpty()) {
             throw new NutsIllegalArgumentException("Missing version");
         }
@@ -108,7 +104,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         return ret;
     }
 
-    protected void oninitializeWorkspace(ClassLoader bootClassLoader) {
+    protected void onInitializeWorkspace(ClassLoader bootClassLoader) {
         //now will iterate over Extension classes to wire them ...
         List<Class> loadedExtensions = discoverTypes(NutsComponent.class, bootClassLoader);
         for (Class extensionImpl : loadedExtensions) {
@@ -126,11 +122,11 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     @Override
     public NutsWorkspaceExtension addWorkspaceExtension(String id, NutsSession session) {
         session = validateSession(session);
-        NutsId oldId = CoreNutsUtils.finNutsIdByFullName(CoreNutsUtils.parseOrErrorNutsId(id), extensions.keySet());
+        NutsId oldId = CoreNutsUtils.finNutsIdByFullName(ws.parseRequiredNutsId(id), extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
             NutsId nutsId = ws.resolveId(id, session);
-            NutsId eid = CoreNutsUtils.parseOrErrorNutsId(id);
+            NutsId eid = ws.parseRequiredNutsId(id);
             if (StringUtils.isEmpty(eid.getGroup())) {
                 eid = eid.setGroup(nutsId.getGroup());
             }
@@ -138,7 +134,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             return wireExtension(eid, session);
         } else {
             old = extensions.get(oldId);
-            ws.getConfigManager().addExtension(CoreNutsUtils.parseOrErrorNutsId(id));
+            ws.getConfigManager().addExtension(ws.parseRequiredNutsId(id));
             return old;
         }
     }
@@ -156,12 +152,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     @Override
     public NutsWorkspaceExtension[] getWorkspaceExtensions() {
-        return extensions.values().toArray(new NutsWorkspaceExtension[extensions.size()]);
-    }
-
-    @Override
-    public JsonIO getJsonIO() {
-        return CoreJsonUtils.get();
+        return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
 
     protected NutsWorkspaceExtension wireExtension(NutsId id, NutsSession session) {
@@ -214,7 +205,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     private boolean isLoadedClassPath(NutsFile file, NutsSession session) {
         session = validateSession(session);
-        if (file.getId().isSameFullName(CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_ID_BOOT))) {
+        if (file.getId().isSameFullName(ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT))) {
             return true;
         }
         try {
@@ -314,7 +305,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             URL u = expandURL(url);
             bootUrls.add(new URLLocation(url, u));
         }
-        return bootUrls.toArray(new URLLocation[bootUrls.size()]);
+        return bootUrls.toArray(new URLLocation[0]);
     }
 
     @Override
@@ -330,7 +321,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
                 urls.add(r);
             }
         }
-        return urls.toArray(new String[urls.size()]);
+        return urls.toArray(new String[0]);
     }
 
     protected URL expandURL(String url) {
@@ -344,7 +335,6 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             return null;
         }
     }
-
 
 
     @Override
@@ -364,7 +354,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     @Override
     public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters) {
-        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameterTypes);
+        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters);
     }
 
     @Override
@@ -407,151 +397,12 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         return objectFactory.isRegisteredType(extensionPointType, extensionType);
     }
 
-//    @Override
-//    public NutsConsole createConsole(NutsSession session) {
-//        session = validateSession(session);
-//        NutsConsole cmd = objectFactory.createSupported(NutsConsole.class, ws);
-//        if (cmd == null) {
-//            throw new NutsExtensionMissingException(NutsConsole.class, "sh");
-//        }
-//        cmd.init(ws, session);
-//        return cmd;
-//    }
-
-    @Override
-    public NutsSession createSession() {
-        NutsSession nutsSession = new NutsSessionImpl();
-        nutsSession.setTerminal(createTerminal());
-        return nutsSession;
-    }
-
-    @Override
-    public NutsTerminal createDefaultTerminal() {
-        return new DefaultNutsTerminal();
-    }
-
-    @Override
-    public NutsTerminal createTerminal() {
-        return createTerminal(null, null, null);
-    }
-
-    @Override
-    public NutsTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) {
-        NutsTerminal term = objectFactory.createSupported(NutsTerminal.class, null);
-        if (term == null) {
-            throw new NutsExtensionMissingException(NutsTerminal.class, "Terminal");
-        }
-        term.install(ws, in, out, err);
-        return term;
-    }
-
     protected NutsSession validateSession(NutsSession session) {
         if (session == null) {
-            session = createSession();
+            session = ws.createSession();
         }
         return session;
     }
 
-    @Override
-    public ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session) {
-        return createClassLoader(nutsIds,null,parentClassLoader,session);
-    }
 
-    @Override
-    public ClassLoader createClassLoader(String[] nutsIds, NutsDependencyScope scope, ClassLoader parentClassLoader, NutsSession session) {
-        if(scope==null){
-            scope=NutsDependencyScope.RUN;
-        }
-        session = validateSession(session);
-        NutsFile[] nutsFiles = ws.fetchDependencies(
-                new NutsDependencySearch(nutsIds)
-                        .setIncludeMain(true)
-                        .setScope(scope),
-                session);
-        URL[] all = new URL[nutsFiles.length];
-        for (int i = 0; i < all.length; i++) {
-            all[i] = URLUtils.toURL(new File(nutsFiles[i].getFile()));
-        }
-        return new NutsURLClassLoader(all, parentClassLoader);
-    }
-
-    @Override
-    public NutsPrintStream createPrintStream(OutputStream out, boolean formatted) {
-        if (out == null) {
-            return null;
-        }
-        if (out instanceof NutsPrintStream) {
-            return (NutsPrintStream) out;
-        }
-        if(formatted){
-            if("true".equals(ws.getProperties().getProperty("nocolors"))){
-                return objectFactory.createSupported(NutsNonFormattedPrintStream.class, out, new Class[]{OutputStream.class}, new Object[]{out});
-            }
-            NutsFormattedPrintStream p = objectFactory.createSupported(NutsFormattedPrintStream.class, out, new Class[]{OutputStream.class}, new Object[]{out});
-            if(p!=null) {
-                return p;
-            }
-        }else{
-            return objectFactory.createSupported(NutsNonFormattedPrintStream.class, out, new Class[]{OutputStream.class}, new Object[]{out});
-        }
-        return objectFactory.createSupported(NutsPrintStream.class, out, new Class[]{OutputStream.class}, new Object[]{out});
-    }
-
-    @Override
-    public NutsPrintStream createPrintStream(File out) {
-        if (out == null) {
-            return null;
-        }
-        try {
-            return new NutsNonFormattedPrintStream(out);
-        } catch (IOException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
-    @Override
-    public InputStream createNullInputStream() {
-        return NullInputStream.INSTANCE;
-    }
-
-    @Override
-    public NutsPrintStream createNullPrintStream() {
-        return createPrintStream(NullOutputStream.INSTANCE,false);
-    }
-
-    @Override
-    public NutsId parseNutsId(String nutsId) {
-        return CoreNutsUtils.parseNutsId(nutsId);
-    }
-
-    @Override
-    public NutsDescriptorBuilder createDescriptorBuilder() {
-        return new DefaultNutsDescriptorBuilder();
-    }
-
-    @Override
-    public NutsIdBuilder createIdBuilder() {
-        return new DefaultNutsIdBuilder();
-    }
-
-    @Override
-    public NutsDependencyBuilder createDependencyBuilder() {
-        return new DefaultNutsDependencyBuilder();
-    }
-
-    @Override
-    public JsonIO createJsonSerializer() {
-        return new GsonIO();
-    }
-
-    @Override
-    public NutsFormattedPrintStream createsFormattedPrintStream(PrintStream out) {
-        if (out == null) {
-            out = IOUtils.NULL_PRINT_STREAM;
-        }
-        if (out instanceof NutsFormattedPrintStream) {
-            return (NutsFormattedPrintStream) out;
-        }
-        return new NutsDefaultFormattedPrintStream(out);
-    }
 }

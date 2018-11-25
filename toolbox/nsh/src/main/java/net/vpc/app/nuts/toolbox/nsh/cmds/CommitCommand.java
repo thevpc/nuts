@@ -46,7 +46,7 @@ public class CommitCommand extends AbstractNutsCommand {
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
-        String contentFile = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
+        String contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
         if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }

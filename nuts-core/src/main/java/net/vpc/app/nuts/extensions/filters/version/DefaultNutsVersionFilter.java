@@ -67,7 +67,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     }
 
     public NutsVersionInterval[] getIntervals() {
-        return intervals.toArray(new NutsVersionInterval[intervals.size()]);
+        return intervals.toArray(new NutsVersionInterval[0]);
     }
 
     public static DefaultNutsVersionFilter parse(String version) {

@@ -32,11 +32,16 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
-import net.vpc.app.nuts.toolbox.nsh.util.SShConnection;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
+import net.vpc.common.io.URLUtils;
+import net.vpc.common.ssh.SShConnection;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
+import net.vpc.common.ssh.SshPath;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -57,24 +62,36 @@ public class CpCommand extends AbstractNutsCommand {
 
     public static class Options {
         boolean mkdir;
+        boolean verbose;
+        ShellHelper.WsSshListener sshlistener;
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
         List<FilePath> files = new ArrayList<>();
         Options o = new Options();
-        while (!cmdLine.isEmpty()) {
+        Argument a;
+        while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-                if (cmdLine.isOption(null, "mkdir")) {
-                    o.mkdir = true;
+                if ((a=cmdLine.readBooleanOption("--mkdir"))!=null) {
+                    o.mkdir = a.getBooleanValue();
+                }else if ((a=cmdLine.readBooleanOption("--verbose"))!=null) {
+                    o.verbose = a.getBooleanValue();
+                }else{
+                    cmdLine.unexpectedArgument();
                 }
             } else {
-                files.add(new FilePath(cmdLine.readValue()));
+                String value = cmdLine.readNonOption().getExpression();
+                if(StringUtils.isEmpty(value)){
+                    throw new IllegalArgumentException("Empty File Path");
+                }
+                files.add(FilePath.of(value));
             }
         }
         if (files.size() < 2) {
             throw new IllegalArgumentException("Missing parameters");
         }
+        o.sshlistener = o.verbose?new ShellHelper.WsSshListener(context.getSession()):null;
         for (int i = 0; i < files.size() - 1; i++) {
             copy(files.get(i), files.get(files.size() - 1), o);
         }
@@ -83,8 +100,8 @@ public class CpCommand extends AbstractNutsCommand {
 
     public void copy(FilePath from, FilePath to, Options o) {
         if (from.getProtocol().equals("file") && to.getProtocol().equals("file")) {
-            File from1 = new File(from.getPath());
-            File to1 = new File(to.getPath());
+            File from1 = ((FilePath.LocalFilePath)from).getFile();
+            File to1 = ((FilePath.LocalFilePath)to).getFile();
             if (from1.isFile()) {
                 if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                     to1 = new File(to1, from1.getName());
@@ -100,37 +117,40 @@ public class CpCommand extends AbstractNutsCommand {
             }
             IOUtils.copy(from1, to1);
         } else if (from.getProtocol().equals("file") && to.getProtocol().equals("ssh")) {
-            String p = to.getPath();
+            SshPath to1 = ((FilePath.SshFilePath)to).getSshPath();
+            String p = to1.getPath();
             if (p.endsWith("/") || p.endsWith("\\")) {
-                p = p + "/" + FileUtils.getFileName(from.getPath());
+                p = p + "/" + FileUtils.getFileName(to1.getPath());
             }
 
-            try (SShConnection session = new SShConnection(to)) {
-                copyLocalToRemote(new File(from.getPath()), p, o.mkdir, session);
+            try (SShConnection session = new SShConnection(to1.toAddress())
+                    .addListener(o.sshlistener)
+            ) {
+                copyLocalToRemote(((FilePath.LocalFilePath)from).getFile(), p, o.mkdir, session);
             }
         } else if (from.getProtocol().equals("ssh") && to.getProtocol().equals("file")) {
-            File to1 = new File(to.getPath());
+            SshPath from1 = ((FilePath.SshFilePath)from).getSshPath();
+            File to1 = ((FilePath.LocalFilePath)to).getFile();
             if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
-                to1 = new File(to1, FileUtils.getFileName(from.getPath()));
+                to1 = new File(to1, FileUtils.getFileName(from1.getPath()));
             }
-            try (SShConnection session = new SShConnection(from)) {
-                session.copyRemoteToLocal(from.getPath(), to1.getPath(), o.mkdir);
+            try (SShConnection session = new SShConnection(from1.toAddress())
+                    .addListener(o.sshlistener)
+            ) {
+                session.copyRemoteToLocal(from1.getPath(), to1.getPath(), o.mkdir);
             }
         } else if (from.getProtocol().equals("url") && to.getProtocol().equals("file")) {
-            try {
-                File to1 = new File(to.getPath());
-                if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
-                    to1 = new File(to1, FileUtils.getFileName(from.getPath()));
-                }
-                if (o.mkdir) {
-                    FileUtils.createParents(to1);
-                }
-                IOUtils.copy(new URL(from.getPath()), to1);
-            } catch (MalformedURLException e) {
-                throw new RuntimeIOException(e);
+            URL from1 = ((FilePath.URLFilePath)from).getURL();
+            File to1 = ((FilePath.LocalFilePath)to).getFile();
+            if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
+                to1 = new File(to1, URLUtils.getURLName(from1));
             }
+            if (o.mkdir) {
+                FileUtils.createParents(to1);
+            }
+            IOUtils.copy(from1, to1);
         } else {
-            throw new RuntimeIOException("Unsupported protocols " + from.getProtocol() + "->" + to.getProtocol());
+            throw new RuntimeIOException("Unsupported protocols " + from + "->" + to);
         }
     }
 
@@ -143,13 +163,12 @@ public class CpCommand extends AbstractNutsCommand {
                 copyLocalToRemote(file, to + "/" + file.getName(), mkdir, session);
             }
         } else if (from.isFile()) {
-            String p = FileUtils.getFileParentPath(to);
-            if (p != null) {
-                session.mkdir(p, true);
-            }
-            session.copyLocalToRemote(from.getPath(), to);
+//            String p = FileUtils.getFileParentPath(to);
+//            if (p != null) {
+//                session.mkdir(p, true);
+//            }
+            session.copyLocalToRemote(from.getPath(), to,mkdir);
         }
     }
-
 
 }

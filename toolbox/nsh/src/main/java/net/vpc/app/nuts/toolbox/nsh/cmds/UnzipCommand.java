@@ -41,6 +41,7 @@ import net.vpc.common.strings.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,17 +64,17 @@ public class UnzipCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
-        NutsFormattedPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         List<String> files = new ArrayList<>();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-l")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-l")) {
                 options.l = true;
-            } else if (cmdLine.read("-d")) {
-                options.dir = cmdLine.readValue();
+            } else if (cmdLine.readAll("-d")) {
+                options.dir = cmdLine.read().getExpression();
             } else if (cmdLine.isOption()) {
                 throw new IllegalArgumentException("Not yet supported");
             } else {
-                String path = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                 File file = new File(context.getAbsolutePath(path));
                 files.add(file.getPath());
             }

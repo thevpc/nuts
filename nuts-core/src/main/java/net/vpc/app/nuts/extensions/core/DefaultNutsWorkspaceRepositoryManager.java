@@ -147,7 +147,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public NutsRepository[] getRepositories() {
-        return repositories.values().toArray(new NutsRepository[repositories.size()]);
+        return repositories.values().toArray(new NutsRepository[0]);
     }
 
     @Override
@@ -164,7 +164,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         for (NutsRepositoryFactoryComponent provider : ws.getExtensionManager().createAll(NutsRepositoryFactoryComponent.class)) {
             all.addAll(Arrays.asList(provider.getDefaultRepositories(ws)));
         }
-        return all.toArray(new NutsRepositoryDefinition[all.size()]);
+        return all.toArray(new NutsRepositoryDefinition[0]);
     }
 
     protected void wireRepository(NutsRepository repository) {
@@ -223,7 +223,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public NutsRepositoryListener[] getRepositoryListeners() {
-        return repositoryListeners.toArray(new NutsRepositoryListener[repositoryListeners.size()]);
+        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
     }
 
 }

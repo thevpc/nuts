@@ -46,9 +46,9 @@ public class LoginCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
-        String login = cmdLine.readNonOptionOrError(new DefaultNonOption("Username")).getString();
+        String login = cmdLine.readRequiredNonOption(new DefaultNonOption("Username")).getString();
         String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getString();
-        cmdLine.requireEmpty();
+        cmdLine.unexpectedArgument();
         if (cmdLine.isExecMode()) {
             if (!NutsConstants.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {
                 password = context.getTerminal().readPassword("Password:");

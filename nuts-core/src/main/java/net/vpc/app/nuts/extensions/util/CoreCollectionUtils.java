@@ -43,7 +43,7 @@ public class CoreCollectionUtils {
                 set.addAll(toSet(value));
             }
         }
-        return set.toArray(new String[set.size()]);
+        return set.toArray(new String[0]);
     }
 
     public static Set<String> toSet(String[] values0) {

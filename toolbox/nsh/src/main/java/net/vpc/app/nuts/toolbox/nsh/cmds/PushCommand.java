@@ -30,11 +30,12 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsConfirmAction;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
 import net.vpc.common.commandline.DefaultNonOption;
+
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -50,14 +51,14 @@ public class PushCommand extends AbstractNutsCommand {
         String repo = null;
         cmdLine.requireNonEmpty();
         NutsConfirmAction force = NutsConfirmAction.IGNORE;
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.readOnce("--repo", "-r")) {
-                repo = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
-            } else if (cmdLine.readOnce("--force", "-f")) {
+        PrintStream out = context.getTerminal().getFormattedOut();
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAllOnce("--repo", "-r")) {
+                repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+            } else if (cmdLine.readAllOnce("--force", "-f")) {
                 force = NutsConfirmAction.FORCE;
             } else {
-                String id = cmdLine.readNonOptionOrError(new DefaultNonOption("NewNutsId")).toString();
+                String id = cmdLine.readRequiredNonOption(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
                     context.getValidWorkspace().push(id, repo, force, context.getSession());
                     out.printf("%s pushed successfully\n", id);

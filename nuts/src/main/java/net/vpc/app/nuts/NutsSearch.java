@@ -100,7 +100,7 @@ public class NutsSearch {
     }
 
     public String[] getIds() {
-        return this.ids.toArray(new String[this.ids.size()]);
+        return this.ids.toArray(new String[0]);
     }
 
     public NutsDependencyScope getScope() {

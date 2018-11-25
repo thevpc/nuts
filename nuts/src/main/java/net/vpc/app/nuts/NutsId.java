@@ -90,7 +90,7 @@ public interface NutsId extends Serializable{
 
     NutsVersion getVersion();
 
-    NutsId apply(StringMapper properties);
+    NutsId apply(ObjectConverter<String,String> properties);
 
     NutsIdBuilder builder();
 }

@@ -56,7 +56,7 @@ public class DerbyMain extends NutsApplication{
         }
         NutsId r = ws.resolveNutsIdForClass(getClass());
         if (r == null) {
-            r = ws.createNutsId("net.vpc.app.nuts.toolbox:derby#1.2");
+            r = ws.parseId("net.vpc.app.nuts.toolbox:derby#1.2");
         }
         return r;
     }
@@ -237,7 +237,7 @@ public class DerbyMain extends NutsApplication{
     }
 
     private File download(String id) {
-        final NutsId iid = ws.getExtensionManager().parseNutsId(id);
+        final NutsId iid = ws.parseNutsId(id);
         File downloadBaseFolder = new File(derbyBinHome, iid.getVersion().getValue());
         File targetFile = new File(downloadBaseFolder, iid.getName() + ".jar");
         if (!targetFile.exists()) {

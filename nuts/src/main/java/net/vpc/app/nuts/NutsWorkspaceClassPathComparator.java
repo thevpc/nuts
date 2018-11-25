@@ -109,7 +109,7 @@ class NutsWorkspaceClassPathComparator implements Comparator<NutsWorkspaceClassP
         if (sb.length() > 0) {
             all.add(sb.toString());
         }
-        return all.toArray(new String[all.size()]);
+        return all.toArray(new String[0]);
     }
 
 }

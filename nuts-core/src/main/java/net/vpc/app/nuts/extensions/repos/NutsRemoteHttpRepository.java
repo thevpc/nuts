@@ -58,7 +58,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
                         workspace.getConfigManager().getNutsHomeLocation()).getPath()
                 , SPEED_SLOW);
         try {
-            remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(url + "/version"));
+            remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(url + "/version"));
         } catch (Exception ex) {
             log.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", url);
         }
@@ -90,7 +90,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     public NutsId getRemoteId() {
         if (remoteId == null) {
             try {
-                remoteId = CoreNutsUtils.parseOrErrorNutsId(httpGetString(getUrl("/version")));
+                remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(getUrl("/version")));
             } catch (Exception ex) {
                 log.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", getConfigManager().getLocation());
             }
@@ -223,7 +223,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 //        if (s == null) {
 //            throw new NutsNotFoundException(id);
 //        }
-//        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
+//        return CoreNutsUtils.parseRequiredNutsId(s).setNamespace(getRepositoryId());
 //    }
     @Override
     public List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
@@ -391,7 +391,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = CoreNutsUtils.parseOrErrorNutsId(line);
+            NutsId nutsId = getWorkspace().parseRequiredNutsId(line);
             return nutsId.setNamespace(getRepositoryId());
         }
     }

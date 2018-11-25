@@ -25,6 +25,7 @@
       <module fileurl="file://$PROJECT_DIR$/../../common/java-shell/java-shell.iml" filepath="$PROJECT_DIR$/../../common/java-shell/java-shell.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/mvn/mvn.iml" filepath="$PROJECT_DIR$/toolbox/mvn/mvn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/mysql/mysql.iml" filepath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nde/nde.iml" filepath="$PROJECT_DIR$/toolbox/nde/nde.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/ndi/ndi.iml" filepath="$PROJECT_DIR$/toolbox/ndi/ndi.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" />
@@ -41,16 +42,17 @@
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-classpath/vpc-common-classpath.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-classpath/vpc-common-classpath.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-commandline/vpc-common-commandline.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-commandline/vpc-common-commandline.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-desktop-automation/vpc-common-desktop-automation.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-desktop-automation/vpc-common-desktop-automation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../common/vpc-common/vpc-common-fprint/vpc-common-fprint.iml" filepath="$PROJECT_DIR$/../../common/vpc-common/vpc-common-fprint/vpc-common-fprint.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/vpc-common-io.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/vpc-common-io.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-compress/vpc-common-io-compress.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-compress/vpc-common-io-compress.iml" />
-      <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-osapi/vpc-common-io-osapi.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-osapi/vpc-common-io-osapi.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-mvn/vpc-common-mvn.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-mvn/vpc-common-mvn.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql/vpc-common-sql.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql/vpc-common-sql.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../common/vpc-common/vpc-common-ssh/vpc-common-ssh.iml" filepath="$PROJECT_DIR$/../../common/vpc-common/vpc-common-ssh/vpc-common-ssh.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings/vpc-common-strings.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings/vpc-common-strings.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings/vpc-common-swings.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings/vpc-common-swings.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils/vpc-common-utils.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils/vpc-common-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../common/pheromone/vpc-pheromone-app/vpc-pheromone-app.iml" filepath="$PROJECT_DIR$/../../common/pheromone/vpc-pheromone-app/vpc-pheromone-app.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/worky.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/worky.iml" />
-      <module fileurl="file://$PROJECT_DIR$/toolbox/worky/worky (1).iml" filepath="$PROJECT_DIR$/toolbox/worky/worky (1).iml" />
       <module fileurl="file://$PROJECT_DIR$/../../common/maven/writer-maven-plugin/writer-maven-plugin.iml" filepath="$PROJECT_DIR$/../../common/maven/writer-maven-plugin/writer-maven-plugin.iml" />
     </modules>
   </component>

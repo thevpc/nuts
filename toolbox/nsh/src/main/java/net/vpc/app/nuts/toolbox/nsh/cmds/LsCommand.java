@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
@@ -38,6 +37,7 @@ import net.vpc.common.commandline.FileNonOption;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
@@ -71,13 +71,13 @@ public class LsCommand extends AbstractNutsCommand {
         List<File> folders = new ArrayList<>();
         List<File> files = new ArrayList<>();
         List<File> invalids = new ArrayList<>();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-d")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-d")) {
                 options.d = true;
-            } else if (cmdLine.read("-l")) {
+            } else if (cmdLine.readAll("-l")) {
                 options.l = true;
             } else {
-                String path = cmdLine.readNonOptionOrError(new FileNonOption("FileOrFolder")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getString();
                 File file = new File(context.getAbsolutePath(path));;
                 if (file.isDirectory()) {
                     folders.add(file);
@@ -89,7 +89,7 @@ public class LsCommand extends AbstractNutsCommand {
             }
         }
         boolean first = true;
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         for (File f : invalids) {
             ls(f, options, context, context.getTerminal(), false);
         }
@@ -116,7 +116,7 @@ public class LsCommand extends AbstractNutsCommand {
             throw new NutsIllegalArgumentException("ls: cannot access '" + path.getPath() + "': No such file or directory");
         } else if (path.isDirectory()) {
             if (addPrefix) {
-                NutsPrintStream out = terminal.getFormattedOut();
+                PrintStream out = terminal.getFormattedOut();
                 out.printf("%s:\n", path.getName());
             }
             File[] arr = path.listFiles();
@@ -133,7 +133,7 @@ public class LsCommand extends AbstractNutsCommand {
 
     private void ls0(File path, Options options, NutsTerminal terminal) {
         String name = path.getName();
-        NutsPrintStream out = terminal.getFormattedOut();
+        PrintStream out = terminal.getFormattedOut();
         if (options.l) {
             out.print((path.isDirectory() ? "d" : path.isFile() ? "-" : "?"));
             out.print((path.canRead() ? "r" : "-"));

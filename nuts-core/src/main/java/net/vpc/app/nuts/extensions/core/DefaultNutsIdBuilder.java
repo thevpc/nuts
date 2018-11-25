@@ -279,7 +279,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsIdBuilder apply(StringMapper properties) {
+    public NutsIdBuilder apply(ObjectConverter<String,String> properties) {
         setNamespace(CoreNutsUtils.applyStringProperties(this.getNamespace(), properties));
         setGroup(CoreNutsUtils.applyStringProperties(this.getGroup(), properties));
         setName(CoreNutsUtils.applyStringProperties(this.getName(), properties));

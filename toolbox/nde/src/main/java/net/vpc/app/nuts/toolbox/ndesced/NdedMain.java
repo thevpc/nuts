@@ -3,6 +3,7 @@ package net.vpc.app.nuts.toolbox.ndesced;
 import net.vpc.app.nuts.*;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Arrays;
 
 public class NdedMain extends NutsApplication{
@@ -11,8 +12,8 @@ public class NdedMain extends NutsApplication{
     private String[] args;
     private NutsWorkspaceExtensionManager f;
     private NutsSession session;
-    private NutsFormattedPrintStream out;
-    private NutsFormattedPrintStream err;
+    private PrintStream out;
+    private PrintStream err;
     private NutsTerminal terminal;
 
     private String home = null;
@@ -215,7 +216,7 @@ public class NdedMain extends NutsApplication{
         terminal = session.getTerminal();
         out = terminal.getFormattedOut();
         err = terminal.getFormattedErr();
-        NutsDescriptorBuilder b = f.createDescriptorBuilder();
+        NutsDescriptorBuilder b = ws.createDescriptorBuilder();
         fillArgs(b);
         out.printf("[[Creating new Nuts descriptor...]]\n");
         while (true) {

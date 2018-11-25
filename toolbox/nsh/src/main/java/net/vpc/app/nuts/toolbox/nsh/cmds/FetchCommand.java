@@ -31,14 +31,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsFile;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.FileNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
+import net.vpc.common.commandline.FileNonOption;
 
 import java.io.File;
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -55,36 +55,36 @@ public class FetchCommand extends AbstractNutsCommand {
         String lastLocationFile = null;
         boolean descMode = false;
         boolean effective = false;
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-t", "--to")) {
-                lastLocationFile = (cmdLine.readNonOptionOrError(new FileNonOption("FileOrFolder")).getString());
-            } else if (cmdLine.read("-d", "--desc")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-t", "--to")) {
+                lastLocationFile = (cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getString());
+            } else if (cmdLine.readAll("-d", "--desc")) {
                 descMode = true;
-            } else if (cmdLine.read("-n", "--nuts")) {
+            } else if (cmdLine.readAll("-n", "--nuts")) {
                 descMode = false;
-            } else if (cmdLine.read("-e", "--effective")) {
+            } else if (cmdLine.readAll("-e", "--effective")) {
                 effective = true;
             } else {
                 NutsWorkspace ws = context.getValidWorkspace();
-                String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
                     if (descMode) {
                         NutsFile file = null;
                         if (lastLocationFile == null) {
                             context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
-                            file = new NutsFile(context.getValidWorkspace().getExtensionManager().parseNutsId(id), null, null, false, false, null);
+                            file = new NutsFile(context.getValidWorkspace().parseNutsId(id), null, null, false, false, null);
                         } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getAbsolutePath(lastLocationFile)).isDirectory()) {
                             File folder = new File(context.getAbsolutePath(lastLocationFile));
                             folder.mkdirs();
                             NutsDescriptor descriptor = context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
-                            File target = new File(folder, ws.getNutsFileName(context.getValidWorkspace().getExtensionManager().parseNutsId(id), ".effective.nuts"));
+                            File target = new File(folder, ws.getNutsFileName(context.getValidWorkspace().parseNutsId(id), ".effective.nuts"));
                             descriptor.write(target, true);
-                            file = new NutsFile(ws.parseOrErrorNutsId(id), descriptor, target.getPath(), false, true, null);
+                            file = new NutsFile(ws.parseRequiredNutsId(id), descriptor, target.getPath(), false, true, null);
                         } else {
                             File target = new File(context.getAbsolutePath(lastLocationFile));
                             NutsDescriptor descriptor = context.getValidWorkspace().fetchDescriptor(id, effective, context.getSession());
                             descriptor.write(target, true);
-                            file = new NutsFile(ws.parseOrErrorNutsId(id), descriptor, target.getPath(), false, true, null);
+                            file = new NutsFile(ws.parseRequiredNutsId(id), descriptor, target.getPath(), false, true, null);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);
@@ -96,11 +96,11 @@ public class FetchCommand extends AbstractNutsCommand {
                             File folder = new File(context.getAbsolutePath(lastLocationFile));
                             folder.mkdirs();
                             String fetched = context.getValidWorkspace().copyTo(id, folder.getPath(), context.getSession());
-                            file = new NutsFile(ws.parseOrErrorNutsId(id), null, fetched, false, true, null);
+                            file = new NutsFile(ws.parseRequiredNutsId(id), null, fetched, false, true, null);
                         } else {
                             File simpleFile = new File(context.getAbsolutePath(lastLocationFile));
                             String fetched = context.getValidWorkspace().copyTo(id, simpleFile.getPath(), context.getSession());
-                            file = new NutsFile(ws.parseOrErrorNutsId(id), null, fetched, false, true, null);
+                            file = new NutsFile(ws.parseRequiredNutsId(id), null, fetched, false, true, null);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);
@@ -112,7 +112,7 @@ public class FetchCommand extends AbstractNutsCommand {
     }
 
     private void printFetchedFile(NutsFile file, NutsCommandContext context) {
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         if (!file.isCached()) {
             if (file.isTemporary()) {
                 out.printf("%s fetched successfully temporarily to %s\n", file.getId(), file.getFile());

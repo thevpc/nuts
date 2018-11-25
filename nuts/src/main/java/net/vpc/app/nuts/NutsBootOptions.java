@@ -44,6 +44,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     private String runtimeId;
     private String runtimeSourceURL;
     private String logFolder = null;
+    private String logName = null;
     private Level logLevel = null;
     private int logSize = 0;
     private int logCount = 0;
@@ -52,6 +53,14 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     private boolean perf = false;
 
     private NutsClassLoaderProvider classLoaderProvider;
+
+    public String getLogName() {
+        return logName;
+    }
+
+    public void setLogName(String logName) {
+        this.logName = logName;
+    }
 
     public String getHome() {
         return home;

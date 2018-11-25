@@ -267,7 +267,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                 }
             }
         }
-        return security == null ? null : new NutsEffectiveUserImpl(security, inherited.toArray(new String[inherited.size()]));
+        return security == null ? null : new NutsEffectiveUserImpl(security, inherited.toArray(new String[0]));
     }
 
     @Override
@@ -276,7 +276,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         for (NutsUserConfig secu : ws.getConfigManager().getUsers()) {
             all.add(findUser(secu.getUser()));
         }
-        return all.toArray(new NutsEffectiveUser[all.size()]);
+        return all.toArray(new NutsEffectiveUser[0]);
     }
 
     @Override
@@ -402,7 +402,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                 logins.add(NutsConstants.USER_ANONYMOUS);
             }
         }
-        return logins.toArray(new String[logins.size()]);
+        return logins.toArray(new String[0]);
     }
 
     @Override

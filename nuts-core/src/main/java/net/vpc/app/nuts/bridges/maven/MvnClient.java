@@ -3,7 +3,7 @@ package net.vpc.app.nuts.bridges.maven;
 import net.vpc.app.nuts.*;
 
 public class MvnClient {
-    public static final String NET_VPC_APP_NUTS_MVN = "net.vpc.app.nuts.toolbox:mvn#1.0.0";
+    public static final String NET_VPC_APP_NUTS_MVN = "net.vpc.app.nuts.toolbox:mvn";
     private NutsWorkspace ws;
     private Status status=Status.INIT;
     public enum Status{

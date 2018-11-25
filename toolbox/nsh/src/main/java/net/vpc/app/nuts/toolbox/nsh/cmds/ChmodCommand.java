@@ -30,11 +30,11 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +124,7 @@ public class ChmodCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         List<File> files = new ArrayList<>();
         Mods m = new Mods();
-        while (!cmdLine.isEmpty()) {
+        while (cmdLine.hasNext()) {
             String s = cmdLine.read().getString();
             if (s.startsWith("-")) {
                 if (s.equals("-R")) {
@@ -177,14 +177,14 @@ public class ChmodCommand extends AbstractNutsCommand {
         if (files.isEmpty()) {
             throw new IllegalArgumentException("Missing Expression");
         }
-        NutsFormattedPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         for (File f : files) {
             chmod(f, m,out);
         }
         return 0;
     }
 
-    protected void chmod(File f, Mods m, NutsPrintStream out) {
+    protected void chmod(File f, Mods m, PrintStream out) {
         if (m.r == 0 && m.w == 0 && m.x == 0) {
             return;
         }
@@ -192,7 +192,7 @@ public class ChmodCommand extends AbstractNutsCommand {
             if(!f.canRead() &&
                     !f.setReadable(m.r == 1, m.user)
                     ){
-                out.printf("Unable to [["+((m.r == 1)?"set":"unset")+"]] read  flag for ==%s==\n",f);
+                out.printf("Unable to [["+((m.r == 1)?"set":"unset")+"]] readAll  flag for ==%s==\n",f);
             }
         }
         if (m.w != 0) {

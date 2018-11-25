@@ -62,7 +62,7 @@ public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuil
     @Override
     public DefaultNutsSearchBuilder addJs(Collection<String> value) {
         if (value != null) {
-            addJs(value.toArray(new String[value.size()]));
+            addJs(value.toArray(new String[0]));
         }
         return this;
     }
@@ -79,7 +79,7 @@ public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuil
     @Override
     public DefaultNutsSearchBuilder addId(Collection<String> value) {
         if (value != null) {
-            addId(value.toArray(new String[value.size()]));
+            addId(value.toArray(new String[0]));
         }
         return this;
     }
@@ -95,7 +95,7 @@ public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuil
     @Override
     public DefaultNutsSearchBuilder addArch(Collection<String> value) {
         if (value != null) {
-            addArch(value.toArray(new String[value.size()]));
+            addArch(value.toArray(new String[0]));
         }
         return this;
     }
@@ -111,7 +111,7 @@ public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuil
     @Override
     public DefaultNutsSearchBuilder addPackaging(Collection<String> value) {
         if (value != null) {
-            addPackaging(value.toArray(new String[value.size()]));
+            addPackaging(value.toArray(new String[0]));
         }
         return this;
     }
@@ -127,7 +127,7 @@ public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuil
     @Override
     public DefaultNutsSearchBuilder addRepository(Collection<String> value) {
         if (value != null) {
-            addRepository(value.toArray(new String[value.size()]));
+            addRepository(value.toArray(new String[0]));
         }
         return this;
     }
@@ -159,7 +159,7 @@ public class DefaultNutsSearchBuilder implements net.vpc.app.nuts.NutsSearchBuil
             }
         }
         if (!ids.isEmpty()) {
-            idFilter = simplify(And(idFilter, new NutsPatternIdFilter(ids.toArray(new String[ids.size()]))));
+            idFilter = simplify(And(idFilter, new NutsPatternIdFilter(ids.toArray(new String[0]))));
         }
         NutsDescriptorFilter packs = null;
         for (String v : packagings) {

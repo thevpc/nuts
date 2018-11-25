@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>derby</artifactId>
-    <version>1.2</version>
+    <version>0.5.0.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.derby</name>
 

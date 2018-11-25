@@ -26,7 +26,7 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
                 }
             }
         }
-        this.all = valid.toArray(new NutsVersionFilter[valid.size()]);
+        this.all = valid.toArray(new NutsVersionFilter[0]);
     }
 
     @Override

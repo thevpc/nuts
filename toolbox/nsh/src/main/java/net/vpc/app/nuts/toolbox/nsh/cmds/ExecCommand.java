@@ -50,50 +50,20 @@ public class ExecCommand extends AbstractNutsCommand {
         List<String> sargs=new ArrayList<>();
         boolean nativeCommand=false;
         boolean command=false;
-        while(!cmdLine.isEmpty()){
+        while(cmdLine.hasNext()){
             if(!command){
-                if(cmdLine.read("-n","--native")) {
+                if(cmdLine.readAll("-n","--native")) {
                     nativeCommand = true;
                 }else{
                     command=true;
                 }
             }else{
-                sargs.add(cmdLine.readValue());
+                sargs.add(cmdLine.read().getValue());
             }
         }
         if (cmdLine.isAutoCompleteMode()) {
             return -1;
         }
-//        String[] finalArgs = cmdLine.toArray();
-//        if (finalArgs.length > 0 && finalArgs[0].equals("-c")) {
-//            int from = 1;
-//            if (finalArgs.length > 1 && finalArgs[1].equals("-d")) {
-//                from++;
-//            }
-//            List<String> commands = new ArrayList<>();
-//            Map<String, String> env = new HashMap<>();
-//            boolean expectEnv = true;
-//            for (int i = from; i < finalArgs.length; i++) {
-//                String command = finalArgs[i];
-//                if (expectEnv) {
-//                    String[] s = CoreNutsUtils.splitNameAndValue(command);
-//                    if (s != null) {
-//                        env.put(s[0], s[1]);
-//                    } else {
-//                        expectEnv = false;
-//                        commands.add(command);
-//                    }
-//                } else {
-//                    commands.add(command);
-//                }
-//            }
-//            if (commands.isEmpty()) {
-//                throw new NutsIllegalArgumentException("Missing command");
-//            }
-//            String[] commandsArray = commands.toArray(new String[commands.size()]);
-//            String currentDirectory = context.getCwd();
-//            return CoreIOUtils.execAndWait(commandsArray, env, currentDirectory == null ? null : new File(currentDirectory), context.getTerminal(), true);
-//        }
         return context.getValidWorkspace()
                 .createExecBuilder()
                 .setNativeCommand(nativeCommand)

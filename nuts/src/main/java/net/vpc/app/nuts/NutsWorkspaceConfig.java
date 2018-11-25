@@ -86,7 +86,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
 
     public NutsRepositoryLocation[] getRepositories() {
-        return repositories.values().toArray(new NutsRepositoryLocation[repositories.size()]);
+        return repositories.values().toArray(new NutsRepositoryLocation[0]);
     }
 
 
@@ -131,7 +131,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
 
     public NutsId[] getExtensions() {
-        return extensions.toArray(new NutsId[extensions.size()]);
+        return extensions.toArray(new NutsId[0]);
     }
 
 
@@ -163,7 +163,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
 
     public NutsUserConfig[] getSecurity() {
-        return security.values().toArray(new NutsUserConfig[security.size()]);
+        return security.values().toArray(new NutsUserConfig[0]);
     }
 
     public Map<String, List<NutsSdkLocation>> getSdk() {

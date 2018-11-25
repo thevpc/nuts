@@ -29,14 +29,18 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.*;
+import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
+import net.vpc.app.nuts.toolbox.nsh.DefaultNutsConsole;
+import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsole;
 import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.javashell.InterrupShellException;
 import net.vpc.common.javashell.QuitShellException;
 import net.vpc.common.strings.StringUtils;
+
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -62,7 +66,7 @@ public class ConsoleCommand extends AbstractNutsCommand {
         }
 
         NutsTerminal terminal = context.getTerminal();
-        NutsPrintStream out = terminal.getFormattedOut();
+        PrintStream out = terminal.getFormattedOut();
         out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n", context.getValidWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString());
 
         NutsConsole console = new DefaultNutsConsole();

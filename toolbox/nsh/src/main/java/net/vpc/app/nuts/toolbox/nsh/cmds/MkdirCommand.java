@@ -32,7 +32,10 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.ssh.SShConnection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,26 +53,35 @@ public class MkdirCommand extends AbstractNutsCommand {
 
     public static class Options {
         boolean p;
+        boolean verbose;
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
         List<FilePath> files = new ArrayList<>();
         Options o = new Options();
-        while (!cmdLine.isEmpty()) {
+        Argument a;
+        while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-                if (cmdLine.isOption("p", null)) {
-                    o.p = true;
+                if ((a = cmdLine.readBooleanOption("--verbose")) != null) {
+                    o.verbose = a.getBooleanValue();
+                }if ((a = cmdLine.readBooleanOption("--")) != null) {
+                    o.p = a.getBooleanValue();
                 }
             } else {
-                files.add(new FilePath(cmdLine.readValue()));
+                files.add(FilePath.of(cmdLine.read().getExpression()));
             }
         }
         if (files.size() < 1) {
             throw new IllegalArgumentException("Missing parameters");
         }
-        for (int i = 0; i < files.size() ; i++) {
-            files.get(i).mkdir(o.p);
+        ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
+        for (int i = 0; i < files.size(); i++) {
+            FilePath v = files.get(i);
+            if (v instanceof FilePath.SshFilePath) {
+                ((FilePath.SshFilePath) v).setListener(listener);
+            }
+            v.mkdir(o.p);
         }
         return 0;
     }

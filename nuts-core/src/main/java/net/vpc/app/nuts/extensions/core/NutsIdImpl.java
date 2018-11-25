@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsIdBuilder;
-import net.vpc.app.nuts.StringMapper;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
@@ -394,7 +391,7 @@ public class NutsIdImpl implements NutsId {
     }
 
     @Override
-    public NutsId apply(StringMapper properties) {
+    public NutsId apply(ObjectConverter<String,String> properties) {
         return new NutsIdImpl(
                 CoreNutsUtils.applyStringProperties(this.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(this.getGroup(), properties),

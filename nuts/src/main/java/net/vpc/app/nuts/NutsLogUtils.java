@@ -58,7 +58,7 @@ public final class NutsLogUtils {
     private NutsLogUtils() {
     }
 
-    public static void prepare(Level level, String pattern, int maxSize, int count, String home, String workspace) {
+    public static void prepare(Level level, String folder, String name, int maxSize, int count, String home, String workspace) {
         Logger olderLog = Logger.getLogger(NutsLogUtils.class.getName());
         boolean logged = false;
         Logger rootLogger = Logger.getLogger("");//"net.vpc.app.nuts"
@@ -66,11 +66,14 @@ public final class NutsLogUtils {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
-        if (pattern == null || NutsStringUtils.isEmpty(pattern)) {
-            String baseFolder = NutsIOUtils.resolveWorkspaceLocation(home,workspace);
-            pattern = baseFolder + "/log/net/vpc/app/nuts/nuts/LATEST/nuts-%g.log";
-            pattern = pattern.replace('/', File.separatorChar);
+        if (name == null || NutsStringUtils.isEmpty(name)) {
+            name="nuts-%g.log";
         }
+        if (folder == null || NutsStringUtils.isEmpty(folder)) {
+            String baseFolder = NutsIOUtils.resolveWorkspaceLocation(home,workspace);
+            folder = baseFolder + "/log/net/vpc/app/nuts/nuts/LATEST";
+        }
+        String pattern=(folder+"/"+name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
             maxSize = 5;
         }

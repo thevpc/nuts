@@ -31,7 +31,6 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsConfirmAction;
 import net.vpc.app.nuts.NutsFile;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
@@ -39,6 +38,7 @@ import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 import net.vpc.common.commandline.ValueNonOption;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,14 +57,14 @@ public class UpdateCommand extends AbstractNutsCommand {
         NutsConfirmAction force = NutsConfirmAction.IGNORE;
         String version = null;
         List<String> ids = new ArrayList<>();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.readOnce("--force", "-f")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAllOnce("--force", "-f")) {
                 force = NutsConfirmAction.FORCE;
-            } else if (cmdLine.readOnce("--version", "-v")) {
+            } else if (cmdLine.readAllOnce("--version", "-v")) {
                 force = NutsConfirmAction.FORCE;
-                version = cmdLine.readNonOptionOrError(new ValueNonOption("Version")).getString();
+                version = cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getString();
             } else {
-                String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId",null)).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId",null)).getString();
                 ids.add(id);
             }
         }
@@ -84,7 +84,7 @@ public class UpdateCommand extends AbstractNutsCommand {
     private void update(String id, NutsConfirmAction uptoDateAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getValidWorkspace();
         NutsFile file = ws.update(id, uptoDateAction, context.getSession());
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         if (file.isCached()) {
             out.printf("%s **already installed**\n", file.getId());
         } else {
@@ -95,7 +95,7 @@ public class UpdateCommand extends AbstractNutsCommand {
     private void updateWorkspace(String version, NutsConfirmAction foundAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getValidWorkspace();
         NutsFile file = ws.updateWorkspace(version, foundAction, context.getSession());
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         if (file.isCached()) {
             out.printf("%s **already installed**\n", file.getId());
         } else {

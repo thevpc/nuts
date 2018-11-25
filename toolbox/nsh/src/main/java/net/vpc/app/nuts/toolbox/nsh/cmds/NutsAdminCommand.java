@@ -53,41 +53,41 @@ public class NutsAdminCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
         cmdLine.requireNonEmpty();
-        if (cmdLine.read("update-index")) {
+        if (cmdLine.readAll("update-index")) {
             List<String> repos = new ArrayList<>();
-            while (!cmdLine.isEmpty()) {
-                repos.add(cmdLine.readValue());
+            while (cmdLine.hasNext()) {
+                repos.add(cmdLine.read().getExpression());
             }
             if (repos.isEmpty()) {
                 context.getFormattedOut().printf("[[%s]] Updating all indices\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation());
-                context.getValidWorkspace().updateAllIndices();
+                context.getValidWorkspace().updateAllRepositoryIndices();
             } else {
                 for (String repo : repos) {
                     context.getFormattedOut().printf("[[%s]] Updating index %s\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation(),repo);
-                    context.getValidWorkspace().updateIndex(repo);
+                    context.getValidWorkspace().updateRepositoryIndex(repo);
                 }
             }
-        }else if (cmdLine.read("delete-all-logs")) {
+        }else if (cmdLine.readAll("delete-all-logs")) {
             File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.LOGS));
             context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
             IOUtils.delete(file);
             file = new File(context.getValidWorkspace().getConfigManager().getNutsHomeLocation(),"log");
             context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
             IOUtils.delete(file);
-        }else if (cmdLine.read("delete-all-vars")) {
+        }else if (cmdLine.readAll("delete-all-vars")) {
             File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.VAR));
             context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
             IOUtils.delete(file);
-        }else if (cmdLine.read("delete-all-programs")) {
+        }else if (cmdLine.readAll("delete-all-programs")) {
             File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.PROGRAMS));
             context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
             IOUtils.delete(file);
-        }else if (cmdLine.read("delete-all-configs")) {
+        }else if (cmdLine.readAll("delete-all-configs")) {
             File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.CONFIG));
             context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
             IOUtils.delete(file);
         }
-        cmdLine.requireEmpty();
+        cmdLine.unexpectedArgument();
         return 0;
     }
 }

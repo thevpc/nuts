@@ -30,24 +30,20 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class NutsTerminalDelegate extends AbstractNutsTerminal {
 
     private NutsTerminal base;
     private InputStream inReplace;
     private BufferedReader inReplaceReader;
-    private NutsPrintStream outReplace;
-    private NutsPrintStream errReplace;
+    private PrintStream outReplace;
+    private PrintStream errReplace;
 
-    public NutsTerminalDelegate(NutsTerminal base, InputStream inReplace, NutsPrintStream outReplace, NutsPrintStream errReplace) {
+    public NutsTerminalDelegate(NutsTerminal base, InputStream inReplace, PrintStream outReplace, PrintStream errReplace) {
         if (base instanceof NutsTerminalDelegate) {
             base = ((NutsTerminalDelegate) base).base;
         }
@@ -62,7 +58,7 @@ public class NutsTerminalDelegate extends AbstractNutsTerminal {
     }
 
     @Override
-    public void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err) {
+    public void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err) {
 
     }
 
@@ -106,7 +102,7 @@ public class NutsTerminalDelegate extends AbstractNutsTerminal {
     }
 
     @Override
-    public NutsPrintStream getOut() {
+    public PrintStream getOut() {
         if (outReplace != null) {
             return outReplace;
         }
@@ -114,12 +110,12 @@ public class NutsTerminalDelegate extends AbstractNutsTerminal {
     }
 
     @Override
-    public void setOut(NutsPrintStream out) {
+    public void setOut(PrintStream out) {
         outReplace = out;
     }
 
     @Override
-    public NutsPrintStream getErr() {
+    public PrintStream getErr() {
         if (errReplace != null) {
             return errReplace;
         }
@@ -127,7 +123,7 @@ public class NutsTerminalDelegate extends AbstractNutsTerminal {
     }
 
     @Override
-    public void setErr(NutsPrintStream err) {
+    public void setErr(PrintStream err) {
         errReplace = err;
     }
 

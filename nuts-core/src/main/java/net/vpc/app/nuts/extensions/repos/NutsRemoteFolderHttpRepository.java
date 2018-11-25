@@ -232,7 +232,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
 //        if (s == null) {
 //            throw new NutsNotFoundException(id);
 //        }
-//        return CoreNutsUtils.parseOrErrorNutsId(s).setNamespace(getRepositoryId());
+//        return CoreNutsUtils.parseRequiredNutsId(s).setNamespace(getRepositoryId());
 //    }
     @Override
     public List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {

@@ -61,7 +61,7 @@ public class GsonIO implements JsonIO {
             if (s == null) {
                 return null;
             }
-            return CoreNutsUtils.parseOrErrorNutsId(s);
+            return CoreNutsUtils.parseRequiredNutsId(s);
         }
 
 

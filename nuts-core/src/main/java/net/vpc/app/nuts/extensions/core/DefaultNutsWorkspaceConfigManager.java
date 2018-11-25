@@ -31,6 +31,8 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.*;
+import net.vpc.common.mvn.PomId;
+import net.vpc.common.mvn.PomIdResolver;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
@@ -94,7 +96,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 }
             }
         }
-        String[] arr = imports.toArray(new String[imports.size()]);
+        String[] arr = imports.toArray(new String[0]);
 //        Arrays.sort(arr);
         setImports(arr);
     }
@@ -116,7 +118,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 }
             }
         }
-        String[] arr = imports.toArray(new String[imports.size()]);
+        String[] arr = imports.toArray(new String[0]);
 //        Arrays.sort(arr);
         setImports(arr);
     }
@@ -135,7 +137,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 }
             }
         }
-        String[] arr = simports.toArray(new String[simports.size()]);
+        String[] arr = simports.toArray(new String[0]);
 //        Arrays.sort(arr);
         getConfig().setImports(arr);
     }
@@ -152,7 +154,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 all.add(s);
             }
         }
-        return all.toArray(new String[all.size()]);
+        return all.toArray(new String[0]);
     }
 
     @Override
@@ -289,7 +291,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     @Override
     public String[] getSdkTypes() {
         Set<String> s = config.getSdk().keySet();
-        return s.toArray(new String[s.size()]);
+        return s.toArray(new String[0]);
     }
 
     @Override
@@ -313,7 +315,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (list == null) {
             return new NutsSdkLocation[0];
         }
-        return list.toArray(new NutsSdkLocation[list.size()]);
+        return list.toArray(new NutsSdkLocation[0]);
     }
 
     public boolean addExtension(NutsId extensionId) {
@@ -420,16 +422,27 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     @Override
     public String resolveNutsJarFile() {
         try {
-            NutsId baseId = CoreNutsUtils.parseOrErrorNutsId(NutsConstants.NUTS_ID_BOOT);
+            NutsId baseId = ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT);
             String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
             URL resource = Nuts.class.getResource(urlPath);
             if (resource != null) {
                 URL runtimeURL = CorePlatformUtils.resolveURLFromResource(Nuts.class, urlPath);
-                File file = CorePlatformUtils.resolveLocalFileFromURL(runtimeURL);
-                return file == null ? null : file.getPath();
+                return CorePlatformUtils.resolveLocalFileFromURL(runtimeURL).getPath();
             }
         } catch (Exception e) {
             //e.printStackTrace();
+        }
+        // This will happen when running app from  nuts dev project so that classes folder is considered as
+        // binary class path instead of a single jar file.
+        // In that case we will gather nuts from maven .m2 repository
+        PomId m = PomIdResolver.resolvePomId(Nuts.class, null);
+        if(m!=null){
+            File f=new File(System.getProperty("user.home")+"/.m2/repository/"+m.getGroupId().replace('.','/')+"/"+m.getArtifactId()+"/"+m.getVersion()+"/"
+                    +ws.getNutsFileName(ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion()).build()
+                    ,"jar"));
+            if(f.exists()){
+                return f.getPath();
+            }
         }
         return null;
     }

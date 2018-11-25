@@ -19,10 +19,8 @@ public class ProjectService {
 
     public ProjectService(NutsWorkspace ws, RepositoryAddress defaultRepositoryAddress, File file) throws IOException {
         this.ws = ws;
-        this.defaultRepositoryAddress = defaultRepositoryAddress;
-        try (FileReader f = new FileReader(file)) {
-            config = ws.getExtensionManager().getJsonIO().read(f, ProjectConfig.class);
-        }
+        this.defaultRepositoryAddress = defaultRepositoryAddress==null?new RepositoryAddress() : defaultRepositoryAddress;
+        config = ws.getJsonIO().read(file, ProjectConfig.class);
     }
 
     public ProjectService(NutsWorkspace ws, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -45,27 +43,23 @@ public class ProjectService {
     }
 
     public File getConfigFile() {
-        String storeRoot = ws.getStoreRoot("net.vpc.app.nuts.toolbox:worky#CURRENT", RootFolderType.CONFIG);
+        File storeRoot = new File(ws.getStoreRoot("net.vpc.app.nuts.toolbox:worky#CURRENT", RootFolderType.CONFIG), "projects");
         return new File(storeRoot, config.getId() + ".config");
     }
 
     public void save() throws IOException {
         File configFile = getConfigFile();
         FileUtils.createParents(configFile);
-        try (FileWriter f = new FileWriter(configFile)) {
-            ws.getExtensionManager().getJsonIO().write(config, f, true);
-        }
+        ws.getJsonIO().write(config, configFile, true);
     }
 
-    public boolean load() throws IOException {
+    public boolean load() {
         File configFile = getConfigFile();
         if (configFile.isFile()) {
-            try (FileReader f = new FileReader(configFile)) {
-                ProjectConfig u = ws.getExtensionManager().getJsonIO().read(f, ProjectConfig.class);
-                if (u != null) {
-                    config = u;
-                    return true;
-                }
+            ProjectConfig u = ws.getJsonIO().read(configFile, ProjectConfig.class);
+            if (u != null) {
+                config = u;
+                return true;
             }
         }
         return false;
@@ -88,7 +82,7 @@ public class ProjectService {
                                     && !g.getGroupId().contains("$")
                                     && !g.getArtifactId().contains("$")
                                     && !g.getVersion().contains("$")
-                            ) {
+                    ) {
 
                         String s = IOUtils.loadString(new File(f, "pom.xml"));
                         //check if the s

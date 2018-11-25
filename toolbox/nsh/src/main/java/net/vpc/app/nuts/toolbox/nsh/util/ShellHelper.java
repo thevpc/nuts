@@ -1,5 +1,10 @@
 package net.vpc.app.nuts.toolbox.nsh.util;
 
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.common.ssh.SshListener;
+
+import java.io.PrintStream;
+
 public class ShellHelper {
     public static String[] splitNameAndValue(String arg) {
         int i = arg.indexOf('=');
@@ -23,4 +28,27 @@ public class ShellHelper {
         }
     }
 
+
+    public static class WsSshListener implements SshListener {
+        PrintStream out;
+
+        public WsSshListener(NutsSession session) {
+            out = session.getTerminal().getFormattedOut();
+        }
+
+        @Override
+        public void onExec(String command) {
+            out.println("[[\\[SSH-EXEC\\]]] %s\n" + command);
+        }
+
+        @Override
+        public void onGet(String from, String to, boolean mkdir) {
+            out.println("[[\\[SSH-GET \\]]] %s -> %s%\n" + from + " " + to);
+        }
+
+        @Override
+        public void onPut(String from, String to, boolean mkdir) {
+            out.println("[[\\[SSH-PUT \\]]] %s -> %s%\n" + from + " " + to);
+        }
+    }
 }

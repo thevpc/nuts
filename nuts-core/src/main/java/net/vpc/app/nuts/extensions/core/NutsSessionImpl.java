@@ -33,6 +33,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.terminals.NutsTerminalDelegate;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,7 +118,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
                     found.add(listener);
                 }
             }
-            return found.toArray((T[]) Array.newInstance(type,found.size()));
+            return found.toArray((T[]) Array.newInstance(type,0));
         }
         return (T[]) Array.newInstance(type,0);
     }
@@ -127,7 +128,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
         if (listeners == null) {
             return new NutsListener[0];
         }
-        return listeners.toArray(new NutsListener[listeners.size()]);
+        return listeners.toArray(new NutsListener[0]);
     }
 
     @Override
@@ -153,7 +154,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
 //        return out;
 //    }
 //
-//    public NutsSession setOut(PrintStream out) {
+//    public NutsSession setOutput(PrintStream out) {
 //        this.out = NutsPrintStream.create(out);
 //        return this;
 //    }
@@ -178,7 +179,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession setTerminal(NutsTerminal base, InputStream inReplace, NutsPrintStream outReplace, NutsPrintStream errReplace) {
+    public NutsSession setTerminal(NutsTerminal base, InputStream inReplace, PrintStream outReplace, PrintStream errReplace) {
         return setTerminal(new NutsTerminalDelegate(base, inReplace, outReplace, errReplace));
     }
 

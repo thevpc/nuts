@@ -8,6 +8,7 @@
     <file url="file://$PROJECT_DIR$/toolbox/derby" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/feenoo" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/mvn" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/mysql" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/nde" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/ndi" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/nsh" charset="UTF-8" />
@@ -16,10 +17,12 @@
     <file url="file://$PROJECT_DIR$/toolbox/worky" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../../common/java-shell" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../../common/maven/writer-maven-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../common/pheromone/vpc-pheromone-app" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../common/vpc-common/vpc-common-fprint" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../common/vpc-common/vpc-common-ssh" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/derby" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/feenoo" charset="UTF-8" />
-    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/ndesc-ed" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/ndi" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/tomcat" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky" charset="UTF-8" />

@@ -59,13 +59,13 @@ public class ZipCommand extends AbstractNutsCommand {
         List<String> files = new ArrayList<>();
 //        NutsPrintStream out = context.getTerminal().getOut();
         File outZip=null;
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-r")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-r")) {
                 options.r=true;
             } else if (cmdLine.isOption()) {
                 throw new IllegalArgumentException("Not yet supported");
             } else {
-                String path = cmdLine.readNonOptionOrError(new FileNonOption("File")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                 File file = new File(context.getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;

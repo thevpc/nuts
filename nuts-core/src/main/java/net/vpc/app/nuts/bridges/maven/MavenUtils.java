@@ -215,7 +215,7 @@ public class MavenUtils {
                                             mavenVersionToNutsVersion(d_version.toString().trim()),
                                             d_scope.toString().trim(),
                                             d_optional.toString().trim(),
-                                            exclusions.toArray(new NutsId[exclusions.size()])
+                                            exclusions.toArray(new NutsId[0])
                                     )
                             );
                         }
@@ -250,7 +250,7 @@ public class MavenUtils {
                 .setName(name.toString())
                 .setDescription(description.toString())
                 .setPlatform(new String[]{"java"})
-                .setDependencies(deps.toArray(new NutsDependency[deps.size()]))
+                .setDependencies(deps.toArray(new NutsDependency[0]))
                 .setProperties(props)
                 .build()
                 ;

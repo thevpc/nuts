@@ -25,7 +25,7 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
                 }
             }
         }
-        this.all = valid.toArray(new NutsDescriptorFilter[valid.size()]);
+        this.all = valid.toArray(new NutsDescriptorFilter[0]);
     }
 
     @Override

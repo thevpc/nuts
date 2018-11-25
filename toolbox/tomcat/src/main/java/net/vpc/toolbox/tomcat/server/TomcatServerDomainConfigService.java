@@ -18,7 +18,7 @@ public class TomcatServerDomainConfigService {
         this.config = config;
         this.tomcat = tomcat;
         this.name = name;
-        this.context = tomcat.app.context;
+        this.context = tomcat.getTomcatServer().getContext();
     }
 
     public TomcatServerDomainConfig getConfig() {

@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ConfigNutsArguments extends NutsArguments{
     private boolean version = false;
+    private String versionOptions;
     private boolean doupdate = false;
     private boolean checkupdates = false;
     private String applyUpdatesFile = null;
@@ -14,6 +15,14 @@ public class ConfigNutsArguments extends NutsArguments{
     private NutsBootOptions bootOptions = new NutsBootOptions();
     private NutsWorkspaceOptions workspaceCreateOptions = new NutsWorkspaceOptions()
             .setCreateIfNotFound(true);
+
+    public String getVersionOptions() {
+        return versionOptions;
+    }
+
+    public void setVersionOptions(String versionOptions) {
+        this.versionOptions = versionOptions;
+    }
 
     public boolean isVersion() {
         return version;

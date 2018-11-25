@@ -32,12 +32,13 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.commandline.FileNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,24 +58,24 @@ public class InstallCommand extends AbstractNutsCommand {
         String repositoryId = null;
         String descriptorFile = null;
         do {
-            if (cmdLine.readOnce("-f", "--force")) {
+            if (cmdLine.readAllOnce("-f", "--force")) {
                 foundAction = NutsConfirmAction.FORCE;
-            } else if (cmdLine.readOnce("-r", "--repository")) {
+            } else if (cmdLine.readAllOnce("-r", "--repository")) {
                 repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
-            } else if (cmdLine.readOnce("-s", "--descriptor")) {
+            } else if (cmdLine.readAllOnce("-s", "--descriptor")) {
                 descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
-            } else if (cmdLine.readOnce("-t", "--target")) {
+            } else if (cmdLine.readAllOnce("-t", "--target")) {
                 descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getString();
-            } else if (cmdLine.readOnce("-y", "--deploy", "--no-install")) {
+            } else if (cmdLine.readAllOnce("-y", "--deploy", "--no-install")) {
                 deployOnly = true;
                 bundleOnly = false;
-            } else if (cmdLine.readOnce("-b", "--bundle")) {
+            } else if (cmdLine.readAllOnce("-b", "--bundle")) {
                 deployOnly = false;
                 bundleOnly = true;
             } else {
-                String id = cmdLine.readNonOptionOrError(new NutsIdNonOption("NutsId", context)).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context)).getString();
                 if (cmdLine.isExecMode()) {
-                    NutsPrintStream out = context.getTerminal().getFormattedOut();
+                    PrintStream out = context.getTerminal().getFormattedOut();
                     if (deployOnly) {
                         for (String s : context.expandPath(id)) {
                             NutsId deployedId = context.getValidWorkspace().deploy(
@@ -117,14 +118,14 @@ public class InstallCommand extends AbstractNutsCommand {
                 }
                 descriptorFile = null;
             }
-        } while (!cmdLine.isEmpty());
+        } while (cmdLine.hasNext());
         return 0;
     }
 
     private NutsFile logInstallStatus(String s, NutsCommandContext context, NutsConfirmAction foundAction) {
         NutsTerminal terminal = context.getTerminal();
         NutsFile file = null;
-        NutsPrintStream out = terminal.getFormattedOut();
+        PrintStream out = terminal.getFormattedOut();
         try {
             file = context.getValidWorkspace().install(s, foundAction, context.getSession());
         } catch (NutsAlreadytInstalledException ex) {

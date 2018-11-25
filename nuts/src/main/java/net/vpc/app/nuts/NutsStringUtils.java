@@ -96,7 +96,7 @@ final class NutsStringUtils {
                 }
             }
         }
-        return allValid.toArray(new String[allValid.size()]);
+        return allValid.toArray(new String[0]);
     }
 
 }

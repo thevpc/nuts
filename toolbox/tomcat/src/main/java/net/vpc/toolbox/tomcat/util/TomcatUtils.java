@@ -64,7 +64,7 @@ public class TomcatUtils {
     }
 
     public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
-        JsonIO jsonSerializer = ws.getExtensionManager().createJsonSerializer();
+        JsonIO jsonSerializer = ws.getJsonIO();
         PrintWriter w = new PrintWriter(out);
         jsonSerializer.write(config, new PrintWriter(out), true);
         w.flush();

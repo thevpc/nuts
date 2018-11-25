@@ -4,7 +4,7 @@
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>feenoo</artifactId>
     <name>net.vpc.app.nuts.toolbox.feenoo</name>
-    <version>1.0</version>
+    <version>0.5.0.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

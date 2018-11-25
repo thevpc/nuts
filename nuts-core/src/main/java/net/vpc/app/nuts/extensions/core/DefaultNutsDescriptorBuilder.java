@@ -119,7 +119,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
     @Override
     public NutsDescriptorBuilder setId(String id) {
-        this.id = CoreNutsUtils.parseOrErrorNutsId(id);
+        this.id = CoreNutsUtils.parseRequiredNutsId(id);
         return this;
     }
 
@@ -316,25 +316,25 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDependency[] getDependencies() {
-        return dependencies == null ? new NutsDependency[0] : dependencies.toArray(new NutsDependency[dependencies.size()]);
+        return dependencies == null ? new NutsDependency[0] : dependencies.toArray(new NutsDependency[0]);
     }
 
     @Override
     public String[] getArch() {
         return arch == null ? new String[0] :
-                arch.toArray(new String[arch.size()]);
+                arch.toArray(new String[0]);
     }
 
     public String[] getOs() {
-        return os == null ? new String[0] : os.toArray(new String[os.size()]);
+        return os == null ? new String[0] : os.toArray(new String[0]);
     }
 
     public String[] getOsdist() {
-        return osdist == null ? new String[0] : osdist.toArray(new String[osdist.size()]);
+        return osdist == null ? new String[0] : osdist.toArray(new String[0]);
     }
 
     public String[] getPlatform() {
-        return platform == null ? new String[0] : platform.toArray(new String[platform.size()]);
+        return platform == null ? new String[0] : platform.toArray(new String[0]);
     }
 
     @Override
@@ -360,7 +360,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public String[] getLocations() {
-        return locations == null ? new String[0] : locations.toArray(new String[locations.size()]);
+        return locations == null ? new String[0] : locations.toArray(new String[0]);
     }
 
     @Override
@@ -537,11 +537,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setInstaller(n_installer);
         setName(n_name);
         setDescription(n_desc);
-        setArch(n_archs.toArray(new String[n_archs.size()]));
-        setOs(n_os.toArray(new String[n_os.size()]));
-        setOsdist(n_osdist.toArray(new String[n_osdist.size()]));
-        setPlatform(n_platform.toArray(new String[n_platform.size()]));
-        setDependencies(n_deps.toArray(new NutsDependency[n_deps.size()]));
+        setArch(n_archs.toArray(new String[0]));
+        setOs(n_os.toArray(new String[0]));
+        setOsdist(n_osdist.toArray(new String[0]));
+        setPlatform(n_platform.toArray(new String[0]));
+        setDependencies(n_deps.toArray(new NutsDependency[0]));
         setProperties(n_props);
         return this;
     }
@@ -585,12 +585,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.setOs(CoreNutsUtils.applyStringProperties(getOs(), map));
         this.setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map));
         this.setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map));
-        this.setDependencies(n_deps.toArray(new NutsDependency[n_deps.size()]));
+        this.setDependencies(n_deps.toArray(new NutsDependency[0]));
         this.setProperties(n_props);
         return this;
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, StringMapper properties) {
+    private NutsId applyNutsIdProperties(NutsId child, ObjectConverter<String,String> properties) {
         return new NutsIdImpl(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -600,7 +600,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringMapper properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, ObjectConverter<String,String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);

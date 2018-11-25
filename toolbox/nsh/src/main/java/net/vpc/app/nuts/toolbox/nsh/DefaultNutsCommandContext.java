@@ -34,6 +34,7 @@ import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -174,21 +175,21 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public NutsFormattedPrintStream getFormattedOut() {
+    public PrintStream getFormattedOut() {
         return getTerminal().getFormattedOut();
     }
 
     @Override
-    public NutsFormattedPrintStream getFormattedErr() {
+    public PrintStream getFormattedErr() {
         return getTerminal().getFormattedErr();
     }
     @Override
-    public NutsPrintStream getOut() {
+    public PrintStream getOut() {
         return getTerminal().getOut();
     }
 
     @Override
-    public NutsPrintStream getErr() {
+    public PrintStream getErr() {
         return getTerminal().getErr();
     }
 }

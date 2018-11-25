@@ -113,7 +113,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             for (int i = 0; i < count; i++) {
                 if (buffer[i] == stream.CR) {
                     if (i + 3 >= (buffer.length - 4)) {
-                        //read some more
+                        //readAll some more
                         int x = itemInputStream.read(buffer, count, buffer.length - 4);
                         count += x;
                     }

@@ -65,7 +65,7 @@ public class NutsPatternIdFilter implements NutsIdFilter, Simplifiable<NutsIdFil
                 }
             }
         }
-        this.ids = all.toArray(new String[all.size()]);
+        this.ids = all.toArray(new String[0]);
     }
 
     public static Pattern compile(String[] arr, boolean addStars) {

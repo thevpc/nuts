@@ -34,6 +34,7 @@ import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -112,7 +113,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         StringKeyValueList runnerProps = new StringKeyValueList();
         if (executionContext.getExecutorDescriptor() != null) {
             runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
-//            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getExecutorDescriptor().getProperties(), runnerProps);
+//            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getExecutorDescriptor().getRuntimeProperties(), runnerProps);
         }
         for (String k : env) {
             String[] strings = CoreNutsUtils.splitNameAndValue(k);
@@ -219,9 +220,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                     if(mainClassFromManifest!=null){
                         mainClass = mainClassFromManifest;
                     }else {
-                        String[] classes = CorePlatformUtils.resolveMainClasses(file);
+                        ExecutionEntry[] classes = CorePlatformUtils.resolveMainClasses(file);
                         if(classes.length>0) {
-                            mainClass = StringUtils.join(":", classes);
+                            mainClass = StringUtils.join(":", classes, ExecutionEntry::getName);
                         }
                     }
                 }
@@ -253,7 +254,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         break;
                     default:
                         while (true) {
-                            NutsPrintStream out = executionContext.getTerminal().getFormattedOut();
+                            PrintStream out = executionContext.getTerminal().getFormattedOut();
                             out.printf("Multiple runnable classes detected  - actually [[%s]] . Select one :\n", possibleClasses.size());
                             for (int i = 0; i < possibleClasses.size(); i++) {
                                 out.printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
@@ -290,7 +291,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         File directory = StringUtils.isEmpty(executionContext.getCwd()) ? null :
                 new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
-                args.toArray(new String[args.size()]),
+                args.toArray(new String[0]),
                 osEnv, directory
                 , executionContext.getTerminal(), showCommand
         );

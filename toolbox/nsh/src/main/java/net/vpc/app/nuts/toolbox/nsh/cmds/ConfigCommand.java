@@ -29,13 +29,13 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.CommandLine;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,15 +61,15 @@ public class ConfigCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean empty = true;
         do {
-            if (cmdLine.readOnce("--save")) {
+            if (cmdLine.readAllOnce("--save")) {
                 autoSave = true;
                 empty = false;
                 continue;
             }
-            if (cmdLine.readOnce("-h", "-?", "--help")) {
+            if (cmdLine.readAllOnce("-h", "-?", "--help")) {
                 empty = false;
                 if (cmdLine.isExecMode()) {
-                    NutsPrintStream out = context.getTerminal().getFormattedOut();
+                    PrintStream out = context.getTerminal().getFormattedOut();
                     out.printf("update\n");
                     out.printf("check-updates\n");
                     out.printf("create workspace ...\n");
@@ -115,16 +115,16 @@ public class ConfigCommand extends AbstractNutsCommand {
             if (!cmdLine.isExecMode()) {
                 return -1;
             }
-            if (!cmdLine.isEmpty()) {
-                NutsPrintStream out = context.getTerminal().getFormattedErr();
-                out.printf("Unexpected %s\n", cmdLine.get(0));
+            if (cmdLine.hasNext()) {
+                PrintStream out = context.getTerminal().getFormattedErr();
+                out.printf("Unexpected %s\n", cmdLine.get());
                 out.printf("type for more help : config -h\n");
                 return 1;
             }
             break;
-        } while (!cmdLine.isEmpty());
+        } while (cmdLine.hasNext());
         if (empty) {
-            NutsPrintStream out = context.getTerminal().getFormattedErr();
+            PrintStream out = context.getTerminal().getFormattedErr();
             out.printf("Missing config command\n");
             out.printf("type for more help : config -h\n");
             return 1;
@@ -135,7 +135,7 @@ public class ConfigCommand extends AbstractNutsCommand {
     public void showRepo(NutsCommandContext context, NutsRepository repository, String prefix) {
         boolean enabled = repository.isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        NutsPrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().getFormattedOut();
         out.print(prefix);
         if (enabled) {
             out.print("==" + repository.getRepositoryId() + disabledString + "==");
@@ -170,17 +170,17 @@ public class ConfigCommand extends AbstractNutsCommand {
             save = false;
         }
         if (cmdLine != null) {
-            while (!cmdLine.isEmpty()) {
-                if (cmdLine.read("--save")) {
+            while (cmdLine.hasNext()) {
+                if (cmdLine.readAll("--save")) {
                     save = true;
                 } else {
-                    cmdLine.requireEmpty();
+                    cmdLine.unexpectedArgument();
                 }
             }
         }
         if (save) {
             if (cmdLine == null || cmdLine.isExecMode()) {
-                NutsPrintStream out = context.getTerminal().getFormattedOut();
+                PrintStream out = context.getTerminal().getFormattedOut();
                 if (repository == null) {
                     workspace.getConfigManager().save();
                     out.printf("##workspace saved.##\n");

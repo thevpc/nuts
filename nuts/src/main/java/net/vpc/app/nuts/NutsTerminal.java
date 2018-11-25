@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * Created by vpc on 2/20/17.
@@ -37,7 +38,7 @@ import java.io.InputStream;
 @Prototype
 public interface NutsTerminal extends NutsComponent<Object> {
 
-    void install(NutsWorkspace workspace, InputStream in, NutsPrintStream out, NutsPrintStream err);
+    void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err);
 
     String readLine(String promptFormat, Object... params);
 
@@ -47,15 +48,15 @@ public interface NutsTerminal extends NutsComponent<Object> {
 
     void setIn(InputStream in);
 
-    NutsFormattedPrintStream getFormattedOut();
+    PrintStream getFormattedOut();
 
-    NutsFormattedPrintStream getFormattedErr();
+    PrintStream getFormattedErr();
 
-    NutsPrintStream getOut();
+    PrintStream getOut();
 
-    void setOut(NutsPrintStream out);
+    void setOut(PrintStream out);
 
-    NutsPrintStream getErr();
+    PrintStream getErr();
 
-    void setErr(NutsPrintStream out);
+    void setErr(PrintStream out);
 }

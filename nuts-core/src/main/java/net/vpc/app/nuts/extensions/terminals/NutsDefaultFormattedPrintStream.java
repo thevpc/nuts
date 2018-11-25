@@ -30,23 +30,16 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.extensions.terminals.textparsers.DefaultNutsTextParser;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.common.fprint.*;
 import net.vpc.common.io.NullOutputStream;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDefaultFormattedPrintStream extends NutsFormattedPrintStream {
+public class NutsDefaultFormattedPrintStream extends FormattedPrintStream implements NutsFormattedPrintStream {
 
-    private boolean formatEnabled = true;
 
     public NutsDefaultFormattedPrintStream() {
         super(NullOutputStream.INSTANCE);
@@ -80,155 +73,10 @@ public class NutsDefaultFormattedPrintStream extends NutsFormattedPrintStream {
         super(file, csn);
     }
 
-    public boolean isFormatEnabled() {
-        return formatEnabled;
-    }
-
-    public void setFormatEnabled(boolean formatEnabled) {
-        this.formatEnabled = formatEnabled;
-    }
-
-    protected final void writeRaw(String rawString) {
-        try {
-            super.write(rawString.getBytes());
-        } catch (IOException ex) {
-            throw new NutsIOException(ex);
-        }
-    }
-
-    protected void startFormat(NutsTextFormat format) {
-
-    }
-
-    protected void endFormat(NutsTextFormat format) {
-    }
-
-    protected NutsTextFormat simplifyFormat(NutsTextFormat f) {
-        if (f instanceof NutsTextFormatList) {
-            NutsTextFormatList l = (NutsTextFormatList) f;
-            NutsTextFormat[] o = ((NutsTextFormatList) f).getChildren();
-            List<NutsTextFormat> ok = new ArrayList<>();
-            if (o != null) {
-                for (NutsTextFormat v : o) {
-                    if (v != null) {
-                        v = simplifyFormat(v);
-                        if (v != null) {
-                            ok.add(v);
-                        }
-                    }
-                }
-            }
-            if (ok.isEmpty()) {
-                return null;
-            }
-            if (ok.size() == 1) {
-                return simplifyFormat(ok.get(0));
-            }
-            return NutsTextFormats.list(ok.toArray(new NutsTextFormat[ok.size()]));
-        }
-        return f;
-    }
-
-    @Override
-    public NutsDefaultFormattedPrintStream format(Locale l, String format, Object... args) {
-        print(CoreStringUtils.format(l, format, args));
-        return this;
-    }
-
-    public PrintStream format(String format, Object... args) {
-        print(CoreStringUtils.format(Locale.getDefault(), format, args));
-        return this;
-    }
-
-    @Override
-    public void println(String text) {
-        print(text);
-        println();
-    }
-
-    protected NutsDefaultFormattedPrintStream writeRaw(NutsTextFormat format, String rawString) {
-        if (isFormatEnabled() && format != null) {
-            NutsTextFormat c = simplifyFormat(format);
-            try {
-                startFormat(c);
-                writeRaw(rawString);
-            } finally {
-                endFormat(c);
-            }
-        } else {
-            writeRaw(rawString);
-        }
-        return this;
-    }
-
-    private void print(NutsTextFormat[] formats, NutsTextNode node) {
-        if (formats == null) {
-            formats = new NutsTextFormat[0];
-        }
-        if (node instanceof NutsTextNodePlain) {
-            NutsTextNodePlain p = (NutsTextNodePlain) node;
-            writeRaw(NutsTextFormats.list(formats), p.getValue());
-        } else if (node instanceof NutsTextNodeList) {
-            NutsTextNodeList s = (NutsTextNodeList) node;
-            for (NutsTextNode n : s) {
-                print(formats, n);
-            }
-        } else if (node instanceof NutsTextNodeStyled) {
-            NutsTextNodeStyled s = (NutsTextNodeStyled) node;
-            NutsTextFormat[] s2 = _appendFormats(formats, s.getStyle());
-            print(s2, s.getChild());
-        } else if (node instanceof NutsTextNodeCommand) {
-            NutsTextNodeCommand s = (NutsTextNodeCommand) node;
-            NutsTextFormat[] s2 = _appendFormats(formats, s.getStyle());
-            writeRaw(NutsTextFormats.list(s2), "");
-        } else {
-            writeRaw(NutsTextFormats.list(formats), String.valueOf(node));
-        }
-    }
-
-    public void print(NutsTextNode node) {
-        if (node == null) {
-            node = NutsTextNodePlain.NULL;
-        }
-        print(new NutsTextFormat[0], node);
-    }
 
     @Override
     public int getSupportLevel(Object criteria) {
         return DEFAULT_SUPPORT + 1;
     }
-
-    @Override
-    public void print(String text) {
-        if (!isFormatEnabled()) {
-            writeRaw(text);
-            return;
-        }
-        if (text == null) {
-            text = "";
-        }
-        if (text.isEmpty()) {
-            //do nothing!!!
-        } else {
-            if (text.equals("`enable-formats`")) {
-                setFormatEnabled(true);
-            } else if (text.equals("`disable-formats`")) {
-                setFormatEnabled(false);
-            } else {
-                NutsTextNode node = DefaultNutsTextParser.INSTANCE.parse(text);
-                print(node);
-            }
-        }
-    }
-
-    private NutsTextFormat[] _appendFormats(NutsTextFormat[] old, NutsTextFormat v) {
-        List<NutsTextFormat> list = new ArrayList<NutsTextFormat>((old == null ? 0 : old.length) + 1);
-        if (old != null) {
-            list.addAll(Arrays.asList(old));
-        }
-        list.add(v);
-        return list.toArray(new NutsTextFormat[list.size()]);
-    }
-
 
 }

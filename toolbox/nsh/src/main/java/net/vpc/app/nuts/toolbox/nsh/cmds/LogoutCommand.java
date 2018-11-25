@@ -43,7 +43,7 @@ public class LogoutCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
-        cmdLine.requireEmpty();
+        cmdLine.unexpectedArgument();
         if (!cmdLine.isExecMode()) {
             return -1;
         }

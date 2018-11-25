@@ -111,8 +111,8 @@ public class ItemStreamInfo {
 //        }
 //
 //        @Override
-//        public int read() throws IOException {
-//            int y = ss.read();
+//        public int readAll() throws IOException {
+//            int y = ss.readAll();
 //            if (y < 0) {
 //                return y;
 //            }

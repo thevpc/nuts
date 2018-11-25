@@ -97,7 +97,7 @@ public final class NutsUserConfig implements Serializable {
 
 
     public String[] getRights() {
-        return rights.toArray(new String[rights.size()]);
+        return rights.toArray(new String[0]);
     }
 
 
@@ -129,7 +129,7 @@ public final class NutsUserConfig implements Serializable {
 
 
     public String[] getGroups() {
-        return groups.toArray(new String[groups.size()]);
+        return groups.toArray(new String[0]);
     }
 
 

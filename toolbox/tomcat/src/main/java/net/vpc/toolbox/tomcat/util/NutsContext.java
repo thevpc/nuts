@@ -2,12 +2,14 @@ package net.vpc.toolbox.tomcat.util;
 
 import net.vpc.app.nuts.*;
 
+import java.io.PrintStream;
+
 public class NutsContext {
     public final NutsTerminal terminal;
     public NutsWorkspace ws;
     public NutsSession session;
-    public NutsPrintStream out;
-    public NutsPrintStream err;
+    public PrintStream out;
+    public PrintStream err;
     public String programsFolder;
     public String configFolder;
     public String logsFolder;

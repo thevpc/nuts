@@ -22,41 +22,41 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
     public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
-        if (cmdLine.read("set loglevel", "sll")) {
+        if (cmdLine.readAll("set loglevel", "sll")) {
             NutsWorkspaceConfigManager configManager = context.getWorkspace().getConfigManager();
-            if (cmdLine.read("verbose", "finest")) {
+            if (cmdLine.readAll("verbose", "finest")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINEST);
                 }
-            } else if (cmdLine.read("fine")) {
+            } else if (cmdLine.readAll("fine")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINE);
                 }
-            } else if (cmdLine.read("finer")) {
+            } else if (cmdLine.readAll("finer")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINER);
                 }
-            } else if (cmdLine.read("info")) {
+            } else if (cmdLine.readAll("info")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.INFO);
                 }
-            } else if (cmdLine.read("warning")) {
+            } else if (cmdLine.readAll("warning")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.WARNING);
                 }
-            } else if (cmdLine.read("severe", "error")) {
+            } else if (cmdLine.readAll("severe", "error")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.SEVERE);
                 }
-            } else if (cmdLine.read("config")) {
+            } else if (cmdLine.readAll("config")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.CONFIG);
                 }
-            } else if (cmdLine.read("off")) {
+            } else if (cmdLine.readAll("off")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.OFF);
                 }
-            } else if (cmdLine.read("all")) {
+            } else if (cmdLine.readAll("all")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.ALL);
                 }
@@ -65,9 +65,9 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
                     throw new NutsIllegalArgumentException("Invalid loglevel");
                 }
             }
-            cmdLine.requireEmpty();
+            cmdLine.unexpectedArgument();
             return true;
-        } else if (cmdLine.read("get loglevel")) {
+        } else if (cmdLine.readAll("get loglevel")) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
                 context.getTerminal().getFormattedOut().printf("%s\n", rootLogger.getLevel().toString());

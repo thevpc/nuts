@@ -271,7 +271,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public NutsRepository[] getMirrors() {
-        return mirors.values().toArray(new NutsRepository[mirors.size()]);
+        return mirors.values().toArray(new NutsRepository[0]);
     }
 
     @Override
@@ -330,7 +330,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public NutsRepositoryListener[] getRepositoryListeners() {
-        return repositoryListeners.toArray(new NutsRepositoryListener[repositoryListeners.size()]);
+        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
     }
 
     @Override

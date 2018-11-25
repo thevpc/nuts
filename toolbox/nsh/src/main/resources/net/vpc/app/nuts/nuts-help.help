@@ -59,9 +59,8 @@ nuts \[Nuts Options\] \[Nuts Command\]
                     nuts local       : containing local nuts java and non java nuts
                     maven-local      : containing a reference to ~/.m2/repository local maven repository
                     maven-central    : referencing http://repo.maven.apache.org/maven2/ (with cache support)
-                    vpc-public-maven : referencing https://.../vpc-public-maven/master author\'s github maven repo (with
-                    vpc-public-nuts  : referencing https://.../vpc-public-nuts/master author\'s github maven repo (with
-                                       cache support)
+                    vpc-public-maven : referencing https://.../vpc-public-maven/master author\'s github maven repo (cached)
+                    vpc-public-nuts  : referencing https://.../vpc-public-nuts/master author\'s  github nuts repo (cached)
           minimal : will create an almost empty workspace with a single nuts local repository
           server  : will create an almost empty workspace with a couple of users guest (read support) and contributor
                     (write support)

@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.io.URLUtils;
@@ -37,6 +36,7 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,14 +59,14 @@ public class WgetCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        NutsPrintStream out = context.getTerminal().getOut();
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-O", "--output-document")) {
+        PrintStream out = context.getTerminal().getOut();
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-O", "--output-document")) {
                 options.outputDocument = cmdLine.readNonOption().getString();
-            } else if (cmdLine.read("--version")) {
+            } else if (cmdLine.readAll("--version")) {
                 out.printf("%s\n", "1.0");
                 return 0;
-            } else if (cmdLine.read("--help")) {
+            } else if (cmdLine.readAll("--help")) {
                 out.printf("%s\n", getHelp());
                 return 0;
             } else {

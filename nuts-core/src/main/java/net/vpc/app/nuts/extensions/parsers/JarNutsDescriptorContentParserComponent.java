@@ -144,12 +144,12 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                     .setPackaging("jar")
                     .build();
         }
-        String[] classes = CorePlatformUtils.resolveMainClasses(parserContext.getFullStream());
+        ExecutionEntry[] classes = CorePlatformUtils.resolveMainClasses(parserContext.getFullStream());
         if (classes.length==0) {
             return null;
         } else {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                "--nuts-main-class=" + StringUtils.join(":", classes)}, null)).setExecutable(true);
+                "--nuts-main-class=" + StringUtils.join(":", classes,x->x.getName())}, null)).setExecutable(true);
         }
     }
 }

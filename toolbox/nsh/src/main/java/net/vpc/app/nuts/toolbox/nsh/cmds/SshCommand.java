@@ -29,10 +29,16 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsDependencySearch;
+import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.util.SShConnection;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.io.FileUtils;
+import net.vpc.common.ssh.SShConnection;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,39 +51,135 @@ import java.util.List;
 public class SshCommand extends AbstractNutsCommand {
 
     public SshCommand() {
-        super("rm", DEFAULT_SUPPORT);
+        super("ssh", DEFAULT_SUPPORT);
     }
 
-    private static class Options{
-
+    private static class Options {
+        boolean verbose;
+        boolean invokeNuts;
+        String nutsCommand;
+        String nutsJre;
+        String address;
+        List<String> cmd = new ArrayList<>();
     }
+
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
-        List<String> files = new ArrayList<>();
         Options o = new Options();
-        while (!cmdLine.isEmpty()) {
+        Argument a;
+        while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-                cmdLine.requireEmpty();
-            } else {
-                files.add(cmdLine.readValue());
-            }
-        }
-        if (files.size() < 2) {
-            throw new IllegalArgumentException("Missing parameters");
-        }
-        try(SShConnection session = new SShConnection(files.remove(0))) {
-            StringBuilder sb=new StringBuilder();
-            for (int i = 0; i < files.size(); i++) {
-                if(sb.length()>0){
-                    sb.append(" ");
+                if((a=cmdLine.readOption("--nuts"))!=null) {
+                    o.invokeNuts = true;
+                }else if((a=cmdLine.readStringOption("--nuts-jre"))!=null){
+                    o.nutsJre =a.getStringValue();
+                }else if((a=cmdLine.readBooleanOption("--verbose"))!=null){
+                    o.verbose =a.getBooleanValue();
+                }else{
+                    //suppose this is an other nuts option
+                    //just consume the rest as of the command
+                    while (cmdLine.hasNext()) {
+                        o.cmd.add(cmdLine.read().getExpression());
+                    }
                 }
-                String s = files.get(i);
-                //should add quotes ?
-                sb.append(s);
+            } else {
+                if(o.address==null){
+                    o.address=cmdLine.read().getExpression();
+                }else {
+                    while (cmdLine.hasNext()) {
+                        o.cmd.add(cmdLine.read().getExpression());
+                    }
+                }
             }
-            session.exec(sb.toString());
         }
-        return 0;
+        if (o.address==null) {
+            throw new IllegalArgumentException("Missing ssh address");
+        }
+        if (o.cmd.isEmpty()) {
+            throw new IllegalArgumentException("Missing ssh command. Interactive ssh is not yet supported!");
+        }
+        ShellHelper.WsSshListener listener = o.verbose?new ShellHelper.WsSshListener(context.getSession()):null;
+        try (SShConnection sshSession = new SShConnection(o.address)
+             .addListener(listener)
+        ) {
+            List<String> cmd = new ArrayList<>();
+            if(o.invokeNuts){
+                String home=null;
+                String workspace=null;
+                CommandLine c=new CommandLine(o.cmd.subList(1,o.cmd.size()));
+                Argument arg=null;
+                while(c.hasNext()){
+                    if((arg=c.readOption("--home"))!=null) {
+                        home = c.readNonOption().getString();
+                    }else if((arg=c.readOption("--workspace"))!=null){
+                        workspace=c.readNonOption().getString();
+                    }else if(c.isNonOption()){
+                        break;
+                    }
+                }
+                if(!StringUtils.isEmpty(o.nutsCommand)){
+                    cmd.add(o.nutsCommand);
+                }else{
+                    String userHome=null;
+                    sshSession.setFailFast()
+                            .setRedirectErrorStream(true)
+                            .grabOutputString().exec("echo","$HOME");
+                    userHome= sshSession.getOutputString().trim();
+                    if(StringUtils.isEmpty(home)){
+                        home=userHome+"/.nuts";
+                    }
+                    if(StringUtils.isEmpty(workspace)){
+                        workspace=home+"/default-workspace";
+                    }
+                    String goodJar=null;
+                    for (String jar : new String[]{
+                            home+"/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar",
+                            userHome+"/bin/nuts.jar",
+                            userHome+"/usr/local/nuts/nuts.jar",
+                    }) {
+                        SShConnection sShConnection = sshSession.setFailFast(false).
+                                grabOutputString()
+                                .setRedirectErrorStream(true);
+                        int r = sShConnection.exec("ls", jar);
+                        if(0== r){
+                            //found
+                            goodJar=jar.trim();
+                            break;
+                        }
+                    }
+                    if(goodJar==null){
+                        String from = context.getWorkspace().getConfigManager().resolveNutsJarFile();
+                        if(from==null){
+                            throw new IllegalArgumentException("Unable to resolve Nuts Jar File");
+                        }else {
+                            context.getFormattedOut().printf("Detected nuts.jar location : %s\n", from);
+                            sshSession.setFailFast(true).copyLocalToRemote(from, home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
+                            goodJar=home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
+//                            NutsFile[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getRuntimeId())
+//                                    .setIncludeMain(true),
+//                                    context.getSession());
+//                            for (NutsFile dep : deps) {
+//                                sshSession.setFailFast(true).copyLocalToRemote(dep.getFile(), home + "/bootstrap"
+//                                        +"/"+dep.getId().getGroup().replace('.','/')
+//                                        +"/"+dep.getId().getName()
+//                                        +"/"+dep.getId().getVersion()
+//                                        +"/"+context.getWorkspace().getNutsFileName(dep.getId(),"jar")
+//                                        , true);
+//                            }
+                        }
+                    }
+                    if(o.nutsJre!=null){
+                        cmd.add(o.nutsJre+ FileUtils.getNativePath("/bin/java"));
+                    }else{
+                        cmd.add("java");
+                    }
+                    cmd.add("-jar");
+                    cmd.add(goodJar);
+                }
+            }
+            cmd.addAll(o.cmd);
+            return sshSession.grabOutputString(false).setFailFast(true).exec(cmd);
+        }
     }
 
 }

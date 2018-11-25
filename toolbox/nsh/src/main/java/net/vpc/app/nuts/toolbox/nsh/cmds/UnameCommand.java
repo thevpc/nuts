@@ -30,12 +30,12 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.strings.StringUtils;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,19 +53,19 @@ public class UnameCommand extends AbstractNutsCommand {
         boolean farch = false;
         boolean fos = false;
         boolean fdist = false;
-        while (!cmdLine.isEmpty()) {
-            if (cmdLine.read("-m")) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.readAll("-m")) {
                 farch = true;
-            } else if (cmdLine.read("-r")) {
+            } else if (cmdLine.readAll("-r")) {
                 fos = true;
-            } else if (cmdLine.read("-d")) {
+            } else if (cmdLine.readAll("-d")) {
                 fdist = true;
-            } else if (cmdLine.read("-a")) {
+            } else if (cmdLine.readAll("-a")) {
                 fdist = true;
                 fos = true;
                 farch = true;
             } else {
-                cmdLine.requireEmpty();
+                cmdLine.unexpectedArgument();
             }
         }
         if (cmdLine.isExecMode()) {
@@ -74,7 +74,7 @@ public class UnameCommand extends AbstractNutsCommand {
             NutsId os = ws.getPlatformOs();
             NutsId arch = ws.getPlatformArch();
 
-            NutsPrintStream out = context.getTerminal().getFormattedOut();
+            PrintStream out = context.getTerminal().getFormattedOut();
             List<String> sb = new ArrayList<>();
             if (!farch && !fos && !fdist) {
                 sb.add(osdist.toString());

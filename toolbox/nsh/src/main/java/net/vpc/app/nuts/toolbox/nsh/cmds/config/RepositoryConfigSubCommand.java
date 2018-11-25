@@ -5,16 +5,19 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsRepository;
+import net.vpc.app.nuts.NutsRepositoryDefinition;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
-import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
-import net.vpc.common.commandline.*;
-import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryTypeNonOption;
+import net.vpc.app.nuts.toolbox.nsh.util.DefaultWorkspaceCellFormatter;
+import net.vpc.common.commandline.*;
 import net.vpc.common.commandline.format.TableFormatter;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,29 +33,29 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
     public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
 
         NutsWorkspace ws = context.getValidWorkspace();
-        if (cmdLine.read("save repository", "sw")) {
-            String repositoryId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
-            cmdLine.requireEmpty();
+        if (cmdLine.readAll("save repository", "sw")) {
+            String repositoryId = cmdLine.readRequiredNonOption(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+            cmdLine.unexpectedArgument();
             if (cmdLine.isExecMode()) {
                 ConfigCommand.trySave(context, ws, ws.getRepositoryManager().findRepository(repositoryId), true, null);
             }
             return true;
 
-        } else if (cmdLine.read("create repo", "cr")) {
+        } else if (cmdLine.readAll("create repo", "cr")) {
             String repositoryId = null;
             String location=null;
             String repoType=null;
-            while(!cmdLine.isEmpty()){
-                if(cmdLine.read("-t","--type")) {
-                    repoType = cmdLine.readNonOptionOrError(new DefaultNonOption("RepositoryType")).getString();
-                }else if(cmdLine.read("-l","--location")){
+            while(cmdLine.hasNext()){
+                if(cmdLine.readAll("-t","--type")) {
+                    repoType = cmdLine.readRequiredNonOption(new DefaultNonOption("RepositoryType")).getString();
+                }else if(cmdLine.readAll("-l","--location")){
                     location = cmdLine.readNonOption(new DefaultNonOption("RepositoryLocation")).getString();
-                }else if(cmdLine.read("-id","--id")){
-                    repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
+                }else if(cmdLine.readAll("-id","--id")){
+                    repositoryId = cmdLine.readRequiredNonOption(new DefaultNonOption("NewRepositoryId")).getString();
                 }else if(!cmdLine.isOption()){
                     location = cmdLine.readNonOption(new DefaultNonOption("RepositoryLocation")).getString();
                 }else{
-                    cmdLine.requireEmpty();
+                    cmdLine.unexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -62,21 +65,21 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
             return true;
 
         } else {
-            NutsPrintStream out = context.getTerminal().getFormattedOut();
-            if (cmdLine.read("add repo", "ar")) {
+            PrintStream out = context.getTerminal().getFormattedOut();
+            if (cmdLine.readAll("add repo", "ar")) {
                 boolean proxy = false;
                 boolean pattern = false;
-                while (!cmdLine.isEmpty()) {
-                    if (cmdLine.readOnce("-p", "--proxy")) {
+                while (cmdLine.hasNext()) {
+                    if (cmdLine.readAllOnce("-p", "--proxy")) {
                         proxy = true;
-                    } else if (cmdLine.readOnce("-P", "--pattern")) {
+                    } else if (cmdLine.readAllOnce("-P", "--pattern")) {
                         pattern = true;
                     } else {
                         final Map<String, NutsRepositoryDefinition> repoPatterns = new HashMap<String, NutsRepositoryDefinition>();
                         for (NutsRepositoryDefinition repoPattern : context.getValidWorkspace().getRepositoryManager().getDefaultRepositories()) {
                             repoPatterns.put(repoPattern.getId(), repoPattern);
                         }
-                        String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("RepositoryId") {
+                        String repositoryId = cmdLine.readRequiredNonOption(new DefaultNonOption("RepositoryId") {
                             @Override
                             public List<ArgumentCandidate> getValues() {
                                 ArrayList<ArgumentCandidate> arrayList = new ArrayList<>();
@@ -98,8 +101,8 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                             location = found.getLocation();
                             repoType = found.getType();
                         } else {
-                            location = cmdLine.readNonOptionOrError(new FolderNonOption("Location")).getString();
-                            repoType = cmdLine.readNonOptionOrError(new RepositoryTypeNonOption("RepositoryType", context)).getString();
+                            location = cmdLine.readRequiredNonOption(new FolderNonOption("Location")).getString();
+                            repoType = cmdLine.readRequiredNonOption(new RepositoryTypeNonOption("RepositoryType", context)).getString();
                         }
                         if (cmdLine.isExecMode()) {
                             NutsRepository repo = null;
@@ -112,28 +115,28 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                             ConfigCommand.trySave(context, ws, repo, autoSave, null);
                             ConfigCommand.trySave(context, ws, null, autoSave, null);
                         }
-                        cmdLine.requireEmpty();
+                        cmdLine.unexpectedArgument();
                     }
                 }
                 return true;
 
-            } else if (cmdLine.read("remove repo", "rr")) {
-                String locationOrRepositoryId = cmdLine.readNonOptionOrError(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
+            } else if (cmdLine.readAll("remove repo", "rr")) {
+                String locationOrRepositoryId = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getValidWorkspace())).getString();
                 if (cmdLine.isExecMode()) {
                     ws.getRepositoryManager().removeRepository(locationOrRepositoryId);
                     ConfigCommand.trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
 
-            } else if (cmdLine.read("list repos", "lr")) {
+            } else if (cmdLine.readAll("list repos", "lr")) {
                 if (cmdLine.isExecMode()) {
                     TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                             .setColumnsConfig("id","enabled","type","location")
                             .addHeaderCells("==Id==","==Enabled==","==Type==","==Location==")
                             ;
-                    while (!cmdLine.isEmpty()) {
+                    while (cmdLine.hasNext()) {
                         if(!t.configure(cmdLine)){
-                            cmdLine.requireEmpty();
+                            cmdLine.unexpectedArgument();
                         }
                     }
                     for (NutsRepository repository : ws.getRepositoryManager().getRepositories()) {
@@ -148,7 +151,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                 }
                 return true;
 
-            } else if (cmdLine.read("tree repos", "tr")) {
+            } else if (cmdLine.readAll("tree repos", "tr")) {
                 if (cmdLine.isExecMode()) {
 
                     for (NutsRepository repository : ws.getRepositoryManager().getRepositories()) {
@@ -157,8 +160,8 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                 }
                 return true;
 
-            } else if (cmdLine.read("enable repo", "er")) {
-                String localId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+            } else if (cmdLine.readAll("enable repo", "er")) {
+                String localId = cmdLine.readRequiredNonOption(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
                 if (cmdLine.isExecMode()) {
 
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(localId);
@@ -166,19 +169,19 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                     ConfigCommand.trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
-            } else if (cmdLine.read("disable repo", "rr")) {
-                String localId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+            } else if (cmdLine.readAll("disable repo", "rr")) {
+                String localId = cmdLine.readRequiredNonOption(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
                 if (cmdLine.isExecMode()) {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(localId);
                     editedRepo.setEnabled(false);
                     ConfigCommand.trySave(context, context.getValidWorkspace(), null, autoSave, cmdLine);
                 }
                 return true;
-            } else if (cmdLine.read("edit repo", "er")) {
-                String repoId = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoyId", context.getValidWorkspace())).getString();
-                if (cmdLine.read("add repo", "ar")) {
-                    String repositoryId = cmdLine.readNonOptionOrError(new DefaultNonOption("NewRepositoryId")).getString();
-                    String location = cmdLine.readNonOptionOrError(new FolderNonOption("RepositoryLocation")).getString();
+            } else if (cmdLine.readAll("edit repo", "er")) {
+                String repoId = cmdLine.readRequiredNonOption(new RepositoryNonOption("RepositoyId", context.getValidWorkspace())).getString();
+                if (cmdLine.readAll("add repo", "ar")) {
+                    String repositoryId = cmdLine.readRequiredNonOption(new DefaultNonOption("NewRepositoryId")).getString();
+                    String location = cmdLine.readRequiredNonOption(new FolderNonOption("RepositoryLocation")).getString();
                     String repoType = cmdLine.readNonOption(new RepositoryTypeNonOption("RepositoryType", context)).getString();
 
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
@@ -186,22 +189,22 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                     ConfigCommand.trySave(context, ws, editedRepo, autoSave, null);
                     ConfigCommand.trySave(context, ws, repo, autoSave, null);
 
-                } else if (cmdLine.read("remove repo", "rr")) {
-                    String location = cmdLine.readNonOptionOrError(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
+                } else if (cmdLine.readAll("remove repo", "rr")) {
+                    String location = cmdLine.readRequiredNonOption(new RepositoryNonOption("RepositoryId", context.getValidWorkspace())).getString();
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
                     editedRepo.removeMirror(location);
                     ConfigCommand.trySave(context, ws, editedRepo, autoSave, null);
 
-                } else if (cmdLine.read("enable", "rr")) {
+                } else if (cmdLine.readAll("enable", "rr")) {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
                     editedRepo.setEnabled(true);
                     ConfigCommand.trySave(context, ws, editedRepo, autoSave, null);
 
-                } else if (cmdLine.read("disable", "rr")) {
+                } else if (cmdLine.readAll("disable", "rr")) {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
                     editedRepo.setEnabled(true);
                     ConfigCommand.trySave(context, ws, editedRepo, autoSave, null);
-                } else if (cmdLine.read("list repos", "lr")) {
+                } else if (cmdLine.readAll("list repos", "lr")) {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
                     NutsRepository[] linkRepositories = editedRepo.getMirrors();
                     out.printf("%s sub repositories.\n", linkRepositories.length);
@@ -209,9 +212,9 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                             .setColumnsConfig("id","enabled","type","location")
                             .addHeaderCells("==Id==","==Enabled==","==Type==","==Location==")
                             ;
-                    while (!cmdLine.isEmpty()) {
+                    while (cmdLine.hasNext()) {
                         if(!t.configure(cmdLine)){
-                            cmdLine.requireEmpty();
+                            cmdLine.unexpectedArgument();
                         }
                     }
                     for (NutsRepository repository : linkRepositories) {
@@ -223,7 +226,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                         );
                     }
                     out.printf(t.toString());
-                } else if (cmdLine.readOnce("-h", "-?", "--help")) {
+                } else if (cmdLine.readAllOnce("-h", "-?", "--help")) {
                     out.printf("edit repository %s add repo ...\n", repoId);
                     out.printf("edit repository %s remove repo ...\n", repoId);
                     out.printf("edit repository %s list repos ...\n", repoId);

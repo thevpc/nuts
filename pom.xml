@@ -21,6 +21,7 @@
         <module>toolbox/tomcat</module>
         <module>toolbox/nde</module>
         <module>toolbox/worky</module>
+        <module>toolbox/mysql</module>
         <module>nuts-clown</module>
         <module>nuts-tomcat-classloader</module>
     </modules>

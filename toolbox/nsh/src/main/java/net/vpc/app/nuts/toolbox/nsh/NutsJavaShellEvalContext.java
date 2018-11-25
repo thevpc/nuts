@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.NutsNonFormattedPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.javashell.DefaultJavaShellEvalContext;
 import net.vpc.common.javashell.Env;
@@ -84,14 +82,16 @@ class NutsJavaShellEvalContext extends DefaultJavaShellEvalContext {
 
     @Override
     public JavaShellEvalContext setOut(OutputStream out) {
-        boolean formatted=true;
-        if(out instanceof NutsNonFormattedPrintStream){
-            formatted=false;
-        }
-        if(out instanceof NutsFormattedPrintStream){
-            formatted=true;
-        }
-        commandContext.getTerminal().setOut(workspace.getExtensionManager().createPrintStream(out,formatted));
+//        boolean formatted=true;
+//        if(out instanceof NutsNonFormattedPrintStream){
+//            formatted=false;
+//        }
+//        if(out instanceof NutsFormattedPrintStream){
+//            formatted=true;
+//        }
+        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
+                true//formatted
+        ));
         return this;
     }
 

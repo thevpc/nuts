@@ -31,13 +31,14 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
 import net.vpc.common.commandline.format.PropertiesFormatter;
-import net.vpc.common.io.*;
+import net.vpc.common.io.InputStreamVisitor;
+import net.vpc.common.io.PathFilter;
+import net.vpc.common.io.ZipUtils;
 import net.vpc.common.mvn.Pom;
 import net.vpc.common.mvn.PomXmlParser;
 import net.vpc.common.strings.StringUtils;
@@ -55,6 +56,7 @@ import org.boris.pecoff4j.util.ResourceHelper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -69,8 +71,8 @@ public class FileVersionCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        NutsPrintStream out = context.getFormattedOut();
-        NutsPrintStream err = context.getFormattedErr();
+        PrintStream out = context.getFormattedOut();
+        PrintStream err = context.getFormattedErr();
         NutsWorkspace ws = context.getWorkspace();
         Set<String> unsupportedFileTypes = new HashSet<>();
         Map<String, Set<VersionDescriptor>> results = new HashMap<>();
@@ -290,7 +292,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
                 p.setProperty("nuts.version-provider", "win-pe");
                 if (!StringUtils.isEmpty(artifactId) && !StringUtils.isEmpty(artifactVersion)) {
                     d.add(new VersionDescriptor(
-                            ws.createNutsId(null, artifactId, artifactVersion),
+                            ws.createIdBuilder().setName(artifactId).setVersion(artifactVersion).build(),
                             p
                     ));
                 }
@@ -301,7 +303,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
 
     private Set<VersionDescriptor> detectJarWarEarVersions(String filePath, NutsCommandContext context, NutsWorkspace ws) throws IOException {
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = new FilePath(filePath).getInputStream()) {
+        try (InputStream is = FilePath.of(filePath).getInputStream()) {
             ZipUtils.visitZipStream(is, new PathFilter() {
                 @Override
                 public boolean accept(String path) {
@@ -352,7 +354,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
                                         && !StringUtils.isEmpty(Bundle_Version)
                                 ) {
                             all.add(new VersionDescriptor(
-                                    ws.createNutsId(Bundle_SymbolicName, Bundle_Name, Bundle_Version),
+                                    ws.createIdBuilder().setGroup(Bundle_SymbolicName).setName(Bundle_Name).setVersion(Bundle_Version).build(),
                                     properties
                             ));
                         }
@@ -402,7 +404,10 @@ public class FileVersionCommand extends AbstractNutsCommand {
                                 }
                             }
                             all.add(new VersionDescriptor(
-                                    ws.createNutsId(d.getPomId().getGroupId(), d.getPomId().getArtifactId(), d.getPomId().getVersion())
+                                    ws.createIdBuilder().setGroup(d.getPomId().getGroupId())
+                                            .setNamespace(d.getPomId().getArtifactId())
+                                            .setVersion(d.getPomId().getVersion())
+                                            .build()
                                     , properties));
                         } catch (Exception e) {
                             //e.printStackTrace();
@@ -422,7 +427,9 @@ public class FileVersionCommand extends AbstractNutsCommand {
                             prop.setProperty("nuts.version-provider", "maven");
                             if (version != null && version.trim().length() != 0) {
                                 all.add(new VersionDescriptor(
-                                        ws.createNutsId(groupId, artifactId, version),
+                                        ws.createIdBuilder()
+                                        .setGroup(groupId).setName(artifactId).setVersion(version)
+                                        .build(),
                                         prop
                                 ));
                             }

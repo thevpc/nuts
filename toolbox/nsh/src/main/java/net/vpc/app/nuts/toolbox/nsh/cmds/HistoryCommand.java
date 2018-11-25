@@ -29,12 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.common.javashell.HistoryElement;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.javashell.HistoryElement;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -48,7 +48,7 @@ public class HistoryCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
-        NutsPrintStream out = context.getTerminal().getOut();
+        PrintStream out = context.getTerminal().getOut();
         List<HistoryElement> history = context.getConsole().getHistory(200);
         for (int i = 0; i < history.size(); i++) {
             HistoryElement historyElement = history.get(i);

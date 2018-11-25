@@ -13,6 +13,7 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,65 +47,65 @@ public class NutsServerMain extends NutsApplication {
                 Map<String, String> workspaceLocations = new HashMap<>();
                 Map<String, NutsWorkspace> workspaces = new HashMap<>();
             }
-            if (cmdLine.read("start")) {
+            if (cmdLine.readAll("start")) {
                 List<SrvInfo> servers = new ArrayList<SrvInfo>();
                 boolean autocreate = false;
                 boolean save = true;
                 String archetype = "server"; //default archetype for server
 
-                while (!cmdLine.isEmpty()) {
-                    if (cmdLine.readOnce("-c", "--create")) {
+                while (cmdLine.hasNext()) {
+                    if (cmdLine.readAllOnce("-c", "--create")) {
                         autocreate = true;
-                    } else if (cmdLine.readOnce("-h", "--archetype")) {
-                        archetype = cmdLine.readNonOptionOrError(new ArchitectureNonOption("Archetype", context)).getStringOrError();
-                    } else if (cmdLine.readOnce("-!s", "--no-save")) {
+                    } else if (cmdLine.readAllOnce("-h", "--archetype")) {
+                        archetype = cmdLine.readRequiredNonOption(new ArchitectureNonOption("Archetype", context)).getStringOrError();
+                    } else if (cmdLine.readAllOnce("-!s", "--no-save")) {
                         save = false;
-                    } else if (cmdLine.readOnce("--http")) {
+                    } else if (cmdLine.readAllOnce("--http")) {
                         servers.add(new SrvInfo());
                         servers.get(servers.size() - 1).serverType = "http";
-                    } else if (cmdLine.readOnce("--https")) {
+                    } else if (cmdLine.readAllOnce("--https")) {
                         servers.add(new SrvInfo());
                         servers.get(servers.size() - 1).serverType = "https";
-                    } else if (cmdLine.readOnce("--admin")) {
+                    } else if (cmdLine.readAllOnce("--admin")) {
                         servers.add(new SrvInfo());
                         servers.get(servers.size() - 1).serverType = "admin";
-                    } else if (cmdLine.readOnce("-n", "--name")) {
+                    } else if (cmdLine.readAllOnce("-n", "--name")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).name = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerName")).getString();
-                    } else if (cmdLine.readOnce("-a", "--address")) {
+                        servers.get(servers.size() - 1).name = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerName")).getString();
+                    } else if (cmdLine.readAllOnce("-a", "--address")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).addr = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerAddress")).getString();
+                        servers.get(servers.size() - 1).addr = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerAddress")).getString();
 
-                    } else if (cmdLine.readOnce("-p", "--port")) {
+                    } else if (cmdLine.readAllOnce("-p", "--port")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).port = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerPort")).getIntOrError();
+                        servers.get(servers.size() - 1).port = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerPort")).getInt();
 
-                    } else if (cmdLine.readOnce("-l", "--backlog")) {
+                    } else if (cmdLine.readAllOnce("-l", "--backlog")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).port = cmdLine.readNonOptionOrError(new DefaultNonOption("ServerBacklog")).getIntOrError();
-                    } else if (cmdLine.readOnce("--ssl-certificate")) {
+                        servers.get(servers.size() - 1).port = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerBacklog")).getInt();
+                    } else if (cmdLine.readAllOnce("--ssl-certificate")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).sslCertificate = cmdLine.readNonOptionOrError(new DefaultNonOption("SslCertificate")).getStringOrError();
-                    } else if (cmdLine.readOnce("--ssl-passphrase")) {
+                        servers.get(servers.size() - 1).sslCertificate = cmdLine.readRequiredNonOption(new DefaultNonOption("SslCertificate")).getStringOrError();
+                    } else if (cmdLine.readAllOnce("--ssl-passphrase")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        servers.get(servers.size() - 1).sslPassphrase = cmdLine.readNonOptionOrError(new DefaultNonOption("SslPassPhrase")).getStringOrError();
+                        servers.get(servers.size() - 1).sslPassphrase = cmdLine.readRequiredNonOption(new DefaultNonOption("SslPassPhrase")).getStringOrError();
                     } else {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("Server Type missing");
                         }
-                        String s = cmdLine.readNonOptionOrError(new DefaultNonOption("Workspace")).getString();
+                        String s = cmdLine.readRequiredNonOption(new DefaultNonOption("Workspace")).getString();
                         int eq = s.indexOf('=');
                         if (eq >= 0) {
                             String serverContext = s.substring(0, eq);
@@ -194,22 +195,22 @@ public class NutsServerMain extends NutsApplication {
                         serverManager.startServer(config0);
                     }
                 }
-            } else if (cmdLine.read("stop")) {
-                String s = cmdLine.readNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
+            } else if (cmdLine.readAll("stop")) {
+                String s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", context)).getString();
                 if (cmdLine.isExecMode()) {
                     serverManager.stopServer(s);
                 }
-                while (!cmdLine.isEmpty()) {
-                    s = cmdLine.readNonOptionOrError(new ServerNonOption("ServerName", context)).getString();
+                while (cmdLine.hasNext()) {
+                    s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", context)).getString();
                     if (cmdLine.isExecMode()) {
                         serverManager.stopServer(s);
                     }
                 }
-            } else if (cmdLine.read("list")) {
-                cmdLine.requireEmpty();
+            } else if (cmdLine.readAll("list")) {
+                cmdLine.unexpectedArgument();
                 if (cmdLine.isExecMode()) {
                     List<NutsServer> servers = serverManager.getServers();
-                    NutsPrintStream out = context.getTerminal().getFormattedOut();
+                    PrintStream out = context.getTerminal().getFormattedOut();
                     if (servers.isEmpty()) {
                         out.printf("No Server is Running\n");
                     }
@@ -224,7 +225,7 @@ public class NutsServerMain extends NutsApplication {
             } else {
                 throw new NutsCommandSyntaxError("Invalid syntax from command 'server");
             }
-            cmdLine.requireEmpty();
+            cmdLine.unexpectedArgument();
             return 0;
         } catch (IOException e) {
             throw new RuntimeException(e);

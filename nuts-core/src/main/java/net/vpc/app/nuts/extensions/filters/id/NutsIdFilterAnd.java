@@ -25,7 +25,7 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
                 }
             }
         }
-        this.all = valid.toArray(new NutsIdFilter[valid.size()]);
+        this.all = valid.toArray(new NutsIdFilter[0]);
     }
 
     @Override

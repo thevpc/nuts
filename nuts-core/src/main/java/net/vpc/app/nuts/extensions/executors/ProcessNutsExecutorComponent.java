@@ -110,7 +110,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                     new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         }
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
-                app.toArray(new String[app.size()]),
+                app.toArray(new String[0]),
                 osEnv, directory, executionContext.getTerminal(), showCommand
         );
     }
