@@ -133,6 +133,8 @@ public class NutsAdminCommand extends AbstractNutsCommand {
                 deleteCache(context,force);
                 deleteLog(context,force);
                 cmdLine.unexpectedArgument(getName());
+            } else if (cmdLine.readAll("cleanup")) {
+
             } else {
                 cmdLine.unexpectedArgument(getName());
             }
@@ -200,6 +202,11 @@ public class NutsAdminCommand extends AbstractNutsCommand {
     }
 
     private void deleteCache(NutsCommandContext context, boolean force) {
+        String workspaceLocation = context.getWorkspace().getConfigManager().getWorkspaceLocation();
+        File cache = new File(workspaceLocation, "cache");
+        if(cache.exists()){
+            IOUtils.delete(cache);
+        }
         for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
             deleteRepoCache(repository,context,force);
         }

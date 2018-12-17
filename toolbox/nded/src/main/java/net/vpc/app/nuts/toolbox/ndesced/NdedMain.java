@@ -3,6 +3,8 @@ package net.vpc.app.nuts.toolbox.ndesced;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 
 import java.io.File;
 import java.util.Arrays;
@@ -20,62 +22,60 @@ public class NdedMain extends NutsApplication {
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        for (int i = 0; i < appContext.getArgs().length; i++) {
-            switch (appContext.getArgs()[i]) {
-                case "--nuts-bootstrap": {
-                    i++;
-                    home = (appContext.getArgs()[i]);
-                    break;
+        CommandLine commandLine=new CommandLine(appContext.getArgs(),appContext.getAutoComplete());
+        Argument a;
+        while (commandLine.hasNext()){
+            if(appContext.configure(commandLine)){
+
+            }else if((a=commandLine.readStringOption("--home"))!=null){
+                home = a.getStringValue();
+            }else if((a=commandLine.readStringOption("--id"))!=null){
+                String v = a.getStringValue();
+                builder0.setId(v);
+            }else if((a=commandLine.readStringOption("--ext"))!=null){
+                String v = a.getStringValue();
+                builder0.setExt(v);
+            }else if((a=commandLine.readStringOption("--name"))!=null){
+                String v = a.getStringValue();
+                builder0.setName(v);
+            }else if((a=commandLine.readStringOption("--packaging"))!=null){
+                String v = a.getStringValue();
+                builder0.setPackaging(v);
+            }else if((a=commandLine.readStringOption("--platform"))!=null){
+                String v = a.getStringValue();
+                for (String s : v.split(" ,;")) {
+                    if(s.length()>0){
+                        builder0.addPlatform(s);
+                    }
                 }
-                case "--id": {
-                    i++;
-                    builder0.setId(appContext.getArgs()[i]);
-                    break;
+            }else if((a=commandLine.readStringOption("--os"))!=null){
+                String v = a.getStringValue();
+                for (String s : v.split(" ,;")) {
+                    if(s.length()>0){
+                        builder0.addOs(s);
+                    }
                 }
-                case "--ext": {
-                    i++;
-                    builder0.setExt(appContext.getArgs()[i]);
-                    break;
+            }else if((a=commandLine.readStringOption("--osdist"))!=null){
+                String v = a.getStringValue();
+                for (String s : v.split(" ,;")) {
+                    if(s.length()>0){
+                        builder0.addOsdist(s);
+                    }
                 }
-                case "--packaging": {
-                    i++;
-                    builder0.setPackaging(appContext.getArgs()[i]);
-                    break;
+            }else if((a=commandLine.readStringOption("--arch"))!=null){
+                String v = a.getStringValue();
+                for (String s : v.split(" ,;")) {
+                    if(s.length()>0){
+                        builder0.addArch(s);
+                    }
                 }
-                case "--name": {
-                    i++;
-                    builder0.setName(appContext.getArgs()[i]);
-                    break;
-                }
-                case "--platform": {
-                    i++;
-                    builder0.addPlatform(appContext.getArgs()[i]);
-                    break;
-                }
-                case "--os": {
-                    i++;
-                    builder0.addOs(appContext.getArgs()[i]);
-                    break;
-                }
-                case "--osdist": {
-                    i++;
-                    builder0.addOsdist(appContext.getArgs()[i]);
-                    break;
-                }
-                case "--arch": {
-                    i++;
-                    builder0.addArch(appContext.getArgs()[i]);
-                    break;
-                }
-                case "--location": {
-                    i++;
-                    builder0.addLocation(appContext.getArgs()[i]);
-                    break;
-                }
-                case "--interactive": {
-                    interactive = true;
-                    break;
-                }
+            }else if((a=commandLine.readStringOption("--location"))!=null){
+                String v = a.getStringValue();
+                builder0.addLocation(v);
+            }else if((a=commandLine.readBooleanOption("-i","--interactive"))!=null){
+                interactive = a.getBooleanValue();
+            }else{
+                commandLine.unexpectedArgument("nded");
             }
         }
     }
@@ -89,7 +89,7 @@ public class NdedMain extends NutsApplication {
             return;
         }
         if (!nullOnly || isEmpty(home)) {
-            String s = checkParam("nuts-bootstrap", home);
+            String s = checkParam("home", home);
             if (!isEmpty(s)) {
                 home = s;
             }
@@ -248,52 +248,6 @@ public class NdedMain extends NutsApplication {
         desc.write(file);
         desc.write(this.appContext.out());
         return 0;
-//        if (!home.equals("stdout")) {
-//            return;
-//        }
-//
-//        NutsDescriptorBuilder builder = f.createDescriptorBuilder();
-//
-//        builder.setId(
-//                f.createIdBuilder()
-//                        .setName("name")
-//                        .setVersion("version")
-//                        .build()
-//        )
-//                .setFace("face")
-//                .setName("Application Full Name")
-//                .setDescription("Application Description")
-//                .setExecutable(true)
-//                .setPackaging("jar")
-//                .setExt("exe")
-//                .setArch(new String[]{"64bit"})
-//                .setOs(new String[]{"linux#4.6"})
-//                .setOsdist(new String[]{"opensuse#42"})
-//                .setPlatform(new String[]{"java#8"})
-//                .setExecutor(new NutsExecutorDescriptor(
-//
-//                        f.createIdBuilder().setName("java").setVersion("8").build(),
-//                        new String[]{"-jar"}
-//                ))
-//                .setInstaller(new NutsExecutorDescriptor(
-//                        f.createIdBuilder().setName("java").setVersion("8").build(),
-//                        new String[]{"-jar"}
-//                ))
-//                .setLocations(new String[]{
-//                        "http://server/somelink"
-//                })
-//                .setDependencies(
-//                        new NutsDependency[]{
-//                                f.createDependencyBuilder()
-//                                        .setNamespace("namespace")
-//                                        .setName("name")
-//                                        .setVersion("version")
-//                                        .setScope("compile")
-//                                        .build()
-//                        }
-//                )
-//                .build()
-//                .write(System.out);
     }
 
     private static String getFilePath(File s){
