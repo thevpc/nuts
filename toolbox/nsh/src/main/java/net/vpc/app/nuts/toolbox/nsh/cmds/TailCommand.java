@@ -58,26 +58,29 @@ public class TailCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        PrintStream out = context.getTerminal().getOut();
+        PrintStream out = context.out();
+        boolean noColors=false;
         while (cmdLine.hasNext()) {
             Argument a = cmdLine.read();
             if (a.isOption()) {
-                if(ShellHelper.isInt(a.getString().substring(1))){
-                    options.max=Integer.parseInt(a.getString().substring(1));
-                }else{
+                if (context.configure(cmdLine)) {
+                    //
+                }else if (ShellHelper.isInt(a.getString().substring(1))) {
+                    options.max = Integer.parseInt(a.getString().substring(1));
+                } else {
                     throw new IllegalArgumentException("Not yet supported");
                 }
             } else {
                 String path = a.getString();
-                File file = new File(context.getAbsolutePath(path));
-                    files.add(file.getPath());
+                File file = new File(context.getShell().getAbsolutePath(path));
+                files.add(file.getPath());
             }
         }
         if (files.isEmpty()) {
             throw new IllegalArgumentException("Not yet supported");
         }
         for (String file : files) {
-            TextFiles.tail(TextFiles.create(file),options.max, out);
+            TextFiles.tail(TextFiles.create(file), options.max, out);
         }
         return 0;
     }

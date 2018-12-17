@@ -41,6 +41,7 @@
         <module name="nsh" />
         <module name="nuts" />
         <module name="nuts-clown" />
+        <module name="nuts-cmd-app" />
         <module name="nuts-core" />
         <module name="nuts-server" />
         <module name="nuts-servlet" />
@@ -107,6 +108,7 @@
       <module name="nsh" target="1.8" />
       <module name="nuts" target="1.8" />
       <module name="nuts-clown" target="1.5" />
+      <module name="nuts-cmd-app" target="1.8" />
       <module name="nuts-core" target="1.8" />
       <module name="nuts-root" target="1.5" />
       <module name="nuts-server" target="1.8" />

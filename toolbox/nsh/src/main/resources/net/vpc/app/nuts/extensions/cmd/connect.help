@@ -1,4 +1,4 @@
-connects to a **nuts** server
+connect to a **nuts** server
 
 @@SYNOPSYS:@@
 ##connect## [user@]server[:port]

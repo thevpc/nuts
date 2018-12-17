@@ -7,6 +7,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds.config;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand;
 import net.vpc.app.nuts.toolbox.nsh.options.GroupNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
@@ -30,7 +31,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
     }
 
     public static boolean exec(NutsRepository editedRepo, CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {
-        NutsWorkspace workspace = context.getValidWorkspace();
+        NutsWorkspace workspace = context.getWorkspace();
         if (cmdLine.readAll("add user", "au")) {
             NutsRepository repository = null;
             if (editedRepo != null) {
@@ -110,7 +111,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                     } else if (cmdLine.readAll("--old-password")) {
                         oldPassword = cmdLine.readRequiredNonOption(new DefaultNonOption("OldPassword")).getString();
                     } else {
-                        cmdLine.unexpectedArgument();
+                        cmdLine.unexpectedArgument("config password");
                     }
                 } while (cmdLine.hasNext());
                 if (cmdLine.isExecMode()) {
@@ -161,7 +162,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                 }
     //            NutsUserConfig u = null;
     //            if (repository == null) {
-    //                u = context.getValidWorkspace().getConfig().getUser(user);
+    //                u = context.getWorkspace().getConfig().getUser(user);
     //            } else {
     //                u = repository.getConfig().getUser(user);
     //            }
@@ -198,7 +199,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                                 break;
                             }
                             case "--remove-group": {
-                                String a = cmdLine.readRequiredNonOption(new GroupNonOption("Group", context, repository)).getString();
+                                String a = cmdLine.readRequiredNonOption(new GroupNonOption("Group", context.consoleContext(), repository)).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.getSecurityManager().removeUserGroups(user, a);
@@ -253,7 +254,7 @@ public class UserConfigSubCommand extends AbstractConfigSubCommand {
                                 }
                                 break;
                             default:
-                                cmdLine.unexpectedArgument();
+                                cmdLine.unexpectedArgument("config edit user");
                                 break;
                         }
                     }

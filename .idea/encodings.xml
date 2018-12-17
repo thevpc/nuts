@@ -2,6 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/nuts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/nuts-cmd-app" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nuts-core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nuts-servlet" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/nuts-tomcat-classloader" charset="UTF-8" />
@@ -31,7 +32,6 @@
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-desktop-automation" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-compress" charset="UTF-8" />
-    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-osapi" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-mvn" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-sql" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings" charset="UTF-8" />

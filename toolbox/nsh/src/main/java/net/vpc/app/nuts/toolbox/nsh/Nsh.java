@@ -1,16 +1,19 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsApplication;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
 
-public class Nsh extends NutsApplication{
+import java.util.Arrays;
+
+public class Nsh extends NutsApplication {
     public static void main(String[] args) {
         new Nsh().launchAndExit(args);
     }
 
     @Override
-    public int launch(String[] args, NutsWorkspace ws) {
-        DefaultNutsConsole c=new DefaultNutsConsole(ws);
+    public int launch(NutsApplicationContext appContext) {
+        String[] args=appContext.getArgs();
+        NutsJavaShell c=new NutsJavaShell(appContext);
         return c.run(args);
     }
 }

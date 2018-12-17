@@ -1,4 +1,4 @@
-shows version
+show version
 
 @@SYNOPSYS:@@
 ##version## [ -l ] [ --long ]

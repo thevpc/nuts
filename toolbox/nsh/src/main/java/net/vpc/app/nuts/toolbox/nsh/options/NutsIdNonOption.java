@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.options;
 
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 
 /**
  *
@@ -37,9 +37,9 @@ import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
  */
 public class NutsIdNonOption extends net.vpc.common.commandline.DefaultNonOption {
 
-    private NutsCommandContext context;
+    private NutsConsoleContext context;
 
-    public NutsIdNonOption(String name, NutsCommandContext context) {
+    public NutsIdNonOption(String name, NutsConsoleContext context) {
         super(name);
     }
 

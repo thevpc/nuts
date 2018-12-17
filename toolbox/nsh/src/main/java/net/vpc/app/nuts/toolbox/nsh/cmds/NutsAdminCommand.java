@@ -29,9 +29,12 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.RootFolderType;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.io.IOUtils;
 
@@ -52,42 +55,169 @@ public class NutsAdminCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
-        cmdLine.requireNonEmpty();
-        if (cmdLine.readAll("update-index")) {
-            List<String> repos = new ArrayList<>();
-            while (cmdLine.hasNext()) {
-                repos.add(cmdLine.read().getExpression());
-            }
-            if (repos.isEmpty()) {
-                context.getFormattedOut().printf("[[%s]] Updating all indices\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation());
-                context.getValidWorkspace().updateAllRepositoryIndices();
+        Argument a;
+        boolean noColors=false;
+        while(cmdLine.hasNext()) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (cmdLine.readAll("update-index")) {
+                List<String> repos = new ArrayList<>();
+                while (cmdLine.hasNext()) {
+                    repos.add(cmdLine.read().getExpression());
+                }
+                updateIndex(context, repos.toArray(new String[0]));
+                cmdLine.unexpectedArgument(getName());
+            } else if (cmdLine.readAll("delete-log")) {
+                boolean force=false;
+                while(cmdLine.hasNext()) {
+                    if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                        force=a.getBooleanValue();
+                    }else{
+                        cmdLine.unexpectedArgument(getName());
+                    }
+                }
+                deleteLog(context,force);
+            } else if (cmdLine.readAll("delete-var")) {
+                boolean force=false;
+                while(cmdLine.hasNext()) {
+                    if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                        force=a.getBooleanValue();
+                    }else{
+                        cmdLine.unexpectedArgument(getName());
+                    }
+                }
+                deleteVar(context,force);
+                cmdLine.unexpectedArgument(getName());
+            } else if (cmdLine.readAll("delete-programs")) {
+                boolean force=false;
+                while(cmdLine.hasNext()) {
+                    if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                        force=a.getBooleanValue();
+                    }else{
+                        cmdLine.unexpectedArgument(getName());
+                    }
+                }
+                deletePrgrams(context,force);
+                cmdLine.unexpectedArgument(getName());
+            } else if (cmdLine.readAll("delete-config")) {
+                boolean force=false;
+                while(cmdLine.hasNext()) {
+                    if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                        force=a.getBooleanValue();
+                    }else{
+                        cmdLine.unexpectedArgument(getName());
+                    }
+                }
+                deleteConfig(context,force);
+                cmdLine.unexpectedArgument(getName());
+            } else if (cmdLine.readAll("delete-cache")) {
+                boolean force=false;
+                while(cmdLine.hasNext()) {
+                    if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                        force=a.getBooleanValue();
+                    }else{
+                        cmdLine.unexpectedArgument(getName());
+                    }
+                }
+                deleteCache(context,force);
+                cmdLine.unexpectedArgument(getName());
+            } else if (cmdLine.readAll("cleanup")) {
+                boolean force=false;
+                while(cmdLine.hasNext()) {
+                    if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                        force=a.getBooleanValue();
+                    }else{
+                        cmdLine.unexpectedArgument(getName());
+                    }
+                }
+                deleteCache(context,force);
+                deleteLog(context,force);
+                cmdLine.unexpectedArgument(getName());
             } else {
-                for (String repo : repos) {
-                    context.getFormattedOut().printf("[[%s]] Updating index %s\n",context.getValidWorkspace().getConfigManager().getWorkspaceLocation(),repo);
-                    context.getValidWorkspace().updateRepositoryIndex(repo);
+                cmdLine.unexpectedArgument(getName());
+            }
+        }
+        return 0;
+    }
+
+    private void updateIndex(NutsCommandContext context, String[] repos) {
+        if (repos.length==0) {
+            context.out().printf("[[%s]] Updating all indices\n", context.getWorkspace().getConfigManager().getWorkspaceLocation());
+            context.getWorkspace().updateAllRepositoryIndices();
+        } else {
+            for (String repo : repos) {
+                context.out().printf("[[%s]] Updating index %s\n", context.getWorkspace().getConfigManager().getWorkspaceLocation(), repo);
+                context.getWorkspace().updateRepositoryIndex(repo);
+            }
+        }
+    }
+
+    private void deleteLog(NutsCommandContext context, boolean force) {
+        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.LOGS));
+        if(file.exists()) {
+            context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
+            if(force ||ShellHelper.readAccept(context.getTerminal())){
+                IOUtils.delete(file);
+            }
+        }
+        file = new File(context.getWorkspace().getConfigManager().getHomeLocation(), "log");
+        if(file.exists()) {
+            context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
+            if (force || ShellHelper.readAccept(context.getTerminal())) {
+                IOUtils.delete(file);
+            }
+        }
+    }
+
+    private void deleteVar(NutsCommandContext context, boolean force) {
+        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.VAR));
+        if(file.exists()) {
+            context.out().printf("@@Deleting@@ ##var## folder %s ...\n", file.getPath());
+            if (force || ShellHelper.readAccept(context.getTerminal())) {
+                IOUtils.delete(file);
+            }
+        }
+    }
+
+    private void deletePrgrams(NutsCommandContext context, boolean force) {
+        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.PROGRAMS));
+        if(file.exists()) {
+            context.out().printf("@@Deleting@@ ##programs## folder %s ...\n", file.getPath());
+            if (force || ShellHelper.readAccept(context.getTerminal())) {
+                IOUtils.delete(file);
+            }
+        }
+    }
+
+    private void deleteConfig(NutsCommandContext context, boolean force) {
+        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.CONFIG));
+        if(file.exists()) {
+            context.out().printf("@@Deleting@@ ##config## folder %s ...\n", file.getPath());
+            if (force || ShellHelper.readAccept(context.getTerminal())) {
+                IOUtils.delete(file);
+            }
+        }
+    }
+
+    private void deleteCache(NutsCommandContext context, boolean force) {
+        for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
+            deleteRepoCache(repository,context,force);
+        }
+    }
+
+    private static void deleteRepoCache(NutsRepository repository, NutsCommandContext context, boolean force){
+        String s = repository.getStoreRoot();
+        if(s!=null){
+            File file = new File(s);
+            if(file.exists()) {
+                context.out().printf("@@Deleting@@ ##cache## folder %s ...\n", s);
+                if (force || ShellHelper.readAccept(context.getTerminal())) {
+                    IOUtils.delete(file);
                 }
             }
-        }else if (cmdLine.readAll("delete-all-logs")) {
-            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.LOGS));
-            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
-            IOUtils.delete(file);
-            file = new File(context.getValidWorkspace().getConfigManager().getNutsHomeLocation(),"log");
-            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
-            IOUtils.delete(file);
-        }else if (cmdLine.readAll("delete-all-vars")) {
-            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.VAR));
-            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
-            IOUtils.delete(file);
-        }else if (cmdLine.readAll("delete-all-programs")) {
-            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.PROGRAMS));
-            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
-            IOUtils.delete(file);
-        }else if (cmdLine.readAll("delete-all-configs")) {
-            File file = new File(context.getValidWorkspace().getStoreRoot(RootFolderType.CONFIG));
-            context.getFormattedOut().printf("@@Deleting@@ %s ...\n",file.getPath());
-            IOUtils.delete(file);
         }
-        cmdLine.unexpectedArgument();
-        return 0;
+        for (NutsRepository mirror : repository.getMirrors()) {
+            deleteRepoCache(mirror,context,force);
+        }
     }
 }

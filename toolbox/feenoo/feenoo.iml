@@ -11,6 +11,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="nuts-cmd-app" />
+    <orderEntry type="module" module-name="nuts" />
+    <orderEntry type="module" module-name="vpc-common-commandline" />
     <orderEntry type="module" module-name="vpc-common-strings" />
   </component>
 </module>

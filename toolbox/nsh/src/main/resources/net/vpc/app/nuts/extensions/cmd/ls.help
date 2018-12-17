@@ -1,4 +1,4 @@
-lists directory
+list directory (or file)
 
 @@SYNOPSYS:@@
 ##ls## [options] <directory>

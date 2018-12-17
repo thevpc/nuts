@@ -50,9 +50,9 @@ public class RightNonOption extends DefaultNonOption {
     private final boolean existing;
     private final String user;
 
-//    public RightNonOption(String name, NutsCommandContext context) {
+//    public RightNonOption(String name, NutsConsoleContext context) {
 //        super(name);
-//        this.workspace = context.getValidWorkspace();
+//        this.workspace = context.getWorkspace();
 //    }
     public RightNonOption(String name, NutsWorkspace workspace, NutsRepository repository, String user, boolean existing) {
         super(name);

@@ -1,4 +1,4 @@
-logs in as a given user
+log in as a given user for the current workspace
 
 @@SYNOPSYS:@@
 ##login## <username> [user-password]

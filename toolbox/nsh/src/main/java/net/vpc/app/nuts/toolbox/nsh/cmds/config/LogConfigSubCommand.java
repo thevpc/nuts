@@ -65,7 +65,7 @@ public class LogConfigSubCommand extends AbstractConfigSubCommand {
                     throw new NutsIllegalArgumentException("Invalid loglevel");
                 }
             }
-            cmdLine.unexpectedArgument();
+            cmdLine.unexpectedArgument("config log");
             return true;
         } else if (cmdLine.readAll("get loglevel")) {
             if (cmdLine.isExecMode()) {

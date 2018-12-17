@@ -58,26 +58,29 @@ public class HeadCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        PrintStream out = context.getTerminal().getOut();
+        PrintStream out = context.out();
+        Argument a;
+        boolean noColors = false;
         while (cmdLine.hasNext()) {
-            Argument a = cmdLine.read();
-            if (a.isOption()) {
-                if(ShellHelper.isInt(a.getString().substring(1))){
-                    options.max=Integer.parseInt(a.getString().substring(1));
-                }else{
+            if (cmdLine.isOption()) {
+                if (context.configure(cmdLine)) {
+                    //
+                }else if (ShellHelper.isInt(cmdLine.get().getString().substring(1))) {
+                    options.max = Integer.parseInt(cmdLine.read().getString().substring(1));
+                } else {
                     throw new IllegalArgumentException("Not yet supported");
                 }
             } else {
-                String path = a.getString();
-                File file = new File(context.getAbsolutePath(path));
-                    files.add(file.getPath());
+                String path = cmdLine.read().getString();
+                File file = new File(context.getShell().getAbsolutePath(path));
+                files.add(file.getPath());
             }
         }
         if (files.isEmpty()) {
             throw new IllegalArgumentException("Not yet supported");
         }
         for (String file : files) {
-            TextFiles.head(TextFiles.create(file),options.max, out);
+            TextFiles.head(TextFiles.create(file), options.max, out);
         }
         return 0;
     }

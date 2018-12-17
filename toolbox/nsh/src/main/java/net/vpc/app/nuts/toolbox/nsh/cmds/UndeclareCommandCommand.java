@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.DefaultNonOption;
 
 import java.io.PrintStream;
@@ -45,14 +46,23 @@ public class UndeclareCommandCommand extends AbstractNutsCommand {
         super("undeclare-command", DEFAULT_SUPPORT);
     }
 
-      public int exec(String[] args, NutsCommandContext context) throws Exception {
+    public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        PrintStream out = context.getTerminal().getOut();
+        PrintStream out = context.out();
+        Argument a;
+        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-
-            }else{
-                context.getConsole().uninstallCommand(cmdLine.readNonOption(DefaultNonOption.NAME).getString());
+                if (context.configure(cmdLine)) {
+                    //
+                } else {
+                    cmdLine.unexpectedArgument(getName());
+                }
+            } else {
+                String cmd = cmdLine.readNonOption(DefaultNonOption.NAME).getString();
+                if (cmdLine.isExecMode()) {
+                    context.getShell().undeclareCommand(cmd);
+                }
             }
         }
         return 0;

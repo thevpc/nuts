@@ -1,4 +1,4 @@
-shows the error message of the last command if was erroneous.
+show the error message of the last command if was erroneous.
 
 @@SYNOPSYS:@@
 ##showerr## [--trace]

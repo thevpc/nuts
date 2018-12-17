@@ -4,13 +4,14 @@
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>feenoo</artifactId>
     <name>net.vpc.app.nuts.toolbox.feenoo</name>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <github.global.server>github</github.global.server>
+        <nuts-autocomplete-support>true</nuts-autocomplete-support>
     </properties>
     <distributionManagement>
         <site>
@@ -118,9 +119,24 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>net.vpc.app.nuts</groupId>
+            <artifactId>nuts-cmd-app</artifactId>
+            <version>0.5.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-strings</artifactId>
             <version>1.2.15</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>vpc-public-maven</id>
+            <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

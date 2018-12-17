@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>mvn</artifactId>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.mvn</name>
 
@@ -44,6 +44,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
+        <nuts-autocomplete-support>true</nuts-autocomplete-support>
     </properties>
 
     <distributionManagement>
@@ -62,7 +63,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1</version>
         </dependency>
 
         <dependency>

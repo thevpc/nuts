@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
@@ -54,78 +55,78 @@ public class CatCommand extends AbstractNutsCommand {
         boolean n = false;
         boolean T = false;
         boolean E = false;
+        boolean noColors = false;
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        Options options = new Options();
+        Options o = new Options();
         List<File> files = new ArrayList<>();
-        PrintStream out = context.getTerminal().getOut();
+        PrintStream out = context.out();
+        Argument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.readAll("-")) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (cmdLine.readAll("-")) {
                 files.add(null);
             } else if (cmdLine.readAll("-n", "--number")) {
-                options.n = true;
+                o.n = true;
             } else if (cmdLine.readAll("-t", "--show-tabs")) {
-                options.T = true;
+                o.T = true;
             } else if (cmdLine.readAll("-E", "--show-ends")) {
-                options.E = true;
-            } else if (cmdLine.readAll("--version")) {
-                out.printf("%s\n", "1.0");
-                return 0;
-            } else if (cmdLine.readAll("--help")) {
-                out.printf("%s\n", getHelp());
-                return 0;
+                o.E = true;
+            } else if ((a = cmdLine.readBooleanOption("--no-colors")) != null) {
+                o.noColors = a.getBooleanValue();
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
-                File file = new File(context.getAbsolutePath(path));
+                File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file);
             }
         }
         if (files.isEmpty()) {
             files.add(null);
         }
-        if (options.n || options.T || options.E) {
-            int nn=1;
+        if (o.n || o.T || o.E) {
+            int nn = 1;
             //text mode
             for (File f : files) {
-                Reader reader=null;
+                Reader reader = null;
                 try {
                     if (f == null) {
-                        reader = new InputStreamReader(context.getTerminal().getIn());
+                        reader = new InputStreamReader(context.in());
                     } else {
                         reader = new FileReader(f);
                     }
                     try (BufferedReader r = new BufferedReader(reader)) {
                         String line = null;
                         while ((line = r.readLine()) != null) {
-                            if(options.n){
-                                out.print(StringUtils.alignRight(String.valueOf(nn),6));
+                            if (o.n) {
+                                out.print(StringUtils.alignRight(String.valueOf(nn), 6));
                                 out.print("  ");
                             }
-                            if(options.T){
-                                line=line.replace("\t","^I");
+                            if (o.T) {
+                                line = line.replace("\t", "^I");
                             }
                             out.print(line);
-                            if(options.E){
+                            if (o.E) {
                                 out.println("$");
                             }
                             out.println();
                             nn++;
                         }
                     }
-                }finally {
-                    if(reader!=null){
+                } finally {
+                    if (reader != null) {
                         reader.close();
                     }
                 }
             }
         } else {
             for (File f : files) {
-                if(f==null){
-                    IOUtils.copy(context.getTerminal().getIn(),out);
-                }else{
-                    IOUtils.copy(f,out);
+                if (f == null) {
+                    IOUtils.copy(context.in(), out);
+                } else {
+                    IOUtils.copy(f, out);
                 }
             }
         }

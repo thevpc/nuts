@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.ZipOptions;
 import net.vpc.common.io.ZipUtils;
@@ -57,16 +58,20 @@ public class ZipCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-//        NutsPrintStream out = context.getTerminal().getOut();
+//        NutsPrintStream out = context.out();
         File outZip=null;
+        boolean noColors=false;
+        Argument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.readAll("-r")) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (cmdLine.readAll("-r")) {
                 options.r=true;
             } else if (cmdLine.isOption()) {
                 throw new IllegalArgumentException("Not yet supported");
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
-                File file = new File(context.getAbsolutePath(path));
+                File file = new File(context.getShell().getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;
                 }else {

@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -73,28 +73,28 @@ public class ChmodCommand extends AbstractNutsCommand {
 
         @Override
         public String toString() {
-            StringBuilder sb=new StringBuilder();
-            if(user){
+            StringBuilder sb = new StringBuilder();
+            if (user) {
                 sb.append("u");
-            }else{
+            } else {
                 sb.append("a");
             }
-            if(r>0) {
+            if (r > 0) {
                 sb.append("+r");
-            }else if(r<0){
+            } else if (r < 0) {
                 sb.append("-r");
             }
-            if(w>0) {
+            if (w > 0) {
                 sb.append("+w");
-            }else if(w<0){
+            } else if (w < 0) {
                 sb.append("-w");
             }
-            if(x>0) {
+            if (x > 0) {
                 sb.append("+x");
-            }else if(x<0){
+            } else if (x < 0) {
                 sb.append("-x");
             }
-            if(recursive) {
+            if (recursive) {
                 sb.append(" [recursive]");
             }
             return sb.toString();
@@ -124,62 +124,66 @@ public class ChmodCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         List<File> files = new ArrayList<>();
         Mods m = new Mods();
+        Argument a;
+        boolean noColors=false;
         while (cmdLine.hasNext()) {
             String s = cmdLine.read().getString();
-            if (s.startsWith("-")) {
-                if (s.equals("-R")) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (s.startsWith("-")) {
+                if (s.equals("-R") || s.equals("--recursive")) {
                     m.recursive = true;
                 } else if (isRights(s.substring(1))) {
                     m.user = true;
                     apply(s.substring(1), m, -1);
                 } else {
-                    throw new IllegalArgumentException("Unsupported option" + s);
+                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
                 }
             } else if (s.startsWith("+")) {
                 if (isRights(s.substring(1))) {
                     m.user = true;
                     apply(s.substring(1), m, 1);
                 } else {
-                    throw new IllegalArgumentException("Unsupported option" + s);
+                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
                 }
             } else if (s.startsWith("u-")) {
                 if (isRights(s.substring(2))) {
                     m.user = true;
                     apply(s.substring(2), m, -1);
                 } else {
-                    throw new IllegalArgumentException("Unsupported option" + s);
+                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
                 }
             } else if (s.startsWith("a-")) {
                 if (isRights(s.substring(2))) {
                     m.user = false;
                     apply(s.substring(2), m, -1);
                 } else {
-                    throw new IllegalArgumentException("Unsupported option" + s);
+                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
                 }
             } else if (s.startsWith("u+")) {
                 if (isRights(s.substring(2))) {
                     m.user = true;
                     apply(s.substring(2), m, 1);
                 } else {
-                    throw new IllegalArgumentException("Unsupported option" + s);
+                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
                 }
             } else if (s.startsWith("a+")) {
                 if (isRights(s.substring(2))) {
                     m.user = false;
                     apply(s.substring(2), m, 1);
                 } else {
-                    throw new IllegalArgumentException("Unsupported option" + s);
+                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
                 }
             } else {
-                files.add(new File(context.getAbsolutePath(s)));
+                files.add(new File(context.getShell().getAbsolutePath(s)));
             }
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("Missing Expression");
+            throw new IllegalArgumentException("chmod: Missing Expression");
         }
-        PrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.out();
         for (File f : files) {
-            chmod(f, m,out);
+            chmod(f, m, out);
         }
         return 0;
     }
@@ -189,27 +193,27 @@ public class ChmodCommand extends AbstractNutsCommand {
             return;
         }
         if (m.r != 0) {
-            if(!f.canRead() &&
+            if (!f.canRead() &&
                     !f.setReadable(m.r == 1, m.user)
-                    ){
-                out.printf("Unable to [["+((m.r == 1)?"set":"unset")+"]] readAll  flag for ==%s==\n",f);
+            ) {
+                out.printf("Unable to [[" + ((m.r == 1) ? "set" : "unset") + "]] readAll  flag for ==%s==\n", f);
             }
         }
         if (m.w != 0) {
-            if(!f.canWrite() && !f.setWritable(m.w == 1, m.user)){
-                out.printf("Unable to [["+((m.w == 1)?"set":"unset")+"]] write flag for ==%s==\n",f);
+            if (!f.canWrite() && !f.setWritable(m.w == 1, m.user)) {
+                out.printf("Unable to [[" + ((m.w == 1) ? "set" : "unset") + "]] write flag for ==%s==\n", f);
             }
         }
         if (m.x != 0) {
-            if(!f.canExecute() && !f.setExecutable(m.x == 1, m.user)){
-                out.printf("Unable to [["+((m.x == 1)?"set":"unset")+"]] exec  flag for ==%s==\n",f);
+            if (!f.canExecute() && !f.setExecutable(m.x == 1, m.user)) {
+                out.printf("Unable to [[" + ((m.x == 1) ? "set" : "unset") + "]] exec  flag for ==%s==\n", f);
             }
         }
         if (f.isDirectory()) {
             File[] files = f.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    chmod(file, m,out);
+                    chmod(file, m, out);
                 }
             }
         }

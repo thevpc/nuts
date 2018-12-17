@@ -29,9 +29,9 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.InputStreamVisitor;
 import net.vpc.common.io.UnzipOptions;
@@ -66,8 +66,12 @@ public class UnzipCommand extends AbstractNutsCommand {
         Options options = new Options();
         PrintStream out = context.getTerminal().getFormattedOut();
         List<String> files = new ArrayList<>();
+        Argument a;
+        boolean noColors = false;
         while (cmdLine.hasNext()) {
-            if (cmdLine.readAll("-l")) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (cmdLine.readAll("-l")) {
                 options.l = true;
             } else if (cmdLine.readAll("-d")) {
                 options.dir = cmdLine.read().getExpression();
@@ -75,7 +79,7 @@ public class UnzipCommand extends AbstractNutsCommand {
                 throw new IllegalArgumentException("Not yet supported");
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
-                File file = new File(context.getAbsolutePath(path));
+                File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }
@@ -87,17 +91,17 @@ public class UnzipCommand extends AbstractNutsCommand {
                 ZipUtils.visitZipFile(new File(file), null, new InputStreamVisitor() {
                     @Override
                     public boolean visit(String path, InputStream inputStream) throws IOException {
-                        out.printf("%s\n",path);
+                        out.printf("%s\n", path);
                         return true;
                     }
                 });
             } else {
                 String dir = options.dir;
                 if (StringUtils.isEmpty(dir)) {
-                    dir = context.getCwd();
+                    dir = context.getShell().getCwd();
                 }
-                dir = context.getAbsolutePath(dir);
-                ZipUtils.unzip(context.getAbsolutePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
+                dir = context.getShell().getAbsolutePath(dir);
+                ZipUtils.unzip(context.getShell().getAbsolutePath(file), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
             }
         }
         return 0;

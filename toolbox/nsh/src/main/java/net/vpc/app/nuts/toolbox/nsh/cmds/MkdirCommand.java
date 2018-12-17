@@ -35,7 +35,6 @@ import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.ssh.SShConnection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,21 +60,22 @@ public class MkdirCommand extends AbstractNutsCommand {
         List<FilePath> files = new ArrayList<>();
         Options o = new Options();
         Argument a;
+        boolean noColors=false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-                if ((a = cmdLine.readBooleanOption("--verbose")) != null) {
-                    o.verbose = a.getBooleanValue();
-                }if ((a = cmdLine.readBooleanOption("--")) != null) {
+                if (context.configure(cmdLine)) {
+                    //
+                }else if ((a = cmdLine.readBooleanOption("-p","--parent")) != null) {
                     o.p = a.getBooleanValue();
                 }
             } else {
-                files.add(FilePath.of(cmdLine.read().getExpression()));
+                files.add(FilePath.of(cmdLine.read().getExpression(),context.getShell().getCwd()));
             }
         }
         if (files.size() < 1) {
             throw new IllegalArgumentException("Missing parameters");
         }
-        ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
+        ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()) : null;
         for (int i = 0; i < files.size(); i++) {
             FilePath v = files.get(i);
             if (v instanceof FilePath.SshFilePath) {

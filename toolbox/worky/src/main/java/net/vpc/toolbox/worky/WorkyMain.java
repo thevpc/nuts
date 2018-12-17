@@ -1,6 +1,8 @@
 package net.vpc.toolbox.worky;
 
-import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.FolderNonOption;
 
@@ -16,38 +18,32 @@ public class WorkyMain extends NutsApplication {
 
 
     @Override
-    public int launch(String[] args, NutsWorkspace ws) {
-        this.service = new WorkspaceService(ws);
-        CommandLine cmd = new CommandLine(args);
-        while (cmd.hasNext()) {
-            if (cmd.readAll("scan")) {
-                boolean interactive = false;
-                while (cmd.hasNext()) {
-                    if (cmd.readAll("-i", "--interactive")) {
-                        interactive = true;
-                    } else {
-                        service.scan(new File(cmd.readNonOption(new FolderNonOption("Folder")).getExpression()), interactive);
-                    }
-                }
-            } else if (cmd.readAll("check")) {
-                service.check(service.findProjectServices(), cmd);
-            } else if (cmd.readAll("enable", "scan")) {
-                while (cmd.hasNext()) {
-                    service.setNoScan(new File(cmd.read().getExpression()), true);
-                }
-            } else if (cmd.readAll("disable", "scan")) {
-                while (cmd.hasNext()) {
-                    service.setNoScan(new File(cmd.read().getExpression()), false);
-                }
-            } else if (cmd.readAll("set")) {
-                while (cmd.hasNext()) {
-                    service.setNoScan(new File(cmd.read().getExpression()), false);
-                }
-            } else if (cmd.readAll("list")) {
-                service.showList();
+    public int launch(NutsApplicationContext appContext) {
+        String[] args = appContext.getArgs();
+        this.service = new WorkspaceService(appContext);
+        CommandLine cmdLine = new CommandLine(args, appContext.getAutoComplete());
+        Argument a;
+        do {
+            if (appContext.configure(cmdLine)) {
+                //
+            } else if ((a = cmdLine.readNonOption("scan")) != null) {
+                return service.scan(cmdLine, appContext);
+            } else if ((a = cmdLine.readNonOption("check")) != null) {
+                return service.check(cmdLine, appContext);
+            } else if (cmdLine.readAll("enable scan")) {
+                return service.enableScan(cmdLine, appContext, true);
+            } else if (cmdLine.readAll("disable scan")) {
+                return service.enableScan(cmdLine, appContext, false);
+            } else if ((a = cmdLine.readNonOption("list")) != null) {
+                return service.list(cmdLine, appContext);
+            } else if ((a = cmdLine.readNonOption("set")) != null) {
+                return service.setWorkspaceConfigParam(cmdLine, appContext);
             } else {
-                cmd.unexpectedArgument();
+                cmdLine.unexpectedArgument("worky");
             }
+        } while (cmdLine.hasNext());
+        if (appContext.isRequiredExit()) {
+            return appContext.getExitCode();
         }
         return 0;
     }

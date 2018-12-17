@@ -25,7 +25,6 @@ net.vpc.app.nuts.toolbox.nsh.cmds.GrepCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.UnameCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.CheckoutCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.CommitCommand
-net.vpc.app.nuts.toolbox.nsh.DefaultNutsConsole
 net.vpc.app.nuts.toolbox.nsh.cmds.UnzipCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ZipCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.TailCommand

@@ -1,0 +1,13 @@
+copy files and directories
+
+@@SYNOPSYS:@@
+##cp## [<OPTION>...] <SOURCE>... <DEST>
+
+copy files and directories
+
+@@EXAMPLES:@@
+
+##cp## -r a b c d
+   copy a b and c to folder d
+
+

@@ -1,8 +1,7 @@
 package net.vpc.app.nuts.toolbox.ndi;
 
-import net.vpc.app.nuts.NutsApplication;
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
 
 import java.io.IOException;
 
@@ -12,17 +11,16 @@ public class NdiMain extends NutsApplication {
     }
 
     @Override
-    public int launch(String[] args, NutsWorkspace ws) {
-        NutsSession session = ws.createSession();
-        args = ws.getBootOptions().getApplicationArguments();
+    public int launch(NutsApplicationContext appContext) {
+        String[] args=appContext.getArgs();
         if (args.length > 0) {
             if (args[0].equals("in") || args[0].equals("install")) {
                 LinuxNdi ndi = null;
-                if (ws.getPlatformOs().getName().equals("linux")) {
-                    ndi = new LinuxNdi(ws, session);
+                if (appContext.getWorkspace().getPlatformOs().getName().equals("linux")) {
+                    ndi = new LinuxNdi(appContext);
                 }
                 if (ndi == null) {
-                    throw new IllegalArgumentException("Platform not supported : " + ws.getPlatformOs());
+                    throw new IllegalArgumentException("Platform not supported : " + appContext.getWorkspace().getPlatformOs());
                 }
                 boolean force = false;
                 boolean forceAll = false;
@@ -46,7 +44,7 @@ public class NdiMain extends NutsApplication {
             }
             return 0;
         } else {
-            session.getTerminal().getFormattedErr().printf("Missing arguments\n");
+            appContext.err().printf("Missing arguments\n");
             return 1;
         }
     }

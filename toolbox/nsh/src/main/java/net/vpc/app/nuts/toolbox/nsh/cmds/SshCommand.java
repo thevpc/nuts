@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsDependencySearch;
-import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
@@ -55,7 +53,6 @@ public class SshCommand extends AbstractNutsCommand {
     }
 
     private static class Options {
-        boolean verbose;
         boolean invokeNuts;
         String nutsCommand;
         String nutsJre;
@@ -67,14 +64,17 @@ public class SshCommand extends AbstractNutsCommand {
         CommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         Argument a;
+        boolean noColors=false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
-                if((a=cmdLine.readOption("--nuts"))!=null) {
+                if (context.configure(cmdLine)) {
+                    //
+                }else  if((a=cmdLine.readOption("--nuts"))!=null) {
                     o.invokeNuts = true;
                 }else if((a=cmdLine.readStringOption("--nuts-jre"))!=null){
                     o.nutsJre =a.getStringValue();
-                }else if((a=cmdLine.readBooleanOption("--verbose"))!=null){
-                    o.verbose =a.getBooleanValue();
+                } else if ((a = cmdLine.readBooleanOption("--no-colors")) != null) {
+                    noColors = a.getBooleanValue();
                 }else{
                     //suppose this is an other nuts option
                     //just consume the rest as of the command
@@ -83,12 +83,9 @@ public class SshCommand extends AbstractNutsCommand {
                     }
                 }
             } else {
-                if(o.address==null){
-                    o.address=cmdLine.read().getExpression();
-                }else {
-                    while (cmdLine.hasNext()) {
-                        o.cmd.add(cmdLine.read().getExpression());
-                    }
+                o.address=cmdLine.read().getExpression();
+                while (cmdLine.hasNext()) {
+                    o.cmd.add(cmdLine.read().getExpression());
                 }
             }
         }
@@ -98,7 +95,7 @@ public class SshCommand extends AbstractNutsCommand {
         if (o.cmd.isEmpty()) {
             throw new IllegalArgumentException("Missing ssh command. Interactive ssh is not yet supported!");
         }
-        ShellHelper.WsSshListener listener = o.verbose?new ShellHelper.WsSshListener(context.getSession()):null;
+        ShellHelper.WsSshListener listener = context.isVerbose()?new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()):null;
         try (SShConnection sshSession = new SShConnection(o.address)
              .addListener(listener)
         ) {
@@ -115,6 +112,8 @@ public class SshCommand extends AbstractNutsCommand {
                         workspace=c.readNonOption().getString();
                     }else if(c.isNonOption()){
                         break;
+                    }else{
+                        c.skip();
                     }
                 }
                 if(!StringUtils.isEmpty(o.nutsCommand)){
@@ -152,10 +151,10 @@ public class SshCommand extends AbstractNutsCommand {
                         if(from==null){
                             throw new IllegalArgumentException("Unable to resolve Nuts Jar File");
                         }else {
-                            context.getFormattedOut().printf("Detected nuts.jar location : %s\n", from);
+                            context.out().printf("Detected nuts.jar location : %s\n", from);
                             sshSession.setFailFast(true).copyLocalToRemote(from, home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
                             goodJar=home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
-//                            NutsFile[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getRuntimeId())
+//                            NutsFile[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getBootRuntime())
 //                                    .setIncludeMain(true),
 //                                    context.getSession());
 //                            for (NutsFile dep : deps) {

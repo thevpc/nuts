@@ -1,20 +1,16 @@
 package net.vpc.app.nuts.toolbox.ndesced;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.Arrays;
 
-public class NdedMain extends NutsApplication{
+public class NdedMain extends NutsApplication {
 
-    private NutsWorkspace ws;
-    private String[] args;
+    private NutsApplicationContext appContext;
     private NutsWorkspaceExtensionManager f;
-    private NutsSession session;
-    private PrintStream out;
-    private PrintStream err;
-    private NutsTerminal terminal;
 
     private String home = null;
     private boolean interactive = false;
@@ -24,56 +20,56 @@ public class NdedMain extends NutsApplication{
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        for (int i = 0; i < args.length; i++) {
-            switch (args[i]) {
+        for (int i = 0; i < appContext.getArgs().length; i++) {
+            switch (appContext.getArgs()[i]) {
                 case "--nuts-bootstrap": {
                     i++;
-                    home = (args[i]);
+                    home = (appContext.getArgs()[i]);
                     break;
                 }
                 case "--id": {
                     i++;
-                    builder0.setId(args[i]);
+                    builder0.setId(appContext.getArgs()[i]);
                     break;
                 }
                 case "--ext": {
                     i++;
-                    builder0.setExt(args[i]);
+                    builder0.setExt(appContext.getArgs()[i]);
                     break;
                 }
                 case "--packaging": {
                     i++;
-                    builder0.setPackaging(args[i]);
+                    builder0.setPackaging(appContext.getArgs()[i]);
                     break;
                 }
                 case "--name": {
                     i++;
-                    builder0.setName(args[i]);
+                    builder0.setName(appContext.getArgs()[i]);
                     break;
                 }
                 case "--platform": {
                     i++;
-                    builder0.addPlatform(args[i]);
+                    builder0.addPlatform(appContext.getArgs()[i]);
                     break;
                 }
                 case "--os": {
                     i++;
-                    builder0.addOs(args[i]);
+                    builder0.addOs(appContext.getArgs()[i]);
                     break;
                 }
                 case "--osdist": {
                     i++;
-                    builder0.addOsdist(args[i]);
+                    builder0.addOsdist(appContext.getArgs()[i]);
                     break;
                 }
                 case "--arch": {
                     i++;
-                    builder0.addArch(args[i]);
+                    builder0.addArch(appContext.getArgs()[i]);
                     break;
                 }
                 case "--location": {
                     i++;
-                    builder0.addLocation(args[i]);
+                    builder0.addLocation(appContext.getArgs()[i]);
                     break;
                 }
                 case "--interactive": {
@@ -85,7 +81,7 @@ public class NdedMain extends NutsApplication{
     }
 
     public String checkParam(String name, String lastValue) {
-        return terminal.readLine("Enter %s%s : ",name,(lastValue == null ? "" : (" " + lastValue)));
+        return appContext.getTerminal().readLine("Enter %s%s : ",name,(lastValue == null ? "" : (" " + lastValue)));
     }
 
     public void fillInteractive(NutsDescriptorBuilder b, boolean nullOnly) {
@@ -104,7 +100,7 @@ public class NdedMain extends NutsApplication{
                 try {
                     b.setId(s);
                 }catch (Exception ex){
-                    err.printf(ex.getMessage());
+                    appContext.err().printf(ex.getMessage());
                 }
             }
         }
@@ -151,40 +147,40 @@ public class NdedMain extends NutsApplication{
         boolean error = false;
         if (b.getId() == null) {
             error = true;
-            err.printf("Missing id\n");
+            appContext.err().printf("Missing id\n");
         } else {
             if (b.getId().getName() == null) {
                 error = true;
-                err.printf("Missing id name\n");
+                appContext.err().printf("Missing id name\n");
             }
             if (b.getId().getGroup() == null) {
                 error = true;
-                err.printf("Missing id group\n");
+                appContext.err().printf("Missing id group\n");
             }
             if (b.getId().getVersion() == null) {
                 error = true;
-                err.printf("Missing id version\n");
+                appContext.err().printf("Missing id version\n");
             }
 
         }
         if (isEmpty(b.getPackaging())) {
             error = true;
-            err.printf("Missing packaging\n");
+            appContext.err().printf("Missing packaging\n");
         }
         if (isEmpty(b.getExt())) {
             error = true;
-            err.printf("Missing ext\n");
+            appContext.err().printf("Missing ext\n");
         }
         if(isEmpty(home)){
             error = true;
-            err.printf("Missing nuts-bootstrap\n");
+            appContext.err().printf("Missing nuts-bootstrap\n");
         }
         return !error;
     }
 
     private boolean confirm(String message) {
         while (true) {
-            String o = terminal.readLine(message + " (y/n) : ");
+            String o = appContext.getTerminal().readLine(message + " (y/n) : ");
             if (o == null) {
                 o = "";
             }
@@ -208,17 +204,13 @@ public class NdedMain extends NutsApplication{
         }
     }
 
-    public int launch(String[] args, NutsWorkspace ws) {
-        this.ws = ws;
-        this.args = ws.getBootOptions().getApplicationArguments();
-        f = ws.getExtensionManager();
-        session = ws.createSession();
-        terminal = session.getTerminal();
-        out = terminal.getFormattedOut();
-        err = terminal.getFormattedErr();
-        NutsDescriptorBuilder b = ws.createDescriptorBuilder();
+    public int launch(NutsApplicationContext appContext) {
+        this.appContext = appContext;
+        String[] args=appContext.getArgs();
+        f = this.appContext.getWorkspace().getExtensionManager();
+        NutsDescriptorBuilder b = this.appContext.getWorkspace().createDescriptorBuilder();
         fillArgs(b);
-        out.printf("[[Creating new Nuts descriptor...]]\n");
+        this.appContext.out().printf("[[Creating new Nuts descriptor...]]\n");
         while (true) {
             fillInteractive(b, true);
             if (check(b)) {
@@ -240,21 +232,21 @@ public class NdedMain extends NutsApplication{
         File file = new File(home,path);
         file.getParentFile().mkdirs();
         NutsDescriptor desc = b.build();
-        out.printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)),("/"+path).replace('/',File.separatorChar));
-        out.printf("id         : ==%s==\n", desc.getId());
-        out.printf("packaging  : ==%s==\n", desc.getPackaging());
-        out.printf("ext        : ==%s==\n", desc.getExt());
+        this.appContext.out().printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)),("/"+path).replace('/',File.separatorChar));
+        this.appContext.out().printf("id         : ==%s==\n", desc.getId());
+        this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging());
+        this.appContext.out().printf("ext        : ==%s==\n", desc.getExt());
         if (desc.getLocations().length > 0) {
-            out.printf("locations  : \n");
+            this.appContext.out().printf("locations  : \n");
             for (String s : b.getLocations()) {
-                out.printf("             ==%s==\n", s);
+                this.appContext.out().printf("             ==%s==\n", s);
             }
         }
         if (!confirm("Confirm ?")) {
             return 1;
         }
         desc.write(file);
-        desc.write(out);
+        desc.write(this.appContext.out());
         return 0;
 //        if (!home.equals("stdout")) {
 //            return;

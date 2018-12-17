@@ -35,7 +35,6 @@ import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.ssh.SShConnection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,31 +61,29 @@ public class RmCommand extends AbstractNutsCommand {
         List<FilePath> files = new ArrayList<>();
         Options o = new Options();
         Argument a;
+        boolean noColors = false;
         while (cmdLine.hasNext()) {
-            if (cmdLine.isOption()) {
-                if ((a=cmdLine.readBooleanOption("--verbose"))!=null) {
-                    o.verbose=a.getBooleanValue();
-                }else if (cmdLine.isOption("-R")) {
-                    o.R = true;
-                }
+            if (context.configure(cmdLine)) {
+                //
+            } else if (cmdLine.isOption("-R")) {
+                o.R = true;
             } else {
-                files.add(FilePath.of(cmdLine.read().getExpression()));
+                files.add(FilePath.of(cmdLine.read().getExpression(),context.getShell().getCwd()));
             }
         }
         if (files.size() < 1) {
             throw new IllegalArgumentException("Missing parameters");
         }
-        ShellHelper.WsSshListener listener = o.verbose?new ShellHelper.WsSshListener(context.getSession()):null;
+        ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession()) : null;
         for (int i = 0; i < files.size(); i++) {
             FilePath p = files.get(i);
-            if(p instanceof FilePath.SshFilePath){
+            if (p instanceof FilePath.SshFilePath) {
                 ((FilePath.SshFilePath) p).setListener(listener);
             }
             p.rm(o.R);
         }
         return 0;
     }
-
 
 
 }

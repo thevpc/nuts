@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.options;
 
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
@@ -46,15 +46,15 @@ public class ExtensionNonOption extends DefaultNonOption {
 
     private NutsWorkspace workspace;
 
-    public ExtensionNonOption(String name, NutsCommandContext context) {
+    public ExtensionNonOption(String name, NutsConsoleContext context) {
         super(name);
-        this.workspace = context.getValidWorkspace();
+        this.workspace = context.getWorkspace();
     }
 
     @Override
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultArgumentCandidate(NutsConstants.NUTS_ID_RUNTIME));
+        all.add(new DefaultArgumentCandidate(NutsConstants.NUTS_ID_BOOT_RUNTIME));
         //should find all nuts with packaging "nuts-extension"
         return all;
     }

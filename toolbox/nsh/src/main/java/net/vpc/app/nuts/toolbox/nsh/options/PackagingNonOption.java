@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.options;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
@@ -46,9 +46,9 @@ public class PackagingNonOption extends DefaultNonOption {
 
     private NutsWorkspace workspace;
 
-    public PackagingNonOption(String name, NutsCommandContext context) {
+    public PackagingNonOption(String name, NutsWorkspace workspace) {
         super(name);
-        this.workspace = context.getValidWorkspace();
+        this.workspace = workspace;
     }
 
     @Override

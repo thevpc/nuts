@@ -44,7 +44,6 @@ import net.vpc.common.ssh.SshPath;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +60,7 @@ public class CpCommand extends AbstractNutsCommand {
     }
 
     public static class Options {
+        boolean noColors;
         boolean mkdir;
         boolean verbose;
         ShellHelper.WsSshListener sshlistener;
@@ -72,36 +72,36 @@ public class CpCommand extends AbstractNutsCommand {
         Options o = new Options();
         Argument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.isOption()) {
-                if ((a=cmdLine.readBooleanOption("--mkdir"))!=null) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if ((a = cmdLine.readBooleanOption("--mkdir")) != null) {
                     o.mkdir = a.getBooleanValue();
-                }else if ((a=cmdLine.readBooleanOption("--verbose"))!=null) {
+                } else if ((a = cmdLine.readBooleanOption("--no-colors")) != null) {
+                    o.noColors = a.getBooleanValue();
+                } else if ((a = cmdLine.readBooleanOption("--verbose")) != null) {
                     o.verbose = a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument();
-                }
             } else {
                 String value = cmdLine.readNonOption().getExpression();
-                if(StringUtils.isEmpty(value)){
+                if (StringUtils.isEmpty(value)) {
                     throw new IllegalArgumentException("Empty File Path");
                 }
-                files.add(FilePath.of(value));
+                files.add(FilePath.of(value,context.getShell().getCwd()));
             }
         }
         if (files.size() < 2) {
             throw new IllegalArgumentException("Missing parameters");
         }
-        o.sshlistener = o.verbose?new ShellHelper.WsSshListener(context.getSession()):null;
+        o.sshlistener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()) : null;
         for (int i = 0; i < files.size() - 1; i++) {
-            copy(files.get(i), files.get(files.size() - 1), o);
+            copy(files.get(i), files.get(files.size() - 1), o,context);
         }
         return 0;
     }
 
-    public void copy(FilePath from, FilePath to, Options o) {
+    public void copy(FilePath from, FilePath to, Options o, NutsCommandContext context) {
         if (from.getProtocol().equals("file") && to.getProtocol().equals("file")) {
-            File from1 = ((FilePath.LocalFilePath)from).getFile();
-            File to1 = ((FilePath.LocalFilePath)to).getFile();
+            File from1 = ((FilePath.LocalFilePath) from).getFile();
+            File to1 = ((FilePath.LocalFilePath) to).getFile();
             if (from1.isFile()) {
                 if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                     to1 = new File(to1, from1.getName());
@@ -115,9 +115,10 @@ public class CpCommand extends AbstractNutsCommand {
             if (o.mkdir) {
                 FileUtils.createParents(to1);
             }
+            context.out().printf("[[\\[CP\\]]] %s -> %s%\n",from ,to);
             IOUtils.copy(from1, to1);
         } else if (from.getProtocol().equals("file") && to.getProtocol().equals("ssh")) {
-            SshPath to1 = ((FilePath.SshFilePath)to).getSshPath();
+            SshPath to1 = ((FilePath.SshFilePath) to).getSshPath();
             String p = to1.getPath();
             if (p.endsWith("/") || p.endsWith("\\")) {
                 p = p + "/" + FileUtils.getFileName(to1.getPath());
@@ -126,11 +127,11 @@ public class CpCommand extends AbstractNutsCommand {
             try (SShConnection session = new SShConnection(to1.toAddress())
                     .addListener(o.sshlistener)
             ) {
-                copyLocalToRemote(((FilePath.LocalFilePath)from).getFile(), p, o.mkdir, session);
+                copyLocalToRemote(((FilePath.LocalFilePath) from).getFile(), p, o.mkdir, session);
             }
         } else if (from.getProtocol().equals("ssh") && to.getProtocol().equals("file")) {
-            SshPath from1 = ((FilePath.SshFilePath)from).getSshPath();
-            File to1 = ((FilePath.LocalFilePath)to).getFile();
+            SshPath from1 = ((FilePath.SshFilePath) from).getSshPath();
+            File to1 = ((FilePath.LocalFilePath) to).getFile();
             if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                 to1 = new File(to1, FileUtils.getFileName(from1.getPath()));
             }
@@ -140,17 +141,18 @@ public class CpCommand extends AbstractNutsCommand {
                 session.copyRemoteToLocal(from1.getPath(), to1.getPath(), o.mkdir);
             }
         } else if (from.getProtocol().equals("url") && to.getProtocol().equals("file")) {
-            URL from1 = ((FilePath.URLFilePath)from).getURL();
-            File to1 = ((FilePath.LocalFilePath)to).getFile();
+            URL from1 = ((FilePath.URLFilePath) from).getURL();
+            File to1 = ((FilePath.LocalFilePath) to).getFile();
             if (to1.isDirectory() || to.getPath().endsWith("/") || to.getPath().endsWith("\\")) {
                 to1 = new File(to1, URLUtils.getURLName(from1));
             }
             if (o.mkdir) {
                 FileUtils.createParents(to1);
             }
+            context.out().printf("[[\\[CP\\]]] %s -> %s%\n",from ,to);
             IOUtils.copy(from1, to1);
         } else {
-            throw new RuntimeIOException("Unsupported protocols " + from + "->" + to);
+            throw new RuntimeIOException("cp: Unsupported protocols " + from + "->" + to);
         }
     }
 
@@ -167,7 +169,7 @@ public class CpCommand extends AbstractNutsCommand {
 //            if (p != null) {
 //                session.mkdir(p, true);
 //            }
-            session.copyLocalToRemote(from.getPath(), to,mkdir);
+            session.copyLocalToRemote(from.getPath(), to, mkdir);
         }
     }
 

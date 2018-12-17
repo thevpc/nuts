@@ -1,8 +1,11 @@
 package net.vpc.app.nuts.toolbox.nsh.util;
 
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.ssh.SshListener;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 
 public class ShellHelper {
@@ -31,24 +34,49 @@ public class ShellHelper {
 
     public static class WsSshListener implements SshListener {
         PrintStream out;
+        NutsWorkspace ws;
+        NutsSession session;
 
-        public WsSshListener(NutsSession session) {
+        public WsSshListener(NutsWorkspace ws,NutsSession session) {
+            this.ws=ws;
+            this.session=session;
             out = session.getTerminal().getFormattedOut();
         }
 
         @Override
         public void onExec(String command) {
-            out.println("[[\\[SSH-EXEC\\]]] %s\n" + command);
+            out.printf("[[\\[SSH-EXEC\\]]] %s\n" ,command);
         }
 
         @Override
         public void onGet(String from, String to, boolean mkdir) {
-            out.println("[[\\[SSH-GET \\]]] %s -> %s%\n" + from + " " + to);
+            out.printf("[[\\[SSH-GET \\]]] %s -> %s%\n",from ,to);
         }
 
         @Override
         public void onPut(String from, String to, boolean mkdir) {
-            out.println("[[\\[SSH-PUT \\]]] %s -> %s%\n" + from + " " + to);
+            out.printf("[[\\[SSH-PUT \\]]] %s -> %s%\n",from ,to);
+        }
+
+        @Override
+        public InputStream monitorInputStream(InputStream stream, long length, String name) {
+            return ws.monitorInputStream(stream,length,name,session);
+        }
+    }
+
+    public static boolean readAccept(NutsTerminal t){
+        while(true){
+            String v = t.readLine("Accept (y/n) : ?");
+            if(v==null){
+                return false;
+            }
+            v=v.trim();
+            if("y".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v)){
+                return true;
+            }
+            if("n".equalsIgnoreCase(v) || "no".equalsIgnoreCase(v)){
+                return false;
+            }
         }
     }
 }

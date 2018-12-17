@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nsh</artifactId>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <name>net.vpc.app.nuts.toolbox.nsh</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -45,6 +45,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
+        <nuts-autocomplete-support>true</nuts-autocomplete-support>
     </properties>
 
     <distributionManagement>
@@ -63,27 +64,22 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>java-shell</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-commandline</artifactId>
-            <version>1.1.1</version>
+            <version>0.7.1</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.5.0</version>
+            <artifactId>nuts-cmd-app</artifactId>
+            <version>0.5.1.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>net.vpc.app.nuts</groupId>-->
-            <!--<artifactId>nuts-core</artifactId>-->
-            <!--<version>0.5.0.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-strings</artifactId>
             <version>1.2.15</version>
+        </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-utils</artifactId>
+            <version>1.22.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>
@@ -93,7 +89,7 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-io-compress</artifactId>
-            <version>1.3.6</version>
+            <version>1.3.7</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
@@ -120,7 +116,7 @@
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-ssh</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.1</version>
         </dependency>
     </dependencies>
     <build>

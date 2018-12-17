@@ -35,6 +35,7 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
@@ -54,17 +55,20 @@ public class WhoCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean argAll = false;
+        Argument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.readAllOnce("--all", "-a")) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (cmdLine.readAllOnce("--all", "-a")) {
                 argAll = true;
             } else {
-                cmdLine.unexpectedArgument();
+                cmdLine.unexpectedArgument(getName());
             }
         }
         if (!cmdLine.isExecMode()) {
             return -1;
         }
-        NutsWorkspace validWorkspace = context.getValidWorkspace();
+        NutsWorkspace validWorkspace = context.getWorkspace();
         String login = validWorkspace.getSecurityManager().getCurrentLogin();
         PrintStream out = context.getTerminal().getFormattedOut();
 

@@ -1,4 +1,4 @@
-displays or modifies workspace configuration.
+display or modifies workspace configuration.
 
 @@SYNOPSYS:@@
 ##config## {{workspace action verb}} {{arguments}} ...

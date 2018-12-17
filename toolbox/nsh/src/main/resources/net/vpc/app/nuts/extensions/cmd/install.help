@@ -1,4 +1,4 @@
-installs one or more **nuts** from remote repositories
+install one or more **nuts** from remote repositories
 
 @@SYNOPSYS:@@
 ##install## [nuts-id] ...

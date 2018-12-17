@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 
 import java.io.File;
@@ -42,10 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by vpc on 1/7/17.
@@ -71,14 +69,19 @@ public class LsCommand extends AbstractNutsCommand {
         List<File> folders = new ArrayList<>();
         List<File> files = new ArrayList<>();
         List<File> invalids = new ArrayList<>();
+        boolean noColors = false;
+        Argument a;
         while (cmdLine.hasNext()) {
-            if (cmdLine.readAll("-d")) {
-                options.d = true;
-            } else if (cmdLine.readAll("-l")) {
-                options.l = true;
+            if (context.configure(cmdLine)) {
+                //
+            }else if ((a = cmdLine.readBooleanOption("-d", "--dir")) != null) {
+                options.d = a.getBooleanValue();
+            } else if ((a = cmdLine.readBooleanOption("-l", "--list")) != null) {
+                options.l = a.getBooleanValue();
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getString();
-                File file = new File(context.getAbsolutePath(path));;
+                File file = new File(context.getShell().getAbsolutePath(path));
+                ;
                 if (file.isDirectory()) {
                     folders.add(file);
                 } else if (file.exists()) {
@@ -88,25 +91,30 @@ public class LsCommand extends AbstractNutsCommand {
                 }
             }
         }
-        boolean first = true;
-        PrintStream out = context.getTerminal().getFormattedOut();
-        for (File f : invalids) {
-            ls(f, options, context, context.getTerminal(), false);
-        }
-        for (File f : files) {
-            first = false;
-            ls(f, options, context, context.getTerminal(), false);
-        }
-        for (File f : folders) {
-            if (first) {
-                first = false;
-            } else {
-                out.println();
+        if (cmdLine.isExecMode()) {
+            int exitCode = 0;
+            boolean first = true;
+            PrintStream out = context.getTerminal().getFormattedOut();
+            for (File f : invalids) {
+                exitCode = 1;
+                ls(f, options, context, context.getTerminal(), false);
             }
-            ls(f, options, context, context.getTerminal(), folders.size() > 0 || files.size() > 0);
-        }
-        if (invalids.size() + files.size() + folders.size() == 0) {
-            ls(new File(context.getCwd()), options, context, context.getTerminal(), false);
+            for (File f : files) {
+                first = false;
+                ls(f, options, context, context.getTerminal(), false);
+            }
+            for (File f : folders) {
+                if (first) {
+                    first = false;
+                } else {
+                    out.println();
+                }
+                ls(f, options, context, context.getTerminal(), folders.size() > 0 || files.size() > 0);
+            }
+            if (invalids.size() + files.size() + folders.size() == 0) {
+                ls(new File(context.getShell().getCwd()), options, context, context.getTerminal(), false);
+            }
+            return exitCode;
         }
         return 0;
     }
@@ -120,7 +128,7 @@ public class LsCommand extends AbstractNutsCommand {
                 out.printf("%s:\n", path.getName());
             }
             File[] arr = path.listFiles();
-            if(arr!=null) {
+            if (arr != null) {
                 Arrays.sort(arr, FILE_SORTER);
                 for (File file1 : arr) {
                     ls0(file1, options, terminal);
@@ -159,23 +167,44 @@ public class LsCommand extends AbstractNutsCommand {
             out.print(" ");
             out.printf("%s", group);
             out.print(" ");
-            out.printf("%s", String.format("%8d", path.length()));
+            out.printf("%s", String.format("%9d", path.length()));
             out.print(" ");
             out.printf("%s", SIMPLE_DATE_FORMAT.format(path.lastModified()));
             out.print(" ");
-            if (path.isDirectory()) {
-                out.printf("==%s==\n", name);
-            } else {
-                out.printf("%s\n", name);
-            }
+            printPathName(path, name, out);
         } else {
-            if (path.isDirectory()) {
-                out.printf("==%s==\n", name);
+            printPathName(path, name, out);
+        }
+    }
+
+    private void printPathName(File path, String name, PrintStream out) {
+        if (path.isDirectory()) {
+            out.printf("==%s==\n", name);
+        } else {
+            String p = path.getName().toLowerCase();
+            if (p.startsWith(".") || p.endsWith(".log") || p.contains(".log.")) {
+                out.printf("<%s>\n", name);
             } else {
-                out.printf("%s\n", name);
+                int i = p.lastIndexOf('.');
+                if (i > -1) {
+                    String suffix = p.substring(i + 1);
+                    if (new HashSet<String>(Arrays.asList("xml", "config", "cfg", "json", "iml", "ipr")).contains(suffix)) {
+                        out.printf("##%s##\n", name);
+                    } else if (
+                            new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh")).contains(suffix)
+                                    || path.canExecute()
+                    ) {
+                        out.printf("[[%s]]\n", name);
+                    } else {
+                        out.printf("%s\n", name);
+                    }
+                } else {
+                    out.printf("%s\n", name);
+                }
             }
         }
     }
+
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private static class FileSorter implements Comparator<File> {

@@ -19,9 +19,9 @@ public interface ConfigSubCommand extends NutsComponent<Object> {
      * true if processed
      *
      * @param cmdLine
+     * @param config
      * @param autoSave
      * @param context
-     * @param config
      * @return
      */
     boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context);

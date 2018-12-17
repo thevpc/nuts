@@ -33,7 +33,7 @@ import net.vpc.app.nuts.NutsEffectiveUser;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
@@ -51,14 +51,14 @@ public class GroupNonOption extends DefaultNonOption {
     private NutsRepository repository;
     private NutsUserConfig securityEntityConfig;
 
-    public GroupNonOption(String name, NutsCommandContext context) {
+    public GroupNonOption(String name, NutsConsoleContext context) {
         super(name);
-        this.workspace = context.getValidWorkspace();
+        this.workspace = context.getWorkspace();
     }
 
-    public GroupNonOption(String name, NutsCommandContext context, NutsRepository repository) {
+    public GroupNonOption(String name, NutsConsoleContext context, NutsRepository repository) {
         super(name);
-        this.workspace = context.getValidWorkspace();
+        this.workspace = context.getWorkspace();
         this.repository = repository;
     }
 

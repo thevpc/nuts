@@ -1,195 +1,114 @@
-/**
- * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
- *
- * Copyright (C) 2016-2017 Taha BEN SALAH
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- * ====================================================================
- */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.*;
-import net.vpc.common.commandline.CommandAutoComplete;
-import net.vpc.common.io.FileUtils;
+import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.javashell.Env;
+import net.vpc.common.javashell.JavaShell;
 
-import java.io.File;
+import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
+    private NutsConsoleContext consoleContext;
+    private NutsCommand command;
+    private boolean noColors = false;
+    private boolean verbose = false;
 
-    private String serviceName;
-    private NutsWorkspace workspace;
-    private NutsConsole console;
-    private NutsSession session;
-    private Map<String, Object> userProperties = new HashMap<>();
-    private Properties env = new Properties();
-    private CommandAutoComplete autoComplete;
-
-    public DefaultNutsCommandContext() {
-    }
-
-    public DefaultNutsCommandContext(NutsWorkspace ws) {
-        setWorkspace(ws);
-        setSession(ws==null?null:ws.createSession());
-    }
-
-    public NutsCommandContext copy() {
-        DefaultNutsCommandContext c = new DefaultNutsCommandContext();
-        c.serviceName = serviceName;
-        c.workspace = workspace;
-        c.console = console;
-        c.session = session.copy();
-        c.env = new Properties();
-        c.env.putAll(env);
-        c.userProperties = new HashMap<>();
-        c.userProperties.putAll(userProperties);
-        return c;
+    public DefaultNutsCommandContext(NutsConsoleContext consoleContext, NutsCommand command) {
+        this.consoleContext = consoleContext;
+        this.command = command;
     }
 
     @Override
-    public Properties getEnv() {
-        return env;
+    public NutsJavaShell getShell() {
+        return (NutsJavaShell) consoleContext.getShell();
     }
 
     @Override
-    public NutsCommandContext setEnv(Properties env) {
-        this.env = new Properties();
-        if (env != null) {
-            this.env.putAll(env);
+    public NutsConsoleContext consoleContext() {
+        return consoleContext;
+    }
+
+    @Override
+    public boolean configure(CommandLine cmd) {
+        Argument a;
+        if ((a = cmd.readOption("--help")) != null) {
+            if (cmd.isExecMode()) {
+                showHelp();
+            }
+            cmd.skipAll();
+            return true;
+        } else if ((a = cmd.readBooleanOption("--no-colors")) != null) {
+            setNoColors(a.getBooleanValue());
+            return true;
+        } else if ((a = cmd.readBooleanOption("--verbose")) != null) {
+            this.setVerbose((a.getBooleanValue()));
+            return true;
+        } else if ((a = cmd.readBooleanOption("--version")) != null) {
+            if (cmd.isExecMode()) {
+                consoleContext.getTerminal().getFormattedOut().printf("%s\n", consoleContext.getShell().getVersion());
+            }
+            cmd.skipAll();
+            return true;
         }
-        return this;
+        return false;
     }
 
-    @Override
-    public Map<String, Object> getUserProperties() {
-        return userProperties;
+    private void showHelp() {
+        out().println(command.getHelp());
     }
 
-    @Override
-    public String getServiceName() {
-        return serviceName;
+    public PrintStream out() {
+        return consoleContext.getFormattedOut();
     }
 
-    @Override
-    public NutsCommandContext setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-        return this;
+    public PrintStream err() {
+        return consoleContext.getFormattedErr();
     }
 
-    @Override
-    public NutsSession getSession() {
-        return session;
+    public boolean isNoColors() {
+        return noColors;
     }
 
-    @Override
-    public NutsCommandContext setSession(NutsSession session) {
-        this.session = session;
-        return this;
+    public void setNoColors(boolean noColors) {
+        this.noColors = noColors;
     }
 
-    @Override
-    public NutsTerminal getTerminal() {
-        return session.getTerminal();
+    public boolean isVerbose() {
+        return verbose;
     }
 
-    @Override
-    public NutsConsole getConsole() {
-        return console;
-    }
-
-    @Override
-    public String[] expandPath(String path) {
-        return FileUtils.expandPath(path,new File(getCwd()));
-    }
-
-    @Override
-    public String getCwd() {
-        return console.getCwd();
-    }
-
-    @Override
-    public void setCwd(String path) {
-        console.setCwd(path);
-    }
-
-    @Override
-    public String getAbsolutePath(String path) {
-        return FileUtils.getAbsolutePath(new File(getCwd()), path);
-    }
-
-    @Override
-    public void setConsole(NutsConsole console) {
-        this.console = console;
-    }
-
-    @Override
-    public NutsWorkspace getValidWorkspace() {
-        if (workspace == null) {
-            throw new NutsIllegalArgumentException("No valid Workspace openWorkspace");
-        }
-        return workspace;
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return consoleContext.getWorkspace();
     }
 
     @Override
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.workspace = workspace;
+    public InputStream in() {
+        return consoleContext.getTerminal().getIn();
     }
 
     @Override
-    public CommandAutoComplete getAutoComplete() {
-        return autoComplete;
+    public NutsSession getSession() {
+        return consoleContext.getSession();
     }
 
     @Override
-    public void setAutoComplete(CommandAutoComplete autoComplete) {
-        this.autoComplete = autoComplete;
+    public NutsTerminal getTerminal() {
+        return consoleContext.getTerminal();
     }
 
-    @Override
-    public PrintStream getFormattedOut() {
-        return getTerminal().getFormattedOut();
-    }
 
     @Override
-    public PrintStream getFormattedErr() {
-        return getTerminal().getFormattedErr();
-    }
-    @Override
-    public PrintStream getOut() {
-        return getTerminal().getOut();
+    public Env env() {
+        return consoleContext.env();
     }
 
-    @Override
-    public PrintStream getErr() {
-        return getTerminal().getErr();
-    }
 }

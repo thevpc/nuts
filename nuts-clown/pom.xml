@@ -7,18 +7,18 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-clown</artifactId>
     <name>net.vpc.app.nuts.nuts-clown</name>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-servlet</artifactId>
-            <version>0.5.0.0</version>
+            <version>0.5.1.0</version>
         </dependency>
     </dependencies>
 

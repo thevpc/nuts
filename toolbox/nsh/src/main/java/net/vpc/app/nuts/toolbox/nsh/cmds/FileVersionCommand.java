@@ -71,8 +71,6 @@ public class FileVersionCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        PrintStream out = context.getFormattedOut();
-        PrintStream err = context.getFormattedErr();
         NutsWorkspace ws = context.getWorkspace();
         Set<String> unsupportedFileTypes = new HashSet<>();
         Map<String, Set<VersionDescriptor>> results = new HashMap<>();
@@ -110,12 +108,12 @@ public class FileVersionCommand extends AbstractNutsCommand {
                 error = true;
             } else {
                 if (maven || args[i].endsWith(".jar") || args[i].endsWith(".war") || args[i].endsWith(".ear")) {
-                    Set<VersionDescriptor> value = detectJarWarEarVersions(context.getAbsolutePath(args[i]), context, ws);
+                    Set<VersionDescriptor> value = detectJarWarEarVersions(context.getShell().getAbsolutePath(args[i]), context, ws);
                     if (!value.isEmpty()) {
                         results.put(args[i], value);
                     }
                 } else if (winPE || args[i].endsWith(".exe") || args[i].endsWith(".dll")) {
-                    Set<VersionDescriptor> value = detectExeVersions(context.getAbsolutePath(args[i]), context, ws);
+                    Set<VersionDescriptor> value = detectExeVersions(context.getShell().getAbsolutePath(args[i]), context, ws);
                     if (!value.isEmpty()) {
                         results.put(args[i], value);
                     }
@@ -131,13 +129,16 @@ public class FileVersionCommand extends AbstractNutsCommand {
             throw new IllegalArgumentException("Options conflict --table --long");
         }
 
+        PrintStream out = context.out();
+        PrintStream err = context.out();
+
         if (table) {
             PropertiesFormatter tt = new PropertiesFormatter().setSort(sort).setTable(true);
             Properties pp=new Properties();
             for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                 VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[entry.getValue().size()])[0];
                 if (nameFormat) {
-                    pp.setProperty(entry.getKey(), o.getId().getFullName());
+                    pp.setProperty(entry.getKey(), o.getId().getSimpleName());
                 } else if (idFormat) {
                     pp.setProperty(entry.getKey(), o.getId().toString());
                 } else if (longFormat) {
@@ -148,7 +149,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
             }
             if(error) {
                 for (String t : unsupportedFileTypes) {
-                    File f = new File(context.getAbsolutePath(t));
+                    File f = new File(context.getShell().getAbsolutePath(t));
                     if (f.isFile()) {
                         pp.setProperty(t, "<<ERROR>> Unsupported File type");
                     } else if (f.isDirectory()) {
@@ -172,7 +173,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
                 Set<VersionDescriptor> v = results.get(k);
                 for (VersionDescriptor descriptor : v) {
                     if (nameFormat) {
-                        out.printf("[[%s]]\n", descriptor.getId().getFullName());
+                        out.printf("[[%s]]\n", descriptor.getId().getSimpleName());
                     } else if (idFormat) {
                         out.printf("[[%s]]\n", descriptor.getId());
                     } else if (longFormat) {
@@ -192,7 +193,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
             if(error) {
                 if (!unsupportedFileTypes.isEmpty()) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(context.getAbsolutePath(t));
+                        File f = new File(context.getShell().getAbsolutePath(t));
                         if (f.isFile()) {
                             err.printf("%s : Unsupported File type\n", t);
                         } else if (f.isDirectory()) {
@@ -205,7 +206,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
             }
         }
         if (!unsupportedFileTypes.isEmpty()) {
-            throw new IllegalArgumentException("Unsupported File types " + unsupportedFileTypes);
+            throw new IllegalArgumentException("file-version: Unsupported File types " + unsupportedFileTypes);
         }
         return 0;
     }
@@ -303,7 +304,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
 
     private Set<VersionDescriptor> detectJarWarEarVersions(String filePath, NutsCommandContext context, NutsWorkspace ws) throws IOException {
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = FilePath.of(filePath).getInputStream()) {
+        try (InputStream is = FilePath.of(filePath,context.getShell().getCwd()).getInputStream()) {
             ZipUtils.visitZipStream(is, new PathFilter() {
                 @Override
                 public boolean accept(String path) {

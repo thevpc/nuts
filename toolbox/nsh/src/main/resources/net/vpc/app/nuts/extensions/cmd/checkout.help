@@ -1,4 +1,4 @@
-checks out a **nuts** to a local folder to be modified
+check out a **nuts** to a local folder to be modified
 
 @@SYNOPSYS:@@
 ##checkout## {{nuts-id}} folder-path

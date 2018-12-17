@@ -41,7 +41,6 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/toolbox/feenoo/pom.xml" />
-        <option value="$PROJECT_DIR$/toolbox/file-version/pom.xml" />
         <option value="$PROJECT_DIR$/toolbox/worky/pom.xml" />
       </set>
     </option>

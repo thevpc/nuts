@@ -1,0 +1,11 @@
+output the last part of files
+
+@@SYNOPSYS:@@
+##tail## [<OPTION>...] <SOURCE>... <DEST>
+
+output the last part of files
+
+@@EXAMPLES:@@
+
+
+

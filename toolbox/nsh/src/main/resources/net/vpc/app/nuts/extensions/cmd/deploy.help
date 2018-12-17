@@ -1,4 +1,4 @@
-deploys a **nuts**
+deploy a **nuts**
 
 @@SYNOPSYS:@@
 ##deploy## --file <FILE> [--desc <DESC-FILE>] [--to <REPOSITORY>] 

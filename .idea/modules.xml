@@ -32,6 +32,7 @@
       <module fileurl="file://$PROJECT_DIR$/toolbox/nsh/nsh.iml" filepath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts/nuts.iml" filepath="$PROJECT_DIR$/nuts/nuts.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-clown/nuts-clown.iml" filepath="$PROJECT_DIR$/nuts-clown/nuts-clown.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nuts-cmd-app/nuts-cmd-app.iml" filepath="$PROJECT_DIR$/nuts-cmd-app/nuts-cmd-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-core/nuts-core.iml" filepath="$PROJECT_DIR$/nuts-core/nuts-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-root.iml" filepath="$PROJECT_DIR$/nuts-root.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" filepath="$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" />

@@ -5,7 +5,7 @@
 /_/ |_/\\__,_/\\__/____/  `` version ${nuts.workspace-runtime.version}##
 
 
- is a new Open Source Package Manager to help install packages
+ Is a new Open Source Package Manager to help install packages
  and libraries for runtime execution. Nuts is the ultimate companion for
  maven (and other build managers) as it helps installing all package
  dependencies at runtime. Nuts is not tied to java and is a good choice

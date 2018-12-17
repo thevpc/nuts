@@ -1,4 +1,4 @@
-commits (re-deploys) an already checked out folder
+commit (re-deploys) an already checked out folder
 
 @@SYNOPSYS:@@
 ##commit## <folder>

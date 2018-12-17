@@ -31,7 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.options;
 
 import net.vpc.app.nuts.NutsRepositoryDefinition;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;
@@ -48,9 +48,9 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
 
     private NutsWorkspace workspace;
 
-    public RepositoryTypeNonOption(String name, NutsCommandContext context) {
+    public RepositoryTypeNonOption(String name, NutsConsoleContext context) {
         super(name);
-        this.workspace = context.getValidWorkspace();
+        this.workspace = context.getWorkspace();
     }
 
     @Override

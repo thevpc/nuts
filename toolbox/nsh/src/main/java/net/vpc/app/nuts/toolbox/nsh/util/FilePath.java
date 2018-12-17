@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.toolbox.nsh.util;
 
+import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.RuntimeIOException;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.ssh.*;
@@ -39,6 +40,18 @@ public abstract class FilePath {
             return new URLFilePath(path);
         } else {
             return new LocalFilePath(path);
+        }
+    }
+
+    public static FilePath of(String path,String pwd) {
+        if (path.startsWith("ssh://")) {
+            return new SshFilePath(path);
+        } else if (path.startsWith("file:")) {
+            return new LocalFilePath(path);
+        } else if (path.contains("://")) {
+            return new URLFilePath(path);
+        } else {
+            return new LocalFilePath(FileUtils.getAbsolutePath(new File(pwd),path));
         }
     }
 
@@ -231,15 +244,15 @@ public abstract class FilePath {
 
         @Override
         public OutputStream getOutputStream() throws IOException {
-            throw new IOException("Unsupported protocol " + getProtocol());
+            throw new IOException("write-file: Unsupported protocol " + getProtocol());
         }
 
         public void rm(boolean recurse) throws IOException {
-            throw new IOException("Unsupported protocol " + getProtocol());
+            throw new IOException("rm: Unsupported protocol " + getProtocol());
         }
 
         public void mkdir(boolean parents) {
-            throw new RuntimeIOException("Unsupported protocols " + getProtocol());
+            throw new RuntimeIOException("mkdir: Unsupported protocols " + getProtocol());
         }
 
         public String getProtocol() {

@@ -31,7 +31,9 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.commandline.format.PropertiesFormatter;
 
@@ -75,19 +77,18 @@ public class PropsCommand extends AbstractNutsCommand {
         Map<String, String> updates = new HashMap<>();
         SourceType sourceType = SourceType.FILE;
         TargetType targetType = TargetType.FILE;
-        public String comments;
+        String comments;
+        boolean noColors;
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        cmdLine.requireNonEmpty();
         Options o = new Options();
-        while (cmdLine.hasNext()) {
-            if (cmdLine.readAllOnce("--version", "-v")) {
-                break;
-            } else if (cmdLine.readAllOnce("--help", "-h")) {
-                break;
-            } else if (cmdLine.readAllOnce("get")) {
+        Argument a;
+        do {
+            if (context.configure(cmdLine)) {
+                //
+            }else  if (cmdLine.readAllOnce("get")) {
                 o.property = cmdLine.read().getExpression();
                 o.action = "get";
                 while (cmdLine.hasNext()) {
@@ -111,7 +112,7 @@ public class PropsCommand extends AbstractNutsCommand {
                         o.sourceType = SourceType.FILE;
                         o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
                     } else {
-                        cmdLine.unexpectedArgument();
+                        cmdLine.unexpectedArgument(getName());
                     }
 
                 }
@@ -172,18 +173,18 @@ public class PropsCommand extends AbstractNutsCommand {
                         o.sourceType = SourceType.FILE;
                         o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
                     } else {
-                        cmdLine.unexpectedArgument();
+                        cmdLine.unexpectedArgument(getName());
                     }
                 }
             } else if (cmdLine.readAllOnce("list")) {
                 o.action = "list";
                 while (cmdLine.hasNext()) {
-                    cmdLine.unexpectedArgument();
+                    cmdLine.unexpectedArgument(getName());
                 }
             } else {
-                cmdLine.unexpectedArgument();
+                cmdLine.unexpectedArgument(getName());
             }
-        }
+        } while (cmdLine.hasNext());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
             throw new IllegalArgumentException("Should not use file with --system flag");
         }
@@ -200,7 +201,7 @@ public class PropsCommand extends AbstractNutsCommand {
             case "set": {
                 switch (o.sourceType) {
                     case FILE: {
-                        Properties p = readProperties(o);
+                        Properties p = readProperties(o,context);
                         if (o.targetType == TargetType.FILE) {
                             try (FileWriter os = new FileWriter(
                                     o.targetFile == null ? o.targetFile : o.sourceFile
@@ -220,25 +221,24 @@ public class PropsCommand extends AbstractNutsCommand {
                 return action_list(context, o);
             }
             default: {
-                throw new IllegalArgumentException("Unsupported action " + o.action);
+                throw new IllegalArgumentException("props: Unsupported action " + o.action);
             }
         }
     }
 
     private int action_list(NutsCommandContext context, Options o) throws IOException {
-        Properties p = getProperties(o);
-        PrintStream out = context.getFormattedOut();
-        PropertiesFormatter f=new PropertiesFormatter()
+        Properties p = getProperties(o,context);
+        PrintStream out = context.out();
+        PropertiesFormatter f = new PropertiesFormatter()
                 .setSort(o.sort)
-                .setTable(true)
-                ;
-        f.format(p,out);
+                .setTable(true);
+        f.format(p, out);
         return 0;
     }
 
     private int action_get(NutsCommandContext context, Options o) throws IOException {
-        Properties p = getProperties(o);
-        PrintStream out = context.getFormattedOut();
+        Properties p = getProperties(o,context);
+        PrintStream out = context.out();
         String v = p.getProperty(o.property);
         if (v != null) {
             out.println(v);
@@ -248,11 +248,11 @@ public class PropsCommand extends AbstractNutsCommand {
         return 1;
     }
 
-    private Properties getProperties(Options o) throws IOException {
+    private Properties getProperties(Options o,NutsCommandContext context) throws IOException {
         Properties p = new Properties();
         switch (o.sourceType) {
             case FILE: {
-                p = readProperties(o);
+                p = readProperties(o,context);
                 break;
             }
             case SYSTEM: {
@@ -264,12 +264,11 @@ public class PropsCommand extends AbstractNutsCommand {
     }
 
 
-
     private Format detectFileFormat(String file) {
         if (
                 file.toLowerCase().endsWith(".props")
                         || file.toLowerCase().endsWith(".properties")
-                ) {
+        ) {
             return Format.PROPS;
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
@@ -277,10 +276,10 @@ public class PropsCommand extends AbstractNutsCommand {
         throw new IllegalArgumentException("Unknown file format " + file);
     }
 
-    private Properties readProperties(Options o) throws IOException {
+    private Properties readProperties(Options o,NutsCommandContext context) throws IOException {
         Properties p = new Properties();
         String sourceFile = o.sourceFile;
-        FilePath filePath = FilePath.of(sourceFile);
+        FilePath filePath = FilePath.of(sourceFile,context.getShell().getCwd());
         try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
@@ -301,7 +300,7 @@ public class PropsCommand extends AbstractNutsCommand {
         return p;
     }
 
-    private void storeProperties(Properties p, Options o, NutsCommandContext context) throws IOException {
+    private void storeProperties(Properties p, Options o, NutsConsoleContext context) throws IOException {
         String targetFile = o.targetFile;
         boolean console = false;
         switch (o.targetType) {
@@ -320,30 +319,29 @@ public class PropsCommand extends AbstractNutsCommand {
             Format format = o.targetFormat;
             switch (format) {
                 case AUTO: {
-                    PropertiesFormatter f=new PropertiesFormatter()
+                    PropertiesFormatter f = new PropertiesFormatter()
                             .setSort(o.sort)
-                            .setTable(true)
-                            ;
-                    f.format(p,context.getFormattedOut());
+                            .setTable(true);
+                    f.format(p, context.getFormattedOut());
                     break;
                 }
                 case PROPS: {
-                    if(o.sort){
-                        p=new SortedProperties(p);
+                    if (o.sort) {
+                        p = new SortedProperties(p);
                     }
-                    p.store(context.getOut(), o.comments);
+                    p.store(context.out(), o.comments);
                     break;
                 }
                 case XML: {
-                    if(o.sort){
-                        p=new SortedProperties(p);
+                    if (o.sort) {
+                        p = new SortedProperties(p);
                     }
-                    p.storeToXML(context.getOut(), o.comments);
+                    p.storeToXML(context.out(), o.comments);
                     break;
                 }
             }
         } else {
-            FilePath filePath=FilePath.of(targetFile);
+            FilePath filePath = FilePath.of(targetFile,context.getShell().getCwd());
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {
@@ -351,15 +349,15 @@ public class PropsCommand extends AbstractNutsCommand {
                 }
                 switch (format) {
                     case PROPS: {
-                        if(o.sort){
-                            p=new SortedProperties(p);
+                        if (o.sort) {
+                            p = new SortedProperties(p);
                         }
                         p.store(os, o.comments);
                         break;
                     }
                     case XML: {
-                        if(o.sort){
-                            p=new SortedProperties(p);
+                        if (o.sort) {
+                            p = new SortedProperties(p);
                         }
                         p.storeToXML(os, o.comments);
                         break;

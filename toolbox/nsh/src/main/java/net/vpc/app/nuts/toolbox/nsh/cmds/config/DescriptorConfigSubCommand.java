@@ -87,7 +87,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.setId(context.getValidWorkspace().parseNutsId(value));
+                        desc.setId(context.getWorkspace().parseNutsId(value));
                     }
                 });
 
@@ -200,7 +200,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 save = cmdLine.readRequiredNonOption(new ValueNonOption("save",  "true", "false")).getBoolean();
             } else {
                 if (!cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException("Unsupported");
+                    throw new NutsIllegalArgumentException("config new|update descriptor: Unsupported option "+cmdLine.get());
                 }
             }
         }
@@ -212,7 +212,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     desc.set(ws.parseDescriptor(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
-                        throw new NutsIllegalArgumentException("-file missing");
+                        throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");
                     }
                 }
             }
@@ -225,7 +225,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                     desc.build().write(new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
-                        throw new NutsIllegalArgumentException("-file missing");
+                        throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");
                     }
                 }
             } else {

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>ndesc-ed</artifactId>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <name>net.vpc.app.nuts.toolbox.nde</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -45,6 +45,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
+        <nuts-autocomplete-support>true</nuts-autocomplete-support>
     </properties>
 
     <distributionManagement>
@@ -62,8 +63,8 @@
     <dependencies>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.5.0</version>
+            <artifactId>nuts-cmd-app</artifactId>
+            <version>0.5.1.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

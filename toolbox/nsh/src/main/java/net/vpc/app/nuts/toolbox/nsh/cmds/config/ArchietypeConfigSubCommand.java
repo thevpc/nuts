@@ -22,7 +22,7 @@ public class ArchietypeConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.readAll("list archetypes", "la")) {
             PrintStream out = context.getTerminal().getFormattedOut();
             if (cmdLine.isExecMode()) {
-                for (String archetype : context.getValidWorkspace().getRepositoryManager().getAvailableArchetypes()) {
+                for (String archetype : context.getWorkspace().getRepositoryManager().getAvailableArchetypes()) {
                     out.printf("%s\n", archetype);
                 }
             }

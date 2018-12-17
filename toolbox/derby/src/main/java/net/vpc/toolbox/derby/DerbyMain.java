@@ -6,6 +6,10 @@
 package net.vpc.toolbox.derby;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,19 +20,18 @@ import java.util.List;
  *
  * @author vpc
  */
-public class DerbyMain extends NutsApplication{
+public class DerbyMain extends NutsApplication {
 
     private File derbyBinHome = new File(".");
     private String derbyVersion = null;
     private String derbyDataHome = null;
     private Command cmd = Command.start;
-    private NutsSession session;
     private String host = null;
     private int port = -1;
     private SSLMode sslmode = null;
     private String extraArg = null;
     private boolean verbose = false;
-    private NutsWorkspace ws;
+    private NutsApplicationContext appContact;
 
     public enum SSLMode {
         off, basic, peerAuthentication
@@ -43,137 +46,76 @@ public class DerbyMain extends NutsApplication{
     }
 
     @Override
-    public int launch(String[] args, NutsWorkspace ws) {
-        this.ws = ws;
-        session = ws.createSession();
-        parseArgs(ws.getBootOptions().getApplicationArguments());
+    public int launch(NutsApplicationContext appContext) {
+        String[] args=appContext.getArgs();
+        this.appContact = appContext;
+        parseArgs(appContext.getWorkspace().getBootOptions().getApplicationArguments());
         return main();
     }
 
-    public NutsId resolveNutsId(){
-        if (ws == null) {
-            ws = Nuts.openWorkspace();
-        }
-        NutsId r = ws.resolveNutsIdForClass(getClass());
-        if (r == null) {
-            r = ws.parseId("net.vpc.app.nuts.toolbox:derby#1.2");
-        }
-        return r;
-    }
-
     public void parseArgs(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            switch (arg) {
-                case "--derby-version":
-                case "-dv": {
-                    i++;
-                    derbyVersion = args[i];
-                    break;
-                }
-                case "--db":
-                case "-db": {
-                    i++;
-                    derbyDataHome = args[i];
-                    break;
-                }
-                case "--version":
-                case "-v": {
-                    System.out.println(resolveNutsId());
-                    break;
-                }
-                case "--verbose": {
-                    verbose = true;
-                    break;
-                }
-                case "start": {
-                    cmd = Command.start;
-                    break;
-                }
-                case "sys":
-                case "sysinfo": {
-                    cmd = Command.sysinfo;
-                    break;
-                }
-                case "ping": {
-                    cmd = Command.sysinfo;
-                    break;
-                }
-                case "rt":
-                case "runtimeinfo": {
-                    cmd = Command.runtimeinfo;
-                    break;
-                }
-                case "trace": {
-                    cmd = Command.trace;
-                    i++;
-                    extraArg = args[i];
-                    break;
-                }
-                case "tracedirectory": {
-                    cmd = Command.trace;
-                    i++;
-                    extraArg = args[i];
-                    break;
-                }
-                case "maxthreads": {
-                    cmd = Command.maxthreads;
-                    i++;
-                    extraArg = args[i];
-                    break;
-                }
-                case "timeslice": {
-                    cmd = Command.timeslice;
-                    i++;
-                    extraArg = args[i];
-                    break;
-                }
-                case "logconnections": {
-                    cmd = Command.logconnections;
-                    i++;
-                    extraArg = args[i];
-                    break;
-                }
-                case "stop":
-                case "shutdown": {
-                    cmd = Command.shutdown;
-                    break;
-                }
-                case "-h":
-                case "-host": {
-                    i++;
-                    host = args[i];
-                    break;
-                }
-                case "-p":
-                case "-port": {
-                    i++;
-                    port = Integer.parseInt(args[i]);
-                    break;
-                }
-                case "-ssl": {
-                    i++;
-                    sslmode = sslmode.valueOf(args[i]);
-                    break;
-                }
-                case "--help":
-                case "-?": {
-                    System.out.println(resolveNutsId() + " [--db <DB_HOME]> [--version <DB_VERSION>] [start|stop|sysinfo]");
-                    System.out.println("\t default DB_HOME    : ~/.netbeans-derby");
-                    System.out.println("\t default DB_VERSION : LATEST");
-                    System.out.println("\t See NetworkServerControl command for full commands");
-                    break;
-                }
+        CommandLine cmdLine = new CommandLine(args);
+        Argument a;
+        boolean noColors = false;
+        while (cmdLine.hasNext()) {
+            if ((a = cmdLine.readBooleanOption("--no-colors")) != null) {
+                noColors = a.getBooleanValue();
+            } else if ((a = cmdLine.readOption("--version")) != null) {
+                appContact.getSession().getTerminal().getFormattedOut().printf("%s\n", appContact.getWorkspace().resolveNutsIdForClass(getClass()).getVersion());
+                return;
+            } else if ((a = cmdLine.readOption("--help")) != null) {
+                appContact.getSession().getTerminal().getFormattedOut().printf(appContact.getWorkspace().resolveDefaultHelpForClass(getClass()));
+                return;
+            } else if ((a = cmdLine.readStringOption("-dv","--derby-version")) != null) {
+                derbyVersion = a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("-db","--db")) != null) {
+                derbyDataHome = a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("-h","--host")) != null) {
+                host = a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("-p","--port")) != null) {
+                port = a.getIntValue();
+            } else if ((a = cmdLine.readStringOption("-ssl","--ssl")) != null) {
+                sslmode = SSLMode.valueOf(a.getStringValue());
+            } else if ((a = cmdLine.readBooleanOption("--verbose")) != null) {
+                verbose = a.getBooleanValue();
+            } else if ((a = cmdLine.readNonOption("start")) != null) {
+                cmd = Command.start;
+            } else if ((a = cmdLine.readNonOption("sys","sysinfo")) != null) {
+                cmd = Command.sysinfo;
+            } else if ((a = cmdLine.readNonOption("ping")) != null) {
+                cmd = Command.ping;
+            } else if ((a = cmdLine.readNonOption("rt","runtime")) != null) {
+                cmd = Command.runtimeinfo;
+            } else if ((a = cmdLine.readStringOption("trace")) != null) {
+                cmd = Command.trace;
+                extraArg=a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("trace-directory")) != null) {
+                cmd = Command.trace;
+                extraArg=a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("max-threads")) != null) {
+                cmd = Command.maxthreads;
+                extraArg=a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("time-slice")) != null) {
+                cmd = Command.timeslice;
+                extraArg=a.getStringValue();
+            } else if ((a = cmdLine.readStringOption("log-connections")) != null) {
+                cmd = Command.logconnections;
+                extraArg=a.getStringValue();
+            } else if ((a = cmdLine.readNonOption("stop","shutdown")) != null) {
+                cmd = Command.shutdown;
+            }else{
+                cmdLine.unexpectedArgument("derby");
             }
         }
     }
 
     public int main() {
+        NutsWorkspace ws = appContact.getWorkspace();
         derbyBinHome = new File(ws.getStoreRoot(resolveNutsId(), RootFolderType.PROGRAMS), "lib");
         String v = derbyVersion;
         String h = derbyDataHome;
         if (v == null) {
-            NutsId best = ws.findOne(new NutsSearch().addId("org.apache.derby:derbynet").setLastestVersions(true), null);
+            NutsId best = ws.findOne(ws.createSearchBuilder().addId("org.apache.derby:derbynet").setLatestVersions(true).build(), null);
             v = best.getVersion().toString();
         }
         if (h == null) {
@@ -237,19 +179,24 @@ public class DerbyMain extends NutsApplication{
     }
 
     private File download(String id) {
-        final NutsId iid = ws.parseNutsId(id);
+        final NutsId iid = appContact.getWorkspace().parseNutsId(id);
         File downloadBaseFolder = new File(derbyBinHome, iid.getVersion().getValue());
         File targetFile = new File(downloadBaseFolder, iid.getName() + ".jar");
         if (!targetFile.exists()) {
-            ws.copyTo(id, targetFile.getPath(), null);
+            appContact.getWorkspace().copyTo(id, targetFile.getPath(), null);
             if (verbose) {
-                session.getTerminal().getOut().println("downloading " + id + " to " + targetFile);
+                appContact.getSession().getTerminal().getOut().println("downloading " + id + " to " + targetFile);
             }
         } else {
             if (verbose) {
-                session.getTerminal().getOut().println("using " + id + " form " + targetFile);
+                appContact.getSession().getTerminal().getOut().println("using " + id + " form " + targetFile);
             }
         }
         return targetFile;
     }
+
+    public NutsId resolveNutsId(){
+        return appContact.getAppId();
+    }
+
 }

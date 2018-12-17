@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 
 /**
  * Created by vpc on 1/7/17.
@@ -43,11 +44,19 @@ public class LogoutCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args,context);
-        cmdLine.unexpectedArgument();
+        Argument a;
+        boolean noColors=false;
+        while(cmdLine.hasNext()) {
+            if (context.configure(cmdLine)) {
+                //
+            }else  {
+                cmdLine.unexpectedArgument(getName());
+            }
+        }
         if (!cmdLine.isExecMode()) {
             return -1;
         }
-        context.getValidWorkspace().getSecurityManager().logout();
+        context.getWorkspace().getSecurityManager().logout();
         return 0;
     }
 }

@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
+import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.commandline.FileNonOption;
 
@@ -63,9 +64,13 @@ public class GrepCommand extends AbstractNutsCommand {
         Options options = new Options();
         List<File> files = new ArrayList<>();
         String expression = null;
-        PrintStream out = context.getTerminal().getOut();
+        PrintStream out = context.out();
+        Argument a;
+        boolean noColors=false;
         while (cmdLine.hasNext()) {
-            if (cmdLine.readAll("-")) {
+            if (context.configure(cmdLine)) {
+                //
+            }else if (cmdLine.readAll("-")) {
                 files.add(null);
             } else if (cmdLine.readAll("-e", "--regexp")) {
                 options.regexp = true;
@@ -90,7 +95,7 @@ public class GrepCommand extends AbstractNutsCommand {
                     expression = cmdLine.readRequiredNonOption(new DefaultNonOption("expression")).getString();
                 } else {
                     String path = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
-                    File file = new File(context.getAbsolutePath(path));
+                    File file = new File(context.getShell().getAbsolutePath(path));
                     files.add(file);
                 }
             }
@@ -101,7 +106,7 @@ public class GrepCommand extends AbstractNutsCommand {
         if (expression == null) {
             throw new IllegalArgumentException("Missing Expression");
         }
-        String baseExpr = options.regexp ? context.getValidWorkspace().createRegex(expression,false) : expression;
+        String baseExpr = options.regexp ? context.getWorkspace().createRegex(expression, false) : expression;
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
         }
@@ -113,41 +118,41 @@ public class GrepCommand extends AbstractNutsCommand {
         }
         Pattern p = Pattern.compile(baseExpr);
         //text mode
-        boolean prefixFileName=files.size()>1;
+        boolean prefixFileName = files.size() > 1;
         for (File f : files) {
-            grepFile(f, p, options, context,prefixFileName);
+            grepFile(f, p, options, context, prefixFileName);
         }
         return 0;
     }
 
-    protected void grepFile(File f, Pattern p, Options options, NutsCommandContext context,boolean prefixFileName) throws IOException {
+    protected void grepFile(File f, Pattern p, Options options, NutsCommandContext context, boolean prefixFileName) throws IOException {
 
         Reader reader = null;
         try {
-            String fileName=null;
+            String fileName = null;
             if (f == null) {
                 reader = new InputStreamReader(context.getTerminal().getIn());
             } else if (f.isDirectory()) {
                 File[] files = f.listFiles();
                 if (files != null) {
                     for (File ff : files) {
-                        grepFile(ff, p, options, context,true);
+                        grepFile(ff, p, options, context, true);
                     }
                 }
                 return;
             } else {
-                fileName=f.getPath();
+                fileName = f.getPath();
                 reader = new FileReader(f);
             }
             try (BufferedReader r = new BufferedReader(reader)) {
                 String line = null;
                 int nn = 1;
-                PrintStream out = context.getTerminal().getOut();
+                PrintStream out = context.out();
                 while ((line = r.readLine()) != null) {
                     boolean matches = p.matcher(line).matches();
                     if (matches != options.invertMatch) {
                         if (options.n) {
-                            if(fileName!=null && prefixFileName){
+                            if (fileName != null && prefixFileName) {
                                 out.print(fileName);
                                 out.print(":");
                             }

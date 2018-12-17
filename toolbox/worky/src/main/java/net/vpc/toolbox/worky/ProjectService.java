@@ -1,6 +1,7 @@
 package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.mvn.Pom;
@@ -14,18 +15,18 @@ import java.util.List;
 
 public class ProjectService {
     private ProjectConfig config;
-    private NutsWorkspace ws;
+    private NutsApplicationContext appContext;
     private RepositoryAddress defaultRepositoryAddress;
 
-    public ProjectService(NutsWorkspace ws, RepositoryAddress defaultRepositoryAddress, File file) throws IOException {
-        this.ws = ws;
-        this.defaultRepositoryAddress = defaultRepositoryAddress==null?new RepositoryAddress() : defaultRepositoryAddress;
-        config = ws.getJsonIO().read(file, ProjectConfig.class);
+    public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, File file) throws IOException {
+        this.appContext = appContext;
+        this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
+        config = appContext.getWorkspace().getJsonIO().read(file, ProjectConfig.class);
     }
 
-    public ProjectService(NutsWorkspace ws, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
+    public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
-        this.ws = ws;
+        this.appContext = appContext;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
     }
 
@@ -43,20 +44,20 @@ public class ProjectService {
     }
 
     public File getConfigFile() {
-        File storeRoot = new File(ws.getStoreRoot("net.vpc.app.nuts.toolbox:worky#CURRENT", RootFolderType.CONFIG), "projects");
+        File storeRoot = new File(appContext.getConfigFolder(), "projects");
         return new File(storeRoot, config.getId() + ".config");
     }
 
     public void save() throws IOException {
         File configFile = getConfigFile();
         FileUtils.createParents(configFile);
-        ws.getJsonIO().write(config, configFile, true);
+        appContext.getWorkspace().getJsonIO().write(config, configFile, true);
     }
 
     public boolean load() {
         File configFile = getConfigFile();
         if (configFile.isFile()) {
-            ProjectConfig u = ws.getJsonIO().read(configFile, ProjectConfig.class);
+            ProjectConfig u = appContext.getWorkspace().getJsonIO().read(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -164,10 +165,10 @@ public class ProjectService {
                                 new NutsBootOptions().setHome(a.getNutsHome())
                         );
                         NutsSession s = ws2.createSession();
-                        List<NutsId> found = ws2.find(new NutsSearch()
+                        List<NutsId> found = ws2.find(ws2.createSearchBuilder()
                                         .setIds(g.getGroupId() + ":" + g.getArtifactId())
                                         .setRepositoryFilter(nutsRepository)
-                                        .setLastestVersions(true)
+                                        .setLatestVersions(true).build()
                                 , s);
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();

@@ -29,53 +29,51 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.Prototype;
-import net.vpc.common.javashell.HistoryElement;
+import net.vpc.common.commandline.ArgumentCandidate;
+import net.vpc.common.commandline.CommandAutoComplete;
+import net.vpc.common.javashell.AutoCompleteCandidate;
+import net.vpc.common.javashell.ConsoleContext;
+import net.vpc.common.javashell.JavaShell;
 
+import java.io.PrintStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * Created by vpc on 1/24/17.
+ * Created by vpc on 1/13/17.
  */
-@Prototype
-public interface NutsConsole extends NutsComponent<Object> {
+public interface NutsConsoleContext extends ConsoleContext {
 
-    void init(NutsWorkspace workspace, NutsSession session);
+    String getServiceName();
 
-    void setServiceName(String serviceName);
+    NutsConsoleContext setServiceName(String serviceName);
+
+    NutsSession getSession();
+
+    NutsConsoleContext setSession(NutsSession session);
+
+    NutsTerminal getTerminal();
+
+    NutsWorkspace getWorkspace();
 
     void setWorkspace(NutsWorkspace workspace);
 
-    int runFile(String file, String[] args);
+    CommandAutoComplete getAutoComplete();
 
-    int runLine(String line);
+    void setAutoComplete(CommandAutoComplete value);
 
-    int runCommand(String[] args);
+    NutsConsoleContext copy();
 
-    int run(String[] args);
+    PrintStream getFormattedOut();
 
-    List<HistoryElement> getHistory(int maxElements);
+    PrintStream getFormattedErr();
 
-    int getLastResult();
+    PrintStream getFormattedOut(boolean forceNoColors);
 
-    NutsCommand[] getCommands();
+    PrintStream getFormattedErr(boolean forceNoColors);
 
-    NutsCommand getCommand(String command);
-
-    NutsCommand findCommand(String command);
-
-    boolean installCommand(NutsCommand command);
-
-    boolean uninstallCommand(String command);
-
-    String getCwd();
-
-    void setCwd(String path);
-
-    Throwable getLastThrowable();
-
-    String getLastErrorMessage();
 }

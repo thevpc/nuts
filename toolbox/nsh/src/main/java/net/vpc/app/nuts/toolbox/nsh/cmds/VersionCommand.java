@@ -30,21 +30,13 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.Nsh;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.common.io.URLUtils;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.mvn.PomIdResolver;
-import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -61,12 +53,20 @@ public class VersionCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getWorkspace();
         boolean fancy = false;
         boolean min = false;
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-f") || args[i].equals("--fancy")) {
-                fancy = true;
-            } else if (args[i].equals("-m") || args[i].equals("--min")) {
+        CommandLine cmdLine=new CommandLine(args);
+        Argument a;
+        boolean noColors=false;
+        while(cmdLine.hasNext()){
+            if (context.configure(cmdLine)) {
+                //
+            }else if ((a = cmdLine.readBooleanOption("-f","--fancy")) != null) {
+                fancy = a.getBooleanValue();
+            }else if ((a = cmdLine.readBooleanOption("-m","--min")) != null) {
                 min = true;
+            }else{
+                cmdLine.unexpectedArgument(getName());
             }
+
         }
         Properties extra = new Properties();
         extra.put("nsh-version",PomIdResolver.resolvePomId(getClass()).toString());

@@ -32,6 +32,7 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
         }
         NutsWorkspace ws = context.getWorkspace();
         PrintStream out = context.getTerminal().getFormattedOut();
+        NutsWorkspaceConfigManager conf = ws.getConfigManager();
         if (cmdLine.readAll("add java")) {
             if (cmdLine.readAll("--search")) {
                 List<String> extraLocations = new ArrayList<>();
@@ -39,34 +40,34 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
                     extraLocations.add(cmdLine.read().getExpression());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NutsSdkLocation loc : ws.getConfigManager().searchJdkLocations(out)) {
-                        ws.getConfigManager().addSdk("java", loc);
+                    for (NutsSdkLocation loc : conf.searchJdkLocations(out)) {
+                        conf.addSdk("java", loc);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : ws.getConfigManager().searchJdkLocations(extraLocation, out)) {
-                            ws.getConfigManager().addSdk("java", loc);
+                        for (NutsSdkLocation loc : conf.searchJdkLocations(extraLocation, out)) {
+                            conf.addSdk("java", loc);
                         }
                     }
                 }
-                cmdLine.unexpectedArgument();
+                cmdLine.unexpectedArgument("config java");
                 if (autoSave) {
-                    ws.getConfigManager().save();
+                    conf.save();
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = ws.getConfigManager().resolveJdkLocation(cmdLine.read().getExpression());
+                    NutsSdkLocation loc = conf.resolveJdkLocation(cmdLine.read().getExpression());
                     if (loc != null) {
-                        ws.getConfigManager().addSdk("java", loc);
+                        conf.addSdk("java", loc);
                     }
                 }
                 if (autoSave) {
-                    ws.getConfigManager().save();
+                    conf.save();
                 }
             }
             return true;
         } else if (cmdLine.readAll("remove java")) {
-            NutsWorkspaceConfigManager cm = ws.getConfigManager();
+            NutsWorkspaceConfigManager cm = conf;
             while (cmdLine.hasNext()) {
                 String name = cmdLine.read().getExpression();
                 NutsSdkLocation loc = cm.findSdkByName("java", name);
@@ -81,7 +82,7 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
                 }
             }
             if (autoSave) {
-                ws.getConfigManager().save();
+                conf.save();
             }
             return true;
         } else if (cmdLine.readAll("list java")) {
@@ -92,12 +93,12 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
                     .addHeaderCells("==Name==", "==Version==", "==Path==");
             while (cmdLine.hasNext()) {
                 if (!t.configure(cmdLine)) {
-                    cmdLine.unexpectedArgument();
+                    cmdLine.unexpectedArgument("config list java");
                 }
             }
             if (cmdLine.isExecMode()) {
 
-                NutsSdkLocation[] sdks = ws.getConfigManager().getSdks("java");
+                NutsSdkLocation[] sdks = conf.getSdks("java");
                 Arrays.sort(sdks, new Comparator<NutsSdkLocation>() {
                     @Override
                     public int compare(NutsSdkLocation o1, NutsSdkLocation o2) {

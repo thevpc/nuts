@@ -1,0 +1,13 @@
+output the first part of files
+
+@@SYNOPSYS:@@
+##head## [<OPTION>...] <FILE> ...
+
+output the first part of files
+
+@@EXAMPLES:@@
+
+##head## -100 out.txt
+   print first 100 lnes
+
+

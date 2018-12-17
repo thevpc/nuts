@@ -1,4 +1,4 @@
-updates a **nuts** or updates the workspace
+update a **nuts** or update the workspace
 
 @@SYNOPSYS:@@
 ##update## [ --force ] id1 ...
