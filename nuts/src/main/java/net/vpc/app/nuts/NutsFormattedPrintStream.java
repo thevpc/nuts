@@ -4,5 +4,5 @@ package net.vpc.app.nuts;
 import java.io.PrintStream;
 
 public interface NutsFormattedPrintStream extends NutsComponent<Object> {
-    PrintStream printf(String format, Object... args);
+    PrintStream getUnformattedInstance();
 }

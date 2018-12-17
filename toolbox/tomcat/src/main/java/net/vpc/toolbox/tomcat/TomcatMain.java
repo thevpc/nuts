@@ -1,11 +1,15 @@
 package net.vpc.toolbox.tomcat;
 
-import net.vpc.app.nuts.NutsApplication;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.toolbox.tomcat.client.TomcatClient;
-import net.vpc.toolbox.tomcat.server.TomcatServer;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
+import net.vpc.toolbox.tomcat.remote.RemoteTomcat;
+import net.vpc.toolbox.tomcat.local.LocalTomcat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TomcatMain extends NutsApplication {
     public static void main(String[] args) {
@@ -13,20 +17,50 @@ public class TomcatMain extends NutsApplication {
     }
 
     @Override
-    public int launch(String[] args, NutsWorkspace ws) {
+    public int launch(NutsApplicationContext appContext) {
+        String[] args = appContext.getArgs();
         if (args.length == 0) {
-            throw new IllegalArgumentException("Expected --client or --server");
+            throw new IllegalArgumentException("Expected --remote or --server");
         }
-        if (args[0].equals("--client") || args[0].equals("-c")) {
-            TomcatClient m = new TomcatClient(ws);
-            return m.runArgs(Arrays.copyOfRange(args, 1, args.length));
+        List<String> argsList = new ArrayList<>();
+        CommandLine cmd = new CommandLine(args);
+        Boolean local = null;
+        while (cmd.hasNext()) {
+            Argument a = cmd.read();
+            if (local == null) {
+                if (a.getExpression().equals("--remote") || a.getExpression().equals("-r")) {
+                    local = false;
+                } else if (a.getExpression().equals("--local") || a.getExpression().equals("-l")) {
+                    local = true;
+                } else if (a.getExpression().equals("--version")) {
+                    appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf("%s\n", appContext.getWorkspace().resolveNutsIdForClass(getClass()).getVersion());
+                    return 0;
+                } else if (a.getExpression().equals("--help")) {
+                    appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf(appContext.getWorkspace().resolveDefaultHelpForClass(getClass()));
+                    return 0;
+                } else if (a.isOption()) {
+                    argsList.add(a.getExpression());
+                } else {
+                    argsList.add(a.getExpression());
+                    local = true;
+                }
+            } else {
+                argsList.add(a.getExpression());
+            }
         }
-        if (args[0].equals("--server") || args[0].equals("-s")) {
-            TomcatServer m = new TomcatServer(ws);
-            return m.runArgs(Arrays.copyOfRange(args, 1, args.length));
+        if (local == null) {
+            local = true;
+        }
+
+        appContext.setArgs(argsList.toArray(new String[0]));
+        if (local) {
+            LocalTomcat m = new LocalTomcat(appContext);
+            return m.runArgs();
         } else {
-            TomcatServer m = new TomcatServer(ws);
-            return m.runArgs(args);
+            RemoteTomcat m = new RemoteTomcat(appContext);
+            return m.runArgs();
         }
     }
+
+
 }

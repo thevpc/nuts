@@ -37,15 +37,15 @@ public interface MapListener<K, V> {
     /**
      * Invoked when item added
      */
-    void elementAdded(K key, V value);
+    void entryAdded(K key, V value);
 
     /**
      * Invoked when item removed
      */
-    void elementRemoved(K key, V value);
+    void entryRemoved(K key, V value);
 
     /**
      * Invoked when item updated
      */
-    void elementUpdated(K key, V newValue, V oldValue);
+    void entryUpdated(K key, V newValue, V oldValue);
 }

@@ -200,7 +200,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         try {
             try {
                 stream = getStream(id, ".pom", CoreNutsUtils.FACE_DESC, session);
-                nutsDescriptor = MavenUtils.parsePomXml(stream);
+                nutsDescriptor = MavenUtils.parsePomXml(stream,getPath(id, ".pom"));
             } finally {
                 if (stream != null) {
                     stream.close();

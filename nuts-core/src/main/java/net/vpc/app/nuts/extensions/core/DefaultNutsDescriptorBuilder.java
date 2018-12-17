@@ -490,7 +490,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         LinkedHashSet<String> n_osdist = new LinkedHashSet<>();
         LinkedHashSet<String> n_platform = new LinkedHashSet<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
-            n_id = applyNutsIdInheritance(n_id, parentDescriptor.getId());
+            n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId());
             if (!n_executable && parentDescriptor.isExecutable()) {
                 n_executable = true;
             }
@@ -616,46 +616,5 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         );
     }
 
-    private NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
-        if (parent != null) {
-            boolean modified = false;
-            String namespace = child.getNamespace();
-            String group = child.getGroup();
-            String name = child.getName();
-            String version = child.getVersion().getValue();
-            Map<String, String> face = child.getQueryMap();
-            if (StringUtils.isEmpty(namespace)) {
-                modified = true;
-                namespace = parent.getNamespace();
-            }
-            if (StringUtils.isEmpty(group)) {
-                modified = true;
-                group = parent.getGroup();
-            }
-            if (StringUtils.isEmpty(name)) {
-                modified = true;
-                name = parent.getName();
-            }
-            if (StringUtils.isEmpty(version)) {
-                modified = true;
-                version = parent.getVersion().getValue();
-            }
-            Map<String, String> parentFaceMap = parent.getQueryMap();
-            if (!parentFaceMap.isEmpty()) {
-                modified = true;
-                face.putAll(parentFaceMap);
-            }
-            if (modified) {
-                return new NutsIdImpl(
-                        namespace,
-                        group,
-                        name,
-                        version,
-                        face
-                );
-            }
-        }
-        return child;
-    }
 
 }

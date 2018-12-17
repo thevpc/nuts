@@ -66,7 +66,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                 CoreIOUtils.resolvePath(repositoryId,
                         root != null ? new File(root) : CoreIOUtils.createFile(
                                 workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getNutsHomeLocation()).getPath(),
+                        workspace.getConfigManager().getHomeLocation()).getPath(),
                 SPEED_SLOW);
     }
 
@@ -395,5 +395,10 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
             throw new NutsNotFoundException(id == null ? null : id.toString());
         }
+    }
+
+    @Override
+    public String getStoreRoot() {
+        return null;
     }
 }

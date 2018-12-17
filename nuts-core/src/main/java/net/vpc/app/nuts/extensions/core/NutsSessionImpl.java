@@ -179,11 +179,6 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession setTerminal(NutsTerminal base, InputStream inReplace, PrintStream outReplace, PrintStream errReplace) {
-        return setTerminal(new NutsTerminalDelegate(base, inReplace, outReplace, errReplace));
-    }
-
-    @Override
     public String toString() {
         return "NutsSession(" + "transitive=" + transitive + ", fetchMode=" + fetchMode + ", properties=" + properties + '}';
     }

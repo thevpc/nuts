@@ -35,15 +35,21 @@ import java.util.*;
 public final class NutsWorkspaceConfig implements Serializable {
 
     private static final long serialVersionUID = 1;
-    private boolean secure = false;
     private String workspace = null;
+    private String bootAPIVersion = null;
+    private String bootRuntime = null;
+    private String bootRuntimeDependencies = null;
+    private String bootRepositories = null;
+    private String bootJavaCommand = null;
+    private String bootJavaOptions = null;
     private String componentsLocation = null;
     private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
     private List<NutsId> extensions = new ArrayList<>();
     private Properties env = new Properties();
-    private Map<String, NutsUserConfig> security = new HashMap<>();
     private Map<String, List<NutsSdkLocation>> sdk = new HashMap<>();
     private String[] imports = new String[0];
+    private boolean secure = false;
+    private Map<String, NutsUserConfig> security = new HashMap<>();
 
     public NutsWorkspaceConfig() {
     }
@@ -51,6 +57,10 @@ public final class NutsWorkspaceConfig implements Serializable {
     public NutsWorkspaceConfig(NutsWorkspaceConfig other) {
         this.secure = other.isSecure();
         this.workspace = other.getWorkspace();
+        this.bootAPIVersion = other.getBootAPIVersion();
+        this.bootRuntime = other.getBootRuntime();
+        this.bootRuntimeDependencies = other.getBootRuntimeDependencies();
+        this.bootRepositories = other.getBootRepositories();
         this.componentsLocation = other.getComponentsLocation();
         for (NutsRepositoryLocation repository : other.getRepositories()) {
             this.repositories.put(repository.getId(), repository);
@@ -60,7 +70,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         }
         for (Map.Entry<String, List<NutsSdkLocation>> e : other.getSdk().entrySet()) {
             List<NutsSdkLocation> value = e.getValue();
-            this.sdk.put(e.getKey(), value==null?new ArrayList<>() : new ArrayList<>(value));
+            this.sdk.put(e.getKey(), value == null ? new ArrayList<>() : new ArrayList<>(value));
         }
         this.extensions.addAll(Arrays.asList(other.getExtensions()));
         this.env.putAll(other.getEnv());
@@ -129,6 +139,10 @@ public final class NutsWorkspaceConfig implements Serializable {
         extensions.remove(extensionId);
     }
 
+    public void updateExtensionAt(int index, NutsId extensionId) {
+        extensions.set(index, extensionId);
+    }
+
 
     public NutsId[] getExtensions() {
         return extensions.toArray(new NutsId[0]);
@@ -167,7 +181,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     }
 
     public Map<String, List<NutsSdkLocation>> getSdk() {
-        return sdk==null?new HashMap<>() :sdk;
+        return sdk == null ? new HashMap<>() : sdk;
     }
 
 
@@ -181,4 +195,57 @@ public final class NutsWorkspaceConfig implements Serializable {
     }
 
 
+    public String getBootAPIVersion() {
+        return bootAPIVersion;
+    }
+
+    public NutsWorkspaceConfig setBootAPIVersion(String bootAPIVersion) {
+        this.bootAPIVersion = bootAPIVersion;
+        return this;
+    }
+
+    public String getBootRuntime() {
+        return bootRuntime;
+    }
+
+    public NutsWorkspaceConfig setBootRuntime(String bootRuntime) {
+        this.bootRuntime = bootRuntime;
+        return this;
+    }
+
+    public String getBootRuntimeDependencies() {
+        return bootRuntimeDependencies;
+    }
+
+    public NutsWorkspaceConfig setBootRuntimeDependencies(String bootRuntimeDependencies) {
+        this.bootRuntimeDependencies = bootRuntimeDependencies;
+        return this;
+    }
+
+    public String getBootRepositories() {
+        return bootRepositories;
+    }
+
+    public NutsWorkspaceConfig setBootRepositories(String bootRepositories) {
+        this.bootRepositories = bootRepositories;
+        return this;
+    }
+
+    public String getBootJavaCommand() {
+        return bootJavaCommand;
+    }
+
+    public NutsWorkspaceConfig setBootJavaCommand(String bootJavaCommand) {
+        this.bootJavaCommand = bootJavaCommand;
+        return this;
+    }
+
+    public String getBootJavaOptions() {
+        return bootJavaOptions;
+    }
+
+    public NutsWorkspaceConfig setBootJavaOptions(String bootJavaOptions) {
+        this.bootJavaOptions = bootJavaOptions;
+        return this;
+    }
 }

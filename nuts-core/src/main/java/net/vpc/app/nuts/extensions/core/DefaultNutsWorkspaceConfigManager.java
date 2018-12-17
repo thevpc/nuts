@@ -47,16 +47,20 @@ import java.util.logging.Level;
 class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
 
     private final DefaultNutsWorkspace ws;
+
     private NutsId workspaceBootId;
-    private NutsBootWorkspace workspaceBoot;
     private NutsId workspaceRuntimeId;
+
+    private NutsId actualBootId;
+    private NutsId actualRuntimeId;
+
+    private NutsBootWorkspace workspaceBoot;
     private String nutsHome;
     private ClassLoader bootClassLoader;
     private URL[] bootClassWorldURLs;
     private NutsWorkspaceConfig config = new NutsWorkspaceConfig();
     private String workspace;
     private String cwd = System.getProperty("user.dir");
-    private ObservableMap<String, Object> sharedObjects = new ObservableMap<>();
 
     protected DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace outer) {
         this.ws = outer;
@@ -75,13 +79,23 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public NutsId getWorkspaceRuntimeId() {
+    public NutsId getWorkspaceBootAPI() {
+        return workspaceBootId;
+    }
+
+    @Override
+    public NutsId getWorkspaceBootRuntime() {
         return workspaceRuntimeId;
     }
 
     @Override
-    public NutsId getWorkspaceBootId() {
-        return workspaceBootId;
+    public NutsId getBootRuntime() {
+        return actualRuntimeId;
+    }
+
+    @Override
+    public NutsId getBootAPI() {
+        return actualBootId;
     }
 
     @Override
@@ -295,12 +309,56 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
+    public NutsBootConfig getBootConfig() {
+        return new NutsBootConfig()
+                .setBootAPIVersion(getBootAPI().getVersion().toString())
+                .setBootRuntime(getBootRuntime().toString())
+                .setBootRuntimeDependencies(config.getBootRuntimeDependencies())
+                .setBootRepositories(config.getBootRepositories())
+                ;
+    }
+
+    @Override
+    public NutsBootConfig getWorkspaceBootConfig() {
+        return new NutsBootConfig()
+                .setBootAPIVersion(config.getBootAPIVersion())
+                .setBootRuntime(config.getBootRuntime())
+                .setBootRuntimeDependencies(config.getBootRuntimeDependencies())
+                .setBootRepositories(config.getBootRepositories())
+                ;
+    }
+
+    @Override
+    public void setBootConfig(NutsBootConfig other) {
+        if (other == null) {
+            other = new NutsBootConfig();
+        }
+        if (!StringUtils.isEmpty(other.getBootRuntime())) {
+            NutsFile[] nutsFiles = ws.fetchDependencies(new NutsDependencySearch(other.getBootRuntime()).setIncludeMain(true), null);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < nutsFiles.length; i++) {
+                if (i > 0) {
+                    sb.append(":");
+                }
+                sb.append(nutsFiles[i].getId().toString());
+            }
+            other.setBootRuntimeDependencies(sb.toString());
+        } else {
+            other.setBootRuntimeDependencies("");
+        }
+        config.setBootAPIVersion(other.getBootAPIVersion());
+        config.setBootRuntime(other.getBootRuntime());
+        config.setBootRuntimeDependencies(other.getBootRuntimeDependencies());
+        config.setBootRepositories(other.getBootRepositories());
+    }
+
+    @Override
     public NutsSdkLocation getSdk(String type, String requestedVersion) {
         NutsVersionFilter javaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedVersion);
         NutsSdkLocation best = null;
         for (NutsSdkLocation jdk : getSdks("java")) {
             String currVersion = jdk.getVersion();
-            if (javaVersionFilter.accept(new NutsVersionImpl(currVersion))) {
+            if (javaVersionFilter == null || javaVersionFilter.accept(new NutsVersionImpl(currVersion))) {
                 if (best == null || CoreVersionUtils.compareVersions(best.getVersion(), currVersion) < 0) {
                     best = jdk;
                 }
@@ -342,6 +400,21 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return false;
     }
 
+    public boolean updateExtension(NutsId extensionId) {
+        if (extensionId == null) {
+            throw new NutsIllegalArgumentException("Invalid Extension");
+        }
+        NutsId[] extensions = getExtensions();
+        for (int i = 0; i < extensions.length; i++) {
+            NutsId extension = extensions[i];
+            if (extension.isSameFullName(extensionId)) {
+                config.updateExtensionAt(i, extensionId);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String getWorkspaceLocation() {
         return workspace;
@@ -361,18 +434,20 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public String getNutsHomeLocation() {
+    public String getHomeLocation() {
         return nutsHome;
     }
 
     @Override
     public Map<String, String> getRuntimeProperties() {
         Map<String, String> map = new HashMap<>();
+        map.put("nuts.boot.version", actualBootId.getVersion().toString());
+        map.put("nuts.boot.id", actualBootId.toString());
         map.put("nuts.workspace-boot.version", workspaceBootId.getVersion().toString());
         map.put("nuts.workspace-boot.id", workspaceBootId.toString());
-        map.put("nuts.workspace-runtime.id", getWorkspaceRuntimeId().toString());
-        map.put("nuts.workspace-runtime.version", getWorkspaceRuntimeId().getVersion().toString());
-        map.put("nuts.workspace-location", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, getNutsHomeLocation()));
+        map.put("nuts.workspace-runtime.id", getBootRuntime().toString());
+        map.put("nuts.workspace-runtime.version", getBootRuntime().getVersion().toString());
+        map.put("nuts.workspace-location", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, getHomeLocation()));
         return map;
     }
 
@@ -384,13 +459,22 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public void onInitializeWorkspace(NutsBootWorkspace workspaceBoot,
                                       String workspaceRoot,
                                       NutsWorkspaceFactory factory,
-                                      NutsId workspaceBootId, NutsId workspaceRuntimeId, String workspace,
+                                      NutsId actualBootId,
+                                      NutsId actualRuntimeId,
+                                      NutsId workspaceBootId,
+                                      NutsId workspaceRuntimeId,
+                                      String workspace,
                                       URL[] bootClassWorldURLs,
                                       ClassLoader bootClassLoader) {
         this.workspaceBoot = workspaceBoot;
         this.nutsHome = workspaceRoot;
+
+        this.actualBootId = actualBootId;
+        this.actualRuntimeId = actualRuntimeId;
+
         this.workspaceBootId = workspaceBootId;
         this.workspaceRuntimeId = workspaceRuntimeId;
+
         this.bootClassLoader = bootClassLoader;
         this.bootClassWorldURLs = bootClassWorldURLs == null ? null : Arrays.copyOf(bootClassWorldURLs, bootClassWorldURLs.length);
         this.workspace = workspace;
@@ -422,7 +506,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     @Override
     public String resolveNutsJarFile() {
         try {
-            NutsId baseId = ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT);
+            NutsId baseId = ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT_API);
             String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
             URL resource = Nuts.class.getResource(urlPath);
             if (resource != null) {
@@ -436,34 +520,15 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         // binary class path instead of a single jar file.
         // In that case we will gather nuts from maven .m2 repository
         PomId m = PomIdResolver.resolvePomId(Nuts.class, null);
-        if(m!=null){
-            File f=new File(System.getProperty("user.home")+"/.m2/repository/"+m.getGroupId().replace('.','/')+"/"+m.getArtifactId()+"/"+m.getVersion()+"/"
-                    +ws.getNutsFileName(ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion()).build()
-                    ,"jar"));
-            if(f.exists()){
+        if (m != null) {
+            File f = new File(System.getProperty("user.home") + "/.m2/repository/" + m.getGroupId().replace('.', '/') + "/" + m.getArtifactId() + "/" + m.getVersion() + "/"
+                    + ws.getNutsFileName(ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion()).build()
+                    , "jar"));
+            if (f.exists()) {
                 return f.getPath();
             }
         }
         return null;
-    }
-
-    public void addSharedObjectsListener(MapListener<String, Object> listener) {
-        sharedObjects.addListener(listener);
-    }
-
-    @Override
-    public void removeSharedObjectsListener(MapListener<String, Object> listener) {
-        sharedObjects.removeListener(listener);
-    }
-
-    @Override
-    public MapListener<String, Object>[] getSharedObjectsListeners() {
-        return sharedObjects.getListeners();
-    }
-
-    @Override
-    public Map<String, Object> getSharedObjects() {
-        return sharedObjects;
     }
 
     @Override
@@ -616,13 +681,13 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public NutsSdkLocation resolveJdkLocation(String path) {
-        return JavaHelper.resolveJdkLocation(path,ws);
+        return JavaHelper.resolveJdkLocation(path, ws);
     }
 
 
     @Override
     public byte[] decryptString(byte[] input) {
-        if(input==null || input.length==0){
+        if (input == null || input.length == 0) {
             return new byte[0];
         }
         String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
@@ -631,7 +696,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public byte[] encryptString(byte[] input) {
-        if(input==null || input.length==0){
+        if (input == null || input.length == 0) {
             return new byte[0];
         }
         String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);

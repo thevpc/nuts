@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -53,9 +53,9 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
     public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
         super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
-                root!=null?root:CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
+                root != null ? root : CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
                         workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getNutsHomeLocation()).getPath()
+                        workspace.getConfigManager().getHomeLocation()).getPath()
                 , SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(url + "/version"));
@@ -66,8 +66,9 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
     @Override
     protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
-        switch (session.getFetchMode()){
-            case OFFLINE:return 0;
+        switch (session.getFetchMode()) {
+            case OFFLINE:
+                return 0;
         }
         return super.getSupportLevelCurrent(id, session);
     }
@@ -211,20 +212,6 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         return httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
     }
 
-//    @Override
-//    public NutsId resolveIdImpl(NutsId id, NutsSession session) {
-//        boolean transitive = session.isTransitive();
-//        String s = null;
-//        try {
-//            s = httpGetString(getUrl("/resolve-id?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-//        } catch (Exception ex) {
-//            //ignore error
-//        }
-//        if (s == null) {
-//            throw new NutsNotFoundException(id);
-//        }
-//        return CoreNutsUtils.parseRequiredNutsId(s).setNamespace(getRepositoryId());
-//    }
     @Override
     public List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         boolean transitive = session.isTransitive();
@@ -236,7 +223,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
         if (idFilter != null) {
-            it = new IteratorFilter<NutsId>(it,CoreNutsUtils.createFilter(idFilter));
+            it = new IteratorFilter<NutsId>(it, CoreNutsUtils.createFilter(idFilter));
         }
         return CollectionUtils.toList(it);
     }
@@ -332,8 +319,8 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             if (StringUtils.isEmpty(newLogin)) {
                 newLogin = login;
             }
-            credentials = getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class,security.getAuthenticationAgent())
-                    .getCredentials(credentials,security.getAuthenticationAgent(),
+            credentials = getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class, security.getAuthenticationAgent())
+                    .getCredentials(credentials, security.getAuthenticationAgent(),
                             getConfigManager());
         }
 
@@ -395,4 +382,10 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             return nutsId.setNamespace(getRepositoryId());
         }
     }
+
+    @Override
+    public String getStoreRoot() {
+        return null;
+    }
+
 }

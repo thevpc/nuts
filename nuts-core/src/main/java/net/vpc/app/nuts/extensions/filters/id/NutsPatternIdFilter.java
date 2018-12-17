@@ -109,7 +109,7 @@ public class NutsPatternIdFilter implements NutsIdFilter, Simplifiable<NutsIdFil
         rebuild();
         if (idPattern != null) {
             if (!idPattern.matcher(id.toString()).matches()
-                    && !idPattern.matcher(id.getFullName()).matches()) {
+                    && !idPattern.matcher(id.getSimpleName()).matches()) {
                 return false;
             }
         }

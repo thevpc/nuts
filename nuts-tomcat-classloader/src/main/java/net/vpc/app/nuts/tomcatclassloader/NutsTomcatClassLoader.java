@@ -40,7 +40,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
     protected String workspaceLocation;
-    protected String workspaceRuntimeId;
+    protected String workspaceBootRuntime;
     protected String home;
     protected String workspaceBootURL;
     protected String workspaceExcludedRepositories;
@@ -151,8 +151,8 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                             ,
                             new NutsBootOptions()
                                     .setHome(getHome())
-                                    .setRuntimeId(getWorkspaceRuntimeId())
-                                    .setRuntimeSourceURL(getRuntimeSourceURL())
+                                    .setBootRuntime(getWorkspaceBootRuntime())
+                                    .setBootRuntimeSourceURL(getRuntimeSourceURL())
                                     .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent()))
                     );
         }
@@ -354,12 +354,12 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         this.workspaceLocation = workspaceLocation;
     }
 
-    public String getWorkspaceRuntimeId() {
-        return workspaceRuntimeId;
+    public String getWorkspaceBootRuntime() {
+        return workspaceBootRuntime;
     }
 
-    public void setWorkspaceRuntimeId(String workspaceRuntimeId) {
-        this.workspaceRuntimeId = workspaceRuntimeId;
+    public void setWorkspaceBootRuntime(String workspaceBootRuntime) {
+        this.workspaceBootRuntime = workspaceBootRuntime;
     }
 
     public String getRuntimeSourceURL() {

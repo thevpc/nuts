@@ -30,20 +30,16 @@
 package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
-import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.extensions.core.*;
 import net.vpc.app.nuts.extensions.filters.dependency.*;
 import net.vpc.app.nuts.extensions.filters.descriptor.*;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterOr;
-import net.vpc.app.nuts.extensions.filters.id.NutsJavascriptIdFilter;
-import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
-import net.vpc.app.nuts.extensions.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.extensions.filters.repository.ExprNutsRepositoryFilter;
+import net.vpc.app.nuts.extensions.filters.repository.NutsRepositoryFilterAnd;
 import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterAnd;
 import net.vpc.app.nuts.extensions.filters.version.NutsVersionFilterOr;
-import net.vpc.common.io.IOUtils;
+import net.vpc.common.io.*;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.Filter;
 
@@ -170,7 +166,7 @@ public class CoreNutsUtils {
     };
 
 
-    public static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("namespace", "group", "name", "version", "param='true'");
+//    public static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("namespace", "group", "name", "version", "param='true'");
 
     public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR =
             new DefaultNutsDescriptorBuilder()
@@ -220,8 +216,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean isSameGroupAndName(NutsId a, NutsId b) {
-        return a.setVersion("").unsetQuery().setNamespace("")
-                .equals(b.setVersion("").unsetQuery().setNamespace(""));
+        return a.getSimpleName().equals(b.getSimpleName());
     }
 
     public static void validateNutName(String name) {
@@ -358,7 +353,7 @@ public class CoreNutsUtils {
         if (all != null) {
             for (String nutsId : all) {
                 if (nutsId != null) {
-                    NutsId nutsId2 = CoreNutsUtils.parseRequiredNutsId(nutsId);
+                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
                     if (nutsId2.isSameFullName(id)) {
                         return nutsId2;
                     }
@@ -653,6 +648,9 @@ public class CoreNutsUtils {
     public static NutsVersionFilter And(NutsVersionFilter... all) {
         return new NutsVersionFilterAnd(all);
     }
+    public static NutsRepositoryFilter And(NutsRepositoryFilter... all) {
+        return new NutsRepositoryFilterAnd(all);
+    }
 
     public static NutsVersionFilter Or(NutsVersionFilter... all) {
         return new NutsVersionFilterOr(all);
@@ -739,75 +737,32 @@ public class CoreNutsUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    public static NutsSearch createSearch(String[] js, String[] ids, String[] arch, String[] packagings, String[] repos) {
-        NutsSearch search = new NutsSearch();
-
-        NutsDescriptorFilter dFilter = null;
-        NutsIdFilter idFilter = null;
-        NutsDependencyFilter depFilter = null;
-        if (js != null) {
-            for (String j : js) {
-                if (!StringUtils.isEmpty(j)) {
-                    if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                        dFilter = simplify(And(dFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
-                    } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                        depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j)));
-                    } else {
-                        idFilter = simplify(And(idFilter, NutsJavascriptIdFilter.valueOf(j)));
-                    }
-                }
-            }
-        }
-        if (ids != null) {
-            idFilter = simplify(And(idFilter, new NutsPatternIdFilter(ids)));
-        }
-        NutsDescriptorFilter packs = null;
-        for (String v : packagings) {
-            packs = CoreNutsUtils.simplify(CoreNutsUtils.Or(packs, new NutsDescriptorFilterPackaging(v)));
-        }
-        NutsDescriptorFilter archs = null;
-        for (String v : arch) {
-            archs = CoreNutsUtils.simplify(CoreNutsUtils.Or(archs, new NutsDescriptorFilterArch(v)));
-        }
-
-        dFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(dFilter, packs, archs));
-
-//        search.setDependencyFilter(null);
-        search.setDescriptorFilter(dFilter);
-        search.setIdFilter(idFilter);
-
-        if (repos != null) {
-            search.setRepositoryFilter(new DefaultNutsRepositoryFilter(new HashSet<>(Arrays.asList(repos))));
-        }
-        return search;
-    }
-
-    public static String getResourceString(String resource, NutsWorkspace ws, Class cls) {
-        String help = null;
-        try {
-            InputStream s = null;
-            try {
-                s = cls.getResourceAsStream(resource);
-                if (s != null) {
-                    help = IOUtils.loadString(s, true);
-                }
-            } finally {
-                if (s != null) {
-                    s.close();
-                }
-            }
-        } catch (IOException e) {
-            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
-        }
-        if (help == null) {
-            help = "no help found";
-        }
-        HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
-        props.putAll(ws.getConfigManager().getRuntimeProperties());
-        help = CoreStringUtils.replaceVars(help, new MapStringMapper(props));
-        return help;
-    }
-
+//    public static String getResourceString(String resource, NutsWorkspace ws, Class cls) {
+//        String help = null;
+//        try {
+//            InputStream s = null;
+//            try {
+//                s = cls.getResourceAsStream(resource);
+//                if (s != null) {
+//                    help = IOUtils.loadString(s, true);
+//                }
+//            } finally {
+//                if (s != null) {
+//                    s.close();
+//                }
+//            }
+//        } catch (IOException e) {
+//            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
+//        }
+//        if (help == null) {
+//            help = "no help found";
+//        }
+//        HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
+//        props.putAll(ws.getConfigManager().getUserProperties());
+//        help = CoreStringUtils.replaceVars(help, new MapStringMapper(props));
+//        return help;
+//    }
+//
     public static String getPath(NutsId id, String ext, String sep) {
         StringBuilder sb = new StringBuilder();
         sb.append(id.getGroup().replaceAll("\\.", sep));
@@ -825,9 +780,9 @@ public class CoreNutsUtils {
     public static List<NutsId> filterNutsIdByLatestVersion(List<NutsId> base) {
         LinkedHashMap<String, NutsId> valid = new LinkedHashMap<>();
         for (NutsId n : base) {
-            NutsId old = valid.get(n.getFullName());
+            NutsId old = valid.get(n.getSimpleName());
             if (old == null || old.getVersion().compareTo(n.getVersion()) < 0) {
-                valid.put(n.getFullName(), n);
+                valid.put(n.getSimpleName(), n);
             }
         }
         return new ArrayList<>(valid.values());
@@ -836,16 +791,16 @@ public class CoreNutsUtils {
     public static List<NutsExtensionInfo> filterNutsExtensionInfoByLatestVersion(List<NutsExtensionInfo> base) {
         LinkedHashMap<String, NutsExtensionInfo> valid = new LinkedHashMap<>();
         for (NutsExtensionInfo n : base) {
-            NutsExtensionInfo old = valid.get(n.getId().getFullName());
+            NutsExtensionInfo old = valid.get(n.getId().getSimpleName());
             if (old == null || old.getId().getVersion().compareTo(n.getId().getVersion()) < 0) {
-                valid.put(n.getId().getFullName(), n);
+                valid.put(n.getId().getSimpleName(), n);
             }
         }
         return new ArrayList<>(valid.values());
     }
 
     public static String expandPath(String path, NutsWorkspace ws) {
-        return CoreNutsUtils.expandPath(path, ws.getConfigManager().getNutsHomeLocation());
+        return expandPath(path, ws.getConfigManager().getHomeLocation());
     }
 
     public static String expandPath(String path, String nutsHome) {
@@ -873,5 +828,124 @@ public class CoreNutsUtils {
         };
     }
 
+    public static CharacterizedFile characterize(NutsWorkspace ws, InputStreamSource contentFile, NutsSession session) {
+        session = validateSession(session,ws);
+        CharacterizedFile c = new CharacterizedFile();
+        c.contentFile = contentFile;
+        if (c.contentFile.getSource() instanceof File) {
+            //okkay
+        } else {
+            File temp = CoreIOUtils.createTempFile(contentFile.getName(), false, null);
+            IOUtils.copy(contentFile.open(), temp, true, true);
+            c.contentFile = IOUtils.toInputStreamSource(temp, new File(ws.getConfigManager().getCwd()));
+            c.addTemp(temp);
+            return characterize(ws,IOUtils.toInputStreamSource(temp, new File(ws.getConfigManager().getCwd())), session);
+        }
+        File fileSource = (File) c.contentFile.getSource();
+        if ((!fileSource.exists())) {
+            throw new NutsIllegalArgumentException("File does not exists " + fileSource);
+        }
+        if (fileSource.isDirectory()) {
+            File ext = new File(fileSource, NutsConstants.NUTS_DESC_FILE_NAME);
+            if (ext.exists()) {
+                c.descriptor = parseNutsDescriptor(ext);
+            } else {
+                c.descriptor = resolveNutsDescriptorFromFileContent(ws,c.contentFile, session);
+            }
+            if (c.descriptor != null) {
+                if ("zip".equals(c.descriptor.getExt())) {
+                    File zipFilePath = new File(ws.resolvePath(fileSource.getPath() + ".zip"));
+                    ZipUtils.zip(fileSource.getPath(), new ZipOptions(), zipFilePath.getPath());
+                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, new File(ws.getConfigManager().getCwd()));
+                    c.addTemp(zipFilePath);
+                } else {
+                    throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
+                }
+            }
+        } else if (fileSource.isFile()) {
+            File ext = new File(ws.resolvePath(fileSource.getPath() + "." + NutsConstants.NUTS_DESC_FILE_NAME));
+            if (ext.exists()) {
+                c.descriptor = parseNutsDescriptor(ext);
+            } else {
+                c.descriptor = resolveNutsDescriptorFromFileContent(ws,c.contentFile, session);
+            }
+        } else {
+            throw new NutsIllegalArgumentException("Path does not denote a valid file or folder " + c.contentFile);
+        }
+
+        return c;
+    }
+
+    public static NutsSession validateSession(NutsSession session,NutsWorkspace ws) {
+        if (session == null) {
+            session = ws.createSession();
+        }
+        return session;
+    }
+
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws,InputStreamSource localPath, NutsSession session) {
+        session = validateSession(session,ws);
+        if (localPath != null) {
+            List<NutsDescriptorContentParserComponent> allParsers = ws.getExtensionManager().createAllSupported(NutsDescriptorContentParserComponent.class, ws);
+            if (allParsers.size() > 0) {
+                String fileExtension = FileUtils.getFileExtension(localPath.getName());
+                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(ws, session, localPath, fileExtension, null, null);
+                for (NutsDescriptorContentParserComponent parser : allParsers) {
+                    NutsDescriptor desc = null;
+                    try {
+                        desc = parser.parse(ctx);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (desc != null) {
+                        return desc;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
+        if (parent != null) {
+            boolean modified = false;
+            String namespace = child.getNamespace();
+            String group = child.getGroup();
+            String name = child.getName();
+            String version = child.getVersion().getValue();
+            Map<String, String> face = child.getQueryMap();
+            if (StringUtils.isEmpty(namespace)) {
+                modified = true;
+                namespace = parent.getNamespace();
+            }
+            if (StringUtils.isEmpty(group)) {
+                modified = true;
+                group = parent.getGroup();
+            }
+            if (StringUtils.isEmpty(name)) {
+                modified = true;
+                name = parent.getName();
+            }
+            if (StringUtils.isEmpty(version)) {
+                modified = true;
+                version = parent.getVersion().getValue();
+            }
+            Map<String, String> parentFaceMap = parent.getQueryMap();
+            if (!parentFaceMap.isEmpty()) {
+                modified = true;
+                face.putAll(parentFaceMap);
+            }
+            if (modified) {
+                return new NutsIdImpl(
+                        namespace,
+                        group,
+                        name,
+                        version,
+                        face
+                );
+            }
+        }
+        return child;
+    }
 
 }

@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
@@ -65,7 +64,7 @@ public class NutsHttpServletFacade {
                                 .setNamespace(context.getServerId())
                         .setGroup("net.vpc.app.nuts")
                         .setName("nuts-server")
-                        .setVersion(context.getWorkspace().getConfigManager().getWorkspaceRuntimeId().getVersion().toString())
+                        .setVersion(context.getWorkspace().getConfigManager().getBootRuntime().getVersion().toString())
                         .build().toString()
                 );
             }
@@ -154,7 +153,8 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 List<NutsId> fetch = null;
                 try {
-                    fetch = context.getWorkspace().find(new NutsSearch(id), context.getSession().copy().setTransitive(transitive));
+                    NutsWorkspace ws = context.getWorkspace();
+                    fetch = ws.find(ws.createSearchBuilder().addId(id).build(), context.getSession().copy().setTransitive(transitive));
                 } catch (Exception exc) {
                     //
                 }

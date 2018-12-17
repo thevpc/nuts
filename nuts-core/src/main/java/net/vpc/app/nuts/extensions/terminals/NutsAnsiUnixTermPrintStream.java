@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsFormattedPrintStream;
+import net.vpc.app.nuts.OutputStreamTransparentAdapter;
 import net.vpc.common.fprint.*;
 
 import java.io.File;
@@ -40,34 +41,41 @@ import java.io.UnsupportedEncodingException;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsAnsiUnixTermPrintStream extends AnsiUnixTermPrintStream implements NutsFormattedPrintStream {
-
+public class NutsAnsiUnixTermPrintStream extends AnsiUnixTermPrintStream implements NutsFormattedPrintStream, OutputStreamTransparentAdapter {
+    private OutputStream out;
     public NutsAnsiUnixTermPrintStream(OutputStream out) {
         super(out);
+        this.out=out;
     }
 
-    public NutsAnsiUnixTermPrintStream(OutputStream out, boolean autoFlush) {
-        super(out, autoFlush);
-    }
+//    public NutsAnsiUnixTermPrintStream(OutputStream out, boolean autoFlush) {
+//        super(out, autoFlush);
+//    }
+//
+//    public NutsAnsiUnixTermPrintStream(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
+//        super(out, autoFlush, encoding);
+//    }
+//
+//    public NutsAnsiUnixTermPrintStream(String fileName) throws FileNotFoundException {
+//        super(fileName);
+//    }
+//
+//    public NutsAnsiUnixTermPrintStream(String fileName, String csn) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(fileName, csn);
+//    }
+//
+//    public NutsAnsiUnixTermPrintStream(File file) throws FileNotFoundException {
+//        super(file);
+//    }
+//
+//    public NutsAnsiUnixTermPrintStream(File file, String csn) throws FileNotFoundException, UnsupportedEncodingException {
+//        super(file, csn);
+//    }
 
-    public NutsAnsiUnixTermPrintStream(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
-        super(out, autoFlush, encoding);
-    }
 
-    public NutsAnsiUnixTermPrintStream(String fileName) throws FileNotFoundException {
-        super(fileName);
-    }
-
-    public NutsAnsiUnixTermPrintStream(String fileName, String csn) throws FileNotFoundException, UnsupportedEncodingException {
-        super(fileName, csn);
-    }
-
-    public NutsAnsiUnixTermPrintStream(File file) throws FileNotFoundException {
-        super(file);
-    }
-
-    public NutsAnsiUnixTermPrintStream(File file, String csn) throws FileNotFoundException, UnsupportedEncodingException {
-        super(file, csn);
+    @Override
+    public OutputStream baseOutputStream() {
+        return out;
     }
 
     @Override

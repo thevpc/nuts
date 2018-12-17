@@ -38,7 +38,14 @@ import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
 import net.vpc.app.nuts.extensions.util.MapStringMapper;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
+import net.vpc.common.util.Chronometer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -51,11 +58,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by vpc on 2/20/17.
  */
 public class MavenUtils {
+    private static final Logger log = Logger.getLogger(MavenUtils.class.getName());
 
     private static boolean isStackSubPath(Stack<String> stack, int offset, String... path) {
         for (int i = 0; i < path.length; i++) {
@@ -82,7 +92,7 @@ public class MavenUtils {
         return true;
     }
 
-    public static NutsDescriptor parsePomXml(InputStream stream) {
+    public static NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
         try {
             byte[] bytes = IOUtils.loadByteArray(stream, -1, true);
             int skip = 0;
@@ -91,13 +101,221 @@ public class MavenUtils {
             }
             ByteArrayInputStream ok = new ByteArrayInputStream(bytes);
             ok.skip(skip);
-            return parsePomXml0(ok);
+            return parsePomXml0(ok, urlDesc);
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
     }
 
-    public static NutsDescriptor parsePomXml0(InputStream stream) {
+    public static NutsDescriptor parsePomXml0(InputStream stream, String urlDesc) {
+        long startTime = System.currentTimeMillis();
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = null;
+        List<NutsDependency> deps = new ArrayList<>();
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+            if (stream == null) {
+                return null;
+            }
+            Document doc = dBuilder.parse(stream);
+            //optional, but recommended
+            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+            doc.getDocumentElement().normalize();
+            NodeList properties = doc.getDocumentElement().getElementsByTagName("properties");
+            NodeList rootChildList = doc.getDocumentElement().getChildNodes();
+            String groupId = "";
+            String artifactId = "";
+            String description = "";
+            String version = "";
+            String p_groupId = "";
+            String p_artifactId = "";
+            String p_version = "";
+            String packaging = "";
+            Map<String,String> props=new LinkedHashMap<>();
+            for (int i = 0; i < rootChildList.getLength(); i++) {
+                Element elem1 = toElement(rootChildList.item(i));
+                if(elem1!=null) {
+                    switch (elem1.getTagName()) {
+                        case "groupId": {
+                            groupId = elemToStr(elem1);
+                            break;
+                        }
+                        case "artifactId": {
+                            artifactId = elemToStr(elem1);
+                            break;
+                        }
+                        case "version": {
+                            version = elemToStr(elem1);
+                            break;
+                        }
+                        case "packaging": {
+                            packaging = elemToStr(elem1);
+                            break;
+                        }
+                        case "description": {
+                            description = elemToStr(elem1);
+                            break;
+                        }
+                        case "parent": {
+                            NodeList parentChildList = elem1.getChildNodes();
+                            for (int j = 0; j < parentChildList.getLength(); j++) {
+                                Element parElem = toElement(parentChildList.item(j));
+                                if (parElem != null) {
+                                    switch (parElem.getTagName()) {
+                                        case "groupId": {
+                                            p_groupId = elemToStr(parElem);
+                                            break;
+                                        }
+                                        case "artifactId": {
+                                            p_artifactId = elemToStr(parElem);
+                                            break;
+                                        }
+                                        case "version": {
+                                            p_version = elemToStr(parElem);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case "properties": {
+                            NodeList propsChildList = elem1.getChildNodes();
+                            for (int j = 0; j < propsChildList.getLength(); j++) {
+                                Element parElem = toElement(propsChildList.item(j));
+                                if (parElem != null) {
+                                    props.put(parElem.getTagName(), elemToStr(parElem));
+                                }
+                            }
+                            break;
+                        }
+                        case "dependencies": {
+                            NodeList dependenciesChildList = elem1.getChildNodes();
+                            for (int j = 0; j < dependenciesChildList.getLength(); j++) {
+                                Element dependency = toElement(dependenciesChildList.item(j), "dependency");
+                                if (dependency != null) {
+                                    NodeList dependencyChildList = dependency.getChildNodes();
+                                    String d_groupId = "";
+                                    String d_artifactId = "";
+                                    String d_version = "";
+                                    String d_scope = "";
+                                    String d_optional = "";
+                                    List<NutsId> d_exclusions = new ArrayList<>();
+                                    for (int k = 0; k < dependencyChildList.getLength(); k++) {
+                                        Element c = toElement(dependencyChildList.item(k));
+                                        if (c != null) {
+                                            switch (c.getTagName()) {
+                                                case "groupId": {
+                                                    d_groupId = elemToStr(c);
+                                                    break;
+                                                }
+                                                case "artifactId": {
+                                                    d_artifactId = elemToStr(c);
+                                                    break;
+                                                }
+                                                case "version": {
+                                                    d_version = elemToStr(c);
+                                                    break;
+                                                }
+                                                case "scope": {
+                                                    d_scope = elemToStr(c);
+                                                    break;
+                                                }
+                                                case "optional": {
+                                                    d_optional = elemToStr(c);
+                                                    break;
+                                                }
+                                                case "exclusions": {
+                                                    NodeList exclusionsList = c.getChildNodes();
+                                                    String ex_groupId = "";
+                                                    String ex_artifactId = "";
+                                                    for (int l = 0; l < exclusionsList.getLength(); l++) {
+                                                        Element ex = toElement(exclusionsList.item(l));
+                                                        if (ex != null) {
+                                                            switch (ex.getTagName()) {
+                                                                case "groupId": {
+                                                                    ex_groupId = elemToStr(ex);
+                                                                    break;
+                                                                }
+                                                                case "artifactId": {
+                                                                    ex_artifactId = elemToStr(ex);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    if (!ex_groupId.isEmpty()) {
+                                                        d_exclusions.add(new NutsIdImpl(ex_groupId, ex_artifactId, null));
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (d_scope.isEmpty()) {
+                                        d_scope = "compile";
+                                    }
+                                    deps.add(new NutsDependencyImpl(
+                                            null, d_groupId, d_artifactId, d_version, d_scope, d_optional, d_exclusions.toArray(new NutsId[0])
+                                    ));
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+            long time = System.currentTimeMillis() - startTime;
+            if (time > 0) {
+                log.log(Level.CONFIG, "[SUCCESS] Loading pom.xml file from  {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
+            } else {
+                log.log(Level.CONFIG, "[SUCCESS] Loading pom.xml file from  {0}", new Object[]{urlDesc});
+            }
+
+            boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+            if (packaging.isEmpty()) {
+                packaging="jar";
+            }
+            return new DefaultNutsDescriptorBuilder()
+                    .setId(new NutsIdImpl(
+                            null, groupId, artifactId,
+                            version,
+                            ""
+                    ))
+                    .setParents(p_groupId.length() == 0 ? new NutsId[0] : new NutsId[]{
+                            new NutsIdImpl(
+                                    null, p_groupId, p_artifactId,
+                                    p_version.toString().trim(),
+                                    ""
+                            )
+                    })
+                    .setPackaging(packaging)
+                    .setExecutable(executable)
+                    .setExt("war".equals(packaging) ? "war" : "jar")
+                    .setName(artifactId)
+                    .setDescription(description.toString())
+                    .setPlatform(new String[]{"java"})
+                    .setDependencies(deps.toArray(new NutsDependency[0]))
+                    .setProperties(props)
+                    .build()
+                    ;
+        } catch (Exception e) {
+            long time = System.currentTimeMillis() - startTime;
+            if (time > 0) {
+                log.log(Level.CONFIG, "[ERROR  ] Loading pom.xml file from  {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
+            } else {
+                log.log(Level.CONFIG, "[ERROR  ] Loading pom.xml file from  {0}", new Object[]{urlDesc});
+            }
+            throw new NutsParseException("Error Parsing " + urlDesc, e);
+        }
+    }
+
+    private static String elemToStr(Element ex) {
+        return ex.getTextContent() == null ? "" : ex.getTextContent().trim();
+    }
+
+    public static NutsDescriptor parsePomXml0Old(InputStream stream, String urlDesc) {
         StringBuilder p_groupId = new StringBuilder();
         StringBuilder p_artifactId = new StringBuilder();
         StringBuilder p_version = new StringBuilder();
@@ -376,13 +594,13 @@ public class MavenUtils {
 
     public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsSession session, String urlDesc) throws IOException {
         NutsDescriptor nutsDescriptor = null;
-        if(session==null){
-            session=ws.createSession();
+        if (session == null) {
+            session = ws.createSession();
         }
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
-                nutsDescriptor = MavenUtils.parsePomXml(stream);
+                nutsDescriptor = MavenUtils.parsePomXml(stream,urlDesc);
                 HashMap<String, String> properties = new HashMap<>();
                 NutsSession transitiveSession = session.copy().setTransitive(true);
                 NutsId parentId = null;
@@ -439,14 +657,14 @@ public class MavenUtils {
                                 throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
                             }
                         }
-                        done.add(pid.getFullName());
+                        done.add(pid.getSimpleName());
                         if (CoreNutsUtils.containsVars(thisId)) {
                             thisId.apply(new MapStringMapper(d.getProperties()));
                         } else {
                             break;
                         }
                         for (NutsId nutsId : d.getParents()) {
-                            if (!done.contains(nutsId.getFullName())) {
+                            if (!done.contains(nutsId.getSimpleName())) {
                                 todo.push(nutsId);
                             }
                         }
@@ -486,5 +704,21 @@ public class MavenUtils {
         public List<String> getVersions() {
             return versions;
         }
+    }
+
+    private static Element toElement(Node n) {
+        if (n instanceof Element) {
+            return (Element) n;
+        }
+        return null;
+    }
+
+    private static Element toElement(Node n, String name) {
+        if (n instanceof Element) {
+            if (((Element) n).getTagName().equals(name)) {
+                return (Element) n;
+            }
+        }
+        return null;
     }
 }

@@ -50,7 +50,7 @@ public class NutsSimpleIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilt
     }
 
     public boolean accept(NutsId id) {
-        if (!this.id.getFullName().equals(id.getFullName())) {
+        if (!this.id.getSimpleName().equals(id.getSimpleName())) {
             return false;
         }
         if (!this.id.getVersion().toFilter().accept(id.getVersion())) {

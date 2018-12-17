@@ -12,11 +12,8 @@ import java.lang.reflect.Type;
 
 public class GsonIO implements JsonIO {
     public static final GsonIO INSTANCE = new GsonIO();
-    public static final Gson GSON = prepareBuilder()
-            .create();
-    public static final Gson GSON_PRETTY = prepareBuilder()
-            .setPrettyPrinting()
-            .create();
+    private static Gson GSON;
+    private static Gson GSON_PRETTY;
 
     public static GsonBuilder prepareBuilder() {
         return new GsonBuilder()
@@ -34,7 +31,17 @@ public class GsonIO implements JsonIO {
     }
 
     public static Gson getGson(boolean pretty) {
-        return pretty ? GSON_PRETTY : GSON;
+        if (pretty) {
+            if (GSON_PRETTY == null) {
+                GSON_PRETTY = prepareBuilder().setPrettyPrinting().create();
+            }
+            return GSON_PRETTY;
+        } else {
+            if (GSON == null) {
+                GSON = prepareBuilder().create();
+            }
+            return GSON;
+        }
     }
 
     @Override
@@ -49,7 +56,7 @@ public class GsonIO implements JsonIO {
 
     @Override
     public <T> T read(Reader reader, Class<T> cls) {
-        return GSON.fromJson(reader, cls);
+        return getGson(true).fromJson(reader, cls);
     }
 
     private static class NutsIdJsonAdapter implements
@@ -92,8 +99,7 @@ public class GsonIO implements JsonIO {
 
     private static class NutsDescriptorJsonAdapter implements
             com.google.gson.JsonSerializer<NutsDescriptor>,
-            com.google.gson.JsonDeserializer<NutsDescriptor>
-    {
+            com.google.gson.JsonDeserializer<NutsDescriptor> {
 
         @Override
         public NutsDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -104,16 +110,16 @@ public class GsonIO implements JsonIO {
 
         @Override
         public JsonElement serialize(NutsDescriptor src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null ) {
+            if (src != null) {
                 return context.serialize(new DefaultNutsDescriptorBuilder(src));
             }
             return context.serialize(src);
         }
     }
+
     private static class NutsNutsDependencyJsonAdapter implements
             com.google.gson.JsonSerializer<NutsDependency>,
-            com.google.gson.JsonDeserializer<NutsDependency>
-    {
+            com.google.gson.JsonDeserializer<NutsDependency> {
 
         @Override
         public NutsDependency deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -124,7 +130,7 @@ public class GsonIO implements JsonIO {
 
         @Override
         public JsonElement serialize(NutsDependency src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null ) {
+            if (src != null) {
                 return context.serialize(new DefaultNutsDependencyBuilder(src));
             }
             return context.serialize(src);

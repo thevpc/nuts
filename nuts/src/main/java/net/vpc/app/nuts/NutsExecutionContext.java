@@ -52,4 +52,6 @@ public interface NutsExecutionContext {
     Properties getEnv();
 
     String getCwd();
+
+    boolean isFailFast();
 }

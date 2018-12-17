@@ -6,6 +6,8 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
+import net.vpc.common.io.FileUtils;
+import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 
@@ -20,8 +22,11 @@ public class NutsBootFolderRepository extends NutsFolderRepository {
     }
 
     @Override
-    protected String getStoreRoot() {
-        return getConfigManager().getLocationFolder();
+    public String getStoreRoot() {
+        return FileUtils.getAbsolutePath(
+                new File(getWorkspace().getConfigManager().getWorkspaceLocation()),
+                getConfigManager().getLocationFolder()
+        );
     }
 
     protected NutsFile getLocalNutDescriptorFile(NutsId id) {

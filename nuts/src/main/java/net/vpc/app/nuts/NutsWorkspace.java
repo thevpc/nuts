@@ -36,6 +36,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -76,11 +77,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
-    NutsFile updateWorkspace(String nutsVersion, NutsConfirmAction foundAction, NutsSession session);
-
-    NutsUpdate[] checkWorkspaceUpdates(boolean applyUpdates, String[] args, NutsSession session);
-
-    NutsUpdate checkUpdates(String id, NutsSession session);
+    NutsUpdate[] checkWorkspaceUpdates(NutsWorkspaceUpdateOptions options, NutsSession session);
 
     NutsFile update(String id, NutsConfirmAction uptoDateAction, NutsSession session);
 
@@ -126,7 +123,11 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceRepositoryManager getRepositoryManager();
 
-    Properties getRuntimeProperties();
+    Map<String, Object> getUserProperties();
+
+    NutsTerminal getTerminal();
+
+    void setTerminal(NutsTerminal newTerminal);
 
     NutsSession createSession();
 
@@ -140,6 +141,12 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String getStoreRoot(NutsId id, RootFolderType folderType);
 
+    void addUserPropertyListener(MapListener<String,Object> listener);
+
+    void removeUserPropertyListener(MapListener<String,Object> listener);
+
+    MapListener<String,Object>[] getUserPropertyListeners();
+
     String getStoreRoot(String id, RootFolderType folderType);
 
     NutsFile fetchBootFile(NutsSession session);
@@ -152,9 +159,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsWorkspaceListener[] getWorkspaceListeners();
 
-    NutsId getBootId();
-
-    NutsId getRuntimeId();
+    String resolveDefaultHelpForClass(Class clazz);
 
     NutsId resolveNutsIdForClass(Class clazz);
 
@@ -211,6 +216,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     /**
      * this method removes all  {@link NutsFormattedPrintStream}'s special formatting sequences and returns the raw
      * string to be printed on an ordinary {@link PrintStream}
+     *
      * @param value input string
      * @return string without any escape sequences so that the text printed correctly on any non formatted {@link PrintStream}
      */
@@ -220,6 +226,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
      * This method escapes all special characters that are interpreted by {@link NutsFormattedPrintStream} so that
      * this exact string is printed on such print streams
      * When str is null, an empty string is return
+     *
      * @param value input string
      * @return string with escaped characters so that the text printed correctly on {@link NutsFormattedPrintStream}
      */
@@ -227,6 +234,7 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     /**
      * resolveExecutionEntries
+     *
      * @param file
      * @return
      */
@@ -246,16 +254,20 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String evalContentHash(InputStream input);
 
-    void printVersion(PrintStream out,Properties extraProperties,String options);
+    void printVersion(PrintStream out, Properties extraProperties, String options);
 
 
     NutsTerminal createDefaultTerminal();
 
     NutsTerminal createTerminal();
 
+    NutsTerminal createTerminal(NutsTerminal delegated, InputStream in, PrintStream out, PrintStream err);
+
     NutsTerminal createTerminal(InputStream in, PrintStream out, PrintStream err);
 
-    PrintStream createPrintStream(OutputStream out, boolean formatted);
+    PrintStream createPrintStream(OutputStream out, boolean inputFormatted);
+
+    PrintStream createPrintStream(OutputStream out, boolean inputFormatted, boolean forceNoColors);
 
     PrintStream createPrintStream(File out);
 
@@ -266,7 +278,13 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     NutsId parseNutsId(String nutsId);
 
     InputStream monitorInputStream(String path, String name, NutsSession session);
+
     InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session);
 
+    boolean isStandardOutputStream(OutputStream out);
+
+    boolean isStandardErrorStream(OutputStream out);
+
+    boolean isStandardInputStream(InputStream in);
 }
 

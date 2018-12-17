@@ -57,11 +57,11 @@ public class NutsIdGraph {
     public void remove(NutsId id) {
         files.remove(id);
         allVertices.remove(id);
-        Set<NutsId> old = flatVersions.get(id.getFullName());
+        Set<NutsId> old = flatVersions.get(id.getSimpleName());
         if (old != null) {
             old.remove(id);
             if (old.isEmpty()) {
-                flatVersions.remove(id.getFullName());
+                flatVersions.remove(id.getSimpleName());
             }
         }
         //now remove all vertex to this id
@@ -113,12 +113,12 @@ public class NutsIdGraph {
         }
         vertices.add(to.getId());
 
-        Set<NutsId> versions = flatVersions.get(from.getId().getFullName());
+        Set<NutsId> versions = flatVersions.get(from.getId().getSimpleName());
         if (versions == null) {
             versions = new HashSet<>();
         }
         versions.add(from.getId());
-        flatVersions.put(from.getId().getFullName(), versions);
+        flatVersions.put(from.getId().getSimpleName(), versions);
     }
 
     public void visit(NutsId id, List<NutsFile> collected) {

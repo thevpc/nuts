@@ -1,11 +1,11 @@
 package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.DefaultNutsCommandContext;
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
 import net.vpc.app.nuts.toolbox.nsh.options.ArchitectureNonOption;
 import net.vpc.app.nuts.toolbox.nsh.options.ServerNonOption;
-import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.DefaultNonOption;
 import net.vpc.common.io.IOUtils;
@@ -27,13 +27,13 @@ public class NutsServerMain extends NutsApplication {
     }
 
     @Override
-    public int launch(String[] args, NutsWorkspace ws) {
+    public int launch(NutsApplicationContext appContext) {
+        String[] args=appContext.getArgs();
         try {
-            DefaultNutsCommandContext context = new DefaultNutsCommandContext(ws);
             boolean autoSave = false;
-            NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getValidWorkspace());
+            NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(appContext.getWorkspace());
 
-            net.vpc.common.commandline.CommandLine cmdLine = new CommandLine(args, (CommandAutoComplete) context.getAutoComplete());
+            net.vpc.common.commandline.CommandLine cmdLine = new CommandLine(args, appContext.getAutoComplete());
 
             class SrvInfo {
 
@@ -57,7 +57,7 @@ public class NutsServerMain extends NutsApplication {
                     if (cmdLine.readAllOnce("-c", "--create")) {
                         autocreate = true;
                     } else if (cmdLine.readAllOnce("-h", "--archetype")) {
-                        archetype = cmdLine.readRequiredNonOption(new ArchitectureNonOption("Archetype", context)).getStringOrError();
+                        archetype = cmdLine.readRequiredNonOption(new ArchitectureNonOption("Archetype", appContext.getWorkspace())).getStringOrError();
                     } else if (cmdLine.readAllOnce("-!s", "--no-save")) {
                         save = false;
                     } else if (cmdLine.readAllOnce("--http")) {
@@ -71,39 +71,39 @@ public class NutsServerMain extends NutsApplication {
                         servers.get(servers.size() - 1).serverType = "admin";
                     } else if (cmdLine.readAllOnce("-n", "--name")) {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         servers.get(servers.size() - 1).name = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerName")).getString();
                     } else if (cmdLine.readAllOnce("-a", "--address")) {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         servers.get(servers.size() - 1).addr = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerAddress")).getString();
 
                     } else if (cmdLine.readAllOnce("-p", "--port")) {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         servers.get(servers.size() - 1).port = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerPort")).getInt();
 
                     } else if (cmdLine.readAllOnce("-l", "--backlog")) {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         servers.get(servers.size() - 1).port = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerBacklog")).getInt();
                     } else if (cmdLine.readAllOnce("--ssl-certificate")) {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         servers.get(servers.size() - 1).sslCertificate = cmdLine.readRequiredNonOption(new DefaultNonOption("SslCertificate")).getStringOrError();
                     } else if (cmdLine.readAllOnce("--ssl-passphrase")) {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         servers.get(servers.size() - 1).sslPassphrase = cmdLine.readRequiredNonOption(new DefaultNonOption("SslPassPhrase")).getStringOrError();
                     } else {
                         if (servers.size() == 0) {
-                            throw new NutsIllegalArgumentException("Server Type missing");
+                            throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
                         String s = cmdLine.readRequiredNonOption(new DefaultNonOption("Workspace")).getString();
                         int eq = s.indexOf('=');
@@ -111,12 +111,12 @@ public class NutsServerMain extends NutsApplication {
                             String serverContext = s.substring(0, eq);
                             String workspaceLocation = s.substring(eq + 1);
                             if (servers.get(servers.size() - 1).workspaceLocations.containsKey(serverContext)) {
-                                throw new NutsIllegalArgumentException("Server Workspace context Already defined " + serverContext);
+                                throw new NutsIllegalArgumentException("nuts-server: Server Workspace context Already defined " + serverContext);
                             }
                             servers.get(servers.size() - 1).workspaceLocations.put(serverContext, workspaceLocation);
                         } else {
                             if (servers.get(servers.size() - 1).workspaceLocations.containsKey("")) {
-                                throw new NutsIllegalArgumentException("Server Workspace context Already defined " + "");
+                                throw new NutsIllegalArgumentException("nuts-server: Server Workspace context Already defined " + "");
                             }
                             servers.get(servers.size() - 1).workspaceLocations.put("", s);
                         }
@@ -125,7 +125,7 @@ public class NutsServerMain extends NutsApplication {
                 }
                 if (cmdLine.isExecMode()) {
                     if (servers.isEmpty()) {
-                        context.getTerminal().getFormattedErr().printf("No Server config found.\n");
+                        appContext.getTerminal().getFormattedErr().printf("No Server config found.\n");
                         return 1;
                     }
                     Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();
@@ -134,14 +134,14 @@ public class NutsServerMain extends NutsApplication {
                         for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
                             NutsWorkspace nutsWorkspace = null;
                             if (StringUtils.isEmpty(entry.getValue())) {
-                                if (context.getValidWorkspace() == null) {
-                                    throw new NutsIllegalArgumentException("Missing workspace");
+                                if (appContext.getWorkspace() == null) {
+                                    throw new NutsIllegalArgumentException("nuts-server: Missing workspace");
                                 }
-                                nutsWorkspace = context.getValidWorkspace();
+                                nutsWorkspace = appContext.getWorkspace();
                             } else {
                                 nutsWorkspace = allWorkspaces.get(entry.getValue());
                                 if (nutsWorkspace == null) {
-                                    nutsWorkspace = context.getValidWorkspace().openWorkspace(
+                                    nutsWorkspace = appContext.getWorkspace().openWorkspace(
                                             new NutsWorkspaceOptions()
                                                     .setWorkspace(entry.getValue())
                                                     .setCreateIfNotFound(autocreate)
@@ -169,11 +169,11 @@ public class NutsServerMain extends NutsApplication {
                                 if ("https".equals(server.serverType)) {
                                     config.setSsh(true);
                                     if (server.sslCertificate == null) {
-                                        throw new NutsIllegalArgumentException("Missing SSL Certificate");
+                                        throw new NutsIllegalArgumentException("nuts-server: Missing SSL Certificate");
                                     }
-                                    config.setSslKeystoreCertificate(IOUtils.loadByteArray(new File(context.getAbsolutePath(server.sslCertificate))));
+                                    config.setSslKeystoreCertificate(IOUtils.loadByteArray(new File(server.sslCertificate)));
                                     if (server.sslPassphrase == null) {
-                                        throw new NutsIllegalArgumentException("Missing SSL Passphrase");
+                                        throw new NutsIllegalArgumentException("nuts-server: Missing SSL Passphrase");
                                     }
                                     config.setSslKeystorePassphrase(server.sslPassphrase.toCharArray());
                                 }
@@ -190,27 +190,27 @@ public class NutsServerMain extends NutsApplication {
                                 break;
                             }
                             default:
-                                throw new NutsIllegalArgumentException("Unsupported server type " + server.serverType);
+                                throw new NutsIllegalArgumentException("nuts-server: Unsupported server type " + server.serverType);
                         }
                         serverManager.startServer(config0);
                     }
                 }
             } else if (cmdLine.readAll("stop")) {
-                String s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", context)).getString();
+                String s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", appContext.getWorkspace())).getString();
                 if (cmdLine.isExecMode()) {
                     serverManager.stopServer(s);
                 }
                 while (cmdLine.hasNext()) {
-                    s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", context)).getString();
+                    s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", appContext.getWorkspace())).getString();
                     if (cmdLine.isExecMode()) {
                         serverManager.stopServer(s);
                     }
                 }
             } else if (cmdLine.readAll("list")) {
-                cmdLine.unexpectedArgument();
+                cmdLine.unexpectedArgument("nuts-server list");
                 if (cmdLine.isExecMode()) {
                     List<NutsServer> servers = serverManager.getServers();
-                    PrintStream out = context.getTerminal().getFormattedOut();
+                    PrintStream out = appContext.getTerminal().getFormattedOut();
                     if (servers.isEmpty()) {
                         out.printf("No Server is Running\n");
                     }
@@ -223,9 +223,9 @@ public class NutsServerMain extends NutsApplication {
                     }
                 }
             } else {
-                throw new NutsCommandSyntaxError("Invalid syntax from command 'server");
+                throw new NutsCommandSyntaxError("nuts-server: Invalid syntax for command server");
             }
-            cmdLine.unexpectedArgument();
+            cmdLine.unexpectedArgument("nuts-server");
             return 0;
         } catch (IOException e) {
             throw new RuntimeException(e);

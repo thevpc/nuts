@@ -68,9 +68,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         checkNutsRepositoryConfig(config);
         if (root == null) {
             throw new IllegalArgumentException("Missing folder");
-//            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getNutsHomeLocation());
+//            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getHomeLocation());
         } else {
-            root = CoreIOUtils.resolvePath(null, new File(root), workspace.getConfigManager().getNutsHomeLocation()).getPath();
+            root = CoreIOUtils.resolvePath(null, new File(root), workspace.getConfigManager().getHomeLocation()).getPath();
         }
         if (root == null || (new File(root).exists() && !new File(root).isDirectory())) {
             throw new NutsInvalidRepositoryException(String.valueOf(root), "Unable to resolve root to a valid folder " + root + "");
@@ -345,7 +345,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
             if (CoreVersionUtils.isStaticVersionPattern(versionString) || StringUtils.isEmpty(versionString)) {
-                if (StringUtils.isEmpty(versionString) || "LATEST".equals(versionString)) {
+                if (StringUtils.isEmpty(versionString) || "LATEST".equals(versionString) || "RELEASE".equals(versionString)) {
                     NutsId a = findLatestVersion(id.setVersion(null), null, session);
                     if (a == null) {
                         throw new NutsNotFoundException(id.toString());
@@ -356,7 +356,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 }
             } else {
                 DefaultNutsIdMultiFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), new NutsSimpleIdFilter(id), CoreVersionUtils.createNutsVersionFilter(versionString), null, this, session);
-                NutsId a = findLatestVersion(id, filter, session);
+                NutsId a = findLatestVersion(id.setVersion(null), filter, session);
                 if (a == null) {
                     throw new NutsNotFoundException(id.toString());
                 }
@@ -495,7 +495,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
         if ("RELEASE".equals(id.getVersion().getValue())
                 || "LATEST".equals(id.getVersion().getValue())
-                || "RELEASE".equals(id.getVersion().getValue())) {
+        ) {
             throw new NutsIllegalArgumentException("Invalid version " + id.getVersion());
         }
 //        if (descriptor.getArch().length > 0 || descriptor.getOs().length > 0 || descriptor.getOsdist().length > 0 || descriptor.getPlatform().length > 0) {

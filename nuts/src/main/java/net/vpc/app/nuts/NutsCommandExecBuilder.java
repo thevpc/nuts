@@ -32,6 +32,10 @@ public interface NutsCommandExecBuilder {
 
     NutsCommandExecBuilder addCommand(List<String> command);
 
+    NutsCommandExecBuilder addExecutorOptions(String... executorOptions);
+
+    NutsCommandExecBuilder addExecutorOptions(List<String> executorOptions);
+
     NutsCommandExecBuilder setCommand(String... command);
 
     NutsCommandExecBuilder setCommand(List<String> command);
@@ -55,8 +59,6 @@ public interface NutsCommandExecBuilder {
     NutsCommandExecBuilder setIn(InputStream in);
 
     PrintStream getOut();
-
-    NutsCommandExecBuilder setOutAndErrStringBuffer();
 
     NutsCommandExecBuilder grabOutputString();
 

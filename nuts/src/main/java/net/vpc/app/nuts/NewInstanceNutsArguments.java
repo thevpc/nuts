@@ -9,6 +9,7 @@ public class NewInstanceNutsArguments extends NutsArguments{
     private String bootVersion;
     private String requiredVersion;
     private String javaCommand;
+    private String javaOptions;
 
     public String getJavaCommand() {
         return javaCommand;
@@ -61,6 +62,15 @@ public class NewInstanceNutsArguments extends NutsArguments{
 
     public NewInstanceNutsArguments setRequiredVersion(String requiredVersion) {
         this.requiredVersion = requiredVersion;
+        return this;
+    }
+
+    public String getJavaOptions() {
+        return javaOptions;
+    }
+
+    public NewInstanceNutsArguments setJavaOptions(String javaOptions) {
+        this.javaOptions = javaOptions;
         return this;
     }
 }

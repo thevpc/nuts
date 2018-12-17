@@ -72,8 +72,8 @@ public class NutsHttpServlet extends HttpServlet {
         Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
         NutsBootOptions bootOptions = new NutsBootOptions().setHome(root)
-                .setRuntimeId(runtimeId)
-                .setRuntimeSourceURL(runtimeSourceURL);
+                .setBootRuntime(runtimeId)
+                .setBootRuntimeSourceURL(runtimeSourceURL);
         NutsWorkspace workspace = Nuts.openWorkspace(
                 new NutsWorkspaceOptions()
                         .setWorkspace(workspaceLocation)

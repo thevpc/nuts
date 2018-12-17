@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.net.URL;
-import java.util.Properties;
 
 /**
  * Private API
@@ -40,8 +39,12 @@ import java.util.Properties;
 public interface NutsWorkspaceImpl extends NutsWorkspace{
 
     boolean initializeWorkspace(NutsBootWorkspace workspaceBoot, NutsWorkspaceFactory factory,
-            String workspaceBootId, String workspaceRuntimeId, String workspace, URL[] bootClassWorldURLs, 
-            ClassLoader workspaceClassLoader, NutsWorkspaceOptions options);
+                                NutsBootConfig actualBootConfig, NutsBootConfig wsBootConfig,
+                                String workspace,
+                                URL[] bootClassWorldURLs,
+                                ClassLoader workspaceClassLoader,
+                                NutsWorkspaceOptions options
+    );
 
-    NutsWorkspace self();
+//    NutsWorkspace self();
 }

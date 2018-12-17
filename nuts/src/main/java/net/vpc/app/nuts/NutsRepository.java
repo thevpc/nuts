@@ -158,4 +158,6 @@ public interface NutsRepository {
     boolean isEnabled();
 
     int getSpeed();
+
+    String getStoreRoot() ;
 }

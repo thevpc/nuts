@@ -51,7 +51,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 CoreIOUtils.resolvePath(repositoryId,
                         root != null ? new File(root) : CoreIOUtils.createFile(
                                 workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getNutsHomeLocation()).getPath(),
+                        workspace.getConfigManager().getHomeLocation()).getPath(),
                 SPEED_FAST);
     }
 
@@ -92,16 +92,21 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        File locationFolder = getStoreRoot();
+        File locationFolder = getPrivateStoreRoot();
 
         return new File(locationFolder, groupId.replaceAll("\\.", File.separator) + File.separator + artifactId + File.separator + version + File.separator + artifactId + "-" + version + extension)
                 .getPath();
     }
 
-    private File getStoreRoot() {
+    @Override
+    public String getStoreRoot() {
+        return null;
+    }
+
+    private File getPrivateStoreRoot() {
         return CoreIOUtils.resolvePath(getConfigManager().getLocation(),
                 new File(getConfigManager().getLocationFolder()),
-                getWorkspace().getConfigManager().getNutsHomeLocation());
+                getWorkspace().getConfigManager().getHomeLocation());
     }
 
     @Override
@@ -142,7 +147,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //            }
 //            throw new NutsIdInvalidFormatException("Missing group for " + id);
 //        }
-//        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+//        File groupFolder = new File(getPrivateStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
 //        if (StringUtils.isEmpty(id.getName())) {
 //            if (nullIfInvalidName) {
 //                return null;
@@ -173,7 +178,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (id.getVersion().isEmpty()) {
             return null;
         }
-        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getPrivateStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
         File artifactFolder = new File(groupFolder, id.getName());
         if (id.getVersion().isEmpty()) {
             return null;
@@ -219,7 +224,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        if (id.getVersion().isEmpty()) {
 //            return null;
 //        }
-//        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+//        File groupFolder = new File(getPrivateStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
 //        File artifactFolder = new File(groupFolder, id.getName());
 //        if (id.getVersion().isEmpty()) {
 //            if (id.getQueryMap().isEmpty()) {
@@ -255,7 +260,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getPrivateStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
         return new File(groupFolder, id.getName());
     }
 
@@ -361,7 +366,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     @Override
     protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            File locationFolder = getStoreRoot();
+            File locationFolder = getPrivateStoreRoot();
             return findInFolder(locationFolder, filter, session);
         }
         return Collections.emptyIterator();
@@ -391,4 +396,5 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //            throw new NutsNotFoundException(id.toString(), null, ex);
 //        }
 //    }
+
 }

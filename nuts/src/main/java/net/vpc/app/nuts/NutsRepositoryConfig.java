@@ -152,7 +152,7 @@ public class NutsRepositoryConfig implements Serializable {
 
     public String getEnv(String property, String defaultValue) {
         String o = getEnv().getProperty(property);
-        if (NutsStringUtils.isEmpty(o)) {
+        if (NutsUtils.isEmpty(o)) {
             return defaultValue;
         }
         return o;
@@ -167,7 +167,7 @@ public class NutsRepositoryConfig implements Serializable {
 
 
     public void setEnv(String property, String value) {
-        if (NutsStringUtils.isEmpty(value)) {
+        if (NutsUtils.isEmpty(value)) {
             getEnv().remove(property);
         } else {
             getEnv().setProperty(property, value);

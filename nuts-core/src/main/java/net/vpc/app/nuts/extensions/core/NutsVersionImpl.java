@@ -42,6 +42,7 @@ import net.vpc.common.strings.StringUtils;
 public class NutsVersionImpl implements NutsVersion {
     private static final long serialVersionUID=1l;
     private final String value;
+    public static final NutsVersion EMPTY=new NutsVersionImpl("");
 
     public NutsVersionImpl(String value) {
         this.value = StringUtils.trim(value);

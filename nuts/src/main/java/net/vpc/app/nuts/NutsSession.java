@@ -60,6 +60,4 @@ public interface NutsSession {
     NutsTerminal getTerminal();
 
     NutsSession setTerminal(NutsTerminal terminal);
-
-    NutsSession setTerminal(NutsTerminal base, InputStream inReplace, PrintStream outReplace, PrintStream errReplace);
 }

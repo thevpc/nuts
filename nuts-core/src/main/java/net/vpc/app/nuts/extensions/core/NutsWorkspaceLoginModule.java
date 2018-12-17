@@ -31,7 +31,6 @@ package net.vpc.app.nuts.extensions.core;
 
 import com.sun.security.auth.UserPrincipal;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsEnvironmentContext;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.strings.StringUtils;
@@ -50,6 +49,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
     private Subject subject;
     private UserPrincipal userPrincipal;
     private String login;
+    private static ThreadLocal<NutsWorkspace> workspace=new ThreadLocal<>();
 
     static {
         final Configuration configuration = Configuration.getConfiguration();
@@ -59,7 +59,8 @@ public class NutsWorkspaceLoginModule implements LoginModule {
         }
     }
 
-    public static void install() {
+    public static void configure(NutsWorkspace workspace) {
+        NutsWorkspaceLoginModule.workspace.set(workspace);
         //do nothing
     }
 
@@ -91,7 +92,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             char[] pp = callback == null ? null : callback.getPassword();
             String password = pp == null ? null : String.valueOf(pp);
 
-            NutsWorkspace workspace = NutsEnvironmentContext.getNutsWorkspace();
+            NutsWorkspace workspace = NutsWorkspaceLoginModule.workspace.get();
             if (workspace == null) {
                 throw new LoginException("Authentication failed : No Workspace");
             }

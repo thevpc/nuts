@@ -40,11 +40,11 @@ import java.util.List;
  *
  * @author vpc
  */
-class CharacterizedFile implements AutoCloseable {
+public class CharacterizedFile implements AutoCloseable {
 
-    InputStreamSource contentFile;
-    List<File> temps = new ArrayList<>();
-    NutsDescriptor descriptor;
+    public InputStreamSource contentFile;
+    public List<File> temps = new ArrayList<>();
+    public NutsDescriptor descriptor;
 
     public void addTemp(File f) {
         temps.add(f);

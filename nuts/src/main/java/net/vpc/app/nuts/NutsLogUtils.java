@@ -50,7 +50,7 @@ public final class NutsLogUtils {
     public static final Filter LOG_FILTER = new Filter() {
         @Override
         public boolean isLoggable(LogRecord record) {
-            String loggerName = record == null ? "" : NutsStringUtils.trim(record.getLoggerName());
+            String loggerName = record == null ? "" : NutsUtils.trim(record.getLoggerName());
             return loggerName.startsWith("net.vpc.app.nuts");
         }
     };
@@ -66,14 +66,14 @@ public final class NutsLogUtils {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
-        if (name == null || NutsStringUtils.isEmpty(name)) {
-            name="nuts-%g.log";
+        if (name == null || NutsUtils.isEmpty(name)) {
+            name = "nuts-%g.log";
         }
-        if (folder == null || NutsStringUtils.isEmpty(folder)) {
-            String baseFolder = NutsIOUtils.resolveWorkspaceLocation(home,workspace);
+        if (folder == null || NutsUtils.isEmpty(folder)) {
+            String baseFolder = NutsUtils.resolveWorkspaceLocation(home, workspace);
             folder = baseFolder + "/log/net/vpc/app/nuts/nuts/LATEST";
         }
-        String pattern=(folder+"/"+name).replace('/', File.separatorChar);
+        String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
             maxSize = 5;
         }
@@ -106,7 +106,7 @@ public final class NutsLogUtils {
                     olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
                 }
                 if (pattern.contains("/")) {
-                    NutsIOUtils.createFile(pattern.substring(0, pattern.lastIndexOf('/'))).mkdirs();
+                    NutsUtils.createFile(pattern.substring(0, pattern.lastIndexOf('/'))).mkdirs();
                 }
                 updatedHandler = true;
                 rootLogger.addHandler(new MyFileHandler(pattern, maxSize * MEGA, count, true));
@@ -186,19 +186,34 @@ public final class NutsLogUtils {
             }
             String v = classNameCache.get(className);
             if (v == null) {
-                StringBuilder sb = new StringBuilder();
-                String[] split = className.split("\\.");
-                for (int i = 0; i < split.length - 1; i++) {
-                    sb.append(split[i].charAt(0));
-                    sb.append('.');
+                StringBuilder sb = new StringBuilder(45);
+                int pos = 0, end;
+                while ((end = className.indexOf('.', pos)) >= 0) {
+                    sb.append(className.charAt(pos)).append('.');
+                    pos = end + 1;
                 }
-                if (split.length > 0) {
-                    sb.append(split[split.length - 1]);
+                sb.append(className.substring(pos));
+
+                int length = 45 - sb.length();
+                while (length > 0) {
+                    if (length >= 16) {
+                        sb.append("                ");
+                        length -= 16;
+                    } else if (length >= 8) {
+                        sb.append("        ");
+                        length -= 8;
+                    } else if (length >= 4) {
+                        sb.append("    ");
+                        length -= 4;
+                    } else if (length >= 2) {
+                        sb.append("  ");
+                        length -= 2;
+                    } else {
+                        sb.append(' ');
+                        length--;
+                    }
                 }
-                while (sb.length() < 45) {
-                    sb.append(' ');
-                }
-                v = sb.toString();
+                v= sb.toString();
                 classNameCache.put(className, v);
             }
             return v;

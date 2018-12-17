@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
@@ -57,7 +56,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
                 root != null ? root : CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
                         workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getNutsHomeLocation()).getPath()
+                        workspace.getConfigManager().getHomeLocation()).getPath()
                 , SPEED_SLOW);
     }
 
@@ -118,7 +117,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
         return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/"
-                + artifactId + "-" + version + extension
+                + artifactId + "-" + version + "."+extension
         ));
     }
 
@@ -181,19 +180,27 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
     protected String copyToImpl(NutsId id, String localPath, NutsSession session) {
         NutsDescriptor desc = null;
         String fileExtension = null;
-
+        desc = fetchDescriptor(id, session);
+        fileExtension = desc.getExt();
         if (new File(localPath).isDirectory()) {
-            desc = fetchDescriptor(id, session);
-            fileExtension = FileUtils.getFileExtension(desc.getExt());
             localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, fileExtension)).getPath();
         }
-
+        for (String location : desc.getLocations()) {
+            if(!StringUtils.isEmpty(location)){
+                try {
+                    CoreIOUtils.downloadPath(location, new File(localPath), location, getWorkspace(), session);
+                    return localPath;
+                }catch (Exception ex){
+                    //ignore
+                }
+            }
+        }
         try {
             httpDownloadToFile(getPath(id, fileExtension), new File(localPath), true);
+            return localPath;
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
-        throw new NutsNotFoundException(id.toString());
     }
 
     @Override
@@ -242,7 +249,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
             String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId)+"/.folders").split("\n");
             List<NutsId> n=new ArrayList<>();
             for (String s : all) {
-                if(!StringUtils.isEmpty(s)){
+                if(!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)){
                     NutsId id2 = id.builder().setVersion(s).build();
                     if(idFilter==null|| idFilter.accept(id2)) {
                         n.add(id2);
@@ -314,5 +321,9 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         }
     }
 
+    @Override
+    public String getStoreRoot() {
+        return null;
+    }
 
 }

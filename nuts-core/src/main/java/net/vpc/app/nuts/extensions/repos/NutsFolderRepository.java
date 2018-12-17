@@ -703,7 +703,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    protected String getStoreRoot() {
+    public String getStoreRoot() {
         String n = getConfigManager().getComponentsLocation();
         if (StringUtils.isEmpty(n)) {
             n = NutsConstants.FOLDER_NAME_COMPONENTS;
@@ -755,7 +755,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         TreeSet<String> folders=new TreeSet<>();
         if(children!=null){
             for (File child : children) {
-                if(!child.getName().startsWith(".")) {
+                if(!child.getName().startsWith(".") && !child.getName().equals("LATEST") && !child.getName().equals("RELEASE")) {
                     if (child.isDirectory()) {
                         reindexFolder(child);
                         folders.add(child.getName());

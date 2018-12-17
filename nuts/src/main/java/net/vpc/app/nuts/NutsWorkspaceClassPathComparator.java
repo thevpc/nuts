@@ -37,14 +37,16 @@ import java.util.List;
  *
  * @author vpc
  */
-class NutsWorkspaceClassPathComparator implements Comparator<NutsWorkspaceClassPath> {
+class NutsWorkspaceClassPathComparator implements Comparator<NutsBootConfig> {
 
     public NutsWorkspaceClassPathComparator() {
     }
 
     @Override
-    public int compare(NutsWorkspaceClassPath o1, NutsWorkspaceClassPath o2) {
-        return compareVersion(o1.getId().getVersion(), o2.getId().getVersion());
+    public int compare(NutsBootConfig o1, NutsBootConfig o2) {
+        return compareVersion(
+                o1.getBootRuntime().substring(o1.getBootRuntime().indexOf("#")+1),
+                o2.getBootRuntime().substring(o2.getBootRuntime().indexOf("#")+1));
     }
 
     public int compareVersion(String o1, String o2) {

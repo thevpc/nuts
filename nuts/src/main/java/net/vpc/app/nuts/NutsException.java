@@ -32,7 +32,6 @@ package net.vpc.app.nuts;
 import java.io.IOException;
 
 public class NutsException extends RuntimeException {
-
     public NutsException() {
     }
 

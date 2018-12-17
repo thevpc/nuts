@@ -6,11 +6,12 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
     <name>net.vpc.app.nuts.nuts-builder</name>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>
         <module>nuts-core</module>
+        <module>nuts-cmd-app</module>
         <module>toolbox/mvn</module>
         <module>toolbox/nsh</module>
         <module>toolbox/ndi</module>
@@ -22,8 +23,8 @@
         <module>toolbox/nde</module>
         <module>toolbox/worky</module>
         <module>toolbox/mysql</module>
-        <module>nuts-clown</module>
         <module>nuts-tomcat-classloader</module>
+        <module>nuts-clown</module>
     </modules>
     <properties>
     </properties>

@@ -32,10 +32,10 @@ package net.vpc.app.nuts;
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its
  * dependencies and for creating workspaces using the method
- * {@link #openWorkspace(String, NutsWorkspaceOptions)}. NutsBootWorkspace
+ * {@link #openWorkspace(NutsWorkspaceOptions)} . NutsBootWorkspace
  * is also responsible of managing local jar cache folder located at
  * $root/bootstrap where $root is the nuts root folder (~/.nuts) defined by
- * {@link #getNutsHomeLocation()}.
+ * {@link #getHomeLocation()}.
  * <pre>
  *   ~/.nuts/bootstrap ({@link #getBootstrapLocation})
  *       └── net
@@ -61,7 +61,7 @@ public interface NutsBootWorkspace {
      * @return a string representing the boot nuts id in the form
      * net.vpc.app:nuts#VERSION
      */
-    String getBootId();
+    String getBootAPI();
 
     /**
      * loaded (at runtime) nuts id for the net.vpc.app.nuts:nuts-core component.
@@ -71,8 +71,12 @@ public interface NutsBootWorkspace {
      * @return a string representing the boot nuts id in the form
      * net.vpc.app.nuts-core:nuts#VERSION
      */
-    String getRuntimeId();
+    String getBootRuntime();
 
+    /**
+     * Boot Options (passed as process execution arguments)
+     * @return Boot Options
+     */
     NutsBootOptions getBootOptions();
 
     /**
@@ -80,7 +84,7 @@ public interface NutsBootWorkspace {
      *
      * @return nuts root folder
      */
-    String getNutsHomeLocation();
+    String getHomeLocation();
 
     /**
      * nuts bootstrap folder. It defaults to "~/.nuts/bootstrap" bootstrap
@@ -95,7 +99,7 @@ public interface NutsBootWorkspace {
      * <code>workspaceLocation</code> location and according to the given
      * creation options. workspaceLocation may be absolute or relative in which
      * case it will be resolved as a sub folder of nuts root folder (see
-     * {@link #getNutsHomeLocation()}). If no options are provided (options==null)
+     * {@link #getHomeLocation()}). If no options are provided (options==null)
      * workspace will be created and saved it not found null     (<code>new NutsWorkspaceOptions().setCreateIfNotFound(true).setSaveIfCreated(true)<code>)
      * Please note that it may not be safe to create several instances of the same workspace.
      *

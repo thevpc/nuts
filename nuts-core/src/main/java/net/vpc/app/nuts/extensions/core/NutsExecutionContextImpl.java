@@ -47,6 +47,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     private NutsWorkspace workspace;
     private NutsExecutorDescriptor executorDescriptor;
     private String cwd;
+    private boolean failFast;
 
     public NutsExecutionContextImpl(NutsFile nutsFile, NutsSession session, NutsWorkspace workspace,String cwd) {
         this.nutsFile = nutsFile;
@@ -70,7 +71,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     }
 
 
-    public NutsExecutionContextImpl(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace) {
+    public NutsExecutionContextImpl(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace,boolean failFast) {
         if (appArgs == null) {
             appArgs = new String[0];
         }
@@ -91,9 +92,10 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
             env = new Properties();
         }
         this.env = env;
+        this.failFast = failFast;
     }
 
-    public NutsExecutionContextImpl(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor) {
+    public NutsExecutionContextImpl(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor,boolean failFast) {
         if (args == null) {
             args = new String[0];
         }
@@ -103,6 +105,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
         if (execProperties == null) {
             execProperties = new Properties();
         }
+        this.failFast = failFast;
         this.nutsFile = nutsFile;
         this.args = args;
         this.session = session;
@@ -167,4 +170,7 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
         return cwd;
     }
 
+    public boolean isFailFast() {
+        return failFast;
+    }
 }

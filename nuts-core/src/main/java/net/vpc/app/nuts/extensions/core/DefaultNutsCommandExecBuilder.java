@@ -4,13 +4,24 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
 import net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.RuntimeIOException;
 
 import java.io.*;
 import java.util.*;
 
 public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
+    private static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
+            .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
+            .setExt("exe")
+            .setPackaging("exe")
+            .setExecutable(true)
+            .setExecutor(new NutsExecutorDescriptor(CoreNutsUtils.parseNutsId("exec")))
+            .build();
+
     private List<String> command;
+    private List<String> executorOptions;
     private Properties env;
     private DefaultNutsWorkspace ws;
     private NutsSession session;
@@ -74,6 +85,25 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             this.command = new ArrayList<>();
         }
         this.command.addAll(command);
+        return this;
+    }
+
+
+    @Override
+    public NutsCommandExecBuilder addExecutorOptions(String... executorOptions) {
+        if (this.executorOptions == null) {
+            this.executorOptions = new ArrayList<>();
+        }
+        this.executorOptions.addAll(Arrays.asList(executorOptions));
+        return this;
+    }
+
+    @Override
+    public NutsCommandExecBuilder addExecutorOptions(List<String> executorOptions) {
+        if (this.executorOptions == null) {
+            this.executorOptions = new ArrayList<>();
+        }
+        this.executorOptions.addAll(executorOptions);
         return this;
     }
 
@@ -163,13 +193,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     }
 
     @Override
-    public NutsCommandExecBuilder setOutAndErrStringBuffer() {
-        setOut(new SPrintStream2());
-        setErr(getOut());
-        return this;
-    }
-
-    @Override
     public NutsCommandExecBuilder grabOutputString() {
         setOut(new SPrintStream2());
         return this;
@@ -234,9 +257,9 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         terminal.setIn(in != null ? in : session.getTerminal().getIn());
         terminal.setOut(out != null ? out : session.getTerminal().getOut());
         if (isRedirectErrorStream()) {
-            terminal.setErr(err != null ? err : session.getTerminal().getErr());
-        } else {
             terminal.setErr(terminal.getOut());
+        } else {
+            terminal.setErr(err != null ? err : session.getTerminal().getErr());
         }
         String[] ts = command.toArray(new String[0]);
         if (nativeCommand) {
@@ -245,37 +268,13 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                 e2 = new HashMap<>();
                 e2.putAll((Map) env);
             }
-            try {
-                result = CoreIOUtils.execAndWait(ts,
-                        e2,
-                        directory == null ? null : new File(directory),
-                        terminal, true);
-            } catch (InterruptedException e) {
-                throw new RuntimeIOException(e.toString());
-            } catch (IOException e) {
-                throw new RuntimeIOException(e);
-            }
+            result = CoreIOUtils.execAndWait(ws,ts,
+                    e2,
+                    directory == null ? null : new File(directory),
+                    terminal, true, isFailFast());
 
         } else {
-            result = ws.exec(ts, env, directory, session);
-        }
-
-        if (result != 0) {
-            if (isFailFast()) {
-                if (isRedirectErrorStream()) {
-                    if (isGrabOutputString()) {
-                        throw new RuntimeIOException("Execution Failed with code " + result + " and message : " + getOutputString());
-                    }
-                } else {
-                    if (isGrabErrorString()) {
-                        throw new RuntimeIOException("Execution Failed with code " + result + " and message : " + getErrorString());
-                    }
-                    if (isGrabOutputString()) {
-                        throw new RuntimeIOException("Execution Failed with code " + result + " and message : " + getOutputString());
-                    }
-                }
-                throw new RuntimeIOException("Execution Failed with code " + result);
-            }
+            result = execNuts(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), env, directory, isFailFast(), session.copy().setTerminal(terminal));
         }
         return this;
     }
@@ -487,5 +486,60 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         }
         return s;
     }
+
+    public int execNuts(String[] cmd, String[] executorOptions, Properties env, String dir, boolean failSafe, NutsSession session) {
+        if (cmd == null || cmd.length == 0) {
+            throw new NutsIllegalArgumentException("Missing command");
+        }
+        String[] args = new String[cmd.length - 1];
+        System.arraycopy(cmd, 1, args, 0, args.length);
+        String id = cmd[0];
+        if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_EXEC)) {
+            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_EXEC + " : " + id);
+        }
+        int result = 0;
+        if (id.contains("/") || id.contains("\\")) {
+            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(id, "path", id, new File(ws.getConfigManager().getCwd())), session)) {
+                if (c.descriptor == null) {
+                    //this is a native file?
+                    c.descriptor = TEMP_DESC;
+                }
+                NutsFile nutToRun = new NutsFile(
+                        c.descriptor.getId(),
+                        c.descriptor,
+                        ((File) c.contentFile.getSource()).getPath(),
+                        false,
+                        c.temps.size() > 0,
+                        null
+                );
+                result = ws.exec(nutToRun, args, executorOptions, env, dir, failSafe, session);
+            }
+        } else {
+            NutsFile nutToRun = ws.fetchWithDependencies(id, session);
+            //load all needed dependencies!
+            ws.fetchDependencies(new NutsDependencySearch(nutToRun.getId()), session);
+            result = ws.exec(nutToRun, args, executorOptions, env, dir, failSafe, session);
+        }
+
+        if (result != 0) {
+            if (isFailFast()) {
+                if (isRedirectErrorStream()) {
+                    if (isGrabOutputString()) {
+                        throw new RuntimeIOException("Execution Failed with code " + result + " and message : " + getOutputString());
+                    }
+                } else {
+                    if (isGrabErrorString()) {
+                        throw new RuntimeIOException("Execution Failed with code " + result + " and message : " + getErrorString());
+                    }
+                    if (isGrabOutputString()) {
+                        throw new RuntimeIOException("Execution Failed with code " + result + " and message : " + getOutputString());
+                    }
+                }
+                throw new RuntimeIOException("Execution Failed with code " + result);
+            }
+        }
+        return result;
+    }
+
 
 }

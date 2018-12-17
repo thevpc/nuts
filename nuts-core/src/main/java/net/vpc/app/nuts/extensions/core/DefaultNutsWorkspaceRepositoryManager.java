@@ -62,7 +62,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         ws.getConfigManager().removeRepository(repositoryId);
         if (removed != null) {
             for (NutsWorkspaceListener nutsWorkspaceListener : ws.getWorkspaceListeners()) {
-                nutsWorkspaceListener.onRemoveRepository(ws.self(), removed);
+                nutsWorkspaceListener.onRemoveRepository(ws, removed);
             }
         }
     }
@@ -70,7 +70,17 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
     @Override
     public NutsRepository addProxiedRepository(String repositoryId, String location, String type, boolean autoCreate) {
         NutsRepository proxy = addRepository(repositoryId, repositoryId, NutsConstants.REPOSITORY_TYPE_NUTS, autoCreate);
-        return proxy.addMirror(repositoryId + "-ref", location, type, autoCreate);
+        //Dont need to add mirror if repository is already loadable from config!
+        NutsRepository m = null;
+        try {
+            m = proxy.getMirror(repositoryId + "-ref");
+        }catch (NutsRepositoryNotFoundException ex){
+            //
+        }
+        if(m==null) {
+            return proxy.addMirror(repositoryId + "-ref", location, type, autoCreate);
+        }
+        return proxy;
     }
 
     @Override
@@ -174,7 +184,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         }
         repositories.put(repository.getRepositoryId(), repository);
         for (NutsWorkspaceListener nutsWorkspaceListener : ws.getWorkspaceListeners()) {
-            nutsWorkspaceListener.onAddRepository(ws.self(), repository);
+            nutsWorkspaceListener.onAddRepository(ws, repository);
         }
     }
 

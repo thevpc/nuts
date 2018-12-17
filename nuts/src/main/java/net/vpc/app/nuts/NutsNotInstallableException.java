@@ -47,7 +47,7 @@ public class NutsNotInstallableException extends NutsElementNotFoundException {
 
     public NutsNotInstallableException(String nuts, String msg, Exception ex) {
         super(
-                NutsStringUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
+                NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.nuts = nuts;
     }

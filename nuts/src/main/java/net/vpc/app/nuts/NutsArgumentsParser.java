@@ -1,10 +1,6 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,8 +14,8 @@ public final class NutsArgumentsParser {
     private NutsArgumentsParser() {
     }
 
-    public static String[] uncompressBootArguments(String compressedArgsString) {
-        if(compressedArgsString==null){
+    public static String[] parseCommandLine(String commandLineString) {
+        if (commandLineString == null) {
             return new String[0];
         }
         List<String> args = new ArrayList<>();
@@ -28,7 +24,7 @@ public final class NutsArgumentsParser {
         final int IN_WORD = 1;
         final int IN_QUOTED_WORD = 2;
         int status = START;
-        char[] charArray = compressedArgsString.toCharArray();
+        char[] charArray = commandLineString.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
             switch (status) {
@@ -133,7 +129,7 @@ public final class NutsArgumentsParser {
                         sb.append(c);
                         break;
                     }
-                    default:{
+                    default: {
                         sb.append(c);
                     }
                 }
@@ -168,11 +164,11 @@ public final class NutsArgumentsParser {
         } else {
             nargs = args;
             aargs = null;
-        }
-
-        NewInstanceNutsArguments a = parseNewInstanceNutsArguments(nargs);
-        if (a != null) {
-            return a;
+            //never create new instance if expected nuts args(inherited workspace)
+            NewInstanceNutsArguments a = parseNewInstanceNutsArguments(nargs);
+            if (a != null) {
+                return a;
+            }
         }
         ConfigNutsArguments z = parseCurrentInstanceNutsArguments(nargs, aargs);
         return z;
@@ -182,13 +178,13 @@ public final class NutsArgumentsParser {
         List<String> showError = new ArrayList<>();
         ConfigNutsArguments o = new ConfigNutsArguments();
         int startAppArgs = 0;
-        String requiredBootVersion=null;
+        boolean expectArgs = false;
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
         o.getWorkspaceCreateOptions().setSaveIfCreated(true);
         for (int i = 0; i < bootArgs.length; i++) {
             String a = bootArgs[i];
-            if (a.startsWith("-")) {
+            if (!expectArgs && a.startsWith("-")) {
                 switch (a) {
                     //dash (startAppArgs) should be the very last argument
                     case "-": {
@@ -211,9 +207,6 @@ public final class NutsArgumentsParser {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
                         o.getWorkspaceCreateOptions().setWorkspace(bootArgs[i]);
-                        break;
-                    case "--workspace-version":
-                        requiredBootVersion = "@workspace-version";
                         break;
                     case "--archetype":
                         i++;
@@ -243,28 +236,60 @@ public final class NutsArgumentsParser {
                         }
                         o.setApplyUpdatesFile(bootArgs[i]);
                         break;
-                    case "--runtime-id":
+                    case "--boot-runtime":
                         i++;
                         if (i >= bootArgs.length) {
                             throw new NutsIllegalArgumentException("Missing argument for runtime-id");
                         }
-                        o.getBootOptions().setRuntimeId(bootArgs[i]);
+                        String br = bootArgs[i];
+                        if (br.indexOf("#") > 0) {
+                            //this is a full id
+                        } else {
+                            br = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + br;
+                        }
+                        o.getBootOptions().setBootRuntime(br);
                         break;
                     case "--runtime-source-url":
                         i++;
                         if (i >= bootArgs.length) {
                             throw new NutsIllegalArgumentException("Missing argument for boot-url");
                         }
-                        o.getBootOptions().setRuntimeSourceURL(bootArgs[i]);
+                        o.getBootOptions().setBootRuntimeSourceURL(bootArgs[i]);
+                        break;
+                    case "--java":
+                    case "--boot-java":
+                        i++;
+                        if (i >= bootArgs.length) {
+                            throw new NutsIllegalArgumentException("Missing argument for java");
+                        }
+                        o.getBootOptions().setBootJavaCommand(bootArgs[i]);
+                        break;
+                    case "--java-home":
+                    case "--boot-java-home":
+                        i++;
+                        if (i >= bootArgs.length) {
+                            throw new NutsIllegalArgumentException("Missing argument for java-home");
+                        }
+                        o.getBootOptions().setBootJavaCommand(NutsUtils.resolveJavaCommand(bootArgs[i]));
+                        break;
+                    case "--java-options":
+                    case "--boot-java-options":
+                        i++;
+                        if (i >= bootArgs.length) {
+                            throw new NutsIllegalArgumentException("Missing argument for java-options");
+                        }
+                        o.getBootOptions().setBootJavaOptions(bootArgs[i]);
                         break;
                     case "--save":
                         o.getWorkspaceCreateOptions().setSaveIfCreated(true);
                         break;
-                    case "--no-colors":
-                        o.getWorkspaceCreateOptions().setNoColors(true);
-                        break;
-                    case "--nosave":
+                    case "--no-save":
+                    case "--!save":
                         o.getWorkspaceCreateOptions().setSaveIfCreated(false);
+                        break;
+                    case "--no-colors":
+                    case "--!colors":
+                        o.getWorkspaceCreateOptions().setNoColors(true);
                         break;
                     case "-version":
                     case "--version":
@@ -304,7 +329,7 @@ public final class NutsArgumentsParser {
                         if (i >= bootArgs.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-size");
                         }
-                        o.getBootOptions().setLogSize(Integer.parseInt(bootArgs[i]));
+                        o.getBootOptions().setLogSize(NutsUtils.parseFileSize(bootArgs[i]));
                         break;
                     case "--log-folder":
                         i++;
@@ -332,21 +357,23 @@ public final class NutsArgumentsParser {
                         if (i >= bootArgs.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-extensions");
                         }
-                        excludedExtensions.addAll(NutsStringUtils.split(bootArgs[i], " ,;"));
+                        excludedExtensions.addAll(NutsUtils.split(bootArgs[i], " ,;"));
                         break;
                     case "--exclude-repositories":
                         i++;
                         if (i >= bootArgs.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-repositories");
                         }
-                        excludedRepositories.addAll(NutsStringUtils.split(bootArgs[i], " ,;"));
+                        excludedRepositories.addAll(NutsUtils.split(bootArgs[i], " ,;"));
                         break;
                     case "--help": {
                         o.setShowHelp(true);
+                        expectArgs = true;
                         break;
                     }
                     case "--license": {
                         o.setShowLicense(true);
+                        expectArgs = true;
                         break;
                     }
                     case "--perf": {
@@ -357,7 +384,8 @@ public final class NutsArgumentsParser {
                         if (a.startsWith("--version=")) {
                             o.setVersion(true);
                             o.setVersionOptions(a.substring("--version=".length()));
-                        }else if (a.startsWith("-J")) {
+                            expectArgs = true;
+                        } else if (a.startsWith("-J")) {
                             o.getArgs().add(a);
                         } else if (a.startsWith("--nuts")) {
                             o.getArgs().add(a);
@@ -368,6 +396,9 @@ public final class NutsArgumentsParser {
                     }
                 }
                 startAppArgs = i + 1;
+                if (expectArgs) {
+                    break;
+                }
             } else {
                 break;
             }
@@ -384,13 +415,15 @@ public final class NutsArgumentsParser {
                 throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
             }
         }
-        o.getBootOptions().setBootArguments(Arrays.copyOfRange(bootArgs, 0,startAppArgs));
+        o.getBootOptions().setBootArguments(Arrays.copyOfRange(bootArgs, 0, startAppArgs));
         o.getBootOptions().setApplicationArguments(appArgs == null ? new String[0] : appArgs);
         return o;
     }
 
     private static NewInstanceNutsArguments parseNewInstanceNutsArguments(String[] args) {
         String requiredBootVersion = null;
+        String requiredJavaCommand = null;
+        String requiredJavaOptions = null;
         boolean configureLog = false;
         Level logLevel = null;
         int logSize = 0;
@@ -402,18 +435,37 @@ public final class NutsArgumentsParser {
         for (int i = 0; i < args.length; i++) {
             String a = args[i];
             switch (a) {
-                case "--run-version":
+                case "--boot-version":
+                case "--boot-api-version":
                     i++;
                     if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for archetype");
+                        throw new NutsIllegalArgumentException("Missing argument for run-version");
                     }
                     requiredBootVersion = args[i];
                     break;
-                case "--workspace-version":
-                    requiredBootVersion = "@workspace-version";
+                case "--java":
+                case "--boot-java":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for java");
+                    }
+                    requiredJavaCommand = args[i];
                     break;
-                case "--boot-version":
-                    requiredBootVersion = null;
+                case "--java-home":
+                case "--boot-java-home":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for java-home");
+                    }
+                    requiredJavaCommand = NutsUtils.resolveJavaCommand(args[i]);
+                    break;
+                case "--java-options":
+                case "--boot-java-options":
+                    i++;
+                    if (i >= args.length) {
+                        throw new NutsIllegalArgumentException("Missing argument for java-options");
+                    }
+                    requiredJavaOptions = args[i];
                     break;
                 case "--home":
                     i++;
@@ -486,141 +538,130 @@ public final class NutsArgumentsParser {
                     if (i >= args.length) {
                         throw new NutsIllegalArgumentException("Missing argument for workspace");
                     }
-                    workspace=args[i];
+                    workspace = args[i];
                     break;
                 default:
                     break;
             }
         }
-
-        String actualVersion = Nuts.getActualVersion();
         if (nutsHome == null) {
             nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
         }
-        if (requiredBootVersion != null){
-            switch (requiredBootVersion){
-                case "@workspace-version":{
-                    requiredBootVersion=Nuts.getConfigCurrentVersion(nutsHome,workspace);
-                    break;
-                }
-            }
-        }
-        if (requiredBootVersion != null && !requiredBootVersion.equals(actualVersion)) {
-            if (configureLog) {
-                NutsLogUtils.prepare(logLevel, logFolder, logName,logSize, logCount,nutsHome,workspace);
-            }
-            log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
-            if ("CURRENT".equalsIgnoreCase(requiredBootVersion)) {
-                String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-                File versionFile = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + versionUrl);
-                boolean loaded = false;
-                try {
-                    if (versionFile.isFile()) {
-                        String str = NutsIOUtils.readStringFromFile(versionFile);
-                        if (str != null) {
-                            str = str.trim();
-                            if (str.length() > 0) {
-                                requiredBootVersion = str;
-                            }
-                            loaded = true;
-                        }
-                    }
-                } catch (Exception ex) {
-                    System.err.printf("Unable to load nuts version from " + versionUrl + ".\n");
-                }
-                if (loaded) {
-                    log.fine("Detected version " + requiredBootVersion);
-                } else {
-                    requiredBootVersion = "LATEST";
-                }
+        NutsBootConfig defaultBootConfig = NutsUtils.loadNutsBootConfig(nutsHome, workspace);
+        String actualVersion = Nuts.getActualVersion();
 
-            }
-            if ("LATEST".equalsIgnoreCase(requiredBootVersion)) {
-                String mvnUrl = ("https://github.com/thevpc/vpc-public-maven/raw/master" + NutsConstants.NUTS_ID_BOOT_PATH + "/maven-metadata.xml");
-                boolean loaded = false;
-                try {
-                    String str = NutsIOUtils.readStringFromURL(new URL(mvnUrl));
-                    if (str != null) {
-                        for (String line : str.split("\n")) {
-                            line = line.trim();
-                            if (line.startsWith("<release>")) {
-                                requiredBootVersion = line.substring("<release>".length(), line.length() - "</release>".length()).trim();
-                                loaded = true;
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    System.err.printf("Unable to load nuts version from " + mvnUrl + ".\n");
-                    ex.printStackTrace();
-                    throw new NutsIllegalArgumentException("Unable to load nuts version from " + mvnUrl);
-                }
-                if (loaded) {
-                    System.out.println("detected version " + requiredBootVersion);
-                } else {
-                    throw new NutsIllegalArgumentException("Unable to load nuts version from " + mvnUrl);
-                }
-            }
-            String jarUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/" + requiredBootVersion + "/nuts-" + requiredBootVersion + ".jar";
-            File bootFile0 = new File(nutsHome, NutsConstants.BOOTSTRAP_REPOSITORY_NAME + jarUrl);
-            log.fine("Checking boot jar from " + nutsHome + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
-            File bootFile = bootFile0;
-            if (!bootFile.isFile()) {
-                bootFile = new File(System.getProperty("user.home"), "/.m2/repository" + jarUrl);
-                log.fine("Checking boot jar from ~/.m2 (local maven)");
-                if (!bootFile.isFile()) {
-                    log.fine("Checking boot jar from remote vpc-public-maven repository");
-                    String mvnUrl = "https://github.com/thevpc/vpc-public-maven/raw/master" + jarUrl;
-                    try {
-                        if (bootFile0.getParentFile() != null) {
-                            bootFile0.getParentFile().mkdirs();
-                        }
-                        ReadableByteChannel rbc = Channels.newChannel(new URL(mvnUrl).openStream());
-                        FileOutputStream fos = new FileOutputStream(bootFile0);
-                        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                        bootFile = bootFile0;
-                    } catch (Exception ex) {
-                        System.err.printf("Unable to load nuts from " + mvnUrl + ".\n");
-                        ex.printStackTrace();
-                        throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
-                    }
-                }
-            }
-            NewInstanceNutsArguments a = new NewInstanceNutsArguments();
-            a.setBootFile(bootFile);
-            //should read from params
-            a.setJavaCommand(System.getProperty("java.home") + "/bin/java");
-            a.setArgs(args);
-            a.setBootVersion(actualVersion);
-            a.setRequiredVersion(requiredBootVersion);
-            return a;
-        } else {
-            return null;
-//            String v = getConfigCurrentVersion(nutsHome);
-//            if (v == null) {
-//                setConfigCurrentVersion(actualVersion, nutsHome);
-//            }
+        if (requiredBootVersion == null) {
+            requiredBootVersion = defaultBootConfig.getBootAPIVersion();
         }
-//        return args;
+        if (requiredJavaCommand == null) {
+            requiredJavaCommand = defaultBootConfig.getBootJavaCommand();
+        }
+        if (requiredJavaOptions == null) {
+            requiredJavaOptions = defaultBootConfig.getBootJavaOptions();
+        }
+        if (
+                (requiredBootVersion == null || requiredBootVersion.trim().isEmpty() || requiredBootVersion.equals(actualVersion))
+                        &&
+                        isActualJavaCommand(requiredJavaCommand)
+        ) {
+            return null;
+        }
+        if (configureLog) {
+            NutsLogUtils.prepare(logLevel, logFolder, logName, logSize, logCount, nutsHome, workspace);
+        }
+        log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
+        StringBuilder errors = new StringBuilder();
+        if ("LATEST".equalsIgnoreCase(requiredBootVersion) || "RELEASE".equalsIgnoreCase(requiredBootVersion)) {
+            String releaseVersion = null;
+            try {
+                releaseVersion = NutsUtils.resolveMavenReleaseVersion(NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT, NutsConstants.NUTS_ID_BOOT_API_PATH);
+                requiredBootVersion = releaseVersion;
+            } catch (Exception ex) {
+                errors.append("Unable to load nuts version from " + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT + ".\n");
+                throw new NutsIllegalArgumentException("Unable to load nuts version from " + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT);
+            }
+            System.out.println("detected version " + requiredBootVersion);
+        }
+        File file = NutsUtils.resolveOrDownloadJar(NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion,
+                new String[]{
+                        nutsHome + File.separator + NutsConstants.BOOTSTRAP_REPOSITORY_NAME,
+                        System.getProperty("user.home") + "/.m2/repository",
+                        NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
+                        NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
+                        NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
+                },
+                nutsHome + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME
+        );
+        if (file == null) {
+            errors.append("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion + "\n");
+            NutsBootConfig actualBootConfig = new NutsBootConfig()
+                    .setBootAPIVersion(NutsConstants.NUTS_ID_BOOT_API + "#" + Nuts.getActualVersion())
+                    .setBootRuntime(null);
+
+            NutsUtils.showError(
+                    actualBootConfig,
+                    new NutsBootConfig()
+                            .setBootAPIVersion(requiredBootVersion)
+                            .setBootRuntime(null)
+                            .setBootJavaCommand(requiredJavaCommand)
+                            .setBootJavaOptions(requiredJavaOptions)
+                    , nutsHome
+                    , workspace,
+                    errors.toString()
+            );
+
+            throw new NutsIllegalArgumentException("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion);
+        }
+        NewInstanceNutsArguments a = new NewInstanceNutsArguments();
+        a.setBootFile(file);
+        //should read from params
+        a.setBootVersion(requiredBootVersion);
+        a.setJavaCommand(requiredJavaCommand);
+        a.setJavaOptions(requiredJavaOptions);
+        a.setArgs(args);
+//            a.setRequiredVersion(requiredBootVersion);
+        return a;
+    }
+
+    private static boolean isActualJavaCommand(String cmd) {
+        if (cmd == null || cmd.trim().isEmpty()) {
+            return true;
+        }
+        String jh = System.getProperty("java.home").replace("\\", "/");
+        cmd = cmd.replace("\\", "/");
+        if (cmd.equals(jh + "/bin/java")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/bin/java.exe")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/jre/bin/java")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/jre/bin/java.exe")) {
+            return true;
+        }
+        return false;
     }
 
     private static String[][] resolveBootAndAppArgs(String[] args) {
         if (args.length > 0 && args[0].startsWith("--nuts-boot-args=")) {
             return new String[][]{
-                    uncompressBootArguments(args[0].substring("--nuts-boot-args=".length())),
-                    Arrays.copyOfRange(args,1,args.length)
+                    parseCommandLine(args[0].substring("--nuts-boot-args=".length())),
+                    Arrays.copyOfRange(args, 1, args.length)
             };
-        }else{
+        } else {
             String s = System.getProperty("nuts.boot.args");
-            if(s!=null){
+            if (s != null) {
                 return new String[][]{
-                        uncompressBootArguments(s),
+                        parseCommandLine(s),
                         args
                 };
             }
             s = System.getenv("nuts_boot_args");
-            if(s!=null){
+            if (s != null) {
                 return new String[][]{
-                        uncompressBootArguments(s),
+                        parseCommandLine(s),
                         args
                 };
             }

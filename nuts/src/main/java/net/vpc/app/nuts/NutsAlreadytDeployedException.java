@@ -47,7 +47,7 @@ public class NutsAlreadytDeployedException extends NutsElementNotFoundException 
 
     public NutsAlreadytDeployedException(String nuts, String msg, Exception ex) {
         super(
-                NutsStringUtils.isEmpty(msg) ? "Already deployed nuts " + (nuts == null ? "<null>" : nuts) : msg,
+                NutsUtils.isEmpty(msg) ? "Already deployed nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.nuts = nuts;
     }

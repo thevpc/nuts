@@ -32,7 +32,6 @@ package net.vpc.app.nuts.extensions.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import javax.security.auth.Subject;
@@ -435,7 +434,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
 
     @Override
     public String login(CallbackHandler handler) {
-        NutsWorkspaceLoginModule.install(); //initialize it
+        NutsWorkspaceLoginModule.configure(ws); //initialize it
         //        if (!NutsConstants.USER_ANONYMOUS.equals(getCurrentLogin())) {
         //            throw new NutsLoginException("Already logged in");
         //        }

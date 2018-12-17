@@ -84,7 +84,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return new NutsRepositoryDefinition[]{
-                new NutsRepositoryDefinition("system", workspace.getPlatformOsLibPath() + FileUtils.getNativePath("/nuts/system-repository"), "nuts", false)
+                new NutsRepositoryDefinition("system", FileUtils.getNativePath(workspace.getPlatformOsLibPath() + "/nuts/system-repository"), "nuts", false,NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL)
         };
     }
 }

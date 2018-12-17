@@ -42,9 +42,29 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
 
     NutsBootWorkspace getBoot();
 
-    NutsId getWorkspaceBootId();
+    /**
+     * Actual (Runtime) Boot API Id
+     * @return Actual (Runtime) Boot API Id
+     */
+    NutsId getBootAPI();
 
-    NutsId getWorkspaceRuntimeId();
+    /**
+     * Actual (Runtime) Boot Runtime Id
+     * @return Actual (Runtime) Boot Runtime Id
+     */
+    NutsId getBootRuntime();
+
+    /**
+     * Configured Boot API Id
+     * @return Configured Boot API Id
+     */
+    NutsId getWorkspaceBootAPI();
+
+    /**
+     * Configured Boot Runtime Id
+     * @return Configured Boot Runtime Id
+     */
+    NutsId getWorkspaceBootRuntime();
 
     String getWorkspaceLocation();
 
@@ -53,7 +73,7 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
      *
      * @return nuts root folder
      */
-    String getNutsHomeLocation();
+    String getHomeLocation();
 
     Properties getEnv();
 
@@ -87,13 +107,7 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
 
     boolean removeExtension(NutsId extensionId);
 
-    Map<String, Object> getSharedObjects();
-
-    void addSharedObjectsListener(MapListener<String, Object> listener);
-
-    void removeSharedObjectsListener(MapListener<String, Object> listener);
-
-    MapListener<String, Object>[] getSharedObjectsListeners();
+    boolean updateExtension(NutsId extensionId);
 
     void save();
 
@@ -136,6 +150,11 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
     NutsSdkLocation removeSdk(String name, NutsSdkLocation location);
 
     NutsSdkLocation findSdk(String name, NutsSdkLocation location);
+
+    NutsBootConfig getBootConfig();
+    NutsBootConfig getWorkspaceBootConfig();
+
+    void setBootConfig(NutsBootConfig other);
 
     String[] getSdkTypes();
 

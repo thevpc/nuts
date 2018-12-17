@@ -6,44 +6,13 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class TomcatUtils {
     public static boolean isEmpty(String string) {
         return string == null || string.trim().isEmpty();
-    }
-
-//    public static void main(String[] args) {
-//        TomcatServerConfig c=new TomcatServerConfig();
-//        TomcatServerAppConfig m = new TomcatServerAppConfig();
-//        c.getApps().put("hi", m);
-//        m.setDomain("ok");
-//        System.out.println(getPropertyValue(c,"apps.hi.domain"));
-//    }
-    public static Object getPropertyValue(Object obj, String propExpr) {
-        int x=propExpr.indexOf('.');
-        if(x<0){
-            if(obj instanceof Map){
-                for (Object o : ((Map) obj).keySet()) {
-                    String k=String.valueOf(o);
-                    if(k.equals(propExpr)){
-                        return ((Map) obj).get(o);
-                    }
-                }
-                return null;
-            }
-            propExpr = Character.toUpperCase(propExpr.charAt(0)) + propExpr.substring(1);
-            Method m = null;
-            try {
-                m = obj.getClass().getDeclaredMethod("get" + propExpr);
-                return m.invoke(obj);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(e);
-            }
-        }else {
-            Object o = getPropertyValue(obj, propExpr.substring(0, x));
-            return getPropertyValue(o, propExpr.substring(x + 1));
-        }
     }
 
     public static String toValidFileName(String name, String defaultName) {
@@ -71,18 +40,53 @@ public class TomcatUtils {
     }
 
     public static boolean isPositiveInt(String s) {
-        if(s==null){
+        if (s == null) {
             return false;
         }
-        s=s.trim();
-        if(s.length()==0){
+        s = s.trim();
+        if (s.length() == 0) {
             return false;
         }
         for (char c : s.toCharArray()) {
-            if(!Character.isDigit(c)){
+            if (!Character.isDigit(c)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public static String[] splitInstanceAppPreferInstance(String value) {
+        return splitInstanceApp(value, true);
+    }
+    public static String[] splitInstanceAppPreferApp(String value) {
+        return splitInstanceApp(value, false);
+    }
+
+    public static String[] splitInstanceApp(String value, boolean preferInstance) {
+        int dot = value.indexOf('.');
+        if (dot >= 0) {
+            return new String[]{value.substring(0, dot), value.substring(0, dot + 1)};
+        } else if (preferInstance) {
+            return new String[]{value, ""};
+        } else {
+            return new String[]{"", value};
+        }
+    }
+
+    public static String toJsonString(Object o) {
+        if (o == null) {
+            return String.valueOf(o);
+        }
+        if (o instanceof Boolean
+                || o instanceof Number
+                || o instanceof Map
+                || o instanceof Collection
+        ) {
+            return String.valueOf(o);
+        }
+        if (o.getClass().isArray()) {
+            return Arrays.toString((Object[]) o);
+        }
+        return "\"" + o.toString().replace("\"", "\\\"") + "\"";
     }
 }

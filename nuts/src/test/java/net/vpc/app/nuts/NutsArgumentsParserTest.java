@@ -17,7 +17,7 @@ public class NutsArgumentsParserTest {
             System.out.println(Arrays.toString(arg));
             String v = NutsArgumentsParser.compressBootArguments(arg);
             System.out.println("\t"+v);
-            String[] v2 = NutsArgumentsParser.uncompressBootArguments(v);
+            String[] v2 = NutsArgumentsParser.parseCommandLine(v);
             Assert.assertArrayEquals(
                     arg,v2
             );

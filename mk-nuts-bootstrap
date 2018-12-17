@@ -17,7 +17,7 @@ cp $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties
 echo $bootVersion > $vpc_public_nuts/version.txt
 
 
-echo "runtimeId=net.vpc.app.nuts:nuts-core#$runtimeVersion" >> $bootPath/nuts.properties
+echo "bootRuntimeId=net.vpc.app.nuts:nuts-core#$runtimeVersion" >> $bootPath/nuts.properties
 echo "repositories=http://repo.maven.apache.org/maven2/;https://raw.githubusercontent.com/thevpc/vpc-public-maven/master" >> $bootPath/nuts.properties
 
 mkdir -p $bootLatestPath

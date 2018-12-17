@@ -48,7 +48,7 @@ public class CoreIOUtils {
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
 
 
-    public static int execAndWait(NutsFile nutMainFile, final NutsWorkspace workspace, final NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand) throws NutsExecutionException {
+    public static int execAndWait(NutsFile nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
         File installerFile = nutMainFile.getFile() == null ? null : new File(nutMainFile.getFile());
         File storeFolder = nutMainFile.getInstallFolder() == null ? null : new File(nutMainFile.getInstallFolder());
@@ -64,11 +64,11 @@ public class CoreIOUtils {
         if (nutsJarFile != null) {
             map.put("nuts.jar", new File(nutsJarFile).getAbsolutePath());
         }
-        map.put("nuts.id", nutMainFile.getId().toString());
-        map.put("nuts.id.version", nutMainFile.getId().getVersion().getValue());
-        map.put("nuts.id.name", nutMainFile.getId().getName());
-        map.put("nuts.id.fullName", nutMainFile.getId().getFullName());
-        map.put("nuts.id.group", nutMainFile.getId().getGroup());
+        map.put("nuts.id", id.toString());
+        map.put("nuts.id.version", id.getVersion().getValue());
+        map.put("nuts.id.name", id.getName());
+        map.put("nuts.id.fullName", id.getSimpleName());
+        map.put("nuts.id.group", id.getGroup());
         map.put("nuts.file", nutMainFile.getFile());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
 
@@ -105,7 +105,7 @@ public class CoreIOUtils {
                     return resolveJavaCommand(javaVer, workspace);
                 } else if (skey.equals("nuts")) {
                     NutsFile nutsFile = null;
-                    nutsFile = workspace.fetch(NutsConstants.NUTS_ID_BOOT, session);
+                    nutsFile = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API, session);
                     if (nutsFile.getFile() != null) {
                         return ("<::expand::> " + convert("java") + " -jar " + nutsFile.getFile());
                     }
@@ -147,22 +147,11 @@ public class CoreIOUtils {
         } else {
             directory = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), directory.getPath());
         }
-        int x = Integer.MIN_VALUE;
-        try {
-            x = execAndWait(args, envmap, directory, terminal, showCommand);
-            if (x != 0) {
-                throw new NutsExecutionException(x);
-            }
-            return x;
-        } catch (InterruptedException ex) {
-            throw new NutsExecutionException(ex.getMessage(), ex, x);
-        } catch (IOException ex) {
-            throw new NutsExecutionException(ex.getMessage(), ex, x);
-        }
+        return execAndWait(workspace, args, envmap, directory, terminal, showCommand, failFast);
     }
 
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
-        String bestJavaPath=resolveJdkLocation(requestedJavaVersion,workspace).getPath();
+        String bestJavaPath = resolveJdkLocation(requestedJavaVersion, workspace).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
             File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), bestJavaPath);
             if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
@@ -174,17 +163,18 @@ public class CoreIOUtils {
 
     public static NutsSdkLocation resolveJdkLocation(String requestedJavaVersion, NutsWorkspace workspace) {
         requestedJavaVersion = StringUtils.trim(requestedJavaVersion);
-        NutsSdkLocation bestJava = workspace.getConfigManager().getSdk("java",requestedJavaVersion);
-        if (bestJava==null) {
+        NutsSdkLocation bestJava = workspace.getConfigManager().getSdk("java", requestedJavaVersion);
+        if (bestJava == null) {
             NutsSdkLocation current = new NutsSdkLocation(
                     "java.home",
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            if(CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion).accept(new NutsVersionImpl(current.getVersion()))){
-                bestJava=current;
+            NutsVersionFilter requestedJavaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(new NutsVersionImpl(current.getVersion()))) {
+                bestJava = current;
             }
-            if(bestJava==null) {
+            if (bestJava == null) {
                 if (!StringUtils.isEmpty(requestedJavaVersion)) {
                     if (log.isLoggable(Level.FINE)) {
                         log.log(Level.FINE, "No valid JRE found. recommended " + requestedJavaVersion + " . Using default java.home at " + System.getProperty("java.home"));
@@ -200,43 +190,44 @@ public class CoreIOUtils {
         return bestJava;
     }
 
-
-    public static int execAndWait(String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand) throws InterruptedException, IOException {
+    public static int execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand, boolean failFast) {
         PrintStream out = terminal.getOut();
         PrintStream err = terminal.getErr();
         InputStream in = terminal.getIn();
-        return execAndWait(args, env, directory, in, out, err, showCommand);
-    }
-
-    public static int execAndWait(String[] args, Map<String, String> env, File directory, InputStream in, PrintStream out, PrintStream err, boolean showCommand) throws InterruptedException, IOException {
-        if(log.isLoggable(Level.FINE)) {
-            StringBuilder logged = new StringBuilder();
-            logged.append("[exec]");
-            for (String arg : args) {
-                logged.append(" " + arg);
-            }
-            log.log(Level.FINE, logged.toString());
+        if (ws.isStandardOutputStream(out)) {
+            out = null;
         }
-        if (showCommand) {
-            if (out instanceof NutsFormattedPrintStream) {
-                out.print("==[exec]==");
-            } else {
-                out.print("exec");
-            }
-            for (String arg : args) {
-                out.print(" " + arg);
-            }
-            out.println();
+        if (ws.isStandardErrorStream(err)) {
+            err = null;
         }
-
-        return new ProcessBuilder2()
+        if (ws.isStandardInputStream(in)) {
+            in = null;
+        }
+        ProcessBuilder2 pb = new ProcessBuilder2()
                 .setCommand(args)
                 .setEnv(env)
                 .setIn(in)
                 .setOutput(out)
                 .setErr(err)
                 .setDirectory(directory)
-                .start().waitFor().getResult();
+                .setFailFast(failFast)
+                ;
+        if(out==null && err==null && in==null){
+            pb.inheritIO();
+        }
+
+        if (log.isLoggable(Level.FINE)) {
+            log.log(Level.FINE, "[exec] "+pb.getCommandString());
+        }
+        if (showCommand) {
+            if (terminal.getOut() instanceof NutsFormattedPrintStream) {
+                terminal.getOut().print("==[exec]== ");
+            } else {
+                terminal.getOut().print("exec ");
+            }
+            terminal.getOut().println(pb.getCommandString());
+        }
+        return pb.start().waitFor().getResult();
     }
 
 
@@ -300,26 +291,24 @@ public class CoreIOUtils {
             workspaceRoot = NutsConstants.DEFAULT_NUTS_HOME;
         }
         if (path != null && path.length() > 0) {
-            String firstItem = "";
-            if ('\\' == File.separatorChar) {
-                String[] split = path.split("([/\\\\])");
-                if (split.length > 0) {
-                    firstItem = split[0];
+            if (path.startsWith("~")) {
+                if (path.equals("~~")) {
+                    return createFile(workspaceRoot);
+                } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
+                    return createFile(workspaceRoot, path.substring(3));
+                } else if (path.equals("~")) {
+                    return new File(System.getProperty("user.home"));
+                } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
+                    return createFile(System.getProperty("user.home"), path.substring(2));
+                } else if (baseFolder != null) {
+                    return createFile(baseFolder, path);
+                } else {
+                    return CoreIOUtils.createFile(path);
                 }
-            } else {
-                String[] split = path.split("(/|" + File.separatorChar + ")");
-                if (split.length > 0) {
-                    firstItem = split[0];
-                }
-            }
-            if (firstItem.equals("~~")) {
-                return resolvePath(workspaceRoot + "/" + path.substring(2), null, workspaceRoot);
-            } else if (firstItem.equals("~")) {
-                return new File(System.getProperty("user.home"), path.substring(1));
             } else if (FileUtils.isAbsolutePath(path)) {
                 return new File(path);
             } else if (baseFolder != null) {
-                return CoreIOUtils.createFile(baseFolder, path);
+                return createFile(baseFolder, path);
             } else {
                 return CoreIOUtils.createFile(path);
             }
@@ -394,11 +383,11 @@ public class CoreIOUtils {
         return new File(path);
     }
 
-    public static void downloadPath(String from, File to, Object source, NutsWorkspace workspace, NutsSession session){
-        IOUtils.copy(openStream(from, source, workspace,session),to,true,true);
+    public static void downloadPath(String from, File to, Object source, NutsWorkspace workspace, NutsSession session) {
+        IOUtils.copy(openStream(from, source, workspace, session), to, true, true);
     }
 
-    public static InputStream openStream(String path, Object source, NutsWorkspace workspace,NutsSession session){
+    public static InputStream openStream(String path, Object source, NutsWorkspace workspace, NutsSession session) {
         InputStream stream = null;
         URLHeader header = null;
         long size = -1;

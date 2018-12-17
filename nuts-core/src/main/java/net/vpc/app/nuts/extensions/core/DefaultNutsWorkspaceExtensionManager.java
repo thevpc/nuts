@@ -6,12 +6,11 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
 import net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream;
+import net.vpc.app.nuts.extensions.terminals.NutsTerminalDelegate;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
@@ -35,6 +34,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
                     NutsDefaultFormattedPrintStream.class,
                     NutsNonFormattedPrintStream.class,
                     NutsFormattedPrintStream.class,
+                    NutsTerminalBase.class,
                     NutsTerminal.class,
                     NutsDescriptorContentParserComponent.class,
                     NutsExecutorComponent.class,
@@ -58,15 +58,15 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.getBootId().getVersion().toString(), session);
+        return findWorkspaceExtensions(ws.getConfigManager().getBootAPI().getVersion().toString(), session);
     }
 
     @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.getBootId().getVersion().toString();
+            version = ws.getConfigManager().getBootAPI().getVersion().toString();
         }
-        NutsId id = ws.getBootId().setVersion(version);
+        NutsId id = ws.getConfigManager().getBootAPI().setVersion(version);
         return findExtensions(id.toString(), "extensions", session);
     }
 
@@ -205,7 +205,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     private boolean isLoadedClassPath(NutsFile file, NutsSession session) {
         session = validateSession(session);
-        if (file.getId().isSameFullName(ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT))) {
+        if (file.getId().isSameFullName(ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT_API))) {
             return true;
         }
         try {
@@ -285,16 +285,17 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     public NutsTerminal createTerminal(Class ignoredClass) {
-        NutsTerminal term = createSupported(NutsTerminal.class, ws);
-        if (term == null) {
+        NutsTerminalBase termb = createSupported(NutsTerminalBase.class, ws);
+        if (termb == null) {
             throw new NutsUnsupportedOperationException("Should never happen ! Terminal could not be resolved.");
         } else {
-            if (ignoredClass != null && ignoredClass.equals(term.getClass())) {
+            if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
                 return null;
             }
+            NutsTerminalDelegate term=new NutsTerminalDelegate(termb,true);
             term.install(ws, null, null, null);
+            return term;
         }
-        return term;
     }
 
     @Override
@@ -314,7 +315,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         //or should be read from and extension component?
         String repos = ws.getConfigManager().getEnv("bootstrapRepositoryLocations", "") + ";"
                 + NutsConstants.URL_BOOTSTRAP_LOCAL
-                + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE;
+                + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT;
         List<String> urls = new ArrayList<>();
         for (String r : CoreStringUtils.split(repos, "; ")) {
             if (!StringUtils.isEmpty(r)) {

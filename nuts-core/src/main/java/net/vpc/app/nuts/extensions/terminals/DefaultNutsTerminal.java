@@ -39,21 +39,15 @@ import java.io.*;
  */
 public class DefaultNutsTerminal extends AbstractNutsTerminal {
 
-    private BufferedReader reader;
-    private InputStream in;
-    private PrintStream out;
-    private PrintStream err;
-    private PrintStream outReplace;
-    private PrintStream errReplace;
-    private InputStream inReplace;
-    private BufferedReader inReplaceReader;
 
     public DefaultNutsTerminal() {
     }
 
     @Override
     public void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err) {
+        super.install(workspace, in, out, err);
         this.in = in == null ? System.in : in;
+        this.workspace = workspace;
         if (workspace == null) {
             this.out = out == null ? System.out : out;
             this.err = err == null ? System.err : out;
@@ -66,100 +60,18 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
     }
 
     @Override
+    public NutsTerminal copy() {
+        DefaultNutsTerminal d = new DefaultNutsTerminal();
+        d.copyFrom(this);
+        return d;
+    }
+
+    @Override
     public int getSupportLevel(Object criteria) {
         return DEFAULT_SUPPORT;
     }
 
-    @Override
-    public String readLine(String promptFormat, Object[] params) {
-        getOut().printf(promptFormat, params);
-        getIn();
-        if (inReplaceReader != null) {
-            try {
-                return inReplaceReader.readLine();
-            } catch (IOException e) {
-                throw new NutsIOException(e);
-            }
-        }
-        try {
-            return reader.readLine();
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
 
-    @Override
-    public String readPassword(String prompt) {
-        return CoreIOUtils.readPassword(prompt, getIn(), getOut());
-    }
 
-    public BufferedReader getReader() {
-        if (inReplaceReader != null) {
-            return inReplaceReader;
-        }
-        return reader;
-    }
-
-    @Override
-    public InputStream getIn() {
-        if (inReplace != null) {
-            return inReplace;
-        }
-        return in;
-    }
-
-    @Override
-    public PrintStream getFormattedOut() {
-        PrintStream o = getOut();
-        if (o instanceof NutsFormattedPrintStream) {
-            return o;
-        }
-        return new NutsDefaultFormattedPrintStream(o);
-    }
-
-    @Override
-    public PrintStream getFormattedErr() {
-        PrintStream o = getErr();
-        if (o instanceof NutsFormattedPrintStream) {
-            return o;
-        }
-        return new NutsDefaultFormattedPrintStream(o);
-    }
-
-    @Override
-    public PrintStream getOut() {
-        if (outReplace != null) {
-            return outReplace;
-        }
-        return out;
-    }
-
-    @Override
-    public PrintStream getErr() {
-        if (errReplace != null) {
-            return errReplace;
-        }
-        return err;
-    }
-
-    @Override
-    public void setOut(PrintStream out) {
-        outReplace = out;
-    }
-
-    @Override
-    public void setIn(InputStream in) {
-        inReplace = in;
-        if (in == null) {
-            inReplaceReader = null;
-        } else {
-            inReplaceReader = new BufferedReader(new InputStreamReader(inReplace));
-        }
-    }
-
-    @Override
-    public void setErr(PrintStream err) {
-        errReplace = err;
-    }
 
 }

@@ -30,10 +30,7 @@
 package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
-import net.vpc.app.nuts.toolbox.nsh.DefaultNutsConsole;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsole;
+import net.vpc.app.nuts.toolbox.nsh.*;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
@@ -176,7 +173,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                             @Override
                             public void run() {
                                 String[] args = {NutsConstants.NUTS_SHELL};
-                                NutsConsole cli = null;
+                                NutsJavaShell cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     PrintStream eout = invokerWorkspace.createPrintStream(out,false);
@@ -184,12 +181,11 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     NutsTerminal terminal = invokerWorkspace.createTerminal(finalAccept.getInputStream(),
                                             eout, eout);
                                     session.setTerminal(terminal);
-                                    cli = new DefaultNutsConsole();
-                                    cli.init(invokerWorkspace,session);
+                                    cli = new NutsJavaShell(invokerWorkspace,session);
 //                                    cli.uninstallCommand("server");
-                                    cli.uninstallCommand("connect");
+                                    cli.undeclareCommand("connect");
                                     cli.setServiceName(serverId);
-                                    cli.installCommand(new AbstractNutsCommand("stop-server", DEFAULT_SUPPORT) {
+                                    cli.declareCommand(new AbstractNutsCommand("stop-server", DEFAULT_SUPPORT) {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
                                             PrintStream out2 = MyNutsServer.this.terminal.getFormattedOut();

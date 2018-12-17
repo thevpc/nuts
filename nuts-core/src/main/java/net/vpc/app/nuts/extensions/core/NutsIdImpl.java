@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -45,10 +45,15 @@ public class NutsIdImpl implements NutsId {
     private final String namespace;
     private final String group;
     private final String name;
-    private final NutsVersionImpl version;
+    private final NutsVersion version;
     private final String query;
 
     public NutsIdImpl(String namespace, String group, String name, String version, Map<String, String> query) {
+        this(namespace, group, name,
+                StringUtils.isEmpty(version) ? null : new NutsVersionImpl(version), query);
+    }
+
+    protected NutsIdImpl(String namespace, String group, String name, NutsVersion version, Map<String, String> query) {
         StringBuilder sb = new StringBuilder();
         if (query != null) {
             for (Map.Entry<String, String> entry : query.entrySet()) {
@@ -61,12 +66,20 @@ public class NutsIdImpl implements NutsId {
         this.namespace = StringUtils.trimToNull(namespace);
         this.group = StringUtils.trimToNull(group);
         this.name = StringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.version = version == null ? NutsVersionImpl.EMPTY : version;
         this.query = StringUtils.trimToNull(sb.toString());
     }
 
+    protected NutsIdImpl(String namespace, String group, String name, NutsVersion version, String query) {
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = version == null ? NutsVersionImpl.EMPTY : version;
+        this.query = StringUtils.trimToNull(query);
+    }
+
     public NutsIdImpl(String group, String name, String version) {
-        this(null,group,name,version,(String) null);
+        this(null, group, name, version, (String) null);
     }
 
     public NutsIdImpl(String namespace, String group, String name, String version, String query) {
@@ -182,7 +195,7 @@ public class NutsIdImpl implements NutsId {
                 namespace,
                 newGroupId,
                 name,
-                version.getValue(),
+                version,
                 query
         );
     }
@@ -193,7 +206,7 @@ public class NutsIdImpl implements NutsId {
                 newNamespace,
                 group,
                 name,
-                version.getValue(),
+                version,
                 query
         );
     }
@@ -215,7 +228,7 @@ public class NutsIdImpl implements NutsId {
                 namespace,
                 group,
                 newName,
-                version.getValue(),
+                version,
                 query
         );
     }
@@ -234,13 +247,18 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId setQueryProperty(String property, String value) {
-        Map<String, String> m = getQueryMap();
-        if (value == null) {
-            m.remove(property);
+        if (value == null || value.length()==0) {
+            if(query!=null && !query.isEmpty()) {
+                Map<String, String> m = getQueryMap();
+                m.remove(property);
+                return setQuery(m);
+            }
+            return this;
         } else {
+            Map<String, String> m = getQueryMap();
             m.put(property, value);
+            return setQuery(m);
         }
-        return setQuery(m);
     }
 
     @Override
@@ -251,7 +269,7 @@ public class NutsIdImpl implements NutsId {
                 for (Map.Entry<String, String> e : queryMap.entrySet()) {
                     String property = e.getKey();
                     String value = e.getValue();
-                    if (value == null) {
+                    if (value == null || value.isEmpty()) {
                         m.remove(property);
                     } else {
                         m.put(property, value);
@@ -264,7 +282,7 @@ public class NutsIdImpl implements NutsId {
                     namespace,
                     group,
                     name,
-                    version.getValue(),
+                    version,
                     queryMap
             );
         }
@@ -286,7 +304,7 @@ public class NutsIdImpl implements NutsId {
                 namespace,
                 group,
                 name,
-                version.getValue(),
+                version,
                 query
         );
     }
@@ -299,7 +317,7 @@ public class NutsIdImpl implements NutsId {
     @Override
     public Map<String, String> getQueryMap() {
         String q = getQuery();
-        if(q==null){
+        if (q == null || q.equals("")) {
             return new HashMap<>();
         }
         return StringUtils.parseMap(q, "&");
@@ -316,11 +334,36 @@ public class NutsIdImpl implements NutsId {
     }
 
     @Override
-    public String getFullName() {
+    public String getSimpleName() {
         if (StringUtils.isEmpty(group)) {
             return StringUtils.trim(name);
         }
         return StringUtils.trim(group) + ":" + StringUtils.trim(name);
+    }
+
+    @Override
+    public NutsId getSimpleNameId() {
+        return new NutsIdImpl(null, group, name, (NutsVersion) null, "");
+    }
+
+    @Override
+    public NutsId getLongNameId() {
+        return new NutsIdImpl(null, group, name, version,"");
+    }
+
+    @Override
+    public String getFullName() {
+        return toString();
+    }
+
+    @Override
+    public String getLongName() {
+        String s = getSimpleName();
+        NutsVersion v = getVersion();
+        if (v.isEmpty()) {
+            return s;
+        }
+        return s + "#" + v;
     }
 
     @Override
@@ -329,7 +372,7 @@ public class NutsIdImpl implements NutsId {
     }
 
     @Override
-    public NutsVersionImpl getVersion() {
+    public NutsVersion getVersion() {
         return version;
     }
 
@@ -343,7 +386,7 @@ public class NutsIdImpl implements NutsId {
             sb.append(group).append(":");
         }
         sb.append(name);
-        if (!StringUtils.isEmpty(version.getValue())) {
+        if (!version.isEmpty()) {
             sb.append("#").append(version);
         }
         if (!StringUtils.isEmpty(query)) {
@@ -391,7 +434,7 @@ public class NutsIdImpl implements NutsId {
     }
 
     @Override
-    public NutsId apply(ObjectConverter<String,String> properties) {
+    public NutsId apply(ObjectConverter<String, String> properties) {
         return new NutsIdImpl(
                 CoreNutsUtils.applyStringProperties(this.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(this.getGroup(), properties),

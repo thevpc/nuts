@@ -39,10 +39,10 @@ import java.util.List;
 
 public class CoreVersionUtils {
 
-    public static final NutsVersionFilter ALL_VERSIONS = new AllNutsVersionFilter();
+//    public static final NutsVersionFilter ALL_VERSIONS = new AllNutsVersionFilter();
 
     public static boolean versionMatches(String version, String pattern) {
-        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
+        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LATEST") || pattern.equals("RELEASE")) {
             return true;
         }
         return pattern.equals(version);
@@ -67,17 +67,22 @@ public class CoreVersionUtils {
     }
 
     public static int compareVersions(String v1, String v2) {
-        if ("LATEST".equals(v2)) {
-            if (v1.equals("LATEST")) {
-                return 0;
-            }
-            return -1;
+        v1=StringUtils.trim(v1);
+        v2=StringUtils.trim(v2);
+        if (v1.equals(v2)) {
+            return 0;
         }
         if ("LATEST".equals(v1)) {
-            if (v2.equals("LATEST")) {
-                return 0;
-            }
             return 1;
+        }
+        if ("LATEST".equals(v2)) {
+            return -1;
+        }
+        if ("RELEASE".equals(v1)) {
+            return 1;
+        }
+        if ("RELEASE".equals(v2)) {
+            return -1;
         }
         String[] v1arr = splitVersionParts(v1);
         String[] v2arr = splitVersionParts(v2);
@@ -250,13 +255,13 @@ public class CoreVersionUtils {
         if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",") || pattern.contains("*")) {
             return false;
         } else {
-            return !"LATEST".equals(pattern);
+            return !"LATEST".equals(pattern) && !"RELEASE".equals(pattern);
         }
     }
 
     public static NutsVersionFilter createNutsVersionFilter(String pattern) {
-        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LAST")) {
-            return ALL_VERSIONS;
+        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LAST") || pattern.equals("LATEST") || pattern.equals("RELEASE")) {
+            return null;//ALL_VERSIONS;
         }
         return DefaultNutsVersionFilter.parse(pattern);
     }

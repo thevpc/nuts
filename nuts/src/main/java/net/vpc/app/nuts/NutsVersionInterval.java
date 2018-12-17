@@ -50,13 +50,13 @@ public class NutsVersionInterval implements Serializable{
     }
 
     public boolean acceptVersion(NutsVersion version) {
-        if (!NutsStringUtils.isEmpty(min)) {
+        if (!NutsUtils.isEmpty(min) && !min.equals("LATEST") && !min.equals("RELEASE")) {
             int t = version.compareTo(min);
             if ((inclusiveLowerBoundary && t < 0) || (!inclusiveLowerBoundary && t <= 0)) {
                 return false;
             }
         }
-        if (!NutsStringUtils.isEmpty(max)) {
+        if (!NutsUtils.isEmpty(max) && !max.equals("LATEST") && !max.equals("RELEASE")) {
             int t = version.compareTo(max);
             return (!inclusiveUpperBoundary || t <= 0) && (inclusiveUpperBoundary || t < 0);
         }
@@ -64,8 +64,8 @@ public class NutsVersionInterval implements Serializable{
     }
 
     public boolean isFixedValue() {
-        return inclusiveLowerBoundary && inclusiveUpperBoundary && NutsStringUtils.trim(min).equals(NutsStringUtils.trim(max))
-                && !"LATEST".endsWith(min) && !"RELEASE".endsWith(min);
+        return inclusiveLowerBoundary && inclusiveUpperBoundary && NutsUtils.trim(min).equals(NutsUtils.trim(max))
+                && !"LATEST".equals(min) && !"RELEASE".equals(min);
     }
 
     @Override

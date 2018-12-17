@@ -36,27 +36,22 @@ import java.io.PrintStream;
  * Created by vpc on 2/20/17.
  */
 @Prototype
-public interface NutsTerminal extends NutsComponent<Object> {
-
-    void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err);
-
-    String readLine(String promptFormat, Object... params);
-
-    String readPassword(String prompt);
-
-    InputStream getIn();
-
-    void setIn(InputStream in);
+public interface NutsTerminal extends NutsTerminalBase {
 
     PrintStream getFormattedOut();
 
     PrintStream getFormattedErr();
 
-    PrintStream getOut();
+    PrintStream getFormattedOut(boolean forceNoColors);
+
+    PrintStream getFormattedErr(boolean forceNoColors);
+
+    void setIn(InputStream in);
 
     void setOut(PrintStream out);
 
-    PrintStream getErr();
-
     void setErr(PrintStream out);
+
+    NutsTerminal copy();
+
 }

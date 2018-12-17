@@ -41,8 +41,10 @@ import java.util.logging.Level;
 public final class NutsBootOptions implements Serializable, Cloneable {
 
     private String home;
-    private String runtimeId;
-    private String runtimeSourceURL;
+    private String bootRuntime;
+    private String bootJavaCommand;
+    private String bootJavaOptions;
+    private String bootRuntimeSourceURL;
     private String logFolder = null;
     private String logName = null;
     private Level logLevel = null;
@@ -71,21 +73,21 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public String getRuntimeId() {
-        return runtimeId;
+    public String getBootRuntime() {
+        return bootRuntime;
     }
 
-    public NutsBootOptions setRuntimeId(String runtimeId) {
-        this.runtimeId = runtimeId;
+    public NutsBootOptions setBootRuntime(String bootRuntime) {
+        this.bootRuntime = bootRuntime;
         return this;
     }
 
-    public String getRuntimeSourceURL() {
-        return runtimeSourceURL;
+    public String getBootRuntimeSourceURL() {
+        return bootRuntimeSourceURL;
     }
 
-    public NutsBootOptions setRuntimeSourceURL(String runtimeSourceURL) {
-        this.runtimeSourceURL = runtimeSourceURL;
+    public NutsBootOptions setBootRuntimeSourceURL(String bootRuntimeSourceURL) {
+        this.bootRuntimeSourceURL = bootRuntimeSourceURL;
         return this;
     }
 
@@ -115,18 +117,18 @@ public final class NutsBootOptions implements Serializable, Cloneable {
             sb.append("home=").append(home);
             empty = false;
         }
-        if (runtimeId != null) {
+        if (bootRuntime != null) {
             if (!empty) {
                 sb.append(", ");
             }
-            sb.append("runtimeId=").append(runtimeId);
+            sb.append("bootRuntime=").append(bootRuntime);
             empty = false;
         }
-        if (runtimeSourceURL != null) {
+        if (bootRuntimeSourceURL != null) {
             if (!empty) {
                 sb.append(", ");
             }
-            sb.append("runtimeSourceURL=").append(runtimeSourceURL);
+            sb.append("bootRuntimeSourceURL=").append(bootRuntimeSourceURL);
             empty = false;
         }
         if (classLoaderProvider != null) {
@@ -201,41 +203,22 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 41 * hash + Objects.hashCode(this.home);
-        hash = 41 * hash + Objects.hashCode(this.runtimeId);
-        hash = 41 * hash + Objects.hashCode(this.runtimeSourceURL);
-        hash = 41 * hash + Objects.hashCode(this.classLoaderProvider);
-        return hash;
+    public String getBootJavaCommand() {
+        return bootJavaCommand;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NutsBootOptions other = (NutsBootOptions) obj;
-        if (!Objects.equals(this.home, other.home)) {
-            return false;
-        }
-        if (!Objects.equals(this.runtimeId, other.runtimeId)) {
-            return false;
-        }
-        if (!Objects.equals(this.runtimeSourceURL, other.runtimeSourceURL)) {
-            return false;
-        }
-        if (!Objects.equals(this.classLoaderProvider, other.classLoaderProvider)) {
-            return false;
-        }
-        return true;
+    public NutsBootOptions setBootJavaCommand(String bootJavaCommand) {
+        this.bootJavaCommand = bootJavaCommand;
+        return this;
+    }
+
+    public String getBootJavaOptions() {
+        return bootJavaOptions;
+    }
+
+    public NutsBootOptions setBootJavaOptions(String bootJavaOptions) {
+        this.bootJavaOptions = bootJavaOptions;
+        return this;
     }
 
     public NutsBootOptions copy() {
@@ -247,5 +230,34 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new NutsUnsupportedOperationException("Should never Happen", e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsBootOptions that = (NutsBootOptions) o;
+        return logSize == that.logSize &&
+                logCount == that.logCount &&
+                perf == that.perf &&
+                Objects.equals(home, that.home) &&
+                Objects.equals(bootRuntime, that.bootRuntime) &&
+                Objects.equals(bootJavaCommand, that.bootJavaCommand) &&
+                Objects.equals(bootJavaOptions, that.bootJavaOptions) &&
+                Objects.equals(bootRuntimeSourceURL, that.bootRuntimeSourceURL) &&
+                Objects.equals(logFolder, that.logFolder) &&
+                Objects.equals(logName, that.logName) &&
+                Objects.equals(logLevel, that.logLevel) &&
+                Arrays.equals(bootArguments, that.bootArguments) &&
+                Arrays.equals(applicationArguments, that.applicationArguments) &&
+                Objects.equals(classLoaderProvider, that.classLoaderProvider);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(home, bootRuntime, bootJavaCommand, bootJavaOptions, bootRuntimeSourceURL, logFolder, logName, logLevel, logSize, logCount, perf, classLoaderProvider);
+        result = 31 * result + Arrays.hashCode(bootArguments);
+        result = 31 * result + Arrays.hashCode(applicationArguments);
+        return result;
     }
 }

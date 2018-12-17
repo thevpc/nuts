@@ -68,7 +68,7 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
             V old = base.put(key, value);
             if (listeners != null) {
                 for (MapListener<K, V> listener : listeners) {
-                    listener.elementUpdated(key, value, old);
+                    listener.entryUpdated(key, value, old);
                 }
             }
             return old;
@@ -76,7 +76,7 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
             V old = base.put(key, value);
             if (listeners != null) {
                 for (MapListener<K, V> listener : listeners) {
-                    listener.elementAdded(key, value);
+                    listener.entryAdded(key, value);
                 }
             }
             return old;
@@ -90,7 +90,7 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
         V r = base.remove(key);
         if (found && listeners != null) {
             for (MapListener<K, V> listener : listeners) {
-                listener.elementRemoved(kkey, r);
+                listener.entryRemoved(kkey, r);
             }
         }
         return r;
@@ -146,7 +146,7 @@ public class ObservableMap<K, V> extends AbstractMap<K, V> {
                     public void remove() {
                         baseIterator.remove();
                         for (MapListener<K, V> listener : listeners) {
-                            listener.elementRemoved(curr.getKey(), curr.getValue());
+                            listener.entryRemoved(curr.getKey(), curr.getValue());
                         }
                     }
                 };

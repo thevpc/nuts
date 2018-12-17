@@ -109,9 +109,10 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
             directory = StringUtils.isEmpty(executionContext.getCwd()) ? null :
                     new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
         }
-        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
+        return CoreIOUtils.execAndWait(
+                nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
                 app.toArray(new String[0]),
-                osEnv, directory, executionContext.getTerminal(), showCommand
+                osEnv, directory, executionContext.getTerminal(), showCommand,executionContext.isFailFast()
         );
     }
 }

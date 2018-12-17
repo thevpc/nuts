@@ -5,10 +5,12 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
+import net.vpc.app.nuts.OutputStreamTransparentAdapter;
 import net.vpc.common.io.InputStreamEvent;
 import net.vpc.common.io.InputStreamMonitor;
 import net.vpc.common.util.BytesSizeFormat;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 
@@ -16,7 +18,7 @@ import java.text.DecimalFormat;
  *
  * @author vpc
  */
-public class DefaultInputStreamMonitor implements InputStreamMonitor {
+public class DefaultInputStreamMonitor implements InputStreamMonitor , OutputStreamTransparentAdapter {
 
     private static DecimalFormat df = new DecimalFormat("##0.00");
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
@@ -24,6 +26,11 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor {
 
     public DefaultInputStreamMonitor(PrintStream out) {
         this.out = out;
+    }
+
+    @Override
+    public OutputStream baseOutputStream() {
+        return out;
     }
 
     @Override

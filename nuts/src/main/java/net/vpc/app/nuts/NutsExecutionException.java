@@ -34,35 +34,35 @@ package net.vpc.app.nuts;
  */
 public class NutsExecutionException extends NutsException {
 
-    private final int errorCode;
+    private final int exitCode;
 
-    public NutsExecutionException(int errorCode) {
-        super("Execution Failed with error code " + errorCode);
-        this.errorCode = errorCode;
+    public NutsExecutionException(int exitCode) {
+        super("Execution Failed with error code " + exitCode);
+        this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(String message, int errorCode) {
+    public NutsExecutionException(String message, int exitCode) {
         super(message);
-        this.errorCode = errorCode;
+        this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(String message, Throwable cause, int errorCode) {
+    public NutsExecutionException(String message, Throwable cause, int exitCode) {
         super(message, cause);
-        this.errorCode = errorCode;
+        this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(Throwable cause, int errorCode) {
+    public NutsExecutionException(Throwable cause, int exitCode) {
         super(cause);
-        this.errorCode = errorCode;
+        this.exitCode = exitCode;
     }
 
-    public NutsExecutionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int errorCode) {
+    public NutsExecutionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.errorCode = errorCode;
+        this.exitCode = exitCode;
     }
 
-    public int getErrorCode() {
-        return errorCode;
+    public int getExitCode() {
+        return exitCode;
     }
 
 }

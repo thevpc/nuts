@@ -48,12 +48,17 @@ final class BootNutsId {
     }
 
     static BootNutsId parse(String id) {
-        String[] splittedBootId = id.split("[:#]");
-        if (splittedBootId.length == 3) {
-            return new BootNutsId(splittedBootId[0], splittedBootId[1], splittedBootId[2]);
-        }
-        if (splittedBootId.length == 2) {
-            return new BootNutsId(splittedBootId[0], splittedBootId[1], "LATEST");
+        int dots=id.indexOf(':');
+        if(dots>0) {
+            int dash = id.indexOf('#', dots + 1);
+            if (dash < 0) {
+                //maven will use a double ':' instead of #
+                dash = id.indexOf(':', dots + 1);
+            }
+            if (dash >= 0) {
+                return new BootNutsId(id.substring(0, dots), id.substring(dots+1,dash), id.substring(dash+1));
+            }
+            return new BootNutsId(id.substring(0, dots), id.substring(dots+1), "LATEST");
         }
         throw new NutsParseException("Unable to parse " + id);
     }

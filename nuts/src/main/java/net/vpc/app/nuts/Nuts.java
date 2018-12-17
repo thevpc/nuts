@@ -30,16 +30,12 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -49,6 +45,11 @@ public class Nuts {
 
     private static final Logger log = Logger.getLogger(Nuts.class.getName());
 
+//    public static void main(String[] args) {
+//        for (int i = 0; i < 10000; i++) {
+//            uncheckedMain(args);
+//        }
+//    }
     public static void main(String[] args) {
         try {
             System.exit(uncheckedMain(args));
@@ -56,7 +57,7 @@ public class Nuts {
             int errorCode = 204;
             //inherit error code from exception
             if (ex instanceof NutsExecutionException) {
-                errorCode = ((NutsExecutionException) ex).getErrorCode();
+                errorCode = ((NutsExecutionException) ex).getExitCode();
             }
             boolean showTrace = false;
             boolean showErrorClass = false;
@@ -93,31 +94,26 @@ public class Nuts {
 
 
     public static NutsWorkspace openInheritedWorkspace(String[] args) {
-        long startTime = System.currentTimeMillis();
-        NutsArguments nutsArguments = NutsArgumentsParser.parseNutsArguments(args, true);
-        if (nutsArguments instanceof NewInstanceNutsArguments) {
-            NewInstanceNutsArguments i = (NewInstanceNutsArguments) nutsArguments;
-            throw new IllegalArgumentException("Unable to open a distinct version " + i.getBootFile() + "<>" + i.getRequiredVersion());
-        }
-        ConfigNutsArguments a = (ConfigNutsArguments) nutsArguments;
-        if (a.getWorkspaceCreateOptions().getCreationTime() == 0) {
-            a.getWorkspaceCreateOptions().setCreationTime(startTime);
-        }
-        return openWorkspace(a.getWorkspaceCreateOptions().setCreateIfNotFound(true), a.getBootOptions());
+        return openWorkspace(args,true);
     }
 
     public static NutsWorkspace openWorkspace(String[] args) {
+        return openWorkspace(args,false);
+    }
+
+    private static NutsWorkspace openWorkspace(String[] args,boolean expectedNutsArgs) {
         long startTime = System.currentTimeMillis();
-        NutsArguments nutsArguments = NutsArgumentsParser.parseNutsArguments(args, false);
+        NutsArguments nutsArguments = NutsArgumentsParser.parseNutsArguments(args, expectedNutsArgs);
         if (nutsArguments instanceof NewInstanceNutsArguments) {
             NewInstanceNutsArguments i = (NewInstanceNutsArguments) nutsArguments;
             throw new IllegalArgumentException("Unable to open a distinct version " + i.getBootFile() + "<>" + i.getRequiredVersion());
         }
         ConfigNutsArguments a = (ConfigNutsArguments) nutsArguments;
-        if (a.getWorkspaceCreateOptions().getCreationTime() == 0) {
-            a.getWorkspaceCreateOptions().setCreationTime(startTime);
+        NutsWorkspaceOptions workspaceCreateOptions = a.getWorkspaceCreateOptions();
+        if (workspaceCreateOptions.getCreationTime() == 0) {
+            workspaceCreateOptions.setCreationTime(startTime);
         }
-        return openWorkspace(a.getWorkspaceCreateOptions().setCreateIfNotFound(true), a.getBootOptions());
+        return openWorkspace(workspaceCreateOptions.setCreateIfNotFound(true), a.getBootOptions());
     }
 
     public static NutsWorkspace openWorkspace() {
@@ -144,11 +140,35 @@ public class Nuts {
 
 
     public static void startNewProcess(NewInstanceNutsArguments n) {
+        for (int i = 0; i < 10; i++) {
+            System.out.println("");
+        }
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<String> cmd = new ArrayList<>();
-        cmd.add(n.getJavaCommand());
+        String jc = n.getJavaCommand();
+        if(jc==null||jc.trim().isEmpty()){
+            jc=NutsUtils.resolveJavaCommand(null);
+        }
+        cmd.add(jc);
+        Collections.addAll(cmd, NutsArgumentsParser.parseCommandLine(n.getJavaOptions()));
+//        cmd.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
         cmd.add("-jar");
         cmd.add(n.getBootFile().getPath());
+        //cmd.add("--verbose");
         cmd.addAll(Arrays.asList(n.getArgs()));
+        StringBuilder sb=new StringBuilder();
+        for (int i = 0; i < cmd.size(); i++) {
+            String s = cmd.get(i);
+            if(i>0){
+                sb.append(" ");
+            }
+            sb.append(s);
+        }
+        System.out.println("[EXEC] " +sb);
         try {
             new ProcessBuilder(cmd).inheritIO().start();
         } catch (IOException ex) {
@@ -166,138 +186,57 @@ public class Nuts {
         ConfigNutsArguments o = (ConfigNutsArguments) a;
         o.getWorkspaceCreateOptions().setCreationTime(startTime);
         NutsWorkspace ws = openWorkspace(o.getWorkspaceCreateOptions(), o.getBootOptions());
-        boolean someProcessing = false;
 
         String[] commandArguments = o.getArgs().toArray(new String[0]);
-        NutsSession session = ws.createSession();
-        int errorCode = 0;
+        if (o.isVersion()) {
+            PrintStream out = ws.getTerminal().getFormattedOut();
+            ws.printVersion(out,null,o.getVersionOptions());
+            return 0;
+        }
         if (o.isShowHelp()) {
-            errorCode = ws.createExecBuilder()
-                    .setSession(session)
+            return ws.createExecBuilder()
                     .setCommand(NutsConstants.NUTS_SHELL, "help")
+                    .addCommand(commandArguments)
                     .exec().getResult();
-            someProcessing = true;
         }
         if (o.isShowLicense()) {
-            errorCode = ws.createExecBuilder()
-                    .setSession(session)
+            return ws.createExecBuilder()
                     .setCommand(NutsConstants.NUTS_SHELL, "help", "--license")
+                    .addCommand(commandArguments)
                     .exec().getResult()
             ;
-            someProcessing = true;
-        }
-
-        if (o.getApplyUpdatesFile() != null) {
-            errorCode = ws.exec(o.getApplyUpdatesFile(), args, false, false, session);
-            return errorCode;
         }
 
         if (o.isCheckupdates() || o.isDoupdate()) {
-            if (ws.checkWorkspaceUpdates(o.isDoupdate(), args, session).length > 0) {
+            if (ws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                    .setApplyUpdates(o.isDoupdate())
+                    .setEnableMajorUpdates(true)
+                    .setEnableMajorUpdates(true)
+                    , null).length > 0) {
                 return 0;
             }
-            someProcessing = true;
+            return 1;
         }
 
-        if (o.isVersion()) {
-            PrintStream out = session.getTerminal().getFormattedOut();
-            ws.printVersion(out,null,o.getVersionOptions());
-            someProcessing = true;
-        }
-
-        if (someProcessing && commandArguments.length == 0) {
-            return 0;
-        }
-        if (commandArguments.length == 0 && !o.isShowHelp()) {
+        if (commandArguments.length == 0) {
             return ws.createExecBuilder()
-                    .setSession(session)
                     .setCommand(NutsConstants.NUTS_SHELL, "help")
                     .exec().getResult();
         }
-        List<String> consoleArguments = new ArrayList<>();
-        consoleArguments.addAll(Arrays.asList(commandArguments));
         return ws.createExecBuilder()
-                .setSession(session)
-                .setCommand(consoleArguments)
+                .setCommand(commandArguments)
                 .exec().getResult();
     }
 
-    private static boolean showPerf(long overallTimeMillis, boolean perf, NutsSession session) {
-        if (perf) {
-            session.getTerminal().getFormattedOut().printf("**Nuts** loaded in [[%s]]ms\n",
-                    overallTimeMillis
-            );
-        }
-        return false;
-    }
-
-
-    public static String getConfigCurrentVersion(String nutsHome, String workspace) {
-        String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome, workspace), versionUrl);
-        try {
-            if (versionFile.isFile()) {
-                String str = NutsIOUtils.readStringFromFile(versionFile);
-                if (str != null) {
-                    str = str.trim();
-                    if (str.length() > 0) {
-                        return str;
-                    }
-                }
-                log.log(Level.CONFIG, "Reading nuts version file " + versionUrl + ".\n");
-            }
-        } catch (Exception ex) {
-            log.log(Level.CONFIG, "Unable to load nuts version file " + versionUrl + ".\n", ex);
-        }
-        return null;
-    }
-
-    public static boolean setConfigCurrentVersion(String version, String nutsHome, String workspace) {
-        String versionUrl = NutsConstants.NUTS_ID_BOOT_PATH + "/CURRENT/nuts.version";
-        File versionFile = new File(NutsIOUtils.resolveWorkspaceLocation(nutsHome, workspace), versionUrl);
-        if (version != null) {
-            version = version.trim();
-            if (version.isEmpty()) {
-                version = null;
-            }
-        }
-        if (version == null) {
-            if (versionFile.exists()) {
-                log.log(Level.CONFIG, "Deleting nuts version file " + versionUrl + ".\n");
-            }
-            return versionFile.delete();
-        } else {
-            if (versionFile.getParentFile() != null) {
-                versionFile.getParentFile().mkdirs();
-            }
-            PrintStream ps = null;
-            try {
-                try {
-                    ps = new PrintStream(versionFile);
-                    ps.println(version);
-                    log.log(Level.CONFIG, "Updating nuts version file " + version + " => " + versionUrl + ".\n");
-                } finally {
-                    if (ps != null) {
-                        ps.close();
-                    }
-                }
-                return true;
-            } catch (FileNotFoundException ex) {
-                log.log(Level.CONFIG, "Unable to store nuts version file " + versionUrl + ".\n", ex);
-            }
-        }
-        return false;
-    }
-
     public static String getActualVersion() {
-        return NutsIOUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties")).getProperty("project.version", "0.0.0");
+        return NutsUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"),null).getProperty("project.version", "0.0.0");
     }
 
     private static void showStaticHelp() {
         String actualVersion = getActualVersion();
         String str = null;
         try {
-            str = NutsIOUtils.readStringFromURL(Nuts.class.getResource("/net/vpc/app/nuts/NutsStaticHelp.txt"));
+            str = NutsUtils.readStringFromURL(Nuts.class.getResource("/net/vpc/app/nuts/NutsStaticHelp.txt"));
             System.out.println("Nuts " + actualVersion);
             System.out.println(str);
         } catch (IOException e) {
