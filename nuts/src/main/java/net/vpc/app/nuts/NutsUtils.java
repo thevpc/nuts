@@ -47,9 +47,8 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -855,5 +854,43 @@ final class NutsUtils {
             }
         }
         return null;
+    }
+
+    public static boolean deleteAndConfirm(File directoryName,boolean force) throws IOException {
+        if(directoryName.exists()) {
+            if (!force) {
+                Scanner s = new Scanner(System.in);
+                System.out.println("Deleting folder " + directoryName);
+                System.out.print("\t Are you sure? : ");
+                String line = s.nextLine();
+                if (!"y".equals(line) && !"yes".equals(line)) {
+                    throw new NutsUserCancelException();
+                }
+            }
+            delete(directoryName.getPath());
+            return true;
+        }
+        return false;
+    }
+
+    public static void delete(String directoryName) throws IOException {
+
+        Path directory = Paths.get(directoryName);
+        Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+
+            @Override
+            public FileVisitResult visitFile(Path file,
+                                             BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                    throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 }

@@ -1,0 +1,15 @@
+{
+  "mirrors": {
+    "vpc-public-nuts-ref": {
+      "id": "vpc-public-nuts-ref",
+      "type": "nuts-folder",
+      "location": "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master",
+      "enabled": true
+    }
+  },
+  "users": {},
+  "id": "vpc-public-nuts",
+  "type": "nuts",
+  "location": "vpc-public-nuts",
+  "env": {}
+}

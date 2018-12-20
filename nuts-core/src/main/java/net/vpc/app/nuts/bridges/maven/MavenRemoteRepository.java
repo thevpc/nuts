@@ -37,6 +37,10 @@ import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.TraceResult;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
+import net.vpc.common.mvn.ArchetypeCatalogParser;
+import net.vpc.common.mvn.MavenMetadata;
+import net.vpc.common.mvn.PomId;
+import net.vpc.common.mvn.PomIdFilter;
 import net.vpc.common.strings.StringUtils;
 
 import javax.xml.stream.XMLEventReader;
@@ -95,7 +99,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             } catch (Exception ex) {
                 throw new NutsNotFoundException(id,ex);
             }
-            MavenUtils.MavenMetadataInfo info = MavenUtils.parseMavenMetaData(metadataStream);
+            MavenMetadata info = MavenUtils.parseMavenMetaData(metadataStream);
             if (info != null) {
                 for (String version : info.getVersions()) {
                     final NutsId nutsId = id.setVersion(version);
@@ -129,7 +133,8 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     @Override
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         String url = URLUtils.buildUrl(getConfigManager().getLocation(), "/archetype-catalog.xml");
-        return parseArchetypeCatalog(openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace(CoreNutsUtils.FACE_CATALOG), session), filter);
+        InputStream s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace(CoreNutsUtils.FACE_CATALOG), session);
+        return MavenUtils.createArchetypeCatalogIterator(s, filter,true);
     }
 
     private NutsRepository getLocalMavenRepo() {
@@ -238,123 +243,6 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         return null;
     }
 
-
-    private Iterator<NutsId> parseArchetypeCatalog(final InputStream stream, final NutsIdFilter filter0) {
-        return new Iterator<NutsId>() {
-            NutsId last;
-            NutsIdFilter filter = filter0;
-            InputStream stream2 = stream;
-            XMLInputFactory factory;
-            XMLEventReader eventReader;
-            Stack<String> nodePath = new Stack<>();
-            StringBuilder groupId = new StringBuilder();
-            StringBuilder artifactId = new StringBuilder();
-            StringBuilder version = new StringBuilder();
-
-            {
-                factory = XMLInputFactory.newInstance();
-                factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
-                try {
-                    eventReader = factory.createXMLEventReader(new InputStreamReader(stream2));
-                } catch (XMLStreamException e) {
-                    //
-                }
-            }
-
-            @Override
-            public boolean hasNext() {
-                if (eventReader == null) {
-                    return false;
-                }
-                try {
-                    while (eventReader.hasNext()) {
-                        XMLEvent event = eventReader.nextEvent();
-                        switch (event.getEventType()) {
-                            case XMLStreamConstants.START_ELEMENT: {
-                                StartElement startElement = event.asStartElement();
-                                String qName = startElement.getName().getLocalPart();
-                                nodePath.push(qName);
-                                if (MavenUtils.isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype")) {
-                                    StringUtils.clear(groupId);
-                                    StringUtils.clear(artifactId);
-                                    StringUtils.clear(version);
-                                }
-                                break;
-                            }
-                            case XMLStreamConstants.CHARACTERS: {
-                                if (MavenUtils.isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype", "groupId")) {
-                                    groupId.append(event.asCharacters().getData());
-                                } else if (MavenUtils.isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype", "artifactId")) {
-                                    artifactId.append(event.asCharacters().getData());
-                                } else if (MavenUtils.isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype", "version")) {
-                                    version.append(event.asCharacters().getData());
-                                }
-                                break;
-                            }
-                            case XMLStreamConstants.END_ELEMENT: {
-//                                EndElement endElement = event.asEndElement();
-//                                String localPart = endElement.getName().getLocalPart();
-                                if (MavenUtils.isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype")) {
-                                    last = new NutsIdImpl(
-                                            null, groupId.toString(), artifactId.toString(), version.toString(), ""
-                                    );
-//                                    DelegateNutsDescriptor d = new DelegateNutsDescriptor() {
-//                                        NutsId id = last;
-//                                        NutsDescriptor base = null;
-//
-//                                        @Override
-//                                        protected NutsDescriptor getBase() {
-//                                            if (base == null) {
-//                                                base = fetchDescriptor(last, null);
-//                                            }
-//                                            return base;
-//                                        }
-//
-//                                        @Override
-//                                        public NutsId getId() {
-//                                            return id;
-//                                        }
-//                                    };
-                                    if (filter == null || filter.accept(last)) {
-                                        nodePath.pop();
-                                        return true;
-                                    }
-                                }
-                                nodePath.pop();
-                                break;
-                            }
-                        }
-                    }
-                } catch (XMLStreamException ex) {
-                    return false;
-                }
-                return false;
-            }
-
-            @Override
-            public NutsId next() {
-                return last;
-            }
-
-            @Override
-            public void remove() {
-                throw new NutsUnsupportedOperationException("remove not supported");
-            }
-
-            @Override
-            protected void finalize() throws Throwable {
-                super.finalize();
-                if (stream2 != null) {
-                    try {
-                        stream2.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    stream2 = null;
-                }
-            }
-        };
-    }
 
     @Override
     protected String getPath(NutsId id, String extension) {

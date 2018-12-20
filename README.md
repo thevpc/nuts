@@ -43,7 +43,7 @@ Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8
 
 ## Latest News
 
-2018/12/16 	nuts 0.5.1.0 released
+2018/12/18 	nuts 0.5.1.0 released
 2018/11/25 	nuts 0.5.0.0 released
 
 ## Getting started

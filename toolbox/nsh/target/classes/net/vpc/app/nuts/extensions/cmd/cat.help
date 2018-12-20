@@ -1,0 +1,16 @@
+concatenate files and print on the standard output
+
+@@SYNOPSYS:@@
+##cat## [<OPTION>...] <FILE> ...
+
+concatenate files and print on the standard output
+
+@@EXAMPLES:@@
+
+##cat## f - g
+    Output f's contents, then standard input, then g's contents.
+##cat##
+    Copy standard input to standard output.
+
+
+

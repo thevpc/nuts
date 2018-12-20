@@ -2,6 +2,8 @@ package net.vpc.app.nuts.toolbox.ndi;
 
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 
 import java.io.IOException;
 
@@ -12,9 +14,11 @@ public class NdiMain extends NutsApplication {
 
     @Override
     public int launch(NutsApplicationContext appContext) {
-        String[] args=appContext.getArgs();
-        if (args.length > 0) {
-            if (args[0].equals("in") || args[0].equals("install")) {
+        CommandLine cmd=new CommandLine(appContext);
+        cmd.requireNonEmpty();
+        Argument a;
+        if (cmd.hasNext()) {
+            if ((a=cmd.readNonOption("in","install"))!=null) {
                 LinuxNdi ndi = null;
                 if (appContext.getWorkspace().getPlatformOs().getName().equals("linux")) {
                     ndi = new LinuxNdi(appContext);
@@ -25,17 +29,21 @@ public class NdiMain extends NutsApplication {
                 boolean force = false;
                 boolean forceAll = false;
                 boolean fetch = false;
-                for (int i = 1; i < args.length; i++) {
-                    if (args[i].equals("-f")) {
-                        force = true;
-                    } else if (args[i].equals("-F")) {
-                        forceAll = true;
-                        force = true;
-                    } else if (args[i].equals("-c")) {
-                        fetch = true;
+                while (cmd.hasNext()){
+                    if ((a=cmd.readBooleanOption("-f","--force"))!=null) {
+                        force = a.getBooleanValue();
+                    }else if ((a=cmd.readBooleanOption("-F","--force-all"))!=null) {
+                            forceAll = a.getBooleanValue();
+                            if(forceAll && !force){
+                                force=true;
+                            }
+                    }else if ((a=cmd.readBooleanOption("-t","--fetch"))!=null) {
+                            fetch = a.getBooleanValue();
+                    } else if(cmd.isOption()){
+                        cmd.unexpectedArgument("ndi");
                     } else {
                         try {
-                            ndi.createNutsScript(args[i], force, forceAll, fetch);
+                            ndi.createNutsScript(cmd.read().getString(), force, forceAll, fetch);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

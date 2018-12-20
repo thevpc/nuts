@@ -1,12 +1,11 @@
 package net.vpc.app.nuts.extensions.terminals;
 
-import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
+import net.vpc.app.nuts.extensions.util.DefaultNutsResponseParser;
 
 import java.io.*;
+import java.util.Arrays;
 
 public abstract class AbstractNutsTerminal implements NutsTerminal {
     protected PrintStream out_getFormatted_Force;
@@ -124,7 +123,7 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
     }
 
     @Override
-    public String readLine(String promptFormat, Object[] params) {
+    public String readLine(String promptFormat, Object ... params) {
         getOut().printf(promptFormat, params);
         getIn();
         try {
@@ -166,5 +165,31 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
         this.outReplace=other.outReplace;
         this.errReplace=other.errReplace;
     }
-
+    @Override
+    public <T> T ask(NutsQuestion<T> question) {
+        String message = question.getMessage();
+        if (message.endsWith("\n")) {
+            message = message.substring(0, message.length() - 1);
+        }
+        getFormattedOut().printf(message, question.getMessageParameters());
+        if (question.getDefautValue() != null) {
+            getFormattedOut().printf(" (default is [[%s]])", question.getDefautValue());
+        }
+        if (question.getAcceptedValues() != null && question.getAcceptedValues().length > 0) {
+            getFormattedOut().printf(" (accepts [[%s]])", Arrays.toString(question.getAcceptedValues()));
+        }
+        getFormattedOut().printf("\n");
+        String v = readLine("\tPlease enter value or @@%s@@ to cancel : ", "cancel!");
+        if ("cancel!".equals(v)) {
+            throw new NutsUserCancelException();
+        }
+        NutsResponseParser p = question.getParse();
+        if (p == null) {
+            p = DefaultNutsResponseParser.INSTANCE;
+        }
+        if (v == null || v.length() == 0) {
+            return (T) p.parse(question.getDefautValue(),question.getValueType());
+        }
+        return (T) p.parse(v,question.getValueType());
+    }
 }

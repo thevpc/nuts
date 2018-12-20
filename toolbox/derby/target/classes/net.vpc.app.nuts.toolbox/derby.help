@@ -1,0 +1,4 @@
+derby [--db <DB_HOME]> [--version <DB_VERSION>] [start|stop|sysinfo]
+default DB_HOME    : ~/.netbeans-derby
+default DB_VERSION : LATEST
+See NetworkServerControl command for full commands

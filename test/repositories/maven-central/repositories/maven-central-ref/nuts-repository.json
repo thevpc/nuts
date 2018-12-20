@@ -1,0 +1,8 @@
+{
+  "mirrors": {},
+  "users": {},
+  "id": "maven-central-ref",
+  "type": "maven",
+  "location": "http://repo.maven.apache.org/maven2/",
+  "env": {}
+}

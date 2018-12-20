@@ -1,0 +1,15 @@
+{
+  "mirrors": {
+    "maven-central-ref": {
+      "id": "maven-central-ref",
+      "type": "maven",
+      "location": "http://repo.maven.apache.org/maven2/",
+      "enabled": true
+    }
+  },
+  "users": {},
+  "id": "maven-central",
+  "type": "nuts",
+  "location": "maven-central",
+  "env": {}
+}

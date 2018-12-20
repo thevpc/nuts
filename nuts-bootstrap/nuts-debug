@@ -1,0 +1,35 @@
+#!/bin/bash 
+#     _   __      __
+#    / | / /_  __/ /______
+#   /  |/ / / / / __/ ___/
+#  / /|  / /_/ / /_(__  )
+# /_/ |_/\\__,_/\\__/____/  shell script
+#
+# you might use simply java -jar nuts.jar
+# if your have already an existing copy of nuts.jar.
+# This shell will add some flavour to nuts execution pattern.
+# It will actually look for java execution envirement in $NUTS_JAVA_HOME
+# 
+# Example :
+# nuts console
+#    runs nuts and starts console
+# @date 2018-10-19
+# @version 0.4.2.0
+
+#NUTS_JAVA_HOME='';
+
+base=$(dirname $0)
+
+
+JAVA_CMD='java'
+
+if [ x"$JAVA_HOME" != "x" ] ; then
+    JAVA_CMD="$JAVA_HOME/bin/java";
+fi
+
+if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
+    JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
+fi
+
+
+$JAVA_CMD -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -jar "$base/nuts.jar" $*

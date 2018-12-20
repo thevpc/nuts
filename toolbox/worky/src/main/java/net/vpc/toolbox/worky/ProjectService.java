@@ -130,7 +130,7 @@ public class ProjectService {
                     try {
                         return new PomXmlParser().parse(new File(f, "pom.xml"))
                                 .getVersion();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new IllegalArgumentException(e);
                     }
                 }
@@ -173,7 +173,7 @@ public class ProjectService {
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new IllegalArgumentException(e);
                     }
                 }

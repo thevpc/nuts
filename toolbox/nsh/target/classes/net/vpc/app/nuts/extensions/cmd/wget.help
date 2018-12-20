@@ -1,0 +1,13 @@
+non-interactive network downloader
+
+@@SYNOPSYS:@@
+wget## [<OPTION>...] <PARAMS> ...
+
+non-interactive network downloader
+
+@@EXAMPLES:@@
+
+##wget## www.google.com
+   download file
+
+

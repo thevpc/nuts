@@ -1,0 +1,13 @@
+list, test and extract compressed files in a ZIP archive
+
+@@SYNOPSYS:@@
+##unzip## [<OPTION>...] <SOURCE>
+
+list, test and extract compressed files in a ZIP archive
+
+@@EXAMPLES:@@
+
+##cp## -r a b c d
+   copy a b and c to folder d
+
+

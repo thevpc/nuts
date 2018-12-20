@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigNutsArguments extends NutsArguments{
-    private boolean version = false;
     private String versionOptions;
-    private boolean doupdate = false;
-    private boolean checkupdates = false;
     private String applyUpdatesFile = null;
-    private boolean showHelp = false;
-    private boolean showLicense = false;
+    private NutsBootCommand bootCommand = NutsBootCommand.RUN;
     private List<String> args = new ArrayList<>();
     private NutsBootOptions bootOptions = new NutsBootOptions();
     private NutsWorkspaceOptions workspaceCreateOptions = new NutsWorkspaceOptions()
@@ -24,57 +20,12 @@ public class ConfigNutsArguments extends NutsArguments{
         this.versionOptions = versionOptions;
     }
 
-    public boolean isVersion() {
-        return version;
-    }
-
-    public NutsArguments setVersion(boolean version) {
-        this.version = version;
-        return this;
-    }
-
-    public boolean isDoupdate() {
-        return doupdate;
-    }
-
-    public NutsArguments setDoupdate(boolean doupdate) {
-        this.doupdate = doupdate;
-        return this;
-    }
-
-    public boolean isCheckupdates() {
-        return checkupdates;
-    }
-
-    public NutsArguments setCheckupdates(boolean checkupdates) {
-        this.checkupdates = checkupdates;
-        return this;
-    }
-
     public String getApplyUpdatesFile() {
         return applyUpdatesFile;
     }
 
     public NutsArguments setApplyUpdatesFile(String applyUpdatesFile) {
         this.applyUpdatesFile = applyUpdatesFile;
-        return this;
-    }
-
-    public boolean isShowHelp() {
-        return showHelp;
-    }
-
-    public NutsArguments setShowHelp(boolean showHelp) {
-        this.showHelp = showHelp;
-        return this;
-    }
-
-    public boolean isShowLicense() {
-        return showLicense;
-    }
-
-    public NutsArguments setShowLicense(boolean showLicense) {
-        this.showLicense = showLicense;
         return this;
     }
 
@@ -102,6 +53,15 @@ public class ConfigNutsArguments extends NutsArguments{
 
     public NutsArguments setWorkspaceCreateOptions(NutsWorkspaceOptions workspaceCreateOptions) {
         this.workspaceCreateOptions = workspaceCreateOptions;
+        return this;
+    }
+
+    public NutsBootCommand getBootCommand() {
+        return bootCommand;
+    }
+
+    public ConfigNutsArguments setBootCommand(NutsBootCommand bootCommand) {
+        this.bootCommand = bootCommand;
         return this;
     }
 }

@@ -1,0 +1,15 @@
+log out from current workspace
+
+@@SYNOPSYS:@@
+##logout##
+
+logs out (to anonymous)
+
+
+@@EXAMPLES:@@
+
+##logout##
+   logs out to anonymous
+
+
+

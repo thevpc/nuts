@@ -477,7 +477,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         PrintStream out = resolveOut(session);
         if (options.isLogUpdates()) {
             if (updates.length == 0) {
-                out.printf("Workspace is [[up-to-date]]. You are running latest version version ==%s==\n", getConfigManager().getBootRuntime().getVersion());
+                out.printf("Workspace is [[up-to-date]]. You are running latest version ==%s==\n", getConfigManager().getBootRuntime().getVersion());
                 return updates;
             } else {
                 out.printf("Workspace has ##%s## component%s to update.\n", updates.length, (updates.length > 1 ? "s" : ""));

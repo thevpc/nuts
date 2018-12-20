@@ -1,0 +1,15 @@
+{
+  "mirrors": {
+    "vpc-public-maven-ref": {
+      "id": "vpc-public-maven-ref",
+      "type": "maven",
+      "location": "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master",
+      "enabled": true
+    }
+  },
+  "users": {},
+  "id": "vpc-public-maven",
+  "type": "nuts",
+  "location": "vpc-public-maven",
+  "env": {}
+}

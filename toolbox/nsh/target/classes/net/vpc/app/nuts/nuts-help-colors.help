@@ -1,0 +1,38 @@
+Nuts format types are :
+
+Text             | Text
+\_\_Text\_\_         | __Text__
+\@Text\@           | @Text@
+\@\@Text\@\@         | @@Text@@
+\@\@\@Text\@\@\@       | @@@Text@@@
+\[Text\]           | [Text]
+\[\[Text\]\]         | [[Text]]
+\[\[\[Text\]\]\]       | [[[Text]]]
+\[\[\[\[Text\]\]\]\]     | [[[[Text]]]]
+\[\[\[\[\[Text\]\]\]\]\]   | [[[[[Text]]]]]
+\*Text\*           | *Text*
+\*\*Text\*\*         | **Text**
+\*\*\*Text\*\*\*       | ***Text***
+\(Text\)           | (Text)
+\(\(Text\)\)         | ((Text))
+\(\(\(Text\)\)\)       | (((Text)))
+\(\(\(\(Text\)\)\)\)     | ((((Text))))
+\(\(\(\(\(Text\)\)\)\)\)   | (((((Text)))))
+\#Text\#           | #Text#
+\#\#Text\#\#         | ##Text##
+\#\#\#Text\#\#\#       | ###Text###
+\{Text\}           | {Text}
+\{\{Text\}\}         | {{Text}}
+\{\{\{Text\}\}\}       | {{{Text}}}
+\<Text\>           | <Text>
+\<\<Text\>\>         | <<Text>>
+\<\<\<Text\>\>\>       | <<<Text>>>
+\"Text\"           | "Text"
+\"\"Text\"\"         | ""Text""
+\"\"\"Text\"\"\"       | """Text"""
+\'Text\'           | 'Text'
+\'\'Text\'\'         | ''Text''
+\'\'\'Text\'\'\'       | '''Text'''
+
+
+You can escape special characters using ##\\## character

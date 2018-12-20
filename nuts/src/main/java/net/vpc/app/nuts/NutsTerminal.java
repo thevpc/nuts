@@ -54,4 +54,5 @@ public interface NutsTerminal extends NutsTerminalBase {
 
     NutsTerminal copy();
 
+    <T> T ask(NutsQuestion<T> question);
 }

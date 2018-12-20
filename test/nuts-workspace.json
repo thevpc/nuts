@@ -1,0 +1,80 @@
+{
+  "secure": false,
+  "repositories": {
+    "local": {
+      "id": "local",
+      "type": "nuts",
+      "enabled": true
+    },
+    "system": {
+      "id": "system",
+      "type": "nuts",
+      "location": "null/nuts/system-repository",
+      "enabled": true
+    },
+    "maven-local": {
+      "id": "maven-local",
+      "type": "maven",
+      "location": "~/.m2/repository",
+      "enabled": true
+    },
+    "maven-central": {
+      "id": "maven-central",
+      "type": "nuts",
+      "location": "maven-central",
+      "enabled": true
+    },
+    "vpc-public-maven": {
+      "id": "vpc-public-maven",
+      "type": "nuts",
+      "location": "vpc-public-maven",
+      "enabled": true
+    },
+    "vpc-public-nuts": {
+      "id": "vpc-public-nuts",
+      "type": "nuts",
+      "location": "vpc-public-nuts",
+      "enabled": true
+    }
+  },
+  "extensions": [],
+  "env": {
+    "autosave": "true",
+    "passphrase": "4974277320636F6D706C6574656C79206E7574732121"
+  },
+  "security": {
+    "admin": {
+      "user": "admin",
+      "credentials": "D033E22AE348AEB5660FC2140AEC35850C4DA997",
+      "groups": [],
+      "rights": []
+    },
+    "anonymous": {
+      "user": "anonymous",
+      "groups": [],
+      "rights": [
+        "fetch-desc",
+        "fetch-content"
+      ]
+    },
+    "user": {
+      "user": "user",
+      "mappedUser": "contributor",
+      "credentials": "12DEA96FEC20593566AB75692C9949596833ADC9",
+      "groups": [],
+      "rights": [
+        "fetch-desc",
+        "save",
+        "fetch-content",
+        "push",
+        "deploy",
+        "undeploy"
+      ]
+    }
+  },
+  "sdk": {},
+  "imports": [
+    "net.vpc.app.nuts.toolbox",
+    "net.vpc.app"
+  ]
+}

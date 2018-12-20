@@ -1,0 +1,19 @@
+log in as a given user for the current workspace
+
+@@SYNOPSYS:@@
+##login## <username> [user-password]
+
+logs in as <username>. If user-password is not specified, will be asked for
+
+
+@@EXAMPLES:@@
+
+##login## admin admin
+   connects as admin with default credentials admin
+
+##login## admin
+   connects as admin. Password  will be asked for
+
+##login## toto@192.36.6.8
+   connects to 192.36.6.8 on the default port (8898)
+

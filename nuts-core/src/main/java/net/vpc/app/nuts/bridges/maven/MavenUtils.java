@@ -37,26 +37,13 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
 import net.vpc.app.nuts.extensions.util.MapStringMapper;
 import net.vpc.common.io.IOUtils;
+import net.vpc.common.mvn.*;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.Chronometer;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,31 +53,6 @@ import java.util.logging.Logger;
  */
 public class MavenUtils {
     private static final Logger log = Logger.getLogger(MavenUtils.class.getName());
-
-    private static boolean isStackSubPath(Stack<String> stack, int offset, String... path) {
-        for (int i = 0; i < path.length; i++) {
-            int x = stack.size() - offset - path.length + i;
-            if (x < 0) {
-                return false;
-            }
-            if (!stack.get(x).equals(path[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isStackPath(Stack<String> stack, String... path) {
-        if (stack.size() != path.length) {
-            return false;
-        }
-        for (int i = 0; i < path.length; i++) {
-            if (!stack.get(stack.size() - path.length + i).equals(path[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public static NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
         try {
@@ -107,165 +69,55 @@ public class MavenUtils {
         }
     }
 
+    public static NutsId[] toNutsId(PomId[] ids) {
+        NutsId[] a=new NutsId[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            a[i]=toNutsId(ids[i]);
+        }
+        return a;
+    }
+    public static NutsDependency[] toNutsDependencies(PomDependency[] deps) {
+        NutsDependency[] a=new NutsDependency[deps.length];
+        for (int i = 0; i < deps.length; i++) {
+            a[i]=toNutsDependency(deps[i]);
+        }
+        return a;
+    }
+
+    public static NutsId toNutsId(PomId d) {
+        return new NutsIdImpl(
+                null,
+                d.getGroupId(),
+                d.getArtifactId(),
+                toNutsVersion(d.getVersion()),
+                ""
+        );
+    }
+    public static NutsDependency toNutsDependency(PomDependency d) {
+        return new NutsDependencyImpl(
+                null,
+                d.getGroupId(),
+                d.getArtifactId(),
+                d.getVersion(),
+                d.getScope(),
+                d.getOptional(),
+                toNutsId(d.getExclusions())
+        );
+    }
+
     public static NutsDescriptor parsePomXml0(InputStream stream, String urlDesc) {
         long startTime = System.currentTimeMillis();
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
         List<NutsDependency> deps = new ArrayList<>();
         try {
-            dBuilder = dbFactory.newDocumentBuilder();
             if (stream == null) {
                 return null;
             }
-            Document doc = dBuilder.parse(stream);
-            //optional, but recommended
-            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-            doc.getDocumentElement().normalize();
-            NodeList properties = doc.getDocumentElement().getElementsByTagName("properties");
-            NodeList rootChildList = doc.getDocumentElement().getChildNodes();
-            String groupId = "";
-            String artifactId = "";
-            String description = "";
-            String version = "";
-            String p_groupId = "";
-            String p_artifactId = "";
-            String p_version = "";
-            String packaging = "";
-            Map<String,String> props=new LinkedHashMap<>();
-            for (int i = 0; i < rootChildList.getLength(); i++) {
-                Element elem1 = toElement(rootChildList.item(i));
-                if(elem1!=null) {
-                    switch (elem1.getTagName()) {
-                        case "groupId": {
-                            groupId = elemToStr(elem1);
-                            break;
-                        }
-                        case "artifactId": {
-                            artifactId = elemToStr(elem1);
-                            break;
-                        }
-                        case "version": {
-                            version = elemToStr(elem1);
-                            break;
-                        }
-                        case "packaging": {
-                            packaging = elemToStr(elem1);
-                            break;
-                        }
-                        case "description": {
-                            description = elemToStr(elem1);
-                            break;
-                        }
-                        case "parent": {
-                            NodeList parentChildList = elem1.getChildNodes();
-                            for (int j = 0; j < parentChildList.getLength(); j++) {
-                                Element parElem = toElement(parentChildList.item(j));
-                                if (parElem != null) {
-                                    switch (parElem.getTagName()) {
-                                        case "groupId": {
-                                            p_groupId = elemToStr(parElem);
-                                            break;
-                                        }
-                                        case "artifactId": {
-                                            p_artifactId = elemToStr(parElem);
-                                            break;
-                                        }
-                                        case "version": {
-                                            p_version = elemToStr(parElem);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                        case "properties": {
-                            NodeList propsChildList = elem1.getChildNodes();
-                            for (int j = 0; j < propsChildList.getLength(); j++) {
-                                Element parElem = toElement(propsChildList.item(j));
-                                if (parElem != null) {
-                                    props.put(parElem.getTagName(), elemToStr(parElem));
-                                }
-                            }
-                            break;
-                        }
-                        case "dependencies": {
-                            NodeList dependenciesChildList = elem1.getChildNodes();
-                            for (int j = 0; j < dependenciesChildList.getLength(); j++) {
-                                Element dependency = toElement(dependenciesChildList.item(j), "dependency");
-                                if (dependency != null) {
-                                    NodeList dependencyChildList = dependency.getChildNodes();
-                                    String d_groupId = "";
-                                    String d_artifactId = "";
-                                    String d_version = "";
-                                    String d_scope = "";
-                                    String d_optional = "";
-                                    List<NutsId> d_exclusions = new ArrayList<>();
-                                    for (int k = 0; k < dependencyChildList.getLength(); k++) {
-                                        Element c = toElement(dependencyChildList.item(k));
-                                        if (c != null) {
-                                            switch (c.getTagName()) {
-                                                case "groupId": {
-                                                    d_groupId = elemToStr(c);
-                                                    break;
-                                                }
-                                                case "artifactId": {
-                                                    d_artifactId = elemToStr(c);
-                                                    break;
-                                                }
-                                                case "version": {
-                                                    d_version = elemToStr(c);
-                                                    break;
-                                                }
-                                                case "scope": {
-                                                    d_scope = elemToStr(c);
-                                                    break;
-                                                }
-                                                case "optional": {
-                                                    d_optional = elemToStr(c);
-                                                    break;
-                                                }
-                                                case "exclusions": {
-                                                    NodeList exclusionsList = c.getChildNodes();
-                                                    String ex_groupId = "";
-                                                    String ex_artifactId = "";
-                                                    for (int l = 0; l < exclusionsList.getLength(); l++) {
-                                                        Element ex = toElement(exclusionsList.item(l));
-                                                        if (ex != null) {
-                                                            switch (ex.getTagName()) {
-                                                                case "groupId": {
-                                                                    ex_groupId = elemToStr(ex);
-                                                                    break;
-                                                                }
-                                                                case "artifactId": {
-                                                                    ex_artifactId = elemToStr(ex);
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                    if (!ex_groupId.isEmpty()) {
-                                                        d_exclusions.add(new NutsIdImpl(ex_groupId, ex_artifactId, null));
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (d_scope.isEmpty()) {
-                                        d_scope = "compile";
-                                    }
-                                    deps.add(new NutsDependencyImpl(
-                                            null, d_groupId, d_artifactId, d_version, d_scope, d_optional, d_exclusions.toArray(new NutsId[0])
-                                    ));
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-                }
+            Pom pom = PomXmlParser.parse(stream);
+            boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+            if (pom.getPackaging().isEmpty()) {
+                pom.setPackaging("jar");
             }
+
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
                 log.log(Level.CONFIG, "[SUCCESS] Loading pom.xml file from  {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
@@ -273,31 +125,17 @@ public class MavenUtils {
                 log.log(Level.CONFIG, "[SUCCESS] Loading pom.xml file from  {0}", new Object[]{urlDesc});
             }
 
-            boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
-            if (packaging.isEmpty()) {
-                packaging="jar";
-            }
             return new DefaultNutsDescriptorBuilder()
-                    .setId(new NutsIdImpl(
-                            null, groupId, artifactId,
-                            version,
-                            ""
-                    ))
-                    .setParents(p_groupId.length() == 0 ? new NutsId[0] : new NutsId[]{
-                            new NutsIdImpl(
-                                    null, p_groupId, p_artifactId,
-                                    p_version.toString().trim(),
-                                    ""
-                            )
-                    })
-                    .setPackaging(packaging)
+                    .setId(toNutsId(pom.getPomId()))
+                    .setParents(pom.getParent()==null? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
+                    .setPackaging(pom.getPackaging())
                     .setExecutable(executable)
-                    .setExt("war".equals(packaging) ? "war" : "jar")
-                    .setName(artifactId)
-                    .setDescription(description.toString())
+                    .setExt("war".equals(pom.getPackaging()) ? "war" : "jar")
+                    .setName(pom.getArtifactId())
+                    .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})
-                    .setDependencies(deps.toArray(new NutsDependency[0]))
-                    .setProperties(props)
+                    .setDependencies(toNutsDependencies(pom.getDependencies()))
+                    .setProperties(pom.getProperties())
                     .build()
                     ;
         } catch (Exception e) {
@@ -311,285 +149,9 @@ public class MavenUtils {
         }
     }
 
-    private static String elemToStr(Element ex) {
-        return ex.getTextContent() == null ? "" : ex.getTextContent().trim();
-    }
 
-    public static NutsDescriptor parsePomXml0Old(InputStream stream, String urlDesc) {
-        StringBuilder p_groupId = new StringBuilder();
-        StringBuilder p_artifactId = new StringBuilder();
-        StringBuilder p_version = new StringBuilder();
-
-        StringBuilder d_groupId = new StringBuilder();
-        StringBuilder d_artifactId = new StringBuilder();
-        StringBuilder d_version = new StringBuilder();
-        StringBuilder d_scope = new StringBuilder();
-        StringBuilder d_optional = new StringBuilder();
-
-        StringBuilder e_groupId = new StringBuilder();
-        StringBuilder e_artifactId = new StringBuilder();
-        StringBuilder e_version = new StringBuilder();
-
-        StringBuilder groupId = new StringBuilder();
-        StringBuilder artifactId = new StringBuilder();
-        StringBuilder version = new StringBuilder();
-        StringBuilder packaging = new StringBuilder();
-        StringBuilder name = new StringBuilder();
-        StringBuilder description = new StringBuilder();
-        StringBuilder propertyValue = new StringBuilder();
-        Map<String, String> props = new HashMap<>();
-        List<NutsDependency> deps = new ArrayList<>();
-        List<NutsId> exclusions = new ArrayList<>();
-        try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
-            XMLEventReader eventReader
-                    = factory.createXMLEventReader(new InputStreamReader(stream));
-            Stack<String> nodePath = new Stack<>();
-            while (eventReader.hasNext()) {
-                XMLEvent event = eventReader.nextEvent();
-                switch (event.getEventType()) {
-                    case XMLStreamConstants.START_ELEMENT: {
-                        StartElement startElement = event.asStartElement();
-                        String qName = startElement.getName().getLocalPart();
-                        nodePath.push(qName);
-                        if (isStackSubPath(nodePath, 1, "project", "properties")) {
-                            StringUtils.clear(propertyValue);
-                        }
-                        if (isStackPath(nodePath, "project", "dependencies", "dependency")) {
-                            StringUtils.clear(d_groupId);
-                            StringUtils.clear(d_artifactId);
-                            StringUtils.clear(d_scope);
-                            StringUtils.clear(d_version);
-                            StringUtils.clear(d_optional);
-                            exclusions.clear();
-                        }
-                        if (isStackPath(nodePath, "project", "dependencies", "dependency", "exclusions", "exclusion")) {
-                            StringUtils.clear(e_groupId);
-                            StringUtils.clear(e_artifactId);
-                            StringUtils.clear(e_version);
-                        }
-                        break;
-                    }
-                    case XMLStreamConstants.CHARACTERS: {
-                        if (isStackPath(nodePath, "project", "groupId")) {
-                            groupId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "artifactId")) {
-                            artifactId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "version")) {
-                            version.append(event.asCharacters().getData());
-
-                        } else if (isStackPath(nodePath, "project", "parent", "groupId")) {
-                            p_groupId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "parent", "artifactId")) {
-                            p_artifactId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "parent", "version")) {
-                            p_version.append(event.asCharacters().getData());
-
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "groupId")) {
-                            d_groupId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "artifactId")) {
-                            d_artifactId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "version")) {
-                            d_version.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "scope")) {
-                            d_scope.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "optional")) {
-                            d_optional.append(event.asCharacters().getData());
-
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "exclusions", "exclusion", "groupId")) {
-                            e_groupId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "exclusions", "exclusion", "artifactId")) {
-                            e_artifactId.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "dependencies", "dependency", "exclusions", "exclusion", "version")) {
-                            e_version.append(event.asCharacters().getData());
-
-                        } else if (isStackPath(nodePath, "project", "packaging")) {
-                            packaging.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "name")) {
-                            name.append(event.asCharacters().getData());
-                        } else if (isStackPath(nodePath, "project", "description")) {
-                            description.append(event.asCharacters().getData());
-                        } else if (isStackSubPath(nodePath, 1, "project", "properties")) {
-                            propertyValue.append(event.asCharacters().getData());
-                        }
-                        break;
-                    }
-                    case XMLStreamConstants.END_ELEMENT: {
-                        EndElement endElement = event.asEndElement();
-                        String localPart = endElement.getName().getLocalPart();
-                        if (isStackSubPath(nodePath, 1, "project", "properties")) {
-                            props.put(localPart, propertyValue.toString().trim());
-                        }
-                        if (isStackPath(nodePath, "project", "dependencies", "dependency", "exclusions", "exclusion")) {
-                            exclusions.add(new NutsIdImpl(null, e_groupId.toString(), e_artifactId.toString(), e_version.toString(), (String) null));
-                        }
-                        if (isStackPath(nodePath, "project", "dependencies", "dependency")) {
-                            deps.add(
-                                    new NutsDependencyImpl(
-                                            null,
-                                            d_groupId.toString().trim(),
-                                            d_artifactId.toString().trim(),
-                                            mavenVersionToNutsVersion(d_version.toString().trim()),
-                                            d_scope.toString().trim(),
-                                            d_optional.toString().trim(),
-                                            exclusions.toArray(new NutsId[0])
-                                    )
-                            );
-                        }
-                        nodePath.pop();
-                        break;
-                    }
-                }
-            }
-        } catch (XMLStreamException e) {
-            throw new NutsParseException(e);
-        }
-        boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
-        if (packaging.toString().trim().isEmpty()) {
-            packaging.append("jar");
-        }
-        return new DefaultNutsDescriptorBuilder()
-                .setId(new NutsIdImpl(
-                        null, groupId.toString().trim(), artifactId.toString().trim(),
-                        version.toString().trim(),
-                        ""
-                ))
-                .setParents(p_groupId.length() == 0 ? new NutsId[0] : new NutsId[]{
-                        new NutsIdImpl(
-                                null, p_groupId.toString().trim(), p_artifactId.toString().trim(),
-                                p_version.toString().trim(),
-                                ""
-                        )
-                })
-                .setPackaging(packaging.toString())
-                .setExecutable(executable)
-                .setExt("war".equals(packaging.toString()) ? "war" : "jar")
-                .setName(name.toString())
-                .setDescription(description.toString())
-                .setPlatform(new String[]{"java"})
-                .setDependencies(deps.toArray(new NutsDependency[0]))
-                .setProperties(props)
-                .build()
-                ;
-    }
-
-    public static String mavenVersionToNutsVersion(String version) {
+    public static String toNutsVersion(String version) {
         return version.replace("(", "]").replace(")", "[");
-//        Pattern pattern = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]()])(?<LV1>[^\\[\\],()]*),(?<RV1>[^\\[\\],()]*)(?<R1>[\\[\\]()]))|(?<VAL2>(?<L2>[\\[\\]()])(?<V2>[^\\[\\],()]*)(?<R2>[\\[\\]()]))|(?<VAL3>(?<V3>[^\\[\\], ()]+)))(\\s|,|\n)*)");
-//        Matcher y = pattern.matcher(version);
-//        StringBuilder sb = new StringBuilder();
-//        while (y.find()){
-//            if(y.group("VAL1")!=null) {
-//                boolean inclusiveLowerBoundary = y.group("L1").equals("[");
-//                boolean inclusiveUpperBoundary = y.group("R1").equals("]");
-//                String min = y.group("LV1");
-//                String max = y.group("RV1");
-//
-//                if(sb.length()>0){
-//                    sb.append(",");
-//                }
-//                sb.append(inclusiveLowerBoundary?"[":"]");
-//                sb.append(min);
-//                sb.append(",");
-//                sb.append(max);
-//                sb.append(inclusiveUpperBoundary?"]":"[");
-//
-//            }else if(y.group("VAL2")!=null){
-//                boolean inclusiveLowerBoundary = y.group("L2").equals("[");
-//                boolean inclusiveUpperBoundary = y.group("R2").equals("]");
-//                String val=y.group("V2");
-//                //  [a]  or ]a[
-//                if((inclusiveLowerBoundary && inclusiveUpperBoundary) || (!inclusiveLowerBoundary && !inclusiveUpperBoundary)) {
-//                    sb.append(inclusiveLowerBoundary?"[":"]");
-//                    sb.append(val);
-//                    sb.append(",");
-//                    sb.append(val);
-//                    sb.append(inclusiveUpperBoundary?"]":"[");
-//                    // ]a]    == ],a]
-//                }else if(!inclusiveLowerBoundary){
-//                    sb.append(inclusiveLowerBoundary?"[":"]");
-//                    sb.append("");
-//                    sb.append(",");
-//                    sb.append(val);
-//                    sb.append(inclusiveUpperBoundary?"]":"[");
-//
-//                    // [a[    == [a,[
-//                }else if(!inclusiveLowerBoundary){
-//                    d.add(new DefaultNutsVersionFilter.NutsVersionInterval(false, true, val,null));
-//                }
-//            }else {
-//                if(sb.length()>0){
-//                    sb.append(",");
-//                }
-//                sb.append(y.group("V3"));
-//            }
-//        }
-//        return sb.toString();
-//
-
-    }
-
-    public static MavenMetadataInfo parseMavenMetaData(InputStream stream) {
-        MavenMetadataInfo info = new MavenMetadataInfo();
-        StringBuilder ver = new StringBuilder();
-        StringBuilder latest = new StringBuilder();
-        StringBuilder release = new StringBuilder();
-        List<String> versions = new ArrayList<>();
-        try {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
-            XMLEventReader eventReader
-                    = factory.createXMLEventReader(new InputStreamReader(stream));
-            Stack<String> nodePath = new Stack<>();
-            while (eventReader.hasNext()) {
-                XMLEvent event = eventReader.nextEvent();
-                switch (event.getEventType()) {
-                    case XMLStreamConstants.START_ELEMENT: {
-                        StartElement startElement = event.asStartElement();
-                        String qName = startElement.getName().getLocalPart();
-                        nodePath.push(qName);
-                        StringUtils.clear(ver);
-                        break;
-                    }
-                    case XMLStreamConstants.CHARACTERS: {
-                        if (isStackPath(nodePath, "metadata", "versioning", "versions", "version")) {
-                            ver.append(event.asCharacters().getData());
-                        }
-                        if (isStackPath(nodePath, "metadata", "versioning", "release")) {
-                            release.append(event.asCharacters().getData());
-                        }
-                        if (isStackPath(nodePath, "metadata", "versioning", "latest")) {
-                            latest.append(event.asCharacters().getData());
-                        }
-                        break;
-                    }
-                    case XMLStreamConstants.END_ELEMENT: {
-                        if (isStackPath(nodePath, "metadata", "versioning", "versions", "version")) {
-                            nodePath.pop();
-                            if (ver.length() > 0) {
-                                versions.add(ver.toString());
-                            }
-                        } else {
-                            nodePath.pop();
-                        }
-                        break;
-                    }
-                }
-            }
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-        info.latest = latest.toString();
-        info.release = release.toString();
-        for (String version : versions) {
-            if (latest.length() > 0 && CoreVersionUtils.compareVersions(version, latest.toString()) > 0) {
-                //do not add
-            } else {
-                info.versions.add(version);
-            }
-        }
-        return info;
     }
 
     public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsSession session, String urlDesc) throws IOException {
@@ -695,30 +257,38 @@ public class MavenUtils {
         return nutsDescriptor;
     }
 
-    public static class MavenMetadataInfo {
 
-        String latest;
-        String release;
-        List<String> versions = new ArrayList<>();
+    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream,NutsIdFilter filter,boolean autoClose) {
+        Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
+            @Override
+            public boolean accept(PomId id) {
+                return filter.accept(MavenUtils.toNutsId(id));
+            }
+        },autoClose);
+        return new Iterator<NutsId>() {
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
 
-        public List<String> getVersions() {
-            return versions;
-        }
+            @Override
+            public NutsId next() {
+                return MavenUtils.toNutsId(it.next());
+            }
+        };
     }
 
-    private static Element toElement(Node n) {
-        if (n instanceof Element) {
-            return (Element) n;
+    public static MavenMetadata parseMavenMetaData(InputStream metadataStream) {
+        MavenMetadata s = MavenMetadataParser.parseMavenMetaData(metadataStream);
+        if(s==null){
+            return s;
         }
-        return null;
-    }
-
-    private static Element toElement(Node n, String name) {
-        if (n instanceof Element) {
-            if (((Element) n).getTagName().equals(name)) {
-                return (Element) n;
+        for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
+            String version = iterator.next();
+            if (s.getLatest().length() > 0 && CoreVersionUtils.compareVersions(version, s.getLatest().toString()) > 0) {
+                iterator.remove();
             }
         }
-        return null;
+        return s;
     }
 }

@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.extensions.terminals;
 
+import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
 
@@ -81,6 +82,11 @@ public class UnmodifiableTerminal implements NutsTerminal {
     @Override
     public PrintStream getErr() {
         return base.getErr();
+    }
+
+    @Override
+    public <T> T ask(NutsQuestion<T> question) {
+        return base.ask(question);
     }
 
     @Override

@@ -1,0 +1,8 @@
+{
+  "mirrors": {},
+  "users": {},
+  "id": "maven-local",
+  "type": "maven",
+  "location": "~/.m2/repository",
+  "env": {}
+}

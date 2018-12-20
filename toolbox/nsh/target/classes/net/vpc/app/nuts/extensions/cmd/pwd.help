@@ -1,0 +1,12 @@
+print working directory
+
+@@SYNOPSYS:@@
+##pwd##
+
+prints working directory
+@@EXAMPLES:@@
+
+##pwd##
+   prints working directory
+
+

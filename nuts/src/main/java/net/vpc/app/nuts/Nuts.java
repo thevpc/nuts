@@ -32,10 +32,7 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -188,34 +185,95 @@ public class Nuts {
         NutsWorkspace ws = openWorkspace(o.getWorkspaceCreateOptions(), o.getBootOptions());
 
         String[] commandArguments = o.getArgs().toArray(new String[0]);
-        if (o.isVersion()) {
-            PrintStream out = ws.getTerminal().getFormattedOut();
-            ws.printVersion(out,null,o.getVersionOptions());
-            return 0;
-        }
-        if (o.isShowHelp()) {
-            return ws.createExecBuilder()
-                    .setCommand(NutsConstants.NUTS_SHELL, "help")
-                    .addCommand(commandArguments)
-                    .exec().getResult();
-        }
-        if (o.isShowLicense()) {
-            return ws.createExecBuilder()
-                    .setCommand(NutsConstants.NUTS_SHELL, "help", "--license")
-                    .addCommand(commandArguments)
-                    .exec().getResult()
-            ;
-        }
-
-        if (o.isCheckupdates() || o.isDoupdate()) {
-            if (ws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
-                    .setApplyUpdates(o.isDoupdate())
-                    .setEnableMajorUpdates(true)
-                    .setEnableMajorUpdates(true)
-                    , null).length > 0) {
+        switch (o.getBootCommand()){
+            case VERSION:{
+                PrintStream out = ws.getTerminal().getFormattedOut();
+                ws.printVersion(out,null,o.getVersionOptions());
                 return 0;
             }
-            return 1;
+            case HELP:{
+                return ws.createExecBuilder()
+                        .setCommand(NutsConstants.NUTS_SHELL, "help")
+                        .addCommand(commandArguments)
+                        .exec().getResult();
+            }
+            case LICENSE:{
+                return ws.createExecBuilder()
+                        .setCommand(NutsConstants.NUTS_SHELL, "help", "--license")
+                        .addCommand(commandArguments)
+                        .exec().getResult()
+                        ;
+            }
+            case UPDATE:{
+                if (ws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                                .setApplyUpdates(true)
+                                .setEnableMajorUpdates(true)
+                                .setEnableMajorUpdates(true)
+                        , null).length > 0) {
+                    return 0;
+                }
+                return 1;
+            }
+            case CHECK_UPDATES:{
+                if (ws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                                .setApplyUpdates(false)
+                                .setEnableMajorUpdates(true)
+                                .setEnableMajorUpdates(true)
+                        , null).length > 0) {
+                    return 0;
+                }
+                return 1;
+            }
+            case CLEAN:{
+                boolean force=false;
+                for (String argument : ws.getBootOptions().getBootArguments()) {
+                    if("-f".equals(argument) ||"--force".equals(argument)){
+                        force=true;
+                    }
+                }
+                File f=new File(ws.getConfigManager().getWorkspaceLocation(),"cache");
+                try {
+                    NutsUtils.deleteAndConfirm(f,force);
+                } catch (Exception e) {
+                    System.err.println(e.toString());
+                    return 1;
+                }
+                f=new File(ws.getConfigManager().getWorkspaceLocation(),"log");
+                try {
+                    NutsUtils.deleteAndConfirm(f,force);
+                } catch (NutsUserCancelException e) {
+                    System.err.println(e.getMessage());
+                    return 1;
+                } catch (Exception e) {
+                    System.err.println(e.toString());
+                    return 1;
+                }
+                return 0;
+            }
+            case RESET:{
+                boolean force=false;
+                for (String argument : ws.getBootOptions().getBootArguments()) {
+                    if("-f".equals(argument) ||"--force".equals(argument)){
+                        force=true;
+                    }
+                }
+                File f=new File(ws.getConfigManager().getWorkspaceLocation());
+                System.out.println("**************");
+                System.out.println("** ATTENTION *");
+                System.out.println("**************");
+                System.out.println("You are about to delete all Workspace configuration files.");
+                System.out.println("Are you sure this is what you want ??");
+                try {
+                    NutsUtils.deleteAndConfirm(f,force);
+                } catch (NutsUserCancelException e) {
+                    System.err.println(e.getMessage());
+                    return 1;
+                } catch (Exception e) {
+                    System.err.println(e.toString());
+                    return 1;
+                }
+                return 0;
+            }
         }
 
         if (commandArguments.length == 0) {

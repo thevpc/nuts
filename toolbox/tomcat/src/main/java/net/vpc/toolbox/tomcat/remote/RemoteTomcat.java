@@ -1,6 +1,7 @@
 package net.vpc.toolbox.tomcat.remote;
 
 import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.app.NutsAppUtils;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
@@ -167,16 +168,16 @@ public class RemoteTomcat {
                 ok = true;
                 if (TomcatUtils.isEmpty(c.getConfig().getServer())) {
                     ok = false;
-                    c.getConfig().setServer(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?", "ssh://login@myserver/instanceName", c.getName(), "--server"));
+                    c.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefautValue("ssh://login@myserver/instanceName")));
                 }
                 if (TomcatUtils.isEmpty(c.getConfig().getRemoteTempPath())) {
                     ok = false;
-                    c.getConfig().setRemoteTempPath(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?", "/tmp", c.getName(), "--remote-temp-path"));
+                    c.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?",  c.getName(), "--remote-temp-path").setDefautValue("/tmp")));
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (TomcatUtils.isEmpty(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.readOrCancel("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", null, c.getName(), aa.getName(), "-app.path"));
+                        aa.getConfig().setPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")));
                     }
                 }
             } catch (NutsUserCancelException ex) {

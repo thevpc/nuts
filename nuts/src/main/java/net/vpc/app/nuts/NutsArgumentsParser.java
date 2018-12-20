@@ -293,13 +293,24 @@ public final class NutsArgumentsParser {
                         break;
                     case "-version":
                     case "--version":
-                        o.setVersion(true);
+                        o.setBootCommand(NutsBootCommand.VERSION);
+                        expectArgs=true;
                         break;
                     case "--update":
-                        o.setDoupdate(true);
+                        o.setBootCommand(NutsBootCommand.UPDATE);
+                        expectArgs=true;
+                        break;
+                    case "--clean":
+                        o.setBootCommand(NutsBootCommand.CLEAN);
+                        expectArgs=true;
+                        break;
+                    case "--reset":
+                        o.setBootCommand(NutsBootCommand.RESET);
+                        expectArgs=true;
                         break;
                     case "--check-updates":
-                        o.setCheckupdates(true);
+                        o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
+                        expectArgs=true;
                         break;
                     case "--verbose":
                     case "--log-finest":
@@ -367,12 +378,14 @@ public final class NutsArgumentsParser {
                         excludedRepositories.addAll(NutsUtils.split(bootArgs[i], " ,;"));
                         break;
                     case "--help": {
-                        o.setShowHelp(true);
+                        o.setBootCommand(NutsBootCommand.HELP);
+                        expectArgs=true;
                         expectArgs = true;
                         break;
                     }
                     case "--license": {
-                        o.setShowLicense(true);
+                        o.setBootCommand(NutsBootCommand.LICENSE);
+                        expectArgs=true;
                         expectArgs = true;
                         break;
                     }
@@ -382,7 +395,7 @@ public final class NutsArgumentsParser {
                     }
                     default: {
                         if (a.startsWith("--version=")) {
-                            o.setVersion(true);
+                            o.setBootCommand(NutsBootCommand.VERSION);
                             o.setVersionOptions(a.substring("--version=".length()));
                             expectArgs = true;
                         } else if (a.startsWith("-J")) {
@@ -406,7 +419,7 @@ public final class NutsArgumentsParser {
         o.getWorkspaceCreateOptions().setExcludedExtensions(excludedExtensions.toArray(new String[0]));
         o.getWorkspaceCreateOptions().setExcludedRepositories(excludedRepositories.toArray(new String[0]));
         o.getArgs().addAll(Arrays.asList(Arrays.copyOfRange(bootArgs, startAppArgs, bootArgs.length)));
-        if (!o.isShowHelp()) {
+        if (o.getBootCommand()!=NutsBootCommand.HELP) {
             if (!showError.isEmpty()) {
                 for (String s : showError) {
                     System.err.printf("%s·\n", s);

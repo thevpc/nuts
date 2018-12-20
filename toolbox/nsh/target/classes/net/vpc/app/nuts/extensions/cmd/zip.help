@@ -1,0 +1,13 @@
+package and compress (archive) files
+
+@@SYNOPSYS:@@
+##zip## [-r] <ZIP_FILE> <FILE> ...
+
+package and compress (archive) filesy
+
+@@EXAMPLES:@@
+
+##zip## -r out.zip /another/path
+   changes to another path
+
+

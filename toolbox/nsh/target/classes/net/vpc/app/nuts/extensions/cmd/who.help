@@ -1,0 +1,14 @@
+show who is logged in
+
+@@SYNOPSYS:@@
+##who## [ options ]
+
+shows who is logged in
+
+--all  -a   : show all information about user
+@@EXAMPLES:@@
+
+who -a
+   shows all information about current user
+
+

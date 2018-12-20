@@ -1,5 +1,6 @@
 package net.vpc.toolbox.mysql.remote;
 
+import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.app.NutsAppUtils;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
@@ -154,20 +155,20 @@ public class RemoteMysql {
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
                 if (StringUtils.isEmpty(db.getConfig().getServer())) {
                     ok = false;
-                    db.getConfig().setServer(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?", "ssh://login@myserver", c.getName(), "--server"));
+                    db.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefautValue( "ssh://login@myserver")));
                 }
                 if (StringUtils.isEmpty(db.getConfig().getRemoteInstance())) {
                     ok = false;
-                    db.getConfig().setRemoteInstance(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?", "default", c.getName(), "--remote-instance"));
+                    db.getConfig().setRemoteInstance(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?",  c.getName(), "--remote-instance").setDefautValue("default")));
                 }
                 if (StringUtils.isEmpty(db.getConfig().getRemoteTempPath())) {
                     ok = false;
-                    db.getConfig().setRemoteTempPath(context.readOrCancel("[instance=[[%s]]] Would you enter ==%s== value?", "/tmp", c.getName(), "--remote-temp-path"));
+                    db.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?",  c.getName(), "--remote-temp-path").setDefautValue("/tmp")));
                 }
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
                     if (StringUtils.isEmpty(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.readOrCancel("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", null, c.getName(), aa.getName(), "-app.path"));
+                        aa.getConfig().setPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")));
                     }
                 }
             } catch (UserCancelException ex) {

@@ -1,0 +1,9 @@
+{
+  "mirrors": {},
+  "users": {},
+  "id": "local",
+  "type": "nuts",
+  "env": {
+    "deploy-priority": "10"
+  }
+}

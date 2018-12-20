@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class NutsApplicationContext {
+public class NutsApplicationContext implements CommandLineContext {
     public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "@@Candidate@@: ";
     private final Class appClass;
     private final NutsTerminal terminal;
@@ -71,7 +71,7 @@ public class NutsApplicationContext {
 //                ,workspace.createPrintStream(System.out,false)
                 , out()
         ) : null;
-        tableCellFormatter=new ColoredCellFormatter(this);
+        tableCellFormatter = new ColoredCellFormatter(this);
     }
 
     public CommandAutoComplete getAutoComplete() {
@@ -125,25 +125,6 @@ public class NutsApplicationContext {
         }
     }
 
-    public String readOrCancel(String message, String defaultValue, Object... params) {
-        if (message.endsWith("\n")) {
-            message = message.substring(0, message.length() - 1);
-        }
-        out().printf(message, params);
-        if (defaultValue != null) {
-            out().printf(" (default %s)\n", defaultValue);
-        }
-        out().printf("\n");
-        String v = getTerminal().readLine("\tPlease enter value or @@%s@@ to cancel : ", "cancel!");
-        if ("cancel!".equals(v)) {
-            throw new NutsUserCancelException();
-        }
-        if (v == null) {
-            return defaultValue;
-        }
-        return v;
-    }
-
     public boolean isRequiredExit() {
         return requiredExit;
     }
@@ -154,6 +135,10 @@ public class NutsApplicationContext {
 
     public Class getAppClass() {
         return appClass;
+    }
+
+    public NutsTerminal terminal() {
+        return terminal;
     }
 
     public NutsTerminal getTerminal() {
@@ -404,4 +389,5 @@ public class NutsApplicationContext {
         this.startTimeMillis = startTimeMillis;
         return this;
     }
+
 }
