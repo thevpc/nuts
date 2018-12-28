@@ -1,6 +1,6 @@
 ##tomcat## toolbox to start, monitor and deploy both local and remote tomcat instances
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##tomcat## \<TARGET\> \<OPTIONS\> ...
 
 tomcat toolbox to start, monitor and remote deploy applications

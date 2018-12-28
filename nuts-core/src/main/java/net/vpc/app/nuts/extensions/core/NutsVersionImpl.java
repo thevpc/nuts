@@ -40,7 +40,7 @@ import net.vpc.common.strings.StringUtils;
  * Created by vpc on 1/15/17.
  */
 public class NutsVersionImpl implements NutsVersion {
-    private static final long serialVersionUID=1l;
+    private static final long serialVersionUID= 1L;
     private final String value;
     public static final NutsVersion EMPTY=new NutsVersionImpl("");
 

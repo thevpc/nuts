@@ -48,4 +48,9 @@ public class NutsWorkspaceListenerAdapter implements NutsWorkspaceListener {
     public void onRemoveRepository(NutsWorkspace workspace, NutsRepository repository) {
 
     }
+
+    @Override
+    public void onCreateWorkspace(NutsWorkspace workspace) {
+
+    }
 }

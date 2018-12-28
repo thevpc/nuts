@@ -33,18 +33,63 @@ public class NutsApplicationContext implements CommandLineContext {
     private long startTimeMillis;
     private int exitCode;
     private String[] args;
-    private CommandAutoComplete autoComplete;
     private TableFormatter.CellFormatter tableCellFormatter;
+    private String mode="launch";
+
+    /**
+     *  previous version for "on-update" mode
+     */
+    private NutsVersion appPreviousVersion;
+
+    /**
+     * auto complete info for "auto-complete" mode
+     */
+    private CommandAutoComplete autoComplete;
+
+    private String[] modeArgs=new String[0];
 
 
     public NutsApplicationContext(NutsWorkspace workspace, Class appClass, String storeId) {
-        String[] args = workspace.getBootOptions().getApplicationArguments();
+        String[] args = workspace.getConfigManager().getOptions().getApplicationArguments();
         int wordIndex = -1;
-        if (args.length > 0 && args[0].startsWith("--nuts-autocomplete-index=")) {
-            wordIndex = Integer.parseInt(args[0].substring(args[0].indexOf('=') + 1));
+        if (args.length > 0 && args[0].startsWith("--nuts-execution-mode=")) {
+            String[] execModeCommand = NutsArgumentsParser.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
+            if(execModeCommand.length>0){
+                switch (execModeCommand[0]){
+                    case "auto-complete":{
+                        mode="auto-complete";
+                        if(execModeCommand.length>1){
+                            wordIndex = Integer.parseInt(execModeCommand[1]);
+                        }
+                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        break;
+                    }
+                    case "on-install":{
+                        mode="on-install";
+                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        break;
+                    }
+                    case "on-uninstall":{
+                        mode="on-uninstall";
+                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        break;
+                    }
+                    case "on-update":{
+                        mode="on-uninstall";
+                        if(execModeCommand.length>1){
+                            appPreviousVersion = workspace.parseVersion(execModeCommand[1]);
+                        }
+                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        break;
+                    }
+                    default:{
+                        throw new NutsExecutionException("Unsupported nuts-execution-mode : "+args[0],205);
+                    }
+                }
+            }
             args = Arrays.copyOfRange(args, 1, args.length);
         }
-        NutsId appId = workspace.resolveNutsIdForClass(appClass);
+        NutsId appId = workspace.resolveIdForClass(appClass);
         if (appId == null) {
             throw new NutsExecutionException("Invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
         }
@@ -67,11 +112,26 @@ public class NutsApplicationContext implements CommandLineContext {
         if (wordIndex >= 0) {
             setNoColors(true);
         }
-        autoComplete = wordIndex >= 0 ? new AppCommandAutoComplete(args, wordIndex
-//                ,workspace.createPrintStream(System.out,false)
-                , out()
-        ) : null;
+        autoComplete = wordIndex >= 0 ? new AppCommandAutoComplete(args, wordIndex, out()) : null;
         tableCellFormatter = new ColoredCellFormatter(this);
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public NutsApplicationContext setMode(String mode) {
+        this.mode = mode;
+        return this;
+    }
+
+    public String[] getModeArgs() {
+        return modeArgs;
+    }
+
+    public NutsApplicationContext setModeArgs(String[] modeArgs) {
+        this.modeArgs = modeArgs;
+        return this;
     }
 
     public CommandAutoComplete getAutoComplete() {
@@ -90,7 +150,7 @@ public class NutsApplicationContext implements CommandLineContext {
             return true;
         } else if ((a = cmd.readBooleanOption("--version")) != null) {
             if (cmd.isExecMode()) {
-                out().printf("%s\n", getWorkspace().resolveNutsIdForClass(getClass()).getVersion().toString());
+                out().printf("%s\n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
                 cmd.skipAll();
             }
             setRequiredExit(true);
@@ -257,6 +317,10 @@ public class NutsApplicationContext implements CommandLineContext {
         return appId;
     }
 
+    public NutsVersion getAppVersion() {
+        return appId==null?null:appId.getVersion();
+    }
+
     public NutsApplicationContext setAppId(NutsId appId) {
         this.appId = appId;
         return this;
@@ -390,4 +454,12 @@ public class NutsApplicationContext implements CommandLineContext {
         return this;
     }
 
+    public NutsVersion getAppPreviousVersion() {
+        return appPreviousVersion;
+    }
+
+    public NutsApplicationContext setAppPreviousVersion(NutsVersion previousVersion) {
+        this.appPreviousVersion = previousVersion;
+        return this;
+    }
 }

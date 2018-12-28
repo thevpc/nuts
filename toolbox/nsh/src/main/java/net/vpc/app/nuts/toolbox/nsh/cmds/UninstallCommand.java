@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsConfirmAction;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
@@ -49,24 +51,33 @@ public class UninstallCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         boolean erase = false;
         Argument a;
-        boolean noColors=false;
+        NutsConfirmAction foundAction=NutsConfirmAction.ERROR;
         do {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {
                     //
+                }else if (cmdLine.readAllOnce("-f", "--force")) {
+                    foundAction = NutsConfirmAction.FORCE;
+                }else if (cmdLine.readAllOnce("-i", "--ignore")) {
+                    foundAction = NutsConfirmAction.IGNORE;
+                }else if (cmdLine.readAllOnce("-e", "--error")) {
+                    foundAction = NutsConfirmAction.ERROR;
+                }else if (cmdLine.readAllOnce("-r", "--erase")) {
+                    erase = true;
                 }else  {
-                    cmdLine.readRequiredOption("--erase");
+                    cmdLine.unexpectedArgument("uninstall");
                     erase = true;
                 }
             } else {
                 String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.consoleContext())).getString();
                 if (cmdLine.isExecMode()) {
-                    boolean file = context.getWorkspace().uninstall(id, erase, context.getSession());
+                    NutsWorkspace ws = context.getWorkspace();
+                    boolean file = ws.uninstall(id, args, foundAction, erase, context.getSession());
                     PrintStream out = context.getTerminal().getFormattedOut();
                     if (file) {
-                        out.printf("%s uninstalled successfully \n", id);
+                        out.printf(ws.formatId(ws.parseId(id))+" uninstalled ##successfully##\n");
                     } else {
-                        out.printf("%s could not be uninstalled\n", id);
+                        out.printf(ws.formatId(ws.parseId(id))+" @@could not@@ be uninstalled\n");
                     }
                 }
             }

@@ -36,23 +36,23 @@ import java.util.Properties;
  * Created by vpc on 1/5/17.
  */
 public class NutsExecutorDescriptor implements Serializable{
-    private static final long serialVersionUID=1l;
+    private static final long serialVersionUID= 1L;
 
     private final NutsId id;
-    private final String[] args;
+    private final String[] options;
     private final Properties properties;
 
     public NutsExecutorDescriptor(NutsId id) {
         this(id,null,null);
     }
 
-    public NutsExecutorDescriptor(NutsId id, String[] args) {
-        this(id,args,null);
+    public NutsExecutorDescriptor(NutsId id, String[] options) {
+        this(id, options,null);
     }
 
-    public NutsExecutorDescriptor(NutsId id, String[] args, Properties properties) {
+    public NutsExecutorDescriptor(NutsId id, String[] options, Properties properties) {
         this.id = id;
-        this.args = args == null ? new String[0] : args;
+        this.options = options == null ? new String[0] : options;
         this.properties = properties == null ? new Properties() : properties;
     }
 
@@ -60,8 +60,8 @@ public class NutsExecutorDescriptor implements Serializable{
         return id;
     }
 
-    public String[] getArgs() {
-        return args;
+    public String[] getOptions() {
+        return options;
     }
 
     public Properties getProperties() {

@@ -72,6 +72,7 @@ public class RightNonOption extends DefaultNonOption {
         all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_FETCH_CONTENT));
         all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_FETCH_DESC));
         all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_INSTALL));
+        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_AUTO_INSTALL));
         all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_PUSH));
         all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_REMOVE_REPOSITORY));
         all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SAVE_REPOSITORY));

@@ -139,8 +139,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         if (f.exists()) {
             JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
             try (FileReader r = new FileReader(f)) {
-                RemoteTomcatConfig i = jsonSerializer.read(r, RemoteTomcatConfig.class);
-                config = i;
+                config = jsonSerializer.read(r, RemoteTomcatConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -218,8 +217,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
 
     public int execRemoteNuts(String... cmd) {
         RemoteTomcatConfig cconfig = getConfig();
-        List<String> cmdList = new ArrayList<>();
-        cmdList.addAll(Arrays.asList(
+        List<String> cmdList = new ArrayList<>(Arrays.asList(
                 "nsh",
                 "ssh",
                 "--nuts"

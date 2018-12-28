@@ -61,7 +61,7 @@ public class CommitCommand extends AbstractNutsCommand {
                                 s,
                                 context.getSession()
                         );
-                        context.out().printf("Folder ==%s== commited successfully as ==%s==\n", s, nf);
+                        context.out().printf("Folder ==%s== committed successfully as ==%s==\n", s, nf);
                     }
                 }
             }

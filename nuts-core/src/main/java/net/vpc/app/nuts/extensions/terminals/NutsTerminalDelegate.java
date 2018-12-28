@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.extensions.terminals;
 
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsTerminalBase;
 import net.vpc.app.nuts.NutsWorkspace;

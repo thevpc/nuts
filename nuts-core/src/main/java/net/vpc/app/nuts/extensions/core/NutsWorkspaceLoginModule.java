@@ -115,7 +115,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                     this.login = name;
                     return true;
                 }catch (Exception ex){
-
+                    //
                 }
 
 //                if(!StringUtils.isEmpty(registeredUser.getCredentials())){

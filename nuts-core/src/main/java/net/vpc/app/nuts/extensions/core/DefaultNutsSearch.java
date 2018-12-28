@@ -1,8 +1,7 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
-
-public class DefaultNutsSearch implements NutsSearch {
+public class DefaultNutsSearch {
     private NutsRepositoryFilter repositoryFilter;
     private NutsVersionFilter versionFilter;
     private boolean sort;
@@ -10,9 +9,16 @@ public class DefaultNutsSearch implements NutsSearch {
     private boolean latestVersions;
     private NutsDescriptorFilter descriptorFilter;
     private String[] ids;
+    private NutsSession session;
+    private DefaultNutsWorkspace ws;
 
-    public DefaultNutsSearch(String[] ids, NutsRepositoryFilter repositoryFilter, NutsVersionFilter versionFilter, boolean sort, NutsIdFilter idFilter, boolean latestVersions, NutsDescriptorFilter descriptorFilter) {
+    public DefaultNutsSearch(String[] ids, NutsRepositoryFilter repositoryFilter, NutsVersionFilter versionFilter, boolean sort, NutsIdFilter idFilter, boolean latestVersions,
+                             NutsDescriptorFilter descriptorFilter,
+                             DefaultNutsWorkspace ws,
+                             NutsSession session) {
         this.ids = ids;
+        this.ws = ws;
+        this.session = session;
         this.repositoryFilter = repositoryFilter;
         this.versionFilter = versionFilter;
         this.sort = sort;
@@ -21,32 +27,26 @@ public class DefaultNutsSearch implements NutsSearch {
         this.descriptorFilter = descriptorFilter;
     }
 
-    @Override
     public NutsRepositoryFilter getRepositoryFilter() {
         return repositoryFilter;
     }
 
-    @Override
     public NutsVersionFilter getVersionFilter() {
         return versionFilter;
     }
 
-    @Override
     public boolean isSort() {
         return sort;
     }
 
-    @Override
     public NutsIdFilter getIdFilter() {
         return idFilter;
     }
 
-    @Override
     public boolean isLatestVersions() {
         return latestVersions;
     }
 
-    @Override
     public NutsDescriptorFilter getDescriptorFilter() {
         return descriptorFilter;
     }
@@ -54,4 +54,11 @@ public class DefaultNutsSearch implements NutsSearch {
     public String[] getIds() {
         return ids;
     }
+
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+
 }

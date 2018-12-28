@@ -56,6 +56,13 @@ public class NutsNotFoundException extends NutsElementNotFoundException {
         this.nuts = nuts;
     }
 
+    public NutsNotFoundException(NutsId nuts, String msg, Exception ex) {
+        super(
+                NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts.toString()) : msg,
+                ex);
+        this.nuts = nuts==null?null:nuts.toString();
+    }
+
     public String getNuts() {
         return nuts;
     }

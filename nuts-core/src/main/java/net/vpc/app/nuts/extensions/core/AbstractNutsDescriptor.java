@@ -75,7 +75,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
-        if (_v.isSameFullName(_v2)) {
+        if (_v.equalsSimpleName(_v2)) {
             if (_v.getVersion().toFilter().accept(_v2.getVersion())) {
                 return true;
             }
@@ -96,7 +96,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.isSameFullName(_v)) {
+                if (y.equalsSimpleName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
                     }
@@ -121,7 +121,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.isSameFullName(_v)) {
+                if (y.equalsSimpleName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
                     }
@@ -146,7 +146,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
-                if (y.isSameFullName(_v)) {
+                if (y.equalsSimpleName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
                     }
@@ -176,7 +176,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                     //should accept any platform !!!
                     return true;
                 }
-                if (y.isSameFullName(_v)) {
+                if (y.equalsSimpleName(_v)) {
                     if (y.getVersion().toFilter().accept(_v.getVersion())) {
                         return true;
                     }
@@ -333,14 +333,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         n_osdist.addAll(Arrays.asList(getOsdist()));
         n_platform.addAll(Arrays.asList(getPlatform()));
         NutsId[] n_parents = new NutsId[0];
-        if (n_packaging.isEmpty() && n_ext.isEmpty()) {
-            n_packaging = "jar";
-            n_ext = "jar";
-        } else if (n_packaging.isEmpty()) {
-            n_packaging = n_ext;
-        } else {
-            n_ext = n_packaging;
-        }
+//        if (n_packaging.isEmpty() && n_ext.isEmpty()) {
+//            n_packaging = "jar";
+//            n_ext = "jar";
+//        } else if (n_packaging.isEmpty()) {
+//            n_packaging = n_ext;
+//        } else {
+//            n_ext = n_packaging;
+//        }
         return new DefaultNutsDescriptorBuilder()
                 .setId(n_id)
                 .setFace(n_alt)
@@ -454,7 +454,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         NutsDependency[] dependencies = getDependencies();
         ArrayList<NutsDependency> dependenciesList = new ArrayList<>();
         for (NutsDependency d : dependencies) {
-            if (d.getFullName().equals(dependency.getFullName())
+            if (d.getLongName().equals(dependency.getLongName())
                     && Objects.equals(d.getScope(), dependency.getScope())) {
                 //do not add
             } else {
@@ -561,6 +561,16 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
+    public NutsDescriptor setNutsApplication(boolean nutsApp) {
+        if (nutsApp == isNutsApplication()) {
+            return this;
+        }
+        return builder().setNutsApplication(nutsApp).build();
+    }
+
+
+
+    @Override
     public NutsDescriptor setExecutor(NutsExecutorDescriptor executor) {
         if (Objects.equals(executor, getExecutor())) {
             return this;
@@ -588,7 +598,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (Objects.equals(l_properties, getProperties())) {
             return this;
         }
-        return builder().setProperties(map).build();
+        return builder().setProperties(l_properties).build();
     }
 
     @Override

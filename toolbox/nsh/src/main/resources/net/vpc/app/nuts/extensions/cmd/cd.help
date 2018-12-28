@@ -1,6 +1,6 @@
 change directory
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##cd## <directory>
 
 changes the working directory

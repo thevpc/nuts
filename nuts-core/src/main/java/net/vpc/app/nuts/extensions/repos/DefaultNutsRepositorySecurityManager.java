@@ -30,6 +30,17 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     }
 
     @Override
+    public void checkAllowed(String right,String operationName) {
+        if(!isAllowed(right)){
+            if(StringUtils.isEmpty(operationName)){
+                throw new NutsSecurityException(right+" not allowed!");
+            }else{
+                throw new NutsSecurityException(operationName+": "+right+" not allowed!");
+            }
+        }
+    }
+
+    @Override
     public boolean isAllowed(String right) {
         String name = repo.getWorkspace().getSecurityManager().getCurrentLogin();
         if (NutsConstants.USER_ADMIN.equals(name)) {

@@ -70,7 +70,7 @@ public class PropertyFilter implements Serializable {
                 String s = st.nextToken();
                 list.add(s);
             }
-            regexPatternOrder = list.toArray(new String[list.size()]);
+            regexPatternOrder = list.toArray(new String[0]);
         }
         for (int i = 0; i < regexPatternOrder.length; i++) {
             String s = regexPatternOrder[i];

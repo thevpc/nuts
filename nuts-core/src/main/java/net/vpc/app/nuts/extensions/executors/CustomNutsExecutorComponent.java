@@ -31,7 +31,7 @@ package net.vpc.app.nuts.extensions.executors;
 
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsId;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsFile nutsFile) {
+    public int getSupportLevel(NutsDefinition nutsDefinition) {
         return NO_SUPPORT;
     }
 

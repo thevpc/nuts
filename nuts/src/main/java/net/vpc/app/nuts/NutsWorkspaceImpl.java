@@ -38,7 +38,7 @@ import java.net.URL;
  */
 public interface NutsWorkspaceImpl extends NutsWorkspace{
 
-    boolean initializeWorkspace(NutsBootWorkspace workspaceBoot, NutsWorkspaceFactory factory,
+    boolean initializeWorkspace(NutsWorkspaceFactory factory,
                                 NutsBootConfig actualBootConfig, NutsBootConfig wsBootConfig,
                                 String workspace,
                                 URL[] bootClassWorldURLs,

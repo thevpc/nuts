@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -52,72 +52,26 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsFile nutsFile) {
-        if (nutsFile != null) {
-            if ("jar".equals(nutsFile.getDescriptor().getPackaging())) {
+    public int getSupportLevel(NutsDefinition nutsDefinition) {
+        if (nutsDefinition != null) {
+            if ("jar".equals(nutsDefinition.getDescriptor().getPackaging())) {
                 return DEFAULT_SUPPORT + 1;
             }
         }
         return NO_SUPPORT;
     }
 
-    private static class Prop {
-
-        String name;
-
-        public Prop(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean isAssignment() {
-            return name.contains("=");
-        }
-
-        public String getKey() {
-            String[] strings = CoreNutsUtils.splitNameAndValue(name);
-            if (strings != null) {
-                return (strings[0]);
-            } else {
-                return name;
-            }
-        }
-
-        public String getValue() {
-            String[] strings = CoreNutsUtils.splitNameAndValue(name);
-            if (strings != null) {
-                return strings[1];
-            } else {
-                return "";
-            }
-        }
-    }
-
     @Override
     public int exec(NutsExecutionContext executionContext) {
-        NutsFile nutMainFile = executionContext.getNutsFile();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+        NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
 
-        List<String> env = new ArrayList<>();
-
-        List<String> app = new ArrayList<>();
-        app.addAll(Arrays.asList(executionContext.getArgs()));
+        List<String> app = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
 
         StringKeyValueList runnerProps = new StringKeyValueList();
         if (executionContext.getExecutorDescriptor() != null) {
             runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
-//            runnerProps = (Properties) CoreCollectionUtils.mergeMaps(executionContext.getExecutorDescriptor().getUserProperties(), runnerProps);
         }
-        for (String k : env) {
-            String[] strings = CoreNutsUtils.splitNameAndValue(k);
-            if (strings != null) {
-                runnerProps.add(strings[0], strings[1]);
-            } else {
-                runnerProps.add(k, "");
-            }
-        }
+
 
         if (executionContext.getEnv() != null) {
             runnerProps.add((Map) executionContext.getEnv());
@@ -126,84 +80,76 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         List<String> jvmArgs = new ArrayList<String>();
 
         HashMap<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().getBootOptions().getBootArgumentsString();
-        osEnv.put("nuts_boot_args",bootArgumentsString);
+        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getBootArgumentsString();
+        osEnv.put("nuts_boot_args", bootArgumentsString);
 
-        jvmArgs.add("-Dnuts.boot.args="+ bootArgumentsString);
+        jvmArgs.add("-Dnuts.boot.args=" + bootArgumentsString);
         String javaVersion = null;//runnerProps.getProperty("java.version");
         String javaHome = null;//runnerProps.getProperty("java.version");
         String mainClass = null;
+        boolean mainClassApp = false;
+        String dir = executionContext.getCwd();
         boolean showCommand = false;
         boolean jar = false;
         List<String> classPath = new ArrayList<>();
-        String[] execArgs = executionContext.getExecArgs();
+        String[] execArgs = executionContext.getExecutorOptions();
         //will accept all -- and - based options!
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
-            if(arg.equals("--java-version") || arg.equals("-java-version")) {
+            if (arg.equals("--java-version") || arg.equals("-java-version")) {
                 i++;
                 javaVersion = execArgs[i];
-            }else if(arg.startsWith("--java-version=")|| arg.startsWith("-java-version=")) {
-                javaVersion = execArgs[i].substring(arg.indexOf('=')+1);
+            } else if (arg.startsWith("--java-version=") || arg.startsWith("-java-version=")) {
+                javaVersion = execArgs[i].substring(arg.indexOf('=') + 1);
 
-            }else if(arg.equals("--java-home") || arg.equals("-java-home")) {
+            } else if (arg.equals("--java-home") || arg.equals("-java-home")) {
                 i++;
                 javaHome = execArgs[i];
-            }else if(
+            } else if (
                     arg.startsWith("--java-home=")
-                    ||arg.startsWith("-java-home=")
-            ){
-                javaHome = execArgs[i].substring(arg.indexOf('=')+1);
+                            || arg.startsWith("-java-home=")
+            ) {
+                javaHome = execArgs[i].substring(arg.indexOf('=') + 1);
 
-            }else if(
+            } else if (
                     arg.equals("--class-path") || arg.equals("--classpath") || arg.equals("--cp")
-                    || arg.equals("-class-path") || arg.equals("-classpath") || arg.equals("-cp")
+                            || arg.equals("-class-path") || arg.equals("-classpath") || arg.equals("-cp")
             ) {
                 i++;
-                classPath.add(execArgs[i]);
-            }else if(
+                addToCp(classPath, execArgs[i]);
+            } else if (
                     arg.startsWith("--class-path=") || arg.startsWith("--classpath=") || arg.startsWith("--cp=")
-                    ||arg.startsWith("-class-path=") || arg.startsWith("-classpath=") || arg.startsWith("-cp=")
-            ){
-                classPath.add(execArgs[i].substring(arg.indexOf('=')+1));
+                            || arg.startsWith("-class-path=") || arg.startsWith("-classpath=") || arg.startsWith("-cp=")
+            ) {
+                addToCp(classPath, execArgs[i].substring(arg.indexOf('=') + 1));
 
-            }else if(arg.equals("--nuts-path") || arg.equals("--nutspath") || arg.equals("--np")) {
+            } else if (arg.equals("--nuts-path") || arg.equals("--nutspath") || arg.equals("--np")) {
                 i++;
                 npToCp(executionContext, classPath, execArgs[i]);
-            }else if(arg.startsWith("--nuts-path=") || arg.startsWith("--nutspath=") || arg.startsWith("--np=")){
-                npToCp(executionContext, classPath, execArgs[i].substring(arg.indexOf('=')+1));
+            } else if (arg.startsWith("--nuts-path=") || arg.startsWith("--nutspath=") || arg.startsWith("--np=")) {
+                npToCp(executionContext, classPath, execArgs[i].substring(arg.indexOf('=') + 1));
 
-            }else if(arg.equals("--jar") || arg.equals("-jar")) {
-                jar=true;
-            }else  {
+            } else if (arg.equals("--jar") || arg.equals("-jar")) {
+                jar = true;
+            } else if (arg.equals("--main-class") || arg.equals("-main-class") || arg.equals("--class") || arg.equals("-class")) {
+                i++;
+                mainClass = execArgs[i];
+            } else if (
+                    arg.startsWith("--main-class=") || arg.startsWith("-main-class=") || arg.startsWith("--class=")
+                            || arg.startsWith("-class=")
+            ) {
+                mainClass = execArgs[i].substring(arg.indexOf('=') + 1);
+            } else if (arg.equals("--show-command") || arg.equals("-show-command")) {
+                showCommand = true;
+            } else if (arg.equals("--dir") || arg.equals("-dir")) {
+                i++;
+                dir = execArgs[i];
+            } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
+                dir = execArgs[i].substring(arg.indexOf('=') + 1);
+            } else {
                 jvmArgs.add(arg);
             }
         }
-//        for (StringKeyValue e : runnerProps) {
-//            String k = e.getKey();
-//            String value = e.getValue();
-//            if (k.equals("-java-version")) {
-//                javaVersion = value;
-//            } else if (k.equals("-java-home")) {
-//                javaHome = value;
-//            } else if (k.equals("-class-path") || k.equals("-cp") || k.equals("-classpath")) {
-//                classPath.add(value);
-//            } else if (k.equals("-nuts-path") || k.equals("-np") || k.equals("-nutspath")) {
-//                npToCp(executionContext, classPath, value);
-//            } else if (k.equals("-main-class")) {
-//                mainClass = value;
-//            } else if (k.equals("-show-command")) {
-//                showCommand = true;
-//            } else if (k.equals("-jar")) {
-//                jar = true;
-//            } else {
-//                if (value.length() > 0) {
-//                    jvmArgs.add(k + "=" + value);
-//                } else {
-//                    jvmArgs.add(k);
-//                }
-//            }
-//        }
         if (javaHome == null) {
             if (!StringUtils.isEmpty(javaVersion)) {
                 javaHome = "${java#" + javaVersion + "}";
@@ -214,16 +160,18 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             javaHome = javaHome + "/bin/java";
         }
 
-        List<NutsFile> nutsFiles = new ArrayList<>();
+        List<NutsDefinition> nutsDefinitions = new ArrayList<>();
         NutsDescriptor descriptor = nutMainFile.getDescriptor();
         descriptor = executionContext.getWorkspace().resolveEffectiveDescriptor(descriptor, executionContext.getSession());
         for (NutsDependency d : descriptor.getDependencies()) {
-            nutsFiles.addAll(
-                    Arrays.asList(executionContext.getWorkspace().fetchDependencies(
-                            new NutsDependencySearch(d.toId())
-                                    .setIncludeMain(true)
-                                    .setScope(NutsDependencyScope.RUN),
-                            executionContext.getSession().copy().setTransitive(true)))
+            nutsDefinitions.addAll(
+                    executionContext.getWorkspace()
+                            .createQuery().addId(d.toId())
+                            .setSession(executionContext.getSession().copy().setTransitive(true))
+                            .setScope(NutsDependencyScope.RUN)
+                            .includeDependencies()
+                            .fetch()
+
             );
         }
         List<String> args = new ArrayList<String>();
@@ -244,14 +192,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 File file = CoreIOUtils.fileByPath(nutMainFile.getFile());
                 if (file != null) {
                     //check manifest!
-                    String mainClassFromManifest = CorePlatformUtils.resolveMainClass(file);
-                    if(mainClassFromManifest!=null){
-                        mainClass = mainClassFromManifest;
-                    }else {
-                        ExecutionEntry[] classes = CorePlatformUtils.resolveMainClasses(file);
-                        if(classes.length>0) {
-                            mainClass = StringUtils.join(":", classes, ExecutionEntry::getName);
-                        }
+                    ExecutionEntry[] classes = CorePlatformUtils.resolveMainClasses(file);
+                    if (classes.length > 0) {
+                        mainClass = StringUtils.join(":", classes, ExecutionEntry::getName);
                     }
                 }
             }
@@ -261,10 +204,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             args.add("-classpath");
             StringBuilder sb = new StringBuilder();
             sb.append(nutMainFile.getFile());
-            for (NutsFile nutsFile : nutsFiles) {
-                if (nutsFile.getFile() != null) {
+            for (NutsDefinition nutsDefinition : nutsDefinitions) {
+                if (nutsDefinition.getFile() != null) {
                     sb.append(File.pathSeparatorChar);
-                    sb.append(nutsFile.getFile());
+                    sb.append(nutsDefinition.getFile());
                 }
             }
             for (String cp : classPath) {
@@ -287,7 +230,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                             for (int i = 0; i < possibleClasses.size(); i++) {
                                 out.printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
                             }
-                            String line = executionContext.getTerminal().readLine("Enter class ==%s== or ==%s== to run it. Type @@%s@@ to cancel : ", "#","name","cancel");
+                            String line = executionContext.getTerminal().readLine("Enter class ==%s== or ==%s== to run it. Type @@%s@@ to cancel : ", "#", "name", "cancel");
                             if (line != null) {
                                 if (line.equals("cancel")) {
                                     return -1;
@@ -316,26 +259,33 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         args.addAll(app);
 
-        File directory = StringUtils.isEmpty(executionContext.getCwd()) ? null :
-                new File(executionContext.getWorkspace().resolvePath(executionContext.getCwd()));
-        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecProperties(),
+        File directory = StringUtils.isEmpty(dir) ? null :new File(executionContext.getWorkspace().resolvePath(dir));
+        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory
-                , executionContext.getTerminal(), showCommand,executionContext.isFailFast()
+                , executionContext.getTerminal(), showCommand, executionContext.isFailFast()
         );
 
     }
 
+    private void addToCp(List<String> classPath, String value) {
+        for (String n : CoreStringUtils.split(value, ":;, ")) {
+            if (!StringUtils.isEmpty(n)) {
+                classPath.add(n);
+            }
+        }
+    }
+
     private void npToCp(NutsExecutionContext executionContext, List<String> classPath, String value) {
-        NutsSearchBuilder ns = executionContext.getWorkspace().createSearchBuilder().setLatestVersions(true);
-        for (String n : CoreStringUtils.split(value, "; ")) {
+        NutsQuery ns = executionContext.getWorkspace().createQuery().setLatestVersions(true)
+                .setSession(executionContext.getSession());
+        for (String n : CoreStringUtils.split(value, ";, ")) {
             if (!StringUtils.isEmpty(n)) {
                 ns.addId(n);
             }
         }
-        final List<NutsId> all = executionContext.getWorkspace().find(ns.build(), executionContext.getSession());
-        for (NutsId nutsId : all) {
-            NutsFile f = executionContext.getWorkspace().fetch(nutsId.toString(), executionContext.getSession());
+        for (NutsId nutsId : ns.find()) {
+            NutsDefinition f = executionContext.getWorkspace().fetch(nutsId, executionContext.getSession());
             classPath.add(f.getFile());
         }
     }

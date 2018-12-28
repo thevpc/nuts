@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -39,8 +40,6 @@ import java.util.logging.Level;
  * @author vpc
  */
 public interface NutsWorkspaceConfigManager extends EnvProvider {
-
-    NutsBootWorkspace getBoot();
 
     /**
      * Actual (Runtime) Boot API Id
@@ -67,6 +66,8 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
     NutsId getWorkspaceBootRuntime();
 
     String getWorkspaceLocation();
+
+    boolean isReadOnly();
 
     /**
      * nuts root folder. It defaults to "~/.nuts"
@@ -170,8 +171,24 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
 
     NutsSdkLocation resolveJdkLocation(String path);
 
+    NutsWorkspaceOptions getOptions();
+
     byte[] decryptString(byte[] input);
 
     byte[] encryptString(byte[] input);
+
+    void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory);
+
+    void uninstallCommandFactory(String name);
+
+    void installCommand(NutsWorkspaceCommandConfig command);
+
+    void uninstallCommand(String name);
+
+    NutsWorkspaceCommand findCommand(String name);
+
+    List<NutsWorkspaceCommand> findCommands();
+
+    List<NutsWorkspaceCommand> findCommands(NutsId id);
 }
 

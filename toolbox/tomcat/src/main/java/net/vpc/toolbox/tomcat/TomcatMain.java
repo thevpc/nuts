@@ -8,7 +8,6 @@ import net.vpc.toolbox.tomcat.remote.RemoteTomcat;
 import net.vpc.toolbox.tomcat.local.LocalTomcat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TomcatMain extends NutsApplication {
@@ -33,7 +32,7 @@ public class TomcatMain extends NutsApplication {
                 } else if (a.getExpression().equals("--local") || a.getExpression().equals("-l")) {
                     local = true;
                 } else if (a.getExpression().equals("--version")) {
-                    appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf("%s\n", appContext.getWorkspace().resolveNutsIdForClass(getClass()).getVersion());
+                    appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf("%s\n", appContext.getWorkspace().resolveIdForClass(getClass()).getVersion());
                     return 0;
                 } else if (a.getExpression().equals("--help")) {
                     appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf(appContext.getWorkspace().resolveDefaultHelpForClass(getClass()));

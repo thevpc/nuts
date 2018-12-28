@@ -69,7 +69,7 @@ public interface NutsRepository {
 
     void push(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session);
 
-    NutsFile fetch(NutsId id, NutsSession session);
+    NutsDefinition fetch(NutsId id, NutsSession session);
 
     NutsDescriptor fetchDescriptor(NutsId id, NutsSession session);
 

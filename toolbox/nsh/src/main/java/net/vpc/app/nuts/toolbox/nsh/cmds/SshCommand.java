@@ -154,15 +154,15 @@ public class SshCommand extends AbstractNutsCommand {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
                             sshSession.setFailFast(true).copyLocalToRemote(from, home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
                             goodJar=home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
-//                            NutsFile[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getBootRuntime())
+//                            NutsDefinition[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getBootRuntime())
 //                                    .setIncludeMain(true),
 //                                    context.getSession());
-//                            for (NutsFile dep : deps) {
+//                            for (NutsDefinition dep : deps) {
 //                                sshSession.setFailFast(true).copyLocalToRemote(dep.getFile(), home + "/bootstrap"
 //                                        +"/"+dep.getId().getGroup().replace('.','/')
 //                                        +"/"+dep.getId().getName()
 //                                        +"/"+dep.getId().getVersion()
-//                                        +"/"+context.getWorkspace().getNutsFileName(dep.getId(),"jar")
+//                                        +"/"+context.getWorkspace().getFileName(dep.getId(),"jar")
 //                                        , true);
 //                            }
                         }

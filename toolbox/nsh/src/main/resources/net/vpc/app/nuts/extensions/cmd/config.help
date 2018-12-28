@@ -1,6 +1,6 @@
 display or modifies workspace configuration.
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##config## {{workspace action verb}} {{arguments}} ...
 
 displays or modifies workspace configuration.

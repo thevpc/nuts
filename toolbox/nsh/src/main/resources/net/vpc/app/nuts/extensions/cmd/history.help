@@ -1,6 +1,6 @@
 display or the command history list
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##history## [<OPTION>...]
 
     ##history## -c | --clear

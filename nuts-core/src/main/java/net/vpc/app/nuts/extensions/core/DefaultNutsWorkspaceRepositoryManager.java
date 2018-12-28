@@ -45,7 +45,7 @@ import java.util.*;
  */
 class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryManager {
 
-    private Map<String, NutsRepository> repositories = new HashMap<String, NutsRepository>();
+    private Map<String, NutsRepository> repositories = new LinkedHashMap<>();
     private final DefaultNutsWorkspace ws;
     private List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
@@ -55,9 +55,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public void removeRepository(String repositoryId) {
-        if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_REMOVE_REPOSITORY)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_REMOVE_REPOSITORY);
-        }
+        ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_REMOVE_REPOSITORY,"remove-repository");
         NutsRepository removed = repositories.remove(repositoryId);
         ws.getConfigManager().removeRepository(repositoryId);
         if (removed != null) {
@@ -85,9 +83,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
 
     @Override
     public NutsRepository addRepository(String repositoryId, String location, String type, boolean autoCreate) {
-        if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_ADD_REPOSITORY)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_ADD_REPOSITORY);
-        }
+        ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_ADD_REPOSITORY,"add-repository");
         if(StringUtils.isEmpty(repositoryId)){
             if(StringUtils.isEmpty(location)){
                 throw new IllegalArgumentException("You should consider specifying location and/or repositoryId");
@@ -122,8 +118,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         }
         ws.getConfigManager().addRepository(new NutsRepositoryLocation(repositoryId, location, type));
 //        NutsRepository repo = openRepository(repositoryId, new File(getRepositoriesRoot(), repositoryId), location, type, autoCreate);
-        NutsRepository repo = openRepository(repositoryId, location, type, getRepositoriesRoot(), autoCreate);
-        return repo;
+        return openRepository(repositoryId, location, type, getRepositoriesRoot(), autoCreate);
     }
 
     String getRepositoriesRoot() {
@@ -174,6 +169,12 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         for (NutsRepositoryFactoryComponent provider : ws.getExtensionManager().createAll(NutsRepositoryFactoryComponent.class)) {
             all.addAll(Arrays.asList(provider.getDefaultRepositories(ws)));
         }
+        Collections.sort(all, new Comparator<NutsRepositoryDefinition>() {
+            @Override
+            public int compare(NutsRepositoryDefinition o1, NutsRepositoryDefinition o2) {
+                return Integer.compare(o1.getOrder(),o2.getOrder());
+            }
+        });
         return all.toArray(new NutsRepositoryDefinition[0]);
     }
 

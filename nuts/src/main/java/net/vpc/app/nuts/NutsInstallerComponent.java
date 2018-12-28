@@ -33,11 +33,8 @@ package net.vpc.app.nuts;
  * Created by vpc on 1/7/17.
  */
 @Singleton
-public interface NutsInstallerComponent extends NutsComponent<NutsFile> {
-
+public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
     void install(NutsExecutionContext executionContext);
 
     void uninstall(NutsExecutionContext executionContext, boolean deleteData);
-
-    boolean isInstalled(NutsExecutionContext executionContext);
 }

@@ -19,11 +19,21 @@ public class MvnClient {
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session){
+        if(id.getSimpleName().equals(NET_VPC_APP_NUTS_MVN)){
+            return false;
+        }
         switch (status){
             case INIT:{
                 status=Status.DIRTY;
                 try {
+                    System.out.println("start fetchWithDependencies ");
                     ws.fetchWithDependencies(NET_VPC_APP_NUTS_MVN, session.copy().setFetchMode(NutsFetchMode.ONLINE));
+                    System.out.println("loop");
+                    for (NutsId nutsId : ws.createQuery().includeDependencies().find()) {
+                        System.out.println("fecth "+nutsId);
+                        ws.fetchWithDependencies(nutsId, session.copy().setFetchMode(NutsFetchMode.ONLINE));
+                    }
+                    System.out.println("Success !!!!!");
                     status=Status.SUCCESS;
                 }catch (Exception ex){
                     ex.printStackTrace();
@@ -46,6 +56,7 @@ public class MvnClient {
         try {
             NutsCommandExecBuilder b = ws
                     .createExecBuilder()
+                    .setFailFast()
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",

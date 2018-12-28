@@ -121,20 +121,22 @@ public final class NutsLogUtils {
                 rootLogger.setLevel(level);
             }
             for (Handler handler : rootLogger.getHandlers()) {
-                oldLevel = handler.getLevel();
-                if (oldLevel == null || !oldLevel.equals(level)) {
-                    updatedLoglevel = true;
-                    handler.setLevel(level);
-                }
-                Formatter oldLogFormatter = handler.getFormatter();
-                if (oldLogFormatter == null || oldLogFormatter != LOG_FORMATTER) {
-                    updatedLoglevel = true;
-                    handler.setFormatter(LOG_FORMATTER);
-                }
-                Filter oldFilter = handler.getFilter();
-                if (oldFilter == null || oldFilter != LOG_FILTER) {
-                    updatedLoglevel = true;
-                    handler.setFilter(LOG_FILTER);
+                if(handler instanceof MyFileHandler) {
+                    oldLevel = handler.getLevel();
+                    if (oldLevel == null || !oldLevel.equals(level)) {
+                        updatedLoglevel = true;
+                        handler.setLevel(level);
+                    }
+                    Formatter oldLogFormatter = handler.getFormatter();
+                    if (oldLogFormatter == null || oldLogFormatter != LOG_FORMATTER) {
+                        updatedLoglevel = true;
+                        handler.setFormatter(LOG_FORMATTER);
+                    }
+                    Filter oldFilter = handler.getFilter();
+                    if (oldFilter == null || oldFilter != LOG_FILTER) {
+                        updatedLoglevel = true;
+                        handler.setFilter(LOG_FILTER);
+                    }
                 }
             }
         }

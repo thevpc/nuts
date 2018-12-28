@@ -475,13 +475,11 @@ final class NutsUtils {
 
     public static String toMavenFileName(String nutsId, String extension) {
         String[] arr = nutsId.split("[:#]");
-        StringBuilder sb = new StringBuilder();
-        sb.append(arr[1]);
-        sb.append("-");
-        sb.append(arr[2]);
-        sb.append(".");
-        sb.append(extension);
-        return sb.toString();
+        return arr[1] +
+                "-" +
+                arr[2] +
+                "." +
+                extension;
     }
 
     public static String toMavenPath(String nutsId) {
@@ -538,8 +536,7 @@ final class NutsUtils {
 
     public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder) {
         String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
-        for (int i = 0; i < repositories.length; i++) {
-            String r = repositories[i];
+        for (String r : repositories) {
             log.fine("Checking " + nutsId + " jar from " + r);
             String path = resolveMavenFullPath(r, nutsId, "jar");
             if (!isFileURL(r)) {
@@ -684,15 +681,15 @@ final class NutsUtils {
         return val * multiplier;
     }
 
-    public static void showError(NutsBootConfig actualBootConfig, NutsBootConfig bootConfig, String home, String workspace, String extraMessage) {
+    public static void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String home, String workspace, String extraMessage) {
         System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.\n");
         System.err.printf("This component needs Internet connexion to initialize Nuts configuration.\n");
         System.err.printf("Don't panic, once components are downloaded, you will be able to work offline...\n");
         System.err.printf("Here after current environment info :\n");
-        System.err.printf("  nuts-boot-api-version            : %s\n", bootConfig.getBootAPIVersion() == null ? "<?> Not Found!" : bootConfig.getBootAPIVersion());
-        System.err.printf("  nuts-boot-runtime                : %s\n", bootConfig.getBootRuntime() == null ? "<?> Not Found!" : bootConfig.getBootRuntime());
-        System.err.printf("  nuts-workspace-boot-api-version  : %s\n", bootConfig.getBootAPIVersion() == null ? "<?> Not Found!" : bootConfig.getBootAPIVersion());
-        System.err.printf("  nuts-workspace-boot-runtime      : %s\n", bootConfig.getBootRuntime() == null ? "<?> Not Found!" : bootConfig.getBootRuntime());
+        System.err.printf("  nuts-boot-api-version            : %s\n", actualBootConfig.getBootAPIVersion() == null ? "<?> Not Found!" : actualBootConfig.getBootAPIVersion());
+        System.err.printf("  nuts-boot-runtime                : %s\n", actualBootConfig.getBootRuntime() == null ? "<?> Not Found!" : actualBootConfig.getBootRuntime());
+        System.err.printf("  nuts-workspace-api-version       : %s\n", workspaceConfig.getBootAPIVersion() == null ? "<?> Not Found!" : workspaceConfig.getBootAPIVersion());
+        System.err.printf("  nuts-workspace-runtime           : %s\n", workspaceConfig.getBootRuntime() == null ? "<?> Not Found!" : workspaceConfig.getBootRuntime());
         System.err.printf("  nuts-home                        : %s\n", home);
         System.err.printf("  workspace-location               : %s\n", (workspace == null ? "<default-location>" : workspace));
         System.err.printf("  java-version                     : %s\n", System.getProperty("java.version"));
@@ -760,6 +757,7 @@ final class NutsUtils {
 
         long startTime = System.currentTimeMillis();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setExpandEntityReferences(false);
         DocumentBuilder dBuilder = null;
         List<String> deps=new ArrayList<>();
         try {

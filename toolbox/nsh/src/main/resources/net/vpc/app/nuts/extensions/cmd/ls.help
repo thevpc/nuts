@@ -1,6 +1,6 @@
 list directory (or file)
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##ls## [options] <directory>
 
 -l : long format

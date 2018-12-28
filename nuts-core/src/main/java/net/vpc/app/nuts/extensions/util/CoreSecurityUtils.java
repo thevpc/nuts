@@ -147,9 +147,9 @@ public class CoreSecurityUtils {
 
     public static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (int i = 0; i < bytes.length; i++) {
-            sb.append(toHex(bytes[i] >> 4));
-            sb.append(toHex(bytes[i]));
+        for (byte aByte : bytes) {
+            sb.append(toHex(aByte >> 4));
+            sb.append(toHex(aByte));
         }
 
         return sb.toString();

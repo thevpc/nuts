@@ -1,6 +1,6 @@
 list, test and extract compressed files in a ZIP archive
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##unzip## [<OPTION>...] <SOURCE>
 
 list, test and extract compressed files in a ZIP archive

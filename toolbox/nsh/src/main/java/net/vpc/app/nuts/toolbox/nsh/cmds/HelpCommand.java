@@ -55,7 +55,6 @@ public class HelpCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         PrintStream out = context.getTerminal().getFormattedOut();
-        boolean showLicense = false;
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
         Argument a;
@@ -63,8 +62,6 @@ public class HelpCommand extends AbstractNutsCommand {
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
-            }else if (cmdLine.readAll("-l", "--license")) {
-                showLicense = true;
             }else if (cmdLine.readAll("-c", "--colors")) {
                 showColors = true;
             } else if (cmdLine.isOption()) {
@@ -76,15 +73,12 @@ public class HelpCommand extends AbstractNutsCommand {
             }
         }
         if (cmdLine.isExecMode()) {
-            if (showLicense) {
-                String licenseText = context.getWorkspace().getResourceString("/net/vpc/app/nuts/nuts-license.help", HelpCommand.class, "no help found");
-                out.println(licenseText);
-            }else if (showColors) {
+            if (showColors) {
                 String colorsText = context.getWorkspace().getResourceString("/net/vpc/app/nuts/nuts-help-colors.help", HelpCommand.class, "no help found");
                 out.println(colorsText);
             } else {
                 if (commandNames.isEmpty()) {
-                    String helpText = context.getWorkspace().getResourceString("/net/vpc/app/nuts/nuts-help.help", HelpCommand.class, "no help found");
+                    String helpText = context.getWorkspace().getResourceString("/net/vpc/app/nuts/nsh-help.help", HelpCommand.class, "no help found");
                     out.println(helpText);
                     out.println("@@AVAILABLE COMMANDS ARE:@@");
                     NutsCommand[] commands = context.getShell().getCommands();

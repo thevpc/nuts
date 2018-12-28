@@ -1,5 +1,5 @@
 show the full id of a **nuts**
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##which## {{nuts-id}} ...
 

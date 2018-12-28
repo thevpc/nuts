@@ -71,16 +71,15 @@ public class NutsHttpServlet extends HttpServlet {
         super.init();
         Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
-        NutsBootOptions bootOptions = new NutsBootOptions().setHome(root)
-                .setBootRuntime(runtimeId)
-                .setBootRuntimeSourceURL(runtimeSourceURL);
         NutsWorkspace workspace = Nuts.openWorkspace(
                 new NutsWorkspaceOptions()
+                        .setHome(root)
+                        .setBootRuntime(runtimeId)
+                        .setBootRuntimeSourceURL(runtimeSourceURL)
                         .setWorkspace(workspaceLocation)
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true)
-                        .setArchetype("server"),
-                bootOptions
+                        .setArchetype("server")
         );
         DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
         if (workspaces.isEmpty()) {
@@ -97,10 +96,13 @@ public class NutsHttpServlet extends HttpServlet {
             NutsWorkspace ws = workspacesByLocation.get(location);
             if (ws == null) {
                 ws = Nuts.openWorkspace(new NutsWorkspaceOptions()
+                        .setHome(root)
+                        .setBootRuntime(runtimeId)
+                        .setBootRuntimeSourceURL(runtimeSourceURL)
                         .setWorkspace(location)
                         .setCreateIfNotFound(true)
                         .setSaveIfCreated(true)
-                        .setArchetype("server"), bootOptions
+                        .setArchetype("server")
                 );
                 workspacesByLocation.put(location, ws);
             }
@@ -158,7 +160,7 @@ public class NutsHttpServlet extends HttpServlet {
                 s="";
             }
             workspaces=new HashMap<>();
-            for (String s1 : s.split("\n|;")) {
+            for (String s1 : s.split("[\n;]")) {
                 s1=s1.trim();
                 if(s1.startsWith("#") || s1.isEmpty() || ! s1.contains("=")){
                     //ignore

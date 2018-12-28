@@ -20,7 +20,7 @@ public class LinuxNdi {
         } else {
             createBootScript(forceBoot,true);
             NutsId nutsId = appContext.getWorkspace().parseId(id);
-            NutsFile fetched=null;
+            NutsDefinition fetched=null;
             if(nutsId.getVersion().isEmpty()){
                 fetched = appContext.getWorkspace().fetch(id, null);
                 nutsId=fetched.getId().getSimpleNameId();
@@ -46,7 +46,7 @@ public class LinuxNdi {
 
     public void createBootScript(boolean force,boolean silent) throws IOException {
         NutsId b = appContext.getWorkspace().getConfigManager().getBootAPI();
-        NutsFile f = appContext.getWorkspace().fetch(b.toString(), null);
+        NutsDefinition f = appContext.getWorkspace().fetch(b.toString(), null);
         File ff = getScriptFile("nuts");
         if (!force && ff.exists()) {
             if (!silent) {

@@ -15,7 +15,7 @@ import java.io.PrintStream;
  *
  * @author vpc
  */
-public class ArchietypeConfigSubCommand extends AbstractConfigSubCommand {
+public class ArchetypeConfigSubCommand extends AbstractConfigSubCommand {
 
     @Override
     public boolean exec(CommandLine cmdLine, ConfigCommand config, Boolean autoSave, NutsCommandContext context) {

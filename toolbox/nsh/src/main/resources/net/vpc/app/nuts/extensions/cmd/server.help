@@ -1,6 +1,6 @@
 manage nuts repository servers
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##server## {{arguments}} ...
 
 ##server## (start | ss) serverId ...

@@ -1,6 +1,6 @@
 fetch a **nuts**
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##fetch## {{nuts-id}}  ...
 
 fetches (without installing) a **nuts** package

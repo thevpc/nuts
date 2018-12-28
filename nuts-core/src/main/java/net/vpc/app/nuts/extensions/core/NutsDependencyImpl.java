@@ -36,6 +36,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -80,12 +81,19 @@ public class NutsDependencyImpl implements NutsDependency {
 
     @Override
     public NutsId toId() {
+        Map<String,String> m=new LinkedHashMap<>();
+        if(!StringUtils.isEmpty(scope) && !"compile".equals(scope)){
+            m.put("scope",scope);
+        }
+        if(!StringUtils.isEmpty(scope) && !"false".equals(optional)){
+            m.put("optional",optional);
+        }
         return new NutsIdImpl(
                 getNamespace(),
                 getGroup(),
                 getName(),
                 getVersion().getValue(),
-                ""
+                m
         );
     }
 
@@ -105,11 +113,26 @@ public class NutsDependencyImpl implements NutsDependency {
     }
 
     @Override
-    public String getFullName() {
+    public String getSimpleName() {
         if (StringUtils.isEmpty(group)) {
             return StringUtils.trim(name);
         }
         return StringUtils.trim(group) + ":" + StringUtils.trim(name);
+    }
+
+    @Override
+    public String getLongName() {
+        String s = getSimpleName();
+        NutsVersion v = getVersion();
+        if (v.isEmpty()) {
+            return s;
+        }
+        return s + "#" + v;
+    }
+
+    @Override
+    public String getFullName() {
+        return toString();
     }
 
     @Override

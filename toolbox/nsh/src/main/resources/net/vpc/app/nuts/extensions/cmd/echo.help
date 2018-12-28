@@ -1,6 +1,6 @@
 display a line of text
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##echo## [-n|-p] <messages>
 
 display a line of text

@@ -75,6 +75,8 @@ public interface NutsWorkspaceSecurityManager {
 
     boolean isAllowed(String right);
 
+    void checkAllowed(String right,String operationName);
+
     boolean switchUnsecureMode(String adminPassword);
 
     boolean switchSecureMode(String adminPassword);

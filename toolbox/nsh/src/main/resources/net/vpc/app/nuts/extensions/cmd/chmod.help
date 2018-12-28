@@ -1,6 +1,6 @@
 change file mode bits
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##chmod## [OPTION]... [MODE]... <FILE>...
 
 change file mode bits

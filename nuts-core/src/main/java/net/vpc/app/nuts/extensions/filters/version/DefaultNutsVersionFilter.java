@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
  */
 public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter,Serializable {
-    private static final long serialVersionUID=1l;
+    private static final long serialVersionUID= 1L;
 
     public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]])(?<LV1>[^\\[\\],]*),(?<RV1>[^\\[\\],]*)(?<R1>[\\[\\]]))|(?<VAL2>(?<L2>[\\[\\]])(?<V2>[^\\[\\],]*)(?<R2>[\\[\\]]))|(?<VAL3>(?<V3>[^\\[\\], ]+)))(\\s|,|\n)*)");
     private List<NutsVersionInterval> intervals = new ArrayList<>();
@@ -131,7 +131,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
 
     @Override
     public String toJsNutsIdFilterExpr() {
-        return new StringBuilder("id.version.matches('").append(CoreStringUtils.escapeCoteStrings(toString())).append("')").toString();
+        return "id.version.matches('" + CoreStringUtils.escapeCoteStrings(toString()) + "')";
     }
 
     @Override

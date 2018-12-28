@@ -61,9 +61,7 @@ public class NutsSimpleIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilt
 
     @Override
     public String toJsNutsIdFilterExpr() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("id.matches('").append(CoreStringUtils.escapeCoteStrings(id.toString())).append("')");
-        return sb.toString();
+        return "id.matches('" + CoreStringUtils.escapeCoteStrings(id.toString()) + "')";
     }
 
     @Override

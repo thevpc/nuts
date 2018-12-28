@@ -101,7 +101,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                                 .setExecutable(mainClass.isSet())
                                 .setExt("jar")
                                 .setPackaging("jar")
-                                .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"--nuts-jar"}))
+                                .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
                                 .build();
 
 
@@ -131,7 +131,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             baseNutsDescriptor = maven.get();
             if (mainClass.isSet()) {
                 return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                    "--nuts-main-class", mainClass.get()}));
+                    "--main-class", mainClass.get()}));
             }
         } else if (metainf.isSet()) {
             baseNutsDescriptor = metainf.get();
@@ -149,7 +149,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             return null;
         } else {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                "--nuts-main-class=" + StringUtils.join(":", classes,x->x.getName())}, null)).setExecutable(true);
+                "--main-class=" + StringUtils.join(":", classes,x->x.getName())}, null)).setExecutable(true);
         }
     }
 }

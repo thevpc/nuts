@@ -43,6 +43,8 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     boolean isExecutable();
 
+    boolean isNutsApplication();
+
     String getPackaging();
 
     String getExt();
@@ -82,6 +84,8 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder setDescription(String description);
 
     NutsDescriptorBuilder setExecutable(boolean executable);
+
+    NutsDescriptorBuilder setNutsApplication(boolean nutsApp);
 
     NutsDescriptorBuilder setExecutor(NutsExecutorDescriptor executor);
 

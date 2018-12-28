@@ -170,238 +170,256 @@ public final class NutsArgumentsParser {
                 return a;
             }
         }
-        ConfigNutsArguments z = parseCurrentInstanceNutsArguments(nargs, aargs);
-        return z;
+        return parseCurrentInstanceNutsArguments(nargs, aargs);
     }
 
-    private static ConfigNutsArguments parseCurrentInstanceNutsArguments(String[] bootArgs, String[] appArgs) {
+    private static NutsWorkspaceOptions parseCurrentInstanceNutsArguments(String[] bootArguments, String[] initialApplicationArguments) {
         List<String> showError = new ArrayList<>();
-        ConfigNutsArguments o = new ConfigNutsArguments();
+        NutsWorkspaceOptions o = new NutsWorkspaceOptions().setCreateIfNotFound(true);
         int startAppArgs = 0;
         boolean expectArgs = false;
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
-        o.getWorkspaceCreateOptions().setSaveIfCreated(true);
-        for (int i = 0; i < bootArgs.length; i++) {
-            String a = bootArgs[i];
+        List<String> applicationArguments = new ArrayList<>();
+        List<String> executorOptions = new ArrayList<>();
+        o.setSaveIfCreated(true);
+        for (int i = 0; i < bootArguments.length; i++) {
+            String a = bootArguments[i];
             if (!expectArgs && a.startsWith("-")) {
                 switch (a) {
                     //dash (startAppArgs) should be the very last argument
                     case "-": {
-                        o.getArgs().add(0, NutsConstants.NUTS_SHELL);
+                        applicationArguments.add(0, NutsConstants.NUTS_SHELL);
                         startAppArgs = i + 1;
                         //force exit loop
-                        i = bootArgs.length;
+                        i = bootArguments.length;
                         continue;
                     }
                     case "--home":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
-                        o.getBootOptions().setHome(bootArgs[i]);
+                        o.setHome(bootArguments[i]);
                         break;
                     case "--workspace":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for workspace");
                         }
-                        o.getWorkspaceCreateOptions().setWorkspace(bootArgs[i]);
+                        o.setWorkspace(bootArguments[i]);
                         break;
                     case "--archetype":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for archetype");
                         }
-                        o.getWorkspaceCreateOptions().setArchetype(bootArgs[i]);
+                        o.setArchetype(bootArguments[i]);
                         break;
                     case "--login":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for login ");
                         }
-                        o.getWorkspaceCreateOptions().setLogin(bootArgs[i]);
+                        o.setLogin(bootArguments[i]);
                         break;
                     case "--password":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for password");
                         }
-                        o.getWorkspaceCreateOptions().setPassword(bootArgs[i]);
-                        break;
-                    case "--apply-updates":
-                        i++;
-                        if (i >= bootArgs.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for apply-updates");
-                        }
-                        o.setApplyUpdatesFile(bootArgs[i]);
+                        o.setPassword(bootArguments[i]);
                         break;
                     case "--boot-runtime":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for runtime-id");
                         }
-                        String br = bootArgs[i];
+                        String br = bootArguments[i];
                         if (br.indexOf("#") > 0) {
                             //this is a full id
                         } else {
                             br = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + br;
                         }
-                        o.getBootOptions().setBootRuntime(br);
+                        o.setBootRuntime(br);
                         break;
                     case "--runtime-source-url":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for boot-url");
                         }
-                        o.getBootOptions().setBootRuntimeSourceURL(bootArgs[i]);
+                        o.setBootRuntimeSourceURL(bootArguments[i]);
                         break;
                     case "--java":
                     case "--boot-java":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for java");
                         }
-                        o.getBootOptions().setBootJavaCommand(bootArgs[i]);
+                        o.setBootJavaCommand(bootArguments[i]);
                         break;
                     case "--java-home":
                     case "--boot-java-home":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for java-home");
                         }
-                        o.getBootOptions().setBootJavaCommand(NutsUtils.resolveJavaCommand(bootArgs[i]));
+                        o.setBootJavaCommand(NutsUtils.resolveJavaCommand(bootArguments[i]));
                         break;
                     case "--java-options":
                     case "--boot-java-options":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for java-options");
                         }
-                        o.getBootOptions().setBootJavaOptions(bootArgs[i]);
+                        o.setBootJavaOptions(bootArguments[i]);
                         break;
                     case "--save":
-                        o.getWorkspaceCreateOptions().setSaveIfCreated(true);
+                        o.setSaveIfCreated(true);
                         break;
                     case "--no-save":
                     case "--!save":
-                        o.getWorkspaceCreateOptions().setSaveIfCreated(false);
+                        o.setSaveIfCreated(false);
                         break;
                     case "--no-colors":
                     case "--!colors":
-                        o.getWorkspaceCreateOptions().setNoColors(true);
+                        o.setNoColors(true);
+                        break;
+                    case "--read-only":
+                        o.setReadOnly(true);
                         break;
                     case "-version":
                     case "--version":
                         o.setBootCommand(NutsBootCommand.VERSION);
-                        expectArgs=true;
+                        expectArgs = true;
                         break;
                     case "--update":
                         o.setBootCommand(NutsBootCommand.UPDATE);
-                        expectArgs=true;
+                        expectArgs = true;
                         break;
                     case "--clean":
                         o.setBootCommand(NutsBootCommand.CLEAN);
-                        expectArgs=true;
+                        expectArgs = true;
                         break;
                     case "--reset":
                         o.setBootCommand(NutsBootCommand.RESET);
-                        expectArgs=true;
+                        expectArgs = true;
+                        break;
+                    case "--install-companions":
+                        o.setBootCommand(NutsBootCommand.INSTALL_COMPANIONS);
+                        expectArgs = true;
+                        break;
+                    case "--exec":
+                        o.setBootCommand(NutsBootCommand.EXEC);
+                        while (i+1 < bootArguments.length) {
+                            a = bootArguments[i+1];
+                            if (!a.startsWith("-")) {
+                                break;
+                            } else {
+                                executorOptions.add(a);
+                            }
+                            i++;
+                        }
+                        expectArgs = true;
                         break;
                     case "--check-updates":
                         o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
-                        expectArgs=true;
+                        expectArgs = true;
+                        break;
+                    case "--install":
+                        o.setBootCommand(NutsBootCommand.INSTALL);
+                        expectArgs = true;
+                        break;
+                    case "--uninstall":
+                        o.setBootCommand(NutsBootCommand.UNINSTALL);
+                        expectArgs = true;
                         break;
                     case "--verbose":
                     case "--log-finest":
-                        o.getBootOptions().setLogLevel(Level.FINEST);
+                        o.setLogLevel(Level.FINEST);
                         break;
                     case "--info":
                     case "--log-info":
-                        o.getBootOptions().setLogLevel(Level.INFO);
+                        o.setLogLevel(Level.INFO);
                         break;
                     case "--log-fine":
-                        o.getBootOptions().setLogLevel(Level.FINE);
+                        o.setLogLevel(Level.FINE);
                         break;
                     case "--log-finer":
-                        o.getBootOptions().setLogLevel(Level.FINER);
+                        o.setLogLevel(Level.FINER);
                         break;
                     case "--log-all":
-                        o.getBootOptions().setLogLevel(Level.ALL);
+                        o.setLogLevel(Level.ALL);
                         break;
                     case "--log-off":
-                        o.getBootOptions().setLogLevel(Level.OFF);
+                        o.setLogLevel(Level.OFF);
                         break;
                     case "--log-severe":
-                        o.getBootOptions().setLogLevel(Level.SEVERE);
+                        o.setLogLevel(Level.SEVERE);
                         break;
                     case "--log-size":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-size");
                         }
-                        o.getBootOptions().setLogSize(NutsUtils.parseFileSize(bootArgs[i]));
+                        o.setLogSize(NutsUtils.parseFileSize(bootArguments[i]));
                         break;
                     case "--log-folder":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-size");
                         }
-                        o.getBootOptions().setLogFolder(bootArgs[i]);
+                        o.setLogFolder(bootArguments[i]);
                         break;
                     case "--log-name":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-name");
                         }
-                        o.getBootOptions().setLogName(bootArgs[i]);
+                        o.setLogName(bootArguments[i]);
                         break;
                     case "--log-count":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for log-count");
                         }
-                        o.getBootOptions().setLogCount(Integer.parseInt(bootArgs[i]));
+                        o.setLogCount(Integer.parseInt(bootArguments[i]));
                         break;
                     case "--exclude-extensions":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-extensions");
                         }
-                        excludedExtensions.addAll(NutsUtils.split(bootArgs[i], " ,;"));
+                        excludedExtensions.addAll(NutsUtils.split(bootArguments[i], " ,;"));
                         break;
                     case "--exclude-repositories":
                         i++;
-                        if (i >= bootArgs.length) {
+                        if (i >= bootArguments.length) {
                             throw new NutsIllegalArgumentException("Missing argument for exclude-repositories");
                         }
-                        excludedRepositories.addAll(NutsUtils.split(bootArgs[i], " ,;"));
+                        excludedRepositories.addAll(NutsUtils.split(bootArguments[i], " ,;"));
                         break;
                     case "--help": {
                         o.setBootCommand(NutsBootCommand.HELP);
-                        expectArgs=true;
                         expectArgs = true;
                         break;
                     }
                     case "--license": {
                         o.setBootCommand(NutsBootCommand.LICENSE);
-                        expectArgs=true;
                         expectArgs = true;
                         break;
                     }
                     case "--perf": {
-                        o.getBootOptions().setPerf(true);
+                        o.setPerf(true);
                         break;
                     }
                     default: {
                         if (a.startsWith("--version=")) {
                             o.setBootCommand(NutsBootCommand.VERSION);
-                            o.setVersionOptions(a.substring("--version=".length()));
+                            applicationArguments.add(a.substring("--version=".length()));
                             expectArgs = true;
-                        } else if (a.startsWith("-J")) {
-                            o.getArgs().add(a);
-                        } else if (a.startsWith("--nuts")) {
-                            o.getArgs().add(a);
+                        } else if (a.startsWith("--auto-config=")) {
+                            o.setAutoConfig(a.substring("--auto-config=".length()));
                         } else {
                             showError.add("nuts: invalid option [[" + a + "]]");
                         }
@@ -416,20 +434,26 @@ public final class NutsArgumentsParser {
                 break;
             }
         }
-        o.getWorkspaceCreateOptions().setExcludedExtensions(excludedExtensions.toArray(new String[0]));
-        o.getWorkspaceCreateOptions().setExcludedRepositories(excludedRepositories.toArray(new String[0]));
-        o.getArgs().addAll(Arrays.asList(Arrays.copyOfRange(bootArgs, startAppArgs, bootArgs.length)));
-        if (o.getBootCommand()!=NutsBootCommand.HELP) {
+        o.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
+        o.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
+        if(startAppArgs<bootArguments.length) {
+            applicationArguments.addAll(Arrays.asList(Arrays.copyOfRange(bootArguments, startAppArgs, bootArguments.length)));
+        }
+        if (o.getBootCommand() != NutsBootCommand.HELP) {
             if (!showError.isEmpty()) {
                 for (String s : showError) {
-                    System.err.printf("%s·\n", s);
+                    System.err.printf("%s\n", s);
                 }
-                System.err.printf("Try 'nuts --help' for more information.\n");
+                System.err.println("Try 'nuts --help' for more information.\n");
                 throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
             }
         }
-        o.getBootOptions().setBootArguments(Arrays.copyOfRange(bootArgs, 0, startAppArgs));
-        o.getBootOptions().setApplicationArguments(appArgs == null ? new String[0] : appArgs);
+        if (initialApplicationArguments != null) {
+            applicationArguments.addAll(Arrays.asList(initialApplicationArguments));
+        }
+        o.setBootArguments(Arrays.copyOfRange(bootArguments, 0, startAppArgs));
+        o.setApplicationArguments(applicationArguments.toArray(new String[0]));
+        o.setExecutorOptions(executorOptions.toArray(new String[0]));
         return o;
     }
 
@@ -597,16 +621,16 @@ public final class NutsArgumentsParser {
         }
         File file = NutsUtils.resolveOrDownloadJar(NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion,
                 new String[]{
-                        nutsHome + File.separator + NutsConstants.BOOTSTRAP_REPOSITORY_NAME,
+                        nutsHome + File.separator + NutsConstants.DEFAULT_WORKSPACE_NAME + File.separator + "cache",
                         System.getProperty("user.home") + "/.m2/repository",
                         NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
                         NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
                         NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
                 },
-                nutsHome + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME
+                nutsHome + File.separator + NutsConstants.DEFAULT_WORKSPACE_NAME + File.separator + "cache"
         );
         if (file == null) {
-            errors.append("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion + "\n");
+            errors.append("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#").append(requiredBootVersion).append("\n");
             NutsBootConfig actualBootConfig = new NutsBootConfig()
                     .setBootAPIVersion(NutsConstants.NUTS_ID_BOOT_API + "#" + Nuts.getActualVersion())
                     .setBootRuntime(null);

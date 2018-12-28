@@ -54,20 +54,19 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     private NutsId actualBootId;
     private NutsId actualRuntimeId;
 
-    private NutsBootWorkspace workspaceBoot;
     private String nutsHome;
     private ClassLoader bootClassLoader;
     private URL[] bootClassWorldURLs;
     private NutsWorkspaceConfig config = new NutsWorkspaceConfig();
     private String workspace;
     private String cwd = System.getProperty("user.dir");
+    private List<NutsWorkspaceCommandFactory> commandFactories = new ArrayList<>();
+    private ConfigNutsWorkspaceCommandFactory configCommandFactory = new ConfigNutsWorkspaceCommandFactory();
+    private boolean configurationChanged = false;
+    private NutsWorkspaceOptions options;
 
     protected DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace outer) {
         this.ws = outer;
-    }
-
-    public NutsBootWorkspace getWorkspaceBoot() {
-        return workspaceBoot;
     }
 
     public ClassLoader getBootClassLoader() {
@@ -164,9 +163,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         //workaround
         String extraImports = getEnv("imports", null);
         if (extraImports != null) {
-            for (String s : extraImports.split("[,;: ]")) {
-                all.add(s);
-            }
+            all.addAll(Arrays.asList(extraImports.split("[,;: ]")));
         }
         return all.toArray(new String[0]);
     }
@@ -334,13 +331,13 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             other = new NutsBootConfig();
         }
         if (!StringUtils.isEmpty(other.getBootRuntime())) {
-            NutsFile[] nutsFiles = ws.fetchDependencies(new NutsDependencySearch(other.getBootRuntime()).setIncludeMain(true), null);
+            List<NutsDefinition> nutsDefinitions = ws.createQuery().addId(other.getBootRuntime()).includeDependencies().fetch();
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < nutsFiles.length; i++) {
+            for (int i = 0; i < nutsDefinitions.size(); i++) {
                 if (i > 0) {
                     sb.append(":");
                 }
-                sb.append(nutsFiles[i].getId().toString());
+                sb.append(nutsDefinitions.get(i).getId().toString());
             }
             other.setBootRuntimeDependencies(sb.toString());
         } else {
@@ -392,7 +389,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             throw new NutsIllegalArgumentException("Invalid Extension");
         }
         for (NutsId extension : getExtensions()) {
-            if (extension.isSameFullName(extensionId)) {
+            if (extension.equalsSimpleName(extensionId)) {
                 getConfig().removeExtension(extension);
                 return true;
             }
@@ -407,7 +404,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         NutsId[] extensions = getExtensions();
         for (int i = 0; i < extensions.length; i++) {
             NutsId extension = extensions[i];
-            if (extension.isSameFullName(extensionId)) {
+            if (extension.equalsSimpleName(extensionId)) {
                 config.updateExtensionAt(i, extensionId);
                 return true;
             }
@@ -421,16 +418,21 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
+    public boolean isReadOnly() {
+        return options.isReadOnly();
+    }
+
+    @Override
     public void save() {
-        if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_SAVE_WORKSPACE)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SAVE_WORKSPACE);
-        }
+        CoreNutsUtils.checkReadOnly(ws);
+        ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_SAVE_WORKSPACE, "save");
         File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         CoreJsonUtils.storeJson(config, file, true);
         NutsRepositoryFilter repositoryFilter = null;
         for (NutsRepository repo : ws.getEnabledRepositories(repositoryFilter)) {
             repo.save();
         }
+        configurationChanged = false;
     }
 
     @Override
@@ -451,23 +453,19 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return map;
     }
 
-    @Override
-    public NutsBootWorkspace getBoot() {
-        return workspaceBoot;
-    }
-
-    public void onInitializeWorkspace(NutsBootWorkspace workspaceBoot,
-                                      String workspaceRoot,
-                                      NutsWorkspaceFactory factory,
-                                      NutsId actualBootId,
-                                      NutsId actualRuntimeId,
-                                      NutsId workspaceBootId,
-                                      NutsId workspaceRuntimeId,
-                                      String workspace,
-                                      URL[] bootClassWorldURLs,
-                                      ClassLoader bootClassLoader) {
-        this.workspaceBoot = workspaceBoot;
+    public void onInitializeWorkspace(
+            NutsWorkspaceOptions options,
+            String workspaceRoot,
+            NutsWorkspaceFactory factory,
+            NutsId actualBootId,
+            NutsId actualRuntimeId,
+            NutsId workspaceBootId,
+            NutsId workspaceRuntimeId,
+            String workspace,
+            URL[] bootClassWorldURLs,
+            ClassLoader bootClassLoader) {
         this.nutsHome = workspaceRoot;
+        this.options = options;
 
         this.actualBootId = actualBootId;
         this.actualRuntimeId = actualRuntimeId;
@@ -506,7 +504,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     @Override
     public String resolveNutsJarFile() {
         try {
-            NutsId baseId = ws.parseRequiredNutsId(NutsConstants.NUTS_ID_BOOT_API);
+            NutsId baseId = ws.parseRequiredId(NutsConstants.NUTS_ID_BOOT_API);
             String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
             URL resource = Nuts.class.getResource(urlPath);
             if (resource != null) {
@@ -522,7 +520,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         PomId m = PomIdResolver.resolvePomId(Nuts.class, null);
         if (m != null) {
             File f = new File(System.getProperty("user.home") + "/.m2/repository/" + m.getGroupId().replace('.', '/') + "/" + m.getArtifactId() + "/" + m.getVersion() + "/"
-                    + ws.getNutsFileName(ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion()).build()
+                    + ws.getFileName(ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion()).build()
                     , "jar"));
             if (f.exists()) {
                 return f.getPath();
@@ -535,7 +533,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public String toString() {
         return "NutsWorkspaceConfig{"
                 + "workspaceBootId=" + workspaceBootId
-                + ", workspaceBoot=" + workspaceBoot
                 + ", workspaceRuntimeId=" + workspaceRuntimeId
                 + ", nutsHome='" + nutsHome + '\''
                 + ", workspace='" + workspace + '\''
@@ -621,7 +618,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             throw new NutsIllegalArgumentException("Invalid Extension");
         }
         for (NutsId extension : getExtensions()) {
-            if (extension.isSameFullName(extension)) {
+            if (extension.equalsSimpleName(extension)) {
                 return true;
             }
         }
@@ -684,6 +681,10 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return JavaHelper.resolveJdkLocation(path, ws);
     }
 
+    @Override
+    public NutsWorkspaceOptions getOptions() {
+        return options.copy();
+    }
 
     @Override
     public byte[] decryptString(byte[] input) {
@@ -701,6 +702,240 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         }
         String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
         return CoreSecurityUtils.httpEncrypt(input, passphrase);
+    }
+
+    @Override
+    public NutsWorkspaceCommand findCommand(String name) {
+        NutsWorkspaceCommandConfig c = configCommandFactory.findCommand(name, ws);
+        if (c == null) {
+            for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
+                c = commandFactory.findCommand(name, ws);
+                if (c != null && c.getId() != null) {
+                    break;
+                }
+            }
+        }
+        if (c == null) {
+            return null;
+        }
+        return toDefaultNutsWorkspaceCommand(c);
+    }
+
+    private DefaultNutsWorkspaceCommand toDefaultNutsWorkspaceCommand(NutsWorkspaceCommandConfig c) {
+        return new DefaultNutsWorkspaceCommand()
+                .setCommand(c.getCommand())
+                .setFactoryId(c.getFactoryId())
+                .setId(c.getId())
+                .setName(c.getName());
+    }
+
+    @Override
+    public void installCommand(NutsWorkspaceCommandConfig command) {
+        if (command == null
+                || StringUtils.isEmpty(command.getName())
+                || command.getName().contains(" ") || command.getName().contains("/") || command.getName().contains("\\")
+                || command.getId() == null
+                || command.getId().getName().isEmpty()
+                || command.getId().getGroup().isEmpty()
+                || command.getCommand() == null
+        ) {
+            throw new IllegalArgumentException("Invalid command " + (command == null ? "<NULL>" : command.getName()));
+        }
+        if (configCommandFactory.findCommand(command.getName(), ws) != null) {
+            throw new IllegalArgumentException("Command already exists " + command.getName());
+        }
+        configCommandFactory.installCommand(command);
+    }
+
+    @Override
+    public void uninstallCommand(String name) {
+        if (StringUtils.isEmpty(name)) {
+            throw new IllegalArgumentException("Invalid command " + (name == null ? "<NULL>" : name));
+        }
+        configCommandFactory.uninstallCommand(name);
+    }
+
+    @Override
+    public List<NutsWorkspaceCommand> findCommands() {
+        HashMap<String, NutsWorkspaceCommand> all = new HashMap<>();
+        for (NutsWorkspaceCommandConfig command : configCommandFactory.findCommands(ws)) {
+            all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
+        }
+        for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
+            for (NutsWorkspaceCommandConfig command : commandFactory.findCommands(ws)) {
+                if (!all.containsKey(command.getName())) {
+                    all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
+                }
+            }
+        }
+        return new ArrayList<>(all.values());
+    }
+
+    @Override
+    public void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactoryConfig) {
+        if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
+            throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + commandFactoryConfig);
+        }
+        for (NutsWorkspaceCommandFactory factory : commandFactories) {
+            if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
+                throw new IllegalArgumentException();
+            }
+        }
+        NutsWorkspaceCommandFactory f = null;
+        if (StringUtils.isEmpty(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
+            f = new CommandNutsWorkspaceCommandFactory();
+        }
+        f.configure(commandFactoryConfig);
+        commandFactories.add(f);
+        Collections.sort(commandFactories, new Comparator<NutsWorkspaceCommandFactory>() {
+            @Override
+            public int compare(NutsWorkspaceCommandFactory o1, NutsWorkspaceCommandFactory o2) {
+                return Integer.compare(o2.getPriority(), o1.getPriority());
+            }
+        });
+        List<NutsWorkspaceCommandFactoryConfig> commandFactories = config.getCommandFactories();
+        if (commandFactories == null) {
+            commandFactories = new ArrayList<>();
+            config.setCommandFactories(commandFactories);
+        }
+        NutsWorkspaceCommandFactoryConfig oldCommandFactory = null;
+        for (NutsWorkspaceCommandFactoryConfig commandFactory : commandFactories) {
+            if (commandFactory.getFactoryId().equals(f.getFactoryId())) {
+                oldCommandFactory = commandFactory;
+            }
+        }
+        if (oldCommandFactory == null) {
+            commandFactories.add(commandFactoryConfig);
+        } else if (oldCommandFactory != commandFactoryConfig) {
+            oldCommandFactory.setFactoryId(commandFactoryConfig.getFactoryId());
+            oldCommandFactory.setFactoryType(commandFactoryConfig.getFactoryType());
+            oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
+            oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
+        }
+    }
+
+    @Override
+    public void uninstallCommandFactory(String factoryId) {
+        if (factoryId == null || factoryId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
+        }
+        NutsWorkspaceCommandFactory removeMe = null;
+        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+            NutsWorkspaceCommandFactory factory = iterator.next();
+            if (factoryId.equals(factory.getFactoryId())) {
+                iterator.remove();
+                break;
+            }
+        }
+        List<NutsWorkspaceCommandFactoryConfig> commandFactories = config.getCommandFactories();
+        if (commandFactories != null) {
+            for (Iterator<NutsWorkspaceCommandFactoryConfig> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+                NutsWorkspaceCommandFactoryConfig commandFactory = iterator.next();
+                if (factoryId.equals(commandFactory.getFactoryId())) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<NutsWorkspaceCommand> findCommands(NutsId id) {
+        HashMap<String, NutsWorkspaceCommand> all = new HashMap<>();
+        for (NutsWorkspaceCommandConfig command : configCommandFactory.findCommands(id, ws)) {
+            all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
+        }
+        return new ArrayList<>(all.values());
+    }
+
+    private class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
+        @Override
+        public void configure(NutsWorkspaceCommandFactoryConfig config) {
+
+        }
+
+        @Override
+        public String getFactoryId() {
+            return "default";
+        }
+
+        public File getRootFolder() {
+            return new File(ws.getStoreRoot(RootFolderType.PROGRAMS));
+        }
+
+        @Override
+        public int getPriority() {
+            return Integer.MAX_VALUE;
+        }
+
+        public void uninstallCommand(String name) {
+            File file = new File(getRootFolder(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+            if (file.isFile()) {
+                if (!file.delete()) {
+                    throw new IllegalArgumentException("Unable to delete file " + file.getPath());
+                }
+            }
+        }
+
+        public void installCommand(NutsWorkspaceCommandConfig command) {
+            File file = new File(getRootFolder(), command.getName() + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+            ws.getJsonIO().write(command, file, true);
+        }
+
+        @Override
+        public NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace) {
+            File file = new File(getRootFolder(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+            if (file.exists()) {
+                NutsWorkspaceCommandConfig c = ws.getJsonIO().read(file, NutsWorkspaceCommandConfig.class);
+                if (c != null) {
+                    c.setName(name);
+                    return c;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public List<NutsWorkspaceCommandConfig> findCommands(NutsWorkspace workspace) {
+            return findCommands((ObjectFilter<NutsWorkspaceCommandConfig>) null);
+        }
+
+        public List<NutsWorkspaceCommandConfig> findCommands(NutsId id, NutsWorkspace workspace) {
+            return findCommands(new ObjectFilter<NutsWorkspaceCommandConfig>() {
+                @Override
+                public boolean accept(NutsWorkspaceCommandConfig value) {
+                    if (id.getVersion().isEmpty()) {
+                        return value.getId().getSimpleName().equals(id.getSimpleName());
+                    } else {
+                        return value.getId().getLongName().equals(id.getLongName());
+                    }
+                }
+            });
+        }
+
+        public List<NutsWorkspaceCommandConfig> findCommands(ObjectFilter<NutsWorkspaceCommandConfig> filter) {
+            List<NutsWorkspaceCommandConfig> all = new ArrayList<>();
+            File[] files = getRootFolder().listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)) {
+                        NutsWorkspaceCommandConfig c = null;
+                        try {
+                            c = ws.getJsonIO().read(file, NutsWorkspaceCommandConfig.class);
+                        } catch (Exception ex) {
+                            //
+                        }
+                        if (c != null) {
+                            c.setName(file.getName().substring(0, file.getName().length() - 4));
+                            if (filter == null || filter.accept(c)) {
+                                all.add(c);
+                            }
+                        }
+                    }
+                }
+            }
+            return all;
+        }
     }
 
 }

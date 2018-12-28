@@ -1,6 +1,6 @@
 commit (re-deploys) an already checked out folder
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##commit## <folder>
 
 commits (re-deploys) an already checked out folder

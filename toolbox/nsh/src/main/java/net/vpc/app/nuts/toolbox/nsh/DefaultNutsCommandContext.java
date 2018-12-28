@@ -62,11 +62,11 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     public PrintStream out() {
-        return consoleContext.getFormattedOut();
+        return consoleContext.getFormattedOut(noColors);
     }
 
     public PrintStream err() {
-        return consoleContext.getFormattedErr();
+        return consoleContext.getFormattedErr(noColors);
     }
 
     public boolean isNoColors() {

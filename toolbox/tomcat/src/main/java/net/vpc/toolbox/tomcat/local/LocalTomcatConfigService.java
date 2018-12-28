@@ -21,7 +21,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     private LocalTomcat app;
     private LocalTomcatConfig config;
     private NutsApplicationContext context;
-    private NutsFile catalinaNutsFile;
+    private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
 
     public LocalTomcatConfigService(File file, LocalTomcat app) {
@@ -98,7 +98,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public String getEffectiveCatalinaVersion() {
         String h = getConfig().getCatalinaHome();
         if (TomcatUtils.isEmpty(h)) {
-            NutsFile nf = getCatalinaNutsFile();
+            NutsDefinition nf = getCatalinaNutsDefinition();
             return nf.getId().getVersion().toString();
         }
         return h.trim();
@@ -137,7 +137,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public String getCatalinaHome() {
         String h = getConfig().getCatalinaHome();
         if (TomcatUtils.isEmpty(h)) {
-            NutsFile f = getCatalinaNutsFile();
+            NutsDefinition f = getCatalinaNutsDefinition();
             return f.getInstallFolder();
         } else {
             return h;
@@ -167,7 +167,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (args != null) {
             for (String arg : args) {
                 if (!TomcatUtils.isEmpty(arg)) {
-                    for (String s : arg.split(",| ")) {
+                    for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
                         }
@@ -257,7 +257,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return true;
     }
 
-    private NutsFile getCatalinaNutsFile() {
+    private NutsDefinition getCatalinaNutsDefinition() {
         String catalinaVersion = getRequestedCatalinaVersion();
         if (catalinaVersion == null) {
             catalinaVersion = "";
@@ -266,16 +266,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (catalinaVersion.isEmpty()) {
             catalinaVersion = "8.5";
         }
-        if (catalinaNutsFile == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
+        if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            catalinaNutsFile = context.getWorkspace().install("org.apache.catalina:tomcat#" + catalinaVersion + "*", NutsConfirmAction.IGNORE, context.getSession().copy().addListeners(new NutsInstallListener() {
+            catalinaNutsDefinition = context.getWorkspace().install("org.apache.catalina:tomcat#" + catalinaVersion + "*", new String[0], NutsConfirmAction.IGNORE, context.getSession().copy().addListeners(new NutsInstallListener() {
                 @Override
-                public void onInstall(NutsFile nutsFile, boolean update, NutsSession session) {
-                    context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsFile.getInstallFolder());
+                public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
+                    context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallFolder());
                 }
             }));
         }
-        return catalinaNutsFile;
+        return catalinaNutsDefinition;
     }
 
 
@@ -492,8 +492,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (f.exists()) {
             JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
             try (FileReader r = new FileReader(f)) {
-                LocalTomcatConfig i = jsonSerializer.read(r, LocalTomcatConfig.class);
-                config = i;
+                config = jsonSerializer.read(r, LocalTomcatConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);

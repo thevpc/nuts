@@ -1,6 +1,6 @@
 log out from current workspace
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##logout##
 
 logs out (to anonymous)

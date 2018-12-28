@@ -1,6 +1,6 @@
 output the first part of files
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##head## [<OPTION>...] <FILE> ...
 
 output the first part of files

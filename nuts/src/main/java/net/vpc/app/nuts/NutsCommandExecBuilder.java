@@ -40,6 +40,10 @@ public interface NutsCommandExecBuilder {
 
     NutsCommandExecBuilder setCommand(List<String> command);
 
+    NutsCommandExecBuilder setExecutorOptions(String... options);
+
+    NutsCommandExecBuilder setExecutorOptions(List<String> options);
+
     Properties getEnv();
 
     NutsCommandExecBuilder addEnv(Map<String, String> env);

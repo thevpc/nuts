@@ -31,14 +31,13 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.NullOutputStream;
-import net.vpc.app.nuts.NutsSearchBuilder;
+import net.vpc.app.nuts.NutsQuery;
 import net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent;
 import net.vpc.app.nuts.extensions.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.extensions.filters.DefaultNutsIdMultiFilter;
 import net.vpc.app.nuts.extensions.filters.dependency.NutsExclusionDependencyFilter;
 import net.vpc.app.nuts.extensions.filters.id.NutsIdFilterOr;
 import net.vpc.app.nuts.extensions.filters.id.NutsPatternIdFilter;
-import net.vpc.app.nuts.extensions.repos.NutsBootFolderRepository;
 import net.vpc.app.nuts.extensions.repos.NutsFolderRepository;
 import net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal;
 import net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream;
@@ -71,10 +70,9 @@ import static net.vpc.app.nuts.extensions.util.CoreNutsUtils.And;
 public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     public static final Logger log = Logger.getLogger(DefaultNutsWorkspace.class.getName());
-    private NutsFile nutsComponentId;
+    private NutsDefinition nutsComponentId;
     private final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
     private boolean initializing;
-    private NutsRepository bootstrapNutsRepository;
     protected final DefaultNutsWorkspaceSecurityManager securityManager = new DefaultNutsWorkspaceSecurityManager(this);
     protected final DefaultNutsWorkspaceConfigManager configManager = new DefaultNutsWorkspaceConfigManager(this);
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
@@ -85,7 +83,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     private String platformOsLibPath;
     private ObservableMap<String, Object> userProperties = new ObservableMap<String, Object>();
 
-    private NutsWorkspaceOptions options;
     private NutsTerminal terminal;
 
     public DefaultNutsWorkspace() {
@@ -111,11 +108,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public PrintStream createNullPrintStream() {
         return createPrintStream(NullOutputStream.INSTANCE, false);
-    }
-
-    @Override
-    public NutsId parseNutsId(String nutsId) {
-        return CoreNutsUtils.parseNutsId(nutsId);
     }
 
     @Override
@@ -176,27 +168,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             nutsWorkspace.getUserProperties().put("no-colors", "true");
         }
         NutsWorkspaceImpl nutsWorkspaceImpl = (NutsWorkspaceImpl) nutsWorkspace;
-        if (nutsWorkspaceImpl.initializeWorkspace(configManager.getWorkspaceBoot(), newFactory,
+        if (nutsWorkspaceImpl.initializeWorkspace(newFactory,
                 configManager.getBootConfig(), configManager.getWorkspaceBootConfig(), options.getWorkspace(),
                 configManager.getBootClassWorldURLs(),
                 configManager.getBootClassLoader(), options.copy().setIgnoreIfFound(true))) {
             if (log.isLoggable(Level.FINE)) {
-                log.log(Level.FINE, "workspace created : " + configManager.getWorkspaceBoot());
+                log.log(Level.FINE, "workspace created");
             }
         }
         return nutsWorkspace;
     }
 
-    public NutsWorkspaceOptions getOptions() {
-        return options.copy();
-    }
-
-    public NutsBootOptions getBootOptions() {
-        return getConfigManager().getBoot().getBootOptions();
-    }
-
     @Override
-    public boolean initializeWorkspace(NutsBootWorkspace workspaceBoot, NutsWorkspaceFactory factory,
+    public boolean initializeWorkspace(NutsWorkspaceFactory factory,
                                        NutsBootConfig actualBootConfig, NutsBootConfig wsBootConfig,
                                        String workspace,
                                        URL[] bootClassWorldURLs, ClassLoader bootClassLoader,
@@ -205,16 +189,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (options == null) {
             options = new NutsWorkspaceOptions();
         }
-        this.options = options;
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, factory);
-        configManager.onInitializeWorkspace(workspaceBoot,
-                StringUtils.isEmpty(workspaceBoot.getHomeLocation()) ? NutsConstants.DEFAULT_NUTS_HOME : workspaceBoot.getHomeLocation(),
+        String home=options.getHome();
+        configManager.onInitializeWorkspace(options,StringUtils.isEmpty(home) ? NutsConstants.DEFAULT_NUTS_HOME : home,
                 factory,
-                parseNutsId(NutsConstants.NUTS_ID_BOOT_API + "#" + actualBootConfig.getBootAPIVersion()),
-                parseNutsId(actualBootConfig.getBootRuntime()),
+                parseId(NutsConstants.NUTS_ID_BOOT_API + "#" + actualBootConfig.getBootAPIVersion()),
+                parseId(actualBootConfig.getBootRuntime()),
 
-                parseNutsId(NutsConstants.NUTS_ID_BOOT_API + "#" + wsBootConfig.getBootAPIVersion()),
-                parseNutsId(wsBootConfig.getBootRuntime()),
+                parseId(NutsConstants.NUTS_ID_BOOT_API + "#" + wsBootConfig.getBootAPIVersion()),
+                parseId(wsBootConfig.getBootRuntime()),
 
                 resolveWorkspacePath(workspace),
                 bootClassWorldURLs,
@@ -227,8 +210,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (!options.isIgnoreIfFound() && exists) {
             throw new NutsWorkspaceAlreadyExistsException(workspace);
         }
-
-        this.bootstrapNutsRepository = new NutsBootFolderRepository(workspaceBoot, this, null);
 
         extensionManager.onInitializeWorkspace(bootClassLoader);
 
@@ -254,6 +235,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 if (options.isSaveIfCreated()) {
                     getConfigManager().save();
                 }
+                autoConfigPostInstall(session, "");
+                for (NutsWorkspaceListener workspaceListener : workspaceListeners) {
+                    workspaceListener.onCreateWorkspace(this);
+                }
             } else if (configManager.getConfig().getRepositories().length == 0) {
                 initializeWorkspace(options.getArchetype(), session);
                 if (options.isSaveIfCreated()) {
@@ -266,9 +251,87 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return !exists;
     }
 
+    public void autoConfigPostInstall(NutsSession session, String autoConfig) {
+        if (autoConfig == null) {
+            autoConfig = "ask";
+        }
+        boolean configure;
+        boolean ask ;
+        boolean silent ;
+        switch (autoConfig) {
+            case "silent": {
+                configure = true;
+                ask = false;
+                silent = true;
+                break;
+            }
+            case "run": {
+                configure = true;
+                ask = false;
+                silent = false;
+                break;
+            }
+            case "skip": {
+                configure = false;
+                ask = false;
+                silent = false;
+                break;
+            }
+            case "ask": {
+                configure = true;
+                ask = true;
+                silent = false;
+                break;
+            }
+            default: {
+                configure = true;
+                ask = true;
+                silent = false;
+                break;
+            }
+        }
+        if (configure) {
+            reconfigurePostInstall(session, ask, silent);
+        }
+    }
+
+    public void reconfigurePostInstall(NutsSession session, boolean ask, boolean silent) {
+        session = CoreNutsUtils.validateSession(session, this);
+        PrintStream out = terminal.getFormattedOut();
+        if (!silent) {
+            out.println(
+                    "==``    _   __      __        \n" +
+                            "   / | / /_  __/ /______    \n" +
+                            "  /  |/ / / / / __/ ___/   \n" +
+                            " / /|  / /_/ / /_(__  )    \n" +
+                            "/_/ |_/\\\\__,_/\\\\__/____/  `` == version [[" + getConfigManager().getBootRuntime().getVersion() + "]]"
+            );
+            out.println("[[--------------------------------------------------------------------------------]]");
+            out.println("This is the very @@First@@ time Nuts has benn started for this workspace...");
+            out.println("[[--------------------------------------------------------------------------------]]");
+        }
+        NutsQuestion<Boolean> q = NutsQuestion.forBoolean("Would you like to install recommended companion tools").setDefautValue(true);
+        if (!ask || terminal.ask(q)) {
+            installCompanionTools(silent, session);
+        }
+    }
+
     @Override
-    public NutsFile fetchBootFile(NutsSession session) {
-        session = validateSession(session);
+    public void installCompanionTools(boolean silent, NutsSession session){
+        PrintStream out = terminal.getFormattedOut();
+        out.println("Installation of Nuts companion tools...");
+        out.println("##\\### installing ==nsh== (Nuts bash shell companion)...");
+        install("nsh", new String[0], NutsConfirmAction.FORCE, session);
+        out.println("##\\### installing ==ndi== (Nuts Desktop Integration companion)...");
+        install("ndi", new String[0], NutsConfirmAction.FORCE, session);
+        out.println("##\\### installing ==mvn== (Maven command line companion)...");
+        install("mvn", new String[0], NutsConfirmAction.FORCE, session);
+        out.println("Installation of companion tools ##succeeded##...");
+    }
+
+    @Override
+    public NutsDefinition fetchBootFile(NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         if (nutsComponentId == null) {
             nutsComponentId = fetch(NutsConstants.NUTS_ID_BOOT_API, session);
         }
@@ -276,15 +339,18 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsFile install(String id, NutsConfirmAction foundAction, NutsSession session) {
-        session = validateSession(session);
+    public NutsDefinition install(String id, String[] args, NutsConfirmAction foundAction, NutsSession session) {
+        return install(parseRequiredId(id), args, foundAction, session);
+    }
+
+    @Override
+    public NutsDefinition install(NutsId id, String[] args, NutsConfirmAction foundAction, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         if (foundAction == null) {
             foundAction = NutsConfirmAction.ERROR;
         }
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_INSTALL)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_INSTALL);
-        }
-        NutsFile nutToInstall = fetchWithDependencies(id, session);
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_INSTALL, "install");
+        NutsDefinition nutToInstall = fetchWithDependencies(id, session);
         if (nutToInstall != null && nutToInstall.getFile() != null) {
             if (nutToInstall.isInstalled()) {
                 switch (foundAction) {
@@ -300,17 +366,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             if (nutToInstall.getFile() != null) {
                 installer = getInstaller(nutToInstall, session);
             }
-            postInstall(nutToInstall, installer, session);
+            postInstall(nutToInstall, args, installer, session);
         }
         return nutToInstall;
     }
 
     @Override
     public NutsId commit(String folder, NutsSession session) {
-        session = validateSession(session);
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_DEPLOY)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_DEPLOY);
-        }
+        session = CoreNutsUtils.validateSession(session, this);
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_DEPLOY, "commit");
         if (folder == null || !new File(folder).isDirectory()) {
             throw new NutsIllegalArgumentException("Not a directory " + folder);
         }
@@ -321,9 +385,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (oldVersion.endsWith(NutsConstants.VERSION_CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.VERSION_CHECKED_OUT_EXTENSION.length());
             String newVersion = parseVersion(oldVersion).inc().getValue();
-            NutsFile newVersionFound = null;
+            NutsDefinition newVersionFound = null;
             try {
-                newVersionFound = fetch(d.getId().setVersion(newVersion).toString(), session);
+                newVersionFound = fetch(d.getId().setVersion(newVersion), session);
             } catch (NutsNotFoundException ex) {
                 //ignore
             }
@@ -342,12 +406,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsFile checkout(String id, String folder, NutsSession session) {
-        session = validateSession(session);
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_INSTALL)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_INSTALL);
-        }
-        NutsFile nutToInstall = fetchWithDependencies(id, session);
+    public NutsDefinition checkout(String id, String folder, NutsSession session) {
+        return checkout(parseRequiredId(id), folder, session);
+    }
+
+    @Override
+    public NutsDefinition checkout(NutsId id, String folder, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_INSTALL, "checkout");
+        NutsDefinition nutToInstall = fetchWithDependencies(id, session);
         if ("zip".equals(nutToInstall.getDescriptor().getExt())) {
 
             ZipUtils.unzip(nutToInstall.getFile(), resolvePath(folder), new UnzipOptions().setSkipRoot(false));
@@ -360,12 +427,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
             d.write(file, true);
 
-            return new NutsFile(
+            return new NutsDefinition(
                     newId,
                     d,
                     folder,
                     false,
                     false,
+                    null,
                     null
             );
         } else {
@@ -374,32 +442,38 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     public NutsUpdate checkUpdates(String id, String bootAPIVersion, NutsSession session) {
-        session = validateSession(session);
-        NutsId baseId = parseRequiredNutsId(id);
+        return checkUpdates(parseRequiredId(id), bootAPIVersion, session);
+    }
+
+    public NutsUpdate checkUpdates(NutsId id, String bootAPIVersion, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         NutsId oldId = null;
-        NutsFile oldFile = null;
-        NutsFile newFile = null;
+        NutsDefinition oldFile = null;
+        NutsDefinition newFile = null;
         NutsId newId = null;
         NutsSession sessionOnline = session.copy().setFetchMode(NutsFetchMode.ONLINE);
         NutsSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
-        if (id.equals(NutsConstants.NUTS_ID_BOOT_API)) {
+        if (id.getSimpleName().equals(NutsConstants.NUTS_ID_BOOT_API)) {
             oldId = getConfigManager().getBootAPI();
             String v = bootAPIVersion;
             if (StringUtils.isEmpty(v)) {
                 v = "LATEST";
             }
-            oldFile = fetch(oldId.toString(), sessionOffline);
+            oldFile = fetch(oldId, sessionOffline);
             newFile = this.fetch(NutsConstants.NUTS_ID_BOOT_API + "#" + v, sessionOnline);
             newId = newFile.getId();
-        } else if (id.equals(NutsConstants.NUTS_ID_BOOT_RUNTIME)) {
+        } else if (id.getSimpleName().equals(NutsConstants.NUTS_ID_BOOT_RUNTIME)) {
             oldId = getConfigManager().getBootRuntime();
-            oldFile = fetch(oldId.toString(), sessionOffline);
-            newId = findFirst(createSearchBuilder().addId(NutsConstants.NUTS_ID_BOOT_RUNTIME)
+            oldFile = fetch(oldId, sessionOffline);
+            newId = createQuery()
+                    .addId(NutsConstants.NUTS_ID_BOOT_RUNTIME)
                     .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootAPIVersion))
-                    .setLatestVersions(true).build(), sessionOnline);
+                    .setLatestVersions(true)
+                    .setSession(sessionOnline)
+                    .findFirst();
             if (newId != null) {
                 try {
-                    newFile = fetchWithDependencies(newId.toString(), session);
+                    newFile = fetchWithDependencies(newId, session);
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -407,18 +481,16 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         } else {
             try {
                 oldId = fetchDescriptor(id, true, session.setFetchMode(NutsFetchMode.OFFLINE)).getId();
-                oldFile = fetch(oldId.toString(), session);
+                oldFile = fetch(oldId, session);
             } catch (Exception ex) {
                 //ignore
             }
-            NutsSearch nutsSearch = createSearchBuilder().addId(NutsConstants.NUTS_ID_BOOT_RUNTIME)
+            newId = createQuery().addId(NutsConstants.NUTS_ID_BOOT_RUNTIME)
                     .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootAPIVersion))
-                    .setLatestVersions(true)
-                    .build();
-            newId = findFirst(nutsSearch, sessionOnline);
+                    .setLatestVersions(true).setSession(sessionOnline).findFirst();
             if (newId != null) {
                 try {
-                    newFile = fetchWithDependencies(newId.toString(), session);
+                    newFile = fetchWithDependencies(newId, session);
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -431,7 +503,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (cnewId != null && !cnewId.equals(coldId) && newFile != null) {
             String sOldFile = oldFile == null ? null : oldFile.getFile();
             String sNewFile = newFile.getFile();
-            return new NutsUpdate(baseId, oldId, newId, sOldFile, sNewFile, false);
+            return new NutsUpdate(id, oldId, newId, sOldFile, sNewFile, false);
         }
         return null;
     }
@@ -441,7 +513,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (options == null) {
             options = new NutsWorkspaceUpdateOptions();
         }
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         Map<String, NutsUpdate> allUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdate> extUpdates = new LinkedHashMap<>();
         NutsUpdate bootUpdate = null;
@@ -466,7 +538,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         }
         if (options.isUpdateExtensions()) {
             for (NutsId ext : getConfigManager().getExtensions()) {
-                NutsUpdate extUpdate = checkUpdates(ext.toString(), bootVersion, session);
+                NutsUpdate extUpdate = checkUpdates(ext, bootVersion, session);
                 if (extUpdate != null) {
                     allUpdates.put(extUpdate.getAvailableId().getSimpleName(), extUpdate);
                     extUpdates.put(extUpdate.getAvailableId().getSimpleName(), extUpdate);
@@ -557,7 +629,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (!exclude) {
             boolean coreFound = false;
             for (NutsId ext : getConfigManager().getExtensions()) {
-                if (ext.isSameFullName(parseNutsId(getConfigManager().getBootRuntime().getSimpleName()))) {
+                if (ext.equalsSimpleName(getConfigManager().getBootRuntime())) {
                     coreFound = true;
                     break;
                 }
@@ -574,7 +646,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             id = id.setVersion("LATEST");
         }
         List<URLLocation> bootUrls = new ArrayList<>();
-        for (URLLocation r : extensionManager.getExtensionURLLocations(id.toString(), NutsConstants.NUTS_ID_BOOT_API, "properties")) {
+        for (URLLocation r : extensionManager.getExtensionURLLocations(id, NutsConstants.NUTS_ID_BOOT_API, "properties")) {
             bootUrls.add(r);
             if (r.getUrl() != null) {
                 Properties p = IOUtils.loadURLProperties(r.getUrl());
@@ -599,13 +671,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
 //    @Override
-//    public NutsFile updateWorkspace(String version, NutsConfirmAction foundAction, NutsSession session) {
+//    public NutsDefinition updateWorkspace(String version, NutsConfirmAction foundAction, NutsSession session) {
 //        session = validateSession(session);
 //        String nutsIdStr = NutsConstants.NUTS_ID_BOOT_API + (StringUtils.isEmpty(version) ? "" : ("#") + version);
-//        NutsFile[] bootIdFile = bootstrapUpdate(nutsIdStr, foundAction, session);
+//        NutsDefinition[] bootIdFile = bootstrapUpdate(nutsIdStr, foundAction, session);
 //        Properties bootInfo = getBootInfo(bootIdFile[0].getId());
 //        String runtimeId = bootInfo.getProperty("runtimeId");
-//        NutsFile[] runtimeIdFiles = bootstrapUpdate(runtimeId, foundAction, session);
+//        NutsDefinition[] runtimeIdFiles = bootstrapUpdate(runtimeId, foundAction, session);
 //        if (runtimeIdFiles.length == 0) {
 //            throw new NutsBootException("Unable to locate update for " + runtimeId);
 //        }
@@ -633,7 +705,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //
 //        Properties coreProperties = new Properties();
 //        List<String> dependencies = new ArrayList<>();
-//        for (NutsFile fetchDependency : runtimeIdFiles) {
+//        for (NutsDefinition fetchDependency : runtimeIdFiles) {
 //            dependencies.add(fetchDependency.getId().setNamespace(null).toString());
 //        }
 //        coreProperties.put("project.id", runtimeIdFile.getSimpleName());
@@ -642,13 +714,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //        coreProperties.put("project.dependencies.compile", StringUtils.join(";", dependencies));
 //        IOUtils.saveProperties(coreProperties, null, new File(r, CoreNutsUtils.getPath(runtimeIdFile, ".userProperties", File.separator)));
 //
-//        List<NutsFile> updatedExtensions = new ArrayList<>();
+//        List<NutsDefinition> updatedExtensions = new ArrayList<>();
 //        for (NutsId ext : getConfigManager().getExtensions()) {
 //            NutsVersion nversion = ext.getVersion();
 //            if (!nversion.isSingleValue()) {
 //                //will update bootstrap workspace so that next time
 //                //it will be loaded
-//                NutsFile[] newVersion = bootstrapUpdate(ext.toString(), foundAction, session);
+//                NutsDefinition[] newVersion = bootstrapUpdate(ext.toString(), foundAction, session);
 //                if (!newVersion[0].getId().getVersion().equals(nversion)) {
 //                    updatedExtensions.add(newVersion[0]);
 //                }
@@ -663,38 +735,41 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //    }
 
     @Override
-    public NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsConfirmAction foundAction, NutsSession session) {
-        session = validateSession(session);
-        Map<String, NutsFile> all = new HashMap<>();
+    public NutsDefinition[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsConfirmAction foundAction, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+        Map<String, NutsDefinition> all = new HashMap<>();
         for (String id : new HashSet<>(Arrays.asList(toUpdateIds))) {
-            NutsFile updated = update(id, foundAction, session);
+            NutsDefinition updated = update(id, foundAction, session);
             all.put(updated.getId().getSimpleName(), updated);
         }
         if (toRetainDependencies != null) {
             for (String d : new HashSet<>(Arrays.asList(toRetainDependencies))) {
                 NutsDependency dd = CoreNutsUtils.parseNutsDependency(d);
-                if (all.containsKey(dd.getFullName())) {
-                    NutsFile updated = all.get(dd.getFullName());
+                if (all.containsKey(dd.getLongName())) {
+                    NutsDefinition updated = all.get(dd.getLongName());
                     if (!dd.getVersion().toFilter().accept(updated.getId().getVersion())) {
                         throw new NutsIllegalArgumentException(dd + " unsatisfied  : " + updated.getId().getVersion());
                     }
                 }
             }
         }
-        return all.values().toArray(new NutsFile[0]);
+        return all.values().toArray(new NutsDefinition[0]);
     }
 
     @Override
-    public NutsFile update(String id, NutsConfirmAction uptoDateAction, NutsSession session) {
-        session = validateSession(session);
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_INSTALL)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_INSTALL);
-        }
-        NutsVersion version = parseRequiredNutsId(id).getVersion();
+    public NutsDefinition update(String id, NutsConfirmAction uptoDateAction, NutsSession session) {
+        return update(parseRequiredId(id), uptoDateAction, session);
+    }
+
+    @Override
+    public NutsDefinition update(NutsId id, NutsConfirmAction uptoDateAction, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_INSTALL, "update");
+        NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
             throw new NutsIllegalArgumentException("Version is too restrictive. You would use fetch or install instead");
         }
-        NutsFile nutToInstall = fetchWithDependencies(id, session);
+        NutsDefinition nutToInstall = fetchWithDependencies(id, session);
         if (nutToInstall != null && nutToInstall.getFile() != null) {
             boolean requiredUpdate = !nutToInstall.isInstalled() && !nutToInstall.isCached();
             if (!requiredUpdate) {
@@ -707,15 +782,21 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     }
                 }
             }
-            postInstall(nutToInstall, getInstaller(nutToInstall, session), session);
+            //TODO should consider postUpdate
+            postInstall(nutToInstall, new String[0], getInstaller(nutToInstall, session), session);
         }
         return nutToInstall;
     }
 
     @Override
     public boolean isInstalled(String id, boolean checkDependencies, NutsSession session) {
-        session = validateSession(session);
-        NutsFile nutToInstall = null;
+        return isInstalled(parseRequiredId(id), checkDependencies, session);
+    }
+
+    @Override
+    public boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+        NutsDefinition nutToInstall = null;
         try {
             if (checkDependencies) {
                 nutToInstall = fetchWithDependencies(id, session.copy().setFetchMode(NutsFetchMode.OFFLINE).setTransitive(false));
@@ -729,12 +810,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public boolean uninstall(String id, boolean deleteData, NutsSession session) {
-        session = validateSession(session);
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_UNINSTALL)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_UNINSTALL);
-        }
-        NutsFile nutToInstall = fetchWithDependencies(id, session.copy().setTransitive(false));
+    public boolean uninstall(String id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session) {
+        return uninstall(parseRequiredId(id), args, notFoundAction, deleteData, session);
+    }
+
+    @Override
+    public boolean uninstall(NutsId id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_UNINSTALL, "uninstall");
+        NutsDefinition nutToInstall = fetchWithDependencies(id, session.copy().setTransitive(false));
         if (!isInstalled(nutToInstall, session)) {
             throw new NutsIllegalArgumentException(id + " Not Installed");
         }
@@ -742,15 +826,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (ii == null) {
             return false;
         }
-        NutsDescriptor descriptor = nutToInstall.getDescriptor();
-        NutsExecutorDescriptor installer = descriptor.getInstaller();
-        String installFolder = getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS);
-        NutsExecutionContext executionContext = new NutsExecutionContextImpl(
-                nutToInstall, new String[0],
-                installer == null ? null : installer.getArgs(), installer == null ? null : installer.getProperties(),
-                new Properties(),
-                installFolder,
-                session, this, true);
+//        NutsDescriptor descriptor = nutToInstall.getDescriptor();
+        NutsExecutionContext executionContext = createNutsExecutionContext(nutToInstall, args, session, true, null);
         ii.uninstall(executionContext, deleteData);
         IOUtils.delete(new File(getStoreRoot(id, RootFolderType.PROGRAMS)));
         IOUtils.delete(new File(getStoreRoot(id, RootFolderType.TEMP)));
@@ -768,38 +845,39 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public boolean isFetched(String id, NutsSession session) {
-        session = validateSession(session);
-        return isFetched(parseRequiredNutsId(id), session);
+        return isFetched(parseRequiredId(id), session);
     }
 
     @Override
-    public NutsFile fetchWithDependencies(String id, NutsSession session) {
-        session = validateSession(session);
-        NutsFile fetched = fetch(id, session);
-        fetchDependencies(new NutsDependencySearch(id), session);
+    public NutsDefinition fetchWithDependencies(String id, NutsSession session) {
+        return fetchWithDependencies(parseRequiredId(id), session);
+    }
+
+    @Override
+    public NutsDefinition fetchWithDependencies(NutsId id, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+        NutsDefinition fetched = fetch(id, session);
+        createQuery().addId(fetched.getId()).setSession(session).dependenciesOnly().fetch();
         return fetched;
     }
 
     @Override
-    public NutsFile fetch(String id, NutsSession session) {
-        session = validateSession(session);
-        return fetchSimple(parseRequiredNutsId(id), session);
+    public NutsDefinition fetch(String id, NutsSession session) {
+        return fetch(parseRequiredId(id), session);
     }
 
     @Override
-    public NutsFile[] fetchDependencies(NutsDependencySearch search, NutsSession session) {
-        session = validateSession(session);
-        return fetchDependencies(search, new NutsIdGraph(), session);
+    public NutsDefinition fetch(NutsId id, NutsSession session) {
+        return fetchSimple(id, session);
     }
 
     @Override
     public NutsId resolveId(String id, NutsSession session) {
-        session = validateSession(session);
-        NutsId nutsId = parseRequiredNutsId(id);
+        NutsId nutsId = parseRequiredId(id);
         return resolveId(nutsId, session);
     }
 
-    public NutsId resolveId0(NutsId id, NutsSession session) {
+    protected NutsId resolveId0(NutsId id, NutsSession session) {
         NutsRepositoryFilter repositoryFilter = null;
         for (NutsRepository repo : getEnabledRepositories(id, repositoryFilter, session)) {
             try {
@@ -819,18 +897,18 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     public NutsId resolveId(NutsId id, NutsSession session) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         //add env parameters to fetch adequate nuts
         id = NutsWorkspaceHelper.configureFetchEnv(id, this);
 
         for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
-            session = session.copy().setFetchMode(mode);
+            NutsSession sessionCopy = session.copy().setFetchMode(mode);
             try {
                 if (id.getGroup() == null) {
                     String[] groups = getConfigManager().getImports();
                     for (String group : groups) {
                         try {
-                            NutsId f = resolveId0(id.setGroup(group), session);
+                            NutsId f = resolveId0(id.setGroup(group), sessionCopy);
                             if (f != null) {
                                 return f;
                             }
@@ -840,7 +918,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     }
                     throw new NutsNotFoundException(id);
                 }
-                return resolveId0(id, session);
+                return resolveId0(id, sessionCopy);
             } catch (NutsNotFoundException ex) {
                 //ignore
             }
@@ -848,51 +926,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         throw new NutsNotFoundException(id);
     }
 
-    @Override
-    public NutsId findOne(NutsSearch search, NutsSession session) {
-        List<NutsId> r = find(search, session);
-        if (r.isEmpty()) {
-            return null;
-        }
-        if (r.size() > 1) {
-            throw new IllegalArgumentException("Too many results (" + r.size() + " but expected one only)");
-        }
-        return r.get(0);
-    }
-
-    @Override
-    public NutsId findFirst(NutsSearch search, NutsSession session) {
-        List<NutsId> r = find(search, session);
-        if (r.isEmpty()) {
-            return null;
-        }
-        return r.get(0);
-    }
-
-    @Override
-    public List<NutsId> find(NutsSearch search, NutsSession session) {
-        session = validateSession(session);
-        List<NutsId> li = CollectionUtils.toList(findIterator(search, session));
-        if (search.isSort()) {
-            li.sort(new Comparator<NutsId>() {
-                @Override
-                public int compare(NutsId o1, NutsId o2) {
-                    int x = o1.getSimpleName().compareTo(o2.getSimpleName());
-                    if (x != 0) {
-                        return x;
-                    }
-                    //latests versions first
-                    x = o1.getVersion().compareTo(o2.getVersion());
-                    return -x;
-                }
-            });
-        }
-        return li;
-    }
-
-    @Override
-    public Iterator<NutsId> findIterator(NutsSearch search, NutsSession session) {
-        session = validateSession(session);
+    public Iterator<NutsId> findIterator(DefaultNutsSearch search) {
+        NutsSession session = CoreNutsUtils.validateSession(search.getSession(), this);
         NutsVersionFilter versionFilter = search.getVersionFilter();
         NutsIdFilter idFilter = search.getIdFilter();
         NutsRepositoryFilter repositoryFilter = search.getRepositoryFilter();
@@ -902,7 +937,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             IteratorList<NutsId> result = new IteratorList<>();
             for (String id : goodIds) {
                 Iterator<NutsId> good = null;
-                NutsId nutsId = parseNutsId(id);
+                NutsId nutsId = parseId(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (nutsId.getGroup() == null) {
@@ -938,14 +973,24 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                         result.addNonEmpty(good);
                     } else if (nutsId.getGroup() == null) {
                         //now will look with *:artifactId pattern
-                        NutsSearchBuilder search2 = createSearchBuilder()
-                                .setAll(search)
+                        NutsQuery search2 = createQuery()
+                                .addId(search.getIds())
+                                .setIdFilter(search.getIdFilter())
+//                                .setIdFilter(search.getDependencyFilter())
+                                .setRepositoryFilter(search.getRepositoryFilter())
+                                .setVersionFilter(search.getVersionFilter())
+                                .setDescriptorFilter(search.getDescriptorFilter())
+//                                .setScope(search.getScope())
+                                .setLatestVersions(search.isLatestVersions())
+                                .setSort(search.isSort())
+                                .setSession(session)
                                 .setIds();
+
                         search2.setIdFilter(new NutsIdFilterOr(
                                 new NutsPatternIdFilter(new String[]{nutsId.setGroup("*").toString()}),
                                 CoreNutsUtils.simplify(search2.getIdFilter())
                         ));
-                        Iterator<NutsId> b = findIterator(search2.build(), session);
+                        Iterator<NutsId> b = search2.findIterator();
                         b = CollectionUtils.nullifyIfEmpty(b);
                         if (b != null) {
                             result.addNonEmpty(b);
@@ -964,7 +1009,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             if (ids.length == 1) {
                 String id = ids[0];
                 if (id.indexOf('*') < 0 && id.indexOf(':') > 0) {
-                    NutsId nid = parseNutsId(id);
+                    NutsId nid = parseId(id);
                     if (nid != null) {
 
                         for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
@@ -996,7 +1041,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
         for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
             NutsSession session2 = session.copy().setFetchMode(mode);
-            IteratorList<NutsId> all = new IteratorList<NutsId>();
+            IteratorList<NutsId> all = new IteratorList<>();
             for (NutsRepository repo : getEnabledRepositories(repositoryFilter)) {
                 try {
                     if (repositoryFilter == null || repositoryFilter.accept(repo)) {
@@ -1021,14 +1066,18 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public NutsDescriptor fetchDescriptor(String idString, boolean effective, NutsSession session) {
-        session = validateSession(session);
+        return fetchDescriptor(parseRequiredId(idString), effective, session);
+    }
+
+    @Override
+    public NutsDescriptor fetchDescriptor(NutsId id, boolean effective, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         long startTime = System.currentTimeMillis();
-        NutsId id = parseRequiredNutsId(idString);
         if (log.isLoggable(Level.FINEST)) {
             traceMessage(session, id, TraceResult.START, "Fetch descriptor", 0);
         }
         try {
-            NutsDescriptor v = fetchDescriptor0(idString, effective, session);
+            NutsDescriptor v = fetchDescriptor0(id, effective, session);
             if (log.isLoggable(Level.FINEST)) {
                 traceMessage(session, id, TraceResult.SUCCESS, "Fetch descriptor", startTime);
             }
@@ -1083,20 +1132,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 + StringUtils.alignLeft(message, 18) + " " + id + timeMessage);
     }
 
-    protected NutsDescriptor fetchDescriptor0(String idString, boolean effective, NutsSession session) {
-        session = validateSession(session);
-        NutsId id = parseRequiredNutsId(idString);
+    protected NutsDescriptor fetchDescriptor0(NutsId id, boolean effective, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         id = NutsWorkspaceHelper.configureFetchEnv(id, this);
         Set<String> errors = new LinkedHashSet<>();
         NutsRepositoryFilter repositoryFilter = null;
         for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
-            session = session.copy().setFetchMode(mode);
+            NutsSession session2 = session.copy().setFetchMode(mode);
             try {
                 if (id.getGroup() == null) {
                     String[] groups = getConfigManager().getImports();
                     for (String group : groups) {
                         try {
-                            NutsDescriptor f = fetchDescriptor0(id.setGroup(group).toString(), effective, session);
+                            NutsDescriptor f = fetchDescriptor0(id.setGroup(group), effective, session2);
                             if (f != null) {
                                 return f;
                             }
@@ -1108,19 +1156,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     throw new NutsNotFoundException(id);
                 }
 
-                for (NutsRepository repo : getEnabledRepositories(id, repositoryFilter, session)) {
+                for (NutsRepository repo : getEnabledRepositories(id, repositoryFilter, session2)) {
                     try {
-                        NutsDescriptor child = repo.fetchDescriptor(id, session);
+                        NutsDescriptor child = repo.fetchDescriptor(id, session2);
                         if (child != null) {
 //                            if (StringUtils.isEmpty(child.getId().getNamespace())) {
 //                                child = child.setId(child.getId().setNamespace(repo.getRepositoryId()));
 //                            }
                             if (effective) {
                                 try {
-                                    return resolveEffectiveDescriptor(child, session);
+                                    return resolveEffectiveDescriptor(child, session2);
                                 } catch (NutsNotFoundException ex) {
                                     if (log.isLoggable(Level.FINE)) {
-                                        log.log(Level.FINE, "Unable to resolve Effective descriptor for " + idString);
+                                        log.log(Level.FINE, "Unable to resolve Effective descriptor for " + id);
                                     }
                                     //ignore
                                 }
@@ -1136,14 +1184,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 //ignore
             }
         }
-        throw new NutsNotFoundException(idString, StringUtils.join("\n", errors), null);
+        throw new NutsNotFoundException(id, StringUtils.join("\n", errors), null);
     }
 
     @Override
     public String fetchHash(String id, NutsSession session) {
-        session = validateSession(session);
-        long startTime = System.currentTimeMillis();
-        NutsId nutsId = parseRequiredNutsId(id);
+        session = CoreNutsUtils.validateSession(session, this);
+        NutsId nutsId = parseRequiredId(id);
         NutsRepositoryFilter repositoryFilter = null;
         for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
             NutsSession session2 = session.copy().setFetchMode(mode);
@@ -1163,8 +1210,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public String fetchDescriptorHash(String id, NutsSession session) {
-        session = validateSession(session);
-        NutsId nutsId = parseRequiredNutsId(id);
+        session = CoreNutsUtils.validateSession(session, this);
+        NutsId nutsId = parseRequiredId(id);
         NutsRepositoryFilter repositoryFilter = null;
         for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
             NutsSession session2 = session.copy().setFetchMode(mode);
@@ -1184,22 +1231,25 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public void push(String id, String repositoryId, NutsConfirmAction foundAction, NutsSession session) {
-        session = validateSession(session);
-        NutsId nid = parseRequiredNutsId(id);
-        session = validateSession(session);
+        push(parseRequiredId(id), repositoryId, foundAction, session);
+    }
+
+    @Override
+    public void push(NutsId id, String repositoryId, NutsConfirmAction foundAction, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         NutsRepositoryFilter repositoryFilter = null;
-        if (StringUtils.trim(nid.getVersion().getValue()).endsWith(NutsConstants.VERSION_CHECKED_OUT_EXTENSION)) {
-            throw new NutsIllegalArgumentException("Invalid Version " + nid.getVersion());
+        if (StringUtils.trim(id.getVersion().getValue()).endsWith(NutsConstants.VERSION_CHECKED_OUT_EXTENSION)) {
+            throw new NutsIllegalArgumentException("Invalid Version " + id.getVersion());
         }
         NutsSession nonTransitiveSession = session.copy().setTransitive(false);
-        NutsFile file = fetch(id, nonTransitiveSession);
+        NutsDefinition file = fetch(id, nonTransitiveSession);
         if (file == null) {
             throw new NutsIllegalArgumentException("Nothing to push");
         }
         if (StringUtils.isEmpty(repositoryId)) {
             Set<String> errors = new LinkedHashSet<>();
             for (NutsRepository repo : getEnabledRepositories(file.getId(), repositoryFilter, session)) {
-                NutsFile id2 = null;
+                NutsDefinition id2 = null;
                 try {
                     id2 = repo.fetch(file.getId(), session);
                 } catch (Exception e) {
@@ -1208,7 +1258,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 }
                 if (id2 != null && repo.isSupportedMirroring()) {
                     try {
-                        repo.push(nid, repositoryId, foundAction, session);
+                        repo.push(id, repositoryId, foundAction, session);
                         return;
                     } catch (Exception e) {
                         errors.add(StringUtils.exceptionToString(e));
@@ -1225,8 +1275,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsFile createBundle(String contentFolder, String destFile, NutsSession session) {
-        session = validateSession(session);
+    public NutsDefinition createBundle(String contentFolder, String destFile, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         File contentFolderObj = new File(contentFolder);
         if (contentFolderObj.isDirectory()) {
             NutsDescriptor descriptor = null;
@@ -1243,12 +1293,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                                 + "/" + descriptor.getId().getGroup() + "." + descriptor.getId().getName() + "." + descriptor.getId().getVersion() + ".zip");
                     }
                     ZipUtils.zip(contentFolderObj.getPath(), new ZipOptions(), destFile);
-                    return new NutsFile(
+                    return new NutsDefinition(
                             descriptor.getId(),
                             descriptor,
                             destFile,
                             true,
                             false,
+                            null,
                             null
                     );
                 } else {
@@ -1263,7 +1314,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession session) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         if (descriptor == null) {
             throw new NutsNotFoundException("<null>");
         }
@@ -1276,7 +1327,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if ((StringUtils.isEmpty(g)) || (StringUtils.isEmpty(v))) {
             NutsId[] parents = descriptor.getParents();
             for (NutsId parent : parents) {
-                NutsId p = resolveEffectiveId(fetchDescriptor(parent.toString(), false, session), session);
+                NutsId p = resolveEffectiveId(fetchDescriptor(parent, false, session), session);
                 if (StringUtils.isEmpty(g)) {
                     g = p.getGroup();
                 }
@@ -1300,12 +1351,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         NutsId[] parents = descriptor.getParents();
         NutsDescriptor[] parentDescriptors = new NutsDescriptor[parents.length];
         for (int i = 0; i < parentDescriptors.length; i++) {
             parentDescriptors[i] = resolveEffectiveDescriptor(
-                    fetchDescriptor(parents[i].toString(), false, session),
+                    fetchDescriptor(parents[i], false, session),
                     session
             );
         }
@@ -1386,8 +1437,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //        }
 //    }
     public String copyTo(String id, String localPath, NutsSession session) {
-        session = validateSession(session);
-        return copyTo(parseRequiredNutsId(id), session, localPath);
+        return copyTo(parseRequiredId(id), session, localPath);
     }
 
     public NutsWorkspaceExtensionManager getExtensionManager() {
@@ -1408,14 +1458,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public int getSupportLevel(NutsBootWorkspace criteria) {
+    public int getSupportLevel(Object criteria) {
         return DEFAULT_SUPPORT;
     }
 
-    @Override
     public int exec(String nutsJarFile0, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session) {
         File nutsJarFile = nutsJarFile0 == null ? null : new File(nutsJarFile0);
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         PrintStream out = resolveOut(session);
         if (copyCurrentToFile) {
             File acFile = CoreIOUtils.fileByPath(getConfigManager().resolveNutsJarFile());
@@ -1526,19 +1575,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     private PrintStream resolveOut(NutsSession session) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         return (session == null || session.getTerminal() == null) ? createNullPrintStream() : session.getTerminal().getOut();
     }
 
-    protected NutsSession validateSession(NutsSession session) {
-        if (session == null) {
-            session = createSession();
-        }
-        return session;
-    }
-
     protected void initializeWorkspace(String archetype, NutsSession session) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         if (StringUtils.isEmpty(archetype)) {
             archetype = "default";
         }
@@ -1570,15 +1612,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 //        }
     }
 
-    protected NutsInstallerComponent getInstaller(NutsFile nutToInstall, NutsSession session) {
-        session = validateSession(session);
+    protected NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         if (nutToInstall != null && nutToInstall.getFile() != null) {
             NutsDescriptor descriptor = nutToInstall.getDescriptor();
             NutsExecutorDescriptor installerDescriptor = descriptor.getInstaller();
-            NutsFile runnerFile = nutToInstall;
+            NutsDefinition runnerFile = nutToInstall;
             if (installerDescriptor != null && installerDescriptor.getId() != null) {
                 if (installerDescriptor.getId() != null) {
-                    runnerFile = fetchWithDependencies(installerDescriptor.getId().toString(), session.copy().setTransitive(false));
+                    runnerFile = fetchWithDependencies(installerDescriptor.getId(), session.copy().setTransitive(false));
                 }
             }
             if (runnerFile == null) {
@@ -1589,47 +1631,41 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 return best;
             }
         }
-        return null;
+        return new CommandForIdNutsInstallerComponent();
     }
 
-    protected boolean isInstalled(NutsFile nutToInstall, NutsSession session) {
-        session = validateSession(session);
-        if (!getSecurityManager().isAllowed(NutsConstants.RIGHT_FETCH_DESC)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_FETCH_DESC);
-        }
-        NutsInstallerComponent ii = getInstaller(nutToInstall, session);
-        if (ii == null) {
-            return true;
-        }
-
-        NutsExecutorDescriptor installer = nutToInstall.getDescriptor().getInstaller();
-        NutsExecutionContext executionContext = new NutsExecutionContextImpl(
-                nutToInstall, new String[0], installer == null ? null : installer.getArgs(), null,
-                installer == null ? null : installer.getProperties(),
-                getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS),
-                session, this, true);
-        return ii.isInstalled(executionContext);
+    protected boolean isInstalled(NutsDefinition nutToInstall, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
+//        NutsInstallerComponent ii = getInstaller(nutToInstall, session);
+//        if (ii == null) {
+//            return true;
+//        }
+        NutsExecutionContext executionContext = createNutsExecutionContext(nutToInstall, new String[0], session, true, nutToInstall.getId().getSimpleName());
+        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsDefinition().getId(), RootFolderType.PROGRAMS));
+        File log = new File(installFolder, ".nuts-install.log");
+        return log.exists();
     }
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
         for (NutsExecutorComponent nutsExecutorComponent : getExtensionManager().createAll(NutsExecutorComponent.class)) {
-            if (nutsExecutorComponent.getId().isSameFullName(nutsId)) {
+            if (nutsExecutorComponent.getId().equalsSimpleName(nutsId)) {
                 return nutsExecutorComponent;
             }
         }
         return new CustomNutsExecutorComponent(nutsId);
     }
 
-    private NutsExecutorComponent resolveNutsExecutorComponent(NutsFile nutsFile) {
-        NutsExecutorComponent executorComponent = getExtensionManager().createSupported(NutsExecutorComponent.class, nutsFile);
+    private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
+        NutsExecutorComponent executorComponent = getExtensionManager().createSupported(NutsExecutorComponent.class, nutsDefinition);
         if (executorComponent != null) {
             return executorComponent;
         }
-        throw new NutsNotFoundException("Nuts Executor not found for " + nutsFile);
+        throw new NutsExecutorNotFoundException(nutsDefinition.getId());
     }
 
-    protected int exec(NutsFile nutToRun, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failSafe, NutsSession session) {
-        session = validateSession(session);
+    protected int exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failSafe, NutsSession session) {
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_EXEC, "exec");
+        session = CoreNutsUtils.validateSession(session, this);
         if (nutToRun != null && nutToRun.getFile() != null) {
             NutsDescriptor descriptor = nutToRun.getDescriptor();
             if (!descriptor.isExecutable()) {
@@ -1638,7 +1674,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
             NutsExecutorDescriptor executor = descriptor.getExecutor();
             NutsExecutorComponent execComponent = null;
-            List<String> executrorArgs = new ArrayList<>();
+            List<String> executorArgs = new ArrayList<>();
             Properties execProps = null;
             if (executor == null) {
                 execComponent = resolveNutsExecutorComponent(nutToRun);
@@ -1647,56 +1683,20 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     execComponent = resolveNutsExecutorComponent(nutToRun);
                 } else {
                     execComponent = resolveNutsExecutorComponent(executor.getId());
-//                    NutsFile runnerFile = fetch(executor.getId(), session, true);
-//                    execComponent = resolveNutsExecutorComponent(runnerFile);
                 }
-                executrorArgs.addAll(Arrays.asList(executor.getArgs()));
+                executorArgs.addAll(Arrays.asList(executor.getOptions()));
                 execProps = executor.getProperties();
             }
-            executrorArgs.addAll(Arrays.asList(executorOptions));
-            boolean nowait = false;
-            if (appArgs.length > 0 && "&".equals(appArgs[appArgs.length - 1])) {
-                String[] arg2 = new String[appArgs.length - 1];
-                System.arraycopy(appArgs, 0, arg2, 0, arg2.length);
-                appArgs = arg2;
-                nowait = true;
-            }
-            if (appArgs.length > 0 && ">null".equals(appArgs[appArgs.length - 1])) {
-                String[] arg2 = new String[appArgs.length - 1];
-                System.arraycopy(appArgs, 0, arg2, 0, arg2.length);
-                appArgs = arg2;
-                session = session.copy();
-                PrintStream nostream = createNullPrintStream();
-                NutsTerminal t = createTerminal(null, nostream, nostream);
-                session.setTerminal(t);
-            }
-            final NutsExecutionContext executionContext = new NutsExecutionContextImpl(nutToRun, appArgs
-                    , executrorArgs.toArray(new String[0])
-                    , env, execProps, dir, session, this, nutToRun.getDescriptor().getExecutor(), failSafe);
-            if (nowait) {
-                final NutsExecutorComponent finalExecComponent = execComponent;
-                NutsSession finalSession = session;
-                Thread thread = new Thread("Exec-" + nutToRun.getId().toString()) {
-                    @Override
-                    public void run() {
-                        try {
-                            int result = finalExecComponent.exec(executionContext);
-                        } catch (Exception e) {
-                            e.printStackTrace(finalSession.getTerminal().getErr());
-                        }
-                    }
-                };
-                thread.setDaemon(true);
-                thread.start();
-                return 0;
-            } else {
-                return execComponent.exec(executionContext);
-            }
+            executorArgs.addAll(Arrays.asList(executorOptions));
+            final NutsExecutionContext executionContext = new NutsExecutionContextImpl(nutToRun,
+                    appArgs, executorArgs.toArray(new String[0])
+                    , env, execProps, dir, session, this, failSafe, commandName);
+            return execComponent.exec(executionContext);
         }
-        throw new NutsNotFoundException("Nuts not found " + nutToRun);
+        throw new NutsNotFoundException(nutToRun.getId());
     }
 
-    protected NutsDependencyFilter createNutsDependencyFilter(NutsDependencyFilter filter, NutsId[] exclusions) {
+    public NutsDependencyFilter createNutsDependencyFilter(NutsDependencyFilter filter, NutsId[] exclusions) {
         if (exclusions == null || exclusions.length == 0) {
             return filter;
         }
@@ -1705,7 +1705,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     protected NutsId deploy(String contentFile0, NutsDescriptor descriptor, String repositoryId, NutsConfirmAction foundAction, NutsSession session) {
         File contentFile = contentFile0 == null ? null : new File(contentFile0);
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         File tempFile = null;
         try {
             if (contentFile.isDirectory()) {
@@ -1757,10 +1757,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
             NutsId effId = resolveEffectiveId(descriptor, transitiveSession);
             for (String os : descriptor.getOs()) {
-                CorePlatformUtils.checkSupportedOs(parseRequiredNutsId(os).getSimpleName());
+                CorePlatformUtils.checkSupportedOs(parseRequiredId(os).getSimpleName());
             }
             for (String arch : descriptor.getArch()) {
-                CorePlatformUtils.checkSupportedArch(parseRequiredNutsId(arch).getSimpleName());
+                CorePlatformUtils.checkSupportedArch(parseRequiredId(arch).getSimpleName());
             }
             if (StringUtils.isEmpty(repositoryId)) {
                 NutsRepositoryFilter repositoryFilter = null;
@@ -1819,7 +1819,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     protected String copyTo(NutsId id, NutsSession session, String localPath) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         id = resolveId(id, session);
 //        id = configureFetchEnv(id);
         Set<String> errors = new LinkedHashSet<>();
@@ -1838,36 +1838,21 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     if (fetched != null) {
                         return fetched;
                     } else {
-                        errors.add(StringUtils.exceptionToString(new NutsNotFoundException(id.toString())));
+                        errors.add(StringUtils.exceptionToString(new NutsNotFoundException(id)));
                     }
                 } catch (Exception ex) {
                     errors.add(StringUtils.exceptionToString(ex));
                 }
             }
         }
-        throw new NutsNotFoundException(id.toString(), StringUtils.join("\n", errors), null);
-    }
-
-    protected void checkNutsId(NutsId id, String right) {
-        if (id == null) {
-            throw new NutsIllegalArgumentException("Missing id");
-        }
-        if (!getSecurityManager().isAllowed(right)) {
-            throw new NutsSecurityException("Not Allowed " + right);
-        }
-        if (StringUtils.isEmpty(id.getGroup())) {
-            throw new NutsIllegalArgumentException("Missing group");
-        }
-        if (StringUtils.isEmpty(id.getName())) {
-            throw new NutsIllegalArgumentException("Missing name");
-        }
+        throw new NutsNotFoundException(id, StringUtils.join("\n", errors), null);
     }
 
     protected NutsRepository getEnabledRepositoryOrError(String repoId) {
         NutsRepository r = getRepositoryManager().findRepository(repoId);
         if (r != null) {
             if (!isEnabledRepository(repoId)) {
-                throw new NutsNotFoundException("Repository " + repoId + " is disabled.");
+                throw new NutsRepositoryNotFoundException("Repository " + repoId + " is disabled.");
             }
         }
         return r;
@@ -1924,8 +1909,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return false;
     }
 
-    private boolean isInstallable(NutsFile nutToInstall, NutsSession session) {
-        session = validateSession(session);
+    private boolean isInstallable(NutsDefinition nutToInstall, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         if (nutToInstall != null && nutToInstall.getFile() != null) {
             NutsInstallerComponent nutsInstallerComponent = getInstaller(nutToInstall, session);
             if (nutsInstallerComponent == null) {
@@ -1936,18 +1921,29 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return false;
     }
 
-    private void postInstall(NutsFile nutToInstall, NutsInstallerComponent installerComponent, NutsSession session) {
+    private void postInstall(NutsDefinition nutToInstall, String[] args, NutsInstallerComponent installerComponent, NutsSession session) {
         if (nutToInstall == null) {
             return;
         }
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         boolean reinstall = nutToInstall.isInstalled();
         if (installerComponent != null) {
             if (nutToInstall.getFile() != null) {
-                NutsExecutionContext executionContext = createNutsExecutionContext(nutToInstall, session, true);
-                if (!installerComponent.isInstalled(executionContext)) {
-                    installerComponent.install(executionContext);
-                    nutToInstall.setInstalled(true);
+                NutsExecutionContext executionContext = createNutsExecutionContext(nutToInstall, args, session, true, null);
+                if (!isInstalled(executionContext.getNutsDefinition(), session)) {
+                    setInstalled(executionContext);
+                    try {
+                        installerComponent.install(executionContext);
+                        executionContext.getWorkspace().getTerminal().getFormattedOut().printf(formatId(nutToInstall.getId()) + " Installed successfully.\n");
+                    } catch (Exception ex) {
+                        executionContext.getWorkspace().getTerminal().getFormattedOut().printf(formatId(nutToInstall.getId()) + " @@Failed@@ to install : %s.\n", ex.toString());
+                        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsDefinition().getId(), RootFolderType.PROGRAMS));
+                        File log = new File(installFolder, ".nuts-install.log");
+                        if (log.isFile()) {
+                            log.delete();
+                        }
+                        throw new NutsExecutionException("Unable to install "+nutToInstall.getId().toString(),ex, 1);
+                    }
                     String installFolder = getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS);
                     nutToInstall.setInstallFolder(installFolder);
                 }
@@ -1958,20 +1954,26 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         }
     }
 
-    private NutsExecutionContext createNutsExecutionContext(NutsFile nutToInstall, NutsSession session, boolean failFast) {
+    private NutsExecutionContext createNutsExecutionContext(NutsDefinition nutToInstall, String[] args, NutsSession session, boolean failFast, String commandName) {
+        if (commandName == null) {
+            commandName = resolveCommandName(nutToInstall.getId());
+        }
         NutsDescriptor descriptor = nutToInstall.getDescriptor();
         NutsExecutorDescriptor installer = descriptor.getInstaller();
-        String[] args = null;
+        List<String> iargs = new ArrayList<>();
         Properties props = null;
-        String dir = null;
         if (installer != null) {
-            args = installer.getArgs();
+            if (installer.getOptions() != null) {
+                iargs.addAll(Arrays.asList(installer.getOptions()));
+            }
             props = installer.getProperties();
-
+        }
+        if (args != null) {
+            iargs.addAll(Arrays.asList(args));
         }
         String installFolder = getStoreRoot(nutToInstall.getId(), RootFolderType.PROGRAMS);
         Properties env = new Properties();
-        return new NutsExecutionContextImpl(nutToInstall, new String[0], args, env, props, installFolder, session, this, failFast);
+        return new NutsExecutionContextImpl(nutToInstall, new String[0], iargs.toArray(new String[0]), env, props, installFolder, session, this, failFast, commandName);
     }
 
     private NutsId toCanonicalForm(NutsId id) {
@@ -1984,29 +1986,30 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return id;
     }
 
-    private NutsFile[] bootstrapUpdate(String id, NutsConfirmAction foundAction, NutsSession session) {
-        session = validateSession(session);
-        NutsFile[] deps = fetchDependencies(new NutsDependencySearch(id).setIncludeMain(true), session);
-        for (NutsFile dep : deps) {
-            if (dep.getFile() != null && !NutsConstants.DEFAULT_REPOSITORY_NAME.equals(dep.getId().getNamespace())) {
-                bootstrapNutsRepository.deploy(dep.getId(),
-                        dep.getDescriptor(),
-                        dep.getFile(), foundAction,
-                        session
-                );
-            }
-        }
-        return deps;
-    }
+//    private NutsDefinition[] bootstrapUpdate(String id, NutsConfirmAction foundAction, NutsSession session) {
+//        session = validateSession(session);
+//        NutsDefinition[] deps = fetchDependencies(new NutsDependencySearch(id).setIncludeMain(true), session);
+//        for (NutsDefinition dep : deps) {
+//            if (dep.getFile() != null && !NutsConstants.DEFAULT_REPOSITORY_NAME.equals(dep.getId().getNamespace())) {
+//                bootstrapNutsRepository.deploy(dep.getId(),
+//                        dep.getDescriptor(),
+//                        dep.getFile(), foundAction,
+//                        session
+//                );
+//            }
+//        }
+//        return deps;
+//    }
 
-    private NutsFile fetchSimple(NutsId id, NutsSession session) {
+    public NutsDefinition fetchSimple(NutsId id, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         if (log.isLoggable(Level.FINEST)) {
             traceMessage(session, id, TraceResult.START, "Fetch component", 0);
         }
         long startTime = System.currentTimeMillis();
         try {
             LinkedHashSet<String> errors = new LinkedHashSet<>();
-            NutsFile main = null;
+            NutsDefinition main = null;
             NutsId goodId = resolveId(id, session);
 
             String ns = goodId.getNamespace();
@@ -2028,7 +2031,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                                 //
                             }
                         }
-                        main = fetchHelperNutsFile(goodId, errors, session2, enabledRepositories);
+                        main = fetchHelperNutsDefinition(goodId, errors, session2, enabledRepositories);
                     } catch (NutsNotFoundException ex) {
                         //
                     }
@@ -2037,7 +2040,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
             //try to load component from all repositories
             if (main == null) {
-                main = fetchBestHelperNutsFile(session, goodId);
+                main = fetchBestHelperNutsDefinition(session, goodId);
             }
             if (log.isLoggable(Level.FINEST)) {
                 traceMessage(session, id, TraceResult.SUCCESS, "Fetch component", startTime);
@@ -2048,8 +2051,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     installer = getInstaller(main, session);
                 }
                 if (installer != null) {
-                    NutsExecutionContext executionContext = createNutsExecutionContext(main, session, true);
-                    if (installer.isInstalled(executionContext)) {
+                    if (isInstalled(main, session)) {
                         main.setInstalled(true);
                         String installFolder = getStoreRoot(main.getId(), RootFolderType.PROGRAMS);
                         main.setInstallFolder(installFolder);
@@ -2062,6 +2064,17 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     main.setInstallFolder(null);
                 }
             }
+            if (main != null) {
+                Map<String, String> q = id.getQueryMap();
+                if (!CoreNutsUtils.isDefaultScope(q.get("scope"))) {
+                    main.setScope(q.get("scope"));
+                    main.setId(main.getId().setQueryProperty("scope", q.get("scope")));
+                }
+                if (q.get("optional") != null) {
+                    main.setOptional(q.get("optional"));
+                    main.setId(main.getId().setQueryProperty("optional", q.get("optional")));
+                }
+            }
             return main;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
@@ -2071,143 +2084,42 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         }
     }
 
-    private NutsFile[] fetchDependencies(NutsDependencySearch search, NutsIdGraph graph, NutsSession session) {
-        session = validateSession(session);
-        NutsDependencyFilter dependencyFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(
-                search.getScope() == NutsDependencyScope.ALL ? null
-                        : search.getScope() == NutsDependencyScope.RUN ? CoreNutsUtils.SCOPE_RUN
-                        : search.getScope() == NutsDependencyScope.TEST ? CoreNutsUtils.SCOPE_TEST
-                        : search.getScope() == NutsDependencyScope.ALL ? null : CoreNutsUtils.SCOPE_RUN,
-                CoreNutsUtils.createNutsDependencyFilter(search.getDependencyFilter())
-        ));
-
-        Set<NutsId> mains = new HashSet<>();
-        Stack<NutsFileAndNutsDependencyFilterItem> stack = new Stack<>();
-        for (String sid : search.getIds()) {
-            NutsId id = parseNutsId(sid);
-            NutsFile main = null;
-            try {
-                main = fetchSimple(id, session);
-            } catch (NutsNotFoundException ex) {
-                if (search.isTrackNotFound()) {
-                    search.getNoFoundResult().add(parseNutsId(ex.getNuts()));
-                } else {
-                    throw ex;
-                }
+    public String resolveCommandName(NutsId id) {
+        String nn = id.getName();
+        NutsWorkspaceCommand c = getConfigManager().findCommand(nn);
+        if (c != null) {
+            if (c.getId().getLongName().equals(id.getLongName())) {
+                return nn;
             }
-            if (main == null) {
-                main = fetchBestHelperNutsFile(session, id);
+        } else {
+            return nn;
+        }
+        nn = id.getName() + "-" + id.getVersion();
+        c = getConfigManager().findCommand(nn);
+        if (c != null) {
+            if (c.getId().getLongName().equals(id.getLongName())) {
+                return nn;
             }
-            mains.add(main.getId());
-            stack.push(new NutsFileAndNutsDependencyFilterItem(main, dependencyFilter));
+        } else {
+            return nn;
         }
-
-        while (!stack.isEmpty()) {
-            NutsFileAndNutsDependencyFilterItem curr = stack.pop();
-            if (!graph.contains(curr.file.getId())) {
-                if (curr.file.getDescriptor() != null) {
-                    graph.set(curr.file);
-                    for (NutsDependency dept : resolveEffectiveDescriptor(curr.file.getDescriptor(), session).getDependencies()) {
-                        NutsId[] exclusions = dept.getExclusions();
-                        if (dependencyFilter == null || dependencyFilter.accept(dept)) {
-                            NutsId item = dept.toId();
-                            //if (!graph.contains(curr.file.getId())) {
-                            try {
-                                NutsFile itemFile = fetchSimple(item, session);
-                                graph.add(curr.file, itemFile);
-                                if (!graph.contains(itemFile.getId())) {
-                                    stack.push(new NutsFileAndNutsDependencyFilterItem(itemFile, createNutsDependencyFilter(curr.filter, exclusions)));
-                                }
-                            } catch (NutsNotFoundException ex) {
-                                if (dept.isOptional()) {
-                                    //ignore
-                                } else if (!graph.contains(item)) {
-                                    stack.push(new NutsFileAndNutsDependencyFilterItem(new NutsFile(item, null, null, false, false, null), createNutsDependencyFilter(curr.filter, exclusions)));
-                                }
-                            }
-                            //}
-                        }
-                    }
-                }
+        nn = id.getGroup() + "." + id.getName() + "-" + id.getVersion();
+        c = getConfigManager().findCommand(nn);
+        if (c != null) {
+            if (c.getId().getLongName().equals(id.getLongName())) {
+                return nn;
             }
+        } else {
+            return nn;
         }
-
-        for (Map.Entry<String, Set<NutsId>> conflict : graph.resolveConflicts().entrySet()) {
-            NutsVersion v = null;
-            for (NutsId n : conflict.getValue()) {
-                if (v == null || n.getVersion().compareTo(v) > 0) {
-                    v = n.getVersion();
-                }
-            }
-            for (NutsId n : conflict.getValue()) {
-                if (!n.getVersion().equals(v)) {
-                    graph.remove(n);
-                }
-            }
-        }
-        ArrayList<NutsFile> collected = new ArrayList<>();
-        for (NutsId main : mains) {
-            graph.visit(main, collected);
-        }
-        if (!search.isIncludeMain()) {
-            Iterator<NutsFile> it = collected.iterator();
-            while (it.hasNext()) {
-                NutsFile next = it.next();
-                if (mains.contains(next.getId())) {
-                    it.remove();
-                    break;
-                }
-            }
-        }
-        return collected.toArray(new NutsFile[0]);
-    }
-
-    private NutsFile fetchBestHelperNutsFile(NutsSession session, NutsId id) {
-        LinkedHashSet<String> errors = new LinkedHashSet<>();
-        NutsFile main = null;
-        NutsRepositoryFilter repositoryFilter = null;
-        for (NutsFetchMode mode : resolveFetchModes(session.getFetchMode())) {
-            if (main != null) {
-                break;
-            }
-            NutsSession session2 = session.copy().setFetchMode(mode);
-            main = fetchHelperNutsFile(id, errors, session2, getEnabledRepositories(id, repositoryFilter, session2.copy().setTransitive(true)));
-        }
-        if (main == null) {
-            throw new NutsNotFoundException(id.toString(), StringUtils.join("\n", errors), null);
-        }
-        return main;
-    }
-
-    private NutsFile fetchHelperNutsFile(NutsId id, LinkedHashSet<String> errors, NutsSession session2, List<NutsRepository> enabledRepositories) {
-        NutsFile found = null;
-        try {
-            for (NutsRepository repo : enabledRepositories) {
-                NutsFile fetch = null;
-                try {
-                    fetch = repo.fetch(id, session2);
-                } catch (Exception ex) {
-                    errors.add(StringUtils.exceptionToString(ex));
-                }
-                if (fetch != null) {
-                    if (StringUtils.isEmpty(fetch.getId().getNamespace())) {
-                        fetch.setId(fetch.getId().setNamespace(repo.getRepositoryId()));
-                    }
-                    found = fetch;
-                    break;
-                }
-            }
-        } catch (NutsNotFoundException ex) {
-            //
-        }
-        return found;
+        throw new NutsElementNotFoundException("Unable to resolve command name for " + id.toString());
     }
 
 
     protected boolean reloadWorkspace(boolean save, NutsSession session, String[] excludedExtensions, String[] excludedRepositories) {
         Set<String> excludedExtensionsSet = excludedExtensions == null ? null : new HashSet<String>(Arrays.asList(excludedExtensions));
         Set<String> excludedRepositoriesSet = excludedRepositories == null ? null : new HashSet<String>(Arrays.asList(excludedRepositories));
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         File file = CoreIOUtils.createFile(getConfigManager().getWorkspaceLocation(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         NutsWorkspaceConfig config = CoreJsonUtils.loadJson(file, NutsWorkspaceConfig.class);
         if (config != null) {
@@ -2216,7 +2128,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
             //extensions already wired... this is needless!
             for (NutsId extensionId : config.getExtensions()) {
-                if (excludedExtensionsSet != null && CoreNutsUtils.findNutsIdByFullNameInStrings(extensionId, excludedExtensionsSet) != null) {
+                if (excludedExtensionsSet != null && CoreNutsUtils.findNutsIdBySimpleNameInStrings(extensionId, excludedExtensionsSet) != null) {
                     continue;
                 }
                 NutsSession sessionCopy = session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE);
@@ -2249,6 +2161,15 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     getConfigManager().save();
                 }
             }
+            if (config.getCommandFactories() != null) {
+                for (NutsWorkspaceCommandFactoryConfig commandFactory : config.getCommandFactories().toArray(new NutsWorkspaceCommandFactoryConfig[0])) {
+                    try {
+                        getConfigManager().installCommandFactory(commandFactory);
+                    } catch (Exception e) {
+                        log.log(Level.SEVERE, "Unable to instantiate Command Factory " + commandFactory);
+                    }
+                }
+            }
             for (NutsWorkspaceListener listener : workspaceListeners) {
                 listener.onReloadWorkspace(this);
             }
@@ -2257,8 +2178,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return false;
     }
 
-    public List<NutsRepository> getEnabledRepositories(NutsId nutsId, NutsRepositoryFilter repositoryFilter, NutsSession session) {
-        session = validateSession(session);
+    private List<NutsRepository> getEnabledRepositories(NutsId nutsId, NutsRepositoryFilter repositoryFilter, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, this);
         return NutsWorkspaceHelper.filterRepositories(getEnabledRepositories(repositoryFilter), nutsId, repositoryFilter, session);
     }
 
@@ -2278,7 +2199,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         @Override
         public boolean accept(NutsDescriptor descriptor) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
-                if (dependency.getFullName().equals(NutsConstants.NUTS_ID_BOOT_API)) {
+                if (dependency.getLongName().equals(NutsConstants.NUTS_ID_BOOT_API)) {
                     if (dependency.getVersion().matches("]" + bootAPIVersion + "]")) {
                         return true;
                     } else {
@@ -2291,37 +2212,27 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public void addUserPropertyListener(MapListener<String,Object> listener) {
+    public void addUserPropertyListener(MapListener<String, Object> listener) {
         userProperties.addListener(listener);
     }
 
     @Override
-    public void removeUserPropertyListener(MapListener<String,Object> listener) {
+    public void removeUserPropertyListener(MapListener<String, Object> listener) {
         userProperties.removeListener(listener);
     }
 
     @Override
-    public MapListener<String,Object>[] getUserPropertyListeners() {
+    public MapListener<String, Object>[] getUserPropertyListeners() {
         return userProperties.getListeners();
     }
 
 
-    protected class NutsFileAndNutsDependencyFilterItem {
-
-        NutsFile file;
-        NutsDependencyFilter filter;
-
-        public NutsFileAndNutsDependencyFilterItem(NutsFile file, NutsDependencyFilter filter) {
-            this.file = file;
-            this.filter = filter;
-        }
-    }
-
+    @Override
     public boolean isFetched(NutsId id, NutsSession session) {
-        session = validateSession(session);
+        session = CoreNutsUtils.validateSession(session, this);
         NutsSession offlineSession = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         try {
-            NutsFile found = fetch(id.toString(), offlineSession);
+            NutsDefinition found = fetch(id, offlineSession);
             return found != null;
         } catch (Exception e) {
             return false;
@@ -2330,7 +2241,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public String getStoreRoot(String id, RootFolderType folderType) {
-        return getStoreRoot(parseNutsId(id), folderType);
+        return getStoreRoot(parseId(id), folderType);
     }
 
     public String getStoreRoot(NutsId id, RootFolderType folderType) {
@@ -2400,21 +2311,21 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public NutsId parseId(String id) {
-        return parseNutsId(id);
+        return CoreNutsUtils.parseNutsId(id);
     }
 
     @Override
-    public NutsId resolveNutsIdForClass(Class clazz) {
+    public NutsId resolveIdForClass(Class clazz) {
         PomId u = PomIdResolver.resolvePomId(clazz, null);
         if (u == null) {
             return null;
         }
-        return parseNutsId(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion());
+        return parseId(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion());
     }
 
     @Override
     public String resolveDefaultHelpForClass(Class clazz) {
-        NutsId nutsId = resolveNutsIdForClass(clazz);
+        NutsId nutsId = resolveIdForClass(clazz);
         if (nutsId != null) {
             String urlPath = "/" + nutsId.getGroup().replace('.', '/') + "/" + nutsId.getName() + ".help";
             URL resource = getClass().getResource(urlPath);
@@ -2430,7 +2341,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsId[] resolveNutsIdsForClass(Class clazz) {
+    public NutsId[] resolveIdsForClass(Class clazz) {
         PomId[] u = PomIdResolver.resolvePomIds(clazz);
         NutsId[] all = new NutsId[u.length];
         for (int i = 0; i < all.length; i++) {
@@ -2442,7 +2353,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public NutsId getPlatformOs() {
         if (platformOs == null) {
-            platformOs = parseNutsId(CorePlatformUtils.getPlatformOs());
+            platformOs = parseId(CorePlatformUtils.getPlatformOs());
         }
         return platformOs;
     }
@@ -2450,7 +2361,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public NutsId getPlatformOsDist() {
         if (platformOsdist == null) {
-            platformOsdist = parseNutsId(CorePlatformUtils.getPlatformOsDist());
+            platformOsdist = parseId(CorePlatformUtils.getPlatformOsDist());
         }
         return platformOsdist;
     }
@@ -2466,7 +2377,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public NutsId getPlatformArch() {
         if (platformArch == null) {
-            platformArch = parseNutsId(CorePlatformUtils.getPlatformArch());
+            platformArch = parseId(CorePlatformUtils.getPlatformArch());
         }
         return platformArch;
     }
@@ -2523,7 +2434,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsId parseRequiredNutsId(String nutFormat) {
+    public NutsId parseRequiredId(String nutFormat) {
         NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
         if (id == null) {
             throw new NutsParseException("Invalid Id format : " + nutFormat);
@@ -2537,12 +2448,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsSearchBuilder createSearchBuilder() {
-        return new DefaultNutsSearchBuilder();
+    public NutsQuery createQuery() {
+        return new DefaultNutsQuery(this);
     }
 
     @Override
-    public String getNutsFileName(NutsId id, String ext) {
+    public String getFileName(NutsId id, String ext) {
         if (StringUtils.isEmpty(ext)) {
             ext = "jar";
         }
@@ -2645,6 +2556,24 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public String evalContentHash(InputStream input) {
         return CoreSecurityUtils.evalSHA1(input, false);
+    }
+
+    @Override
+    public void printHelp(PrintStream out) {
+        if (out == null) {
+            out = createPrintStream(System.out, true);
+        }
+        String help = getResourceString("/net/vpc/app/nuts/nuts-help.help", getClass(), "no help found");
+        out.println(help);
+    }
+
+    @Override
+    public void printLicense(PrintStream out) {
+        if (out == null) {
+            out = createPrintStream(System.out, true);
+        }
+        String help = getResourceString("/net/vpc/app/nuts/nuts-license.help", getClass(), "no help found");
+        out.println(help);
     }
 
     @Override
@@ -2751,8 +2680,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public NutsTerminal createDefaultTerminal() {
-        return new DefaultNutsTerminal();
+    public NutsTerminal createDefaultTerminal(InputStream in, PrintStream out, PrintStream err) {
+        DefaultNutsTerminal v = new DefaultNutsTerminal();
+        v.install(this, in, out, err);
+        return v;
     }
 
     @Override
@@ -2778,9 +2709,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             term.install(this, in, out, err);
             return term;
         } catch (Exception anyException) {
-            NutsTerminal term = createDefaultTerminal();
-            term.install(this, in, out, err);
-            return term;
+            return createDefaultTerminal(in, out, err);
         }
     }
 
@@ -2794,15 +2723,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (scope == null) {
             scope = NutsDependencyScope.RUN;
         }
-        session = validateSession(session);
-        NutsFile[] nutsFiles = fetchDependencies(
-                new NutsDependencySearch(nutsIds)
-                        .setIncludeMain(true)
-                        .setScope(scope),
-                session);
-        URL[] all = new URL[nutsFiles.length];
+        session = CoreNutsUtils.validateSession(session, this);
+        List<NutsDefinition> nutsDefinitions = createQuery().addId(nutsIds).setSession(session).setScope(scope).includeDependencies().fetch();
+        URL[] all = new URL[nutsDefinitions.size()];
         for (int i = 0; i < all.length; i++) {
-            all[i] = URLUtils.toURL(new File(nutsFiles[i].getFile()));
+            all[i] = URLUtils.toURL(new File(nutsDefinitions.get(i).getFile()));
         }
         return new NutsURLClassLoader(all, parentClassLoader);
     }
@@ -2976,6 +2901,205 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             return isStandardInputStream(((InputStreamTransparentAdapter) in).baseInputStream());
         }
         return false;
+    }
+
+    private NutsDefinition fetchHelperNutsDefinition(NutsId id, LinkedHashSet<String> errors, NutsSession session2, List<NutsRepository> enabledRepositories) {
+        NutsDefinition found = null;
+        try {
+            for (NutsRepository repo : enabledRepositories) {
+                NutsDefinition fetch = null;
+                try {
+                    fetch = repo.fetch(id, session2);
+                } catch (Exception ex) {
+                    errors.add(StringUtils.exceptionToString(ex));
+                }
+                if (fetch != null) {
+                    if (StringUtils.isEmpty(fetch.getId().getNamespace())) {
+                        fetch.setId(fetch.getId().setNamespace(repo.getRepositoryId()));
+                    }
+                    found = fetch;
+                    break;
+                }
+            }
+        } catch (NutsNotFoundException ex) {
+            //
+        }
+        return found;
+    }
+
+    private NutsId fetchHelperNutsId(NutsId id, LinkedHashSet<String> errors, NutsSession session2, List<NutsRepository> enabledRepositories) {
+        NutsId found = null;
+        try {
+            for (NutsRepository repo : enabledRepositories) {
+                NutsId fetch = null;
+                try {
+                    fetch = repo.fetchDescriptor(id, session2).getId();
+                } catch (Exception ex) {
+                    errors.add(StringUtils.exceptionToString(ex));
+                }
+                if (fetch != null) {
+                    if (StringUtils.isEmpty(fetch.getNamespace())) {
+                        fetch = fetch.setNamespace(repo.getRepositoryId());
+                    }
+                    found = fetch;
+                    break;
+                }
+            }
+        } catch (NutsNotFoundException ex) {
+            //
+        }
+        return found;
+    }
+
+    public NutsDefinition fetchBestHelperNutsDefinition(NutsSession session, NutsId id) {
+        LinkedHashSet<String> errors = new LinkedHashSet<>();
+        NutsDefinition main = null;
+        NutsRepositoryFilter repositoryFilter = null;
+        for (NutsFetchMode mode : this.resolveFetchModes(session.getFetchMode())) {
+            if (main != null) {
+                break;
+            }
+            NutsSession session2 = session.copy().setFetchMode(mode);
+            main = fetchHelperNutsDefinition(id, errors, session2, getEnabledRepositories(id, repositoryFilter, session2.copy().setTransitive(true)));
+        }
+        if (main == null) {
+            throw new NutsNotFoundException(id, StringUtils.join("\n", errors), null);
+        }
+        return main;
+    }
+
+    public NutsId fetchBestHelperNutsId(NutsSession session, NutsId id) {
+        LinkedHashSet<String> errors = new LinkedHashSet<>();
+        NutsId main = null;
+        NutsRepositoryFilter repositoryFilter = null;
+        for (NutsFetchMode mode : this.resolveFetchModes(session.getFetchMode())) {
+            if (main != null) {
+                break;
+            }
+            NutsSession session2 = session.copy().setFetchMode(mode);
+            main = fetchHelperNutsId(id, errors, session2, getEnabledRepositories(id, repositoryFilter, session2.copy().setTransitive(true)));
+        }
+        if (main == null) {
+            throw new NutsNotFoundException(id, StringUtils.join("\n", errors), null);
+        }
+        return main;
+    }
+
+    @Override
+    public String formatId(NutsId id) {
+        StringBuilder sb = new StringBuilder();
+        if (!StringUtils.isEmpty(id.getNamespace())) {
+            sb.append(id.getNamespace()).append("://");
+        }
+        if (!StringUtils.isEmpty(id.getGroup())) {
+            boolean importedGroup = false;
+            for (String anImport : getConfigManager().getImports()) {
+                if (id.getGroup().equals(anImport)) {
+                    importedGroup = true;
+                    break;
+                }
+            }
+            if (importedGroup) {
+                sb.append("==");
+                sb.append(escapeText(id.getGroup()));
+                sb.append("==");
+            } else {
+                sb.append(escapeText(id.getGroup()));
+            }
+            sb.append(":");
+        }
+        sb.append("[[");
+        sb.append(escapeText(id.getName()));
+        sb.append("]]");
+        if (!StringUtils.isEmpty(id.getVersion().getValue())) {
+            sb.append("#");
+            sb.append(escapeText(id.getVersion().toString()));
+        }
+        if (!StringUtils.isEmpty(id.getQuery())) {
+            sb.append("?");
+            sb.append(escapeText(id.getQuery()));
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String formatDependency(NutsDependency id) {
+        Map<String, String> m = id.toId().getQueryMap();
+        if (!StringUtils.isEmpty(id.getScope())) {
+            m.put("scope", id.getScope());
+        }
+        if (!StringUtils.isEmpty(id.getOptional()) && !"false".equals(id.getOptional())) {
+            m.put("optional", id.getOptional());
+        }
+        return formatId(id.toId().setQuery(m));
+    }
+
+
+    private static class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
+        @Override
+        public void install(NutsExecutionContext executionContext) {
+            NutsId id = executionContext.getNutsDefinition().getId();
+            NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
+            if (descriptor.isNutsApplication()) {
+                int r = executionContext.getWorkspace().createExecBuilder()
+                        .setCommand(
+                                id.setNamespace(null).toString(),
+                                "--nuts-execution-mode=on-install"
+                        )
+                        .exec().setFailFast().getResult();
+            }
+//            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
+//            NutsWorkspaceCommand c = cc.findCommand(id.getName());
+//            if (c != null) {
+//
+//            } else {
+//                //
+//                cc.installCommand(new DefaultNutsWorkspaceCommand()
+//                        .setId(id.setNamespace(""))
+//                        .setName(id.getName())
+//                        .setCommand(new String[0])
+//                );
+//            }
+        }
+
+        @Override
+        public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
+            NutsId id = executionContext.getNutsDefinition().getId();
+            if ("jar".equals(executionContext.getNutsDefinition().getDescriptor().getPackaging())) {
+                ExecutionEntry[] executionEntries = CorePlatformUtils.resolveMainClasses(new File(executionContext.getNutsDefinition().getFile()));
+                for (ExecutionEntry executionEntry : executionEntries) {
+                    if (executionEntry.isApp()) {
+                        //
+                        int r = executionContext.getWorkspace().createExecBuilder()
+                                .setCommand(
+                                        id.toString(),
+                                        "--nuts-execution-mode=on-uninstall"
+                                )
+                                .exec().getResult();
+                        executionContext.getWorkspace().getTerminal().getFormattedOut().printf("Installation Exited with code : " + r);
+                    }
+                }
+            }
+//            NutsId id = executionContext.getNutsDefinition().getId();
+//            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
+//            for (NutsWorkspaceCommand command : cc.findCommands(id)) {
+//                //install if installed with the very same version !!
+//                if (id.getLongName().equals(command.getId().getLongName())) {
+//                    cc.uninstallCommand(command.getName());
+//                }
+//            }
+        }
+
+        @Override
+        public int getSupportLevel(NutsDefinition criteria) {
+            return 0;
+        }
+    }
+
+    protected void setInstalled(NutsExecutionContext executionContext) {
+        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsDefinition().getId(), RootFolderType.PROGRAMS));
+        File log = new File(installFolder, ".nuts-install.log");
+        IOUtils.copy(new ByteArrayInputStream(String.valueOf(new Date()).getBytes()), log, true, true);
     }
 }
 

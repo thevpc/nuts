@@ -159,17 +159,17 @@ public class ProjectService {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = Nuts.openWorkspace(
                                 new NutsWorkspaceOptions()
+                                        .setHome(a.getNutsHome())
                                         .setCreateIfNotFound(false)
                                         .setReadOnly(true)
-                                        .setWorkspace(a.getNutsWorkspace()),
-                                new NutsBootOptions().setHome(a.getNutsHome())
+                                        .setWorkspace(a.getNutsWorkspace())
                         );
                         NutsSession s = ws2.createSession();
-                        List<NutsId> found = ws2.find(ws2.createSearchBuilder()
+                        List<NutsId> found = ws2.createQuery()
                                         .setIds(g.getGroupId() + ":" + g.getArtifactId())
                                         .setRepositoryFilter(nutsRepository)
-                                        .setLatestVersions(true).build()
-                                , s);
+                                        .setLatestVersions(true).setSession(s).find()
+                                ;
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

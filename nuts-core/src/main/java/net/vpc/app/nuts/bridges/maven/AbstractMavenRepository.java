@@ -38,6 +38,8 @@ import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -125,21 +127,20 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 }
             }
             checkSHA1Hash(id, ".pom", CoreNutsUtils.FACE_DESC_HASH, new ByteArrayInputStream(bytes), session);
-            String ext = resolveExtension(nutsDescriptor);
-            File jar = new File(getPath(id, ext));
-            nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(jar));
+            File jar = new File(getPath(id, resolveExtension(nutsDescriptor)));
+            nutsDescriptor = annotateExecDesc(nutsDescriptor,jar);
             return nutsDescriptor;
         } catch (IOException ex) {
-            throw new NutsNotFoundException(id.toString(), null, ex);
+            throw new NutsNotFoundException(id, null, ex);
         } catch (NutsIOException ex) {
-            throw new NutsNotFoundException(id.toString(), null, ex);
+            throw new NutsNotFoundException(id, null, ex);
         }
     }
 
     @Override
     protected String copyToImpl(NutsId id, String localPath, NutsSession session) {
         try {
-            NutsDescriptor d = getWorkspace().fetchDescriptor(id.toString(), true, session);
+            NutsDescriptor d = getWorkspace().fetchDescriptor(id, true, session);
             String ext = resolveExtension(d);
             if (new File(localPath).isDirectory()) {
                 localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext)).getPath();
@@ -148,35 +149,13 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             checkSHA1Hash(id, ext, CoreNutsUtils.FACE_PACKAGE_HASH, new FileInputStream(localPath), session);
             return localPath;
         } catch (NutsIOException ex) {
-            throw new NutsNotFoundException(id.toString(), null, ex);
+            throw new NutsNotFoundException(id, null, ex);
         } catch (IOException ex) {
-            throw new NutsNotFoundException(id.toString(), null, ex);
+            throw new NutsNotFoundException(id, null, ex);
         }
     }
 
-    protected String resolveExtension(NutsDescriptor d) {
-        String ee = d.getExt();
-        if (!StringUtils.isEmpty(ee)) {
-            if ("bundle".equals(ee)) {
-                return ".jar";
-            }
-            if ("nuts-extension".equals(ee)) {
-                return ".jar";
-            }
-            return "." + ee;
-        }
-        String ext = "";
-        if (StringUtils.isEmpty(d.getPackaging())) {
-            ext = ".jar";
-        } else if (d.getPackaging().equals("maven-archetype")) {
-            ext = ".jar";
-        } else if (d.getPackaging().equals("bundle")) {
-            ext = ".jar";
-        } else {
-            ext = ("." + d.getPackaging());
-        }
-        return ext;
-    }
+
 
     @Override
     public String copyDescriptorToImpl(NutsId id, String localPath, NutsSession session) {
@@ -207,9 +186,9 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 }
             }
         } catch (NutsIOException ex) {
-            throw new NutsNotFoundException(id.toString(), null, ex);
+            throw new NutsNotFoundException(id, null, ex);
         } catch (IOException ex) {
-            throw new NutsNotFoundException(id.toString(), null, ex);
+            throw new NutsNotFoundException(id, null, ex);
         }
         return nutsDescriptor.getSHA1();
     }
@@ -227,4 +206,72 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 //        }
 //        throw new NutsNotFoundException(id);
 //    }
+
+    public NutsDescriptor annotateExecDesc(NutsDescriptor nutsDescriptor,File jar) {
+        boolean executable=nutsDescriptor.isExecutable();
+        boolean nutsApp= nutsDescriptor.isNutsApplication();
+        if(jar.getName().toLowerCase().endsWith(".jar") && resolveExtension(nutsDescriptor).equals(".jar") && jar.isFile()){
+            File f = new File(getPath(nutsDescriptor.getId(), ".desc-annotation"));
+            Map<String,String> map = null;
+            try{
+                if(f.isFile()) {
+                    map = getWorkspace().getJsonIO().read(f, Map.class);
+                }
+            }catch (Exception ex){
+                //
+            }
+            if(map!=null){
+                executable="true".equals(map.get("executable"));
+                nutsApp="true".equals(map.get("nutsApplication"));
+            }else {
+                try {
+                    ExecutionEntry[] t = CorePlatformUtils.resolveMainClasses(jar);
+                    if (t.length > 0) {
+                        executable = true;
+                        if (t[0].isApp()) {
+                            nutsApp = true;
+                        }
+                    }
+                    try {
+                        map = new LinkedHashMap<>();
+                        map.put("executable", String.valueOf(executable));
+                        map.put("nutsApplication", String.valueOf(nutsApp));
+                        getWorkspace().getJsonIO().write(map, f,true);
+                    }catch (Exception ex){
+                        //
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+            }
+        }
+        nutsDescriptor = nutsDescriptor.setExecutable(executable);
+        nutsDescriptor = nutsDescriptor.setNutsApplication(nutsApp);
+        return nutsDescriptor;
+    }
+
+    public static String resolveExtension(NutsDescriptor d) {
+        String ee = d.getExt();
+        if (!StringUtils.isEmpty(ee)) {
+            if ("bundle".equals(ee)) {
+                return ".jar";
+            }
+            if ("nuts-extension".equals(ee)) {
+                return ".jar";
+            }
+            return "." + ee;
+        }
+        String ext = "";
+        if (StringUtils.isEmpty(d.getPackaging())) {
+            ext = ".jar";
+        } else if (d.getPackaging().equals("maven-archetype")) {
+            ext = ".jar";
+        } else if (d.getPackaging().equals("bundle")) {
+            ext = ".jar";
+        } else {
+            ext = ("." + d.getPackaging());
+        }
+        return "."+ext;
+    }
+
 }

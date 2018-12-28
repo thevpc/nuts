@@ -1,6 +1,6 @@
 output the last part of files
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##tail## [<OPTION>...] <SOURCE>... <DEST>
 
 output the last part of files

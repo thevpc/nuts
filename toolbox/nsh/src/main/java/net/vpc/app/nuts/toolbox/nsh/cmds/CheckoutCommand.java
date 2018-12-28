@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
@@ -57,7 +57,7 @@ public class CheckoutCommand extends AbstractNutsCommand {
                 String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.consoleContext())).getString();
                 String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getString();
                 if (cmdLine.isExecMode()) {
-                    NutsFile nf = context.getWorkspace().checkout(
+                    NutsDefinition nf = context.getWorkspace().checkout(
                             id,
                             contentFile,
                             context.getSession()

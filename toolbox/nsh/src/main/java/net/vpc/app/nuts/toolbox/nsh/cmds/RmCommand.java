@@ -75,8 +75,7 @@ public class RmCommand extends AbstractNutsCommand {
             throw new IllegalArgumentException("Missing parameters");
         }
         ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(), context.getSession()) : null;
-        for (int i = 0; i < files.size(); i++) {
-            FilePath p = files.get(i);
+        for (FilePath p : files) {
             if (p instanceof FilePath.SshFilePath) {
                 ((FilePath.SshFilePath) p).setListener(listener);
             }

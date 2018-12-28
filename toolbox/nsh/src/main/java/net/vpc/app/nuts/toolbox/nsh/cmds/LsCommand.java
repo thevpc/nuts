@@ -64,12 +64,10 @@ public class LsCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        boolean any = false;
         Options options = new Options();
         List<File> folders = new ArrayList<>();
         List<File> files = new ArrayList<>();
         List<File> invalids = new ArrayList<>();
-        boolean noColors = false;
         Argument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
@@ -94,14 +92,14 @@ public class LsCommand extends AbstractNutsCommand {
         if (cmdLine.isExecMode()) {
             int exitCode = 0;
             boolean first = true;
-            PrintStream out = context.getTerminal().getFormattedOut();
+            PrintStream out = context.out();
             for (File f : invalids) {
                 exitCode = 1;
-                ls(f, options, context, context.getTerminal(), false);
+                ls(f, options, context, out, false);
             }
             for (File f : files) {
                 first = false;
-                ls(f, options, context, context.getTerminal(), false);
+                ls(f, options, context, out, false);
             }
             for (File f : folders) {
                 if (first) {
@@ -109,39 +107,37 @@ public class LsCommand extends AbstractNutsCommand {
                 } else {
                     out.println();
                 }
-                ls(f, options, context, context.getTerminal(), folders.size() > 0 || files.size() > 0);
+                ls(f, options, context, out, folders.size() > 0 || files.size() > 0);
             }
             if (invalids.size() + files.size() + folders.size() == 0) {
-                ls(new File(context.getShell().getCwd()), options, context, context.getTerminal(), false);
+                ls(new File(context.getShell().getCwd()), options, context, out, false);
             }
             return exitCode;
         }
         return 0;
     }
 
-    private void ls(File path, Options options, NutsCommandContext context, NutsTerminal terminal, boolean addPrefix) {
+    private void ls(File path, Options options, NutsCommandContext context, PrintStream out, boolean addPrefix) {
         if (!path.exists()) {
             throw new NutsIllegalArgumentException("ls: cannot access '" + path.getPath() + "': No such file or directory");
         } else if (path.isDirectory()) {
             if (addPrefix) {
-                PrintStream out = terminal.getFormattedOut();
                 out.printf("%s:\n", path.getName());
             }
             File[] arr = path.listFiles();
             if (arr != null) {
                 Arrays.sort(arr, FILE_SORTER);
                 for (File file1 : arr) {
-                    ls0(file1, options, terminal);
+                    ls0(file1, options, out);
                 }
             }
         } else {
-            ls0(path, options, terminal);
+            ls0(path, options, out);
         }
     }
 
-    private void ls0(File path, Options options, NutsTerminal terminal) {
+    private void ls0(File path, Options options, PrintStream out) {
         String name = path.getName();
-        PrintStream out = terminal.getFormattedOut();
         if (options.l) {
             out.print((path.isDirectory() ? "d" : path.isFile() ? "-" : "?"));
             out.print((path.canRead() ? "r" : "-"));

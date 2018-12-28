@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  */
 public class CoreStringUtils {
 
-    private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)\\}");
+    private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)}");
 
     public static int parseInt(String v1, int defaultValue) {
         try {

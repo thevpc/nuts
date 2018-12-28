@@ -50,12 +50,12 @@ public class ShellHelper {
 
         @Override
         public void onGet(String from, String to, boolean mkdir) {
-            out.printf("[[\\[SSH-GET \\]]] %s -> %s%\n",from ,to);
+            out.printf("[[\\[SSH-GET \\]]] %s -> %s\n",from ,to);
         }
 
         @Override
         public void onPut(String from, String to, boolean mkdir) {
-            out.printf("[[\\[SSH-PUT \\]]] %s -> %s%\n",from ,to);
+            out.printf("[[\\[SSH-PUT \\]]] %s -> %s\n",from ,to);
         }
 
         @Override

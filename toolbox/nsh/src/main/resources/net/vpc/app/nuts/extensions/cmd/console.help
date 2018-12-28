@@ -1,6 +1,6 @@
 create a new interactive command line console
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##console##
 
 creates a new interactive command line console.

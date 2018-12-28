@@ -1,6 +1,6 @@
 administrate nuts workspaces
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##nuts-admin## [<OPTION>...] <PARAMS> ...
 
 administrate nuts workspaces

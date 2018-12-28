@@ -1,6 +1,6 @@
 deploy a **nuts**
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##deploy## --file <FILE> [--desc <DESC-FILE>] [--to <REPOSITORY>] 
 
 deploys a new file to the given repository

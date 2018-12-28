@@ -5,7 +5,7 @@
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nuts-server</artifactId>
     <name>net.vpc.app.nuts.toolbox.nuts-server</name>
-    <version>0.5.1.0</version>
+    <version>0.5.2.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
 
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-cmd-app</artifactId>
-            <version>0.5.1.0</version>
+            <version>0.5.2.0</version>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>net.vpc.app.nuts</groupId>-->
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
-            <version>0.5.1.0</version>
+            <version>0.5.2.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

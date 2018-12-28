@@ -39,4 +39,6 @@ public interface NutsWorkspaceListener {
     void onRemoveRepository(NutsWorkspace workspace, NutsRepository repository);
 
     void onReloadWorkspace(NutsWorkspace workspace);
+
+    void onCreateWorkspace(NutsWorkspace workspace);
 }

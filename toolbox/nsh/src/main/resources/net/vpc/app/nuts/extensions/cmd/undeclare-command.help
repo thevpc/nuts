@@ -1,6 +1,6 @@
 undeclare command
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##undeclare-command## [<OPTION>...] <SOURCE>... <DEST>
 
 undeclare command

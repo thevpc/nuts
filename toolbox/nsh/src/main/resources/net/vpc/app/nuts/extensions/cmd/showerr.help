@@ -1,6 +1,6 @@
 show the error message of the last command if was erroneous.
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##showerr## [--trace]
 
 shows the error message of the last command if was erroneous

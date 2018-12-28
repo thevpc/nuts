@@ -37,7 +37,6 @@ import java.net.URL;
  * @author vpc
  */
 public class URLLocation {
-
     private String path;
     private URL url;
 

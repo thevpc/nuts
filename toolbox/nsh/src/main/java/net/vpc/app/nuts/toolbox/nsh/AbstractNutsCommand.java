@@ -59,8 +59,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
 
     protected CommandLine cmdLine(String[] args, NutsCommandContext context) {
         CommandAutoComplete autoComplete = context.consoleContext().getAutoComplete();
-        CommandLine cmdLine = new CommandLine(args, autoComplete);
-        return cmdLine;
+        return new CommandLine(args, autoComplete);
     }
 
     @Override

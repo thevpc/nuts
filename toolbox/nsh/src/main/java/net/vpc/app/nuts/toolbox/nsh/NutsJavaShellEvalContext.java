@@ -52,6 +52,8 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
     private String serviceName;
     private NutsSession session;
     private CommandAutoComplete autoComplete;
+    private boolean verbose;
+    private boolean noColors;
 
     public NutsJavaShellEvalContext() {
         super(null);
@@ -121,7 +123,10 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
     }
 
     public CommandContext createCommandContext(Command command) {
-        return new DefaultNutsCommandContext((NutsConsoleContext) this, (NutsCommand) command);
+        DefaultNutsCommandContext c = new DefaultNutsCommandContext(this, (NutsCommand) command);
+        c.setNoColors(isNoColors());
+        c.setVerbose(isVerbose());
+        return c;
     }
 
     protected void copyFrom(ConsoleContext other) {
@@ -131,6 +136,8 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
             this.workspace = o.workspace;
             this.serviceName = o.serviceName;
             this.commandContext = o.commandContext;
+            this.noColors = o.noColors;
+            this.verbose = o.verbose;
             this.session = o.session.copy();
         }
     }
@@ -238,12 +245,12 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
             ((NutsCommand) command).autoComplete(new DefaultNutsCommandContext(this, (NutsCommand) command), autoComplete);
         } else {
             NutsWorkspace ws = this.getWorkspace();
-            NutsSearch nutsSearch = ws.createSearchBuilder()
+            List<NutsId> nutsIds = ws.createQuery()
                     .addId(commandName)
                     .setLatestVersions(true)
                     .setScope(NutsDependencyScope.RUN)
-                    .build();
-            List<NutsId> nutsIds = ws.find(nutsSearch, this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE));
+                    .setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE))
+                    .find();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
                 NutsDescriptor d = ws.fetchDescriptor(selectedId.toString(), true, this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE));
@@ -258,7 +265,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                             .setCommand(
                                     selectedId
                                             .getLongName(),
-                                    "--nuts-autocomplete-index=" + wordIndex
+                                    "--nuts-execution-mode=auto-complete " + wordIndex
                             )
                             .addCommand(autoCompleteWords)
                             .exec();
@@ -304,5 +311,25 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
         return all;
     }
 
+    @Override
+    public boolean isVerbose() {
+        return verbose;
+    }
 
+    @Override
+    public NutsJavaShellEvalContext setVerbose(boolean verbose) {
+        this.verbose = verbose;
+        return this;
+    }
+
+    @Override
+    public boolean isNoColors() {
+        return noColors;
+    }
+
+    @Override
+    public NutsJavaShellEvalContext setNoColors(boolean noColors) {
+        this.noColors = noColors;
+        return this;
+    }
 }

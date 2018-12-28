@@ -67,18 +67,17 @@ public class JavaConfigSubCommand extends AbstractConfigSubCommand {
             }
             return true;
         } else if (cmdLine.readAll("remove java")) {
-            NutsWorkspaceConfigManager cm = conf;
             while (cmdLine.hasNext()) {
                 String name = cmdLine.read().getExpression();
-                NutsSdkLocation loc = cm.findSdkByName("java", name);
+                NutsSdkLocation loc = conf.findSdkByName("java", name);
                 if (loc == null) {
-                    loc = cm.findSdkByPath("java", name);
+                    loc = conf.findSdkByPath("java", name);
                     if (loc == null) {
-                        loc = cm.findSdkByVersion("java", name);
+                        loc = conf.findSdkByVersion("java", name);
                     }
                 }
                 if (loc != null) {
-                    cm.removeSdk("java", loc);
+                    conf.removeSdk("java", loc);
                 }
             }
             if (autoSave) {

@@ -46,6 +46,9 @@ public interface JsonIO {
     }
 
     default <T> void write(Object obj, File file, boolean pretty) {
+        if(file.getParentFile()!=null){
+            file.getParentFile().mkdirs();
+        }
         try (FileWriter w = new FileWriter(file)) {
             write(obj, w, pretty);
         } catch (IOException ex) {

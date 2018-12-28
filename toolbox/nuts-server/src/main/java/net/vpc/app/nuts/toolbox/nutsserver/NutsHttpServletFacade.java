@@ -75,7 +75,7 @@ public class NutsHttpServletFacade {
                 ListMap<String, String> parameters = context.getParameters();
                 String id = parameters.getOne("id");
                 boolean transitive = parameters.containsKey("transitive");
-                NutsFile fetch = null;
+                NutsDefinition fetch = null;
                 try {
                     fetch = context.getWorkspace().fetch(id, context.getSession().copy().setTransitive(transitive));
                 } catch (Exception exc) {
@@ -154,7 +154,7 @@ public class NutsHttpServletFacade {
                 List<NutsId> fetch = null;
                 try {
                     NutsWorkspace ws = context.getWorkspace();
-                    fetch = ws.find(ws.createSearchBuilder().addId(id).build(), context.getSession().copy().setTransitive(transitive));
+                    fetch = ws.createQuery().setSession(context.getSession().copy().setTransitive(transitive)).addId(id).find();
                 } catch (Exception exc) {
                     //
                 }
@@ -215,9 +215,10 @@ public class NutsHttpServletFacade {
                             break;
                     }
                 }
-                Iterator<NutsId> it = context.getWorkspace().findIterator(
-                        context.getWorkspace().createSearchBuilder().addJs(js).addId(pattern).build(),
-                        context.getSession().copy().setTransitive(transitive));
+                Iterator<NutsId> it = context.getWorkspace().createQuery()
+                                .setSession(context.getSession().copy().setTransitive(transitive))
+                                .addJs(js).addId(pattern).findIterator()
+                        ;
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                 context.sendResponseText(200, iteratorNutsIdToString(it));
             }

@@ -90,7 +90,7 @@ public class RemoteMysql {
                 context.out().printf("%s\n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
             } else {
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
-                    context.out().printf("[%s] %s\n", NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    context.out().printf("[%s] %s\n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
                 }
             }
         }

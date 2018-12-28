@@ -80,7 +80,7 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
 
     @Override
     public String toString() {
-        return "NutsExclusionDependencyFilter{" + "base=" + base + ", exclusions=" + exclusions + '}';
+        return "NutsExclusionDependencyFilter{" + "base=" + base + ", exclusions=" + (exclusions==null?"":Arrays.toString(exclusions)) + '}';
     }
 
 }

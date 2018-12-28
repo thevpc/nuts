@@ -50,11 +50,6 @@ public final class NutsConstants {
     public static final String DEFAULT_WORKSPACE_NAME = "default-workspace";
 
     /**
-     * default bootstrap repository name
-     */
-    public static final String BOOTSTRAP_REPOSITORY_NAME = "bootstrap";
-
-    /**
      * default repository name. By default a repository named "local" is created
      * as folder ~/.nuts/default-workspace/local (assuming default workspace and
      * default root naming)
@@ -118,6 +113,7 @@ public final class NutsConstants {
     public static final String RIGHT_FETCH_CONTENT = "fetch-content";
     public static final String RIGHT_SAVE_REPOSITORY = "save";
     public static final String RIGHT_SAVE_WORKSPACE = "save";
+    public static final String RIGHT_AUTO_INSTALL = "auto-install";
     public static final String RIGHT_INSTALL = "install";
     public static final String RIGHT_UNINSTALL = "uninstall";
     public static final String RIGHT_EXEC = "exec";
@@ -129,7 +125,7 @@ public final class NutsConstants {
     public static final String RIGHT_SET_PASSWORD = "set-password";
     public static final String RIGHT_ADMIN = "admin";
     public static final String[] RIGHTS = {RIGHT_FETCH_DESC, RIGHT_FETCH_CONTENT, RIGHT_SAVE_REPOSITORY,
-        RIGHT_SAVE_WORKSPACE, RIGHT_INSTALL, RIGHT_UNINSTALL, RIGHT_EXEC, RIGHT_DEPLOY, RIGHT_UNDEPLOY,
+        RIGHT_SAVE_WORKSPACE, RIGHT_INSTALL, RIGHT_AUTO_INSTALL,RIGHT_UNINSTALL, RIGHT_EXEC, RIGHT_DEPLOY, RIGHT_UNDEPLOY,
         RIGHT_PUSH, RIGHT_ADD_REPOSITORY, RIGHT_REMOVE_REPOSITORY, RIGHT_SET_PASSWORD, RIGHT_ADMIN};
 
     public static final String ENV_KEY_EXCLUDE_CORE_EXTENSION = "exclude-core-extension";
@@ -172,6 +168,7 @@ public final class NutsConstants {
 
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
+    public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
 
     static {
         _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_ARCH, null);

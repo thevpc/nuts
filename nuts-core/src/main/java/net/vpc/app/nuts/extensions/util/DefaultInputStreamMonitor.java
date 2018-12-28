@@ -61,9 +61,19 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor , OutputStr
                 formattedLine.append(" ");
             }
             formattedLine.append("\\]");
-            formattedLine.append(" " + String.format("%6s", df.format(percent)) + "\\% ");
-            formattedLine.append(" [[" + (mf.format(partialSpeed)) + "/s]] ([[" + (mf.format(globalSpeed)) + "/s]])");
-            formattedLine.append(" ``" + event.getSourceName() + "`` ");
+            formattedLine.append(" ").append(String.format("%6s", df.format(percent))).append("\\% ");
+            formattedLine.append(" [[").append(mf.format(partialSpeed)).append("/s]]");
+//            formattedLine.append(" ([[").append(mf.format(globalSpeed)).append("/s]])");
+            if(event.getLength()<0){
+                if(globalSpeed==0) {
+                    formattedLine.append(" ( -- )");
+                }else{
+                    formattedLine.append(" ([[").append(mf.format(globalSpeed)).append("]])");
+                }
+            }else {
+                formattedLine.append(" ([[").append(mf.format(event.getLength())).append("]])");
+            }
+            formattedLine.append(" ``").append(event.getSourceName()).append("`` ");
             while (formattedLine.length() < 80) {
                 formattedLine.append(' ');
             }

@@ -29,14 +29,14 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsDefinition;
 
 class NutsIdVertex {
 
-    NutsFile from;
-    NutsFile to;
+    NutsDefinition from;
+    NutsDefinition to;
 
-    public NutsIdVertex(NutsFile from, NutsFile to) {
+    public NutsIdVertex(NutsDefinition from, NutsDefinition to) {
         this.from = from;
         this.to = to;
     }

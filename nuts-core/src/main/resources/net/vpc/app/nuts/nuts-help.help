@@ -5,8 +5,9 @@
 /_/ |_/\\__,_/\\__/____/  `` version ${nuts.workspace-runtime.version}##
 
 
-**nuts** stands for **Network Updatable Things Services** tool. It is a simple tool  for __managing__ remote,
-packages, __installing__ these  packages to the current machine and __executing__ such  packages on need.
+**nuts** stands for **Network Updatable Things Services** tool. It is the package manager for (mainly) java
+and non Java world. It helps discovering, downloading, assembling and executing  remote packages in a very
+handy way.
 Each managed package  is also called a **nuts** which  is a **Network Updatable Thing Service** .
 **nuts** packages are  stored  into repositories. A  __repository__  may be local for  storing local **nuts**
 or remote for accessing  remote packages (good examples  are  remote maven  repositories). It may
@@ -17,25 +18,27 @@ that depicts dependencies between them. This dependency is seamlessly handled by
 resolve and download on-need dependencies over the wire.
 
 **nuts** is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
-view of the the  packages __dependency__, like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__  to
-__install__ and __uninstall__ packages allowing multiple versions of the very same package to  be installed,
-and like {{git}}/{{svn}} __source version tools__ to support package (re)-building and deploying.
+view of the the  packages __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
+to __install__ and __uninstall__ packages allowing multiple versions of the very same package to  be installed.
+
+Although **nuts** focuses on java packages, it still supports, by design, native and all non java packages.
+Dependencies are fetched according to the current operating system type, distribution and hardware architectures.
 
 **nuts** works either as __standalone application__ or as __java library__ to enable dynamic and dependency
 aware class loading and brings a rich toolset to provide a versatile portable command line tools such
 as {{nsh}} (a {{bash}} like shell), {{tomcat}}, {{derby}} ... wrapper tools to make it easier providing
 __development__ , __test__ and __deployment__ reproducible environments.
+
 With container concepts in mind, **nuts** is the perfect java application tool for {{Docker}}, {{CoreOs}}
 and other __container managers__.
 
 @@COMMON VERBS:@@
-deploy,undeploy   : to handle packages (package installers) on the local repositories
+deploy, undeploy  : to handle packages (package installers) on the local repositories
 install,uninstall : to install/uninstall a package (using its fetched/deployed installer)
-checkout,commit   : create new versions of the packages
 fetch,push        : download, upload to remote repositories
 find              : searches for existing/installable packages
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 **nuts** \[Nuts Options\]... {{\<command\>}} {{\<args\>}} ...
 
 @@VERSIONS:@@
@@ -86,20 +89,10 @@ Java         Version: ${java.version} (${java.vm.name})
       show version, libraries and locations used for booting **nuts**
  [[--perf]]
       show startup time in ms
- [[--help]]
-      show this help and exit
- [[--license]]
-      show license and exit
- [[--license]]
-      show license and exit
  [[--exclude-extensions]]     {{\<extension-id-list\>}}
       exclude extensions from being loaded at runtime. list is separated with characters " ,;"
  [[--exclude-repositories]]   {{\<repository-list\>}}
       exclude repositories from being loaded at runtime. list is separated with characters " ,;"
- [[--update]]
-      check if a newer version of **nuts** is available in the current workspace and perform update
- [[--check-updates]]
-      check if a newer version of **nuts** is available in the current workspace without performing updates
  [[--boot-runtime]] {{\<runtime-id-or-version\>}}
       load runtime (nuts-core) version. either version may be expressed or full nuts implementation
       (other than nuts-core) should be defined
@@ -122,7 +115,7 @@ Java         Version: ${java.version} (${java.vm.name})
       supported units are :
         {{k}} or {{kb}} : for kilo-bytes (example 10k)
         {{m}} or {{mb}} : for mega-bytes (example 10m)
-        {{g}} or {{gb}} : for mega-bytes (example 10g)
+        {{g}} or {{gb}} : for giga-bytes (example 10g)
  [[--log-folder]]     {{\<log-folder-path\>}}
       define log file folder path
  [[--log-name]]       {{\<log-file-name-pattern\>}}
@@ -131,12 +124,27 @@ Java         Version: ${java.version} (${java.vm.name})
       define the number of files to use (in rotating log)
 
 @@NUTS COMMAND:@@
- commands are workspace specific, type {{--help}} or {{nsh help}} command for detailed help
+ [[--help]]
+      show this help and exit
+ [[--license]]
+      show license and exit
+ [[--install]] {{\<nuts-package\>}}...
+      install **nuts** package {{\<nuts-package\>}}
+ [[--uninstall]] {{\<nuts-package\>}}...
+      uninstall  **nuts** package {{\<nuts-package\>}}
+ [[--update]]
+       check if a newer version of **nuts** is available in the current workspace and perform update
+ [[--check-updates]]
+       check if a newer version of **nuts** is available in the current workspace without performing updates
+ [[--clean]]
+       clean (delete) **nuts** cache folders
+ [[--reset]]
+       reset (delete) **nuts** workspace folder
 
 @@EXAMPLES:@@
-       **nuts** {{--help}}
-            shows this help witch is the help to the nuts bootstrapper (not workspace aware)
-       **nuts** {{--update}} {{--workspace}} /home/me/some-folder {{--archetype}} minimal {{--save}}
+       **nuts** [[--help]]
+            shows this help and exit
+       **nuts** [[--update]] [[--workspace]] /home/me/some-folder [[--archetype]] minimal [[--save]]
             updates **nuts** to the very latest version using workspace location
             /home/me/some-folder. A minimal ('minimal' archetype) workspace will be created
             and saved if no workspace was resolved. The workspace handles local packages only (because of 'minimal' archetype)

@@ -45,11 +45,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
-//import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-//import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-//import net.vpc.app.nuts.extensions.util.CoreStringUtils;
-//import net.vpc.app.nuts.extensions.util.NutsSearchBuilder;
-
 /**
  * Created by vpc on 1/7/17.
  */
@@ -62,7 +57,6 @@ public class FindCommand extends AbstractNutsCommand {
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        NutsWorkspace ws = context.getWorkspace();
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
         FindContext findContext = new FindContext();
@@ -74,7 +68,7 @@ public class FindCommand extends AbstractNutsCommand {
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
-            }else if (cmdLine.readAllOnce("-js", "--javascript")) {
+            } else if (cmdLine.readAllOnce("-js", "--javascript")) {
                 if (currentFindWhat + 1 >= findWhats.size()) {
                     findWhats.add(new FindWhat());
                 }
@@ -118,6 +112,8 @@ public class FindCommand extends AbstractNutsCommand {
                 findContext.installedDependencies = true;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-d", "--dependencies")) {
                 findContext.display = "dependencies";
+            } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-d", "--dependencies-tree")) {
+                findContext.display = "dependencies-tree";
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-i", "--installed")) {
                 findContext.installed = true;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-!i", "--non-installed")) {
@@ -267,31 +263,30 @@ public class FindCommand extends AbstractNutsCommand {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        NutsSearch search = findContext.context.getWorkspace().createSearchBuilder().addJs(findWhat.jsCode)
+        NutsQuery query = findContext.context.getWorkspace().createQuery().addJs(findWhat.jsCode)
                 .addId(findWhat.nonjs)
                 .addArch(findContext.arch)
                 .addPackaging(findContext.pack)
                 .addRepository(findContext.repos)
                 .setSort(true)
-                .setLatestVersions(findContext.latestVersions)
-                .build();
+                .setLatestVersions(findContext.latestVersions);
 
         NutsWorkspace ws = findContext.context.getWorkspace();
         switch (findContext.fecthMode) {
             case ONLINE: {
-                return toext(searchOnline(findContext, search, ws));
+                return toext(searchOnline(findContext, query, ws));
             }
             case OFFLINE: {
-                return toext(searchOffline(findContext, search, ws));
+                return toext(searchOffline(findContext, query, ws));
             }
             case REMOTE: {
-                return toext(searchRemote(findContext, search, ws));
+                return toext(searchRemote(findContext, query, ws));
             }
             case COMMIT: {
-                return searchCommit(findContext, search, ws);
+                return searchCommit(findContext, query, ws);
             }
             case UPDATE: {
-                return searchUpdate(findContext, search, ws);
+                return searchUpdate(findContext, query, ws);
             }
             case STATUS: {
                 throw new NutsIllegalArgumentException("find: Unsupported 'status' fetch mode");
@@ -300,16 +295,16 @@ public class FindCommand extends AbstractNutsCommand {
         return Collections.emptyList();
     }
 
-    private List<NutsIdExt> searchUpdate(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
+    private List<NutsIdExt> searchUpdate(FindContext findContext, NutsQuery query, NutsWorkspace ws) throws IOException {
         Map<String, NutsId> local = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)))) {
+        for (NutsId nutsId : query.setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)).find()) {
             NutsId r = local.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getSimpleName(), nutsId);
             }
         }
         Map<String, NutsId> remote = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
+        for (NutsId nutsId : query.setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)).find()) {
             NutsId r = remote.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getSimpleName(), nutsId);
@@ -318,8 +313,7 @@ public class FindCommand extends AbstractNutsCommand {
 
         //force search of all local nutIds because some repositories could not make a wildcard search...
         for (NutsId localNutsId : local.values()) {
-            for (NutsId nutsId : (ws.find(
-                    ws.createSearchBuilder().addId(localNutsId.toString()).build(), findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
+            for (NutsId nutsId : ws.createQuery().addId(localNutsId.toString()).setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)).find()) {
                 NutsId r = remote.get(nutsId.getSimpleName());
                 if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                     remote.put(nutsId.getSimpleName(), nutsId);
@@ -339,16 +333,16 @@ public class FindCommand extends AbstractNutsCommand {
         return new ArrayList<NutsIdExt>(ret.values());
     }
 
-    private List<NutsIdExt> searchCommit(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
+    private List<NutsIdExt> searchCommit(FindContext findContext, NutsQuery query, NutsWorkspace ws) throws IOException {
         Map<String, NutsId> local = new LinkedHashMap<>();
         Map<String, NutsId> remote = new LinkedHashMap<>();
-        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)))) {
+        for (NutsId nutsId : query.setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)).find()) {
             NutsId r = local.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getSimpleName(), nutsId);
             }
         }
-        for (NutsId nutsId : (ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
+        for (NutsId nutsId : query.setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)).find()) {
             NutsId r = remote.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getSimpleName(), nutsId);
@@ -357,7 +351,7 @@ public class FindCommand extends AbstractNutsCommand {
 
         //force search of all local nutIds because some repositories could not make a wildcard search...
         for (NutsId localNutsId : local.values()) {
-            for (NutsId nutsId : (ws.find(ws.createSearchBuilder().addId(localNutsId.toString()).build(), findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)))) {
+            for (NutsId nutsId : ws.createQuery().addId(localNutsId.toString()).setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)).find()) {
                 NutsId r = remote.get(nutsId.getSimpleName());
                 if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                     remote.put(nutsId.getSimpleName(), nutsId);
@@ -378,16 +372,20 @@ public class FindCommand extends AbstractNutsCommand {
         return new ArrayList<NutsIdExt>(ret.values());
     }
 
-    private List<NutsId> searchRemote(FindContext findContext, NutsSearch search, NutsWorkspace ws) throws IOException {
-        return ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.REMOTE));
+    private List<NutsId> searchFetchType(FindContext findContext, NutsQuery query, NutsFetchMode m) {
+        return query.setSession(findContext.context.getSession().copy().setTransitive(true).setFetchMode(m)).find();
     }
 
-    private List<NutsId> searchOffline(FindContext findContext, NutsSearch search, NutsWorkspace ws) {
-        return ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE));
+    private List<NutsId> searchRemote(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+        return searchFetchType(findContext, query, NutsFetchMode.REMOTE);
     }
 
-    private List<NutsId> searchOnline(FindContext findContext, NutsSearch search, NutsWorkspace ws) {
-        return ws.find(search, findContext.context.getSession().copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE));
+    private List<NutsId> searchOffline(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+        return searchFetchType(findContext, query, NutsFetchMode.OFFLINE);
+    }
+
+    private List<NutsId> searchOnline(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+        return searchFetchType(findContext, query, NutsFetchMode.ONLINE);
         //display(nutsIdIterator,findContext);
     }
 
@@ -445,7 +443,7 @@ public class FindCommand extends AbstractNutsCommand {
                     try {
                         info.getDescriptor();
                     } catch (Exception ex2) {
-
+                        //
                     }
                     findContext.err.print("Error Resolving " + info.nuts + " :: " + ex.getMessage() + "\n");
                     continue;
@@ -453,86 +451,13 @@ public class FindCommand extends AbstractNutsCommand {
             }
             switch (findContext.display) {
                 case "id":
-                case "dependencies":
+                case "dependencies": {
                     Set<String> imports = new HashSet<String>(Arrays.asList(ws.getConfigManager().getImports()));
 
                     if (findContext.longflag) {
-                        NutsDescriptor descriptor = null;
-                        String descriptorError = null;
-                        try {
-                            descriptor = info.getDescriptor();
-                        } catch (Exception ex) {
-                            descriptorError = ex.getMessage();
-                        }
-                        String status = (info.isInstalled(findContext.installedDependencies) ? "i"
-                                : info.isFetched() ? "f"
-                                : "r")
-                                + (info.isUpdatable() ? "u" : ".")
-                                + (descriptor == null ? "?" : (descriptor.isExecutable() ? "x" : "."));
-                        findContext.out.print(status);
-                        findContext.out.print(" ");
-                        findContext.out.print(descriptor == null ? "?  " : descriptor.getPackaging());
-                        findContext.out.print(" ");
-                        findContext.out.print(Arrays.asList(descriptor == null ? new String[0] : descriptor.getArch()));
-                        findContext.out.print(" ");
-                        if (StringUtils.isEmpty(info.nuts.getNamespace())) {
-                            findContext.out.print("?");
-                        } else {
-                            findContext.out.print(info.nuts.getNamespace());
-                        }
-                        findContext.out.print(" ");
-                        findContext.out.print(format(info.nuts, info.desc, imports, ws));
-                        if (findContext.showFile) {
-                            findContext.out.print(" ");
-                            if (info.getFile() == null) {
-                                findContext.out.print("?");
-                            } else {
-                                findContext.out.print(info.getFile().getPath());
-                            }
-                        }
-                        if (findContext.showClass) {
-                            findContext.out.print(" ");
-                            if (info.getFile() == null) {
-                                findContext.out.print("?");
-                            } else {
-                                ExecutionEntry[] cls = ws.resolveExecutionEntries(info.getFile());
-                                if (cls.length == 0) {
-                                    findContext.out.print("?");
-                                } else if (cls.length == 1) {
-                                    findContext.out.print(cls[0].getName());
-                                } else {
-                                    findContext.out.print(Arrays.toString(cls));
-                                }
-                            }
-                        }
-                        if (!StringUtils.isEmpty(descriptorError)) {
-                            findContext.out.print(" [[" + descriptorError + "]]");
-                        }
+                        printLongId(findContext, ws, info, imports);
                     } else {
-                        findContext.out.print(format(info.nuts, info.desc, imports, ws));
-                        if (findContext.showFile) {
-                            findContext.out.print(" ");
-                            if (info.getFile() == null) {
-                                findContext.out.print("?");
-                            } else {
-                                findContext.out.print(info.getFile().getPath());
-                            }
-                        }
-                        if (findContext.showClass) {
-                            findContext.out.print(" ");
-                            if (info.getFile() == null) {
-                                findContext.out.print("?");
-                            } else {
-                                ExecutionEntry[] cls = ws.resolveExecutionEntries(info.getFile());
-                                if (cls.length == 0) {
-                                    findContext.out.print("?");
-                                } else if (cls.length == 1) {
-                                    findContext.out.print(cls[0].getName());
-                                } else {
-                                    findContext.out.print(Arrays.toString(cls));
-                                }
-                            }
-                        }
+                        printShortId(findContext, info);
                     }
                     findContext.out.println();
                     if (findContext.desc) {
@@ -547,59 +472,15 @@ public class FindCommand extends AbstractNutsCommand {
                         findContext.out.println("");
                     }
                     if ("dependencies".equals(findContext.display)) {
-                        NutsFetchMode m = null;
-                        switch (findContext.fecthMode) {
-                            case ONLINE: {
-                                m = NutsFetchMode.ONLINE;
-                                break;
-                            }
-                            case OFFLINE: {
-                                m = NutsFetchMode.OFFLINE;
-                                break;
-                            }
-                            case REMOTE: {
-                                m = NutsFetchMode.REMOTE;
-                                break;
-                            }
-                            case COMMIT: {
-                                m = NutsFetchMode.ONLINE;
-                                break;
-                            }
-                            case UPDATE: {
-                                m = NutsFetchMode.ONLINE;
-                                break;
-                            }
-                        }
-                        NutsFile[] depsFiles = ws.fetchDependencies(
-                                new NutsDependencySearch(info.nuts)
-                                        .setIncludeMain(false)
-                                        .setScope(NutsDependencyScope.RUN),
-                                findContext.context.getSession().copy().setTransitive(true)
-                                        .setFetchMode(m)
-                        );
-                        Arrays.sort(depsFiles);
-                        for (NutsFile dd : depsFiles) {
-                            NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(), null), findContext.context);
-                            dinfo.descriptor = dd.getDescriptor();
-                            if (findContext.longflag) {
-                                String status = (dinfo.isInstalled(findContext.installedDependencies) ? "i"
-                                        : dinfo.isFetched() ? "f"
-                                        : "r") + (dinfo.isUpdatable() ? "u" : ".");
-                                findContext.out.print("\t");
-                                findContext.out.printf("%s", status);
-                                findContext.out.print(" ");
-                                findContext.out.printf("%s", dinfo.getDescriptor().getPackaging());
-                                findContext.out.print(" ");
-                                findContext.out.printf("%s", Arrays.asList(dinfo.getDescriptor().getArch()));
-                                findContext.out.print(" ");
-                                findContext.out.println(format(dinfo.nuts, info.desc, imports, ws));
-                            } else {
-                                findContext.out.print("\t");
-                                findContext.out.println(format(dinfo.nuts, info.desc, imports, ws));
-                            }
-                        }
+                        printDependencyList(findContext, ws, info, imports);
                     }
                     break;
+                }
+                case "dependencies-tree": {
+                    Set<String> imports = new HashSet<String>(Arrays.asList(ws.getConfigManager().getImports()));
+                    printDependencyTree(findContext, info, "", new HashSet<>());
+                    break;
+                }
                 case "name": {
                     String fullName = info.nuts.getSimpleName();
                     if (!visitedItems.contains(fullName)) {
@@ -618,7 +499,7 @@ public class FindCommand extends AbstractNutsCommand {
                             findContext.out.print(" ");
                             findContext.out.print(d == null ? "?" : d.getPackaging());
                             findContext.out.print(" ");
-                            findContext.out.print(Arrays.asList(d == null ? "?" : d.getArch()));
+                            findContext.out.print(Collections.singletonList(d == null ? "?" : d.getArch()));
                             findContext.out.print(" ");
                             findContext.out.printf("%s\n", info.nuts.getSimpleName());
                         } else {
@@ -687,36 +568,261 @@ public class FindCommand extends AbstractNutsCommand {
         }
     }
 
+    private void printLongId(FindContext findContext, NutsWorkspace ws, NutsInfo info, Set<String> imports) {
+        NutsDescriptor descriptor = null;
+        String descriptorError = null;
+        try {
+            descriptor = info.getDescriptor();
+        } catch (Exception ex) {
+            descriptorError = ex.getMessage();
+        }
+        String status = (info.isInstalled(findContext.installedDependencies) ? "i"
+                : info.isFetched() ? "."
+                : "r")
+                + (info.isUpdatable() ? "u" : ".")
+                + (descriptor == null ? "?" :
+                (descriptor.isNutsApplication() ? "X" : descriptor.isExecutable() ? "x" : ".")
+        );
+        findContext.out.print("**" + status + "**");
+        findContext.out.print(" ");
+        findContext.out.print(descriptor == null ? "?  " : descriptor.getPackaging());
+        findContext.out.print(" ");
+        findContext.out.print(Arrays.asList(descriptor == null ? new String[0] : descriptor.getArch()));
+        findContext.out.print(" ");
+        if (StringUtils.isEmpty(info.nuts.getNamespace())) {
+            findContext.out.print("");
+        } else {
+            findContext.out.print(info.nuts.getNamespace());
+        }
+        findContext.out.print(" ");
+        printShortId(findContext, info);
+        if (!StringUtils.isEmpty(descriptorError)) {
+            findContext.out.print(" [[" + descriptorError + "]]");
+        }
+    }
+
+    private List<NutsDependency> findImmediateDependencies(FindContext findContext, String id) {
+        NutsWorkspace ws = findContext.context.getWorkspace();
+        NutsSession session = findContext.context.getSession();
+        HashSet<NutsDependency> all = new HashSet<>();
+        for (NutsDependency dependency : ws.fetchDescriptor(id, true, session).getDependencies()) {
+            all.add(dependency);
+        }
+        ArrayList<NutsDependency> a = new ArrayList<>(all);
+        Collections.sort(a, new Comparator<NutsDependency>() {
+            @Override
+            public int compare(NutsDependency o1, NutsDependency o2) {
+                if (o1 == null || o2 == null) {
+                    if (o1 == o2) {
+                        return 0;
+                    }
+                    if (o1 == null) {
+                        return -1;
+                    }
+                    return 1;
+                }
+                return o1.toId().toString().compareTo(o2.toId().toString());
+            }
+        });
+        return a;
+    }
+
+    private void printDependencyTree(FindContext findContext, NutsInfo info, String prefix, Set<String> visited) throws IOException {
+        findContext.out.print(prefix);
+        printShortId(findContext, info);
+        List<NutsDependency> immediateSelfDependencies=new ArrayList<>();
+        try {
+            immediateSelfDependencies = findImmediateDependencies(findContext, info.nuts.toString());
+        }catch (Exception ex){
+            findContext.out.print(" @@MISSING@@");
+        }
+        findContext.out.println();
+        if(!visited.contains(info.nuts.getLongName())) {
+            visited.add(info.nuts.getLongName());
+            for (NutsDependency dd : immediateSelfDependencies) {
+                NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.toId(), null), findContext.context);
+                printDependencyTree(findContext, dinfo, prefix+"  ",visited);
+            }
+        }else{
+            if(immediateSelfDependencies.size()>0){
+                findContext.out.print(prefix);
+                findContext.out.print("  ...");
+                findContext.out.println();
+            }
+        }
+    }
+
+    private void printDependencyList(FindContext findContext, NutsWorkspace ws, NutsInfo info, Set<String> imports) throws IOException {
+        NutsFetchMode m = getNutsFetchMode(findContext.fecthMode);
+        NutsSession session = findContext.context.getSession().copy().setTransitive(true).setFetchMode(m);
+        List<NutsDefinition> depsFiles = ws.createQuery().setSession(session)
+                .addId(info.nuts)
+                .setScope(NutsDependencyScope.RUN)
+                .setLatestVersions(findContext.latestVersions)
+                .dependenciesOnly()
+                .setSort(true)
+                .fetch();
+        Set<String> immediateSelfDependencies = toDependencySet(ws.fetchDescriptor(info.nuts.toString(), false, session).getDependencies());
+        Set<String> immediateInheritedDependencies = toDependencySet(ws.fetchDescriptor(info.nuts.toString(), true, session).getDependencies());
+        int packagingSize = 3;
+        int archSizeSize = 2;
+        for (NutsDefinition dd : depsFiles) {
+            packagingSize = Math.max(packagingSize, dd.getDescriptor().getPackaging().length());
+            archSizeSize = Math.max(archSizeSize, Arrays.asList(dd.getDescriptor().getArch()).toString().length());
+        }
+        for (NutsDefinition dd : depsFiles) {
+            NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(), null), findContext.context);
+            dinfo.descriptor = dd.getDescriptor();
+            if (findContext.longflag) {
+                String status = buildDependencyStatus(findContext, immediateSelfDependencies, immediateInheritedDependencies, dd, dinfo);
+
+                findContext.out.print("\t");
+                findContext.out.printf("**%s**", status);
+                findContext.out.print(" ");
+                findContext.out.printf("%s", StringUtils.alignLeft(dinfo.getDescriptor().getPackaging(), packagingSize));
+                findContext.out.print(" ");
+                findContext.out.printf("%s", StringUtils.alignLeft(Arrays.asList(dinfo.getDescriptor().getArch()).toString(), archSizeSize));
+                findContext.out.print(" ");
+                findContext.out.println(format(dinfo.nuts, info.desc, imports, ws));
+            } else {
+                findContext.out.print("\t");
+                findContext.out.println(format(dinfo.nuts, info.desc, imports, ws));
+            }
+        }
+    }
+
+    private String buildDependencyStatus(FindContext findContext, Set<String> immediateSelfDependencies, Set<String> immediateInheritedDependencies, NutsDefinition dd, NutsInfo dinfo) {
+        String status = (dinfo.isInstalled(findContext.installedDependencies) ? "i"
+                : dinfo.isFetched() ? "."
+                : "r");
+        status += (dinfo.isUpdatable() ? "u" : ".");
+        status += (dd.getDescriptor().isNutsApplication() ? "X" : dd.getDescriptor().isExecutable() ? "x" : ".");
+        if (immediateSelfDependencies.contains(dd.getId().getLongName())) {
+            status += ".";
+        } else if (immediateInheritedDependencies.contains(dd.getId().getLongName())) {
+            status += "p";
+        } else {
+            status += "d";
+        }
+        switch (StringUtils.trim(dd.getScope()).toLowerCase()) {
+            case "":
+            case "compile": {
+                status += ".";
+                break;
+            }
+            case "runtime": {
+                status += "m";
+                break;
+            }
+            case "test": {
+                status += "t";
+                break;
+            }
+            case "system": {
+                status += "s";
+                break;
+            }
+            case "provided": {
+                status += "p";
+                break;
+            }
+            default: {
+                status += "?";
+                break;
+            }
+        }
+        return status;
+    }
+
+    private void printShortId(FindContext findContext, NutsInfo info) {
+        NutsWorkspace ws = findContext.context.getWorkspace();
+        Set<String> imports = new HashSet<String>(Arrays.asList(ws.getConfigManager().getImports()));
+        findContext.out.print(format(info.nuts, info.desc, imports, ws));
+        if (findContext.showFile) {
+            findContext.out.print(" ");
+            if (info.getFile() == null) {
+                findContext.out.print("?");
+            } else {
+                findContext.out.print(info.getFile().getPath());
+            }
+        }
+        if (findContext.showClass) {
+            findContext.out.print(" ");
+            if (info.getFile() == null) {
+                findContext.out.print("?");
+            } else {
+                ExecutionEntry[] cls = ws.resolveExecutionEntries(info.getFile());
+                if (cls.length == 0) {
+                    findContext.out.print("?");
+                } else if (cls.length == 1) {
+                    findContext.out.print(cls[0].getName());
+                } else {
+                    findContext.out.print(Arrays.toString(cls));
+                }
+            }
+        }
+    }
+
+    private Set<String> toDependencySet(NutsDependency[] all) {
+        Set<String> set = new HashSet<>();
+        for (NutsDependency nutsDependency : all) {
+            set.add(nutsDependency.getLongName());
+        }
+        return set;
+    }
+
+    private NutsFetchMode getNutsFetchMode(SearchMode fecthMode) {
+        NutsFetchMode m = null;
+        switch (fecthMode) {
+            case ONLINE: {
+                m = NutsFetchMode.ONLINE;
+                break;
+            }
+            case OFFLINE: {
+                m = NutsFetchMode.OFFLINE;
+                break;
+            }
+            case REMOTE: {
+                m = NutsFetchMode.REMOTE;
+                break;
+            }
+            case COMMIT: {
+                m = NutsFetchMode.ONLINE;
+                break;
+            }
+            case UPDATE: {
+                m = NutsFetchMode.ONLINE;
+                break;
+            }
+        }
+        return m;
+    }
+
     private String format(NutsId id, String desc, Set<String> imports, NutsWorkspace ws) {
+        Map<String,String> m=id.getQueryMap();
+        String scope=m.get("scope");
+        String optional=m.get("optional");
         id = id.builder()
                 .setNamespace(null)
                 .setQueryProperty(NutsConstants.QUERY_FACE, null)
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true)
                 .build();
         StringBuilder sb = new StringBuilder();
-        if (!StringUtils.isEmpty(id.getNamespace())) {
-            sb.append(id.getNamespace()).append("://");
+        sb.append(ws.formatId(id));
+        if (!StringUtils.isEmpty(scope)) {
+            sb.append(" **");
+            sb.append(ws.escapeText(scope));
+            sb.append("**");
         }
-        if (!StringUtils.isEmpty(id.getGroup())) {
-            if (imports.contains(id.getGroup())) {
-                sb.append("==");
-                sb.append(ws.escapeText(id.getGroup()));
-                sb.append("==");
-            } else {
-                sb.append(ws.escapeText(id.getGroup()));
+        if (!StringUtils.isEmpty(optional)) {
+            if("true".equals(optional)){
+                optional="optional";
+            }else{
+                optional="optional="+optional;
             }
-            sb.append(":");
-        }
-        sb.append("[[");
-        sb.append(ws.escapeText(id.getName()));
-        sb.append("]]");
-        if (!StringUtils.isEmpty(id.getVersion().getValue())) {
-            sb.append("#");
-            sb.append(ws.escapeText(id.getVersion().toString()));
-        }
-        if (!StringUtils.isEmpty(id.getQuery())) {
-            sb.append("?");
-            sb.append(ws.escapeText(id.getQuery()));
+            sb.append(" **");
+            sb.append(ws.escapeText(optional));
+            sb.append("**");
         }
         if (!StringUtils.isEmpty(desc)) {
             sb.append(" **");
@@ -746,7 +852,7 @@ public class FindCommand extends AbstractNutsCommand {
         NutsWorkspace ws;
         NutsSession session;
         NutsDescriptor descriptor;
-        NutsFile _fetchedFile;
+        NutsDefinition _fetchedFile;
 
         public NutsInfo(NutsIdExt nuts, NutsCommandContext context) throws IOException {
             this.nuts = nuts.id;
@@ -793,8 +899,11 @@ public class FindCommand extends AbstractNutsCommand {
                 try {
                     _fetchedFile = ws.fetch(nuts.toString(), session.copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE));
                 } catch (Exception ex) {
-                    _fetchedFile = new NutsFile(null, null, null, false, false, null);
+                    _fetchedFile = new NutsDefinition(null, null, null, false, false, null, null);
                 }
+            }
+            if (_fetchedFile.getFile() == null) {
+                return null;
             }
             return new File(_fetchedFile.getFile());
         }
@@ -840,7 +949,6 @@ public class FindCommand extends AbstractNutsCommand {
     }
 
     static class FindContext {
-
         HashSet<String> arch = new HashSet<String>();
         HashSet<String> pack = new HashSet<String>();
         HashSet<String> repos = new HashSet<String>();

@@ -1,6 +1,6 @@
 copy files and directories
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##cp## [<OPTION>...] <SOURCE>... <DEST>
 
 copy files and directories

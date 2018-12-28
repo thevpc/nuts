@@ -91,7 +91,7 @@ public class LocalMysql {
                 getContext().out().printf("%s\n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
             } else {
                 for (LocalMysqlDatabaseConfigService aa : c.getDatabases()) {
-                    getContext().out().printf("[%s] %s\n", NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    getContext().out().printf("[%s] %s\n", aa.getName(),NutsAppUtils.getPropertyValue(aa.getConfig(), property));
                 }
             }
         }

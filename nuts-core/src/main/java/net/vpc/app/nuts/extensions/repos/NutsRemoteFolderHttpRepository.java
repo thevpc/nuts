@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreHttpUtils;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
@@ -239,7 +238,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
 //        if (s == null) {
 //            throw new NutsNotFoundException(id);
 //        }
-//        return CoreNutsUtils.parseRequiredNutsId(s).setNamespace(getRepositoryId());
+//        return CoreNutsUtils.parseRequiredId(s).setNamespace(getRepositoryId());
 //    }
     @Override
     public List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
@@ -289,12 +288,12 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
 //        return s == null ? -1 : Integer.parseInt(s);
 //    }
     @Override
-    public NutsFile fetchImpl(NutsId id, NutsSession session) {
+    public NutsDefinition fetchImpl(NutsId id, NutsSession session) {
         NutsDescriptor descriptor = fetchDescriptor(id, session);
         String tempFile = CoreIOUtils.createTempFile(descriptor, false).getPath();
         copyTo(id, tempFile, session);
         NutsDescriptor ed = getWorkspace().resolveEffectiveDescriptor(descriptor, session);
-        return new NutsFile(ed.getId(), descriptor, tempFile, false, true, null);
+        return new NutsDefinition(ed.getId(), descriptor, tempFile, false, true, null,null);
     }
 
     private String httpGetString(String url) {

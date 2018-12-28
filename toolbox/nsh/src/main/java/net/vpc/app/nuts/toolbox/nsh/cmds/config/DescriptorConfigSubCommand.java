@@ -87,7 +87,7 @@ public class DescriptorConfigSubCommand extends AbstractConfigSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.setId(context.getWorkspace().parseNutsId(value));
+                        desc.setId(context.getWorkspace().parseId(value));
                     }
                 });
 

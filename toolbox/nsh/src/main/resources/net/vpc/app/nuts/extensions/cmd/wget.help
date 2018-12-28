@@ -1,6 +1,6 @@
 non-interactive network downloader
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 wget## [<OPTION>...] <PARAMS> ...
 
 non-interactive network downloader

@@ -1,6 +1,11 @@
 package net.vpc.app.nuts.toolbox.mvn;
 
+import net.vpc.app.nuts.app.NutsApplication;
+import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 import org.apache.maven.cli.MavenCli;
+import org.codehaus.plexus.util.cli.Commandline;
 
 import java.io.*;
 import java.nio.file.FileVisitResult;
@@ -11,98 +16,98 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NutsMvnMain {
+public class NutsMvnMain extends NutsApplication {
 //    public static void main(String[] args) {
 //        main0(new String[]{
 //                "--json", "--get", "net.vpc.common:vpc-common-classpath:1.3", "vpc-public-maven"
 //        });
 //    }
-
-    public static void main(String[] args) {
+    public static class Options{
         boolean json = false;
+
+    }
+    public static void main(String[] args) {
+        new NutsMvnMain().launchAndExit(args);
+    }
+
+    @Override
+    public int launch(NutsApplicationContext appContext) {
         String command = null;
         List<String> args2 = new ArrayList<>();
-        for (int i = 0; i < args.length; i++) {
-            if (command == null) {
-                switch (args[i]) {
-                    case "-j":
-                    case "--json": {
-                        json = true;
-                        break;
-                    }
-                    case "-v":
-                    case "--version": {
-                        System.out.println("1.0.0");
-                        return;
-                    }
-                    case "build": {
-                        command = "build";
-                        break;
-                    }
-                    case "get": {
-                        command = "get";
-                        break;
-                    }
-                    default: {
-                        command = "default";
-                        args2.add(args[i]);
-                    }
+        Options o=new Options();
+        CommandLine cmd=new CommandLine(appContext);
+        Argument a;
+        while(cmd.hasNext()){
+            if(command == null) {
+                if (appContext.configure(cmd)) {
+                    //fo nothing
+                } else if ((a = cmd.readBooleanOption("-j", "--json")) != null) {
+                    o.json = a.getBooleanValue();
+                } else if ((a = cmd.readNonOption("build")) != null) {
+                    command = "build";
+                } else if ((a = cmd.readNonOption("get")) != null) {
+                    command = "get";
+                } else {
+                    command = "default";
+                    args2.add(cmd.read().getString());
                 }
-            } else {
-                args2.add(args[i]);
+            }else{
+                args2.add(cmd.read().getString());
             }
         }
         if (command == null) {
             command = "build";
         }
-        String[] args2Arr = args2.toArray(new String[args2.size()]);
-        switch (command) {
-            case "build": {
-                List<String> defaultArgs=new ArrayList<>();
-                for (String a : args2Arr) {
-                    if(a.startsWith("-D")){
-                        String[] as=a.substring(2).split("=");
-                        System.setProperty(as[0],as[1]);
-                    }else{
-                        defaultArgs.add(a);
+        if(cmd.isExecMode()) {
+            String[] args2Arr = args2.toArray(new String[0]);
+            switch (command) {
+                case "build":
+                case "default":
+                    {
+                    List<String> defaultArgs = new ArrayList<>();
+                    for (String ar : args2Arr) {
+                        if (ar.startsWith("-D")) {
+                            String[] as = ar.substring(2).split("=");
+                            System.setProperty(as[0], as[1]);
+                        } else {
+                            defaultArgs.add(ar);
+                        }
                     }
+                    boolean r = callMvn(o, ".", defaultArgs.toArray(new String[0]));
+                    return(r ? 0 : 1);
                 }
-                boolean r=callMvn(json,".",defaultArgs.toArray(new String[defaultArgs.size()]));
-                System.exit(r?0:1);
-                break;
-            }
-            case "get": {
-                MavenCli cli = new MavenCli();
-                System.setProperty("artifact", args2Arr[0].replaceFirst("#", ":"));
-                String repo = null;
-                if (args2Arr.length > 1) {
-                    repo = args2Arr[1];
+                case "get": {
+                    System.setProperty("artifact", args2Arr[0].replaceFirst("#", ":"));
+                    String repo = null;
+                    if (args2Arr.length > 1) {
+                        repo = args2Arr[1];
+                    }
+                    if ("central".equals(repo)) {
+                        repo = null;
+                    }
+                    if ("vpc-public-maven".equals(repo)) {
+                        repo = "https://raw.github.com/thevpc/vpc-public-maven/master";
+                    }
+                    if (repo != null) {
+                        System.setProperty("repoUrl", repo);
+                    }
+                    File dir = createTempPom();
+                    boolean r = callMvn(o, dir.getPath(), "dependency:get");
+                    try {
+                        delete(dir);
+                    } catch (IOException ex) {
+                        throw new IllegalArgumentException(ex);
+                    }
+                    return(r ? 0 : 1);
                 }
-                if ("central".equals(repo)) {
-                    repo = null;
-                }
-                if ("vpc-public-maven".equals(repo)) {
-                    repo = "https://raw.github.com/thevpc/vpc-public-maven/master";
-                }
-                if (repo != null) {
-                    System.setProperty("repoUrl", repo);
-                }
-                File dir = createTempPom();
-                boolean r=callMvn(json,dir.getPath(),"dependency:get");
-                try {
-                    delete(dir);
-                } catch (IOException ex) {
-                    throw new IllegalArgumentException(ex);
-                }
-                System.exit(r?0:1);
-                break;
             }
         }
+        return 0;
     }
 
-    private static boolean callMvn(boolean json,String path,String ... args) {
+    private static boolean callMvn(Options options,String path,String ... args) {
         MavenCli cli = new MavenCli();
-        if (json) {
+        if (options.json) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PrintStream out = new PrintStream(bos);
             try {

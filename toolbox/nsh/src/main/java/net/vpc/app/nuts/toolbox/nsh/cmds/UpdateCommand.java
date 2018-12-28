@@ -30,12 +30,11 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsConfirmAction;
-import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceUpdateOptions;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.ValueNonOption;
@@ -99,7 +98,7 @@ public class UpdateCommand extends AbstractNutsCommand {
 
     private void update(String id, NutsConfirmAction uptoDateAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getWorkspace();
-        NutsFile file = ws.update(id, uptoDateAction, context.getSession());
+        NutsDefinition file = ws.update(id, uptoDateAction, context.getSession());
         PrintStream out = context.getTerminal().getFormattedOut();
         if (file.isCached()) {
             out.printf("%s **already installed**\n", file.getId());

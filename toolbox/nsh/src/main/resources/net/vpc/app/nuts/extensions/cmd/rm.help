@@ -1,6 +1,6 @@
 remove files or directories
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##rm## [<OPTION>...] <SOURCE>... <DEST>
 
 remove files or directories

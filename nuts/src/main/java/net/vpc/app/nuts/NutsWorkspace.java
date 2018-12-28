@@ -34,8 +34,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -43,27 +41,21 @@ import java.util.Properties;
  * Created by vpc on 1/5/17.
  */
 @Prototype
-public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
+public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsWorkspace openWorkspace(NutsWorkspaceOptions options);
 
-    Iterator<NutsId> findIterator(NutsSearch search, NutsSession session);
-
-    NutsId findFirst(NutsSearch search, NutsSession session);
-
-    NutsId findOne(NutsSearch search, NutsSession session);
-
-    List<NutsId> find(NutsSearch search, NutsSession session);
-
     String copyTo(String id, String localPath, NutsSession session);
 
-    NutsFile fetch(String id, NutsSession session);
+    NutsDefinition fetchWithDependencies(NutsId id, NutsSession session);
 
-    NutsFile[] fetchDependencies(NutsDependencySearch search, NutsSession session);
+    NutsDefinition fetch(String id, NutsSession session);
 
-    NutsFile fetchWithDependencies(String id, NutsSession session);
+    NutsDefinition fetchWithDependencies(String id, NutsSession session);
 
     NutsDescriptor fetchDescriptor(String id, boolean effective, NutsSession session);
+
+    NutsDescriptor fetchDescriptor(NutsId idString, boolean effective, NutsSession session);
 
     String fetchHash(String id, NutsSession session);
 
@@ -71,29 +63,43 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     boolean isFetched(String id, NutsSession session);
 
+    NutsDefinition fetch(NutsId id, NutsSession session);
+
+    NutsId resolveId(NutsId id, NutsSession session);
+
     NutsId resolveId(String id, NutsSession session);
 
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession session);
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
+    NutsDefinition checkout(NutsId id, String folder, NutsSession session);
+
     NutsUpdate[] checkWorkspaceUpdates(NutsWorkspaceUpdateOptions options, NutsSession session);
 
-    NutsFile update(String id, NutsConfirmAction uptoDateAction, NutsSession session);
+    NutsDefinition update(String id, NutsConfirmAction uptoDateAction, NutsSession session);
 
-    NutsFile[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsConfirmAction foundAction, NutsSession session);
+    NutsDefinition[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsConfirmAction foundAction, NutsSession session);
 
-    NutsFile install(String id, NutsConfirmAction foundAction, NutsSession session);
+    NutsDefinition install(String id, String[] args, NutsConfirmAction foundAction, NutsSession session);
 
-    NutsFile checkout(String id, String folder, NutsSession session);
+    NutsDefinition checkout(String id, String folder, NutsSession session);
+
+    NutsDefinition install(NutsId id, String[] args, NutsConfirmAction foundAction, NutsSession session);
 
     NutsId commit(String folder, NutsSession session);
 
+    NutsDefinition update(NutsId id, NutsConfirmAction uptoDateAction, NutsSession session);
+
     boolean isInstalled(String id, boolean checkDependencies, NutsSession session);
 
-    boolean uninstall(String id, boolean deleteData, NutsSession session);
+    boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session);
+
+    boolean uninstall(String id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session);
 
     void push(String id, String repoId, NutsConfirmAction foundAction, NutsSession session);
+
+    void push(NutsId id, String repositoryId, NutsConfirmAction foundAction, NutsSession session);
 
     /**
      * creates a zip file based on the folder. The folder should contain a
@@ -105,21 +111,9 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
      * @param session       current session
      * @return bundled nuts file, the nuts is neither deployed nor installed!
      */
-    NutsFile createBundle(String contentFolder, String destFile, NutsSession session);
+    NutsDefinition createBundle(String contentFolder, String destFile, NutsSession session);
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
-
-    /**
-     * exec another instance of nuts
-     *
-     * @param nutsJarFile
-     * @param args
-     * @param copyCurrentToFile
-     * @param waitFor
-     * @param session
-     * @return
-     */
-    int exec(String nutsJarFile, String[] args, boolean copyCurrentToFile, boolean waitFor, NutsSession session);
 
     NutsWorkspaceRepositoryManager getRepositoryManager();
 
@@ -141,15 +135,19 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String getStoreRoot(NutsId id, RootFolderType folderType);
 
-    void addUserPropertyListener(MapListener<String,Object> listener);
+    void addUserPropertyListener(MapListener<String, Object> listener);
 
-    void removeUserPropertyListener(MapListener<String,Object> listener);
+    void removeUserPropertyListener(MapListener<String, Object> listener);
 
-    MapListener<String,Object>[] getUserPropertyListeners();
+    MapListener<String, Object>[] getUserPropertyListeners();
+
+    boolean isFetched(NutsId id, NutsSession session);
 
     String getStoreRoot(String id, RootFolderType folderType);
 
-    NutsFile fetchBootFile(NutsSession session);
+    void installCompanionTools(boolean silent, NutsSession session);
+
+    NutsDefinition fetchBootFile(NutsSession session);
 
     JsonIO getJsonIO();
 
@@ -161,9 +159,9 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String resolveDefaultHelpForClass(Class clazz);
 
-    NutsId resolveNutsIdForClass(Class clazz);
+    NutsId resolveIdForClass(Class clazz);
 
-    NutsId[] resolveNutsIdsForClass(Class clazz);
+    NutsId[] resolveIdsForClass(Class clazz);
 
     NutsId getPlatformOs();
 
@@ -181,15 +179,13 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     String resolveRepositoryPath(String location);
 
-    NutsWorkspaceOptions getOptions();
-
-    NutsBootOptions getBootOptions();
-
     NutsDescriptorBuilder createDescriptorBuilder();
 
     NutsIdBuilder createIdBuilder();
 
-    NutsSearchBuilder createSearchBuilder();
+    NutsQuery createQuery();
+
+    boolean uninstall(NutsId id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session);
 
     NutsCommandExecBuilder createExecBuilder();
 
@@ -207,30 +203,12 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     NutsVersion parseVersion(String version);
 
-    NutsId parseRequiredNutsId(String nutFormat);
+    NutsId parseRequiredId(String nutFormat);
 
 
-    String getNutsFileName(NutsId id, String ext);
+    String getFileName(NutsId id, String ext);
 
 
-    /**
-     * this method removes all  {@link NutsFormattedPrintStream}'s special formatting sequences and returns the raw
-     * string to be printed on an ordinary {@link PrintStream}
-     *
-     * @param value input string
-     * @return string without any escape sequences so that the text printed correctly on any non formatted {@link PrintStream}
-     */
-    String filterText(String value);
-
-    /**
-     * This method escapes all special characters that are interpreted by {@link NutsFormattedPrintStream} so that
-     * this exact string is printed on such print streams
-     * When str is null, an empty string is return
-     *
-     * @param value input string
-     * @return string with escaped characters so that the text printed correctly on {@link NutsFormattedPrintStream}
-     */
-    String escapeText(String value);
 
     /**
      * resolveExecutionEntries
@@ -256,8 +234,12 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     void printVersion(PrintStream out, Properties extraProperties, String options);
 
+    void printHelp(PrintStream out);
 
-    NutsTerminal createDefaultTerminal();
+    void printLicense(PrintStream out);
+
+
+    NutsTerminal createDefaultTerminal(InputStream in, PrintStream out, PrintStream err);
 
     NutsTerminal createTerminal();
 
@@ -275,7 +257,6 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
 
     PrintStream createNullPrintStream();
 
-    NutsId parseNutsId(String nutsId);
 
     InputStream monitorInputStream(String path, String name, NutsSession session);
 
@@ -286,5 +267,28 @@ public interface NutsWorkspace extends NutsComponent<NutsBootWorkspace> {
     boolean isStandardErrorStream(OutputStream out);
 
     boolean isStandardInputStream(InputStream in);
+
+    /**
+     * this method removes all  {@link NutsFormattedPrintStream}'s special formatting sequences and returns the raw
+     * string to be printed on an ordinary {@link PrintStream}
+     *
+     * @param value input string
+     * @return string without any escape sequences so that the text printed correctly on any non formatted {@link PrintStream}
+     */
+    String filterText(String value);
+
+    /**
+     * This method escapes all special characters that are interpreted by {@link NutsFormattedPrintStream} so that
+     * this exact string is printed on such print streams
+     * When str is null, an empty string is return
+     *
+     * @param value input string
+     * @return string with escaped characters so that the text printed correctly on {@link NutsFormattedPrintStream}
+     */
+    String escapeText(String value);
+
+    String formatId(NutsId id);
+
+    String formatDependency(NutsDependency id);
 }
 

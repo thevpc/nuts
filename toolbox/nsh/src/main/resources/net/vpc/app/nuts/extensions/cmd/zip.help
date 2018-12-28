@@ -1,6 +1,6 @@
 package and compress (archive) files
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##zip## [-r] <ZIP_FILE> <FILE> ...
 
 package and compress (archive) filesy

@@ -1,6 +1,6 @@
 uninstall one or more **nuts** from repositories
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##uninstall## [nuts-id] ...
 
 uninstalls one or more **nuts** from repositories if installed

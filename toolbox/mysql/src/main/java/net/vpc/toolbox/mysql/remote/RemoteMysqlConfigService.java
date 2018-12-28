@@ -66,8 +66,7 @@ public class RemoteMysqlConfigService {
         if (f.exists()) {
             JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
             try (FileReader r = new FileReader(f)) {
-                RemoteMysqlConfig i = jsonSerializer.read(r, RemoteMysqlConfig.class);
-                config = i;
+                config = jsonSerializer.read(r, RemoteMysqlConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);

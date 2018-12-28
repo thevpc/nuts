@@ -1,6 +1,6 @@
 make directories
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##mkdir## [<OPTION>...] <PARAMS> ...
 
 Create the DIRECTORY(ies), if they do not already exist.

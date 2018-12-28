@@ -1,6 +1,6 @@
 install one or more **nuts** from remote repositories
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##install## [nuts-id] ...
 
 installs one or more nuts from remote repositories if not yet installed

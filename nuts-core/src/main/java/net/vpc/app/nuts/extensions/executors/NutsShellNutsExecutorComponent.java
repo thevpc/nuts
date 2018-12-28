@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts.extensions.executors;
 
+import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsFile;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.common.strings.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,10 +58,10 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsFile nutsFile) {
-        if (nutsFile != null) {
-            if ("nsh".equals(nutsFile.getDescriptor().getPackaging())
-                    || "nuts".equals(nutsFile.getDescriptor().getPackaging())) {
+    public int getSupportLevel(NutsDefinition nutsDefinition) {
+        if (nutsDefinition != null) {
+            if ("nsh".equals(nutsDefinition.getDescriptor().getPackaging())
+                    || "nuts".equals(nutsDefinition.getDescriptor().getPackaging())) {
                 return DEFAULT_SUPPORT + 1;
             }
         }
@@ -67,27 +69,40 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     public int exec(NutsExecutionContext executionContext) {
-        NutsFile nutMainFile = executionContext.getNutsFile();
-        String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecArgs());
-        String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
+        NutsDefinition nutMainFile = executionContext.getNutsDefinition();
+        String[] execArgs = executionContext.getExecutorOptions();
+        String[] appArgs = executionContext.getArgs();
 
+        String dir = null;
+        boolean showCommand = false;
+        for (int i = 0; i < execArgs.length; i++) {
+            String arg = execArgs[i];
+            if (arg.equals("--show-command") || arg.equals("-show-command")) {
+                showCommand = true;
+            } else if (arg.equals("--dir") || arg.equals("-dir")) {
+                i++;
+                dir = execArgs[i];
+            } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
+                dir = execArgs[i].substring(arg.indexOf('=') + 1);
+            }
+        }
 
-        List<String> env = new ArrayList<>();
-        env.addAll(Arrays.asList(envAndApp0[0]));
-        env.addAll(Arrays.asList(envAndApp[0]));
+//        List<String> env = new ArrayList<>();
+//        env.addAll(Arrays.asList(envAndApp0[0]));
+//        env.addAll(Arrays.asList(envAndApp[0]));
 
         List<String> app = new ArrayList<>();
-        app.addAll(Arrays.asList(envAndApp0[1]));
-        app.addAll(Arrays.asList(envAndApp[1]));
+        app.add(NUTS_SHELL);
+        app.add(nutMainFile.getFile());
+        app.addAll(Arrays.asList(appArgs));
 
-        app.add(0,nutMainFile.getFile());
-        app.add(0,NUTS_SHELL);
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().resolvePath(dir));
         return executionContext.getWorkspace()
                 .createExecBuilder()
                 .setCommand(app)
                 .setSession(executionContext.getSession())
                 .setEnv(executionContext.getEnv())
-                .setDirectory(executionContext.getCwd())
+                .setDirectory(directory==null?null:directory.getPath())
                 .exec().getResult();
     }
 

@@ -34,7 +34,7 @@ import java.util.Map;
 
 public interface NutsId extends Serializable {
 
-    boolean isSameFullName(NutsId other);
+    boolean equalsSimpleName(NutsId other);
 
     boolean anyContains(String value);
 

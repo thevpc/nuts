@@ -29,12 +29,12 @@ public class ExtensionConfigSubCommand extends AbstractConfigSubCommand {
         if (cmdLine.readAll("add extension", "ax")) {
             String extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context.consoleContext())).getString();
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().getExtensionManager().addWorkspaceExtension(extensionId, context.getSession());
+                context.getWorkspace().getExtensionManager().addWorkspaceExtension(context.getWorkspace().parseId(extensionId), context.getSession());
             }
             while (cmdLine.hasNext()) {
                 extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context.consoleContext())).getString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().getExtensionManager().addWorkspaceExtension(extensionId, context.getSession());
+                    context.getWorkspace().getExtensionManager().addWorkspaceExtension(context.getWorkspace().parseId(extensionId), context.getSession());
                 }
             }
             if (cmdLine.isExecMode()) {

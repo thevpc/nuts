@@ -83,42 +83,42 @@ public class FileVersionCommand extends AbstractNutsCommand {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("--maven")) {
+        for (String arg : args) {
+            if (arg.equals("--maven")) {
                 maven = true;
-            } else if (args[i].equals("--win-pe")) {
+            } else if (arg.equals("--win-pe")) {
                 winPE = true;
-            } else if (args[i].equals("--exe")) {
+            } else if (arg.equals("--exe")) {
                 winPE = true;
-            } else if (args[i].equals("--dll")) {
+            } else if (arg.equals("--dll")) {
                 winPE = true;
-            } else if (args[i].equals("--long")) {
+            } else if (arg.equals("--long")) {
                 longFormat = true;
-            } else if (args[i].equals("--name")) {
+            } else if (arg.equals("--name")) {
                 nameFormat = true;
-            } else if (args[i].equals("--sort")) {
+            } else if (arg.equals("--sort")) {
                 sort = true;
-            } else if (args[i].equals("--id")) {
+            } else if (arg.equals("--id")) {
                 idFormat = true;
-            } else if (args[i].equals("--all")) {
+            } else if (arg.equals("--all")) {
                 all = true;
-            } else if (args[i].equals("--table")) {
+            } else if (arg.equals("--table")) {
                 table = true;
-            } else if (args[i].equals("--error")) {
+            } else if (arg.equals("--error")) {
                 error = true;
             } else {
-                if (maven || args[i].endsWith(".jar") || args[i].endsWith(".war") || args[i].endsWith(".ear")) {
-                    Set<VersionDescriptor> value = detectJarWarEarVersions(context.getShell().getAbsolutePath(args[i]), context, ws);
+                if (maven || arg.endsWith(".jar") || arg.endsWith(".war") || arg.endsWith(".ear")) {
+                    Set<VersionDescriptor> value = detectJarWarEarVersions(context.getShell().getAbsolutePath(arg), context, ws);
                     if (!value.isEmpty()) {
-                        results.put(args[i], value);
+                        results.put(arg, value);
                     }
-                } else if (winPE || args[i].endsWith(".exe") || args[i].endsWith(".dll")) {
-                    Set<VersionDescriptor> value = detectExeVersions(context.getShell().getAbsolutePath(args[i]), context, ws);
+                } else if (winPE || arg.endsWith(".exe") || arg.endsWith(".dll")) {
+                    Set<VersionDescriptor> value = detectExeVersions(context.getShell().getAbsolutePath(arg), context, ws);
                     if (!value.isEmpty()) {
-                        results.put(args[i], value);
+                        results.put(arg, value);
                     }
                 } else {
-                    unsupportedFileTypes.add(args[i]);
+                    unsupportedFileTypes.add(arg);
                 }
             }
         }
@@ -136,7 +136,7 @@ public class FileVersionCommand extends AbstractNutsCommand {
             PropertiesFormatter tt = new PropertiesFormatter().setSort(sort).setTable(true);
             Properties pp=new Properties();
             for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
-                VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[entry.getValue().size()])[0];
+                VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
                 if (nameFormat) {
                     pp.setProperty(entry.getKey(), o.getId().getSimpleName());
                 } else if (idFormat) {
@@ -249,8 +249,8 @@ public class FileVersionCommand extends AbstractNutsCommand {
         ResourceDirectory rd = pe.getImageData().getResourceTable();
         Set<VersionDescriptor> d = new HashSet<>();
         ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.VERSION_INFO);
-        for (int i = 0; i < entries.length; i++) {
-            byte[] data = entries[i].getData();
+        for (ResourceEntry entry : entries) {
+            byte[] data = entry.getData();
             VersionInfo version = ResourceParser.readVersionInfo(data);
 
             StringFileInfo strings = version.getStringFileInfo();

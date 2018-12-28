@@ -1,6 +1,6 @@
 connect to a **nuts** server
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##connect## [user@]server[:port]
 
 connects to a **nuts** server as user

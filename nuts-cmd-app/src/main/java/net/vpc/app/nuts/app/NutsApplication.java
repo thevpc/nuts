@@ -5,17 +5,40 @@ import net.vpc.app.nuts.*;
 import java.io.PrintStream;
 import java.util.Arrays;
 
+/**
+ * <pre>
+ *   public class MyApplication extends NutsApplication{
+ *     public static void main(String[] args) {
+ *         // just create an instance and call launchAndExit in the main method
+ *         new MyApplication().launchAndExit(args);
+ *     }
+ *     // do the main staff in launch method
+ *     public int launch(NutsApplicationContext appContext) {
+ *         boolean myBooleanOption=false;
+ *         Argument a;
+ *         while(cmd.hasNext()){
+ *             if(appContext.configure(cmd)){
+ *                 //fo nothing
+ *             }else if((a=cmd.readBooleanOption("-o","--option"))!=null){
+ *                 myBooleanOption=a.getBooleanValue();
+ *             }else{
+ *                 cmd.unexpectedArgument("myapp");
+ *             }
+ *         }
+ *         // test if application is running in exec mode
+ *         // (and not in autoComplete mode)
+ *         if(cmd.isExecMode()){
+ *
+ *         }
+ *     }
+ *   }
+ *  </pre>
+ */
 public abstract class NutsApplication {
 
     public void launchAndExit(String[] args) {
-        long startTimeMillis = System.currentTimeMillis();
-        NutsWorkspace ws = null;
         try {
-            ws = Nuts.openInheritedWorkspace(args);
-            NutsApplicationContext applicationContext = createApplicationContext(ws);
-            applicationContext.setStartTimeMillis(startTimeMillis);
-            int r = launch(applicationContext);
-            System.exit(r);
+            System.exit(launch(args));
         } catch (Exception ex) {
             int errorCode = 204;
             if (ex instanceof NutsExecutionException) {
@@ -31,7 +54,7 @@ public abstract class NutsApplication {
             }
             boolean extraError = false;
             try {
-                NutsSession s = ws == null ? null : ws.createSession();
+                NutsSession s = null;//ws == null ? null : ws.createSession();
                 PrintStream formattedErr = s == null ? System.err : s.getTerminal().getFormattedErr();
                 String m = ex.getMessage();
                 if (m == null || m.isEmpty()) {
@@ -54,21 +77,49 @@ public abstract class NutsApplication {
     public int launch(String[] args) {
         long startTimeMillis = System.currentTimeMillis();
         NutsWorkspace ws = Nuts.openInheritedWorkspace(args);
+        NutsApplicationContext applicationContext=null;
         try {
-            NutsApplicationContext applicationContext = createApplicationContext(ws);
+            applicationContext = createApplicationContext(ws);
             applicationContext.setStartTimeMillis(startTimeMillis);
-            return launch(applicationContext);
-        }catch (NutsExecutionException ex){
-            if(ex.getExitCode()==0){
+            switch (applicationContext.getMode()){
+                case "launch":
+                case "auto-complete":{
+                    return launch(applicationContext);
+                }
+                case "on-install":{
+                    return onInstallApplication(applicationContext);
+                }
+                case "on-update":{
+                    return onUpdateApplication(applicationContext);
+                }
+                case "on-uninstall":{
+                    return onUninstallApplication(applicationContext);
+                }
+            }
+            throw new NutsExecutionException("Unsupported execution mode "+applicationContext.getMode(),204);
+        } catch (NutsExecutionException ex) {
+            if (ex.getExitCode() == 0) {
                 return 0;
             }
             throw ex;
         }
     }
 
+    protected int onInstallApplication(NutsApplicationContext applicationContext){
+        return 0;
+    }
+
+    protected int onUpdateApplication(NutsApplicationContext applicationContext){
+        return 0;
+    }
+
+    protected int onUninstallApplication(NutsApplicationContext applicationContext){
+        return 0;
+    }
+
     protected NutsApplicationContext createApplicationContext(NutsWorkspace ws) {
         return new NutsApplicationContext(ws, getClass(), null);
     }
 
-    public abstract int launch(NutsApplicationContext appContext);
+    public abstract int launch(NutsApplicationContext applicationContext);
 }

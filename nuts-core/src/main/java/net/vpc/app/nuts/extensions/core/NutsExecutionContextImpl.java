@@ -38,101 +38,84 @@ import java.util.Properties;
  */
 public class NutsExecutionContextImpl implements NutsExecutionContext {
 
-    private NutsFile nutsFile;
+    private NutsDefinition nutsDefinition;
     private Properties env;
-    private String[] execArgs;
-    private Properties execProperties;
+    private String[] executorOptions;
+    private Properties executorProperties;
     private String[] args;
     private NutsSession session;
     private NutsWorkspace workspace;
     private NutsExecutorDescriptor executorDescriptor;
     private String cwd;
+    private String commandName;
     private boolean failFast;
 
-    public NutsExecutionContextImpl(NutsFile nutsFile, NutsSession session, NutsWorkspace workspace,String cwd) {
-        this.nutsFile = nutsFile;
-        this.session = session;
-        if (nutsFile != null && nutsFile.getDescriptor() != null && nutsFile.getDescriptor().getInstaller() != null) {
-            NutsExecutorDescriptor ii = nutsFile.getDescriptor().getInstaller();
-            execArgs = ii.getArgs();
-            execProperties = ii.getProperties();
-        }
-        this.workspace = workspace;
+//    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
+//        this.nutsDefinition = nutsDefinition;
+//        this.session = session;
+//        if (nutsDefinition != null && nutsDefinition.getDescriptor() != null && nutsDefinition.getDescriptor().getInstaller() != null) {
+//            NutsExecutorDescriptor ii = nutsDefinition.getDescriptor().getInstaller();
+//            executorOptions = ii.getArgs();
+//            executorProperties = ii.getProperties();
+//        }
+//        this.workspace = workspace;
+//        if (args == null) {
+//            args = new String[0];
+//        }
+//        if (executorOptions == null) {
+//            executorOptions = new String[0];
+//        }
+//        if (executorProperties == null) {
+//            executorProperties = new Properties();
+//        }
+//        this.cwd = cwd;
+//    }
+
+
+    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, String[] args, String[] executorArgs, Properties env, Properties executorProperties, String cwd, NutsSession session, NutsWorkspace workspace, boolean failFast, String commandName) {
         if (args == null) {
             args = new String[0];
-        }
-        if (execArgs == null) {
-            execArgs = new String[0];
-        }
-        if (execProperties == null) {
-            execProperties = new Properties();
-        }
-        this.cwd = cwd;
-    }
-
-
-    public NutsExecutionContextImpl(NutsFile nutsFile, String[] appArgs, String[] executorArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace,boolean failFast) {
-        if (appArgs == null) {
-            appArgs = new String[0];
         }
         if (executorArgs == null) {
             executorArgs = new String[0];
         }
-        if (execProperties == null) {
-            execProperties = new Properties();
+        if (executorProperties == null) {
+            executorProperties = new Properties();
         }
-        this.nutsFile = nutsFile;
-        this.args = appArgs;
-        this.execArgs = executorArgs;
-        this.execProperties = execProperties;
-        this.workspace = workspace;
-        this.session = session;
-        this.cwd = cwd;
-        if (env == null) {
-            env = new Properties();
-        }
-        this.env = env;
-        this.failFast = failFast;
-    }
-
-    public NutsExecutionContextImpl(NutsFile nutsFile, String[] args, String[] execArgs, Properties env, Properties execProperties, String cwd, NutsSession session, NutsWorkspace workspace, NutsExecutorDescriptor executorDescriptor,boolean failFast) {
-        if (args == null) {
-            args = new String[0];
-        }
-        if (execArgs == null) {
-            execArgs = new String[0];
-        }
-        if (execProperties == null) {
-            execProperties = new Properties();
-        }
-        this.failFast = failFast;
-        this.nutsFile = nutsFile;
+        this.commandName = commandName;
+        this.nutsDefinition = nutsDefinition;
         this.args = args;
         this.session = session;
         this.workspace = workspace;
-        this.executorDescriptor = executorDescriptor;
-        this.execArgs = execArgs ;
-        this.execProperties = execProperties;
+        this.executorOptions = executorArgs;
+        this.executorProperties = executorProperties;
         this.cwd = cwd;
         if (env == null) {
             env = new Properties();
         }
         this.env = env;
+        this.failFast = failFast;
+        this.executorDescriptor = nutsDefinition.getDescriptor().getExecutor();
     }
 
     @Override
-    public String[] getExecArgs() {
-        return execArgs;
+    public String getCommandName() {
+        return commandName;
     }
 
     @Override
-    public Properties getExecProperties() {
-        return execProperties;
+    public String[] getExecutorOptions() {
+        return executorOptions;
     }
 
     @Override
-    public NutsFile getNutsFile() {
-        return nutsFile;
+    public Properties getExecutorProperties() {
+        return executorProperties;
+    }
+
+    @Override
+    public NutsDefinition getNutsDefinition() {
+        return nutsDefinition;
     }
 
     @Override
@@ -173,4 +156,5 @@ public class NutsExecutionContextImpl implements NutsExecutionContext {
     public boolean isFailFast() {
         return failFast;
     }
+
 }

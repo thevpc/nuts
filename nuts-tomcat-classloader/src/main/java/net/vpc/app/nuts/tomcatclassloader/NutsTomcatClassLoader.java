@@ -55,8 +55,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     }
 
     public URL[] getURLs() {
-        List<URL> all = new ArrayList<>();
-        all.addAll(Arrays.asList(super.getURLs()));
+        List<URL> all = new ArrayList<>(Arrays.asList(super.getURLs()));
         ClassLoader classLoader = resolveNutsClassLoader();
         if (classLoader instanceof URLClassLoader) {
             all.addAll(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
@@ -142,18 +141,16 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
             nutsWorkspace =
                     Nuts.openWorkspace(
                     new NutsWorkspaceOptions()
+                            .setHome(getHome())
+                            .setBootRuntime(getWorkspaceBootRuntime())
+                            .setBootRuntimeSourceURL(getRuntimeSourceURL())
+                            .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent()))
                             .setWorkspace(getWorkspaceLocation())
                             .setArchetype(getWorkspaceArchetype())
                             .setCreateIfNotFound(true)
                             .setSaveIfCreated(true)
                             .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
                             .setExcludedExtensions(splitString(getWorkspaceExcludedExtensions(), " ;"))
-                            ,
-                            new NutsBootOptions()
-                                    .setHome(getHome())
-                                    .setBootRuntime(getWorkspaceBootRuntime())
-                                    .setBootRuntimeSourceURL(getRuntimeSourceURL())
-                                    .setClassLoaderProvider(new SimpleNutsClassLoaderProvider(getParent()))
                     );
         }
         return nutsWorkspace;

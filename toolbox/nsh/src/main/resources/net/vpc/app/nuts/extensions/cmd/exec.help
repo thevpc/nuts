@@ -1,6 +1,6 @@
 invoke a **nuts** command
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##exec## <command arguments>
 
 invokes a **nuts** command

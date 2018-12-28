@@ -35,7 +35,7 @@ import java.io.Serializable;
  * Created by vpc on 2/1/17.
  */
 public class NutsVersionInterval implements Serializable{
-    private static final long serialVersionUID=1l;
+    private static final long serialVersionUID= 1L;
 
     private final boolean inclusiveLowerBoundary;
     private final boolean inclusiveUpperBoundary;
@@ -70,13 +70,11 @@ public class NutsVersionInterval implements Serializable{
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(inclusiveLowerBoundary ? "[" : "]");
-        sb.append(min == null ? "" : min);
-        sb.append(",");
-        sb.append(max == null ? "" : max);
-        sb.append(inclusiveUpperBoundary ? "]" : "[");
-        return sb.toString();
+        return (inclusiveLowerBoundary ? "[" : "]") +
+                (min == null ? "" : min) +
+                "," +
+                (max == null ? "" : max) +
+                (inclusiveUpperBoundary ? "]" : "[");
     }
 
 }

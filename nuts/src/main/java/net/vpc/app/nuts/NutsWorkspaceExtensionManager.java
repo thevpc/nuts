@@ -56,17 +56,17 @@ public interface NutsWorkspaceExtensionManager {
      */
     List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session);
 
-    List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session);
+    List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session);
 
-    NutsWorkspaceExtension addWorkspaceExtension(String id, NutsSession session);
+    NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session);
 
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
 
     NutsWorkspaceExtension[] getWorkspaceExtensions();
 
-    URLLocation[] getExtensionURLLocations(String id, String appId, String extensionType);
+    URLLocation[] getExtensionURLLocations(NutsId id, String appId, String extensionType);
 
-    String[] getExtensionRepositoryLocations(String appId);
+    String[] getExtensionRepositoryLocations(NutsId appId);
 
     List<Class> discoverTypes(Class type, ClassLoader bootClassLoader);
 

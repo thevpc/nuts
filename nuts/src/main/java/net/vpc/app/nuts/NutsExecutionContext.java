@@ -33,11 +33,13 @@ import java.util.Properties;
 
 public interface NutsExecutionContext {
 
-    String[] getExecArgs();
+    String getCommandName();
 
-    Properties getExecProperties();
+    String[] getExecutorOptions();
 
-    NutsFile getNutsFile();
+    Properties getExecutorProperties();
+
+    NutsDefinition getNutsDefinition();
 
     String[] getArgs();
 

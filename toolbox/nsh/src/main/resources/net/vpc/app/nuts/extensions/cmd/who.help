@@ -1,6 +1,6 @@
 show who is logged in
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##who## [ options ]
 
 shows who is logged in

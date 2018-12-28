@@ -10,8 +10,11 @@ import net.vpc.common.io.RuntimeIOException;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
+    public static final Logger log = Logger.getLogger(DefaultNutsCommandExecBuilder.class.getName());
     private static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
             .setExt("exe")
@@ -120,6 +123,18 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     }
 
     @Override
+    public NutsCommandExecBuilder setExecutorOptions(String... options) {
+        setExecutorOptions(Arrays.asList(options));
+        return this;
+    }
+
+    @Override
+    public NutsCommandExecBuilder setExecutorOptions(List<String> options) {
+        this.executorOptions = options == null ? null : new ArrayList<>(options);
+        return this;
+    }
+
+    @Override
     public Properties getEnv() {
         return env;
     }
@@ -129,7 +144,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         if (env != null) {
             if (this.env == null) {
                 this.env = new Properties();
-                env.putAll(env);
+                this.env.putAll(env);
             } else {
                 this.env.putAll(env);
             }
@@ -204,6 +219,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         return this;
     }
 
+
     @Override
     public String getOutputString() {
         PrintStream o = getOut();
@@ -254,21 +270,19 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             this.session = ws.createSession();
         }
         DefaultNutsTerminal terminal = new DefaultNutsTerminal();
-        terminal.setIn(in != null ? in : session.getTerminal().getIn());
-        terminal.setOut(out != null ? out : session.getTerminal().getOut());
-        if (isRedirectErrorStream()) {
-            terminal.setErr(terminal.getOut());
-        } else {
-            terminal.setErr(err != null ? err : session.getTerminal().getErr());
-        }
+        PrintStream out2 = this.out != null ? this.out : session.getTerminal().getOut();
+        terminal.install(ws,
+                in != null ? in : session.getTerminal().getIn(),
+                out2,
+                isRedirectErrorStream() ? out2 : (err != null ? err : session.getTerminal().getErr())
+        );
         String[] ts = command.toArray(new String[0]);
         if (nativeCommand) {
             Map<String, String> e2 = null;
             if (env != null) {
-                e2 = new HashMap<>();
-                e2.putAll((Map) env);
+                e2 = new HashMap<>((Map) env);
             }
-            result = CoreIOUtils.execAndWait(ws,ts,
+            result = CoreIOUtils.execAndWait(ws, ts,
                     e2,
                     directory == null ? null : new File(directory),
                     terminal, true, isFailFast());
@@ -389,55 +403,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             }
             sb.append(enforceDoubleQuote(s));
         }
-        /*if (baseIO) {
-            ProcessBuilder.Redirect r;
-            if (f == null || f.acceptRedirectOutput()) {
-                r = base.redirectOutput();
-                if (r.type() == ProcessBuilder.Redirect.Type.INHERIT) {
-                    sb.append(" > ").append("{inherited}");
-                } else if (r.type() == ProcessBuilder.Redirect.Type.PIPE) {
-
-                } else if (r.type() == ProcessBuilder.Redirect.Type.WRITE) {
-                    sb.append(" > ").append(enforceDoubleQuote(r.file().getPath()));
-                } else if (r.type() == ProcessBuilder.Redirect.Type.APPEND) {
-                    sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
-                } else {
-                    sb.append(" > ").append("{?}");
-                }
-            }
-            if (f == null || f.acceptRedirectError()) {
-                if (base.setRedirectErrorStream()) {
-                    sb.append(" 2>&1");
-                } else {
-                    if (f == null || f.acceptRedirectError()) {
-                        r = base.redirectError();
-                        if (r.type() == ProcessBuilder.Redirect.Type.INHERIT) {
-                            sb.append(" > ").append("{inherited}");
-                        } else if (r.type() == ProcessBuilder.Redirect.Type.PIPE) {
-
-                        } else if (r.type() == ProcessBuilder.Redirect.Type.WRITE) {
-                            sb.append(" > ").append(r.file().getPath());
-                        } else if (r.type() == ProcessBuilder.Redirect.Type.APPEND) {
-                            sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
-                        } else {
-                            sb.append(" > ").append("{?}");
-                        }
-                    }
-                }
-            }
-            if (f == null || f.acceptRedirectInput()) {
-                r = base.redirectInput();
-                if (r.type() == ProcessBuilder.Redirect.Type.INHERIT) {
-                    sb.append(" < ").append("{inherited}");
-                } else if (r.type() == ProcessBuilder.Redirect.Type.PIPE) {
-
-                } else if (r.type() == ProcessBuilder.Redirect.Type.READ) {
-                    sb.append(" < ").append(enforceDoubleQuote(r.file().getPath()));
-                } else {
-                    sb.append(" < ").append("{?}");
-                }
-            }
-        } else*/
         if (isRedirectErrorStream()) {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
@@ -493,32 +458,54 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         }
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
-        String id = cmd[0];
-        if (!ws.getSecurityManager().isAllowed(NutsConstants.RIGHT_EXEC)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_EXEC + " : " + id);
-        }
+        String cmdName = cmd[0];
+        ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_EXEC, cmdName);
         int result = 0;
-        if (id.contains("/") || id.contains("\\")) {
-            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(id, "path", id, new File(ws.getConfigManager().getCwd())), session)) {
+        if (cmdName.contains("/") || cmdName.contains("\\")) {
+            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(cmdName, "path", cmdName, new File(ws.getConfigManager().getCwd())), session)) {
                 if (c.descriptor == null) {
                     //this is a native file?
                     c.descriptor = TEMP_DESC;
                 }
-                NutsFile nutToRun = new NutsFile(
+                NutsDefinition nutToRun = new NutsDefinition(
                         c.descriptor.getId(),
                         c.descriptor,
                         ((File) c.contentFile.getSource()).getPath(),
                         false,
                         c.temps.size() > 0,
-                        null
+                        null,null
                 );
-                result = ws.exec(nutToRun, args, executorOptions, env, dir, failSafe, session);
+                result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failSafe, session);
             }
+        } else if(cmdName.contains(":")){
+            NutsDefinition nutToRun = null;
+            nutToRun = ws.fetchWithDependencies(cmdName, session);
+            if (!ws.isInstalled(nutToRun.getId(), true, session)) {
+                ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
+                ws.install(nutToRun.getId().toString(), args, NutsConfirmAction.FORCE, session);
+            }
+            result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failSafe, session);
         } else {
-            NutsFile nutToRun = ws.fetchWithDependencies(id, session);
+            NutsWorkspaceCommand command = ws.getConfigManager().findCommand(cmdName);
+            NutsDefinition nutToRun = null;
+            if (command == null) {
+                nutToRun = ws.fetchWithDependencies(cmdName, session);
+                log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
+                if (!ws.isInstalled(nutToRun.getId(), true, session)) {
+                    ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
+                    ws.install(nutToRun.getId(), args, NutsConfirmAction.FORCE, session);
+                }
+            } else {
+                if(command.getId()==null) {
+                    throw new NutsExecutionException("Invalid Command Definition "+command,1);
+                }
+                nutToRun = ws.fetchWithDependencies(command.getId(), session);
+                List<String> r=new ArrayList<>(Arrays.asList(command.getCommand()));
+                r.addAll(Arrays.asList(args));
+                args=r.toArray(new String[0]);
+            }
             //load all needed dependencies!
-            ws.fetchDependencies(new NutsDependencySearch(nutToRun.getId()), session);
-            result = ws.exec(nutToRun, args, executorOptions, env, dir, failSafe, session);
+            result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failSafe, session);
         }
 
         if (result != 0) {

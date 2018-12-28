@@ -139,9 +139,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
 
     @Override
     public void setUserCredentials(String login, String password, String oldPassword) {
-        if (!isAllowed(NutsConstants.RIGHT_SET_PASSWORD)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SET_PASSWORD);
-        }
+        ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_SET_PASSWORD,"set-user-credentials");
         if (StringUtils.isEmpty(login)) {
             if (!NutsConstants.USER_ANONYMOUS.equals(getCurrentLogin())) {
                 login = getCurrentLogin();
@@ -154,9 +152,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             throw new NutsIllegalArgumentException("No such user " + login);
         }
         if (!getCurrentLogin().equals(login)) {
-            if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-                throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_ADMIN);
-            }
+            ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_ADMIN,"set-user-credentials");
         }
         if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
             ws.getExtensionManager().createSupported(NutsAuthenticationAgent.class, u.getAuthenticationAgent())
@@ -343,6 +339,17 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
                 .setCredentials(credentials, security.getAuthenticationAgent(),
                         ws.getConfigManager()));
         ws.getConfigManager().setUser(security);
+    }
+
+    @Override
+    public void checkAllowed(String right,String operationName) {
+        if(!isAllowed(right)){
+            if(StringUtils.isEmpty(operationName)){
+                throw new NutsSecurityException(right+" not allowed!");
+            }else{
+                throw new NutsSecurityException(operationName+": "+right+" not allowed!");
+            }
+        }
     }
 
     @Override

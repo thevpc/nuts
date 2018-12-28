@@ -180,7 +180,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
-        throw new NutsNotFoundException(id.toString());
+        throw new NutsNotFoundException(id);
     }
 
     @Override
@@ -269,12 +269,12 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 //        return s == null ? -1 : Integer.parseInt(s);
 //    }
     @Override
-    public NutsFile fetchImpl(NutsId id, NutsSession session) {
+    public NutsDefinition fetchImpl(NutsId id, NutsSession session) {
         NutsDescriptor descriptor = fetchDescriptor(id, session);
         String tempFile = CoreIOUtils.createTempFile(descriptor, false).getPath();
         copyTo(id, tempFile, session);
         NutsDescriptor ed = getWorkspace().resolveEffectiveDescriptor(descriptor, session);
-        return new NutsFile(ed.getId(), descriptor, tempFile, false, true, null);
+        return new NutsDefinition(ed.getId(), descriptor, tempFile, false, true, null,null);
     }
 
     private String httpGetString(String url) {
@@ -344,7 +344,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     public void checkAllowedFetch(NutsId id, NutsSession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
-            throw new NutsNotFoundException(id.toString());
+            throw new NutsNotFoundException(id);
         }
     }
 
@@ -378,7 +378,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = getWorkspace().parseRequiredNutsId(line);
+            NutsId nutsId = getWorkspace().parseRequiredId(line);
             return nutsId.setNamespace(getRepositoryId());
         }
     }

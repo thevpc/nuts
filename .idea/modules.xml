@@ -21,12 +21,14 @@
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-parent.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-parent.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-standalone/hadruwaves-studio-standalone.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-standalone/hadruwaves-studio-standalone.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test/hadruwaves-test.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-test/hadruwaves-test.iml" />
+      <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/tutorials/hadruwaves-tutorial/hadruwaves-tutorial.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/tutorials/hadruwaves-tutorial/hadruwaves-tutorial.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/inspector-gadget.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/inspector-gadget.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../common/java-shell/java-shell.iml" filepath="$PROJECT_DIR$/../../common/java-shell/java-shell.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/mvn/mvn.iml" filepath="$PROJECT_DIR$/toolbox/mvn/mvn.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/mysql/mysql.iml" filepath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nde/nde.iml" filepath="$PROJECT_DIR$/toolbox/nde/nde.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nded/nded.iml" filepath="$PROJECT_DIR$/toolbox/nded/nded.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/ndi/ndi.iml" filepath="$PROJECT_DIR$/toolbox/ndi/ndi.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nsh/nsh.iml" filepath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" />

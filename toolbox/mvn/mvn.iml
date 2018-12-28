@@ -11,6 +11,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nuts" />
+    <orderEntry type="module" module-name="nuts-cmd-app" />
+    <orderEntry type="module" module-name="vpc-common-commandline" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-embedder:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.1.1" level="project" />

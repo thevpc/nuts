@@ -1,6 +1,6 @@
 print working directory
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##pwd##
 
 prints working directory

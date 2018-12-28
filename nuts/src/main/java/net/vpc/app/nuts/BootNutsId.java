@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 import java.util.Objects;
 
 /**
- * simple dummy implementation of NutsId base functionalities
+ * simple dummy implementation of NutsId base functions
  * @author vpc
  */
 final class BootNutsId {

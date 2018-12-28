@@ -33,27 +33,16 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.NutsIdImpl;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.app.nuts.extensions.util.TraceResult;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
-import net.vpc.common.mvn.ArchetypeCatalogParser;
 import net.vpc.common.mvn.MavenMetadata;
-import net.vpc.common.mvn.PomId;
-import net.vpc.common.mvn.PomIdFilter;
 import net.vpc.common.strings.StringUtils;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -158,9 +147,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
 
             //should be already downloaded to m2 folder
-            NutsFile nutsFile = getNutsFile(id, session);
-            if (nutsFile != null && nutsFile.getFile() != null && new File(nutsFile.getFile()).exists()) {
-                IOUtils.copy(new File(nutsFile.getFile()), new File(localPath));
+            NutsDefinition nutsDefinition = getNutsFile(id, session);
+            if (nutsDefinition != null && nutsDefinition.getFile() != null && new File(nutsDefinition.getFile()).exists()) {
+                IOUtils.copy(new File(nutsDefinition.getFile()), new File(localPath));
                 return localPath;
             }
         }
@@ -168,7 +157,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    public NutsFile fetchImpl(NutsId id, NutsSession session) {
+    public NutsDefinition fetchImpl(NutsId id, NutsSession session) {
         if (wrapper == null) {
             wrapper = new MvnClient(getWorkspace());
         }
@@ -179,24 +168,24 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
 
             //should be already downloaded to m2 folder
-            NutsFile nutsFile = getNutsFile(id, session);
-            if (nutsFile != null && nutsFile.getFile() != null && new File(nutsFile.getFile()).exists()) {
-                NutsDescriptor desc = nutsFile.getDescriptor();
+            NutsDefinition nutsDefinition = getNutsFile(id, session);
+            if (nutsDefinition != null && nutsDefinition.getFile() != null && new File(nutsDefinition.getFile()).exists()) {
+                NutsDescriptor desc = nutsDefinition.getDescriptor();
                 if (desc != null) {
                     NutsId id2 = getWorkspace().resolveEffectiveId(desc, session);
                     id2 = id2.setFace(id.getFace());
-                    return new NutsFile(id2, desc, nutsFile.getFile(), true, false, null);
+                    return new NutsDefinition(id2, desc, nutsDefinition.getFile(), true, false, null,null);
                 }
             }
         }
-        NutsDescriptor descriptor = getWorkspace().fetchDescriptor(id.toString(), false, session);
+        NutsDescriptor descriptor = getWorkspace().fetchDescriptor(id, false, session);
         NutsDescriptor ed = getWorkspace().resolveEffectiveDescriptor(descriptor, session);
         File tempFile = CoreIOUtils.createTempFile(descriptor, false);
         copyTo(id, tempFile.getPath(), session);
-        return new NutsFile(ed.getId(), descriptor, tempFile.getPath(), false, true, null);
+        return new NutsDefinition(ed.getId(), descriptor, tempFile.getPath(), false, true, null,null);
     }
 
-    protected NutsFile getNutsFile(NutsId id, NutsSession session) {
+    protected NutsDefinition getNutsFile(NutsId id, NutsSession session) {
         if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
@@ -235,9 +224,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             ) : new File(versionFolder, getQueryFilename(id, nutsDescriptor));
             if (localFile.isFile()) {
                 if (nutsDescriptor != null) {
-                    nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(localFile));
+                    nutsDescriptor = annotateExecDesc(nutsDescriptor,localFile);
                 }
-                return new NutsFile(id, nutsDescriptor, localFile.getPath(), true, false, null);
+                return new NutsDefinition(id, nutsDescriptor, localFile.getPath(), true, false, null,null);
             }
         }
         return null;
@@ -281,7 +270,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     public void checkAllowedFetch(NutsId id, NutsSession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
-            throw new NutsNotFoundException(id == null ? null : id.toString());
+            throw new NutsNotFoundException(id );
         }
     }
 

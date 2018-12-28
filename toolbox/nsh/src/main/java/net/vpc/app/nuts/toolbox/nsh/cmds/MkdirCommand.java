@@ -76,8 +76,7 @@ public class MkdirCommand extends AbstractNutsCommand {
             throw new IllegalArgumentException("Missing parameters");
         }
         ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()) : null;
-        for (int i = 0; i < files.size(); i++) {
-            FilePath v = files.get(i);
+        for (FilePath v : files) {
             if (v instanceof FilePath.SshFilePath) {
                 ((FilePath.SshFilePath) v).setListener(listener);
             }

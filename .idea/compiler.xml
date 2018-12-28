@@ -25,6 +25,7 @@
         <module name="hadruwaves-studio-core" />
         <module name="hadruwaves-studio-standalone" />
         <module name="hadruwaves-test" />
+        <module name="hadruwaves-tutorial" />
         <module name="inspector-gadget" />
         <module name="java-shell" />
         <module name="jvmon" />
@@ -33,6 +34,7 @@
         <module name="mysql" />
         <module name="nb-launcher" />
         <module name="nde" />
+        <module name="nded" />
         <module name="ndesc-ed" />
         <module name="ndesc-ed (1)" />
         <module name="ndi" />
@@ -91,6 +93,7 @@
       <module name="hadruwaves-studio-parent" target="1.5" />
       <module name="hadruwaves-studio-standalone" target="1.5" />
       <module name="hadruwaves-test" target="1.8" />
+      <module name="hadruwaves-tutorial" target="1.8" />
       <module name="inspector-gadget" target="1.8" />
       <module name="java-shell" target="1.8" />
       <module name="jvmon" target="1.8" />
@@ -100,6 +103,7 @@
       <module name="mysql" target="1.8" />
       <module name="nb-launcher" target="1.8" />
       <module name="nde" target="1.8" />
+      <module name="nded" target="1.8" />
       <module name="ndesc-ed" target="1.8" />
       <module name="ndesc-ed (1)" target="1.8" />
       <module name="ndi" target="1.8" />
@@ -131,7 +135,7 @@
       <module name="vpc-common-strings" target="1.8" />
       <module name="vpc-common-swings" target="1.8" />
       <module name="vpc-common-utils" target="1.8" />
-      <module name="vpc-pheromone-app" target="1.6" />
+      <module name="vpc-pheromone-app" target="1.8" />
       <module name="worky" target="1.8" />
       <module name="worky (1)" target="1.8" />
       <module name="writer-maven-plugin" target="1.8" />

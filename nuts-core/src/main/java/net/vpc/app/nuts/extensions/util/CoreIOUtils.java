@@ -48,15 +48,15 @@ public class CoreIOUtils {
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
 
 
-    public static int execAndWait(NutsFile nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
         File installerFile = nutMainFile.getFile() == null ? null : new File(nutMainFile.getFile());
         File storeFolder = nutMainFile.getInstallFolder() == null ? null : new File(nutMainFile.getInstallFolder());
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
-        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-            map.put((String) entry.getKey(), (String) entry.getValue());
-        }
+//        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+//            map.put((String) entry.getKey(), (String) entry.getValue());
+//        }
         for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
             map.put((String) entry.getKey(), (String) entry.getValue());
         }
@@ -104,10 +104,10 @@ public class CoreIOUtils {
                     }
                     return resolveJavaCommand(javaVer, workspace);
                 } else if (skey.equals("nuts")) {
-                    NutsFile nutsFile = null;
-                    nutsFile = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API, session);
-                    if (nutsFile.getFile() != null) {
-                        return ("<::expand::> " + convert("java") + " -jar " + nutsFile.getFile());
+                    NutsDefinition nutsDefinition = null;
+                    nutsDefinition = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API, session);
+                    if (nutsDefinition.getFile() != null) {
+                        return ("<::expand::> " + convert("java") + " -jar " + nutsDefinition.getFile());
                     }
                     return null;
                 }
@@ -116,8 +116,12 @@ public class CoreIOUtils {
         };
         for (Map.Entry<String, String> e : map.entrySet()) {
             String k = e.getKey();
-            k = k.replace('.', '_');
-            envmap.put(k, e.getValue());
+            if(!StringUtils.isEmpty(k)) {
+                k = k.replace('.', '_');
+                if (!StringUtils.isEmpty(e.getValue())) {
+                    envmap.put(k, e.getValue());
+                }
+            }
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
@@ -416,18 +420,18 @@ public class CoreIOUtils {
         boolean monitorable = true;
         if (source instanceof NutsId) {
             NutsId d = (NutsId) source;
-            if (CoreNutsUtils.FACE_CATALOG.equals(d.getFace())) {
-                monitorable = false;
-            }
+//            if (CoreNutsUtils.FACE_CATALOG.equals(d.getFace())) {
+//                monitorable = false;
+//            }
             if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
                 monitorable = false;
             }
             if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
                 monitorable = false;
             }
-            if (CoreNutsUtils.FACE_DESC.equals(d.getFace())) {
-                monitorable = false;
-            }
+//            if (CoreNutsUtils.FACE_DESC.equals(d.getFace())) {
+//                monitorable = false;
+//            }
 //            if ("archetype-catalog".equals(d.getFace())) {
 //                monitorable = false;
 //            }

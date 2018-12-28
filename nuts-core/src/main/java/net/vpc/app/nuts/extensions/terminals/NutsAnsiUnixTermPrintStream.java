@@ -48,31 +48,6 @@ public class NutsAnsiUnixTermPrintStream extends AnsiUnixTermPrintStream impleme
         this.out=out;
     }
 
-//    public NutsAnsiUnixTermPrintStream(OutputStream out, boolean autoFlush) {
-//        super(out, autoFlush);
-//    }
-//
-//    public NutsAnsiUnixTermPrintStream(OutputStream out, boolean autoFlush, String encoding) throws UnsupportedEncodingException {
-//        super(out, autoFlush, encoding);
-//    }
-//
-//    public NutsAnsiUnixTermPrintStream(String fileName) throws FileNotFoundException {
-//        super(fileName);
-//    }
-//
-//    public NutsAnsiUnixTermPrintStream(String fileName, String csn) throws FileNotFoundException, UnsupportedEncodingException {
-//        super(fileName, csn);
-//    }
-//
-//    public NutsAnsiUnixTermPrintStream(File file) throws FileNotFoundException {
-//        super(file);
-//    }
-//
-//    public NutsAnsiUnixTermPrintStream(File file, String csn) throws FileNotFoundException, UnsupportedEncodingException {
-//        super(file, csn);
-//    }
-
-
     @Override
     public OutputStream baseOutputStream() {
         return out;

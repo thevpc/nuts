@@ -52,7 +52,6 @@ public class ServerNonOption extends DefaultNonOption {
 
     @Override
     public List<ArgumentCandidate> getValues() {
-        List<ArgumentCandidate> all = new ArrayList<>();
-        return all;
+        return new ArrayList<>();
     }
 }

@@ -1,6 +1,6 @@
 print system information
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##uname## <options>
 
 print system information

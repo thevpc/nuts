@@ -32,53 +32,11 @@ package net.vpc.app.nuts;
 import java.util.*;
 
 public class NutsDependencySearch {
-
-    private List<String> ids = new ArrayList<>();
     private boolean includeMain = false;
     private boolean trackNotFound = false;
-    private TypedObject dependencyFilter;
-    private NutsDependencyScope scope = NutsDependencyScope.RUN;
     private Set<NutsId> noFoundResult = new HashSet<>();
 
     public NutsDependencySearch() {
-
-    }
-
-    public NutsDependencySearch(String... ids) {
-        addIds(ids);
-    }
-
-    public NutsDependencySearch(NutsId... ids) {
-        addIds(ids);
-    }
-
-    public NutsDependencySearch addIds(String... ids) {
-        if (ids != null) {
-            for (String id : ids) {
-                addId(id);
-            }
-        }
-        return this;
-    }
-
-    public NutsDependencySearch addIds(NutsId... ids) {
-        if (ids != null) {
-            for (NutsId id : ids) {
-                addId(id == null ? null : id.toString());
-            }
-        }
-        return this;
-    }
-
-    public NutsDependencySearch addId(String id) {
-        if (id != null && !id.isEmpty()) {
-            ids.add(id);
-        }
-        return this;
-    }
-
-    public String[] getIds() {
-        return this.ids.toArray(new String[0]);
     }
 
     public boolean isIncludeMain() {
@@ -87,29 +45,6 @@ public class NutsDependencySearch {
 
     public NutsDependencySearch setIncludeMain(boolean includeMain) {
         this.includeMain = includeMain;
-        return this;
-    }
-
-    public NutsDependencySearch setDependencyFilter(NutsDependencyFilter filter) {
-        this.dependencyFilter = new TypedObject(NutsDependencyFilter.class, filter, null);
-        return this;
-    }
-
-    public NutsDependencyScope getScope() {
-        return scope;
-    }
-
-    public NutsDependencySearch setScope(NutsDependencyScope scope) {
-        this.scope = scope;
-        return this;
-    }
-
-    public TypedObject getDependencyFilter() {
-        return dependencyFilter;
-    }
-
-    public NutsDependencySearch setDependencyFilter(String filter) {
-        this.dependencyFilter = new TypedObject(String.class, filter, null);
         return this;
     }
 
@@ -129,11 +64,8 @@ public class NutsDependencySearch {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 41 * hash + Objects.hashCode(this.ids);
         hash = 41 * hash + (this.includeMain ? 1 : 0);
         hash = 41 * hash + (this.trackNotFound ? 1 : 0);
-        hash = 41 * hash + Objects.hashCode(this.dependencyFilter);
-        hash = 41 * hash + Objects.hashCode(this.scope);
         hash = 41 * hash + Objects.hashCode(this.noFoundResult);
         return hash;
     }
@@ -156,15 +88,6 @@ public class NutsDependencySearch {
         if (this.trackNotFound != other.trackNotFound) {
             return false;
         }
-        if (!Objects.equals(this.ids, other.ids)) {
-            return false;
-        }
-        if (!Objects.equals(this.dependencyFilter, other.dependencyFilter)) {
-            return false;
-        }
-        if (this.scope != other.scope) {
-            return false;
-        }
         if (!Objects.equals(this.noFoundResult, other.noFoundResult)) {
             return false;
         }
@@ -173,7 +96,7 @@ public class NutsDependencySearch {
 
     @Override
     public String toString() {
-        return "NutsDependencySearch{" + "ids=" + ids + ", includeMain=" + includeMain + ", trackNotFound=" + trackNotFound + ", dependencyFilter=" + dependencyFilter + ", scope=" + scope + ", noFoundResult=" + noFoundResult + '}';
+        return "NutsDependencySearch{includeMain=" + includeMain + ", trackNotFound=" + trackNotFound  + ", noFoundResult=" + noFoundResult + '}';
     }
 
 }

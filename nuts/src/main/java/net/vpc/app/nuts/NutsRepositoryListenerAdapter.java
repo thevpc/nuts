@@ -35,22 +35,22 @@ package net.vpc.app.nuts;
 public class NutsRepositoryListenerAdapter implements NutsRepositoryListener {
 
     @Override
-    public void onInstall(NutsRepository repository, NutsFile file) {
+    public void onInstall(NutsRepository repository, NutsDefinition file) {
 
     }
 
     @Override
-    public void onPush(NutsRepository repository, NutsFile file) {
+    public void onPush(NutsRepository repository, NutsDefinition file) {
 
     }
 
     @Override
-    public void onUndeploy(NutsRepository repository, NutsFile file) {
+    public void onUndeploy(NutsRepository repository, NutsDefinition file) {
 
     }
 
     @Override
-    public void onDeploy(NutsRepository repository, NutsFile file) {
+    public void onDeploy(NutsRepository repository, NutsDefinition file) {
 
     }
 

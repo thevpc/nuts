@@ -106,13 +106,13 @@ public class MavenUtils {
     }
 
     public static NutsDescriptor parsePomXml0(InputStream stream, String urlDesc) {
+//        System.out.println("parsePomXml0 "+urlDesc);
         long startTime = System.currentTimeMillis();
-        List<NutsDependency> deps = new ArrayList<>();
         try {
             if (stream == null) {
                 return null;
             }
-            Pom pom = PomXmlParser.parse(stream);
+            Pom pom = new PomXmlParser().parse(stream);
             boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if (pom.getPackaging().isEmpty()) {
                 pom.setPackaging("jar");
@@ -173,11 +173,11 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = ws.fetchDescriptor(parentId.toString(), true, transitiveSession);
+                            parentDescriptor = ws.fetchDescriptor(parentId, true, transitiveSession);
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
+                            throw new NutsNotFoundException(nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
                         }
                         parentId = parentDescriptor.getId();
                     }
@@ -212,11 +212,11 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetchDescriptor(pid.toString(), true, transitiveSession);
+                                d = ws.fetchDescriptor(pid, true, transitiveSession);
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
+                                throw new NutsNotFoundException(nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
                             }
                         }
                         done.add(pid.getSimpleName());
@@ -232,7 +232,7 @@ public class MavenUtils {
                         }
                     }
                     if (CoreNutsUtils.containsVars(thisId)) {
-                        throw new NutsNotFoundException(nutsDescriptor.getId().toString(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
+                        throw new NutsNotFoundException(nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
                     }
                     nutsDescriptor = nutsDescriptor.setId(thisId);
                 }
@@ -285,7 +285,7 @@ public class MavenUtils {
         }
         for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
             String version = iterator.next();
-            if (s.getLatest().length() > 0 && CoreVersionUtils.compareVersions(version, s.getLatest().toString()) > 0) {
+            if (s.getLatest().length() > 0 && CoreVersionUtils.compareVersions(version, s.getLatest()) > 0) {
                 iterator.remove();
             }
         }

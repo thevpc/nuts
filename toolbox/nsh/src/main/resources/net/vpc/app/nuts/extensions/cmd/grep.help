@@ -1,6 +1,6 @@
 print lines matching a pattern
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##grep## [<OPTION>...] <PATTERN> <FILE>...
 
 print lines matching a pattern

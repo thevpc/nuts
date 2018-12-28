@@ -18,10 +18,7 @@ import net.vpc.common.commandline.*;
 import net.vpc.common.commandline.format.TableFormatter;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -75,7 +72,7 @@ public class RepositoryConfigSubCommand extends AbstractConfigSubCommand {
                     } else if (cmdLine.readAllOnce("-P", "--pattern")) {
                         pattern = true;
                     } else {
-                        final Map<String, NutsRepositoryDefinition> repoPatterns = new HashMap<String, NutsRepositoryDefinition>();
+                        final Map<String, NutsRepositoryDefinition> repoPatterns = new LinkedHashMap<String, NutsRepositoryDefinition>();
                         for (NutsRepositoryDefinition repoPattern : context.getWorkspace().getRepositoryManager().getDefaultRepositories()) {
                             repoPatterns.put(repoPattern.getId(), repoPattern);
                         }

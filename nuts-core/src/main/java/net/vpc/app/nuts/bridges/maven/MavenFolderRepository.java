@@ -110,15 +110,15 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected NutsFile fetchImpl(NutsId id, NutsSession session) {
-        NutsFile nutsFile = getNutsFile(id, session);
+    protected NutsDefinition fetchImpl(NutsId id, NutsSession session) {
+        NutsDefinition nutsDefinition = getNutsFile(id, session);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            if (nutsFile != null && nutsFile.getFile() != null && new File(nutsFile.getFile()).exists()) {
-                NutsDescriptor desc = nutsFile.getDescriptor();
+            if (nutsDefinition != null && nutsDefinition.getFile() != null && new File(nutsDefinition.getFile()).exists()) {
+                NutsDescriptor desc = nutsDefinition.getDescriptor();
                 if (desc != null) {
                     NutsId id2 = getWorkspace().resolveEffectiveId(desc, session);
                     id2 = id2.setFace(id.getFace());
-                    return new NutsFile(id2, desc, nutsFile.getFile(), true, false, null);
+                    return new NutsDefinition(id2, desc, nutsDefinition.getFile(), true, false, null,null);
                 }
             }
         }
@@ -168,7 +168,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        String ext = ".pom";
 //        return new File(versionFolder, name + ext);
 //    }
-    protected NutsFile getNutsFile(NutsId id, NutsSession session) {
+    protected NutsDefinition getNutsFile(NutsId id, NutsSession session) {
         if (StringUtils.isEmpty(id.getGroup())) {
             return null;
         }
@@ -205,10 +205,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                     id.getName() + "-" + id.getVersion().getValue() + "." + ext2
             ) : new File(versionFolder, getQueryFilename(id, nutsDescriptor));
             if (localFile.isFile()) {
-                if (nutsDescriptor != null) {
-                    nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(localFile));
-                }
-                return new NutsFile(id, nutsDescriptor, localFile.getPath(), true, false, null);
+                nutsDescriptor = annotateExecDesc(nutsDescriptor,localFile);
+                return new NutsDefinition(id, nutsDescriptor, localFile.getPath(), true, false, null,null);
             }
         }
         return null;
@@ -272,7 +270,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             if (id.getVersion().isSingleValue()) {
                 final NutsDescriptor d = parsePomDescriptor(id, session);
                 if (d != null) {
-                    return new ArrayList<>(Arrays.asList(id.setNamespace(getRepositoryId())));
+                    return new ArrayList<>(Collections.singletonList(id.setNamespace(getRepositoryId())));
                 }
                 return Collections.emptyList();
             }
@@ -299,7 +297,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         }
         if (pathname.getName().endsWith(".pom")) {
             File loc = new File(pathname.getPath().substring(0, pathname.getPath().length() - 4) + ".jar");
-            nutsDescriptor = nutsDescriptor.setExecutable(CorePlatformUtils.isExecutableJar(loc));
+            nutsDescriptor = annotateExecDesc(nutsDescriptor,loc);
         }
         return nutsDescriptor;
     }
@@ -329,9 +327,12 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 });
                 if (versionFolders != null) {
                     for (File versionFolder : versionFolders) {
-                        NutsId id2 = id.setVersion(versionFolder.getName());
-                        if(bestId==null || id2.getVersion().compareTo(bestId.getVersion())>0){
-                            bestId=id2;
+                        String fn=id.getName() + "-" + versionFolder.getName()+".pom";
+                        if(new File(versionFolder,fn).isFile()) {
+                            NutsId id2 = id.setVersion(versionFolder.getName());
+                            if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
+                                bestId = id2;
+                            }
                         }
                     }
                 }

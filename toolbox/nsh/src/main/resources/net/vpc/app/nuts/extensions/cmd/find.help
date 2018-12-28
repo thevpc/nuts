@@ -1,6 +1,6 @@
 search for installed and available **nuts**
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##find## <options> [-js <JAVASCRIPT EXPRESSION>]  [ [-e] <LIKE EXPRESSION> ...]
 
 searches for installed and available **nuts**. Found **nuts** are displayed as namespace aware **nuts** ids

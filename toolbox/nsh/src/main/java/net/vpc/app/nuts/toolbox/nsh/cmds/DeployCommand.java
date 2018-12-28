@@ -119,8 +119,8 @@ public class DeployCommand extends AbstractNutsCommand {
             if (StringUtils.isEmpty(id)) {
                 throw new NutsCommandSyntaxError("Missing Id");
             }
-            for (NutsId nutsId : ws.find(ws.createSearchBuilder().addId(id).setLatestVersions(true).setRepositoryFilter(from).build(), context.getSession())) {
-                NutsFile fetched = ws.fetch(nutsId.toString(), context.getSession());
+            for (NutsId nutsId : ws.createQuery().setSession(context.getSession()).addId(id).setLatestVersions(true).setRepositoryFilter(from).find()) {
+                NutsDefinition fetched = ws.fetch(nutsId.toString(), context.getSession());
                 if (fetched.getFile() != null) {
                     NutsId nid = null;
                     nid = ws.deploy(

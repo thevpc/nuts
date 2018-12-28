@@ -656,12 +656,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NutsTerminal terminal) {
-//    private boolean isLoadedClassPath(NutsFile nutsFile) {
-//        if (file.getId().isSameFullName(NutsId.parseRequiredNutsId(NutsConstants.NUTS_COMPONENT_ID))) {
-//            return true;
-//        }
         try {
-//            File file = nutsFile.getFile();
             if (file != null) {
                 ZipFile zipFile = null;
                 try {
@@ -780,8 +775,9 @@ public class CorePlatformUtils {
     }
 
     public static ExecutionEntry[] resolveMainClasses(InputStream jarStream) {
-        final List<String> classes = new ArrayList<>();
-        final List<String> manfiestClass = new ArrayList<>();
+
+        final List<ExecutionEntry> classes = new ArrayList<>();
+        final List<String> manifiestClass = new ArrayList<>();
         ZipUtils.visitZipStream(jarStream, new PathFilter() {
             @Override
             public boolean accept(String path) {
@@ -794,9 +790,13 @@ public class CorePlatformUtils {
             @Override
             public boolean visit(String path, InputStream inputStream) throws IOException {
                 if (path.endsWith(".class")) {
-                    boolean mainClass = isMainClass(inputStream);
-                    if (mainClass) {
-                        classes.add(path.replace('/', '.').substring(0, path.length() - ".class".length()));
+                    int mainClass = getMainClassType(inputStream);
+                    if (mainClass==1 || mainClass==3) {
+                        classes.add(new ExecutionEntry(
+                                path.replace('/', '.').substring(0, path.length() - ".class".length()),
+                                false,
+                                mainClass==3
+                        ));
                     }
                 }else {
                     try(BufferedReader b=new BufferedReader(new InputStreamReader(inputStream))){
@@ -805,7 +805,7 @@ public class CorePlatformUtils {
                             if (line.startsWith("Main-Class:")) {
                                 String c = line.substring("Main-Class:".length()).trim();
                                 if(c.length()>0){
-                                    manfiestClass.add(c);
+                                    manifiestClass.add(c);
                                     break;
                                 }
                             }
@@ -817,15 +817,14 @@ public class CorePlatformUtils {
         });
         List<ExecutionEntry> entries=new ArrayList<>();
         String defaultEntry=null;
-        if(manfiestClass.size()>0){
-            defaultEntry = manfiestClass.get(0);
-            entries.add(new ExecutionEntry(defaultEntry,true));
+        if(manifiestClass.size()>0){
+            defaultEntry = manifiestClass.get(0);
         }
-        for (String entry : classes) {
-            if(defaultEntry!=null && defaultEntry.equals(entry)){
-                //ignore
+        for (ExecutionEntry entry : classes) {
+            if(defaultEntry!=null && defaultEntry.equals(entry.getName())){
+                entries.add(new ExecutionEntry(entry.getName(),true,entry.isApp()));
             }else{
-                entries.add(new ExecutionEntry(entry,false));
+                entries.add(entry);
             }
         }
         return entries.toArray(new ExecutionEntry[0]);
@@ -834,9 +833,11 @@ public class CorePlatformUtils {
     /**
      * @throws IOException
      */
-    public static boolean isMainClass(InputStream stream) throws IOException {
-        final List<Boolean> ref = new ArrayList<>(1);
+    public static int getMainClassType(InputStream stream) throws IOException {
+        final List<Boolean> mainClass = new ArrayList<>(1);
+        final List<Boolean> nutsApp = new ArrayList<>(1);
         ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
+            String lastClass=null;
             /**
              * When a method is encountered
              */
@@ -846,14 +847,22 @@ public class CorePlatformUtils {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {
-                    ref.add(true);
+                    mainClass.add(true);
                 }
                 return super.visitMethod(access, name, desc, signature, exceptions);
+            }
+
+            @Override
+            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                if(superName!=null && superName.equals("net/vpc/app/nuts/app/NutsApplication")){
+                    nutsApp.add(true);
+                }
+                super.visit(version, access, name, signature, superName, interfaces);
             }
         };
         ClassReader classReader = new ClassReader(stream);
         classReader.accept(cl, 0);
-        return !ref.isEmpty();
+        return ((mainClass.isEmpty())?0:1)+(nutsApp.isEmpty()?0:2);
     }
 
 }

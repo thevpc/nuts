@@ -39,9 +39,10 @@ net.vpc.app.nuts.toolbox.nsh.cmds.NutsAdminCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.PropsCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.MkdirCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.FileVersionCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.FindCommandCommand
 
 
-net.vpc.app.nuts.toolbox.nsh.cmds.config.ArchietypeConfigSubCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.config.ArchetypeConfigSubCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.config.DescriptorConfigSubCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.config.ExtensionConfigSubCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.config.ImportConfigSubCommand

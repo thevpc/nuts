@@ -53,17 +53,21 @@ public class ExecCommand extends AbstractNutsCommand {
         boolean command = false;
         Argument a;
         boolean noColors = false;
+        List<String> execOptions=new ArrayList<>();
         while (cmdLine.hasNext()) {
             if (!command) {
                 if (context.configure(cmdLine)) {
                     //
-                }else if (cmdLine.readAll("-n", "--native")) {
-                    nativeCommand = true;
+                }else if ((a=cmdLine.readBooleanOption("-n", "--native"))!=null) {
+                    nativeCommand = a.getBooleanValue();
+                }else if (cmdLine.isOption()) {
+                    execOptions.add(cmdLine.read().getString());
                 } else {
+                    sargs.add(cmdLine.read().getString());
                     command = true;
                 }
             } else {
-                sargs.add(cmdLine.read().getValue());
+                sargs.add(cmdLine.read().getString());
             }
         }
         if (!cmdLine.isExecMode()) {
@@ -73,6 +77,7 @@ public class ExecCommand extends AbstractNutsCommand {
                 .createExecBuilder()
                 .setNativeCommand(nativeCommand)
                 .setCommand(sargs)
+                .setExecutorOptions(execOptions)
                 .setEnv(context.consoleContext().env().getEnv())
                 .setDirectory(context.consoleContext().getShell().getCwd())
                 .setSession(context.getSession())

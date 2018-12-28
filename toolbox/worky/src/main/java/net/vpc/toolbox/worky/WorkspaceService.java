@@ -380,7 +380,7 @@ public class WorkspaceService {
                 try {
                     loaded = projectService.load();
                 } catch (Exception ex) {
-
+                    //
                 }
                 if (loaded) {
                     ProjectConfig p3 = projectService.getConfig();

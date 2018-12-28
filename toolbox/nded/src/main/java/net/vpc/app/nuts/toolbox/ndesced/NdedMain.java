@@ -100,7 +100,7 @@ public class NdedMain extends NutsApplication {
                 try {
                     b.setId(s);
                 }catch (Exception ex){
-                    appContext.err().printf(ex.getMessage());
+                    appContext.err().println(ex.getMessage());
                 }
             }
         }
@@ -147,33 +147,33 @@ public class NdedMain extends NutsApplication {
         boolean error = false;
         if (b.getId() == null) {
             error = true;
-            appContext.err().printf("Missing id\n");
+            appContext.err().print("Missing id\n");
         } else {
             if (b.getId().getName() == null) {
                 error = true;
-                appContext.err().printf("Missing id name\n");
+                appContext.err().print("Missing id name\n");
             }
             if (b.getId().getGroup() == null) {
                 error = true;
-                appContext.err().printf("Missing id group\n");
+                appContext.err().print("Missing id group\n");
             }
             if (b.getId().getVersion() == null) {
                 error = true;
-                appContext.err().printf("Missing id version\n");
+                appContext.err().print("Missing id version\n");
             }
 
         }
         if (isEmpty(b.getPackaging())) {
             error = true;
-            appContext.err().printf("Missing packaging\n");
+            appContext.err().print("Missing packaging\n");
         }
         if (isEmpty(b.getExt())) {
             error = true;
-            appContext.err().printf("Missing ext\n");
+            appContext.err().print("Missing ext\n");
         }
         if(isEmpty(home)){
             error = true;
-            appContext.err().printf("Missing nuts-bootstrap\n");
+            appContext.err().print("Missing nuts-bootstrap\n");
         }
         return !error;
     }
@@ -210,7 +210,7 @@ public class NdedMain extends NutsApplication {
         f = this.appContext.getWorkspace().getExtensionManager();
         NutsDescriptorBuilder b = this.appContext.getWorkspace().createDescriptorBuilder();
         fillArgs(b);
-        this.appContext.out().printf("[[Creating new Nuts descriptor...]]\n");
+        this.appContext.out().print("[[Creating new Nuts descriptor...]]\n");
         while (true) {
             fillInteractive(b, true);
             if (check(b)) {
@@ -237,7 +237,7 @@ public class NdedMain extends NutsApplication {
         this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging());
         this.appContext.out().printf("ext        : ==%s==\n", desc.getExt());
         if (desc.getLocations().length > 0) {
-            this.appContext.out().printf("locations  : \n");
+            this.appContext.out().print("locations  : \n");
             for (String s : b.getLocations()) {
                 this.appContext.out().printf("             ==%s==\n", s);
             }

@@ -1,6 +1,6 @@
 push a **nuts** to remote repository
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##push## id
 
 pushes a **nuts** to remote server

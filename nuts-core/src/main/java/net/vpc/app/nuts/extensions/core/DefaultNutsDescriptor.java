@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -39,7 +39,7 @@ import java.util.*;
  * Created by vpc on 1/5/17.
  */
 public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
-    private static final long serialVersionUID=1l;
+    private static final long serialVersionUID = 1L;
 
     private NutsId id;
     private String face;
@@ -47,6 +47,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String packaging;
     private String ext;
     private boolean executable;
+    private boolean nutsApplication;
     private NutsExecutorDescriptor executor;
     private NutsExecutorDescriptor installer;
     /**
@@ -72,6 +73,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getParents(),
                 d.getPackaging(),
                 d.isExecutable(),
+                d.isNutsApplication(),
                 d.getExt(),
                 d.getExecutor(),
                 d.getInstaller(),
@@ -87,10 +89,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, String ext,
+    public DefaultNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
                                  NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
                                  String[] arch, String[] os, String[] osdist, String[] platform,
-                                 NutsDependency[] dependencies, String[] locations,Map<String, String> properties) {
+                                 NutsDependency[] dependencies, String[] locations, Map<String, String> properties) {
         if (id == null) {
             throw new NutsIllegalArgumentException("Missing id");
         }
@@ -105,6 +107,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             System.arraycopy(parents, 0, this.parents, 0, this.parents.length);
         }
         this.executable = executable;
+        this.nutsApplication = nutsApplication;
         this.description = StringUtils.trim(description);
         this.name = StringUtils.trim(name);
         this.executor = executor;
@@ -165,6 +168,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public boolean isNutsApplication() {
+        return nutsApplication;
+    }
+
+    @Override
     public NutsExecutorDescriptor getExecutor() {
         return executor;
     }
@@ -217,29 +225,31 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
-        return executable == that.executable &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(face, that.face) &&
-                Arrays.equals(parents, that.parents) &&
-                Objects.equals(packaging, that.packaging) &&
-                Objects.equals(ext, that.ext) &&
-                Objects.equals(executor, that.executor) &&
-                Objects.equals(installer, that.installer) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) &&
-                Arrays.equals(arch, that.arch) &&
-                Arrays.equals(os, that.os) &&
-                Arrays.equals(osdist, that.osdist) &&
-                Arrays.equals(platform, that.platform) &&
-                Arrays.equals(locations, that.locations) &&
-                Arrays.equals(dependencies, that.dependencies) &&
-                Objects.equals(properties, that.properties);
+        return
+                executable == that.executable &&
+                        nutsApplication == that.nutsApplication &&
+                        Objects.equals(id, that.id) &&
+                        Objects.equals(face, that.face) &&
+                        Arrays.equals(parents, that.parents) &&
+                        Objects.equals(packaging, that.packaging) &&
+                        Objects.equals(ext, that.ext) &&
+                        Objects.equals(executor, that.executor) &&
+                        Objects.equals(installer, that.installer) &&
+                        Objects.equals(name, that.name) &&
+                        Objects.equals(description, that.description) &&
+                        Arrays.equals(arch, that.arch) &&
+                        Arrays.equals(os, that.os) &&
+                        Arrays.equals(osdist, that.osdist) &&
+                        Arrays.equals(platform, that.platform) &&
+                        Arrays.equals(locations, that.locations) &&
+                        Arrays.equals(dependencies, that.dependencies) &&
+                        Objects.equals(properties, that.properties);
     }
 
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(id, face, packaging, ext, executable, executor, installer, name, description, properties);
+        int result = Objects.hash(id, face, packaging, ext, executable, nutsApplication, executor, installer, name, description, properties);
         result = 31 * result + Arrays.hashCode(parents);
         result = 31 * result + Arrays.hashCode(arch);
         result = 31 * result + Arrays.hashCode(os);

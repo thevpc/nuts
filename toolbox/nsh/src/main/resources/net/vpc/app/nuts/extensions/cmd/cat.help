@@ -1,6 +1,6 @@
 concatenate files and print on the standard output
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##cat## [<OPTION>...] <FILE> ...
 
 concatenate files and print on the standard output

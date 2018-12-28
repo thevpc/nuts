@@ -35,6 +35,7 @@ import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -91,7 +92,7 @@ public class NutsIdImpl implements NutsId {
     }
 
     @Override
-    public boolean isSameFullName(NutsId other) {
+    public boolean equalsSimpleName(NutsId other) {
         if (other == null) {
             return false;
         }
@@ -318,7 +319,7 @@ public class NutsIdImpl implements NutsId {
     public Map<String, String> getQueryMap() {
         String q = getQuery();
         if (q == null || q.equals("")) {
-            return new HashMap<>();
+            return new LinkedHashMap<>();
         }
         return StringUtils.parseMap(q, "&");
     }
@@ -333,13 +334,6 @@ public class NutsIdImpl implements NutsId {
         return group;
     }
 
-    @Override
-    public String getSimpleName() {
-        if (StringUtils.isEmpty(group)) {
-            return StringUtils.trim(name);
-        }
-        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
-    }
 
     @Override
     public NutsId getSimpleNameId() {
@@ -351,9 +345,13 @@ public class NutsIdImpl implements NutsId {
         return new NutsIdImpl(null, group, name, version,"");
     }
 
+
     @Override
-    public String getFullName() {
-        return toString();
+    public String getSimpleName() {
+        if (StringUtils.isEmpty(group)) {
+            return StringUtils.trim(name);
+        }
+        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
     }
 
     @Override
@@ -364,6 +362,11 @@ public class NutsIdImpl implements NutsId {
             return s;
         }
         return s + "#" + v;
+    }
+
+    @Override
+    public String getFullName() {
+        return toString();
     }
 
     @Override

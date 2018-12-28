@@ -30,16 +30,13 @@
 package net.vpc.app.nuts.extensions.installers;
 
 import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsFile;
+import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.RootFolderType;
-import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.Date;
 
 /**
  * Created by vpc on 1/7/17.
@@ -47,9 +44,9 @@ import java.util.Date;
 public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
-    public int getSupportLevel(NutsFile nutsFile) {
-        if (nutsFile != null && nutsFile.getDescriptor() != null) {
-            if ("zip".equals(nutsFile.getDescriptor().getPackaging())) {
+    public int getSupportLevel(NutsDefinition nutsDefinition) {
+        if (nutsDefinition != null && nutsDefinition.getDescriptor() != null) {
+            if ("zip".equals(nutsDefinition.getDescriptor().getPackaging())) {
                 return DEFAULT_SUPPORT;
             }
         }
@@ -58,34 +55,25 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId(), RootFolderType.PROGRAMS));
+        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsDefinition().getId(), RootFolderType.PROGRAMS));
 
-        String skipRoot = (String) executionContext.getExecProperties().remove("unzip-skip-root");
-        ZipUtils.unzip((executionContext.getNutsFile().getFile()),
+        String skipRoot = (String) executionContext.getExecutorProperties().remove("unzip-skip-root");
+        ZipUtils.unzip((executionContext.getNutsDefinition().getFile()),
                 installFolder.getPath(),
                 new UnzipOptions().setSkipRoot("true".equalsIgnoreCase(skipRoot))
         );
-        File log = new File(installFolder, ".nuts-install.log");
-        IOUtils.copy(new ByteArrayInputStream(String.valueOf(new Date()).getBytes()), log, true, true);
-        executionContext.getNutsFile().setInstallFolder(installFolder.getPath());
-        executionContext.getNutsFile().setInstalled(true);
-        if (executionContext.getExecArgs().length > 0) {
+        executionContext.getNutsDefinition().setInstallFolder(installFolder.getPath());
+        executionContext.getNutsDefinition().setInstalled(true);
+        if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
                     .createExecBuilder()
-                    .setCommand(executionContext.getExecArgs())
+                    .setCommand(executionContext.getExecutorOptions())
                     .setSession(executionContext.getSession())
-                    .setEnv(executionContext.getExecProperties())
+                    .setEnv(executionContext.getExecutorProperties())
                     .setDirectory(installFolder.getPath())
                     .exec().getResult()
             ;
         }
-    }
-
-    @Override
-    public boolean isInstalled(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getStoreRoot(executionContext.getNutsFile().getId(), RootFolderType.PROGRAMS));
-        File log = new File(installFolder, ".nuts-install.log");
-        return log.exists();
     }
 
     @Override

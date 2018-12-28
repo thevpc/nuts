@@ -115,7 +115,7 @@ public class CpCommand extends AbstractNutsCommand {
             if (o.mkdir) {
                 FileUtils.createParents(to1);
             }
-            context.out().printf("[[\\[CP\\]]] %s -> %s%\n",from ,to);
+            context.out().printf("[[\\[CP\\]]] %s -> %s\n",from ,to);
             IOUtils.copy(from1, to1);
         } else if (from.getProtocol().equals("file") && to.getProtocol().equals("ssh")) {
             SshPath to1 = ((FilePath.SshFilePath) to).getSshPath();
@@ -149,7 +149,7 @@ public class CpCommand extends AbstractNutsCommand {
             if (o.mkdir) {
                 FileUtils.createParents(to1);
             }
-            context.out().printf("[[\\[CP\\]]] %s -> %s%\n",from ,to);
+            context.out().printf("[[\\[CP\\]]] %s -> %s\n",from ,to);
             IOUtils.copy(from1, to1);
         } else {
             throw new RuntimeIOException("cp: Unsupported protocols " + from + "->" + to);

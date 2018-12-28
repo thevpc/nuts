@@ -37,14 +37,6 @@ import net.vpc.common.io.FileUtils;
 import java.io.*;
 
 public class CoreJsonUtils {
-    public static final SerializeOptions PRETTY_IGNORE_EMPTY_OPTIONS = new SerializeOptions()
-            .setIgnoreNulls(true)
-            .setIgnoreEmptyStrings(true)
-            .setIgnoreEmptyCollections(true)
-            .setIgnoreEmptyMaps(true)
-            .setIgnoreEmptyArrays(true)
-            .setPretty(true);
-
     public static JsonIO get() {
         return GsonIO.INSTANCE;
     }

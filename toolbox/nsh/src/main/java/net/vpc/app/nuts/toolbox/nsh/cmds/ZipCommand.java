@@ -85,7 +85,7 @@ public class ZipCommand extends AbstractNutsCommand {
         if (files.isEmpty()) {
             throw new IllegalArgumentException("Not yet supported");
         }
-        ZipUtils.zip(outZip.getPath(),new ZipOptions(),files.toArray(new String[files.size()]));
+        ZipUtils.zip(outZip.getPath(),new ZipOptions(),files.toArray(new String[0]));
         return 0;
     }
 }

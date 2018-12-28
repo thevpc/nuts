@@ -45,6 +45,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String componentsLocation = null;
     private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
     private List<NutsId> extensions = new ArrayList<>();
+    private List<NutsWorkspaceCommandFactoryConfig> commandFactories = new ArrayList<>();
     private Properties env = new Properties();
     private Map<String, List<NutsSdkLocation>> sdk = new HashMap<>();
     private String[] imports = new String[0];
@@ -62,6 +63,8 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.bootRuntimeDependencies = other.getBootRuntimeDependencies();
         this.bootRepositories = other.getBootRepositories();
         this.componentsLocation = other.getComponentsLocation();
+        this.bootJavaCommand = other.getBootJavaCommand();
+        this.bootJavaOptions = other.getBootJavaOptions();
         for (NutsRepositoryLocation repository : other.getRepositories()) {
             this.repositories.put(repository.getId(), repository);
         }
@@ -246,6 +249,15 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setBootJavaOptions(String bootJavaOptions) {
         this.bootJavaOptions = bootJavaOptions;
+        return this;
+    }
+
+    public List<NutsWorkspaceCommandFactoryConfig> getCommandFactories() {
+        return commandFactories;
+    }
+
+    public NutsWorkspaceConfig setCommandFactories(List<NutsWorkspaceCommandFactoryConfig> commandFactories) {
+        this.commandFactories = commandFactories;
         return this;
     }
 }

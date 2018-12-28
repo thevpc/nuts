@@ -133,7 +133,7 @@ public class WhichCommand extends AbstractNutsCommand {
             }
         }
 
-        NutsFile core = null;
+        NutsDefinition core = null;
         try {
             core = workspace.fetch(NutsConstants.NUTS_ID_BOOT_RUNTIME, session.copy().setFetchMode(NutsFetchMode.OFFLINE));
         } catch (Exception e) {
@@ -146,7 +146,7 @@ public class WhichCommand extends AbstractNutsCommand {
                 cp_nutsCoreFile = core.getFile();
             }
         }
-        map.put("nuts.workspace.version", workspace.parseRequiredNutsId(workspace.getConfigManager().getBoot().getBootAPI()).getVersion().getValue());
+        map.put("nuts.workspace.version", workspace.getConfigManager().getBootAPI().getVersion().getValue());
         map.put("nuts.workspace.api-component", cp_nutsFile);
         map.put("nuts.workspace.core-component", cp_nutsCoreFile);
         map.put("nuts.workspace.location", workspace.getConfigManager().getWorkspaceLocation());

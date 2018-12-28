@@ -334,9 +334,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
         }
         if (all.isEmpty()) {
-            for (T obj : discoverInstances(type, getClass().getClassLoader())) {
-                all.add(obj);
-            }
+            all.addAll(discoverInstances(type, getClass().getClassLoader()));
         }
 //        ServiceLoader serviceLoader = ServiceLoader.load(type);
 //        for (Object object : serviceLoader) {

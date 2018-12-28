@@ -1,6 +1,6 @@
 parse file version
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##file-version## [<OPTION>...] <PARAMS> ...
 
 parse file version (war, jar and exe supported)

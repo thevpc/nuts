@@ -178,7 +178,7 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
         if (question.getAcceptedValues() != null && question.getAcceptedValues().length > 0) {
             getFormattedOut().printf(" (accepts [[%s]])", Arrays.toString(question.getAcceptedValues()));
         }
-        getFormattedOut().printf("\n");
+        getFormattedOut().printf("?\n");
         String v = readLine("\tPlease enter value or @@%s@@ to cancel : ", "cancel!");
         if ("cancel!".equals(v)) {
             throw new NutsUserCancelException();

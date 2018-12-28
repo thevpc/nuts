@@ -1,6 +1,6 @@
 check out a **nuts** to a local folder to be modified
 
-@@SYNOPSYS:@@
+@@SYNOPSIS:@@
 ##checkout## {{nuts-id}} folder-path
 
 checks out a **nuts** to a local folder to be modified. The version of the checked out **nuts** is suffixed with "-CHECKED-OUT"

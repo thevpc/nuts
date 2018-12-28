@@ -16,7 +16,7 @@ public class LocalMysqlConfigService {
     private LocalMysql app;
     private LocalMysqlConfig config;
     private NutsApplicationContext context;
-    private NutsFile catalinaNutsFile;
+    private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
 
     public LocalMysqlConfigService(File file, LocalMysql app) {
@@ -72,7 +72,7 @@ public class LocalMysqlConfigService {
         if (args != null) {
             for (String arg : args) {
                 if (!StringUtils.isEmpty(arg)) {
-                    for (String s : arg.split(",| ")) {
+                    for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
                         }
@@ -89,8 +89,7 @@ public class LocalMysqlConfigService {
         if (f.exists()) {
             JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
             try (FileReader r = new FileReader(f)) {
-                LocalMysqlConfig i = jsonSerializer.read(r, LocalMysqlConfig.class);
-                config = i;
+                config = jsonSerializer.read(r, LocalMysqlConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);

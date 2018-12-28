@@ -34,13 +34,13 @@ package net.vpc.app.nuts;
  */
 public interface NutsRepositoryListener {
 
-    void onUndeploy(NutsRepository repository, NutsFile file);
+    void onUndeploy(NutsRepository repository, NutsDefinition file);
 
-    void onDeploy(NutsRepository repository, NutsFile file);
+    void onDeploy(NutsRepository repository, NutsDefinition file);
 
-    void onInstall(NutsRepository repository, NutsFile file);
+    void onInstall(NutsRepository repository, NutsDefinition file);
 
-    void onPush(NutsRepository repository, NutsFile file);
+    void onPush(NutsRepository repository, NutsDefinition file);
 
     void onAddRepository(NutsWorkspace workspace, NutsRepository parentRepository, NutsRepository repository);
 
