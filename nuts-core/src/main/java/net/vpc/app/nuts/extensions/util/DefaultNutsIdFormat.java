@@ -113,6 +113,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         String scope = m.get("scope");
         String optional = m.get("optional");
         String classifier = m.get("classifier");
+        String exclusions = m.get("exclusions");
         NutsIdBuilder idBuilder = id.builder();
         if (omitEnv) {
             idBuilder.setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
@@ -155,35 +156,86 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             sb.append("#");
             sb.append(ws.escapeText(id.getVersion().toString()));
         }
-        if (!StringUtils.isEmpty(id.getQuery())) {
-            sb.append("?");
-            sb.append(ws.escapeText(id.getQuery()));
-        }
+        boolean firstQ=true;
+
 
         if(!StringUtils.isEmpty(classifier)){
-            sb.append(" ##");
+            if(firstQ){
+                sb.append("{{?}}");
+                firstQ=false;
+            }else{
+                sb.append("{{&}}");
+            }
+            sb.append("{{classifier}}=**");
+            sb.append("**");
             sb.append(ws.escapeText(classifier));
-            sb.append("##");
+            sb.append("**");
         }
 
-        if (highlightScope) {
-            if (!StringUtils.isEmpty(scope)) {
-                sb.append(" **");
+//        if (highlightScope) {
+            if (!StringUtils.isEmpty(scope) && !"compile".equals(scope)) {
+                if(firstQ){
+                    sb.append("{{?}}");
+                    firstQ=false;
+                }else{
+                    sb.append("{{&}}");
+                }
+                sb.append("{{scope}}=**");
+                sb.append("**");
                 sb.append(ws.escapeText(scope));
                 sb.append("**");
             }
-        }
-        if (highlightOptional) {
-            if (!StringUtils.isEmpty(optional)) {
-                if ("true".equals(optional)) {
-                    optional = "optional";
-                } else {
-                    optional = "optional=" + optional;
+//        }
+//        if (highlightOptional) {
+            if (!StringUtils.isEmpty(optional) && !"false".equals(optional)) {
+                if(firstQ){
+                    sb.append("{{?}}");
+                    firstQ=false;
+                }else{
+                    sb.append("{{&}}");
                 }
-                sb.append(" **");
+                sb.append("{{optional}}=**");
                 sb.append(ws.escapeText(optional));
                 sb.append("**");
             }
+//        }
+        if(!StringUtils.isEmpty(exclusions)){
+            if(firstQ){
+                sb.append("{{?}}");
+                firstQ=false;
+            }else{
+                sb.append("{{&}}");
+            }
+            sb.append("{{exclusions}}=@@");
+            sb.append(ws.escapeText(exclusions));
+            sb.append("@@");
+        }
+        if (!StringUtils.isEmpty(id.getQuery())) {
+            for (Map.Entry<String, String> ee : id.getQueryMap().entrySet()) {
+                switch (ee.getKey()){
+                    case "exclusions":
+                    case "optional":
+                    case "scope":
+                    case "classifier":
+                        {
+                        break;
+                    }
+                    default:{
+                        if(firstQ){
+                            sb.append("{{?}}");
+                            firstQ=false;
+                        }else{
+                            sb.append("{{&}}");
+                        }
+                        sb.append("<<"+ws.escapeText(ee.getKey())+">>=");
+                        sb.append(ws.escapeText(exclusions));
+                        sb.append("");
+                    }
+                }
+
+            }
+//            sb.append("?");
+//            sb.append(ws.escapeText(id.getQuery()));
         }
         return sb.toString();
     }

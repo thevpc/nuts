@@ -78,7 +78,7 @@ public enum NutsDependencyScope {
                 v.add(NutsDependencyScope.IMPLEMENTATION);
                 v.add(NutsDependencyScope.RUNTIME);
                 v.add(NutsDependencyScope.SYSTEM);
-                v.add(NutsDependencyScope.PROVIDED);
+//                v.add(NutsDependencyScope.PROVIDED);
                 break;
             }
             case PROFILE_RUN_TEST: {
@@ -192,7 +192,7 @@ public enum NutsDependencyScope {
             case "compileOnly": //gradle
                 return PROVIDED;
             case "runtime":
-                return PROVIDED;
+                return RUNTIME;
             case "import":
                 return IMPORT;
             case "system":

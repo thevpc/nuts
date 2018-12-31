@@ -69,21 +69,21 @@ public class NutsIdGraph {
     }
 
     private <T> void fixConflicts() {
-        List<SimpleNutsIdInfo> conflicts = new ArrayList<>();
         for (SimpleNutsIdInfo value : context.snutsIds.values().toArray(new SimpleNutsIdInfo[0])) {
-            if (value.nodes.size() > 0) {
-                conflicts.add(value);
-            }
-        }
-        for (SimpleNutsIdInfo conflict : conflicts) {
-            Set<NutsIdInfo> list = conflict.nodes;
-            NutsIdInfo best = resolveBest(list);
-            if (best != null) {
-                for (NutsIdInfo nutsIdInfo : list.toArray(new NutsIdInfo[0])) {
-                    context.replace(nutsIdInfo, best);
+            if (value.nodes.size() > 1) {
+                if(value.id.contains("sisu-guice")){
+                    System.out.print("");
+                }
+                Set<NutsIdInfo> list = value.nodes;
+                NutsIdInfo best = resolveBest(list);
+                if (best != null) {
+                    for (NutsIdInfo nutsIdInfo : list.toArray(new NutsIdInfo[0])) {
+                        context.replace(nutsIdInfo, best);
+                    }
                 }
             }
         }
+
         Set<NutsIdNode> wildIds = new HashSet<>(this.wildeIds);
         for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
             for (NutsIdInfo node2 : node1.nodes) {
@@ -97,7 +97,7 @@ public class NutsIdGraph {
         Set<NutsIdNode> toaddOk = new HashSet<>();
         for (NutsIdNode nutsId : wildIds) {
             NutsId nutsId1 = ws.resolveId(nutsId.id, session);
-            toaddOk.add(new NutsIdNode(nutsId1, nutsId.path,nutsId.filter));
+            toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter));
         }
 //        print(System.out);
         if (!toaddOk.isEmpty()) {
@@ -113,7 +113,7 @@ public class NutsIdGraph {
         id = id.setNamespace(null);
         Map<String, String> m = id.getQueryMap();
         if (m != null && !m.isEmpty()) {
-            if("default".equals(m.get("face"))) {
+            if ("default".equals(m.get("face"))) {
                 m.remove("face");
             }
             id = id.setQuery(m);
@@ -125,8 +125,16 @@ public class NutsIdGraph {
     public void add(NutsIdNode from, NutsIdNode to) {
         context.register(from);
         context.register(to);
-        context.getNutsIdInfo(from.id,true)
-                .connect(context.getNutsIdInfo(to.id,true));
+        context.getNutsIdInfo(from.id, true)
+                .connect(context.getNutsIdInfo(to.id, true));
+    }
+
+    public NutsId[] collect() {
+        List<NutsId> all=new ArrayList<>();
+        for (NutsIdInfo root : getRoots()) {
+            all.add(root.getBest().id);
+        }
+        return collect(all,null);
     }
 
     public NutsId[] collect(Collection<NutsId> ids, Collection<NutsId> exclude) {
@@ -136,7 +144,7 @@ public class NutsIdGraph {
         }
         List<NutsId> r = new ArrayList<>();
         for (NutsIdInfo n : collected) {
-            if (!exclude.contains(n.id)) {
+            if (exclude==null || !exclude.contains(n.id)) {
                 r.add(n.id);
             }
         }
@@ -170,12 +178,25 @@ public class NutsIdGraph {
         Collection<NutsIdNode> n = new ArrayList<>();
         int order = 0;
         for (NutsId x : ids) {
-            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null,dependencyFilter));
+            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null, dependencyFilter));
         }
         push0(n);
     }
 
+    private boolean acceptVisit(NutsIdAndNutsDependencyFilterItem curr) {
+        NutsId id2 = cleanup(curr.id.id);
+        if (!visited.contains(id2)) {
+//            if(id2.getName().contains("sisu-guice")) {
+//                System.out.println("::: acceptVisit " + id2);
+//            }
+            visited.add(id2);
+            return true;
+        }
+        return false;
+    }
+
     private void push0(Collection<NutsIdNode> ids) {
+//        System.out.println("::: push0 " + ids);
         if (ids.size() == 0) {
             return;
         }
@@ -192,11 +213,10 @@ public class NutsIdGraph {
         while (!stack.isEmpty()) {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
 //            if(curr.id.id.getName().equals("org.eclipse.sisu.plexus")){
-            if(curr.id.id.getName().equals("sisu-guice")){
-                System.out.print("");
-            }
-            if (!visited.contains(cleanup(curr.id.id))) {
-                visited.add(cleanup(curr.id.id));
+            if (acceptVisit(curr)) {
+                if (curr.id.id.getName().equals("sisu-guice")) {
+                    System.out.print("");
+                }
                 if (curr.id.getVersion().isSingleValue()) {
                     if (curr.getDescriptor(ws, session) != null) {
                         context.register(curr.id);
@@ -204,14 +224,14 @@ public class NutsIdGraph {
                         NutsDependency[] dependencies = curr.getDescriptor(ws, session).getDependencies(curr.id.filter);
                         for (NutsDependency dept : dependencies) {
 //                            System.out.println(curr.id.getLongName()+" ==> "+dept);
-                            if(dept.getName().equals("sisu-guice")){
+                            if (dept.getName().equals("sisu-guice")) {
                                 System.out.print("");
                             }
                             NutsId[] exclusions = dept.getExclusions();
                             NutsDependencyFilter filter2 = ws.createNutsDependencyFilter(curr.id.filter, exclusions);
                             if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept)) {
                                 NutsId item = dept.getId();
-                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id,filter2);
+                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id, filter2);
                                 if (!item.getVersion().isSingleValue()) {
                                     this.add(curr.id, nextNode);
                                 } else {
@@ -331,6 +351,16 @@ public class NutsIdGraph {
             output.add(other);
             other.input.add(this);
         }
+
+        @Override
+        public String toString() {
+            return "NutsIdInfo{" +
+                    "id=" + id +
+                    ", nodes=" + nodes.size() +
+                    ", input=" + input.size() +
+                    ", output=" + output.size() +
+                    '}';
+        }
     }
 
     public static class NutsIdGraphContext {
@@ -405,7 +435,7 @@ public class NutsIdGraph {
         public NutsId parent;
         public NutsDependencyFilter filter;
 
-        public NutsIdNode(NutsId id, List<Integer> path,NutsDependencyFilter dependencyFilter) {
+        public NutsIdNode(NutsId id, List<Integer> path, NutsDependencyFilter dependencyFilter) {
             this.id0 = id;
             this.id = cleanup(id0);
             this.path = new ArrayList<>(path);
@@ -413,7 +443,7 @@ public class NutsIdGraph {
             this.filter = dependencyFilter;
         }
 
-        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent,NutsDependencyFilter dependencyFilter) {
+        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent, NutsDependencyFilter dependencyFilter) {
             this.id0 = id;
             this.id = cleanup(id0);
             this.path = new ArrayList<>();
@@ -462,8 +492,8 @@ public class NutsIdGraph {
                 if (id2.getVersion().isEmpty()) {
                     return -1;
                 }
-                int xx=Integer.compare(this.path.size(),other.path.size());
-                if(xx!=0){
+                int xx = Integer.compare(this.path.size(), other.path.size());
+                if (xx != 0) {
                     return xx;
                 }
                 int max = this.path.size();

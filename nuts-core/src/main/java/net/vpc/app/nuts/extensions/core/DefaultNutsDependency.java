@@ -36,10 +36,7 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by vpc on 1/5/17.
@@ -98,6 +95,13 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (!StringUtils.isEmpty(classifier)) {
             m.put("classifier", classifier);
+        }
+        if(exclusions.length>0){
+            TreeSet<String> ex=new TreeSet<>();
+            for (NutsId exclusion : exclusions) {
+                ex.add(exclusion.getSimpleName());
+            }
+            m.put("exclusions", StringUtils.join(",",ex));
         }
         return new DefaultNutsId(
                 getNamespace(),

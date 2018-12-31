@@ -489,9 +489,9 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             NutsWorkspaceCommand command = ws.getConfigManager().findCommand(cmdName);
             NutsDefinition nutToRun = null;
             if (command == null) {
-                nutToRun = ws.fetchWithDependencies(cmdName, null, false, session);
+                nutToRun = ws.fetch(cmdName, session);
                 log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
-                if (!ws.isInstalled(nutToRun.getId(), true, session)) {
+                if (!ws.isInstalled(nutToRun.getId(), false, session)) {
                     ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
                     ws.install(nutToRun.getId(), args, NutsConfirmAction.FORCE, session);
                 }
@@ -499,7 +499,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                 if(command.getId()==null) {
                     throw new NutsExecutionException("Invalid Command Definition "+command,1);
                 }
-                nutToRun = ws.fetchWithDependencies(command.getId(), null, false, session);
+                nutToRun = ws.fetch(command.getId(), session);
                 List<String> r=new ArrayList<>(Arrays.asList(command.getCommand()));
                 r.addAll(Arrays.asList(args));
                 args=r.toArray(new String[0]);

@@ -278,7 +278,19 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         xargs.addAll(app);
         args.addAll(app);
         if (showCommand || true) {
-            executionContext.getTerminal().getOut().println("==[nuts-exec]== " + NutsArgumentsParser.compressBootArguments(xargs.toArray(new String[0])));
+            PrintStream out = executionContext.getTerminal().getOut();
+            out.println("==[nuts-exec]== " + NutsArgumentsParser.compressBootArguments(xargs.toArray(new String[0])));
+            out.println("\t==[nuts-exec]== ");
+            for (int i = 0; i < xargs.size(); i++) {
+                String xarg = xargs.get(i);
+                if(i>0 && xargs.get(i-1).equals("--nuts-path")){
+                    for (String s : xarg.split(";")) {
+                        out.println("\t\t\t " + s);
+                    }
+                }else {
+                    out.println("\t\t " + xarg);
+                }
+            }
         }
 
         File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().resolvePath(dir));
