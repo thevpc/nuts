@@ -243,9 +243,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
         List<NutsDependency> r = new ArrayList<>(d0.length);
         for (NutsDependency nutsDependency : d0) {
-            if(nutsDependency.getName().contains("compat")){
-                System.out.print("");
-            }
             if (dependencyFilter.accept(getId(), nutsDependency)) {
                 r.add(nutsDependency);
             }

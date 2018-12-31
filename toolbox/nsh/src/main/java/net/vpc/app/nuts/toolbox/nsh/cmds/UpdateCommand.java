@@ -35,7 +35,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceUpdateOptions;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
+import net.vpc.app.nuts.app.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.ValueNonOption;
 
@@ -69,7 +69,7 @@ public class UpdateCommand extends AbstractNutsCommand {
                 force = NutsConfirmAction.FORCE;
                 version = cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getString();
             } else {
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", null)).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
                 ids.add(id);
             }
         }

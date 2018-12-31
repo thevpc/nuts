@@ -107,7 +107,7 @@ public interface NutsQuery {
 
     String[] getArch();
 
-    String[] getPackagings();
+    String[] getPackaging();
 
     String[] getRepos();
 

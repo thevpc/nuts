@@ -60,7 +60,6 @@ public class HeadCommand extends AbstractNutsCommand {
         List<String> files = new ArrayList<>();
         PrintStream out = context.out();
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {

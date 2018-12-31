@@ -324,6 +324,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         install("nsh", new String[0], NutsConfirmAction.FORCE, session);
         out.println("##\\### installing ==ndi== (Nuts Desktop Integration companion)...");
         install("ndi", new String[0], NutsConfirmAction.FORCE, session);
+        out.println("##\\### installing ==nfind== (Nuts Find companion)...");
+        install("nfind", new String[0], NutsConfirmAction.FORCE, session);
+        out.println("##\\### installing ==nadmin== (Nuts Admin companion)...");
+        install("nadmin", new String[0], NutsConfirmAction.FORCE, session);
 //        out.println("##\\### installing ==mvn== (Maven command line companion)...");
 //        install("mvn", new String[0], NutsConfirmAction.FORCE, session);
         out.println("Installation of companion tools ##succeeded##...");
@@ -594,22 +598,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         }
         return updates;
     }
-
-//    public NutsId getBootAPI() {
-//        String bootId = configManager.getWorkspaceBoot().getBootAPI();
-//        if (StringUtils.isEmpty(bootId)) {
-//            bootId = NutsConstants.NUTS_ID_BOOT_API;
-//        }
-//        return parseNutsId(bootId);
-//    }
-
-//    public NutsId getBootRuntime() {
-//        String runtimeId = configManager.getWorkspaceBoot().getBootRuntime();
-//        if (StringUtils.isEmpty(runtimeId)) {
-//            runtimeId = NutsConstants.NUTS_ID_BOOT_RUNTIME;
-//        }
-//        return parseNutsId(runtimeId);
-//    }
 
     /**
      * true when core extension is required for running this workspace. A
@@ -2052,25 +2040,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return id;
     }
 
-//    private NutsDefinition[] bootstrapUpdate(String id, NutsConfirmAction foundAction, NutsSession session) {
-//        session = validateSession(session);
-//        NutsDefinition[] deps = fetchDependencies(new NutsDependencySearch(id).setIncludeMain(true), session);
-//        for (NutsDefinition dep : deps) {
-//            if (dep.getFile() != null && !NutsConstants.DEFAULT_REPOSITORY_NAME.equals(dep.getId().getNamespace())) {
-//                bootstrapNutsRepository.deploy(dep.getId(),
-//                        dep.getDescriptor(),
-//                        dep.getFile(), foundAction,
-//                        session
-//                );
-//            }
-//        }
-//        return deps;
-//    }
-
     public NutsDefinition fetchSimple(NutsId id, NutsSession session) {
-//        if(id.getClassifier()!=null){
-//            System.out.print("");
-//        }
         session = CoreNutsUtils.validateSession(session, this);
         if (log.isLoggable(Level.FINEST)) {
             traceMessage(session, id, TraceResult.START, "Fetch component", 0);

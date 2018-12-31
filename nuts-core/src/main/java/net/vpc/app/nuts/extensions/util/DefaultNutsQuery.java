@@ -69,7 +69,7 @@ public class DefaultNutsQuery implements NutsQuery {
     private NutsSession session;
     private final List<String> js = new ArrayList<>();
     private final List<String> arch = new ArrayList<>();
-    private final List<String> packagings = new ArrayList<>();
+    private final List<String> packaging = new ArrayList<>();
     private final List<String> repos = new ArrayList<>();
     private DefaultNutsWorkspace ws;
     private boolean includeMain = true;
@@ -79,18 +79,6 @@ public class DefaultNutsQuery implements NutsQuery {
     public DefaultNutsQuery(DefaultNutsWorkspace ws) {
         this.ws = ws;
     }
-
-//    public DefaultNutsQuery(String... ids) {
-//        addIds(ids);
-//    }
-//
-//    public DefaultNutsQuery(NutsId... ids) {
-//        addIds(ids);
-//    }
-
-//    public DefaultNutsQuery(DefaultNutsQuery other) {
-//        copyFrom(other);
-//    }
 
     @Override
     public NutsQuery addJs(Collection<String> value) {
@@ -152,7 +140,7 @@ public class DefaultNutsQuery implements NutsQuery {
     @Override
     public NutsQuery addPackaging(String... value) {
         if (value != null) {
-            packagings.addAll(Arrays.asList(value));
+            this.packaging.addAll(Arrays.asList(value));
         }
         return this;
     }
@@ -480,8 +468,8 @@ public class DefaultNutsQuery implements NutsQuery {
     }
 
     @Override
-    public String[] getPackagings() {
-        return packagings.toArray(new String[0]);
+    public String[] getPackaging() {
+        return this.packaging.toArray(new String[0]);
     }
 
     @Override
@@ -538,7 +526,7 @@ public class DefaultNutsQuery implements NutsQuery {
             }
         }
         NutsDescriptorFilter packs = null;
-        for (String v : this.getPackagings()) {
+        for (String v : this.getPackaging()) {
             packs = CoreNutsUtils.simplify(CoreNutsUtils.Or(packs, new NutsDescriptorFilterPackaging(v)));
         }
         NutsDescriptorFilter archs = null;
@@ -682,7 +670,7 @@ public class DefaultNutsQuery implements NutsQuery {
                 getAcceptOptional()==null?null:NutsDependencyOptionFilter.valueOf(getAcceptOptional()),
                 getDependencyFilter()
         ));
-        NutsIdGraph graph = new NutsIdGraph(ws, session, dependencyFilter);
+        NutsIdGraph graph = new NutsIdGraph(ws, session);
         graph.push(ids, dependencyFilter);
         return graph.collect(ids, ids);
     }
@@ -702,23 +690,6 @@ public class DefaultNutsQuery implements NutsQuery {
             return -x;
         }
     }
-
-//    private static class NutsDefinitionComparator implements Comparator<NutsDefinition> {
-//        public static final NutsDefinitionComparator INSTANCE = new NutsDefinitionComparator();
-//
-//        @Override
-//        public int compare(NutsDefinition f1, NutsDefinition f2) {
-//            NutsId o1 = f1.getId();
-//            NutsId o2 = f2.getId();
-//            int x = o1.getSimpleName().compareTo(o2.getSimpleName());
-//            if (x != 0) {
-//                return x;
-//            }
-//            //latests versions first
-//            x = o1.getVersion().compareTo(o2.getVersion());
-//            return -x;
-//        }
-//    }
 
     @Override
     public NutsQuery dependenciesOnly() {

@@ -4,7 +4,6 @@ net.vpc.app.nuts.toolbox.nsh.cmds.ConnectCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ConsoleCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.DeployCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ExecCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.NfindCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.VersionCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HelpCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HistoryCommand
@@ -35,19 +34,7 @@ net.vpc.app.nuts.toolbox.nsh.cmds.CpCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.UndeclareCommandCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.SshCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.RmCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.NutsAdminCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.PropsCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.MkdirCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.FileVersionCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.FindCommandCommand
-
-
-net.vpc.app.nuts.toolbox.nsh.cmds.config.ArchetypeConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.DescriptorConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.ExtensionConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.ImportConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.LogConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.RepositoryConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.UserConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.WorkspaceConfigSubCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.config.JavaConfigSubCommand

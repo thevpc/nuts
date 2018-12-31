@@ -33,8 +33,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
-import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.app.nuts.app.options.NutsIdNonOption;
+import net.vpc.app.nuts.app.options.RepositoryNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.strings.StringUtils;
@@ -91,7 +91,7 @@ public class DeployCommand extends AbstractNutsCommand {
                     if (fileMode) {
                         contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                     } else if (idMode) {
-                        id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.consoleContext())).getString();
+                        id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
                     }
                 }
             }

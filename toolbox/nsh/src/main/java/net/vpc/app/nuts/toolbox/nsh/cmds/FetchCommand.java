@@ -34,7 +34,7 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
+import net.vpc.app.nuts.app.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 
@@ -70,7 +70,7 @@ public class FetchCommand extends AbstractNutsCommand {
                 effective = true;
             } else {
                 NutsWorkspace ws = context.getWorkspace();
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.consoleContext())).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
                 if (cmdLine.isExecMode()) {
                     if (descMode) {
                         NutsDefinition file = null;

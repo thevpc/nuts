@@ -33,7 +33,7 @@ import net.vpc.app.nuts.NutsConfirmAction;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
+import net.vpc.app.nuts.app.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 
 import java.io.PrintStream;
@@ -69,7 +69,7 @@ public class UninstallCommand extends AbstractNutsCommand {
                     erase = true;
                 }
             } else {
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.consoleContext())).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
                 if (cmdLine.isExecMode()) {
                     NutsWorkspace ws = context.getWorkspace();
                     boolean file = ws.uninstall(id, args, foundAction, erase, context.getSession());

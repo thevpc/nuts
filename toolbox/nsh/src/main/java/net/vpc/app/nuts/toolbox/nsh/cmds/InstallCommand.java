@@ -32,8 +32,8 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
-import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.app.nuts.app.options.NutsIdNonOption;
+import net.vpc.app.nuts.app.options.RepositoryNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.FileUtils;
@@ -82,7 +82,7 @@ public class InstallCommand extends AbstractNutsCommand {
                     deployOnly = false;
                     bundleOnly = true;
                 } else {
-                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.consoleContext())).getString();
+                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
                     if (cmdLine.isExecMode()) {
                         PrintStream out = context.getTerminal().getFormattedOut();
                         if (deployOnly) {

@@ -59,7 +59,6 @@ public class ConsoleCommand extends AbstractNutsCommand {
             return -1;
         }
         Argument a;
-        boolean noColors = false;
         List<String> invokeArgs = new ArrayList<>();
         CommandLine cmdLine = new CommandLine(args);
         while (cmdLine.hasNext()) {

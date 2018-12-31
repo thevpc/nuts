@@ -13,6 +13,8 @@
         <module>nuts-core</module>
         <module>nuts-cmd-app</module>
         <module>toolbox/mvn</module>
+        <module>toolbox/nfind</module>
+        <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
         <module>toolbox/ndi</module>
         <module>toolbox/nuts-server</module>

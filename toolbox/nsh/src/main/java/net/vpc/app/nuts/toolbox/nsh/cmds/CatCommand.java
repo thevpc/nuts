@@ -67,7 +67,7 @@ public class CatCommand extends AbstractNutsCommand {
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
-            }else if (cmdLine.readAll("-")) {
+            } else if (cmdLine.readAll("-")) {
                 files.add(null);
             } else if (cmdLine.readAll("-n", "--number")) {
                 o.n = true;

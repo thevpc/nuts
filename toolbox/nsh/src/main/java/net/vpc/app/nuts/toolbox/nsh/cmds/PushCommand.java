@@ -32,7 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.NutsConfirmAction;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.RepositoryNonOption;
+import net.vpc.app.nuts.app.options.RepositoryNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.DefaultNonOption;
 

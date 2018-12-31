@@ -45,12 +45,10 @@ public class NutsIdGraph {
     private final Set<NutsIdNode> wildeIds = new LinkedHashSet<>();
     private final DefaultNutsWorkspace ws;
     private final NutsSession session;
-    private final NutsDependencyFilter defaultDependencyFilter;
 
-    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session, NutsDependencyFilter defaultDependencyFilter) {
+    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        this.defaultDependencyFilter = defaultDependencyFilter;
     }
 
     public NutsIdInfo resolveBest(Set<NutsIdInfo> ids) {
@@ -71,9 +69,6 @@ public class NutsIdGraph {
     private <T> void fixConflicts() {
         for (SimpleNutsIdInfo value : context.snutsIds.values().toArray(new SimpleNutsIdInfo[0])) {
             if (value.nodes.size() > 1) {
-                if(value.id.contains("sisu-guice")){
-                    System.out.print("");
-                }
                 Set<NutsIdInfo> list = value.nodes;
                 NutsIdInfo best = resolveBest(list);
                 if (best != null) {
@@ -186,9 +181,6 @@ public class NutsIdGraph {
     private boolean acceptVisit(NutsIdAndNutsDependencyFilterItem curr) {
         NutsId id2 = cleanup(curr.id.id);
         if (!visited.contains(id2)) {
-//            if(id2.getName().contains("sisu-guice")) {
-//                System.out.println("::: acceptVisit " + id2);
-//            }
             visited.add(id2);
             return true;
         }
@@ -196,37 +188,22 @@ public class NutsIdGraph {
     }
 
     private void push0(Collection<NutsIdNode> ids) {
-//        System.out.println("::: push0 " + ids);
         if (ids.size() == 0) {
             return;
         }
         Stack<NutsIdAndNutsDependencyFilterItem> stack = new Stack<>();
         for (NutsIdNode id : ids) {
-//            NutsId main = null;
-//            main = ws.resolveId(id, session);
-//            if (main == null) {
-//                main = ws.fetchBestHelperNutsId(session, id);
-//            }
             stack.push(new NutsIdAndNutsDependencyFilterItem(id));
         }
-
         while (!stack.isEmpty()) {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
-//            if(curr.id.id.getName().equals("org.eclipse.sisu.plexus")){
             if (acceptVisit(curr)) {
-                if (curr.id.id.getName().equals("sisu-guice")) {
-                    System.out.print("");
-                }
                 if (curr.id.getVersion().isSingleValue()) {
                     if (curr.getDescriptor(ws, session) != null) {
                         context.register(curr.id);
                         int currentOrder = 0;
                         NutsDependency[] dependencies = curr.getDescriptor(ws, session).getDependencies(curr.id.filter);
                         for (NutsDependency dept : dependencies) {
-//                            System.out.println(curr.id.getLongName()+" ==> "+dept);
-                            if (dept.getName().equals("sisu-guice")) {
-                                System.out.print("");
-                            }
                             NutsId[] exclusions = dept.getExclusions();
                             NutsDependencyFilter filter2 = ws.createNutsDependencyFilter(curr.id.filter, exclusions);
                             if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept)) {
@@ -254,7 +231,6 @@ public class NutsIdGraph {
                 }
             }
         }
-//        print(System.out);
         this.fixConflicts();
     }
 

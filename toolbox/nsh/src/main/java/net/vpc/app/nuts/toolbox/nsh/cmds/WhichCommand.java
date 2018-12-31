@@ -32,7 +32,7 @@ package net.vpc.app.nuts.toolbox.nsh.cmds;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.options.NutsIdNonOption;
+import net.vpc.app.nuts.app.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 
 import java.io.PrintStream;
@@ -62,7 +62,7 @@ public class WhichCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else {
-                elems.add(cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.consoleContext())).getString());
+                elems.add(cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString());
 
             }
         }
