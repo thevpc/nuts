@@ -94,7 +94,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                                 .setRepositoryId(repositoryId),
                                         context.getSession()
                                 );
-                                out.printf("File %s deployed successfully as "+ws.formatId(deployedId)+"\n", s, deployedId);
+                                out.printf("File %s deployed successfully as "+ws.createIdFormat().format(deployedId)+"\n", s, deployedId);
                             }
                         } else if (bundleOnly) {
                             for (String s : context.getShell().expandPath(id)) {
@@ -104,7 +104,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                                 new File(context.getShell().getAbsolutePath(descriptorFile)).getPath(),
                                         context.getSession()
                                 );
-                                out.printf("File %s bundled successfully as "+ws.formatId(deployedFileId.getId())+" to %s\n", s, deployedFileId.getFile());
+                                out.printf("File %s bundled successfully as "+ws.createIdFormat().format(deployedFileId.getId())+" to %s\n", s, deployedFileId.getFile());
                             }
                         } else {
 
@@ -118,7 +118,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                                     .setRepositoryId(repositoryId),
                                             context.getSession()
                                     );
-                                    out.printf("File %s deployed successfully as "+ws.formatId(deployedId)+"\n", s);
+                                    out.printf("File %s deployed successfully as "+ws.createIdFormat().format(deployedId)+"\n", s);
                                     s = deployedId.toString();
                                 }
                                 logInstallStatus(s, context, foundAction);
@@ -149,19 +149,19 @@ public class InstallCommand extends AbstractNutsCommand {
         if (!file.isInstalled()) {
             if (!file.isCached()) {
                 if (file.isTemporary()) {
-                    out.printf(ws.formatId(file.getId())+" installed successfully from temporarily file %s\n",  file.getFile());
+                    out.printf(ws.createIdFormat().format(file.getId())+" installed successfully from temporarily file %s\n",  file.getFile());
                 } else {
-                    out.printf(ws.formatId(file.getId())+" installed successfully from remote repository\n");
+                    out.printf(ws.createIdFormat().format(file.getId())+" installed successfully from remote repository\n");
                 }
             } else {
                 if (file.isTemporary()) {
-                    out.printf(ws.formatId(file.getId())+" installed from local temporarily file %s \n", file.getFile());
+                    out.printf(ws.createIdFormat().format(file.getId())+" installed from local temporarily file %s \n", file.getFile());
                 } else {
-                    out.printf(ws.formatId(file.getId())+" installed from local repository\n");
+                    out.printf(ws.createIdFormat().format(file.getId())+" installed from local repository\n");
                 }
             }
         } else {
-            out.printf(ws.formatId(file.getId())+" installed successfully\n");
+            out.printf(ws.createIdFormat().format(file.getId())+" installed successfully\n");
         }
         return file;
     }

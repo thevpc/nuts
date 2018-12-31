@@ -5,6 +5,7 @@ Text             | Text
 \@Text\@           | @Text@
 \@\@Text\@\@         | @@Text@@
 \@\@\@Text\@\@\@       | @@@Text@@@
+\@\@\@\@Text\@\@\@\@     | @@@@Text@@@@
 \[Text\]           | [Text]
 \[\[Text\]\]         | [[Text]]
 \[\[\[Text\]\]\]       | [[[Text]]]
@@ -13,6 +14,15 @@ Text             | Text
 \*Text\*           | *Text*
 \*\*Text\*\*         | **Text**
 \*\*\*Text\*\*\*       | ***Text***
+\*\*\*\*Text\*\*\*\*     | ****Text****
+\=Text\=           | =Text=
+\=\=Text\=\=         | ==Text==
+\=\=\=Text\=\=\=       | ===Text===
+\=\=\=\=Text\=\=\=\=     | ====Text====
+\^Text\^           | ^Text^
+\^\^Text\^\^         | ^^Text^^
+\^\^\^Text\^\^\^       | ^^^Text^^^
+\^\^\^\^Text\^\^\^\^     | ^^^^Text^^^^
 \(Text\)           | (Text)
 \(\(Text\)\)         | ((Text))
 \(\(\(Text\)\)\)       | (((Text)))
@@ -21,18 +31,23 @@ Text             | Text
 \#Text\#           | #Text#
 \#\#Text\#\#         | ##Text##
 \#\#\#Text\#\#\#       | ###Text###
+\#\#\#\#Text\#\#\#\#     | ####Text####
 \{Text\}           | {Text}
 \{\{Text\}\}         | {{Text}}
 \{\{\{Text\}\}\}       | {{{Text}}}
+\{\{\{\{Text\}\}\}\}     | {{{{Text}}}}
 \<Text\>           | <Text>
 \<\<Text\>\>         | <<Text>>
 \<\<\<Text\>\>\>       | <<<Text>>>
+\<\<\<\<Text\>\>\>\>     | <<<<Text>>>>
 \"Text\"           | "Text"
 \"\"Text\"\"         | ""Text""
 \"\"\"Text\"\"\"       | """Text"""
+\"\"\"\"Text\"\"\"\"     | """"Text""""
 \'Text\'           | 'Text'
 \'\'Text\'\'         | ''Text''
 \'\'\'Text\'\'\'       | '''Text'''
+\'\'\'\'Text\'\'\'\'     | ''''Text''''
 
 
 You can escape special characters using ##\\## character

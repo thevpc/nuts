@@ -30,9 +30,10 @@
 package net.vpc.app.nuts.extensions.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
+import net.vpc.app.nuts.extensions.core.DefaultNutsVersion;
 import net.vpc.common.io.*;
 import net.vpc.common.strings.StringUtils;
+import net.vpc.common.util.Convert;
 
 import java.io.*;
 import java.net.URL;
@@ -175,7 +176,7 @@ public class CoreIOUtils {
                     System.getProperty("java.version")
             );
             NutsVersionFilter requestedJavaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(new NutsVersionImpl(current.getVersion()))) {
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()))) {
                 bestJava = current;
             }
             if (bestJava == null) {
@@ -325,7 +326,9 @@ public class CoreIOUtils {
         String ext = null;
         if (descriptor != null) {
             ext = StringUtils.trim(descriptor.getExt());
-            prefix = StringUtils.trim(descriptor.getId().getGroup()) + "-" + StringUtils.trim(descriptor.getId().getName()) + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
+            prefix = StringUtils.trim(descriptor.getId().getGroup())
+                    + "-" + StringUtils.trim(descriptor.getId().getName())
+                    + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
             if (prefix.length() < 3) {
                 prefix = prefix + "tmp";
             }
@@ -418,17 +421,24 @@ public class CoreIOUtils {
             log.log(Level.FINEST, "downloading url failed : {0}", new Object[]{path});
         }
         boolean monitorable = true;
-        if (source instanceof NutsId) {
-            NutsId d = (NutsId) source;
+        Object o = session.getProperty("monitor-allowed");
+        if(o!=null){
+            o= Convert.toBoolean(o);
+        }
+        if(o instanceof Boolean){
+            monitorable=((Boolean) o).booleanValue();
+        }else {
+            if (source instanceof NutsId) {
+                NutsId d = (NutsId) source;
 //            if (CoreNutsUtils.FACE_CATALOG.equals(d.getFace())) {
 //                monitorable = false;
 //            }
-            if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
-                monitorable = false;
-            }
-            if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
-                monitorable = false;
-            }
+                if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
+                    monitorable = false;
+                }
+                if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
+                    monitorable = false;
+                }
 //            if (CoreNutsUtils.FACE_DESC.equals(d.getFace())) {
 //                monitorable = false;
 //            }
@@ -444,6 +454,7 @@ public class CoreIOUtils {
 //            if ("descriptor-sha1".equals(d.getFace())) {
 //                monitorable = false;
 //            }
+            }
         }
         if (!monitorable) {
             return stream;

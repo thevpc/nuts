@@ -58,7 +58,6 @@ public class HelpCommand extends AbstractNutsCommand {
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //

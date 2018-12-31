@@ -165,11 +165,11 @@ public class CoreNutsUtils {
     };
 
 
-//    public static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("namespace", "group", "name", "version", "param='true'");
+//    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
 
     public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR =
             new DefaultNutsDescriptorBuilder()
-                    .setId(new NutsIdImpl(null, "group", "name", "version", (String) null))
+                    .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
                     .setFace("face")
                     .setName("Application Full Name")
                     .setDescription("Application Description")
@@ -181,11 +181,11 @@ public class CoreNutsUtils {
                     .setOsdist(new String[]{"opensuse#42"})
                     .setPlatform(new String[]{"java#8"})
                     .setExecutor(new NutsExecutorDescriptor(
-                            new NutsIdImpl(null, null, "java", "8", (String) null),
+                            new DefaultNutsId(null, null, "java", "8", (String) null),
                             new String[]{"-jar"}
                     ))
                     .setInstaller(new NutsExecutorDescriptor(
-                            new NutsIdImpl(null, null, "java", "8", (String) null),
+                            new DefaultNutsId(null, null, "java", "8", (String) null),
                             new String[]{"-jar"}
                     ))
                     .setLocations(new String[]{
@@ -193,8 +193,8 @@ public class CoreNutsUtils {
                     })
                     .setDependencies(
                             new NutsDependency[]{
-                                    new NutsDependencyImpl(
-                                            "namespace", "group", "name", "version", "compile",
+                                    new DefaultNutsDependency(
+                                            "namespace", "group", "name", null,DefaultNutsVersion.valueOf("version"), "compile",
                                             "false", new NutsId[0]
                                     )
                             }
@@ -429,7 +429,7 @@ public class CoreNutsUtils {
                 artifact = group;
                 group = null;
             }
-            return new NutsIdImpl(
+            return new DefaultNutsId(
                     protocol,
                     group,
                     artifact,
@@ -460,13 +460,17 @@ public class CoreNutsUtils {
     }
 
     public static String getNutsFileName(NutsId id, String ext) {
+        String classifier = id.getClassifier();
         if (StringUtils.isEmpty(ext)) {
             ext = "jar";
         }
         if (!ext.startsWith(".")) {
             ext = "." + ext;
         }
-        return id.getName() + "-" + id.getVersion() + ext;
+        String classifierNamePart = (".json".equals(ext) || ".nuts".equals(ext) || ".pom".equals(ext))?"":
+                (StringUtils.isEmpty(classifier) ? "" : (("-") + classifier));
+
+        return id.getName() + "-" + id.getVersion() + classifierNamePart+ext;
     }
 
     public static String[] applyStringProperties(String[] child, ObjectConverter<String, String> properties) {
@@ -483,6 +487,21 @@ public class CoreNutsUtils {
             m2.put(applyStringProperties(entry.getKey(), properties), applyStringProperties(entry.getValue(), properties));
         }
         return m2;
+    }
+
+    public static NutsVersion applyStringProperties(NutsVersion child, ObjectConverter<String, String> properties) {
+        if(child==null){
+            return child;
+        }
+        String s = child.getValue();
+        if(StringUtils.isEmpty(s)){
+            return DefaultNutsVersion.EMPTY;
+        }
+        String s2=applyStringProperties(s,properties);
+        if(!StringUtils.trim(s2).equals(s)){
+            return DefaultNutsVersion.valueOf(s2);
+        }
+        return child;
     }
 
     public static String applyStringProperties(String child, ObjectConverter<String, String> properties) {
@@ -530,11 +549,12 @@ public class CoreNutsUtils {
                 name = group;
                 group = null;
             }
-            return new NutsDependencyImpl(
+            return new DefaultNutsDependency(
                     protocol,
                     group,
                     name,
-                    version,
+                    queryMap.get("classifier"),
+                    DefaultNutsVersion.valueOf(version),
                     queryMap.get("scope"),
                     queryMap.get("optional"),
                     null
@@ -885,7 +905,7 @@ public class CoreNutsUtils {
                 face.putAll(parentFaceMap);
             }
             if (modified) {
-                return new NutsIdImpl(
+                return new DefaultNutsId(
                         namespace,
                         group,
                         name,
@@ -1041,4 +1061,6 @@ public class CoreNutsUtils {
             throw new NutsReadOnlyException(ws.getConfigManager().getWorkspaceLocation());
         }
     }
+
+
 }

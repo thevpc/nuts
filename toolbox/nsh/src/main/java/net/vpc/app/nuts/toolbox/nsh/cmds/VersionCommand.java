@@ -53,24 +53,28 @@ public class VersionCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getWorkspace();
         boolean fancy = false;
         boolean min = false;
-        CommandLine cmdLine=new CommandLine(args);
+        CommandLine cmdLine = new CommandLine(args);
         Argument a;
-        boolean noColors=false;
-        while(cmdLine.hasNext()){
+        boolean noColors = false;
+        while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
-            }else if ((a = cmdLine.readBooleanOption("-f","--fancy")) != null) {
+            } else if ((a = cmdLine.readBooleanOption("-f", "--fancy")) != null) {
                 fancy = a.getBooleanValue();
-            }else if ((a = cmdLine.readBooleanOption("-m","--min")) != null) {
+            } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
                 min = true;
-            }else{
+            } else {
                 cmdLine.unexpectedArgument(getName());
             }
 
         }
         Properties extra = new Properties();
-        extra.put("nsh-version",PomIdResolver.resolvePomId(getClass()).toString());
-        ws.printVersion(out, extra, ((fancy ? "fancy" : "") + "," + (min ? "min" : "")));
+        out.println(
+                ws.createWorkspaceVersionFormat()
+                        .addOption(((fancy ? "fancy" : "") + "," + (min ? "min" : "")))
+                        .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
+                .format()
+        );
         return 0;
     }
 }

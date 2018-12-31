@@ -47,11 +47,11 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     String copyTo(String id, String localPath, NutsSession session);
 
-    NutsDefinition fetchWithDependencies(NutsId id, NutsSession session);
+    NutsDefinition fetchWithDependencies(NutsId id, NutsDependencyScope[] scopes, boolean includeOptional, NutsSession session);
 
     NutsDefinition fetch(String id, NutsSession session);
 
-    NutsDefinition fetchWithDependencies(String id, NutsSession session);
+    NutsDefinition fetchWithDependencies(String id, NutsDependencyScope[] scopes, boolean includeOptional, NutsSession session);
 
     NutsDescriptor fetchDescriptor(String id, boolean effective, NutsSession session);
 
@@ -171,9 +171,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsId getPlatformArch();
 
-    ClassLoader createClassLoader(String[] nutsIds, ClassLoader parentClassLoader, NutsSession session);
-
-    ClassLoader createClassLoader(String[] nutsIds, NutsDependencyScope scope, ClassLoader parentClassLoader, NutsSession session);
+    NutsClassLoaderBuilder createClassLoaderBuilder();
 
     String resolvePath(String path);
 
@@ -234,9 +232,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     void printVersion(PrintStream out, Properties extraProperties, String options);
 
-    void printHelp(PrintStream out);
+    String getHelp();
 
-    void printLicense(PrintStream out);
+    String getLicense();
 
 
     NutsTerminal createDefaultTerminal(InputStream in, PrintStream out, PrintStream err);
@@ -287,8 +285,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
      */
     String escapeText(String value);
 
-    String formatId(NutsId id);
+    NutsIdFormat createIdFormat();
 
-    String formatDependency(NutsDependency id);
+    NutsWorkspaceVersionFormat createWorkspaceVersionFormat();
 }
 

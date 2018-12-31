@@ -34,14 +34,13 @@ import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Created by vpc on 1/5/17.
  */
-public class NutsIdImpl implements NutsId {
+public class DefaultNutsId implements NutsId {
 
     private final String namespace;
     private final String group;
@@ -49,12 +48,19 @@ public class NutsIdImpl implements NutsId {
     private final NutsVersion version;
     private final String query;
 
-    public NutsIdImpl(String namespace, String group, String name, String version, Map<String, String> query) {
-        this(namespace, group, name,
-                StringUtils.isEmpty(version) ? null : new NutsVersionImpl(version), query);
+    public DefaultNutsId(String namespace, String group, String name, String version, Map<String, String> query) {
+        this(namespace, group, name, DefaultNutsVersion.valueOf(version), query);
     }
 
-    protected NutsIdImpl(String namespace, String group, String name, NutsVersion version, Map<String, String> query) {
+    protected DefaultNutsId(String namespace, String group, String name, NutsVersion version, Map<String, String> query) {
+        this.namespace = StringUtils.trimToNull(namespace);
+        this.group = StringUtils.trimToNull(group);
+        this.name = StringUtils.trimToNull(name);
+        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
+        this.query = formatQuery(query);
+    }
+
+    public static String formatQuery(Map<String, String> query) {
         StringBuilder sb = new StringBuilder();
         if (query != null) {
             for (Map.Entry<String, String> entry : query.entrySet()) {
@@ -64,30 +70,26 @@ public class NutsIdImpl implements NutsId {
                 sb.append(entry.getKey()).append("=").append(entry.getValue());
             }
         }
-        this.namespace = StringUtils.trimToNull(namespace);
-        this.group = StringUtils.trimToNull(group);
-        this.name = StringUtils.trimToNull(name);
-        this.version = version == null ? NutsVersionImpl.EMPTY : version;
-        this.query = StringUtils.trimToNull(sb.toString());
+        return StringUtils.trimToNull(sb.toString());
     }
 
-    protected NutsIdImpl(String namespace, String group, String name, NutsVersion version, String query) {
+    protected DefaultNutsId(String namespace, String group, String name, NutsVersion version, String query) {
         this.namespace = StringUtils.trimToNull(namespace);
         this.group = StringUtils.trimToNull(group);
         this.name = StringUtils.trimToNull(name);
-        this.version = version == null ? NutsVersionImpl.EMPTY : version;
+        this.version = version == null ? DefaultNutsVersion.EMPTY : version;
         this.query = StringUtils.trimToNull(query);
     }
 
-    public NutsIdImpl(String group, String name, String version) {
+    public DefaultNutsId(String group, String name, String version) {
         this(null, group, name, version, (String) null);
     }
 
-    public NutsIdImpl(String namespace, String group, String name, String version, String query) {
+    public DefaultNutsId(String namespace, String group, String name, String version, String query) {
         this.namespace = StringUtils.trimToNull(namespace);
         this.group = StringUtils.trimToNull(group);
         this.name = StringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.version = DefaultNutsVersion.valueOf(version);
         this.query = StringUtils.trimToNull(query);
     }
 
@@ -191,10 +193,13 @@ public class NutsIdImpl implements NutsId {
     }
 
     @Override
-    public NutsIdImpl setGroup(String newGroupId) {
-        return new NutsIdImpl(
+    public DefaultNutsId setGroup(String newGroup) {
+        if(StringUtils.trim(group).equals(StringUtils.trim(newGroup))){
+            return this;
+        }
+        return new DefaultNutsId(
                 namespace,
-                newGroupId,
+                newGroup,
                 name,
                 version,
                 query
@@ -203,7 +208,10 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId setNamespace(String newNamespace) {
-        return new NutsIdImpl(
+        if(StringUtils.trim(namespace).equals(StringUtils.trim(newNamespace))){
+            return this;
+        }
+        return new DefaultNutsId(
                 newNamespace,
                 group,
                 name,
@@ -214,7 +222,11 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId setVersion(String newVersion) {
-        return new NutsIdImpl(
+        NutsVersion nv = DefaultNutsVersion.valueOf(newVersion);
+        if(nv.equals(version)){
+            return this;
+        }
+        return new DefaultNutsId(
                 namespace,
                 group,
                 name,
@@ -225,7 +237,10 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId setName(String newName) {
-        return new NutsIdImpl(
+        if(StringUtils.trim(name).equals(StringUtils.trim(newName))){
+            return this;
+        }
+        return new DefaultNutsId(
                 namespace,
                 group,
                 newName,
@@ -237,6 +252,12 @@ public class NutsIdImpl implements NutsId {
     @Override
     public String getFace() {
         String s = getQueryMap().get(NutsConstants.QUERY_FACE);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getClassifier() {
+        String s = getQueryMap().get("classifier");
         return StringUtils.trimToNull(s);
     }
 
@@ -279,12 +300,19 @@ public class NutsIdImpl implements NutsId {
             }
             return setQuery(m);
         } else {
-            return new NutsIdImpl(
+            String m = DefaultNutsId.formatQuery(queryMap);
+            if(m==null){
+                m="";
+            }
+            if(m.equals(query==null?"":query)){
+                return this;
+            }
+            return new DefaultNutsId(
                     namespace,
                     group,
                     name,
                     version,
-                    queryMap
+                    m
             );
         }
     }
@@ -301,7 +329,10 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId setQuery(String query) {
-        return new NutsIdImpl(
+        if(StringUtils.trim(this.query).equals(query)){
+            return this;
+        }
+        return new DefaultNutsId(
                 namespace,
                 group,
                 name,
@@ -337,12 +368,12 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId getSimpleNameId() {
-        return new NutsIdImpl(null, group, name, (NutsVersion) null, "");
+        return new DefaultNutsId(null, group, name, (NutsVersion) null, "");
     }
 
     @Override
     public NutsId getLongNameId() {
-        return new NutsIdImpl(null, group, name, version,"");
+        return new DefaultNutsId(null, group, name, version,"");
     }
 
 
@@ -408,7 +439,7 @@ public class NutsIdImpl implements NutsId {
             return false;
         }
 
-        NutsIdImpl nutsId = (NutsIdImpl) o;
+        DefaultNutsId nutsId = (DefaultNutsId) o;
 
         if (namespace != null ? !namespace.equals(nutsId.namespace) : nutsId.namespace != null) {
             return false;
@@ -438,7 +469,7 @@ public class NutsIdImpl implements NutsId {
 
     @Override
     public NutsId apply(ObjectConverter<String, String> properties) {
-        return new NutsIdImpl(
+        return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(this.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(this.getGroup(), properties),
                 CoreNutsUtils.applyStringProperties(this.getName(), properties),

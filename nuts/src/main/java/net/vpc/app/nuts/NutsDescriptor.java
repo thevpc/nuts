@@ -65,7 +65,18 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptor setLocations(String[] locations);
 
+    /**
+     * The dependencies specified here are not used until they
+     *  are referenced in a POM within the group. This allows the
+     *  specification of a &quot;standard&quot; version for a particular.
+     *  This corresponds to dependencyManagement.dependencies in maven
+     * @return "standard" dependencies
+     */
+    NutsDependency[] getStandardDependencies();
+
     NutsDependency[] getDependencies();
+
+    NutsDependency[] getDependencies(NutsDependencyFilter dependencyFilter);
 
     NutsExecutorDescriptor getExecutor();
 

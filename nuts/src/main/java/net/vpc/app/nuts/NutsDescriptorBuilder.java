@@ -67,8 +67,6 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setLocations(String[] locations);
 
-    NutsDependency[] getDependencies();
-
     NutsExecutorDescriptor getExecutor();
 
     NutsExecutorDescriptor getInstaller();
@@ -122,6 +120,8 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setId(String id);
 
+    NutsDependency[] getDependencies();
+
     NutsDescriptorBuilder removeDependency(NutsDependency dependency);
 
     NutsDescriptorBuilder addDependency(NutsDependency dependency);
@@ -129,6 +129,16 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder addDependencies(NutsDependency[] dependencies);
 
     NutsDescriptorBuilder setDependencies(NutsDependency[] dependencies);
+
+    NutsDependency[] getStandardDependencies();
+
+    NutsDescriptorBuilder removeStandardDependency(NutsDependency dependency);
+
+    NutsDescriptorBuilder addStandardDependency(NutsDependency dependency);
+
+    NutsDescriptorBuilder addStandardDependencies(NutsDependency[] dependencies);
+
+    NutsDescriptorBuilder setStandardDependencies(NutsDependency[] dependencies);
 
     NutsDescriptorBuilder setProperties(Map<String, String> map);
 

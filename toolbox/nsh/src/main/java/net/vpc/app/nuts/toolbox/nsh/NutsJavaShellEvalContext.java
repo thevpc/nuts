@@ -248,7 +248,8 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
             List<NutsId> nutsIds = ws.createQuery()
                     .addId(commandName)
                     .setLatestVersions(true)
-                    .setScope(NutsDependencyScope.RUN)
+                    .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
+                    .setIncludeOptional(false)
                     .setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE))
                     .find();
             if (nutsIds.size() == 1) {

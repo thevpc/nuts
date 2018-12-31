@@ -53,7 +53,8 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor , OutputStr
             if (x > 0) {
                 formattedLine.append("##");
                 for (int i = 0; i < x; i++) {
-                    formattedLine.append("\\*");
+//                    formattedLine.append("\\*");
+                    formattedLine.append("\u2588");
                 }
                 formattedLine.append("##");
             }

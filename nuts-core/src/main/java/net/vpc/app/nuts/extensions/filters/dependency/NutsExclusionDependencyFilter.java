@@ -20,14 +20,14 @@ public class NutsExclusionDependencyFilter implements NutsDependencyFilter, Simp
     }
 
     @Override
-    public boolean accept(NutsDependency value) {
+    public boolean accept(NutsId from, NutsDependency dependency) {
         if (base != null) {
-            if (!base.accept(value)) {
+            if (!base.accept(from, dependency)) {
                 return false;
             }
         }
         for (NutsId exclusion : exclusions) {
-            NutsId nutsId = value.toId();
+            NutsId nutsId = dependency.getId();
             if (nutsId.groupLike(exclusion.getGroup())
                     && nutsId.nameLike(exclusion.getName())
                     && exclusion.getVersion().toFilter().accept(nutsId.getVersion())) {

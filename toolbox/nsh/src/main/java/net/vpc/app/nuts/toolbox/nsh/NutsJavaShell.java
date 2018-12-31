@@ -326,6 +326,7 @@ public class NutsJavaShell extends JavaShell {
         while (cmd.hasNext()) {
             if (nonOptions.isEmpty()) {
                 if ((a = cmd.readOption("--help")) != null) {
+                    command=true;
                     nonOptions.add("help");
                 } else if (appContext != null && appContext.configure(cmd)) {
                     //ok

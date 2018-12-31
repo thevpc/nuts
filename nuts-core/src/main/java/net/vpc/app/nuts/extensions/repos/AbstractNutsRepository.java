@@ -335,7 +335,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     public NutsDescriptor fetchDescriptor(NutsId id, NutsSession session) {
         checkSession(session);
         getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC,"fetch-descriptor");
-        checkAllowedFetch(id.setFace("nuts"), session);
+        Map<String, String> queryMap = id.getQueryMap();
+        queryMap.remove("optional");
+        queryMap.remove("scope");
+        queryMap.put("face","nuts");
+        id=id.setQuery(queryMap);
+        checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
             String versionString = id.getVersion().getValue();
@@ -682,19 +687,34 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
+    protected String getQueryFilename(NutsId id, String ext) {
+        String classifier="";
+        if (StringUtils.isEmpty(ext)) {
+            ext = "";
+        }
+        if(!ext.equals(".pom") && !ext.equals(".json") && !ext.equals(".nuts")){
+            String c = id.getClassifier();
+            if(!StringUtils.isEmpty(c)){
+                classifier="-"+c;
+            }
+        }
+        return id.getName()+"-"+id.getVersion().getValue()+classifier+ext;
+    }
+
     protected String getQueryFilename(NutsId id, NutsDescriptor descriptor) {
-        String name = id.getName() + "-" + id.getVersion().getValue();
         Map<String, String> query = id.getQueryMap();
         String ext = "";
         String file = query.get(NutsConstants.QUERY_FILE);
         if (file == null) {
-            if (!StringUtils.isEmpty(descriptor.getExt())) {
-                ext = "." + descriptor.getExt();
+            if(descriptor!=null) {
+                if (!StringUtils.isEmpty(descriptor.getExt())) {
+                    ext = "." + descriptor.getExt();
+                }
             }
         } else {
             ext = extensions.get(file);
         }
-        return name + ext;
+        return getQueryFilename(id,ext);
     }
 
     protected abstract void undeployImpl(NutsId id, NutsSession session);

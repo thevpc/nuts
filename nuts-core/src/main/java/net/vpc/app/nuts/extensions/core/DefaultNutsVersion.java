@@ -39,12 +39,20 @@ import net.vpc.common.strings.StringUtils;
 /**
  * Created by vpc on 1/15/17.
  */
-public class NutsVersionImpl implements NutsVersion {
+public class DefaultNutsVersion implements NutsVersion {
     private static final long serialVersionUID= 1L;
     private final String value;
-    public static final NutsVersion EMPTY=new NutsVersionImpl("");
+    public static final NutsVersion EMPTY=new DefaultNutsVersion("");
 
-    public NutsVersionImpl(String value) {
+    public static NutsVersion valueOf(String value){
+        value=StringUtils.trim(value);
+        if(value.isEmpty()){
+            return EMPTY;
+        }
+        return new DefaultNutsVersion(value);
+    }
+
+    private DefaultNutsVersion(String value) {
         this.value = StringUtils.trim(value);
     }
 
@@ -123,7 +131,7 @@ public class NutsVersionImpl implements NutsVersion {
 
     @Override
     public NutsVersion inc(int level) {
-        return new NutsVersionImpl(CoreVersionUtils.incVersion(getValue(),level));
+        return new DefaultNutsVersion(CoreVersionUtils.incVersion(getValue(),level));
     }
 
     @Override
@@ -140,7 +148,7 @@ public class NutsVersionImpl implements NutsVersion {
             return false;
         }
 
-        NutsVersionImpl version = (NutsVersionImpl) o;
+        DefaultNutsVersion version = (DefaultNutsVersion) o;
 
         return value != null ? value.equals(version.value) : version.value == null;
 

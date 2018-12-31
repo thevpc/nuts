@@ -75,9 +75,9 @@ public class UninstallCommand extends AbstractNutsCommand {
                     boolean file = ws.uninstall(id, args, foundAction, erase, context.getSession());
                     PrintStream out = context.getTerminal().getFormattedOut();
                     if (file) {
-                        out.printf(ws.formatId(ws.parseId(id))+" uninstalled ##successfully##\n");
+                        out.printf(ws.createIdFormat().format(ws.parseId(id))+" uninstalled ##successfully##\n");
                     } else {
-                        out.printf(ws.formatId(ws.parseId(id))+" @@could not@@ be uninstalled\n");
+                        out.printf(ws.createIdFormat().format(ws.parseId(id))+" @@could not@@ be uninstalled\n");
                     }
                 }
             }

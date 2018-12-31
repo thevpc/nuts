@@ -33,13 +33,28 @@ public interface NutsDependency {
 
     boolean isOptional();
 
+
     String getOptional();
+
+    NutsDependencyBuilder builder();
+
+    NutsDependency setOptional(String optional);
 
     String getScope();
 
-    NutsId toId();
+    NutsDependency setScope(String scope);
+
+    String getClassifier();
+
+    NutsDependency setClassifier(String classfier);
+
+    NutsId getId();
+
+    NutsDependency setId(NutsId id);
 
     String getNamespace();
+
+    NutsDependency setNamespace(String namespace);
 
     String getGroup();
 
@@ -53,5 +68,12 @@ public interface NutsDependency {
 
     NutsVersion getVersion();
 
+    NutsDependency setVersion(String version);
+
+    NutsDependency setVersion(NutsVersion version);
+
     NutsId[] getExclusions();
+
+    NutsDependency setExclusions(NutsId[] exclusions);
+
 }

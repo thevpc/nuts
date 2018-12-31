@@ -282,6 +282,9 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor applyParents(NutsDescriptor[] parentDescriptors) {
+        if(parentDescriptors.length==0){
+            return this;
+        }
         NutsId n_id = getId();
         String n_alt = getFace();
         String n_packaging = getPackaging();
@@ -300,6 +303,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             n_props.putAll(properties);
         }
         LinkedHashSet<NutsDependency> n_deps = new LinkedHashSet<>();
+        LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
         LinkedHashSet<String> n_archs = new LinkedHashSet<>();
         LinkedHashSet<String> n_os = new LinkedHashSet<>();
         LinkedHashSet<String> n_osdist = new LinkedHashSet<>();
@@ -322,12 +326,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
+            n_sdeps.addAll(Arrays.asList(parentDescriptor.getStandardDependencies()));
             n_archs.addAll(Arrays.asList(parentDescriptor.getArch()));
             n_os.addAll(Arrays.asList(parentDescriptor.getOs()));
             n_osdist.addAll(Arrays.asList(parentDescriptor.getOsdist()));
             n_platform.addAll(Arrays.asList(parentDescriptor.getPlatform()));
         }
         n_deps.addAll(Arrays.asList(getDependencies()));
+        n_sdeps.addAll(Arrays.asList(getStandardDependencies()));
         n_archs.addAll(Arrays.asList(getArch()));
         n_os.addAll(Arrays.asList(getOs()));
         n_osdist.addAll(Arrays.asList(getOsdist()));
@@ -357,6 +363,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setOsdist(n_osdist.toArray(new String[0]))
                 .setPlatform(n_platform.toArray(new String[0]))
                 .setDependencies(n_deps.toArray(new NutsDependency[0]))
+                .setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]))
                 .setProperties(n_props)
                 .build()
                 ;
@@ -387,6 +394,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             n_deps.add(applyNutsDependencyProperties(d2, map));
         }
 
+        LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
+        for (NutsDependency d2 : getStandardDependencies()) {
+            n_sdeps.add(applyNutsDependencyProperties(d2, map));
+        }
+
         return new DefaultNutsDescriptorBuilder()
                 .setId(n_id)
                 .setFace(n_alt)
@@ -403,13 +415,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map))
                 .setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map))
                 .setDependencies(n_deps.toArray(new NutsDependency[0]))
+                .setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]))
                 .setProperties(n_props)
                 .build()
                 ;
     }
 
     private NutsId applyNutsIdProperties(NutsId child, ObjectConverter<String,String> properties) {
-        return new NutsIdImpl(
+        return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
                 CoreNutsUtils.applyStringProperties(child.getName(), properties),
@@ -423,11 +436,12 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
-        return new NutsDependencyImpl(
+        return new DefaultNutsDependency(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
                 CoreNutsUtils.applyStringProperties(child.getName(), properties),
-                CoreNutsUtils.applyStringProperties(child.getVersion().getValue(), properties),
+                CoreNutsUtils.applyStringProperties(child.getClassifier(), properties),
+                CoreNutsUtils.applyStringProperties(child.getVersion(), properties),
                 CoreNutsUtils.applyStringProperties(child.getScope(), properties),
                 CoreNutsUtils.applyStringProperties(child.getOptional(), properties),
                 exclusions

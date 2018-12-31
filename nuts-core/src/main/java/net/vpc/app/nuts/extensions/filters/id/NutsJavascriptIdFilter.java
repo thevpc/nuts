@@ -31,8 +31,7 @@ package net.vpc.app.nuts.extensions.filters.id;
 
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.extensions.core.NutsIdImpl;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.core.DefaultNutsId;
 import net.vpc.app.nuts.extensions.util.JavascriptHelper;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 import net.vpc.common.strings.StringUtils;
@@ -46,7 +45,7 @@ import java.util.WeakHashMap;
  */
 public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
-    private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
+    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
     private JavascriptHelper engineHelper;

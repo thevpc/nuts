@@ -28,13 +28,13 @@ public class Nsh extends NutsApplication {
         parameters.put("find", nshIdStr + " --no-colors -c find-command %n");
         parameters.put("exec", nshIdStr + " -c %n");
         NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
-        cfg.installCommandFactory(
-                new NutsWorkspaceCommandFactoryConfig()
-                        .setFactoryId("nsh")
-                        .setFactoryType("command")
-                        .setPriority(1)
-                        .setParameters(parameters)
-        );
+//        cfg.installCommandFactory(
+//                new NutsWorkspaceCommandFactoryConfig()
+//                        .setFactoryId("nsh")
+//                        .setFactoryType("command")
+//                        .setPriority(1)
+//                        .setParameters(parameters)
+//        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         for (NutsCommand command : c.getCommands()) {
             cfg.installCommand(

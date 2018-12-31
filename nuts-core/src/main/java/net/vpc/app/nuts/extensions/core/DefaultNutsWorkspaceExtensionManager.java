@@ -162,7 +162,10 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             throw new NutsWorkspaceExtensionAlreadyRegisteredException(id.toString(), wired.toString());
         }
         DefaultNutsWorkspace.log.log(Level.FINE, "Installing extension {0}", id);
-        List<NutsDefinition> nutsDefinitions = ws.createQuery().addId(id).setSession(session).setScope(NutsDependencyScope.RUN).includeDependencies().fetch();
+        List<NutsDefinition> nutsDefinitions = ws.createQuery().addId(id).setSession(session)
+                .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
+                .setIncludeOptional(false)
+                .includeDependencies().fetch();
         NutsId toWire = null;
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (nutsDefinition.getId().equalsSimpleName(id)) {

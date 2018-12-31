@@ -93,8 +93,9 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
         File locationFolder = getPrivateStoreRoot();
-
-        return new File(locationFolder, groupId.replaceAll("\\.", File.separator) + File.separator + artifactId + File.separator + version + File.separator + artifactId + "-" + version + extension)
+        return new File(locationFolder, groupId.replaceAll("\\.", File.separator) + File.separator + artifactId + File.separator + version + File.separator
+                +getQueryFilename(id,extension)
+        )
                 .getPath();
     }
 
@@ -184,10 +185,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             return null;
         }
         File versionFolder = new File(artifactFolder, id.getVersion().getValue());
-
-        String name = id.getName() + "-" + id.getVersion().getValue();
-        String ext = ".pom";
-        File descFile = new File(versionFolder, name + ext);
+        File descFile = new File(versionFolder, getQueryFilename(id,".pom"));
 
         if (descFile.isFile()) {
             NutsDescriptor nutsDescriptor = null;
@@ -196,14 +194,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             } catch (IOException e) {
                 throw new NutsIOException(e);
             }
-
-            String ext2 = nutsDescriptor == null ? null : nutsDescriptor.getExt();
-            if (StringUtils.isEmpty(ext)) {
-                ext2 = "jar";
-            }
-            File localFile = nutsDescriptor == null ? new File(versionFolder,
-                    id.getName() + "-" + id.getVersion().getValue() + "." + ext2
-            ) : new File(versionFolder, getQueryFilename(id, nutsDescriptor));
+            File localFile = nutsDescriptor == null ? new File(versionFolder,getQueryFilename(id,nutsDescriptor)) : new File(versionFolder, getQueryFilename(id, nutsDescriptor));
             if (localFile.isFile()) {
                 nutsDescriptor = annotateExecDesc(nutsDescriptor,localFile);
                 return new NutsDefinition(id, nutsDescriptor, localFile.getPath(), true, false, null,null);
@@ -327,9 +318,9 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 });
                 if (versionFolders != null) {
                     for (File versionFolder : versionFolders) {
-                        String fn=id.getName() + "-" + versionFolder.getName()+".pom";
+                        NutsId id2 = id.setVersion(versionFolder.getName());
+                        String fn=getQueryFilename(id2,".pom");
                         if(new File(versionFolder,fn).isFile()) {
-                            NutsId id2 = id.setVersion(versionFolder.getName());
                             if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                                 bestId = id2;
                             }

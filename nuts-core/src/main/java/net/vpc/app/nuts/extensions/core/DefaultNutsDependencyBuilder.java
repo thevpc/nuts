@@ -51,6 +51,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private NutsVersion version;
     private String scope;
     private String optional;
+    private String classifier;
     private NutsId[] exclusions;
 
     public DefaultNutsDependencyBuilder() {
@@ -60,12 +61,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         if (other != null) {
             setNamespace(other.getNamespace());
             setGroup(other.getGroup());
-            setName(other.getNamespace());
+            setName(other.getName());
             setVersion(other.getVersion());
             setScope(other.getScope());
             setOptional(other.getOptional());
             setExclusions(other.getExclusions());
-            setName(other.getName());
+            setClassifier(other.getClassifier());
         }
     }
 
@@ -73,12 +74,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         if (other != null) {
             setNamespace(other.getNamespace());
             setGroup(other.getGroup());
-            setName(other.getNamespace());
+            setName(other.getName());
             setVersion(other.getVersion());
             setScope(other.getScope());
             setOptional(other.getOptional());
             setExclusions(other.getExclusions());
-            setName(other.getName());
+            setClassifier(other.getClassifier());
         }
     }
 
@@ -102,13 +103,35 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setVersion(NutsVersion version) {
-        this.version = version;
+        this.version = version==null? DefaultNutsVersion.EMPTY:version;
         return this;
     }
 
     @Override
-    public NutsDependencyBuilder setVersion(String version) {
-        this.version = StringUtils.isEmpty(version) ? null : new NutsVersionImpl(StringUtils.trimToNull(version));
+    public NutsDependencyBuilder setVersion(String classifier) {
+        this.version = DefaultNutsVersion.valueOf(classifier);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder setId(NutsId id){
+        if(id==null){
+            setNamespace(null);
+            setGroup(null);
+            setName(null);
+            setVersion((String)null);
+        }else{
+            setNamespace(id.getNamespace());
+            setGroup(id.getGroup());
+            setName(id.getName());
+            setVersion(id.getVersion());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder setClassifier(String classifier) {
+        this.classifier = StringUtils.trimToNull(classifier);
         return this;
     }
 
@@ -150,8 +173,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public NutsId toId() {
-        return new NutsIdImpl(
+    public String getClassifier() {
+        return classifier;
+    }
+
+    @Override
+    public NutsId getId() {
+        return new DefaultNutsId(
                 getNamespace(),
                 getGroup(),
                 getName(),
@@ -162,9 +190,9 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependency build() {
-        return new NutsDependencyImpl(
-                getNamespace(), getGroup(), getName(),
-                getVersion() == null ? null : getVersion().getValue(),
+        return new DefaultNutsDependency(
+                getNamespace(), getGroup(), getName(),getClassifier(),
+                getVersion(),
                 getScope(),
                 getOptional(),
                 getExclusions()

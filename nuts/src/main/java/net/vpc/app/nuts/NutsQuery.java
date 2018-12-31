@@ -3,6 +3,7 @@ package net.vpc.app.nuts;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public interface NutsQuery {
     NutsQuery addJs(Collection<String> value);
@@ -52,9 +53,19 @@ public interface NutsQuery {
 
     String[] getIds();
 
-    NutsDependencyScope getScope();
+    Set<NutsDependencyScope> getScope();
 
-    NutsQuery setScope(NutsDependencyScope scope);
+    NutsQuery setScope(Set<NutsDependencyScope> scope);
+
+    NutsQuery addScope(Collection<NutsDependencyScope> scope);
+
+    NutsQuery addScope(NutsDependencyScope scope);
+
+    NutsQuery addScope(NutsDependencyScope... scope);
+
+    NutsQuery removeScope(Collection<NutsDependencyScope> scope);
+
+    NutsQuery removeScope(NutsDependencyScope scope);
 
     NutsQuery setDependencyFilter(NutsDependencyFilter filter);
 
@@ -121,4 +132,10 @@ public interface NutsQuery {
     NutsQuery includeDependencies();
 
     NutsQuery mainOnly();
+
+    Boolean getAcceptOptional();
+
+    NutsQuery setAcceptOptional(Boolean acceptOptional);
+
+    NutsQuery setIncludeOptional(boolean includeOptional);
 }

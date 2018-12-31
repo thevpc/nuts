@@ -45,7 +45,7 @@ import java.util.WeakHashMap;
  */
 public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsVersionFilter {
 
-//    private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
+//    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 //    private static DefaultNutsDescriptor SAMPLE_NUTS_DESCRIPTOR = new DefaultNutsDescriptor(
 //            SAMPLE_NUTS_ID, "default",
 //            new NutsId[]{SAMPLE_NUTS_ID},
@@ -95,7 +95,7 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     }
 
     public NutsVersionJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.toId(); var version=id.getVersion();", blacklist, null);
+        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);

@@ -4,7 +4,7 @@ net.vpc.app.nuts.toolbox.nsh.cmds.ConnectCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ConsoleCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.DeployCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ExecCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.FindCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.NfindCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.VersionCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HelpCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HistoryCommand

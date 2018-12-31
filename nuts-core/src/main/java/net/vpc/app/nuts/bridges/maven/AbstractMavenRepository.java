@@ -55,6 +55,21 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         extensions.put("pom", ".pom");
     }
 
+//    protected String getPathName(NutsId id, String extension){
+//        String artifactId = id.getName();
+//        String classifier = id.getClassifier();
+//        String version = id.getVersion().getValue();
+//        String classifierNamePart = ".pom".equals(extension)?"":
+//                (StringUtils.isEmpty(classifier) ? "" : ("-") + classifier);
+//        if (StringUtils.isEmpty(extension)) {
+//            extension = ".jar";
+//        }
+//        return artifactId
+//                + classifierNamePart
+//                + "-" + version
+//                + extension;
+//    }
+
     protected abstract String getPath(NutsId id, String extension);
 
     protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {

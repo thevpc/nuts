@@ -52,8 +52,8 @@ public class Nuts {
                 errorCode = ((NutsExecutionException) ex).getExitCode();
             }
             boolean showTrace = false;
-            if(args.length>0 && args[0].equals("--verbose")){
-                showTrace=true;
+            if (args.length > 0 && args[0].equals("--verbose")) {
+                showTrace = true;
             }
             boolean showErrorClass = false;
             if (ex.getClass().getName().startsWith("java.lang.")) {
@@ -163,15 +163,18 @@ public class Nuts {
         switch (o.getBootCommand()) {
             case VERSION: {
                 PrintStream out = ws.getTerminal().getFormattedOut();
-                ws.printVersion(out, null, o.getApplicationArguments().length>0?o.getApplicationArguments()[0]:null);
+                out.println(
+                        ws.createWorkspaceVersionFormat().addOption(o.getApplicationArguments().length > 0 ? o.getApplicationArguments()[0] : null)
+                                .format()
+                );
                 return 0;
             }
             case HELP: {
-                ws.printHelp(ws.getTerminal().getFormattedOut());
+                ws.getTerminal().getFormattedOut().println(ws.getHelp());
                 return 0;
             }
             case LICENSE: {
-                ws.printLicense(ws.getTerminal().getFormattedOut());
+                ws.getTerminal().getFormattedOut().println(ws.getLicense());
                 return 0;
             }
             case INSTALL: {
@@ -311,7 +314,7 @@ public class Nuts {
         }
 
         if (o.getApplicationArguments().length == 0) {
-            ws.printHelp(ws.getTerminal().getFormattedOut());
+            ws.getTerminal().getFormattedOut().println(ws.getHelp());
             return 0;
         }
         return ws.createExecBuilder()

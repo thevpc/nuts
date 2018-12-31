@@ -27,11 +27,11 @@ public class MvnClient {
                 status=Status.DIRTY;
                 try {
                     System.out.println("start fetchWithDependencies ");
-                    ws.fetchWithDependencies(NET_VPC_APP_NUTS_MVN, session.copy().setFetchMode(NutsFetchMode.ONLINE));
+                    ws.fetchWithDependencies(NET_VPC_APP_NUTS_MVN, null, false, session.copy().setFetchMode(NutsFetchMode.ONLINE));
                     System.out.println("loop");
                     for (NutsId nutsId : ws.createQuery().includeDependencies().find()) {
                         System.out.println("fecth "+nutsId);
-                        ws.fetchWithDependencies(nutsId, session.copy().setFetchMode(NutsFetchMode.ONLINE));
+                        ws.fetchWithDependencies(nutsId, null, false, session.copy().setFetchMode(NutsFetchMode.ONLINE));
                     }
                     System.out.println("Success !!!!!");
                     status=Status.SUCCESS;

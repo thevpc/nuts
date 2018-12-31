@@ -2,6 +2,7 @@ package net.vpc.app.nuts.extensions.filters.dependency;
 
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
+import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 import net.vpc.common.strings.StringUtils;
@@ -18,9 +19,9 @@ public class NutsDependencyFilterAnd implements NutsDependencyFilter, Simplifiab
     }
 
     @Override
-    public boolean accept(NutsDependency value) {
+    public boolean accept(NutsId from, NutsDependency dependency) {
         for (NutsDependencyFilter nutsDependencyFilter : all) {
-            if (nutsDependencyFilter != null && !nutsDependencyFilter.accept(value)) {
+            if (nutsDependencyFilter != null && !nutsDependencyFilter.accept(from, dependency)) {
                 return false;
             }
         }

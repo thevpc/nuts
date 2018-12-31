@@ -40,6 +40,17 @@ public abstract class NutsApplication {
         try {
             System.exit(launch(args));
         } catch (Exception ex) {
+            boolean forceStackTrace=false;
+            for (int i = 0; i < args.length; i++) {
+                if(args[i].startsWith("--")){
+                    if(args[i].equals("--verbose")){
+                        forceStackTrace=true;
+                        break;
+                    }
+                }else{
+                    break;
+                }
+            }
             int errorCode = 204;
             if (ex instanceof NutsExecutionException) {
                 NutsExecutionException ex2 = (NutsExecutionException) ex;

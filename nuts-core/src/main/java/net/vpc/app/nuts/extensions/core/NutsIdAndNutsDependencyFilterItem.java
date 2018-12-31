@@ -4,18 +4,20 @@ import net.vpc.app.nuts.*;
 
 public class NutsIdAndNutsDependencyFilterItem {
 
-    public NutsId id;
+    public NutsIdGraph.NutsIdNode id;
     public NutsDescriptor descriptor;
-    public NutsDependencyFilter filter;
 
-    public NutsIdAndNutsDependencyFilterItem(NutsId id, NutsDependencyFilter filter) {
+    public NutsIdAndNutsDependencyFilterItem(NutsIdGraph.NutsIdNode id) {
         this.id = id;
-        this.filter = filter;
     }
 
     public NutsDescriptor getDescriptor(NutsWorkspace ws, NutsSession session) {
         if (descriptor == null) {
-            descriptor = ws.fetchDescriptor(id, true, session);
+            try {
+                descriptor = ws.fetchDescriptor(id.id, true, session);
+            }catch (NutsNotFoundException ex){
+                descriptor = ws.fetchDescriptor(id.id, true, session);
+            }
         }
         return descriptor;
     }

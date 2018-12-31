@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.filters.version;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
-import net.vpc.app.nuts.extensions.core.NutsVersionImpl;
+import net.vpc.app.nuts.extensions.core.DefaultNutsVersion;
 import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
@@ -102,7 +102,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
                 String v3 = y.group("V3");
                 if(v3.endsWith("*")){
                     String min = v3.substring(0, v3.length() - 1);
-                    String max = new NutsVersionImpl(min).inc(-1).getValue();
+                    String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
                     d.add(new NutsVersionInterval(true, false, min, max));
                 }else {
                     d.add(new NutsVersionInterval(true, true, v3, v3));

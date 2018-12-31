@@ -75,13 +75,18 @@ public class JavascriptHelper {
                 return StringUtils.isEmpty(value.toString());
             }
             if (value instanceof NutsId) {
-                return NutsJavascriptIdFilter.valueOf(pattern).accept((NutsId) value);
+                NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern);
+                return f==null || f.accept((NutsId) value);
             }
             if (value instanceof NutsDependency) {
-                return NutsDependencyJavascriptFilter.valueOf(pattern).accept((NutsDependency) value);
+                NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern);
+                //TODO, how to pass parent Id for dependency?
+                NutsId from=null;
+                return f==null || f.accept(from, (NutsDependency) value);
             }
             if (value instanceof NutsVersion) {
-                return NutsVersionJavascriptFilter.valueOf(pattern).accept((NutsVersion) value);
+                NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern);
+                return f==null || f.accept((NutsVersion) value);
             }
             return true;
         }

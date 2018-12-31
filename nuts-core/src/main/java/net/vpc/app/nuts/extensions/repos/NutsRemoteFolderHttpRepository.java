@@ -116,7 +116,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
         return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/"
-                + artifactId + "-" + version + "."+extension
+                +getQueryFilename(id,extension)
         ));
     }
 

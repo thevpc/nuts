@@ -31,7 +31,6 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.HashMap;
@@ -62,14 +61,15 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         this.namespace = StringUtils.trimToNull(namespace);
         this.group = StringUtils.trimToNull(group);
         this.name = StringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.version = DefaultNutsVersion.valueOf(version);
+        this.query = DefaultNutsId.formatQuery(query);
     }
 
     public DefaultNutsIdBuilder(String namespace, String group, String name, String version, String query) {
         this.namespace = StringUtils.trimToNull(namespace);
         this.group = StringUtils.trimToNull(group);
         this.name = StringUtils.trimToNull(name);
-        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.version = DefaultNutsVersion.valueOf(version);
         this.query = StringUtils.trimToNull(query);
     }
 
@@ -94,7 +94,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(String version) {
-        this.version = new NutsVersionImpl(StringUtils.trimToNull(version));
+        this.version = DefaultNutsVersion.valueOf(version);
         return this;
     }
 
@@ -112,8 +112,20 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setFace(String value) {
-        return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value))
-                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+        return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value));
+//                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public String getClassifier() {
+        String s = getQueryMap().get("classifier");
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public NutsIdBuilder setClassifier(String value) {
+        return setQueryProperty("classifier", StringUtils.trimToNull(value));
+//                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
     @Override
@@ -149,16 +161,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                 m.putAll(queryMap);
             }
         }
-        StringBuilder sb = new StringBuilder();
-        if (m != null) {
-            for (Map.Entry<String, String> entry : m.entrySet()) {
-                if (sb.length() > 0) {
-                    sb.append("&");
-                }
-                sb.append(entry.getKey()).append("=").append(entry.getValue());
-            }
-        }
-        this.query=sb.toString();
+        this.query= DefaultNutsId.formatQuery(m);
         return this;
     }
 
@@ -290,7 +293,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsId build(){
-        return new NutsIdImpl(
+        return new DefaultNutsId(
                 namespace,group,name,version==null?null:version.getValue(),query
         );
     }

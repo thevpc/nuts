@@ -30,15 +30,9 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.terminals.NutsTerminalDelegate;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by vpc on 2/1/17.
@@ -80,7 +74,7 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
     public NutsSession copy() {
         try {
             NutsSessionImpl cloned = (NutsSessionImpl) clone();
-            cloned.properties = properties == null ? null : new HashMap<>(properties);
+            cloned.properties = properties == null ? null : new LinkedHashMap<>(properties);
             cloned.listeners = listeners == null ? null : new ArrayList<>(listeners);
             return cloned;
         } catch (CloneNotSupportedException e) {
@@ -137,36 +131,33 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
     }
 
     @Override
-    public void setProperties(Map<String, Object> properties) {
+    public NutsSession setProperties(Map<String, Object> properties) {
         this.properties = properties;
+        return this;
     }
 
-    //    public InputStream getIn() {
-//        return in;
-//    }
-//
-//    public NutsSession setIn(InputStream in) {
-//        this.in = in;
-//        return this;
-//    }
-//
-//    public NutsPrintStream getOut() {
-//        return out;
-//    }
-//
-//    public NutsSession setOutput(PrintStream out) {
-//        this.out = NutsPrintStream.create(out);
-//        return this;
-//    }
-//
-//    public NutsPrintStream getErr() {
-//        return err;
-//    }
-//
-//    public NutsSession setErr(PrintStream err) {
-//        this.err = NutsPrintStream.create(err);
-//        return this;
-//    }
+    @Override
+    public Object getProperty(String key){
+        return properties!=null?properties.get(key):null;
+    }
+
+    @Override
+    public NutsSession setProperty(String key, Object value) {
+        if(properties==null){
+            if(value!=null){
+                properties=new LinkedHashMap<>();
+                properties.put(key,value);
+            }
+        }else{
+            if(value!=null){
+                properties.put(key,value);
+            }else{
+                properties.remove(key);
+            }
+        }
+        return this;
+    }
+
     @Override
     public NutsTerminal getTerminal() {
         return terminal;

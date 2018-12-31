@@ -41,9 +41,13 @@ public interface NutsDependencyBuilder {
 
     NutsDependencyBuilder setVersion(String version);
 
+    NutsDependencyBuilder setId(NutsId id);
+
     NutsDependencyBuilder setScope(String scope);
 
     NutsDependencyBuilder setOptional(String optional);
+
+    NutsDependencyBuilder setClassifier(String classifier);
 
     NutsDependencyBuilder setExclusions(NutsId[] exclusions);
 
@@ -53,13 +57,15 @@ public interface NutsDependencyBuilder {
 
     String getScope();
 
-    NutsId toId();
+    NutsId getId();
 
     String getNamespace();
 
     String getGroup();
 
     String getName();
+
+    String getClassifier();
 
     String getFullName();
 

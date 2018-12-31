@@ -30,7 +30,7 @@ public class LinuxNdi {
                 if(fetched==null){
                     fetched = appContext.getWorkspace().fetch(id, null);
                 }
-                appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
+                //appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
             }
             String n = nutsId.getName();
             File ff = getScriptFile(n);

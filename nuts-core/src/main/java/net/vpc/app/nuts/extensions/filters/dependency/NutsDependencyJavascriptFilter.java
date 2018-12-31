@@ -32,8 +32,7 @@ package net.vpc.app.nuts.extensions.filters.dependency;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.extensions.core.NutsIdImpl;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
+import net.vpc.app.nuts.extensions.core.DefaultNutsId;
 import net.vpc.app.nuts.extensions.util.JavascriptHelper;
 import net.vpc.app.nuts.extensions.util.Simplifiable;
 import net.vpc.common.strings.StringUtils;
@@ -47,7 +46,7 @@ import java.util.WeakHashMap;
  */
 public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter>, JsNutsDependencyFilter {
 
-    private static NutsId SAMPLE_NUTS_ID = new NutsIdImpl("sample", "sample", "sample", "sample", "sample");
+    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
     private String code;
     private JavascriptHelper engineHelper;
@@ -73,7 +72,7 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     }
 
     public NutsDependencyJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.toId(); var version=id.getVersion();", blacklist, null);
+        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -84,7 +83,7 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     }
 
     @Override
-    public boolean accept(NutsDependency d) {
+    public boolean accept(NutsId from, NutsDependency d) {
         return engineHelper.accept(d);
     }
 

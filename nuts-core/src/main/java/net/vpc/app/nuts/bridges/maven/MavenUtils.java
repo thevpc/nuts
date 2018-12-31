@@ -31,8 +31,9 @@ package net.vpc.app.nuts.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsDescriptorBuilder;
-import net.vpc.app.nuts.extensions.core.NutsDependencyImpl;
-import net.vpc.app.nuts.extensions.core.NutsIdImpl;
+import net.vpc.app.nuts.extensions.core.DefaultNutsDependency;
+import net.vpc.app.nuts.extensions.core.DefaultNutsId;
+import net.vpc.app.nuts.extensions.core.DefaultNutsVersion;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CoreVersionUtils;
 import net.vpc.app.nuts.extensions.util.MapStringMapper;
@@ -85,7 +86,7 @@ public class MavenUtils {
     }
 
     public static NutsId toNutsId(PomId d) {
-        return new NutsIdImpl(
+        return new DefaultNutsId(
                 null,
                 d.getGroupId(),
                 d.getArtifactId(),
@@ -94,11 +95,12 @@ public class MavenUtils {
         );
     }
     public static NutsDependency toNutsDependency(PomDependency d) {
-        return new NutsDependencyImpl(
+        return new DefaultNutsDependency(
                 null,
                 d.getGroupId(),
                 d.getArtifactId(),
-                d.getVersion(),
+                d.getClassifier(),
+                DefaultNutsVersion.valueOf(d.getVersion()),
                 d.getScope(),
                 d.getOptional(),
                 toNutsId(d.getExclusions())
@@ -135,6 +137,7 @@ public class MavenUtils {
                     .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})
                     .setDependencies(toNutsDependencies(pom.getDependencies()))
+                    .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement()))
                     .setProperties(pom.getProperties())
                     .build()
                     ;
@@ -151,7 +154,7 @@ public class MavenUtils {
 
 
     public static String toNutsVersion(String version) {
-        return version.replace("(", "]").replace(")", "[");
+        return version==null?null:version.replace("(", "]").replace(")", "[");
     }
 
     public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsSession session, String urlDesc) throws IOException {
@@ -190,7 +193,7 @@ public class MavenUtils {
                     properties.put("project.parent.groupId", parentId.getGroup());
                     properties.put("project.parent.artifactId", parentId.getName());
                     properties.put("project.parent.version", parentId.getVersion().getValue());
-                    nutsDescriptor = nutsDescriptor.setProperties(properties, true).applyProperties(properties);
+                    nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.applyProperties(properties);
                 }
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
@@ -241,11 +244,13 @@ public class MavenUtils {
                     nutsDescriptor = nutsDescriptor.setPackaging(nutsPackaging);
                 }
                 properties.put("pom.groupId", thisId.getGroup());
+                properties.put("pom.version", thisId.getVersion().getValue());
+                properties.put("pom.artifactId", thisId.getName());
                 properties.put("project.groupId", thisId.getGroup());
                 properties.put("project.artifactId", thisId.getName());
                 properties.put("project.version", thisId.getVersion().getValue());
                 properties.put("version", thisId.getVersion().getValue());
-                nutsDescriptor = nutsDescriptor.setProperties(properties, true).applyProperties(properties);
+                nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.applyProperties(properties);
             } finally {
                 if (stream != null) {
                     stream.close();

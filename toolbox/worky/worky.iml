@@ -13,8 +13,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nuts-cmd-app" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="vpc-common-io" />
     <orderEntry type="module" module-name="vpc-common-commandline" />
+    <orderEntry type="module" module-name="vpc-common-io" />
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-mvn" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />

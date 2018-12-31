@@ -87,7 +87,7 @@ public class GsonIO implements JsonIO {
             if (s == null) {
                 return null;
             }
-            return new NutsVersionImpl(s);
+            return DefaultNutsVersion.valueOf(s);
         }
 
 

@@ -29,171 +29,136 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.common.strings.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 
 public class NutsIdGraph {
 
-    private final Map<NutsId, NutsList> allVertices = new LinkedHashMap<>();
-    private final Map<NutsId, NutsId> ids = new LinkedHashMap<>();
-    private final Map<String, Set<NutsId>> flatVersions = new LinkedHashMap<>();
-    private final Set<NutsId> roots = new LinkedHashSet<>();
+    private NutsIdGraphContext context = new NutsIdGraphContext();
 
-    public NutsIdGraph() {
+    private final Set<NutsId> visited = new LinkedHashSet<>();
+    private final Set<NutsIdNode> wildeIds = new LinkedHashSet<>();
+    private final DefaultNutsWorkspace ws;
+    private final NutsSession session;
+    private final NutsDependencyFilter defaultDependencyFilter;
+
+    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session, NutsDependencyFilter defaultDependencyFilter) {
+        this.ws = ws;
+        this.session = session;
+        this.defaultDependencyFilter = defaultDependencyFilter;
     }
 
-    public int compareIds(NutsId id1, NutsId id2) {
-        if (id1 == null && id2 == null) {
-            return 0;
-        }
-        if (id1 == null) {
-            return -1;
-        }
-        if (id2 == null) {
-            return 1;
-        }
-        int x = id1.getVersion().compareTo(id2.getVersion());
-        if (x != 0) {
-            return x;
-        }
-        return CoreNutsUtils.compareScopes(id1.getQueryMap().get("scope"), id2.getQueryMap().get("scope"));
-    }
-
-    public NutsId resolveBest(NutsId id1, NutsId id2) {
-        if (id1 == null && id2 == null) {
-            return null;
-        }
-        if (id1 == null) {
-            return id2;
-        }
-        if (id2 == null) {
-            return id1;
-        }
-        int x = id1.getVersion().compareTo(id2.getVersion());
-        int c = CoreNutsUtils.compareScopes(id1.getQueryMap().get("scope"), id2.getQueryMap().get("scope"));
-        if (x != 0) {
-            if (c == 0) {
-                //better version with same scope
-                return x < 0 ? id1 : id2;
+    public NutsIdInfo resolveBest(Set<NutsIdInfo> ids) {
+        NutsIdInfo best = null;
+        for (NutsIdInfo n : ids) {
+            if (best == null) {
+                best = n;
             } else {
-                return c < 0 ? id1 : id2;
-//                String s=c<0?id1.getQueryMap().get("scope"):id2.getQueryMap().get("scope");
-//                return (x<0?id1:id2).setQueryProperty("scope",s);
-            }
-        }
-        return c < 0 ? id1 : id2;
-    }
-
-    public void fixConflicts() {
-        List<NutsId> toRemove = new ArrayList<>();
-        for (Map.Entry<String, Set<NutsId>> conflict : resolveConflicts().entrySet()) {
-            NutsId best = null;
-            for (NutsId n : conflict.getValue()) {
-                best = resolveBest(best, n);
-            }
-            for (NutsId n : conflict.getValue()) {
-                if (!n.equals(best)) {
-                    remove(n);
+                if (n.compareTo(best) < 0) {
+                    best = n;
                 }
             }
         }
+//        System.out.println("RESOLVED "+best+" from "+ids);
+        return best;
     }
 
-    public Map<String, Set<NutsId>> resolveConflicts() {
-        Map<String, Set<NutsId>> all = new LinkedHashMap<>();
-        for (Map.Entry<String, Set<NutsId>> v : flatVersions.entrySet()) {
-            if (v.getValue().size() > 1) {
-                all.put(v.getKey(), new HashSet<>(v.getValue()));
+    private <T> void fixConflicts() {
+        List<SimpleNutsIdInfo> conflicts = new ArrayList<>();
+        for (SimpleNutsIdInfo value : context.snutsIds.values().toArray(new SimpleNutsIdInfo[0])) {
+            if (value.nodes.size() > 0) {
+                conflicts.add(value);
             }
         }
-        return all;
-    }
-
-    public void remove(NutsId id) {
-        ids.remove(id);
-        allVertices.remove(id);
-        Set<NutsId> old = flatVersions.get(id.getSimpleName());
-        if (old != null) {
-            old.remove(id);
-            if (old.isEmpty()) {
-                flatVersions.remove(id.getSimpleName());
+        for (SimpleNutsIdInfo conflict : conflicts) {
+            Set<NutsIdInfo> list = conflict.nodes;
+            NutsIdInfo best = resolveBest(list);
+            if (best != null) {
+                for (NutsIdInfo nutsIdInfo : list.toArray(new NutsIdInfo[0])) {
+                    context.replace(nutsIdInfo, best);
+                }
             }
         }
-        //now remove all vertex to this id
-        for (Iterator<Map.Entry<NutsId, NutsList>> iterator = allVertices.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<NutsId, NutsList> v = iterator.next();
-            v.getValue().remove(id);
-            if (v.getValue().isEmpty()) {
-                iterator.remove();
+        Set<NutsIdNode> wildIds = new HashSet<>(this.wildeIds);
+        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
+            for (NutsIdInfo node2 : node1.nodes) {
+                for (NutsIdNode node3 : node2.nodes) {
+                    if (!node3.getVersion().isSingleValue()) {
+                        wildIds.add(node3);
+                    }
+                }
             }
         }
-    }
-
-    public void addRoot(NutsId id) {
-        roots.add(id);
-    }
-
-    public boolean contains(NutsId id) {
-        return allVertices.containsKey(id);
-    }
-
-    public NutsId getNutsId(NutsId id) {
-        return ids.get(id);
-    }
-
-    public void set(NutsId id) {
-        NutsId old = ids.get(id);
-        if (old == null) {
-            ids.put(id, id);
+        Set<NutsIdNode> toaddOk = new HashSet<>();
+        for (NutsIdNode nutsId : wildIds) {
+            NutsId nutsId1 = ws.resolveId(nutsId.id, session);
+            toaddOk.add(new NutsIdNode(nutsId1, nutsId.path,nutsId.filter));
         }
-        Set<NutsId> versions = flatVersions.get(id.getSimpleName());
-        if (versions == null) {
-            versions = new HashSet<>();
+//        print(System.out);
+        if (!toaddOk.isEmpty()) {
+            push0(toaddOk);
         }
-        versions.add(id);
-        flatVersions.put(id.getSimpleName(), versions);
     }
 
-    public void add(NutsId from, NutsId to) {
-        set(from);
-        set(to);
-        NutsList vertices = allVertices.get(from);
-        if (vertices == null) {
-            vertices = new NutsList();
-            allVertices.put(from, vertices);
-        }
-        vertices.add(to);
 
+    private static NutsId cleanup(NutsId id) {
+        if (id == null) {
+            return null;
+        }
+        id = id.setNamespace(null);
+        Map<String, String> m = id.getQueryMap();
+        if (m != null && !m.isEmpty()) {
+            if("default".equals(m.get("face"))) {
+                m.remove("face");
+            }
+            id = id.setQuery(m);
+        }
+        return id;
     }
 
-    public NutsId[] collect(NutsId[] ids) {
-        Set<NutsId> collected=new HashSet<>();
+
+    public void add(NutsIdNode from, NutsIdNode to) {
+        context.register(from);
+        context.register(to);
+        context.getNutsIdInfo(from.id,true)
+                .connect(context.getNutsIdInfo(to.id,true));
+    }
+
+    public NutsId[] collect(Collection<NutsId> ids, Collection<NutsId> exclude) {
+        Set<NutsIdInfo> collected = new HashSet<>();
         for (NutsId id : ids) {
-            visit(id,collected);
+            visit(context.getNutsIdInfo(id, true), collected);
         }
-        return collected.toArray(new NutsId[0]);
+        List<NutsId> r = new ArrayList<>();
+        for (NutsIdInfo n : collected) {
+            if (!exclude.contains(n.id)) {
+                r.add(n.id);
+            }
+        }
+        return r.toArray(new NutsId[0]);
     }
 
-    public void visit(NutsId id, Collection<NutsId> collected) {
+    public void visit(NutsIdInfo id, Collection<NutsIdInfo> collected) {
         Set<NutsId> visited = new HashSet<>();
-        Stack<NutsId> stack = new Stack<>();
+        Stack<NutsIdInfo> stack = new Stack<>();
         stack.push(id);
-        visited.add(id);
+        visited.add(id.id.getLongNameId());
         while (!stack.isEmpty()) {
-            NutsId i = stack.pop();
+            NutsIdInfo i = stack.pop();
             if (i != null) {
-                NutsId f = getNutsId(i);
-                if (f != null) {
-                    collected.add(f);
-                    NutsList next = allVertices.get(i);
-                    if (next != null) {
-                        for (NutsId j : next.list.values()) {
-                            if (!visited.contains(j)) {
-                                visited.add(j.getLongNameId());
-                                stack.push(j);
-                            }
+                collected.add(i);
+                List<NutsIdInfo> next = i.output;
+                if (next != null) {
+                    for (NutsIdInfo j : next) {
+                        NutsId vv = j.id.getLongNameId();
+                        if (!visited.contains(vv)) {
+                            visited.add(vv);
+                            stack.push(j);
                         }
                     }
                 }
@@ -201,19 +166,412 @@ public class NutsIdGraph {
         }
     }
 
-    public static class NutsList {
-        LinkedHashMap<NutsId, NutsId> list = new LinkedHashMap<>();
+    public void push(Collection<NutsId> ids, NutsDependencyFilter dependencyFilter) {
+        Collection<NutsIdNode> n = new ArrayList<>();
+        int order = 0;
+        for (NutsId x : ids) {
+            n.add(new NutsIdNode(x, Collections.EMPTY_LIST, order++, null,dependencyFilter));
+        }
+        push0(n);
+    }
 
-        public void add(NutsId id) {
-            list.put(id/*.getLongNameId()*/, id);
+    private void push0(Collection<NutsIdNode> ids) {
+        if (ids.size() == 0) {
+            return;
+        }
+        Stack<NutsIdAndNutsDependencyFilterItem> stack = new Stack<>();
+        for (NutsIdNode id : ids) {
+//            NutsId main = null;
+//            main = ws.resolveId(id, session);
+//            if (main == null) {
+//                main = ws.fetchBestHelperNutsId(session, id);
+//            }
+            stack.push(new NutsIdAndNutsDependencyFilterItem(id));
         }
 
-        public void remove(NutsId id) {
-            list.remove(id/*.getLongNameId()*/);
+        while (!stack.isEmpty()) {
+            NutsIdAndNutsDependencyFilterItem curr = stack.pop();
+//            if(curr.id.id.getName().equals("org.eclipse.sisu.plexus")){
+            if(curr.id.id.getName().equals("sisu-guice")){
+                System.out.print("");
+            }
+            if (!visited.contains(cleanup(curr.id.id))) {
+                visited.add(cleanup(curr.id.id));
+                if (curr.id.getVersion().isSingleValue()) {
+                    if (curr.getDescriptor(ws, session) != null) {
+                        context.register(curr.id);
+                        int currentOrder = 0;
+                        NutsDependency[] dependencies = curr.getDescriptor(ws, session).getDependencies(curr.id.filter);
+                        for (NutsDependency dept : dependencies) {
+//                            System.out.println(curr.id.getLongName()+" ==> "+dept);
+                            if(dept.getName().equals("sisu-guice")){
+                                System.out.print("");
+                            }
+                            NutsId[] exclusions = dept.getExclusions();
+                            NutsDependencyFilter filter2 = ws.createNutsDependencyFilter(curr.id.filter, exclusions);
+                            if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept)) {
+                                NutsId item = dept.getId();
+                                NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id,filter2);
+                                if (!item.getVersion().isSingleValue()) {
+                                    this.add(curr.id, nextNode);
+                                } else {
+                                    try {
+                                        this.add(curr.id, nextNode);
+                                        stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
+                                    } catch (NutsNotFoundException ex) {
+                                        if (dept.isOptional()) {
+                                            //ignore
+                                        } else {
+                                            stack.push(new NutsIdAndNutsDependencyFilterItem(nextNode));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    wildeIds.add(curr.id);
+                }
+            }
+        }
+//        print(System.out);
+        this.fixConflicts();
+    }
+
+    private NutsId prepareDepId(NutsDependency dept, NutsId item) {
+        String scope = dept.getScope();
+        if (StringUtils.isEmpty(scope)) {
+            scope = "compile";
+        }
+        if (!"compile".equals(scope)) {
+            item = item.setQueryProperty("scope", scope);
+        }
+        if (dept.isOptional()) {
+            item = item.setQueryProperty("optional", "true");
+        }
+        return item;
+    }
+
+    public static class SimpleNutsIdInfo {
+        private String id;
+        private Set<NutsIdInfo> nodes = new HashSet<>();
+
+        public SimpleNutsIdInfo(String id) {
+            this.id = id;
         }
 
-        public boolean isEmpty() {
-            return list.isEmpty();
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SimpleNutsIdInfo that = (SimpleNutsIdInfo) o;
+            return Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+    }
+
+    public static class NutsIdInfo {
+        private NutsId id;
+        private Set<NutsIdNode> nodes = new HashSet<>();
+        public List<NutsIdInfo> input = new ArrayList<>();
+        public List<NutsIdInfo> output = new ArrayList<>();
+
+        public NutsIdInfo(NutsId id) {
+            this.id = id;
+        }
+
+        public int compareTo(NutsIdInfo other) {
+            return getBest().compareTo(other.getBest());
+        }
+
+        public NutsIdNode getBest() {
+            NutsIdNode b = null;
+            for (NutsIdNode node : nodes) {
+                if (b == null || node.compareTo(b) < 0) {
+                    b = node;
+                }
+            }
+            return b;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NutsIdInfo that = (NutsIdInfo) o;
+            return Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+
+        public void replaceBy(NutsIdInfo other) {
+            for (NutsIdInfo nutsIdNode : input.toArray(new NutsIdInfo[0])) {
+                nutsIdNode.disconnect(this);
+                nutsIdNode.connect(other);
+            }
+            for (NutsIdInfo nutsIdNode : output.toArray(new NutsIdInfo[0])) {
+                disconnect(nutsIdNode);
+                other.connect(nutsIdNode);
+            }
+        }
+
+        public void disconnect(NutsIdInfo other) {
+            output.remove(other);
+            other.input.remove(this);
+        }
+
+        public void connect(NutsIdInfo other) {
+            output.add(other);
+            other.input.add(this);
+        }
+    }
+
+    public static class NutsIdGraphContext {
+        private Set<NutsIdNode> nodes = new HashSet<>();
+        private Map<NutsId, NutsIdInfo> nutsIds = new HashMap<>();
+        private Map<String, SimpleNutsIdInfo> snutsIds = new HashMap<>();
+
+        SimpleNutsIdInfo getSimpleNutsIdInfo(NutsId id, boolean create) {
+            String ii = id.getSimpleName();
+            SimpleNutsIdInfo p = snutsIds.get(ii);
+            if (p == null) {
+                if (create) {
+                    p = new SimpleNutsIdInfo(ii);
+                    snutsIds.put(ii, p);
+                }
+            }
+            return p;
+        }
+
+        NutsIdInfo getNutsIdInfo(NutsId id, boolean create) {
+            NutsId ii = cleanup(id);
+            NutsIdInfo p = nutsIds.get(ii);
+            if (p == null) {
+                if (create) {
+                    p = new NutsIdInfo(ii);
+                    nutsIds.put(ii, p);
+                }
+            }
+            return p;
+        }
+
+        boolean contains(NutsId n) {
+            return nutsIds.containsKey(n);
+        }
+
+        boolean contains(NutsIdNode n) {
+            return nodes.contains(n);
+        }
+
+        void register(NutsIdNode n) {
+            if (!nodes.contains(n)) {
+                nodes.add(n);
+                NutsIdInfo a = getNutsIdInfo(n.id, true);
+                a.nodes.add(n);
+                getSimpleNutsIdInfo(n.id, true).nodes.add(a);
+            }
+        }
+
+        void unregister(NutsIdInfo n) {
+            if (nutsIds.containsKey(n.id)) {
+                for (NutsIdNode node : n.nodes) {
+                    nodes.remove(node);
+                }
+                n.nodes.clear();
+                SimpleNutsIdInfo a = getSimpleNutsIdInfo(n.id, true);
+                a.nodes.remove(n);
+            }
+        }
+
+        void replace(NutsIdInfo a, NutsIdInfo b) {
+            if (!a.equals(b)) {
+                a.replaceBy(b);
+                unregister(a);
+            }
+        }
+    }
+
+    public static class NutsIdNode {
+        public NutsId id0;
+        public NutsId id;
+        public List<Integer> path;
+        public NutsId parent;
+        public NutsDependencyFilter filter;
+
+        public NutsIdNode(NutsId id, List<Integer> path,NutsDependencyFilter dependencyFilter) {
+            this.id0 = id;
+            this.id = cleanup(id0);
+            this.path = new ArrayList<>(path);
+            this.parent = null;
+            this.filter = dependencyFilter;
+        }
+
+        public NutsIdNode(NutsId id, List<Integer> parentPath, int order, NutsId parent,NutsDependencyFilter dependencyFilter) {
+            this.id0 = id;
+            this.id = cleanup(id0);
+            this.path = new ArrayList<>();
+            if (parentPath != null) {
+                this.path.addAll(parentPath);
+            }
+            this.path.add(order);
+            this.parent = parent;
+            this.filter = dependencyFilter;
+        }
+
+        public String getSimpleName() {
+            return id.getSimpleName();
+        }
+
+        public NutsId getLongNameId() {
+            return id.getLongNameId();
+        }
+
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NutsIdNode that = (NutsIdNode) o;
+            return Objects.equals(id, that.id) &&
+                    Objects.equals(path, that.path);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, path);
+        }
+
+        public NutsVersion getVersion() {
+            return id.getVersion();
+        }
+
+        public int compareTo(NutsIdNode other) {
+            if (other.id.getSimpleName().equals(this.id.getSimpleName())) {
+                NutsId id1 = this.id;
+                NutsId id2 = other.id;
+                if (id1.getVersion().isEmpty()) {
+                    return 1;
+                }
+                if (id2.getVersion().isEmpty()) {
+                    return -1;
+                }
+                int xx=Integer.compare(this.path.size(),other.path.size());
+                if(xx!=0){
+                    return xx;
+                }
+                int max = this.path.size();
+                for (int i = 0; i < max; i++) {
+                    int a = this.path.get(i);
+                    int b = other.path.get(i);
+                    int x = Integer.compare(a, b);
+                    if (x != 0) {
+                        return x;
+                    }
+                }
+                if (id2.getVersion().equals(id1.getVersion())) {
+                    return 0;
+                }
+                if (id1.getVersion().isSingleValue() && id2.getVersion().isSingleValue()) {
+                    int x = id1.getVersion().compareTo(id2.getVersion());
+                    int c = CoreNutsUtils.compareScopes(id1.getQueryMap().get("scope"), id2.getQueryMap().get("scope"));
+                    if (x != 0) {
+                        if (c == 0) {
+                            //better version with same scope
+                            return x < 0 ? 1 : -1;
+                        } else {
+                            return c < 0 ? 1 : -1;
+//                String s=c<0?id1.getQueryMap().get("scope"):id2.getQueryMap().get("scope");
+//                return (x<0?id1:id2).setQueryProperty("scope",s);
+                        }
+                    }
+                    return c < 0 ? 1 : -1;
+                }
+                if (id1.getVersion().toFilter().accept(id2.getVersion())) {
+                    return 1;
+                }
+                if (id2.getVersion().toFilter().accept(id1.getVersion())) {
+                    return -1;
+                }
+
+                throw new NutsException("Error");
+            } else {
+                throw new NutsException("Error");
+            }
+        }
+
+        @Override
+        public String toString() {
+            return id.toString() + path.toString();
+        }
+
+
+    }
+
+    public List<NutsIdInfo> getNutsIdInfoList() {
+        List<NutsIdInfo> all = new ArrayList<>();
+        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
+            all.addAll(node1.nodes);
+        }
+        return all;
+    }
+
+    public List<NutsIdNode> getNutsIdNodeList() {
+        List<NutsIdNode> all = new ArrayList<>();
+        for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
+            for (NutsIdInfo node2 : node1.nodes) {
+                all.addAll(node2.nodes);
+            }
+        }
+        return all;
+    }
+
+    public Set<NutsIdInfo> getRoots() {
+        LinkedHashSet<NutsIdInfo> all = new LinkedHashSet<>();
+        for (NutsIdInfo nutsIdNode : getNutsIdInfoList()) {
+            if (nutsIdNode.input.isEmpty()) {
+                all.add(nutsIdNode);
+            }
+        }
+        return all;
+    }
+
+    @Override
+    public String toString() {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(b);
+        print(out);
+        out.flush();
+        return new String(b.toByteArray());
+    }
+
+    public void print(PrintStream out) {
+        out.println("-------------------------------------------------------------");
+        HashSet<NutsId> visited = new HashSet<>();
+        for (NutsIdInfo root : getRoots()) {
+            print(out, root, "", visited);
+        }
+    }
+
+    public void print(PrintStream out, NutsIdInfo x, String prefix, Set<NutsId> visited) {
+        out.print(prefix + x.id);
+        List<NutsIdInfo> nutsList = x.output;
+        if (nutsList == null) {
+            out.println(" ==> NULL");
+        } else {
+            out.println("");
+            if (!visited.contains(x.id)) {
+                visited.add(x.id);
+                for (NutsIdInfo y : nutsList) {
+                    print(out, y, prefix + "  ", visited);
+                }
+            }
         }
     }
 }

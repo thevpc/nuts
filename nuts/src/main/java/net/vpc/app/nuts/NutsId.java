@@ -122,6 +122,8 @@ public interface NutsId extends Serializable {
      */
     String getName();
 
+    String getClassifier();
+
     NutsVersion getVersion();
 
     NutsId apply(ObjectConverter<String, String> properties);

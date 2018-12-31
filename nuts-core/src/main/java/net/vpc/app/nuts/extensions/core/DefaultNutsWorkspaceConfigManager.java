@@ -355,7 +355,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         NutsSdkLocation best = null;
         for (NutsSdkLocation jdk : getSdks("java")) {
             String currVersion = jdk.getVersion();
-            if (javaVersionFilter == null || javaVersionFilter.accept(new NutsVersionImpl(currVersion))) {
+            if (javaVersionFilter == null || javaVersionFilter.accept(DefaultNutsVersion.valueOf(currVersion))) {
                 if (best == null || CoreVersionUtils.compareVersions(best.getVersion(), currVersion) < 0) {
                     best = jdk;
                 }

@@ -63,6 +63,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int exec(NutsExecutionContext executionContext) {
+        NutsIdFormat nutsIdFormat = executionContext.getWorkspace().createIdFormat().setOmitNamespace(true);
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
 
         List<String> app = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
@@ -81,9 +82,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
         HashMap<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getBootArgumentsString();
-        osEnv.put("nuts_boot_args", bootArgumentsString);
-
-        jvmArgs.add("-Dnuts.boot.args=" + bootArgumentsString);
+        if(!StringUtils.isEmpty(bootArgumentsString)) {
+            osEnv.put("nuts_boot_args", bootArgumentsString);
+            jvmArgs.add("-Dnuts.boot.args=" + bootArgumentsString);
+        }
         String javaVersion = null;//runnerProps.getProperty("java.version");
         String javaHome = null;//runnerProps.getProperty("java.version");
         String mainClass = null;
@@ -163,20 +165,22 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
         NutsDescriptor descriptor = nutMainFile.getDescriptor();
         descriptor = executionContext.getWorkspace().resolveEffectiveDescriptor(descriptor, executionContext.getSession());
-        for (NutsDependency d : descriptor.getDependencies()) {
-            nutsDefinitions.addAll(
-                    executionContext.getWorkspace()
-                            .createQuery().addId(d.toId())
-                            .setSession(executionContext.getSession().copy().setTransitive(true))
-                            .setScope(NutsDependencyScope.RUN)
-                            .includeDependencies()
-                            .fetch()
+        nutsDefinitions.addAll(
+                executionContext.getWorkspace()
+                        .createQuery().addId(descriptor.getId())
+                        .setSession(executionContext.getSession().copy().setTransitive(true))
+                        .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
+                        .setIncludeOptional(false)
+                        .includeDependencies()
+                        .fetch()
 
-            );
-        }
+        );
+        List<String> xargs = new ArrayList<String>();
         List<String> args = new ArrayList<String>();
         args.add(javaHome);
+        xargs.add(javaHome);
         args.addAll(jvmArgs);
+        xargs.addAll(jvmArgs);
 
         if (jar) {
             if (mainClass != null) {
@@ -187,6 +191,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
             args.add("-jar");
             args.add(nutMainFile.getFile());
+            xargs.add("-jar");
+            xargs.add(executionContext.getWorkspace().createIdFormat().format(nutMainFile.getId()));
         } else {
             if (mainClass == null) {
                 File file = CoreIOUtils.fileByPath(nutMainFile.getFile());
@@ -201,26 +207,35 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             if (mainClass == null) {
                 throw new NutsIllegalArgumentException("Missing Main Class for " + nutMainFile.getId());
             }
+            xargs.add("--nuts-path");
             args.add("-classpath");
+            StringBuilder xsb = new StringBuilder();
             StringBuilder sb = new StringBuilder();
+            xsb.append(nutsIdFormat.format(nutMainFile.getId()));
             sb.append(nutMainFile.getFile());
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 if (nutsDefinition.getFile() != null) {
                     sb.append(File.pathSeparatorChar);
                     sb.append(nutsDefinition.getFile());
+                    xsb.append(";");
+                    xsb.append(nutsIdFormat.format(nutsDefinition.getId()));
                 }
             }
             for (String cp : classPath) {
                 sb.append(File.pathSeparatorChar);
                 sb.append(cp);
+                xsb.append(";");
+                xsb.append(cp);
             }
             args.add(sb.toString());
+            xargs.add(xsb.toString());
             if (mainClass.contains(":")) {
                 List<String> possibleClasses = CoreStringUtils.split(mainClass, ":");
                 switch (possibleClasses.size()) {
                     case 0:
                         throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
                     case 1:
+                        xargs.add(mainClass);
                         args.add(mainClass);
                         break;
                     default:
@@ -238,12 +253,14 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                                 if (CoreStringUtils.isInt(line)) {
                                     int i = Integer.parseInt(line);
                                     if (i >= 1 && i <= possibleClasses.size()) {
+                                        xargs.add(possibleClasses.get(i - 1));
                                         args.add(possibleClasses.get(i - 1));
                                         break;
                                     }
                                 } else {
                                     for (String possibleClass : possibleClasses) {
                                         if (possibleClass.equals(line)) {
+                                            xargs.add(possibleClass);
                                             args.add(possibleClass);
                                             break;
                                         }
@@ -254,12 +271,17 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                         break;
                 }
             } else {
+                xargs.add(mainClass);
                 args.add(mainClass);
             }
         }
+        xargs.addAll(app);
         args.addAll(app);
+        if (showCommand || true) {
+            executionContext.getTerminal().getOut().println("==[nuts-exec]== " + NutsArgumentsParser.compressBootArguments(xargs.toArray(new String[0])));
+        }
 
-        File directory = StringUtils.isEmpty(dir) ? null :new File(executionContext.getWorkspace().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().resolvePath(dir));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory

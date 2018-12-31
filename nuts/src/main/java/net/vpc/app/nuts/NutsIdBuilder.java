@@ -46,7 +46,11 @@ public interface NutsIdBuilder extends Serializable {
 
     String getFace();
 
+    String getClassifier();
+
     NutsIdBuilder setFace(String value);
+
+    NutsIdBuilder setClassifier(String value);
 
     NutsIdBuilder setQueryProperty(String property, String value);
 

@@ -64,6 +64,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] platform;
     private String[] locations;
     private NutsDependency[] dependencies;
+    private NutsDependency[] standardDependencies;
     private Map<String, String> properties;
 
     public DefaultNutsDescriptor(NutsDescriptor d) {
@@ -84,6 +85,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getOsdist(),
                 d.getPlatform(),
                 d.getDependencies(),
+                d.getStandardDependencies(),
                 d.getLocations(),
                 d.getProperties()
         );
@@ -92,7 +94,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public DefaultNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
                                  NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
                                  String[] arch, String[] os, String[] osdist, String[] platform,
-                                 NutsDependency[] dependencies, String[] locations, Map<String, String> properties) {
+                                 NutsDependency[] dependencies,
+                                 NutsDependency[] standardDependencies,
+                                 String[] locations, Map<String, String> properties) {
         if (id == null) {
             throw new NutsIllegalArgumentException("Missing id");
         }
@@ -124,6 +128,13 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 throw new NullPointerException();
             }
             this.dependencies[i] = dependencies[i];
+        }
+        this.standardDependencies = standardDependencies == null ? new NutsDependency[0] : new NutsDependency[standardDependencies.length];
+        for (int i = 0; i < this.standardDependencies.length; i++) {
+            if (standardDependencies[i] == null) {
+                throw new NullPointerException();
+            }
+            this.standardDependencies[i] = standardDependencies[i];
         }
         if (properties == null || properties.isEmpty()) {
             this.properties = null;
@@ -198,6 +209,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public NutsDependency[] getStandardDependencies() {
+        return standardDependencies;
+    }
+
+    @Override
     public String[] getArch() {
         return arch;
     }
@@ -219,6 +235,20 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return locations;
     }
 
+    @Override
+    public NutsDependency[] getDependencies(NutsDependencyFilter dependencyFilter) {
+        NutsDependency[] d0 = getDependencies();
+        if (dependencyFilter == null) {
+            return d0;
+        }
+        List<NutsDependency> r = new ArrayList<>(d0.length);
+        for (NutsDependency nutsDependency : d0) {
+            if (dependencyFilter.accept(getId(), nutsDependency)) {
+                r.add(nutsDependency);
+            }
+        }
+        return r.toArray(new NutsDependency[0]);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -243,6 +273,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                         Arrays.equals(platform, that.platform) &&
                         Arrays.equals(locations, that.locations) &&
                         Arrays.equals(dependencies, that.dependencies) &&
+                        Arrays.equals(standardDependencies, that.standardDependencies) &&
                         Objects.equals(properties, that.properties);
     }
 
@@ -257,6 +288,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         result = 31 * result + Arrays.hashCode(platform);
         result = 31 * result + Arrays.hashCode(locations);
         result = 31 * result + Arrays.hashCode(dependencies);
+        result = 31 * result + Arrays.hashCode(standardDependencies);
         return result;
     }
 }
