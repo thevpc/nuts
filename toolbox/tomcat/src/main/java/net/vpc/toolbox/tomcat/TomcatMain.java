@@ -1,5 +1,6 @@
 package net.vpc.toolbox.tomcat;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
@@ -19,7 +20,7 @@ public class TomcatMain extends NutsApplication {
     public int launch(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         if (args.length == 0) {
-            throw new IllegalArgumentException("Expected --remote or --server");
+            throw new NutsExecutionException("Expected --remote or --server",2);
         }
         List<String> argsList = new ArrayList<>();
         CommandLine cmd = new CommandLine(args);

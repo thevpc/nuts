@@ -5,10 +5,10 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-tomcat-classloader</artifactId>
     <name>net.vpc.app.nuts.nuts-tomcat-classloader</name>
-    <version>n.0.5.2.0.t.8.0.21</version>
+    <version>n.0.5.3.0.t.8.0.21</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
-
+    <description>Nuts Tomcat Classloader</description>
     <organization>
         <name>vpc open source initiative</name>
         <url>http://tahabensalah.net</url>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.2</version>
+            <version>0.5.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
@@ -130,7 +130,8 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>  <!-- git commit message -->
+                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}
+                    </message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->

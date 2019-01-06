@@ -45,8 +45,8 @@ class NutsWorkspaceClassPathComparator implements Comparator<NutsBootConfig> {
     @Override
     public int compare(NutsBootConfig o1, NutsBootConfig o2) {
         return compareVersion(
-                o1.getBootRuntime().substring(o1.getBootRuntime().indexOf("#")+1),
-                o2.getBootRuntime().substring(o2.getBootRuntime().indexOf("#")+1));
+                o1.getRuntimeId().substring(o1.getRuntimeId().indexOf("#")+1),
+                o2.getRuntimeId().substring(o2.getRuntimeId().indexOf("#")+1));
     }
 
     public int compareVersion(String o1, String o2) {

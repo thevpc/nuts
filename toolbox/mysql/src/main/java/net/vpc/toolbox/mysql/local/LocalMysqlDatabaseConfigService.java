@@ -1,5 +1,6 @@
 package net.vpc.toolbox.mysql.local;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.ProcessBuilder2;
 import net.vpc.common.strings.StringUtils;
@@ -55,7 +56,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        context.getWorkspace().getJsonIO().write(getConfig(), out, true);
+        context.getWorkspace().getIOManager().writeJson(getConfig(), out, true);
         return this;
     }
 
@@ -113,7 +114,7 @@ public class LocalMysqlDatabaseConfigService {
                 if(new File(path).exists()){
                     new File(path).delete();
                 }
-                throw new IllegalArgumentException(p.getOutputString());
+                throw new NutsExecutionException(p.getOutputString(),2);
             }
         } else {
             context.out().printf("==[%s]== create archive %s\n", getDatabaseName(), path);
@@ -136,7 +137,7 @@ public class LocalMysqlDatabaseConfigService {
                 if(new File(path).exists()){
                     new File(path).delete();
                 }
-                throw new IllegalArgumentException(p.getOutputString());
+                throw new NutsExecutionException(p.getOutputString(),2);
             }
         }
     }

@@ -1,0 +1,20 @@
+deploy a ==nuts==
+
+@@SYNOPSIS:@@
+##deploy## --file <FILE> [--desc <DESC-FILE>] [--to <REPOSITORY>] 
+
+deploys a new file to the given repository
+
+##deploy## --id <ID> --source <REPOSITORY> [--to <REPOSITORY>]
+
+deploys an id from registered repository to another
+
+
+@@EXAMPLES:@@
+
+##deploy## --file myjar.jar
+   deploys the myjar.jar file to default local repository
+
+##deploy## --id example:some-thing --to system
+   deploys the latest version of example:some-thing to system repository
+

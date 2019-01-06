@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>derby</artifactId>
-    <version>0.5.2.0</version>
+    <version>0.5.3.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.derby</name>
-
+    <description>Nuts Derby Toolbox</description>
 
     <organization>
         <name>vpc open source initiative</name>
@@ -32,7 +33,7 @@
         </developer>
     </developers>
 
- <licenses>
+    <licenses>
         <license>
             <name>GNU General Public License Version 3.0</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
@@ -62,15 +63,15 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-cmd-app</artifactId>
-            <version>0.5.2.0</version>
+            <version>0.5.3.0</version>
         </dependency>
-<!--        <dependency>
-            <groupId>net.vpc.app</groupId>
-            <artifactId>nuts-core</artifactId>
-            <version>0.4.0.1</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>net.vpc.app</groupId>
+                    <artifactId>nuts-core</artifactId>
+                    <version>0.4.0.1</version>
+                </dependency>-->
     </dependencies>
-   <build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -127,7 +128,8 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>  <!-- git commit message -->
+                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}
+                    </message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->

@@ -1,5 +1,6 @@
 package net.vpc.toolbox.mysql.local;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.app.NutsAppUtils;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
@@ -110,7 +111,7 @@ public class LocalMysql {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(instance);
                 } else {
-                    throw new IllegalArgumentException("Instance name already defined");
+                    throw new NutsExecutionException("Instance name already defined",2);
                 }
             } else if ((a = args.readStringOption("--shutdownWaitTime")) != null) {
                 if (c == null) {
@@ -130,7 +131,7 @@ public class LocalMysql {
                 }
                 LocalMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 if (mysqlAppConfig == null) {
-                    throw new IllegalArgumentException("Missing --app.user");
+                    throw new NutsExecutionException("Missing --app.user",2);
                 }
                 mysqlAppConfig.getConfig().setUser(value);
             } else if ((a = args.readStringOption("--app.password")) != null) {
@@ -140,7 +141,7 @@ public class LocalMysql {
                 }
                 LocalMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 if (mysqlAppConfig == null) {
-                    throw new IllegalArgumentException("Missing --app.password");
+                    throw new NutsExecutionException("Missing --app.password",2);
                 }
                 mysqlAppConfig.getConfig().setPassword(value);
             } else {

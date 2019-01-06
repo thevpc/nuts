@@ -3,8 +3,11 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,12 +25,23 @@ public class Nsh extends NutsApplication {
 
     @Override
     protected int onInstallApplication(NutsApplicationContext applicationContext) {
-        HashMap<String, String> parameters = new HashMap<>();
+        CommandLine cmd=new CommandLine(applicationContext);
+        Argument a;
+        boolean force=false;
+        boolean silent=false;
+        while(cmd.hasNext()){
+            if((a=cmd.readBooleanOption("-f","--force"))!=null) {
+                force = a.getBooleanValue();
+            }else if((a=cmd.readBooleanOption("-s","--silent"))!=null){
+                silent=a.getBooleanValue();
+            }
+        }
         String nshIdStr = applicationContext.getAppId().toString();
-        parameters.put("list", nshIdStr + " --no-colors -c find-command");
-        parameters.put("find", nshIdStr + " --no-colors -c find-command %n");
-        parameters.put("exec", nshIdStr + " -c %n");
         NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
+//        HashMap<String, String> parameters = new HashMap<>();
+//        parameters.put("list", nshIdStr + " --no-colors -c find-command");
+//        parameters.put("find", nshIdStr + " --no-colors -c find-command %n");
+//        parameters.put("exec", nshIdStr + " -c %n");
 //        cfg.installCommandFactory(
 //                new NutsWorkspaceCommandFactoryConfig()
 //                        .setFactoryId("nsh")
@@ -36,14 +50,25 @@ public class Nsh extends NutsApplication {
 //                        .setParameters(parameters)
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        for (NutsCommand command : c.getCommands()) {
-            cfg.installCommand(
-                    new NutsWorkspaceCommandConfig()
-                            .setFactoryId("nsh")
-                            .setName(command.getName())
-                            .setCommand(nshIdStr, "-c", command.getName())
-                            .setId(applicationContext.getAppId())
-            );
+        NutsCommand[] commands = c.getCommands();
+        int count=0;
+        for (NutsCommand command : commands) {
+            if(!command.getName().equals("nsh")) {
+                //avoid recursive definition!
+                if (cfg.installCommand(
+                        new NutsWorkspaceCommandConfig()
+                                .setFactoryId("nsh")
+                                .setName(command.getName())
+                                .setCommand(nshIdStr, "-c", command.getName())
+                                .setId(applicationContext.getAppId()),
+                        force ? NutsConfirmAction.FORCE : NutsConfirmAction.IGNORE
+                )) {
+                    count++;
+                }
+            }
+        }
+        if(!silent){
+            applicationContext.out().printf("Installed ==%s== nsh commands.\n", count);
         }
         cfg.save();
         return 0;

@@ -60,4 +60,6 @@ public interface NutsWorkspaceRepositoryManager {
     void addRepositoryListener(NutsRepositoryListener listener);
 
     NutsRepositoryListener[] getRepositoryListeners();
+
+    String resolveRepositoryPath(String repositoryLocation);
 }

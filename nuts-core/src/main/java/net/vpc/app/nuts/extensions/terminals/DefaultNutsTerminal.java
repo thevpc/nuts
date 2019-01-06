@@ -52,9 +52,9 @@ public class DefaultNutsTerminal extends AbstractNutsTerminal {
             this.out = out == null ? System.out : out;
             this.err = err == null ? System.err : out;
         } else {
-            NutsWorkspaceExtensionManager wem = workspace.getExtensionManager();
-            this.out = out == null ? workspace.createPrintStream(System.out, true) : out;
-            this.err = err == null ? workspace.createPrintStream(System.err, true) : err;
+//            NutsWorkspaceExtensionManager wem = workspace.getExtensionManager();
+            this.out = out == null ? workspace.getIOManager().createPrintStream(System.out, NutsTerminalMode.FORMATTED) : out;
+            this.err = err == null ? workspace.getIOManager().createPrintStream(System.err, NutsTerminalMode.FORMATTED) : err;
         }
         reader = new BufferedReader(new InputStreamReader(this.in));
     }

@@ -39,15 +39,17 @@ public final class NutsUpdate {
     private NutsId baseId;
     private NutsId localId;
     private NutsId availableId;
+    private NutsId[] dependencies;
     private boolean runtime;
 
-    public NutsUpdate(NutsId baseId, NutsId localId, NutsId availableId, String oldIdFile, String availableIdFile, boolean runtime) {
+    public NutsUpdate(NutsId baseId, NutsId localId, NutsId availableId, String oldIdFile, String availableIdFile, NutsId[] dependencies,boolean runtime) {
         this.baseId = baseId;
         this.localId = localId;
         this.availableId = availableId;
         this.availableIdFile = availableIdFile;
         this.oldIdFile = oldIdFile;
         this.runtime = runtime;
+        this.dependencies = dependencies;
     }
 
     public String getOldIdFile() {
@@ -72,5 +74,9 @@ public final class NutsUpdate {
 
     public NutsId getAvailableId() {
         return availableId;
+    }
+
+    public NutsId[] getDependencies() {
+        return dependencies;
     }
 }

@@ -1,5 +1,6 @@
 package net.vpc.toolbox.mysql;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.mysql.remote.RemoteMysql;
@@ -16,7 +17,7 @@ public class MysqlMain extends NutsApplication {
     public int launch(NutsApplicationContext appContext) {
         String[] args=appContext.getArgs();
         if (args.length == 0) {
-            throw new IllegalArgumentException("Expected --remote or --local");
+            throw new NutsExecutionException("Expected --remote or --local",2);
         }
         if (args[0].equals("--remote") || args[0].equals("-c")) {
             RemoteMysql m = new RemoteMysql(appContext);

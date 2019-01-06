@@ -31,9 +31,7 @@ public class RemoteTomcat {
         while (cmd.hasNext()) {
             if (cmd.isOption()) {
                 if (context.configure(cmd)) {
-                    if (context.isRequiredExit()) {
-                        return context.getExitCode();
-                    }
+                    //
                 } else {
                     cmd.unexpectedArgument("tomcat --remote");
                 }
@@ -85,9 +83,7 @@ public class RemoteTomcat {
         Helper x = new Helper();
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readStringOption("--instance")) != null) {
                 x.print(loadOrCreateTomcatConfig(a.getStringValue()));
             } else {
@@ -109,15 +105,13 @@ public class RemoteTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readStringOption("--instance")) != null) {
                 if (c == null) {
                     instanceName = a.getStringValue();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new IllegalArgumentException("instance already defined");
+                    throw new NutsExecutionException("instance already defined",2);
                 }
             } else if ((a = args.readStringOption("--server")) != null) {
                 if (c == null) {
@@ -195,9 +189,7 @@ public class RemoteTomcat {
         int lastExitCode = 0;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readBaseServiceArg(args)) != null) {
                 s.remove();
                 if (!(s instanceof RemoteTomcatConfigService)) {
@@ -210,7 +202,7 @@ public class RemoteTomcat {
             }
         }
         if (!processed) {
-            throw new IllegalArgumentException("Invalid parameters");
+            throw new NutsExecutionException("Invalid parameters",2);
         }
         return lastExitCode;
     }
@@ -221,9 +213,7 @@ public class RemoteTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readStringOption("--app")) != null) {
                 loadApp(a.getStringValue()).install();
             } else {
@@ -239,9 +229,7 @@ public class RemoteTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readStringOption("--app")) != null) {
                 app = a.getStringValue();
             } else if ((a = args.readStringOption("--version")) != null) {
@@ -259,9 +247,7 @@ public class RemoteTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else {
                 name = args.readRequiredNonOption().getExpression();
                 RemoteTomcatConfigService c = loadTomcatConfig(name);
@@ -279,9 +265,7 @@ public class RemoteTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readBooleanOption("--deleteLog")) != null) {
                 deleteLog = a.getBooleanValue();
             } else if ((a = args.readBooleanOption("--install")) != null) {
@@ -325,9 +309,7 @@ public class RemoteTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else {
                 args.unexpectedArgument("tomcat --remote reset");
             }
@@ -381,9 +363,7 @@ public class RemoteTomcat {
         Helper h = new Helper();
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readBooleanOption("--json")) != null) {
                 h.json = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args)) != null) {
@@ -427,9 +407,7 @@ public class RemoteTomcat {
         PropsHelper x = new PropsHelper();
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if (x.s == null && (x.s = readBaseServiceArg(args)) != null) {
                 //ok
             } else if ((a = args.readStringOption("--property")) != null) {

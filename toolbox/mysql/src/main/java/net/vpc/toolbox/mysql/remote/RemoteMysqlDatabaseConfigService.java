@@ -2,6 +2,7 @@ package net.vpc.toolbox.mysql.remote;
 
 import net.vpc.app.nuts.NutsCommandExecBuilder;
 import net.vpc.app.nuts.NutsCommandStringFormatterAdapter;
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
@@ -45,7 +46,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().getJsonIO().write(getConfig(), out, true);
+        context.getWorkspace().getIOManager().writeJson(getConfig(), out, true);
     }
 
     public int pull() {
@@ -57,7 +58,7 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysqlConfigService loc = ms.loadOrCreateMysqlConfig(getConfig().getLocalInstance());
         String localDatabase = getConfig().getLocalDatabase();
         if (StringUtils.isEmpty(localDatabase)) {
-            throw new IllegalArgumentException("Missing local database name");
+            throw new NutsExecutionException("Missing local database name",2);
         }
         LocalMysqlDatabaseConfigService.ArchiveResult archiveResult = loc.getDatabase(localDatabase).archive(null);
         if (archiveResult.execResult != 0) {
@@ -81,7 +82,7 @@ public class RemoteMysqlDatabaseConfigService {
                         .exec("echo","$HOME") == 0) {
                     home = c.getOutputString().trim();
                 } else {
-                    throw new IllegalArgumentException("Unable to detect user remote home : " + c.getOutputString().trim());
+                    throw new NutsExecutionException("Unable to detect user remote home : " + c.getOutputString().trim(),2);
                 }
             }
             remoteTempPath = home + "/tmp";

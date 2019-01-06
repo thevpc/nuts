@@ -93,7 +93,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().resolvePath(dir));
         return CoreIOUtils.execAndWait(
                 nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),

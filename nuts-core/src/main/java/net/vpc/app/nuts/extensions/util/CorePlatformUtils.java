@@ -758,12 +758,12 @@ public class CorePlatformUtils {
         }
     }
 
-    public static ExecutionEntry[] resolveMainClasses(File jarFile) {
+    public static NutsExecutionEntry[] parseMainClasses(File jarFile) {
         try {
             FileInputStream in=null;
             try {
                 in = new FileInputStream(jarFile);
-                return resolveMainClasses(in);
+                return parseMainClasses(in);
             } finally {
                 if (in != null) {
                     in.close();
@@ -774,9 +774,9 @@ public class CorePlatformUtils {
         }
     }
 
-    public static ExecutionEntry[] resolveMainClasses(InputStream jarStream) {
+    public static NutsExecutionEntry[] parseMainClasses(InputStream jarStream) {
 
-        final List<ExecutionEntry> classes = new ArrayList<>();
+        final List<NutsExecutionEntry> classes = new ArrayList<>();
         final List<String> manifiestClass = new ArrayList<>();
         ZipUtils.visitZipStream(jarStream, new PathFilter() {
             @Override
@@ -792,7 +792,7 @@ public class CorePlatformUtils {
                 if (path.endsWith(".class")) {
                     int mainClass = getMainClassType(inputStream);
                     if (mainClass==1 || mainClass==3) {
-                        classes.add(new ExecutionEntry(
+                        classes.add(new NutsExecutionEntry(
                                 path.replace('/', '.').substring(0, path.length() - ".class".length()),
                                 false,
                                 mainClass==3
@@ -815,19 +815,19 @@ public class CorePlatformUtils {
                 return true;
             }
         });
-        List<ExecutionEntry> entries=new ArrayList<>();
+        List<NutsExecutionEntry> entries=new ArrayList<>();
         String defaultEntry=null;
         if(manifiestClass.size()>0){
             defaultEntry = manifiestClass.get(0);
         }
-        for (ExecutionEntry entry : classes) {
+        for (NutsExecutionEntry entry : classes) {
             if(defaultEntry!=null && defaultEntry.equals(entry.getName())){
-                entries.add(new ExecutionEntry(entry.getName(),true,entry.isApp()));
+                entries.add(new NutsExecutionEntry(entry.getName(),true,entry.isApp()));
             }else{
                 entries.add(entry);
             }
         }
-        return entries.toArray(new ExecutionEntry[0]);
+        return entries.toArray(new NutsExecutionEntry[0]);
     }
 
     /**

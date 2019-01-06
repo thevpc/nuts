@@ -1,10 +1,7 @@
 package net.vpc.app.nuts;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,146 +9,6 @@ public final class NutsArgumentsParser {
     private static final Logger log = Logger.getLogger(NutsArgumentsParser.class.getName());
 
     private NutsArgumentsParser() {
-    }
-
-    public static String[] parseCommandLine(String commandLineString) {
-        if (commandLineString == null) {
-            return new String[0];
-        }
-        List<String> args = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        final int START = 0;
-        final int IN_WORD = 1;
-        final int IN_QUOTED_WORD = 2;
-        int status = START;
-        char[] charArray = commandLineString.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
-            switch (status) {
-                case START: {
-                    switch (c) {
-                        case ' ': {
-                            //ignore
-                            break;
-                        }
-                        case '\'': {
-                            status = IN_QUOTED_WORD;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            throw new IllegalArgumentException("Illegal char " + c);
-                        }
-                        default: {
-                            sb.append(c);
-                            status = IN_WORD;
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_WORD: {
-                    switch (c) {
-                        case ' ': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            break;
-                        }
-                        case '\'': {
-                            throw new IllegalArgumentException("Illegal char " + c);
-                        }
-                        case '\\': {
-                            throw new IllegalArgumentException("Illegal char " + c);
-                        }
-                        default: {
-                            sb.append(c);
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_QUOTED_WORD: {
-                    switch (c) {
-                        case '\'': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            i++;
-                            sb.append(charArray[i]);
-                            //ignore
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            //ignore
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        switch (status) {
-            case START: {
-                break;
-            }
-            case IN_WORD: {
-                args.add(sb.toString());
-                sb.delete(0, sb.length());
-                break;
-            }
-            case IN_QUOTED_WORD: {
-                throw new IllegalArgumentException("Expected '");
-            }
-        }
-        return args.toArray(new String[0]);
-    }
-
-    private static String compressBootArgument(String arg) {
-        StringBuilder sb = new StringBuilder();
-        boolean s = false;
-        if (arg != null) {
-            for (char c : arg.toCharArray()) {
-                switch (c) {
-                    case '\'':
-                    case '\\': {
-                        sb.append('\\');
-                        sb.append(c);
-                        s = true;
-                        break;
-                    }
-                    case ' ': {
-                        s = true;
-                        sb.append(c);
-                        break;
-                    }
-                    default: {
-                        sb.append(c);
-                    }
-                }
-            }
-        }
-        if (s || sb.length() == 0) {
-            sb.insert(0, '\'');
-            sb.append('\'');
-        }
-        return sb.toString();
-    }
-
-    public static String compressBootArguments(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (i > 0) {
-                sb.append(" ");
-            }
-            sb.append(compressBootArgument(arg));
-        }
-        return sb.toString();
     }
 
     public static NutsArguments parseNutsArguments(String[] args, boolean expectedNutsArgs) {
@@ -165,7 +22,7 @@ public final class NutsArgumentsParser {
             nargs = args;
             aargs = null;
             //never create new instance if expected nuts args(inherited workspace)
-            NewInstanceNutsArguments a = parseNewInstanceNutsArguments(nargs);
+            NutsNewInstanceNutsArguments a = parseNewInstanceNutsArguments(nargs);
             if (a != null) {
                 return a;
             }
@@ -173,69 +30,48 @@ public final class NutsArgumentsParser {
         return parseCurrentInstanceNutsArguments(nargs, aargs);
     }
 
+
     private static NutsWorkspaceOptions parseCurrentInstanceNutsArguments(String[] bootArguments, String[] initialApplicationArguments) {
         List<String> showError = new ArrayList<>();
         NutsWorkspaceOptions o = new NutsWorkspaceOptions().setCreateIfNotFound(true);
-        int startAppArgs = 0;
-        boolean expectArgs = false;
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
-        List<String> applicationArguments = new ArrayList<>();
+        HashSet<String> tempRepositories = new HashSet<>();
         List<String> executorOptions = new ArrayList<>();
+        LogConfig logConfig = new LogConfig();
         o.setSaveIfCreated(true);
-        for (int i = 0; i < bootArguments.length; i++) {
-            String a = bootArguments[i];
-            if (!expectArgs && a.startsWith("-")) {
-                switch (a) {
-                    //dash (startAppArgs) should be the very last argument
+        NutsMinimalCommandLine.Arg cmdArg;
+        CmdArgList2 cmdArgList = new CmdArgList2(bootArguments);
+        while ((cmdArg = cmdArgList.next()) != null) {
+            if (cmdArg.isOption()) {
+                switch (cmdArg.getKey()) {
+                    //dash  should be the very last argument
                     case "-": {
-                        applicationArguments.add(0, NutsConstants.NUTS_SHELL);
-                        startAppArgs = i + 1;
-                        //force exit loop
-                        i = bootArguments.length;
-                        continue;
+                        if (cmdArg.getValue() != null) {
+                            throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
+                        }
+                        cmdArgList.applicationArguments.add(NutsConstants.NUTS_SHELL);
+                        cmdArgList.consumeApplicationArguments();
+                        break;
                     }
-                    case "--home":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for workspace");
-                        }
-                        o.setHome(bootArguments[i]);
+                    case "--home": {
+                        o.setHome(cmdArgList.getValueFor(cmdArg));
                         break;
-                    case "--workspace":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for workspace");
-                        }
-                        o.setWorkspace(bootArguments[i]);
+                    }
+                    case "--workspace": {
+                        o.setWorkspace(cmdArgList.getValueFor(cmdArg));
                         break;
-                    case "--archetype":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for archetype");
-                        }
-                        o.setArchetype(bootArguments[i]);
+                    }
+                    case "--archetype": {
+                        o.setArchetype(cmdArgList.getValueFor(cmdArg));
                         break;
-                    case "--login":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for login ");
-                        }
-                        o.setLogin(bootArguments[i]);
+                    }
+                    case "--login": {
+                        o.setLogin(cmdArgList.getValueFor(cmdArg));
                         break;
-                    case "--password":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for password");
-                        }
-                        o.setPassword(bootArguments[i]);
-                        break;
-                    case "--boot-runtime":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for runtime-id");
-                        }
-                        String br = bootArguments[i];
+                    }
+                    case "--boot-runtime": {
+                        String br = cmdArgList.getValueFor(cmdArg);
                         if (br.indexOf("#") > 0) {
                             //this is a full id
                         } else {
@@ -243,358 +79,284 @@ public final class NutsArgumentsParser {
                         }
                         o.setBootRuntime(br);
                         break;
-                    case "--runtime-source-url":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for boot-url");
-                        }
-                        o.setBootRuntimeSourceURL(bootArguments[i]);
+                    }
+                    case "--runtime-source-url": {
+                        o.setBootRuntimeSourceURL(cmdArgList.getValueFor(cmdArg));
                         break;
+                    }
                     case "--java":
-                    case "--boot-java":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for java");
-                        }
-                        o.setBootJavaCommand(bootArguments[i]);
+                    case "--boot-java": {
+                        o.setBootJavaCommand(cmdArgList.getValueFor(cmdArg));
                         break;
+                    }
                     case "--java-home":
-                    case "--boot-java-home":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for java-home");
-                        }
-                        o.setBootJavaCommand(NutsUtils.resolveJavaCommand(bootArguments[i]));
+                    case "--boot-java-home": {
+                        o.setBootJavaCommand(NutsUtils.resolveJavaCommand(cmdArgList.getValueFor(cmdArg)));
                         break;
+                    }
                     case "--java-options":
-                    case "--boot-java-options":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for java-options");
-                        }
-                        o.setBootJavaOptions(bootArguments[i]);
+                    case "--boot-java-options": {
+                        o.setBootJavaOptions(cmdArgList.getValueFor(cmdArg));
                         break;
-                    case "--save":
+                    }
+                    case "--save": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setSaveIfCreated(true);
                         break;
+                    }
                     case "--no-save":
-                    case "--!save":
+                    case "--!save": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setSaveIfCreated(false);
                         break;
-                    case "--no-colors":
+                    }
                     case "--!colors":
+                    case "--no-colors": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setNoColors(true);
                         break;
-                    case "--read-only":
+                    }
+                    case "--read-only": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setReadOnly(true);
                         break;
+                    }
                     case "-version":
-                    case "--version":
+                    case "--version": {
                         o.setBootCommand(NutsBootCommand.VERSION);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--update":
+                    }
+                    case "--info": {
+                        o.setBootCommand(NutsBootCommand.INFO);
+                        cmdArgList.consumeApplicationArguments();
+                        break;
+                    }
+                    case "--update": {
                         o.setBootCommand(NutsBootCommand.UPDATE);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--clean":
+                    }
+                    case "--clean": {
                         o.setBootCommand(NutsBootCommand.CLEAN);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--reset":
+                    }
+                    case "--reset": {
                         o.setBootCommand(NutsBootCommand.RESET);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--install-companions":
+                    }
+                    case "--install-companions": {
                         o.setBootCommand(NutsBootCommand.INSTALL_COMPANIONS);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--exec":
-                        o.setBootCommand(NutsBootCommand.EXEC);
-                        while (i+1 < bootArguments.length) {
-                            a = bootArguments[i+1];
-                            if (!a.startsWith("-")) {
-                                break;
-                            } else {
-                                executorOptions.add(a);
-                            }
-                            i++;
-                        }
-                        expectArgs = true;
-                        break;
-                    case "--check-updates":
+                    }
+                    case "--check-updates": {
                         o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--install":
+                    }
+                    case "--install": {
                         o.setBootCommand(NutsBootCommand.INSTALL);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--uninstall":
+                    }
+                    case "--uninstall": {
                         o.setBootCommand(NutsBootCommand.UNINSTALL);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
-                    case "--verbose":
-                    case "--log-finest":
-                        o.setLogLevel(Level.FINEST);
-                        break;
-                    case "--info":
-                    case "--log-info":
-                        o.setLogLevel(Level.INFO);
-                        break;
-                    case "--log-fine":
-                        o.setLogLevel(Level.FINE);
-                        break;
-                    case "--log-finer":
-                        o.setLogLevel(Level.FINER);
-                        break;
-                    case "--log-all":
-                        o.setLogLevel(Level.ALL);
-                        break;
-                    case "--log-off":
-                        o.setLogLevel(Level.OFF);
-                        break;
-                    case "--log-severe":
-                        o.setLogLevel(Level.SEVERE);
-                        break;
-                    case "--log-size":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for log-size");
+                    }
+                    case "--exec": {
+                        o.setBootCommand(NutsBootCommand.EXEC);
+                        while ((cmdArg = cmdArgList.next()) != null) {
+                            if (cmdArg.isOption()) {
+                                executorOptions.add(cmdArg.getArg());
+                            } else {
+                                cmdArgList.applicationArguments.add(cmdArg.getArg());
+                                cmdArgList.consumeApplicationArguments();
+                            }
                         }
-                        o.setLogSize(NutsUtils.parseFileSize(bootArguments[i]));
                         break;
-                    case "--log-folder":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for log-size");
-                        }
-                        o.setLogFolder(bootArguments[i]);
-                        break;
-                    case "--log-name":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for log-name");
-                        }
-                        o.setLogName(bootArguments[i]);
-                        break;
-                    case "--log-count":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for log-count");
-                        }
-                        o.setLogCount(Integer.parseInt(bootArguments[i]));
-                        break;
-                    case "--exclude-extensions":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for exclude-extensions");
-                        }
-                        excludedExtensions.addAll(NutsUtils.split(bootArguments[i], " ,;"));
-                        break;
-                    case "--exclude-repositories":
-                        i++;
-                        if (i >= bootArguments.length) {
-                            throw new NutsIllegalArgumentException("Missing argument for exclude-repositories");
-                        }
-                        excludedRepositories.addAll(NutsUtils.split(bootArguments[i], " ,;"));
-                        break;
+                    }
                     case "--help": {
                         o.setBootCommand(NutsBootCommand.HELP);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
                         break;
                     }
                     case "--license": {
                         o.setBootCommand(NutsBootCommand.LICENSE);
-                        expectArgs = true;
+                        cmdArgList.consumeApplicationArguments();
+                        break;
+                    }
+                    case "--verbose":
+                    case "--log-finest":
+                    case "--log-finer":
+                    case "--log-fine":
+                    case "--log-info":
+                    case "--log-warning":
+                    case "--log-severe":
+                    case "--log-all":
+                    case "--log-off":
+                    case "--log-size":
+                    case "--log-name":
+                    case "--log-folder":
+                    case "--log-count":
+                    case "--log-inherited": {
+                        parseLogLevel(logConfig, cmdArg, cmdArgList);
+                        break;
+                    }
+                    case "--exclude-extension": {
+                        excludedExtensions.add(cmdArgList.getValueFor(cmdArg));
+                        break;
+                    }
+                    case "--exclude-repository": {
+                        excludedRepositories.add(cmdArgList.getValueFor(cmdArg));
+                        break;
+                    }
+                    case "--repository": {
+                        tempRepositories.add(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
                     case "--perf": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setPerf(true);
                         break;
                     }
-                    default: {
-                        if (a.startsWith("--version=")) {
-                            o.setBootCommand(NutsBootCommand.VERSION);
-                            applicationArguments.add(a.substring("--version=".length()));
-                            expectArgs = true;
-                        } else if (a.startsWith("--auto-config=")) {
-                            o.setAutoConfig(a.substring("--auto-config=".length()));
-                        } else {
-                            showError.add("nuts: invalid option [[" + a + "]]");
-                        }
+                    case "--auto-config": {
+                        o.setAutoConfig(cmdArg.getKey() == null ? "" : cmdArg.getKey());
                         break;
                     }
-                }
-                startAppArgs = i + 1;
-                if (expectArgs) {
-                    break;
+                    default: {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        showError.add("nuts: invalid option [[" + cmdArg.getArg() + "]]");
+                    }
                 }
             } else {
-                break;
+                cmdArgList.applicationArguments.add(cmdArg.getArg());
+                cmdArgList.consumeApplicationArguments();
             }
         }
+        if (logConfig.logConfigured) {
+            o.setLogLevel(logConfig.logLevel);
+            o.setLogCount(logConfig.logCount);
+            o.setLogSize(logConfig.logSize);
+            o.setLogFolder(logConfig.logFolder);
+            o.setLogName(logConfig.logName);
+            o.setLogInherited(logConfig.logInherited);
+        }
+        //NutsUtils.split(bootArguments[i], " ,;")
         o.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
         o.setExcludedRepositories(excludedRepositories.toArray(new String[0]));
-        if(startAppArgs<bootArguments.length) {
-            applicationArguments.addAll(Arrays.asList(Arrays.copyOfRange(bootArguments, startAppArgs, bootArguments.length)));
-        }
+        o.setTransientRepositories(tempRepositories.toArray(new String[0]));
         if (o.getBootCommand() != NutsBootCommand.HELP) {
             if (!showError.isEmpty()) {
+                StringBuilder errorMessage = new StringBuilder();
                 for (String s : showError) {
-                    System.err.printf("%s\n", s);
+                    errorMessage.append(s).append("\n");
                 }
-                System.err.println("Try 'nuts --help' for more information.\n");
-                throw new NutsIllegalArgumentException("Try 'nuts --help' for more information.");
+                errorMessage.append("Try 'nuts --help' for more information.\n");
+                throw new NutsIllegalArgumentException(errorMessage.toString());
             }
         }
         if (initialApplicationArguments != null) {
-            applicationArguments.addAll(Arrays.asList(initialApplicationArguments));
+            cmdArgList.applicationArguments.addAll(Arrays.asList(initialApplicationArguments));
         }
-        o.setBootArguments(Arrays.copyOfRange(bootArguments, 0, startAppArgs));
-        o.setApplicationArguments(applicationArguments.toArray(new String[0]));
+        o.setBootArguments(cmdArgList.bootOnlyArgsList.toArray(new String[0]));
+        o.setApplicationArguments(cmdArgList.applicationArguments.toArray(new String[0]));
         o.setExecutorOptions(executorOptions.toArray(new String[0]));
         return o;
     }
 
-    private static NewInstanceNutsArguments parseNewInstanceNutsArguments(String[] args) {
-        String requiredBootVersion = null;
-        String requiredJavaCommand = null;
-        String requiredJavaOptions = null;
-        boolean configureLog = false;
+    private static class LogConfig {
+        boolean logConfigured = false;
         Level logLevel = null;
         int logSize = 0;
         int logCount = 0;
         String logName = null;
         String logFolder = null;
+        boolean logInherited = false;
+    }
+
+    private static NutsNewInstanceNutsArguments parseNewInstanceNutsArguments(String[] args) {
+        String requiredBootVersion = null;
+        String requiredJavaCommand = null;
+        String requiredJavaOptions = null;
         String nutsHome = null;
         String workspace = null;
-        for (int i = 0; i < args.length; i++) {
-            String a = args[i];
-            switch (a) {
+        LogConfig logConfig = new LogConfig();
+        NutsMinimalCommandLine.Arg cmdArg;
+        NutsMinimalCommandLine cmdArgList = new NutsMinimalCommandLine(args);
+        while ((cmdArg = cmdArgList.next()) != null) {
+            switch (cmdArg.getKey()) {
+                //these commands should be executed in the very same process!!
+                case "--check-updates":
+                case "--clean":
+                case "--update":
+                case "--reset": {
+                    return null;
+                }
                 case "--boot-version":
-                case "--boot-api-version":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for run-version");
-                    }
-                    requiredBootVersion = args[i];
+                case "--boot-api-version": {
+                    requiredBootVersion = cmdArgList.getValueFor(cmdArg);
                     break;
+                }
                 case "--java":
-                case "--boot-java":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for java");
-                    }
-                    requiredJavaCommand = args[i];
+                case "--boot-java": {
+                    requiredJavaCommand = cmdArgList.getValueFor(cmdArg);
                     break;
+                }
                 case "--java-home":
-                case "--boot-java-home":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for java-home");
-                    }
-                    requiredJavaCommand = NutsUtils.resolveJavaCommand(args[i]);
+                case "--boot-java-home": {
+                    requiredJavaCommand = NutsUtils.resolveJavaCommand(cmdArgList.getValueFor(cmdArg));
                     break;
+                }
                 case "--java-options":
-                case "--boot-java-options":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for java-options");
-                    }
-                    requiredJavaOptions = args[i];
+                case "--boot-java-options": {
+                    requiredJavaOptions = cmdArgList.getValueFor(cmdArg);
                     break;
-                case "--home":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for workspace");
-                    }
-                    nutsHome = args[i];
+                }
+                case "--home": {
+                    nutsHome = cmdArgList.getValueFor(cmdArg);
                     break;
+                }
+                case "--workspace": {
+                    workspace = cmdArgList.getValueFor(cmdArg);
+                    break;
+                }
                 case "--verbose":
                 case "--log-finest":
-                    configureLog = true;
-                    logLevel = Level.FINEST;
-                    break;
-                case "--info":
-                case "--log-info":
-                    configureLog = true;
-                    logLevel = Level.INFO;
-                    break;
-                case "--log-fine":
-                    configureLog = true;
-                    logLevel = Level.FINE;
-                    break;
                 case "--log-finer":
-                    configureLog = true;
-                    logLevel = Level.FINER;
-                    break;
-                case "--log-all":
-                    configureLog = true;
-                    logLevel = Level.ALL;
-                    break;
-                case "--log-off":
-                    configureLog = true;
-                    logLevel = Level.OFF;
-                    break;
+                case "--log-fine":
+                case "--log-info":
+                case "--log-warning":
                 case "--log-severe":
-                    configureLog = true;
-                    logLevel = Level.SEVERE;
-                    break;
+                case "--log-all":
+                case "--log-off":
                 case "--log-size":
-                    configureLog = true;
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for log-size");
-                    }
-                    logSize = Integer.parseInt(args[i]);
-                    break;
-                case "--log-count":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for log-count");
-                    }
-                    logCount = Integer.parseInt(args[i]);
-                    break;
-                case "--log-folder":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for log-folder");
-                    }
-                    logFolder = args[i];
-                    break;
                 case "--log-name":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for log-name");
-                    }
-                    logName = args[i];
+                case "--log-folder":
+                case "--log-count":
+                case "--log-inherited": {
+                    parseLogLevel(logConfig, cmdArg, cmdArgList);
                     break;
-                case "--workspace":
-                    i++;
-                    if (i >= args.length) {
-                        throw new NutsIllegalArgumentException("Missing argument for workspace");
-                    }
-                    workspace = args[i];
-                    break;
-                default:
-                    break;
+                }
             }
         }
         if (nutsHome == null) {
-            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
+            nutsHome = Nuts.getDefaultNutsHome();
         }
         NutsBootConfig defaultBootConfig = NutsUtils.loadNutsBootConfig(nutsHome, workspace);
         String actualVersion = Nuts.getActualVersion();
 
         if (requiredBootVersion == null) {
-            requiredBootVersion = defaultBootConfig.getBootAPIVersion();
+            requiredBootVersion = defaultBootConfig.getApiVersion();
         }
         if (requiredJavaCommand == null) {
-            requiredJavaCommand = defaultBootConfig.getBootJavaCommand();
+            requiredJavaCommand = defaultBootConfig.getJavaCommand();
         }
         if (requiredJavaOptions == null) {
-            requiredJavaOptions = defaultBootConfig.getBootJavaOptions();
+            requiredJavaOptions = defaultBootConfig.getJavaOptions();
         }
         if (
                 (requiredBootVersion == null || requiredBootVersion.trim().isEmpty() || requiredBootVersion.equals(actualVersion))
@@ -603,8 +365,8 @@ public final class NutsArgumentsParser {
         ) {
             return null;
         }
-        if (configureLog) {
-            NutsLogUtils.prepare(logLevel, logFolder, logName, logSize, logCount, nutsHome, workspace);
+        if (logConfig.logConfigured) {
+            NutsLogUtils.prepare(logConfig.logLevel, logConfig.logFolder, logConfig.logName, logConfig.logSize, logConfig.logCount, logConfig.logInherited, nutsHome, workspace);
         }
         log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
         StringBuilder errors = new StringBuilder();
@@ -619,37 +381,38 @@ public final class NutsArgumentsParser {
             }
             System.out.println("detected version " + requiredBootVersion);
         }
+        String defaultWorkspaceCacheFolder = Nuts.getDefaultWorkspaceFolder(NutsConstants.DEFAULT_WORKSPACE_NAME, nutsHome, RootFolderType.CACHE);
         File file = NutsUtils.resolveOrDownloadJar(NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion,
                 new String[]{
-                        nutsHome + File.separator + NutsConstants.DEFAULT_WORKSPACE_NAME + File.separator + "cache",
+                        defaultWorkspaceCacheFolder,
                         System.getProperty("user.home") + "/.m2/repository",
                         NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
                         NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
                         NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
                 },
-                nutsHome + File.separator + NutsConstants.DEFAULT_WORKSPACE_NAME + File.separator + "cache"
+                defaultWorkspaceCacheFolder
         );
         if (file == null) {
             errors.append("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#").append(requiredBootVersion).append("\n");
             NutsBootConfig actualBootConfig = new NutsBootConfig()
-                    .setBootAPIVersion(NutsConstants.NUTS_ID_BOOT_API + "#" + Nuts.getActualVersion())
-                    .setBootRuntime(null);
+                    .setApiVersion(NutsConstants.NUTS_ID_BOOT_API + "#" + Nuts.getActualVersion())
+                    .setRuntimeId(null);
 
             NutsUtils.showError(
                     actualBootConfig,
                     new NutsBootConfig()
-                            .setBootAPIVersion(requiredBootVersion)
-                            .setBootRuntime(null)
-                            .setBootJavaCommand(requiredJavaCommand)
-                            .setBootJavaOptions(requiredJavaOptions)
+                            .setApiVersion(requiredBootVersion)
+                            .setRuntimeId(null)
+                            .setJavaCommand(requiredJavaCommand)
+                            .setJavaOptions(requiredJavaOptions)
                     , nutsHome
-                    , workspace,
+                    , workspace, null,
                     errors.toString()
             );
 
             throw new NutsIllegalArgumentException("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion);
         }
-        NewInstanceNutsArguments a = new NewInstanceNutsArguments();
+        NutsNewInstanceNutsArguments a = new NutsNewInstanceNutsArguments();
         a.setBootFile(file);
         //should read from params
         a.setBootVersion(requiredBootVersion);
@@ -684,21 +447,21 @@ public final class NutsArgumentsParser {
     private static String[][] resolveBootAndAppArgs(String[] args) {
         if (args.length > 0 && args[0].startsWith("--nuts-boot-args=")) {
             return new String[][]{
-                    parseCommandLine(args[0].substring("--nuts-boot-args=".length())),
+                    NutsMinimalCommandLine.parseCommandLine(args[0].substring("--nuts-boot-args=".length())),
                     Arrays.copyOfRange(args, 1, args.length)
             };
         } else {
             String s = System.getProperty("nuts.boot.args");
             if (s != null) {
                 return new String[][]{
-                        parseCommandLine(s),
+                        NutsMinimalCommandLine.parseCommandLine(s),
                         args
                 };
             }
             s = System.getenv("nuts_boot_args");
             if (s != null) {
                 return new String[][]{
-                        parseCommandLine(s),
+                        NutsMinimalCommandLine.parseCommandLine(s),
                         args
                 };
             }
@@ -708,4 +471,124 @@ public final class NutsArgumentsParser {
             };
         }
     }
+
+    private static void parseLogLevel(LogConfig logConfig, NutsMinimalCommandLine.Arg cmdArg, NutsMinimalCommandLine cmdArgList) {
+        switch (cmdArg.getKey()) {
+            case "--log-size": {
+                logConfig.logConfigured = true;
+                logConfig.logSize = Integer.parseInt(cmdArgList.getValueFor(cmdArg));
+                break;
+            }
+            case "--log-count": {
+                logConfig.logConfigured = true;
+                logConfig.logCount = Integer.parseInt(cmdArgList.getValueFor(cmdArg));
+                break;
+            }
+            case "--log-name": {
+                logConfig.logConfigured = true;
+                logConfig.logName = cmdArgList.getValueFor(cmdArg);
+                break;
+            }
+            case "--log-folder": {
+                logConfig.logConfigured = true;
+                logConfig.logFolder = cmdArgList.getValueFor(cmdArg);
+                break;
+            }
+            case "--log-inherited": {
+                logConfig.logConfigured = true;
+                logConfig.logInherited = true;
+                break;
+            }
+            case "--verbose":
+            case "--log-finest":
+            case "--log-finer":
+            case "--log-fine":
+            case "--log-info":
+            case "--log-warning":
+            case "--log-severe":
+            case "--log-all":
+            case "--log-off": {
+                if (cmdArgList instanceof CmdArgList2) {
+                    ((CmdArgList2) cmdArgList).bootOnlyArgsList.add(cmdArg.getArg());
+                }
+                logConfig.logConfigured = true;
+                String id = cmdArg.getKey();
+                if (cmdArg.getKey().startsWith("--log-")) {
+                    id = id.substring("--log-".length());
+                } else if (cmdArg.getKey().equals("--log")) {
+                    id = cmdArg.getValue();
+                    if (id == null) {
+                        id = "";
+                    }
+                } else if (id.startsWith("--")) {
+                    id = cmdArg.getKey().substring(2);
+                } else {
+                    id = cmdArg.getKey();
+                }
+                switch (id.toLowerCase()) {
+                    case "verbose": {
+                        logConfig.logLevel = Level.FINEST;
+                        break;
+                    }
+                    case "finest": {
+                        logConfig.logLevel = Level.FINEST;
+                        break;
+                    }
+                    case "finer": {
+                        logConfig.logLevel = Level.FINER;
+                        break;
+                    }
+                    case "fine": {
+                        logConfig.logLevel = Level.FINE;
+                        break;
+                    }
+                    case "info": {
+                        logConfig.logLevel = Level.INFO;
+                        break;
+                    }
+                    case "warning": {
+                        logConfig.logLevel = Level.WARNING;
+                        break;
+                    }
+                    case "config": {
+                        logConfig.logLevel = Level.CONFIG;
+                        break;
+                    }
+                    case "all": {
+                        logConfig.logLevel = Level.ALL;
+                        break;
+                    }
+                    case "off": {
+                        logConfig.logLevel = Level.OFF;
+                        break;
+                    }
+                    default: {
+                        logConfig.logLevel = Level.INFO;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    private static class CmdArgList2 extends NutsMinimalCommandLine {
+        List<String> bootOnlyArgsList = new ArrayList<>();
+        List<String> applicationArguments = new ArrayList<>();
+
+        public CmdArgList2(String[] args) {
+            super(args);
+        }
+
+        public String getValueFor(Arg cmdArg) {
+            String v = super.getValueFor(cmdArg);
+            bootOnlyArgsList.add(cmdArg.getKey() + "=" + v);
+            return v;
+        }
+
+        public void consumeApplicationArguments() {
+            applicationArguments.addAll(removeAll());
+        }
+    }
+
 }

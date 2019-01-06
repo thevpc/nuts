@@ -155,7 +155,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
             ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_ADMIN,"set-user-credentials");
         }
         if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-            ws.getExtensionManager().createSupported(NutsAuthenticationAgent.class, u.getAuthenticationAgent())
+            ws.getConfigManager().createAuthenticationAgent(u.getAuthenticationAgent())
                     .checkCredentials(
                             u.getCredentials(),
                             u.getAuthenticationAgent(),
@@ -335,7 +335,7 @@ class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManage
         if (security == null) {
             throw new NutsIllegalArgumentException("User not found " + user);
         }
-        security.setCredentials(ws.getExtensionManager().createSupported(NutsAuthenticationAgent.class, security.getAuthenticationAgent())
+        security.setCredentials(ws.getConfigManager().createAuthenticationAgent(security.getAuthenticationAgent())
                 .setCredentials(credentials, security.getAuthenticationAgent(),
                         ws.getConfigManager()));
         ws.getConfigManager().setUser(security);

@@ -36,17 +36,7 @@ import java.io.PrintStream;
  * Created by vpc on 2/20/17.
  */
 @Prototype
-public interface NutsTerminalBase extends NutsComponent<Object> {
+public interface NutsTerminalBase extends NutsComponent<Object>, NutsTerminalMin {
 
     void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err);
-
-    String readLine(String promptFormat, Object... params);
-
-    String readPassword(String prompt);
-
-    InputStream getIn();
-
-    PrintStream getOut();
-
-    PrintStream getErr();
 }

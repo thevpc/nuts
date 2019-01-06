@@ -55,7 +55,6 @@ public class UnameCommand extends AbstractNutsCommand {
         boolean fos = false;
         boolean fdist = false;
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -75,11 +74,10 @@ public class UnameCommand extends AbstractNutsCommand {
         }
         if (cmdLine.isExecMode()) {
             NutsWorkspace ws = context.getWorkspace();
-            NutsId osdist = ws.getPlatformOsDist();
-            NutsId os = ws.getPlatformOs();
-            NutsId arch = ws.getPlatformArch();
+            NutsId osdist = ws.getConfigManager().getPlatformOsDist();
+            NutsId os = ws.getConfigManager().getPlatformOs();
+            NutsId arch = ws.getConfigManager().getPlatformArch();
 
-            PrintStream out = context.getTerminal().getFormattedOut();
             List<String> sb = new ArrayList<>();
             if (!farch && !fos && !fdist) {
                 sb.add(osdist.toString());
@@ -99,7 +97,7 @@ public class UnameCommand extends AbstractNutsCommand {
             if (sb.isEmpty()) {
                 sb.add("<UNKNOWN>");
             }
-            out.println(StringUtils.join(" ", sb));
+            context.out().println(StringUtils.join(" ", sb));
         }
         return 0;
     }

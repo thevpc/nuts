@@ -21,7 +21,7 @@ public class ProjectService {
     public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, File file) throws IOException {
         this.appContext = appContext;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = appContext.getWorkspace().getJsonIO().read(file, ProjectConfig.class);
+        config = appContext.getWorkspace().getIOManager().readJson(file, ProjectConfig.class);
     }
 
     public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -51,13 +51,13 @@ public class ProjectService {
     public void save() throws IOException {
         File configFile = getConfigFile();
         FileUtils.createParents(configFile);
-        appContext.getWorkspace().getJsonIO().write(config, configFile, true);
+        appContext.getWorkspace().getIOManager().writeJson(config, configFile, true);
     }
 
     public boolean load() {
         File configFile = getConfigFile();
         if (configFile.isFile()) {
-            ProjectConfig u = appContext.getWorkspace().getJsonIO().read(configFile, ProjectConfig.class);
+            ProjectConfig u = appContext.getWorkspace().getIOManager().readJson(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -153,7 +153,7 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (StringUtils.isEmpty(nutsRepository)) {
-                        throw new IllegalArgumentException("Missing Repository");
+                        throw new NutsExecutionException("Missing Repository",2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));

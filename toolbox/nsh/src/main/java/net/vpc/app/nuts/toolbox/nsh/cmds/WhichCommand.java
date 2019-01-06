@@ -57,7 +57,6 @@ public class WhichCommand extends AbstractNutsCommand {
         NutsWorkspace validWorkspace = context.getWorkspace();
         List<String> elems = new ArrayList<>();
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -66,7 +65,7 @@ public class WhichCommand extends AbstractNutsCommand {
 
             }
         }
-        PrintStream out = context.getTerminal().getFormattedOut(noColors);
+        PrintStream out = context.out();
 
         int ret = 0;
         if (elems.isEmpty()) {
@@ -84,7 +83,7 @@ public class WhichCommand extends AbstractNutsCommand {
                 if (cmdLine.isExecMode()) {
                     NutsId found = validWorkspace.resolveId(id, context.getSession());
                     if (found == null) {
-                        context.getTerminal().getFormattedErr().printf("%s not found\n", id);
+                        context.err().printf("%s not found\n", id);
                         ret = 1;
                     } else {
                         out.println(found);
@@ -146,7 +145,7 @@ public class WhichCommand extends AbstractNutsCommand {
                 cp_nutsCoreFile = core.getFile();
             }
         }
-        map.put("nuts.workspace.version", workspace.getConfigManager().getBootAPI().getVersion().getValue());
+        map.put("nuts.workspace.version", workspace.getConfigManager().getRunningContext().getApiId().getVersion().getValue());
         map.put("nuts.workspace.api-component", cp_nutsFile);
         map.put("nuts.workspace.core-component", cp_nutsCoreFile);
         map.put("nuts.workspace.location", workspace.getConfigManager().getWorkspaceLocation());

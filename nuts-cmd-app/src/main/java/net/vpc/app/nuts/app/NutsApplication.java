@@ -61,9 +61,8 @@ public abstract class NutsApplication {
                     errorCode = ex2.getExitCode();
                 }
             } else {
-                ex.printStackTrace();
+                forceStackTrace=true;
             }
-            boolean extraError = false;
             try {
                 NutsSession s = null;//ws == null ? null : ws.createSession();
                 PrintStream formattedErr = s == null ? System.err : s.getTerminal().getFormattedErr();
@@ -76,9 +75,9 @@ public abstract class NutsApplication {
                 }
                 formattedErr.printf("%s\n", m);
             } catch (Exception xex) {
-                extraError = true;
+                forceStackTrace = true;
             }
-            if (extraError) {
+            if (forceStackTrace) {
                 ex.printStackTrace();
             }
             System.exit(errorCode);

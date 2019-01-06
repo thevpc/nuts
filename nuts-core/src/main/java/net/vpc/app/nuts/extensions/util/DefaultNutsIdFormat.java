@@ -140,21 +140,21 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                 if (!(importedGroup && omitImportedGroup)) {
                     if (importedGroup) {
                         sb.append("<<");
-                        sb.append(ws.escapeText(id.getGroup()));
+                        sb.append(ws.getParseManager().escapeText(id.getGroup()));
                         sb.append(">>");
                     } else {
-                        sb.append(ws.escapeText(id.getGroup()));
+                        sb.append(ws.getParseManager().escapeText(id.getGroup()));
                     }
                     sb.append(":");
                 }
             }
         }
         sb.append("[[");
-        sb.append(ws.escapeText(id.getName()));
+        sb.append(ws.getParseManager().escapeText(id.getName()));
         sb.append("]]");
         if (!StringUtils.isEmpty(id.getVersion().getValue())) {
             sb.append("#");
-            sb.append(ws.escapeText(id.getVersion().toString()));
+            sb.append(ws.getParseManager().escapeText(id.getVersion().toString()));
         }
         boolean firstQ=true;
 
@@ -168,7 +168,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             }
             sb.append("{{classifier}}=**");
             sb.append("**");
-            sb.append(ws.escapeText(classifier));
+            sb.append(ws.getParseManager().escapeText(classifier));
             sb.append("**");
         }
 
@@ -182,7 +182,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                 }
                 sb.append("{{scope}}=**");
                 sb.append("**");
-                sb.append(ws.escapeText(scope));
+                sb.append(ws.getParseManager().escapeText(scope));
                 sb.append("**");
             }
 //        }
@@ -195,7 +195,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                     sb.append("{{&}}");
                 }
                 sb.append("{{optional}}=**");
-                sb.append(ws.escapeText(optional));
+                sb.append(ws.getParseManager().escapeText(optional));
                 sb.append("**");
             }
 //        }
@@ -207,7 +207,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                 sb.append("{{&}}");
             }
             sb.append("{{exclusions}}=@@");
-            sb.append(ws.escapeText(exclusions));
+            sb.append(ws.getParseManager().escapeText(exclusions));
             sb.append("@@");
         }
         if (!StringUtils.isEmpty(id.getQuery())) {
@@ -227,9 +227,9 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                         }else{
                             sb.append("{{&}}");
                         }
-                        sb.append("<<"+ws.escapeText(ee.getKey())+">>=");
-                        sb.append(ws.escapeText(exclusions));
-                        sb.append("");
+                        sb.append("<<"+ws.getParseManager().escapeText(ee.getKey())+">>=");
+                        sb.append(ws.getParseManager().escapeText(exclusions));
+//                        sb.append("");
                     }
                 }
 

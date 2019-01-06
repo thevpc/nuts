@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
@@ -67,7 +68,7 @@ public class HeadCommand extends AbstractNutsCommand {
                 }else if (ShellHelper.isInt(cmdLine.get().getString().substring(1))) {
                     options.max = Integer.parseInt(cmdLine.read().getString().substring(1));
                 } else {
-                    throw new IllegalArgumentException("Not yet supported");
+                    throw new NutsExecutionException("Not yet supported",2);
                 }
             } else {
                 String path = cmdLine.read().getString();
@@ -76,7 +77,7 @@ public class HeadCommand extends AbstractNutsCommand {
             }
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("Not yet supported");
+            throw new NutsExecutionException("Not yet supported",2);
         }
         for (String file : files) {
             TextFiles.head(TextFiles.create(file), options.max, out);

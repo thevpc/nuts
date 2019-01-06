@@ -1,7 +1,6 @@
 package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.NutsExecutionException;
-import net.vpc.app.nuts.app.ColoredCellFormatter;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
@@ -28,7 +27,7 @@ public class WorkspaceService {
         File c = getConfigFile();
         if (c.isFile()) {
             try {
-                config = appContext.getWorkspace().getJsonIO().read(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().getIOManager().readJson(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -56,7 +55,7 @@ public class WorkspaceService {
         config = c;
         File configFile = getConfigFile();
         FileUtils.createParents(configFile);
-        appContext.getWorkspace().getJsonIO().write(c, configFile, true);
+        appContext.getWorkspace().getIOManager().writeJson(c, configFile, true);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -209,9 +208,6 @@ public class WorkspaceService {
                 cmd.unexpectedArgument("worky check");
             }
         }
-        if (appContext.isRequiredExit()) {
-            return appContext.getExitCode();
-        }
 
         Boolean[] b = new Boolean[]{commitable, newP, uptodate, old, invalid};
         updateBools(b, true);
@@ -272,7 +268,7 @@ public class WorkspaceService {
                 d.rem = "";
                 d.status = "new";
             } else {
-                int t = appContext.getWorkspace().parseVersion(d.loc).compareTo(d.rem);
+                int t = appContext.getWorkspace().getParseManager().parseVersion(d.loc).compareTo(d.rem);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -328,7 +324,7 @@ public class WorkspaceService {
             //"%s %s %s\n",projectService.getConfig().getId(),loc,rem
             tf.addRow(d.id, d.loc, d.rem, d.status);
         }
-        appContext.out().printf(tf.toString());
+        appContext.out().print(tf.toString());
         return 0;
     }
 

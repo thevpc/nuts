@@ -29,13 +29,15 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
-import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
+import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.commandline.format.PropertiesFormatter;
+import net.vpc.common.xfile.XFile;
 
 import java.io.*;
 import java.util.*;
@@ -78,7 +80,6 @@ public class PropsCommand extends AbstractNutsCommand {
         SourceType sourceType = SourceType.FILE;
         TargetType targetType = TargetType.FILE;
         String comments;
-        boolean noColors;
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
@@ -186,13 +187,13 @@ public class PropsCommand extends AbstractNutsCommand {
             }
         } while (cmdLine.hasNext());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
-            throw new IllegalArgumentException("Should not use file with --system flag");
+            throw new NutsExecutionException("props: Should not use file with --system flag",2);
         }
         if (o.sourceType == SourceType.FILE && o.sourceFile == null) {
-            throw new IllegalArgumentException("Missing file");
+            throw new NutsExecutionException("props: Missing file",3);
         }
         if (o.action == null) {
-            throw new IllegalArgumentException("Missing action");
+            throw new NutsExecutionException("props: Missing action",4);
         }
         switch (o.action) {
             case "get": {
@@ -221,7 +222,7 @@ public class PropsCommand extends AbstractNutsCommand {
                 return action_list(context, o);
             }
             default: {
-                throw new IllegalArgumentException("props: Unsupported action " + o.action);
+                throw new NutsExecutionException("props: Unsupported action " + o.action,2);
             }
         }
     }
@@ -273,13 +274,13 @@ public class PropsCommand extends AbstractNutsCommand {
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
         }
-        throw new IllegalArgumentException("Unknown file format " + file);
+        throw new NutsExecutionException("Unknown file format " + file,2);
     }
 
     private Properties readProperties(Options o,NutsCommandContext context) throws IOException {
         Properties p = new Properties();
         String sourceFile = o.sourceFile;
-        FilePath filePath = FilePath.of(sourceFile,context.getShell().getCwd());
+        XFile filePath = ShellHelper.xfileOf(sourceFile,context.getShell().getCwd());
         try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
@@ -341,7 +342,7 @@ public class PropsCommand extends AbstractNutsCommand {
                 }
             }
         } else {
-            FilePath filePath = FilePath.of(targetFile,context.getShell().getCwd());
+            XFile filePath = ShellHelper.xfileOf(targetFile,context.getShell().getCwd());
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {

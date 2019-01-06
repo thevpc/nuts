@@ -773,11 +773,12 @@ public class CoreNutsUtils {
     }
 
     public static String expandPath(String path, String nutsHome) {
+        String defaultNutsHome = Nuts.getDefaultNutsHome();
         if (StringUtils.isEmpty(nutsHome)) {
-            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
+            nutsHome = defaultNutsHome;
         }
-        if (path.startsWith(NutsConstants.DEFAULT_NUTS_HOME + "/")) {
-            path = nutsHome + "/" + path.substring(NutsConstants.DEFAULT_NUTS_HOME.length() + 1);
+        if (path.startsWith(defaultNutsHome + "/")) {
+            path = nutsHome + "/" + path.substring(defaultNutsHome.length() + 1);
         }
         if (path.startsWith("~/")) {
             path = System.getProperty("user.home") + path.substring(1);
@@ -806,9 +807,9 @@ public class CoreNutsUtils {
         } else {
             File temp = CoreIOUtils.createTempFile(contentFile.getName(), false, null);
             IOUtils.copy(contentFile.open(), temp, true, true);
-            c.contentFile = IOUtils.toInputStreamSource(temp, new File(ws.getConfigManager().getCwd()));
+            c.contentFile = IOUtils.toInputStreamSource(temp,null,null, new File(ws.getConfigManager().getCwd()));
             c.addTemp(temp);
-            return characterize(ws, IOUtils.toInputStreamSource(temp, new File(ws.getConfigManager().getCwd())), session);
+            return characterize(ws, IOUtils.toInputStreamSource(temp, null,null,new File(ws.getConfigManager().getCwd())), session);
         }
         File fileSource = (File) c.contentFile.getSource();
         if ((!fileSource.exists())) {
@@ -823,16 +824,16 @@ public class CoreNutsUtils {
             }
             if (c.descriptor != null) {
                 if ("zip".equals(c.descriptor.getExt())) {
-                    File zipFilePath = new File(ws.resolvePath(fileSource.getPath() + ".zip"));
+                    File zipFilePath = new File(ws.getIOManager().resolvePath(fileSource.getPath() + ".zip"));
                     ZipUtils.zip(fileSource.getPath(), new ZipOptions(), zipFilePath.getPath());
-                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, new File(ws.getConfigManager().getCwd()));
+                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, null,null,new File(ws.getConfigManager().getCwd()));
                     c.addTemp(zipFilePath);
                 } else {
                     throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
                 }
             }
         } else if (fileSource.isFile()) {
-            File ext = new File(ws.resolvePath(fileSource.getPath() + "." + NutsConstants.NUTS_DESC_FILE_NAME));
+            File ext = new File(ws.getIOManager().resolvePath(fileSource.getPath() + "." + NutsConstants.NUTS_DESC_FILE_NAME));
             if (ext.exists()) {
                 c.descriptor = parseNutsDescriptor(ext);
             } else {

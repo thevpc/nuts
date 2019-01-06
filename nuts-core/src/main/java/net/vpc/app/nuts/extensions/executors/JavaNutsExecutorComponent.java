@@ -63,7 +63,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int exec(NutsExecutionContext executionContext) {
-        NutsIdFormat nutsIdFormat = executionContext.getWorkspace().createIdFormat().setOmitNamespace(true);
+        NutsIdFormat nutsIdFormat = executionContext.getWorkspace().getFormatManager().createIdFormat().setOmitNamespace(true);
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
 
         List<String> app = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
@@ -169,7 +169,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getWorkspace()
                         .createQuery().addId(descriptor.getId())
                         .setSession(executionContext.getSession().copy().setTransitive(true))
-                        .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
+                        .addScope(NutsDependencyScope.PROFILE_RUN)
                         .setIncludeOptional(false)
                         .includeDependencies()
                         .fetch()
@@ -192,15 +192,15 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             args.add("-jar");
             args.add(nutMainFile.getFile());
             xargs.add("-jar");
-            xargs.add(executionContext.getWorkspace().createIdFormat().format(nutMainFile.getId()));
+            xargs.add(executionContext.getWorkspace().getFormatManager().createIdFormat().format(nutMainFile.getId()));
         } else {
             if (mainClass == null) {
                 File file = CoreIOUtils.fileByPath(nutMainFile.getFile());
                 if (file != null) {
                     //check manifest!
-                    ExecutionEntry[] classes = CorePlatformUtils.resolveMainClasses(file);
+                    NutsExecutionEntry[] classes = CorePlatformUtils.parseMainClasses(file);
                     if (classes.length > 0) {
-                        mainClass = StringUtils.join(":", classes, ExecutionEntry::getName);
+                        mainClass = StringUtils.join(":", classes, NutsExecutionEntry::getName);
                     }
                 }
             }
@@ -277,10 +277,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         xargs.addAll(app);
         args.addAll(app);
-        if (showCommand || true) {
+        if (showCommand) {
             PrintStream out = executionContext.getTerminal().getOut();
-            out.println("==[nuts-exec]== " + NutsArgumentsParser.compressBootArguments(xargs.toArray(new String[0])));
-            out.println("\t==[nuts-exec]== ");
+//            out.println("==[nuts-exec]== " + NutsArgumentsParser.escapeArguments(xargs.toArray(new String[0])));
+            out.println("==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 String xarg = xargs.get(i);
                 if(i>0 && xargs.get(i-1).equals("--nuts-path")){
@@ -293,7 +293,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
 
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().resolvePath(dir));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory

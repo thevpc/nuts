@@ -52,7 +52,6 @@ public class ExecCommand extends AbstractNutsCommand {
         boolean nativeCommand = false;
         boolean command = false;
         Argument a;
-        boolean noColors = false;
         List<String> execOptions=new ArrayList<>();
         while (cmdLine.hasNext()) {
             if (!command) {

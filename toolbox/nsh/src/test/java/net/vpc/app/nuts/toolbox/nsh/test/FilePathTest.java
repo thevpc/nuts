@@ -1,6 +1,6 @@
 package net.vpc.app.nuts.toolbox.nsh.test;
 
-import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
+import net.vpc.common.xfile.XFile;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class FilePathTest {
     @Test
     public void testKo(){
         try{
-            FilePath.of("ssh://192.168.2.3?password=me&key-file=/home/vpc/my-key.key");
+            XFile.of("ssh://192.168.2.3?password=me&key-file=/home/vpc/my-key.key");
             Assert.assertTrue(false);
         }catch (IllegalArgumentException ex){
             Assert.assertTrue(true);

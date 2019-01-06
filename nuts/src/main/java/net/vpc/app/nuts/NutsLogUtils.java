@@ -58,10 +58,10 @@ public final class NutsLogUtils {
     private NutsLogUtils() {
     }
 
-    public static void prepare(Level level, String folder, String name, int maxSize, int count, String home, String workspace) {
+    public static void prepare(Level level, String folder, String name, int maxSize, int count, boolean inheritLog, String home, String workspace) {
         Logger olderLog = Logger.getLogger(NutsLogUtils.class.getName());
         boolean logged = false;
-        Logger rootLogger = Logger.getLogger("");//"net.vpc.app.nuts"
+        String rootPackage = "net.vpc.app.nuts";
         if (level == null) {
             level = Level.INFO;
         }
@@ -82,38 +82,72 @@ public final class NutsLogUtils {
         }
         boolean updatedHandler = false;
         boolean updatedLoglevel = false;
-        try {
-            boolean found = false;
-            List<MyFileHandler> removeMe = new ArrayList<>();
-            for (Handler handler : rootLogger.getHandlers()) {
-                if (handler instanceof MyFileHandler) {
-                    MyFileHandler mh = (MyFileHandler) handler;
-                    if (mh.pattern.equals(pattern) && mh.count == count && mh.limit == maxSize * MEGA) {
-                        found = true;
-                    } else {
-                        if (!logged) {
-                            logged = true;
-                            olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
-                        }
-                        rootLogger.removeHandler(mh);
-                        mh.close();
-                    }
+        String[] splitted = rootPackage.split("\\.");
+        Logger[] rootLoggers = new Logger[splitted.length + 1];
+        rootLoggers[0] = Logger.getLogger("");
+        for (int i = 0; i < splitted.length; i++) {
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j <= i; j++) {
+                if (j > 0) {
+                    sb.append(".");
                 }
+                sb.append(splitted[j]);
             }
-            if (!found) {
-                if (!logged) {
-                    logged = true;
-                    olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
-                }
-                if (pattern.contains("/")) {
-                    NutsUtils.createFile(pattern.substring(0, pattern.lastIndexOf('/'))).mkdirs();
-                }
-                updatedHandler = true;
-                rootLogger.addHandler(new MyFileHandler(pattern, maxSize * MEGA, count, true));
-            }
-        } catch (IOException e) {
-            throw new NutsIOException(e);
+            rootLoggers[i + 1] = Logger.getLogger(sb.toString());
         }
+        Logger rootLogger = rootLoggers[rootLoggers.length - 1];
+        boolean found = false;
+        for (int i = 0; i < rootLoggers.length - 1; i++) {
+            Logger logger = rootLoggers[i];
+            Level oldLevel = logger.getLevel();
+            if (oldLevel == null || oldLevel.intValue()<level.intValue()) {
+                logger.setLevel(level);
+            }
+        }
+        if(!inheritLog){
+            rootLogger.setUseParentHandlers(false);
+        }
+        for (Handler handler : rootLogger.getHandlers()) {
+            if (handler instanceof MyFileHandler) {
+                MyFileHandler mh = (MyFileHandler) handler;
+                if (mh.pattern.equals(pattern) && mh.count == count && mh.limit == maxSize * MEGA) {
+                    found = true;
+                } else {
+                    if (!logged) {
+                        logged = true;
+                        olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+                    }
+                    rootLogger.removeHandler(mh);
+                    mh.close();
+                }
+            }else if(handler instanceof MyConsoleHandler){
+                logged = true;
+            }
+        }
+        if (!found) {
+            if (!logged) {
+                logged = true;
+                olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+            }
+            File parentFile = new File(pattern).getParentFile();
+            if (parentFile != null) {
+                parentFile.mkdirs();
+            }
+            updatedHandler = true;
+            Handler handler = null;
+            try {
+                handler = new MyFileHandler(pattern, maxSize * MEGA, count, true);
+                rootLogger.addHandler(handler);
+            } catch (Exception ex) {
+                handler = new MyConsoleHandler();
+                handler.setFormatter(LOG_FORMATTER);
+                rootLogger.setUseParentHandlers(false);
+                rootLogger.addHandler(handler);
+
+                rootLogger.log(Level.SEVERE, "Unable to set File log. Fallback to console log : {0}",ex.toString());
+            }
+        }
+
         if (updatedHandler) {
             Level oldLevel = rootLogger.getLevel();
             if (oldLevel == null || !oldLevel.equals(level)) {
@@ -121,17 +155,13 @@ public final class NutsLogUtils {
                 rootLogger.setLevel(level);
             }
             for (Handler handler : rootLogger.getHandlers()) {
-                if(handler instanceof MyFileHandler) {
+                if (handler instanceof MyFileHandler || handler instanceof MyConsoleHandler) {
                     oldLevel = handler.getLevel();
                     if (oldLevel == null || !oldLevel.equals(level)) {
                         updatedLoglevel = true;
                         handler.setLevel(level);
                     }
-                    Formatter oldLogFormatter = handler.getFormatter();
-                    if (oldLogFormatter == null || oldLogFormatter != LOG_FORMATTER) {
-                        updatedLoglevel = true;
-                        handler.setFormatter(LOG_FORMATTER);
-                    }
+                    setFormatter(handler);
                     Filter oldFilter = handler.getFilter();
                     if (oldFilter == null || oldFilter != LOG_FILTER) {
                         updatedLoglevel = true;
@@ -143,6 +173,19 @@ public final class NutsLogUtils {
 //        if (updatedHandler || updatedLoglevel) {
 //            olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
 //        }
+    }
+
+    private static void setFormatter(Handler handler) {
+        boolean updatedLoglevel;
+        Formatter oldLogFormatter = handler.getFormatter();
+        if (oldLogFormatter == null || oldLogFormatter != LOG_FORMATTER) {
+            updatedLoglevel = true;
+            handler.setFormatter(LOG_FORMATTER);
+        }
+    }
+
+    private static final class MyConsoleHandler extends ConsoleHandler {
+
     }
 
     private static final class MyFileHandler extends FileHandler {
@@ -196,7 +239,7 @@ public final class NutsLogUtils {
                 }
                 sb.append(className.substring(pos));
 
-                int length = 45 - sb.length();
+                int length = 47 - sb.length();
                 while (length > 0) {
                     if (length >= 16) {
                         sb.append("                ");
@@ -215,7 +258,7 @@ public final class NutsLogUtils {
                         length--;
                     }
                 }
-                v= sb.toString();
+                v = sb.toString();
                 classNameCache.put(className, v);
             }
             return v;

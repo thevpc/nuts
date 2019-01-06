@@ -26,7 +26,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name="nadmin config";
         Argument a;
-        if (cmdLine.readAll("delete-log")) {
+        if (cmdLine.readAll("delete log")) {
             boolean force=false;
             while(cmdLine.hasNext()) {
                 if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
@@ -37,7 +37,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             deleteLog(context,force);
             return true;
-        } else if (cmdLine.readAll("delete-var")) {
+        } else if (cmdLine.readAll("delete var")) {
             boolean force=false;
             while(cmdLine.hasNext()) {
                 if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
@@ -49,7 +49,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             deleteVar(context,force);
             cmdLine.unexpectedArgument(name);
             return true;
-        } else if (cmdLine.readAll("delete-programs")) {
+        } else if (cmdLine.readAll("delete programs")) {
             boolean force=false;
             while(cmdLine.hasNext()) {
                 if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
@@ -61,7 +61,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             deletePrgrams(context,force);
             cmdLine.unexpectedArgument(name);
             return true;
-        } else if (cmdLine.readAll("delete-config")) {
+        } else if (cmdLine.readAll("delete config")) {
             boolean force=false;
             while(cmdLine.hasNext()) {
                 if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
@@ -108,60 +108,74 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.LOGS));
-        if(file.exists()) {
-            context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
-            if(force ||context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))){
-                IOUtils.delete(file);
+        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.LOGS);
+        if(storeRoot!=null) {
+            File file = new File(storeRoot);
+            if (file.exists()) {
+                context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
+                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                    IOUtils.delete(file);
+                }
             }
-        }
-        file = new File(context.getWorkspace().getConfigManager().getHomeLocation(), "log");
-        if(file.exists()) {
-            context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
-            if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                IOUtils.delete(file);
+            file = new File(context.getWorkspace().getConfigManager().getHomeLocation(), "log");
+            if (file.exists()) {
+                context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
+                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                    IOUtils.delete(file);
+                }
             }
         }
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
-        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.VAR));
-        if(file.exists()) {
-            context.out().printf("@@Deleting@@ ##var## folder %s ...\n", file.getPath());
-            if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                IOUtils.delete(file);
+        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.VAR);
+        if(storeRoot!=null) {
+            File file = new File(storeRoot);
+            if (file.exists()) {
+                context.out().printf("@@Deleting@@ ##var## folder %s ...\n", file.getPath());
+                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                    IOUtils.delete(file);
+                }
             }
         }
     }
 
     private void deletePrgrams(NutsApplicationContext context, boolean force) {
-        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.PROGRAMS));
-        if(file.exists()) {
-            context.out().printf("@@Deleting@@ ##programs## folder %s ...\n", file.getPath());
-            if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                IOUtils.delete(file);
+        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.PROGRAMS);
+        if(storeRoot!=null) {
+            File file = new File(storeRoot);
+            if (file.exists()) {
+                context.out().printf("@@Deleting@@ ##programs## folder %s ...\n", file.getPath());
+                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                    IOUtils.delete(file);
+                }
             }
         }
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {
-        File file = new File(context.getWorkspace().getStoreRoot(RootFolderType.CONFIG));
-        if(file.exists()) {
-            context.out().printf("@@Deleting@@ ##config## folder %s ...\n", file.getPath());
-            if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                IOUtils.delete(file);
+        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.CONFIG);
+        if(storeRoot!=null) {
+            File file = new File(storeRoot);
+            if (file.exists()) {
+                context.out().printf("@@Deleting@@ ##config## folder %s ...\n", file.getPath());
+                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                    IOUtils.delete(file);
+                }
             }
         }
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        String workspaceLocation = context.getWorkspace().getConfigManager().getWorkspaceLocation();
-        File cache = new File(workspaceLocation, "cache");
-        if(cache.exists()){
-            IOUtils.delete(cache);
-        }
-        for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
-            deleteRepoCache(repository,context,force);
+        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.CACHE);
+        if(storeRoot!=null) {
+            File cache = new File(storeRoot);
+            if (cache.exists()) {
+                IOUtils.delete(cache);
+            }
+            for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
+                deleteRepoCache(repository, context, force);
+            }
         }
     }
 

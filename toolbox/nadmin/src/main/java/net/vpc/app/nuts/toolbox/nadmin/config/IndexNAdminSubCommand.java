@@ -22,7 +22,7 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         String name = "nadmin index";
         Argument a;
-        if (cmdLine.readAll("update-index")) {
+        if (cmdLine.readAll("update index")) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
                 repos.add(cmdLine.read().getExpression());

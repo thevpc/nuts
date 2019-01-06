@@ -79,11 +79,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 }
             }
         }
-        JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         File f = new File(context.getConfigFolder(), getName() + LOCAL_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
-            jsonSerializer.write(config, r, true);
+            jsonSerializer.writeJson(config, r, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -188,7 +188,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= new File(catalinaBase).mkdirs();
         ProcessBuilder2 b = new ProcessBuilder2();
-        String ext = context.getWorkspace().getPlatformOs().getName().equals("windows") ? "bat" : "sh";
+        String ext = context.getWorkspace().getConfigManager().getPlatformOs().getName().equals("windows") ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
@@ -341,7 +341,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLogs) {
         stop();
         if (getJpsResult() != null) {
-            throw new IllegalArgumentException("Server " + getName() + " is running. It cannot be stopped!");
+            throw new NutsExecutionException("Server " + getName() + " is running. It cannot be stopped!",2);
         }
         start(deployApps, deleteLogs);
         return true;
@@ -361,7 +361,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.out().printf("==[%s]== Tomcat started.\n", getName());
                 return AppStatus.RUNNING;
             }
-            throw new IllegalArgumentException("Unable to start tomcat");
+            throw new NutsExecutionException("Unable to start tomcat",2);
         }
         for (int i = 0; i < timeout; i++) {
             try {
@@ -379,7 +379,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             context.out().printf("==[%s]== Tomcat out of memory.\n", getName());
             return y;
         }
-        throw new IllegalArgumentException("Unable to start tomcat");
+        throw new NutsExecutionException("Unable to start tomcat",2);
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
@@ -490,9 +490,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String name = getName();
         File f = new File(context.getConfigFolder(), name + LOCAL_CONFIG_EXT);
         if (f.exists()) {
-            JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+            NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
             try (FileReader r = new FileReader(f)) {
-                config = jsonSerializer.read(r, LocalTomcatConfig.class);
+                config = jsonSerializer.readJson(r, LocalTomcatConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -539,7 +539,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService getAppOrError(String appName) {
         LocalTomcatAppConfigService a = getAppOrNull(appName);
         if (a == null) {
-            throw new IllegalArgumentException("App not found :" + appName);
+            throw new NutsExecutionException("App not found :" + appName,2);
         }
         return a;
     }
@@ -563,7 +563,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         domainName = TomcatUtils.toValidFileName(domainName, "default");
         LocalTomcatDomainConfigService d = getDomainOrNull(domainName);
         if (d == null) {
-            throw new IllegalArgumentException("Domain not found :" + domainName);
+            throw new NutsExecutionException("Domain not found :" + domainName,2);
         }
         return d;
     }

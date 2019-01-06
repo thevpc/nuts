@@ -76,15 +76,12 @@ public class ConsoleCommand extends AbstractNutsCommand {
             return console.runCommand(invokeArgs.toArray(new String[0]));
         }
 
-        NutsTerminal terminal = context.getTerminal();
-        PrintStream out = terminal.getFormattedOut();
-        out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n", context.getWorkspace().getConfigManager().getBootRuntime().getVersion().toString());
+        PrintStream out = context.out();
+        out.printf("**Nuts** console (**Network Updatable Things Services**) **v%s** (c) vpc 2017\n", context.getWorkspace().getConfigManager().getRunningContext().getRuntimeId().getVersion().toString());
 
         NutsJavaShell console = new NutsJavaShell(context.getWorkspace(), context.getSession());
 
         while (true) {
-
-            terminal = context.getTerminal();
             NutsWorkspace ws = context.getWorkspace();
             String wss = ws == null ? "" : context.getShell().getAbsolutePath(ws.getConfigManager().getWorkspaceLocation());
             String login = null;
@@ -99,9 +96,9 @@ public class ConsoleCommand extends AbstractNutsCommand {
 
             String line = null;
             try {
-                line = terminal.readLine(prompt);
+                line = context.getTerminal().readLine(prompt);
             } catch (InterruptShellException ex) {
-                terminal.getFormattedErr().printf("==%s==\n", ex.getMessage());
+                context.err().printf("==%s==\n", ex.getMessage());
                 continue;
             }
             if (line == null) {

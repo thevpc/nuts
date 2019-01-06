@@ -56,6 +56,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     private Map<String, NutsRepository> mirrors = new HashMap<>();
     private NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
     private DefaultNutsRepositoryConfigManager configManager;
+    private boolean transientRepository;
 
     public AbstractNutsRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, String root, int speed) {
         init(config, workspace, parentRepository, root, speed);
@@ -68,7 +69,6 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         checkNutsRepositoryConfig(config);
         if (root == null) {
             throw new IllegalArgumentException("Missing folder");
-//            root = CoreIOUtils.resolvePath(location, CoreIOUtils.createFile(workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES), workspace.getConfigManager().getHomeLocation());
         } else {
             root = CoreIOUtils.resolvePath(null, new File(root), workspace.getConfigManager().getHomeLocation()).getPath();
         }
@@ -861,4 +861,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return s;
     }
 
+    public boolean isTransientRepository() {
+        return transientRepository;
+    }
+
+    public AbstractNutsRepository setTransientRepository(boolean transientRepository) {
+        this.transientRepository = transientRepository;
+        return this;
+    }
 }

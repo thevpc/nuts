@@ -45,6 +45,8 @@ public interface NutsRepository {
 
     String getRepositoryType();
 
+    boolean isTransientRepository();
+
     String getRepositoryId();
 
     String getRepositoryLocation();

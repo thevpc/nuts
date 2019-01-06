@@ -51,11 +51,11 @@ public class LocalMysqlConfigService {
 
 
     public LocalMysqlConfigService saveConfig() {
-        JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         File f = new File(context.getConfigFolder(), getName() + SERVER_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
-            jsonSerializer.write(config, r, true);
+            jsonSerializer.writeJson(config, r, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -87,9 +87,9 @@ public class LocalMysqlConfigService {
         String name = getName();
         File f = new File(context.getConfigFolder(), name + SERVER_CONFIG_EXT);
         if (f.exists()) {
-            JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+            NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
             try (FileReader r = new FileReader(f)) {
-                config = jsonSerializer.read(r, LocalMysqlConfig.class);
+                config = jsonSerializer.readJson(r, LocalMysqlConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -110,7 +110,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().getJsonIO().write(getConfig(), out,true);
+        context.getWorkspace().getIOManager().writeJson(getConfig(), out,true);
         return this;
     }
 
@@ -136,7 +136,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         LocalMysqlDatabaseConfigService a = getDatabaseOrNull(appName);
         if (a == null) {
-            throw new IllegalArgumentException("Database not found :" + appName);
+            throw new NutsExecutionException("Database not found :" + appName,2);
         }
         return a;
     }

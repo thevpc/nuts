@@ -32,11 +32,11 @@ public class PropertyFilter implements Serializable {
                 a.add(p);
             }
         }
-        reorderProperies(a);
+        reorderProperties(a);
         return a;
     }
 
-    public void reorderProperies(List<String> properties) {
+    public void reorderProperties(List<String> properties) {
         final HashMap<String, Integer> h = new HashMap<String, Integer>();
         Collections.sort(properties, new Comparator<String>() {
 

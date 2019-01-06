@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -144,7 +143,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                     .setPackaging("jar")
                     .build();
         }
-        ExecutionEntry[] classes = CorePlatformUtils.resolveMainClasses(parserContext.getFullStream());
+        NutsExecutionEntry[] classes = CorePlatformUtils.parseMainClasses(parserContext.getFullStream());
         if (classes.length==0) {
             return null;
         } else {

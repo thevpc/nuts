@@ -86,7 +86,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.setId(context.getWorkspace().parseId(value));
+                        desc.setId(context.getWorkspace().getParseManager().parseId(value));
                     }
                 });
 
@@ -182,7 +182,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.addDependency(ws.parseDependency(value));
+                        desc.addDependency(ws.getParseManager().parseDependency(value));
                     }
                 });
             } else if (cmdLine.readAll("-remove-dependency")) {
@@ -190,7 +190,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.removeDependency(ws.parseDependency(value));
+                        desc.removeDependency(ws.getParseManager().parseDependency(value));
                     }
                 });
             } else if (cmdLine.readAll("-file")) {
@@ -208,7 +208,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 desc.set(ws.createDescriptorBuilder().build());
             } else {
                 if (file != null) {
-                    desc.set(ws.parseDescriptor(new File(file)));
+                    desc.set(ws.getParseManager().parseDescriptor(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");

@@ -70,9 +70,8 @@ public class WhoCommand extends AbstractNutsCommand {
         }
         NutsWorkspace validWorkspace = context.getWorkspace();
         String login = validWorkspace.getSecurityManager().getCurrentLogin();
-        PrintStream out = context.getTerminal().getFormattedOut();
 
-        out.printf("%s\n", login);
+        context.out().printf("%s\n", login);
 
         if (argAll) {
             NutsEffectiveUser user = validWorkspace.getSecurityManager().findUser(login);
@@ -81,52 +80,52 @@ public class WhoCommand extends AbstractNutsCommand {
             Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedRights()));
             String[] currentLoginStack = validWorkspace.getSecurityManager().getCurrentLoginStack();
             if (currentLoginStack.length > 1) {
-                out.print("===stack===      :");
+                context.out().print("===stack===      :");
                 for (String log : currentLoginStack) {
-                    out.print(" [[" + log + "]]");
+                    context.out().print(" [[" + log + "]]");
                 }
-                out.println();
+                context.out().println();
             }
             if (!groups.isEmpty()) {
-                out.printf("===identities=== : %s\n", groups.toString());
+                context.out().printf("===identities=== : %s\n", groups.toString());
             }
             if (!NutsConstants.USER_ADMIN.equals(login)) {
                 if (!rights.isEmpty()) {
-                    out.printf("===rights===     : %s\n", rights.toString());
+                    context.out().printf("===rights===     : %s\n", rights.toString());
                 }
                 if (!inherited.isEmpty()) {
-                    out.printf("===inherited===  : %s\n", (inherited.isEmpty() ? "NONE" : inherited.toString()));
+                    context.out().printf("===inherited===  : %s\n", (inherited.isEmpty() ? "NONE" : inherited.toString()));
                 }
             } else {
-                out.printf("===rights===     : ALL\n");
+                context.out().printf("===rights===     : ALL\n");
             }
             if (user.getMappedUser() != null) {
-                out.printf("===remote-id===  : %s\n", (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
+                context.out().printf("===remote-id===  : %s\n", (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
             }
             for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
                 NutsEffectiveUser ruser = repository.getSecurityManager().getEffectiveUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !StringUtils.isEmpty(ruser.getMappedUser()))) {
-                    out.printf("[ [[%s]] ]: \n", repository.getRepositoryId());
+                    context.out().printf("[ [[%s]] ]: \n", repository.getRepositoryId());
                     Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
                     Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));
                     if (!rgroups.isEmpty()) {
-                        out.printf("    ===identities=== : %s\n", rgroups.toString());
+                        context.out().printf("    ===identities=== : %s\n", rgroups.toString());
                     }
                     if (!NutsConstants.USER_ADMIN.equals(login)) {
                         if (!rrights.isEmpty()) {
-                            out.printf("    ===rights===     : %s\n", rrights.toString());
+                            context.out().printf("    ===rights===     : %s\n", rrights.toString());
                         }
                         if (!rinherited.isEmpty()) {
-                            out.printf("    ===inherited===  : %s\n", rinherited.toString());
+                            context.out().printf("    ===inherited===  : %s\n", rinherited.toString());
                         }
                     } else {
-                        out.printf("    ===rights===     : ALL\n");
+                        context.out().printf("    ===rights===     : ALL\n");
                     }
                     if (ruser.getMappedUser() != null) {
-                        out.printf("    ===remote-id===  : %s\n", ruser.getMappedUser());
+                        context.out().printf("    ===remote-id===  : %s\n", ruser.getMappedUser());
                     }
                 }
             }

@@ -49,7 +49,6 @@ public class CommitCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
 
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //

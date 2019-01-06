@@ -1,5 +1,6 @@
 package net.vpc.toolbox.mysql.remote;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.app.NutsAppUtils;
 import net.vpc.app.nuts.app.NutsApplicationContext;
@@ -108,7 +109,7 @@ public class RemoteMysql {
                     instanceName = a.getStringValue();
                     c = loadOrCreateMysqlConfig(instanceName);
                 } else {
-                    throw new IllegalArgumentException("instance already defined");
+                    throw new NutsExecutionException("instance already defined",2);
                 }
             } else if ((a = args.readStringOption("--server")) != null) {
                 if (c == null) {

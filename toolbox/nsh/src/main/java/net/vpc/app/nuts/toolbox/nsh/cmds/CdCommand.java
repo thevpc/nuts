@@ -51,7 +51,6 @@ public class CdCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
-        boolean noColors=false;
         Argument a;
         while(cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {

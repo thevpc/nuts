@@ -6,12 +6,14 @@ net.vpc.app.nuts.extensions.repos.DefaultNutsRepositoryFactoryComponent
 
 net.vpc.app.nuts.extensions.terminals.DefaultNutsTerminal
 net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixTermPrintStream
+net.vpc.app.nuts.extensions.terminals.NutsAnsiUnixStripperTermPrintStream
 net.vpc.app.nuts.extensions.terminals.NutsDefaultFormattedPrintStream
+net.vpc.app.nuts.extensions.core.DefaultNutsSystemTerminalBase
 
 net.vpc.app.nuts.extensions.archetypes.ServerNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.extensions.archetypes.MinimalNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.extensions.archetypes.DefaultNutsWorkspaceArchetypeComponent
-
+net.vpc.app.nuts.extensions.archetypes.StandaloneNutsWorkspaceArchetypeComponent
 
 net.vpc.app.nuts.extensions.installers.ZipNutsInstallerComponent
 

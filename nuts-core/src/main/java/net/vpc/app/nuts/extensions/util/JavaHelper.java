@@ -18,7 +18,7 @@ public class JavaHelper {
 
     public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
         String[] conf = {};
-        switch (ws.getPlatformOs().getName()) {
+        switch (ws.getConfigManager().getPlatformOs().getName()) {
             case "linux": {
                 conf = new String[]{
                         "/usr/java",

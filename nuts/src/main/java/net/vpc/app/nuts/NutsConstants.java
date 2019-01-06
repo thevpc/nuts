@@ -39,12 +39,6 @@ import java.util.Map;
 public final class NutsConstants {
 
     /**
-     * Default workspace root folder. Workspaces are created as plain folders
-     * under this root folder.
-     */
-    public static final String DEFAULT_NUTS_HOME = "~/.nuts";
-
-    /**
      * default workspace name
      */
     public static final String DEFAULT_WORKSPACE_NAME = "default-workspace";
@@ -88,6 +82,7 @@ public final class NutsConstants {
     public static final String DEFAULT_STORE_VAR = "var";
     public static final String DEFAULT_STORE_LOG = "log";
     public static final String DEFAULT_STORE_CONFIG = "config";
+    public static final String DEFAULT_STORE_CACHE = "cache";
 
     /**
      * workspace config file name
@@ -137,6 +132,7 @@ public final class NutsConstants {
     public static final String ENV_STORE_LOGS = "workspace-logs";
     public static final String ENV_STORE_TEMP = "workspace-temp";
     public static final String ENV_STORE_CONFIG = "workspace-config";
+    public static final String ENV_STORE_CACHE = "workspace-cache";
 
     public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;

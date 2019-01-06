@@ -1,5 +1,5 @@
 #!/bin/sh
-rm -R $HOME/.nuts/bootstrap
+#rm -R $HOME/.nuts/bootstrap
 base=$(dirname $0)
 bootVersion=`grep "project.version=" $base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties | cut -c17-2000`
 runtimeVersion=`grep "project.version=" $base/nuts-core/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts-core/nuts.properties | cut -c17-2000`

@@ -104,9 +104,9 @@ public class NutsWorkspaceHelper {
     public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
         Map<String, String> face = id.getQueryMap();
         if (face.get(NutsConstants.QUERY_FACE) == null && face.get("arch") == null && face.get("os") == null && face.get("osdist") == null && face.get("platform") == null) {
-            face.put("arch", ws.getPlatformArch().toString());
-            face.put("os", ws.getPlatformOs().toString());
-            face.put("osdist", ws.getPlatformOsDist().toString());
+            face.put("arch", ws.getConfigManager().getPlatformArch().toString());
+            face.put("os", ws.getConfigManager().getPlatformOs().toString());
+            face.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
             return id.setQuery(face);
         }
         return id;

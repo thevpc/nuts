@@ -42,9 +42,6 @@ public class WorkyMain extends NutsApplication {
                 cmdLine.unexpectedArgument("worky");
             }
         } while (cmdLine.hasNext());
-        if (appContext.isRequiredExit()) {
-            return appContext.getExitCode();
-        }
         return 0;
     }
 

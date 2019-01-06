@@ -30,9 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -51,6 +49,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
     private Level logLevel = null;
     private int logSize = 0;
     private int logCount = 0;
+    private boolean logInherited = false;
     private String[] bootArguments;
     private String[] applicationArguments;
     private boolean perf = false;
@@ -61,6 +60,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
     private String archetype;
     private String[] excludedExtensions;
     private String[] excludedRepositories;
+    private String[] transientRepositories;
     private String login = null;
     private String password = null;
     private String autoConfig = null;
@@ -167,6 +167,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
             NutsWorkspaceOptions t = (NutsWorkspaceOptions) clone();
             t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
             t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
+            t.setTransientRepositories(t.getTransientRepositories() == null ? null : Arrays.copyOf(t.getTransientRepositories(), t.getTransientRepositories().length));
             t.setBootArguments(t.getBootArguments() == null ? null : Arrays.copyOf(t.getBootArguments(), t.getBootArguments().length));
             t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
             return t;
@@ -278,7 +279,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
         if (bootArguments == null) {
             return "";
         }
-        return NutsArgumentsParser.compressBootArguments(bootArguments);
+        return NutsMinimalCommandLine.escapeArguments(bootArguments);
     }
 
     public String[] getBootArguments() {
@@ -336,7 +337,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
     }
 
     public String[] getExecutorOptions() {
-        return executorOptions==null?new String[0] : executorOptions;
+        return executorOptions == null ? new String[0] : executorOptions;
     }
 
     public NutsWorkspaceOptions setExecutorOptions(String[] executorOptions) {
@@ -350,6 +351,24 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
 
     public NutsWorkspaceOptions setBootCommand(NutsBootCommand bootCommand) {
         this.bootCommand = bootCommand;
+        return this;
+    }
+
+    public String[] getTransientRepositories() {
+        return transientRepositories == null ? new String[0] : transientRepositories;
+    }
+
+    public NutsWorkspaceOptions setTransientRepositories(String[] transientRepositories) {
+        this.transientRepositories = transientRepositories;
+        return this;
+    }
+
+    public boolean isLogInherited() {
+        return logInherited;
+    }
+
+    public NutsWorkspaceOptions setLogInherited(boolean logInherited) {
+        this.logInherited = logInherited;
         return this;
     }
 
@@ -408,6 +427,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
                 saveIfCreated == that.saveIfCreated &&
                 noColors == that.noColors &&
                 readOnly == that.readOnly &&
+                logInherited == that.logInherited &&
                 creationTime == that.creationTime &&
                 Objects.equals(home, that.home) &&
                 Objects.equals(bootRuntime, that.bootRuntime) &&
@@ -433,7 +453,7 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(home, bootRuntime, bootJavaCommand, bootJavaOptions, bootRuntimeSourceURL, logFolder, logName, logLevel, logSize, logCount, perf, workspace, ignoreIfFound, createIfNotFound, saveIfCreated, archetype, login, password, autoConfig, noColors, readOnly, creationTime, classLoaderProvider, bootCommand);
+        int result = Objects.hash(home, bootRuntime, bootJavaCommand, bootJavaOptions, bootRuntimeSourceURL, logFolder, logName, logLevel, logSize, logCount, perf, workspace, ignoreIfFound, createIfNotFound, saveIfCreated, archetype, login, password, autoConfig, noColors, readOnly, creationTime, classLoaderProvider, bootCommand, logInherited);
         result = 31 * result + Arrays.hashCode(bootArguments);
         result = 31 * result + Arrays.hashCode(applicationArguments);
         result = 31 * result + Arrays.hashCode(excludedExtensions);

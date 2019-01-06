@@ -48,7 +48,6 @@ public class LoginCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Argument a;
-        boolean noColors=false;
         while(cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //

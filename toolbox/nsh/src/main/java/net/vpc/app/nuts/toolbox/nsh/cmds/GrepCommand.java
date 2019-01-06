@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -66,7 +67,6 @@ public class GrepCommand extends AbstractNutsCommand {
         String expression = null;
         PrintStream out = context.out();
         Argument a;
-        boolean noColors=false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -104,7 +104,7 @@ public class GrepCommand extends AbstractNutsCommand {
             files.add(null);
         }
         if (expression == null) {
-            throw new IllegalArgumentException("Missing Expression");
+            throw new NutsExecutionException("Missing Expression",2);
         }
         String baseExpr = options.regexp ? context.getWorkspace().createRegex(expression, false) : expression;
         if (options.word) {
@@ -131,7 +131,7 @@ public class GrepCommand extends AbstractNutsCommand {
         try {
             String fileName = null;
             if (f == null) {
-                reader = new InputStreamReader(context.getTerminal().getIn());
+                reader = new InputStreamReader(context.in());
             } else if (f.isDirectory()) {
                 File[] files = f.listFiles();
                 if (files != null) {

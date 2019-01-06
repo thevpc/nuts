@@ -3,6 +3,7 @@ package net.vpc.app.nuts;
 public enum NutsBootCommand {
     EXEC,
     VERSION,
+    INFO,
     INSTALL_COMPANIONS,
     HELP,
     LICENSE,

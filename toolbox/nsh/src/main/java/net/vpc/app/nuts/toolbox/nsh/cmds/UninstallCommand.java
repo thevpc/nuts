@@ -36,8 +36,6 @@ import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.app.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 
-import java.io.PrintStream;
-
 /**
  * Created by vpc on 1/7/17.
  */
@@ -73,11 +71,10 @@ public class UninstallCommand extends AbstractNutsCommand {
                 if (cmdLine.isExecMode()) {
                     NutsWorkspace ws = context.getWorkspace();
                     boolean file = ws.uninstall(id, args, foundAction, erase, context.getSession());
-                    PrintStream out = context.getTerminal().getFormattedOut();
                     if (file) {
-                        out.printf(ws.createIdFormat().format(ws.parseId(id))+" uninstalled ##successfully##\n");
+                        context.out().printf(ws.getFormatManager().createIdFormat().format(ws.getParseManager().parseId(id))+" uninstalled ##successfully##\n");
                     } else {
-                        out.printf(ws.createIdFormat().format(ws.parseId(id))+" @@could not@@ be uninstalled\n");
+                        context.out().printf(ws.getFormatManager().createIdFormat().format(ws.getParseManager().parseId(id))+" @@could not@@ be uninstalled\n");
                     }
                 }
             }

@@ -55,7 +55,6 @@ public class CatCommand extends AbstractNutsCommand {
         boolean n = false;
         boolean T = false;
         boolean E = false;
-        boolean noColors = false;
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
@@ -75,8 +74,6 @@ public class CatCommand extends AbstractNutsCommand {
                 o.T = true;
             } else if (cmdLine.readAll("-E", "--show-ends")) {
                 o.E = true;
-            } else if ((a = cmdLine.readBooleanOption("--no-colors")) != null) {
-                o.noColors = a.getBooleanValue();
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));

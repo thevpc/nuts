@@ -39,31 +39,36 @@ import java.util.logging.Level;
 /**
  * @author vpc
  */
-public interface NutsWorkspaceConfigManager extends EnvProvider {
+public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     /**
-     * Actual (Runtime) Boot API Id
-     * @return Actual (Runtime) Boot API Id
+     * boot time context information of loaded and running context
+     *
+     * @return
      */
-    NutsId getBootAPI();
+    NutsBootContext getRunningContext();
 
     /**
-     * Actual (Runtime) Boot Runtime Id
-     * @return Actual (Runtime) Boot Runtime Id
+     * boot time context information of requested context (from config)
+     *
+     * @return
      */
-    NutsId getBootRuntime();
+    NutsBootContext getBootContext();
 
     /**
-     * Configured Boot API Id
-     * @return Configured Boot API Id
+     * current context information of requested context (from config) now
+     *
+     * @return
      */
-    NutsId getWorkspaceBootAPI();
+    NutsBootContext getConfigContext();
 
     /**
-     * Configured Boot Runtime Id
-     * @return Configured Boot Runtime Id
+     * current context information of requested context (from config)
+     * @return
      */
-    NutsId getWorkspaceBootRuntime();
+    NutsBootConfig getBootConfig();
+
+    boolean isValidWorkspaceFolder();
 
     String getWorkspaceLocation();
 
@@ -75,8 +80,6 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
      * @return nuts root folder
      */
     String getHomeLocation();
-
-    Properties getEnv();
 
     void setEnv(String property, String value);
 
@@ -152,9 +155,6 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
 
     NutsSdkLocation findSdk(String name, NutsSdkLocation location);
 
-    NutsBootConfig getBootConfig();
-    NutsBootConfig getWorkspaceBootConfig();
-
     void setBootConfig(NutsBootConfig other);
 
     String[] getSdkTypes();
@@ -181,7 +181,7 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
 
     void uninstallCommandFactory(String name);
 
-    void installCommand(NutsWorkspaceCommandConfig command);
+    boolean installCommand(NutsWorkspaceCommandConfig command,NutsConfirmAction confirmAction);
 
     void uninstallCommand(String name);
 
@@ -190,5 +190,27 @@ public interface NutsWorkspaceConfigManager extends EnvProvider {
     List<NutsWorkspaceCommand> findCommands();
 
     List<NutsWorkspaceCommand> findCommands(NutsId id);
+
+    String getStoreRoot(RootFolderType folderType);
+
+    String getStoreRoot(String id, RootFolderType folderType);
+
+    String getStoreRoot(NutsId id, RootFolderType folderType);
+
+    NutsId getPlatformOs();
+
+    NutsId getPlatformOsDist();
+
+    String getPlatformOsLibPath();
+
+    NutsId getPlatformArch();
+
+    long getCreationStartTimeMillis();
+
+    long getCreationFinishTimeMillis();
+
+    long getCreationTimeMillis();
+
+    NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
 }
 

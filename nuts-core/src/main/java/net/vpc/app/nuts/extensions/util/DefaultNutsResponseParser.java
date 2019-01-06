@@ -77,4 +77,39 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
             }
         }
     }
+
+    @Override
+    public Object[] getDefaultAcceptedValues(Class type) {
+        if(type.isEnum()){
+            return type.getEnumConstants();
+        }
+        switch (type.getName()) {
+            case "java.lang.String": {
+                return null;
+            }
+            case "int":
+            case "java.lang.Integer": {
+                return null;
+            }
+            case "long":
+            case "java.lang.Long": {
+                return null;
+            }
+            case "float":
+            case "java.lang.Float": {
+                return null;
+            }
+            case "double":
+            case "java.lang.Double": {
+                return null;
+            }
+            case "boolean":
+            case "java.lang.Boolean": {
+                return new Object[]{"y","n"};
+            }
+            default:{
+                throw new IllegalArgumentException("Unsupported type "+type.getName());
+            }
+        }
+    }
 }

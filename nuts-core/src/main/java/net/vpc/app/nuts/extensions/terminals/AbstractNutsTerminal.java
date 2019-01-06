@@ -41,12 +41,12 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
     public PrintStream getFormattedOut(boolean forceNoColors) {
         if (forceNoColors) {
             if (out_getFormatted_Force == null) {
-                out_getFormatted_Force = workspace.createPrintStream(getOut(), true, forceNoColors);
+                out_getFormatted_Force = workspace.getIOManager().createPrintStream(getOut(), NutsTerminalMode.FILTERED);
             }
             return out_getFormatted_Force;
         } else {
             if (out_getFormatted_NoForce == null) {
-                out_getFormatted_NoForce = workspace.createPrintStream(getOut(), true, forceNoColors);
+                out_getFormatted_NoForce = workspace.getIOManager().createPrintStream(getOut(), NutsTerminalMode.FORMATTED);
             }
             return out_getFormatted_NoForce;
         }
@@ -56,12 +56,12 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
     public PrintStream getFormattedErr(boolean forceNoColors) {
         if (forceNoColors) {
             if (err_getFormatted_Force == null) {
-                err_getFormatted_Force = workspace.createPrintStream(getErr(), true, forceNoColors);
+                err_getFormatted_Force = workspace.getIOManager().createPrintStream(getErr(), NutsTerminalMode.FILTERED);
             }
             return err_getFormatted_Force;
         } else {
             if (err_getFormatted_NoForce == null) {
-                err_getFormatted_NoForce = workspace.createPrintStream(getErr(), true, forceNoColors);
+                err_getFormatted_NoForce = workspace.getIOManager().createPrintStream(getErr(), NutsTerminalMode.FORMATTED);
             }
             return err_getFormatted_NoForce;
         }
@@ -123,7 +123,7 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
     }
 
     @Override
-    public String readLine(String promptFormat, Object ... params) {
+    public String readLine(String promptFormat, Object... params) {
         getOut().printf(promptFormat, params);
         getIn();
         try {
@@ -133,16 +133,16 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
         }
     }
 
-    public boolean isInOverridden(){
-        return inReplaceReader!=null;
+    public boolean isInOverridden() {
+        return inReplaceReader != null;
     }
 
-    public boolean isOutOverridden(){
-        return outReplace!=null;
+    public boolean isOutOverridden() {
+        return outReplace != null;
     }
 
-    public boolean isErrOverridden(){
-        return errReplace!=null;
+    public boolean isErrOverridden() {
+        return errReplace != null;
     }
 
     @Override
@@ -150,46 +150,25 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
         return CoreIOUtils.readPassword(prompt, getIn(), getOut());
     }
 
-    protected void copyFrom(AbstractNutsTerminal other){
-        this.workspace=other.workspace;
-        this.in=other.in;
-        this.reader=other.reader;
-        this.out=other.out;
-        this.err=other.err;
-        this.out_getFormatted_Force=other.out_getFormatted_Force;
-        this.out_getFormatted_NoForce=other.out_getFormatted_NoForce;
-        this.err_getFormatted_Force=other.err_getFormatted_Force;
-        this.err_getFormatted_NoForce=other.err_getFormatted_NoForce;
-        this.inReplace=other.inReplace;
-        this.inReplaceReader=other.inReplaceReader;
-        this.outReplace=other.outReplace;
-        this.errReplace=other.errReplace;
+    protected void copyFrom(AbstractNutsTerminal other) {
+        this.workspace = other.workspace;
+        this.in = other.in;
+        this.reader = other.reader;
+        this.out = other.out;
+        this.err = other.err;
+        this.out_getFormatted_Force = other.out_getFormatted_Force;
+        this.out_getFormatted_NoForce = other.out_getFormatted_NoForce;
+        this.err_getFormatted_Force = other.err_getFormatted_Force;
+        this.err_getFormatted_NoForce = other.err_getFormatted_NoForce;
+        this.inReplace = other.inReplace;
+        this.inReplaceReader = other.inReplaceReader;
+        this.outReplace = other.outReplace;
+        this.errReplace = other.errReplace;
     }
+
     @Override
     public <T> T ask(NutsQuestion<T> question) {
-        String message = question.getMessage();
-        if (message.endsWith("\n")) {
-            message = message.substring(0, message.length() - 1);
-        }
-        getFormattedOut().printf(message, question.getMessageParameters());
-        if (question.getDefautValue() != null) {
-            getFormattedOut().printf(" (default is [[%s]])", question.getDefautValue());
-        }
-        if (question.getAcceptedValues() != null && question.getAcceptedValues().length > 0) {
-            getFormattedOut().printf(" (accepts [[%s]])", Arrays.toString(question.getAcceptedValues()));
-        }
-        getFormattedOut().printf("?\n");
-        String v = readLine("\tPlease enter value or @@%s@@ to cancel : ", "cancel!");
-        if ("cancel!".equals(v)) {
-            throw new NutsUserCancelException();
-        }
-        NutsResponseParser p = question.getParse();
-        if (p == null) {
-            p = DefaultNutsResponseParser.INSTANCE;
-        }
-        if (v == null || v.length() == 0) {
-            return (T) p.parse(question.getDefautValue(),question.getValueType());
-        }
-        return (T) p.parse(v,question.getValueType());
+        return new DefaultNutsQuestionExecutor<T>(question,this,getFormattedOut())
+        .execute();
     }
 }

@@ -1,10 +1,9 @@
 net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal
-net.vpc.app.nuts.toolbox.nsh.cmds.ConfigCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.ConnectCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ConsoleCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.DeployCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ExecCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.VersionCommand
+net.vpc.app.nuts.toolbox.nsh.cmds.InfoCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HelpCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HistoryCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.InstallCommand
@@ -36,5 +35,4 @@ net.vpc.app.nuts.toolbox.nsh.cmds.SshCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.RmCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.PropsCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.MkdirCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.FileVersionCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.FindCommandCommand

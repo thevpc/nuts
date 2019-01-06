@@ -97,7 +97,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     public String getHelp() {
         if (help == null) {
             try {
-                URL resource = getClass().getResource("/net/vpc/app/nuts/extensions/cmd/" + getName() + ".help");
+                URL resource = getClass().getResource("/net/vpc/app/nuts/toolbox/nsh/cmd/" + getName() + ".help");
                 if(resource!=null) {
                     help = IOUtils.loadString(resource);
                 }

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -60,7 +61,6 @@ public class WgetCommand extends AbstractNutsCommand {
         Options options = new Options();
         List<String> files = new ArrayList<>();
         Argument a;
-        boolean noColors=false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -71,7 +71,7 @@ public class WgetCommand extends AbstractNutsCommand {
             }
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("Missing Files");
+            throw new NutsExecutionException("wget: Missing Files",2);
         }
         for (String file : files) {
             download(file,options.outputDocument,context);
@@ -87,6 +87,6 @@ public class WgetCommand extends AbstractNutsCommand {
             output2=output2.replace("{}",urlName);
         }
         File file= new File(context.getShell().getAbsolutePath(StringUtils.isEmpty(output2)?urlName:output2));
-        context.getWorkspace().downloadPath(path, file, context.getSession());
+        context.getWorkspace().getIOManager().downloadPath(path, file, context.getSession());
     }
 }

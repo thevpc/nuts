@@ -1,35 +1,36 @@
-##``    _   __      __        
-   / | / /_  __/ /______    
-  /  |/ / / / / __/ ___/   
- / /|  / /_/ / /_(__  )    
-/_/ |_/\\__,_/\\__/____/  `` version ${nuts.workspace-runtime.version}##
+==``    _   __      __       ``==
+==``   / | / /_  __/ /______ ``==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
+==``  /  |/ / / / / __/ ___/ ``==  <<The Open Source Package Manager for __Java__ (TM)>>
+==`` / /|  / /_/ / /_(__  )  ``==  <<and other __things__>> ... by ==vpc==
+==``/_/ |_/\\__,_/\\__/____/ ``==    __http://github.com/thevpc/nuts__
+    version [[${nuts.workspace-runtime.version}]]
 
-
-**nuts** stands for **Network Updatable Things Services** tool. It is the package manager for (mainly) java
-and non Java world. It helps discovering, downloading, assembling and executing  remote packages in a very
-handy way.
-Each managed package  is also called a **nuts** which  is a **Network Updatable Thing Service** .
-**nuts** packages are  stored  into repositories. A  __repository__  may be local for  storing local **nuts**
+==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
+and non Java world. It helps discovering, downloading, assembling and executing  remote packages in
+a very handy way.
+Each managed package  is also called a ==nuts== which  is a **Network Updatable Thing Service** .
+==nuts== packages are  stored  into repositories. A  __repository__  may be local for  storing local ==nuts==
 or remote for accessing  remote packages (good examples  are  remote maven  repositories). It may
 also be a proxy __repository__ so that remote packages are fetched and cached locally to save network
 resources.
-One manages a set of repositories called a  __workspace__. Managed **nuts**  (packages)  have descriptors
-that depicts dependencies between them. This dependency is seamlessly handled by  **nuts**  (tool) to
+One manages a set of repositories called a  __workspace__. Managed ==nuts==  (packages)  have descriptors
+that depicts dependencies between them. This dependency is seamlessly handled by  ==nuts==  (tool) to
 resolve and download on-need dependencies over the wire.
 
-**nuts** is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
+==nuts== is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
 view of the the  packages __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
 to __install__ and __uninstall__ packages allowing multiple versions of the very same package to  be installed.
 
-Although **nuts** focuses on java packages, it still supports, by design, native and all non java packages.
-Dependencies are fetched according to the current operating system type, distribution and hardware architectures.
+Although ==nuts== focuses on java packages, it still supports, by design, native and all non java packages.
+Dependencies are fetched according to the current operating system type, distribution and hardware
+architectures.
 
-**nuts** works either as __standalone application__ or as __java library__ to enable dynamic and dependency
+==nuts== works either as __standalone application__ or as __java library__ to enable dynamic and dependency
 aware class loading and brings a rich toolset to provide a versatile portable command line tools such
 as {{nsh}} (a {{bash}} like shell), {{tomcat}}, {{derby}} ... wrapper tools to make it easier providing
 __development__ , __test__ and __deployment__ reproducible environments.
 
-With container concepts in mind, **nuts** is the perfect java application tool for {{Docker}}, {{CoreOs}}
+With container concepts in mind, ==nuts== is the perfect java application tool for {{Docker}}, {{CoreOs}}
 and other __container managers__.
 
 @@COMMON VERBS:@@
@@ -39,15 +40,12 @@ fetch,push        : download, upload to remote repositories
 find              : searches for existing/installable packages
 
 @@SYNOPSIS:@@
-**nuts** \[Nuts Options\]... {{\<command\>}} {{\<args\>}} ...
+==nuts== \[Nuts Options\]... {{\<command\>}} {{\<args\>}} ...
 
 @@VERSIONS:@@
 Boot API     Version: ${nuts.workspace-boot.version}
 Boot Runtime Version: ${nuts.workspace-runtime.version}
 Java         Version: ${java.version} (${java.vm.name})
-
-@@USAGE:@@
-**nuts** {{\[Nuts Options\]}}... {{\[Nuts Command\]}}...
 
 @@NUTS OPTIONS:@@
  [[--home]] {{\<workspaces-home-location\>}}
@@ -60,24 +58,24 @@ Java         Version: ${java.version} (${java.vm.name})
       repositories).
  [[--archetype]] {{\<archetype-name\>}}
       workspace archetype to create (if workspace not found).
-      when opening a non existing workspace, **nuts** will create it
+      when opening a non existing workspace, ==nuts== will create it
       using the default archetype. Supported archetypes are :
           {{default}} : should handle most cases. Will create 4 repositories
-                    nuts local       : containing local **nuts** (java and non java **nuts**)
+                    nuts local       : containing local ==nuts== (java and non java ==nuts==)
                     maven-local      : containing a reference to ~/.m2/repository local maven repository
                     maven-central    : referencing http://repo.maven.apache.org/maven2/ (with cache support)
                     vpc-public-maven : referencing https://.../vpc-public-maven/master author\'s github maven repo (cached)
-                    vpc-public-nuts  : referencing https://.../vpc-public-nuts/master  author\'s github **nuts**  repo (cached)
-          {{minimal}} : will create an almost empty workspace with a single **nuts** local repository
+                    vpc-public-nuts  : referencing https://.../vpc-public-nuts/master  author\'s github ==nuts==  repo (cached)
+          {{minimal}} : will create an almost empty workspace with a single ==nuts== local repository
           {{server}}  : will create an almost empty workspace with a couple of users __guest_ (read support) and __contributor_
                     (write support)
  [[--login]]     {{\<login\>}}
       workspace login
-      if not specified, all access to **nuts** will be with anonymous credentials. so to promote user privileges, one may
+      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
       specify user credentials (see --password)
  [[--password]]  {{\<password\>}}
       workspace password
-      if not specified, all access to **nuts** will be with anonymous credentials. so to promote user privileges, one may
+      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
       specify user credentials (see --login)
  [[--save]]
       saves workspace if newly created
@@ -86,7 +84,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--no-colors]] or [[--!colors]]
       disable console coloring
  [[--version]] or [[-version]]
-      show version, libraries and locations used for booting **nuts**
+      show version, libraries and locations used for booting ==nuts==
  [[--perf]]
       show startup time in ms
  [[--exclude-extensions]]     {{\<extension-id-list\>}}
@@ -98,7 +96,7 @@ Java         Version: ${java.version} (${java.vm.name})
       (other than nuts-core) should be defined
  [[--boot-version]] {{\<boot-api-version\>}}
  [[--boot-api-version]] {{\<boot-api-version\>}}
-      run a new instance of **nuts** with the specified version
+      run a new instance of ==nuts== with the specified version
  [[--java]]      {{\<java-command\>}}
  [[--boot-java]] {{\<java-command\>}}
       java command to run new instance of nuts
@@ -129,22 +127,22 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--license]]
       show license and exit
  [[--install]] {{\<nuts-package\>}}...
-      install **nuts** package {{\<nuts-package\>}}
+      install ==nuts== package {{\<nuts-package\>}}
  [[--uninstall]] {{\<nuts-package\>}}...
-      uninstall  **nuts** package {{\<nuts-package\>}}
+      uninstall  ==nuts== package {{\<nuts-package\>}}
  [[--update]]
-       check if a newer version of **nuts** is available in the current workspace and perform update
+       check if a newer version of ==nuts== is available in the current workspace and perform update
  [[--check-updates]]
-       check if a newer version of **nuts** is available in the current workspace without performing updates
+       check if a newer version of ==nuts== is available in the current workspace without performing updates
  [[--clean]]
-       clean (delete) **nuts** cache folders
+       clean (delete) ==nuts== cache folders
  [[--reset]]
-       reset (delete) **nuts** workspace folder
+       reset (delete) ==nuts== workspace folder
 
 @@EXAMPLES:@@
-       **nuts** [[--help]]
+       ==nuts== [[--help]]
             shows this help and exit
-       **nuts** [[--update]] [[--workspace]] /home/me/some-folder [[--archetype]] minimal [[--save]]
-            updates **nuts** to the very latest version using workspace location
+       ==nuts== [[--update]] [[--workspace]] /home/me/some-folder [[--archetype]] minimal [[--save]]
+            updates ==nuts== to the very latest version using workspace location
             /home/me/some-folder. A minimal ('minimal' archetype) workspace will be created
             and saved if no workspace was resolved. The workspace handles local packages only (because of 'minimal' archetype)

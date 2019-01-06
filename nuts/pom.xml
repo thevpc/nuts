@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.5.2</version>
+    <version>0.5.3</version>
     <name>net.vpc.app.nuts</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
-
+    <description>Network Updatable Things Services Bootstrap</description>
     <organization>
         <name>vpc open source initiative</name>
         <url>http://tahabensalah.net</url>

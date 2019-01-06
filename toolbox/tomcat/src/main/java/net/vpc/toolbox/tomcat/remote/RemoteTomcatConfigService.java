@@ -1,6 +1,8 @@
 package net.vpc.toolbox.tomcat.remote;
 
 import net.vpc.app.nuts.JsonIO;
+import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.common.io.RuntimeIOException;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
@@ -45,11 +47,11 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
 
 
     public RemoteTomcatConfigService save() {
-        JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         File f = new File(context.getConfigFolder(), name + REMOTE_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
-            jsonSerializer.write(config, r, true);
+            jsonSerializer.writeJson(config, r, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -133,13 +135,13 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new IllegalArgumentException("Missing config name");
+            throw new NutsExecutionException("Missing config name",2);
         }
         File f = new File(context.getConfigFolder(), name + REMOTE_CONFIG_EXT);
         if (f.exists()) {
-            JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+            NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
             try (FileReader r = new FileReader(f)) {
-                config = jsonSerializer.read(r, RemoteTomcatConfig.class);
+                config = jsonSerializer.readJson(r, RemoteTomcatConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -155,9 +157,9 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
     }
 
     public RemoteTomcatConfigService write(PrintStream out) {
-        JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         PrintWriter w = new PrintWriter(out);
-        jsonSerializer.write(getConfig(), new PrintWriter(out), true);
+        jsonSerializer.writeJson(getConfig(), new PrintWriter(out), true);
         w.flush();
         return this;
     }
@@ -183,7 +185,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new IllegalArgumentException("App not found :" + appName);
+            throw new NutsExecutionException("App not found :" + appName,2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }

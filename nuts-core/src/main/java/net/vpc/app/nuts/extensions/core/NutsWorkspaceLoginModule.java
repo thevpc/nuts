@@ -30,9 +30,7 @@
 package net.vpc.app.nuts.extensions.core;
 
 import com.sun.security.auth.UserPrincipal;
-import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsUserConfig;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.common.strings.StringUtils;
 
 import javax.security.auth.Subject;
@@ -105,7 +103,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             NutsUserConfig registeredUser = workspace.getConfigManager().getUser(name);
             if (registeredUser != null) {
                 try {
-                    workspace.getExtensionManager().createSupported(NutsAuthenticationAgent.class,registeredUser.getAuthenticationAgent())
+                    workspace.getConfigManager().createAuthenticationAgent(registeredUser.getAuthenticationAgent())
                             .checkCredentials(
                             registeredUser.getCredentials(),
                                     registeredUser.getAuthenticationAgent(),

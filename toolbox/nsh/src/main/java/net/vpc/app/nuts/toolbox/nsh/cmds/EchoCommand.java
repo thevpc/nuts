@@ -53,7 +53,6 @@ public class EchoCommand extends AbstractNutsCommand {
         boolean first = true;
         PrintStream out = context.out();
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {

@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.app.options;
 
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;

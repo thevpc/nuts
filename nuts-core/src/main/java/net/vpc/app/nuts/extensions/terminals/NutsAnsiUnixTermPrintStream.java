@@ -30,21 +30,22 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsFormattedPrintStream;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.OutputStreamTransparentAdapter;
+import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.common.fprint.*;
+import net.vpc.common.io.IOUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.util.Map;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsAnsiUnixTermPrintStream extends AnsiUnixTermPrintStream implements NutsFormattedPrintStream, OutputStreamTransparentAdapter {
+public class NutsAnsiUnixTermPrintStream extends FormattedPrintStream implements NutsFormattedPrintStream, OutputStreamTransparentAdapter {
     private OutputStream out;
     public NutsAnsiUnixTermPrintStream(OutputStream out) {
-        super(out);
+        super(out,FPrint.RENDERER_ANSI,FPrint.PARSER_DEFAULT);
         this.out=out;
     }
 
@@ -55,21 +56,6 @@ public class NutsAnsiUnixTermPrintStream extends AnsiUnixTermPrintStream impleme
 
     @Override
     public int getSupportLevel(Object criteria) {
-//        Console console = System.console();
-////        if(console ==null){
-////            return -1;
-////        }
-////        if(criteria==console.writer()){
-////            return DEFAULT_SUPPORT + 2;
-////        }
-//        if(criteria ==System.out){
-//            return DEFAULT_SUPPORT + 2;
-//        }
-//        if(criteria ==System.err){
-//            return DEFAULT_SUPPORT + 2;
-//        }
-//        System.out.println(criteria+" :: "+System.out+" :: "+System.err);
-//        return -1;
         return DEFAULT_SUPPORT + 2;
     }
 }

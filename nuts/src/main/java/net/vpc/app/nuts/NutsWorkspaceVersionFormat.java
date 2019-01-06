@@ -9,5 +9,7 @@ public interface NutsWorkspaceVersionFormat {
 
     NutsWorkspaceVersionFormat addOption(String o);
 
+    NutsWorkspaceVersionFormat addOptions(String... o);
+
     String format();
 }

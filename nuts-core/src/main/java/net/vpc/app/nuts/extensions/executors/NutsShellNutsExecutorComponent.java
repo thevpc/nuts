@@ -96,7 +96,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         app.add(nutMainFile.getFile());
         app.addAll(Arrays.asList(appArgs));
 
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().resolvePath(dir));
         return executionContext.getWorkspace()
                 .createExecBuilder()
                 .setCommand(app)

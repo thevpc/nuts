@@ -377,6 +377,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 }
             }
         }
+//        if(bestObj==null){
+//            throw new NutsElementNotFoundException("Not Found implementation for "+type.getName());
+//        }
         return bestObj;
     }
 
@@ -394,6 +397,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 }
             }
         }
+//        if(bestObj==null){
+//            throw new NutsElementNotFoundException("Not Found implementation for "+type.getName());
+//        }
         return bestObj;
     }
 

@@ -31,9 +31,9 @@ package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
+import net.vpc.common.io.ByteArrayPrintStream;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -550,11 +550,9 @@ public class NutsIdGraph {
 
     @Override
     public String toString() {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(b);
+        ByteArrayPrintStream out = new ByteArrayPrintStream();
         print(out);
-        out.flush();
-        return new String(b.toByteArray());
+        return out.toString();
     }
 
     public void print(PrintStream out) {

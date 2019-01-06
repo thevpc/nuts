@@ -244,7 +244,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     @Override
     public NutsCommandExecBuilder setOut(PrintStream out) {
         this.out = (
-                out == null ? null : ws.createPrintStream(out, true)
+                out == null ? null : ws.getIOManager().createPrintStream(out, NutsTerminalMode.FORMATTED)
         );
         return this;
     }
@@ -252,7 +252,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     @Override
     public NutsCommandExecBuilder setErr(PrintStream err) {
         this.err = (
-                err == null ? null : ws.createPrintStream(err, true)
+                err == null ? null : ws.getIOManager().createPrintStream(err, NutsTerminalMode.FORMATTED)
         );
         return this;
     }

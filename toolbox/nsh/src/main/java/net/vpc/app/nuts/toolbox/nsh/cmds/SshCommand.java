@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
@@ -64,7 +65,6 @@ public class SshCommand extends AbstractNutsCommand {
         CommandLine cmdLine = cmdLine(args, context);
         Options o = new Options();
         Argument a;
-        boolean noColors=false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {
@@ -73,8 +73,6 @@ public class SshCommand extends AbstractNutsCommand {
                     o.invokeNuts = true;
                 }else if((a=cmdLine.readStringOption("--nuts-jre"))!=null){
                     o.nutsJre =a.getStringValue();
-                } else if ((a = cmdLine.readBooleanOption("--no-colors")) != null) {
-                    noColors = a.getBooleanValue();
                 }else{
                     //suppose this is an other nuts option
                     //just consume the rest as of the command
@@ -90,10 +88,10 @@ public class SshCommand extends AbstractNutsCommand {
             }
         }
         if (o.address==null) {
-            throw new IllegalArgumentException("Missing ssh address");
+            throw new NutsExecutionException("Missing ssh address",2);
         }
         if (o.cmd.isEmpty()) {
-            throw new IllegalArgumentException("Missing ssh command. Interactive ssh is not yet supported!");
+            throw new NutsExecutionException("Missing ssh command. Interactive ssh is not yet supported!",2);
         }
         ShellHelper.WsSshListener listener = context.isVerbose()?new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()):null;
         try (SShConnection sshSession = new SShConnection(o.address)
@@ -149,12 +147,12 @@ public class SshCommand extends AbstractNutsCommand {
                     if(goodJar==null){
                         String from = context.getWorkspace().getConfigManager().resolveNutsJarFile();
                         if(from==null){
-                            throw new IllegalArgumentException("Unable to resolve Nuts Jar File");
+                            throw new NutsExecutionException("Unable to resolve Nuts Jar File",2);
                         }else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
                             sshSession.setFailFast(true).copyLocalToRemote(from, home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
                             goodJar=home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
-//                            NutsDefinition[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getBootRuntime())
+//                            NutsDefinition[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getRuntimeId())
 //                                    .setIncludeMain(true),
 //                                    context.getSession());
 //                            for (NutsDefinition dep : deps) {

@@ -35,7 +35,7 @@ import java.util.Properties;
 
 final class NutsWorkspaceClassPath {
 
-    private BootNutsId id;
+    private NutsBootId id;
     private String dependencies;
     private String repositories;
 
@@ -63,10 +63,10 @@ final class NutsWorkspaceClassPath {
         }
         this.dependencies = dependencies;
         this.repositories = repositories;
-        this.id = BootNutsId.parse(id + "#" + version);
+        this.id = NutsBootId.parse(id + "#" + version);
     }
 
-    public BootNutsId getId() {
+    public NutsBootId getId() {
         return id;
     }
 
@@ -78,16 +78,16 @@ final class NutsWorkspaceClassPath {
         return dependencies;
     }
 
-    public BootNutsId[] getDependenciesArray() {
+    public NutsBootId[] getDependenciesArray() {
         List<String> split = NutsUtils.split(dependencies, "\n\t ,;");
-        List<BootNutsId> ts = new ArrayList<>();
+        List<NutsBootId> ts = new ArrayList<>();
         for (String s : split) {
             s = s.trim();
             if (!s.isEmpty()) {
-                ts.add(BootNutsId.parse(s));
+                ts.add(NutsBootId.parse(s));
             }
         }
-        return ts.toArray(new BootNutsId[0]);
+        return ts.toArray(new NutsBootId[0]);
     }
 
     public String[] getRepositoriesArray() {

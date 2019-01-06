@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -60,7 +61,6 @@ public class ZipCommand extends AbstractNutsCommand {
         List<String> files = new ArrayList<>();
 //        NutsPrintStream out = context.out();
         File outZip=null;
-        boolean noColors=false;
         Argument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
@@ -68,7 +68,7 @@ public class ZipCommand extends AbstractNutsCommand {
             }else if (cmdLine.readAll("-r")) {
                 options.r=true;
             } else if (cmdLine.isOption()) {
-                throw new IllegalArgumentException("Not yet supported");
+                throw new NutsExecutionException("Not yet supported",2);
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
@@ -80,10 +80,10 @@ public class ZipCommand extends AbstractNutsCommand {
             }
         }
         if (outZip==null) {
-            throw new IllegalArgumentException("Not yet supported");
+            throw new NutsExecutionException("Not yet supported",2);
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("Not yet supported");
+            throw new NutsExecutionException("Not yet supported",2);
         }
         ZipUtils.zip(outZip.getPath(),new ZipOptions(),files.toArray(new String[0]));
         return 0;

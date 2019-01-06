@@ -76,7 +76,6 @@ public class UpdateCommand extends AbstractNutsCommand {
         if (ids.isEmpty()) {
             if (cmdLine.isExecMode()) {
                 //should update nuts
-                PrintStream out = context.getTerminal().getFormattedOut();
                 if(context.getWorkspace().checkWorkspaceUpdates(
                         new NutsWorkspaceUpdateOptions()
                         .setEnableMajorUpdates(force==NutsConfirmAction.FORCE)
@@ -85,7 +84,7 @@ public class UpdateCommand extends AbstractNutsCommand {
                         .setUpdateExtensions(true)
                         .setApplyUpdates(true)
                         , context.getSession()).length==0){
-                    out.printf("workspace **upto-date**\n");
+                    context.out().printf("workspace **upto-date**\n");
                 }
             }
         } else {
@@ -99,11 +98,10 @@ public class UpdateCommand extends AbstractNutsCommand {
     private void update(String id, NutsConfirmAction uptoDateAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getWorkspace();
         NutsDefinition file = ws.update(id, uptoDateAction, context.getSession());
-        PrintStream out = context.getTerminal().getFormattedOut();
         if (file.isCached()) {
-            out.printf("%s **already installed**\n", file.getId());
+            context.out().printf("%s **already installed**\n", file.getId());
         } else {
-            out.printf("%s ##installed successfully##\n", file.getId());
+            context.out().printf("%s ##installed successfully##\n", file.getId());
         }
     }
 }

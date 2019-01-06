@@ -6,4 +6,5 @@ public enum RootFolderType {
     VAR,
     LOGS,
     TEMP,
+    CACHE,
 }

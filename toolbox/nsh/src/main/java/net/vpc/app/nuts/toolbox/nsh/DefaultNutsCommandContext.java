@@ -2,11 +2,11 @@ package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.javashell.Env;
-import net.vpc.common.javashell.JavaShell;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -62,11 +62,11 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     public PrintStream out() {
-        return consoleContext.getFormattedOut(noColors);
+        return consoleContext.out();
     }
 
     public PrintStream err() {
-        return consoleContext.getFormattedErr(noColors);
+        return consoleContext.err();
     }
 
     public boolean isNoColors() {
@@ -74,6 +74,11 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     public void setNoColors(boolean noColors) {
+        if(noColors) {
+            getWorkspace().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
+        }else{
+            getWorkspace().getSystemTerminal().setMode(null);
+        }
         this.noColors = noColors;
     }
 

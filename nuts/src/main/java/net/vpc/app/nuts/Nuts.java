@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -46,16 +47,23 @@ public class Nuts {
         try {
             System.exit(uncheckedMain(args));
         } catch (Exception ex) {
+            boolean showErrorClass = false;
             int errorCode = 204;
             //inherit error code from exception
             if (ex instanceof NutsExecutionException) {
                 errorCode = ((NutsExecutionException) ex).getExitCode();
             }
             boolean showTrace = false;
-            if (args.length > 0 && args[0].equals("--verbose")) {
-                showTrace = true;
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].startsWith("-")) {
+                    if (args[i].equals("--verbose")) {
+                        showTrace = true;
+                        showErrorClass = true;
+                    }
+                } else {
+                    break;
+                }
             }
-            boolean showErrorClass = false;
             if (ex.getClass().getName().startsWith("java.lang.")) {
                 //this is a common error
                 showTrace = true;
@@ -90,8 +98,8 @@ public class Nuts {
     private static NutsWorkspace openWorkspace(String[] args, boolean expectedNutsArgs) {
         long startTime = System.currentTimeMillis();
         NutsArguments nutsArguments = NutsArgumentsParser.parseNutsArguments(args, expectedNutsArgs);
-        if (nutsArguments instanceof NewInstanceNutsArguments) {
-            NewInstanceNutsArguments i = (NewInstanceNutsArguments) nutsArguments;
+        if (nutsArguments instanceof NutsNewInstanceNutsArguments) {
+            NutsNewInstanceNutsArguments i = (NutsNewInstanceNutsArguments) nutsArguments;
             throw new IllegalArgumentException("Unable to open a distinct version " + i.getBootFile() + "<>" + i.getRequiredVersion());
         }
         NutsWorkspaceOptions a = (NutsWorkspaceOptions) nutsArguments;
@@ -116,83 +124,212 @@ public class Nuts {
         if (options.getCreationTime() == 0) {
             options.setCreationTime(System.currentTimeMillis());
         }
+        NutsLogUtils.prepare(options.getLogLevel(), options.getLogFolder(), options.getLogName(),
+                options.getLogSize(), options.getLogCount(), options.isLogInherited(), options.getHome(), options.getWorkspace());
+        if(log.isLoggable(Level.CONFIG)) {
+            log.log(Level.CONFIG, "Open Workspace : {0} @ {1}", new Object[]{
+                    NutsUtils.isEmpty(options.getWorkspace()) ? NutsConstants.DEFAULT_WORKSPACE_NAME : options.getWorkspace(),
+                    NutsUtils.isEmpty(options.getHome()) ? getDefaultNutsHome() : options.getHome()
+            });
+        }
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
 
-    public static void startNewProcess(NewInstanceNutsArguments n) {
+    public static void startNewProcess(NutsNewInstanceNutsArguments n) {
         List<String> cmd = new ArrayList<>();
         String jc = n.getJavaCommand();
         if (jc == null || jc.trim().isEmpty()) {
             jc = NutsUtils.resolveJavaCommand(null);
         }
         cmd.add(jc);
-        Collections.addAll(cmd, NutsArgumentsParser.parseCommandLine(n.getJavaOptions()));
+        boolean showCommand = false;
+        for (String c : NutsMinimalCommandLine.parseCommandLine(n.getJavaOptions())) {
+            if (!c.isEmpty()) {
+                if (c.equals("--show-command")) {
+                    showCommand = true;
+                } else {
+                    cmd.add(c);
+                }
+            }
+        }
+        Collections.addAll(cmd, NutsMinimalCommandLine.parseCommandLine(n.getJavaOptions()));
 //        cmd.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
         cmd.add("-jar");
         cmd.add(n.getBootFile().getPath());
         //cmd.add("--verbose");
         cmd.addAll(Arrays.asList(n.getArgs()));
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < cmd.size(); i++) {
-            String s = cmd.get(i);
-            if (i > 0) {
-                sb.append(" ");
+        if (showCommand) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < cmd.size(); i++) {
+                String s = cmd.get(i);
+                if (i > 0) {
+                    sb.append(" ");
+                }
+                sb.append(s);
             }
-            sb.append(s);
+            System.out.println("[EXEC] " + sb);
         }
-        System.out.println("[EXEC] " + sb);
         try {
-            new ProcessBuilder(cmd).inheritIO().start();
-        } catch (IOException ex) {
+            new ProcessBuilder(cmd).inheritIO().start().waitFor();
+        } catch (Exception ex) {
             throw new IllegalArgumentException("Unable to start nuts", ex);
         }
     }
 
-    public static int uncheckedMain(String[] args) {
+    public static int uncheckedMain(String[] args) throws Exception {
         long startTime = System.currentTimeMillis();
         NutsArguments a = NutsArgumentsParser.parseNutsArguments(args, false);
-        if (a instanceof NewInstanceNutsArguments) {
-            startNewProcess((NewInstanceNutsArguments) a);
+        if (a instanceof NutsNewInstanceNutsArguments) {
+            startNewProcess((NutsNewInstanceNutsArguments) a);
             return 0;
         }
         NutsWorkspaceOptions o = (NutsWorkspaceOptions) a;
         o.setCreationTime(startTime);
-        NutsWorkspace ws = openWorkspace(o);
+        NutsWorkspace workspace = null;
+        try {
+            workspace = openWorkspace(o);
+        } catch (NutsException ex) {
+            switch (o.getBootCommand()){
+                case VERSION:
+                case INFO:
+                case HELP:
+                case LICENSE:
+                    {
+                    try {
+                        runWorkspaceCommand(null, o,"Cannot start workspace to run command "+o.getBootCommand()+". "+ex.getMessage());
+                        return 0;
+                    } catch (NutsUserCancelException e) {
+                        System.err.println(e.getMessage());
+                    } catch (Exception e) {
+                        System.err.println(e.toString());
+                    }
+                }
+            }
+            throw ex;
+        } catch (Throwable ex) {
+            int x = 204;
+            try {
+                x = runWorkspaceCommand(null, o,"Cannot start workspace to run command "+o.getBootCommand()+". Try --clean or --reset to help recovering :"+ex.toString());
+            } catch (Exception e) {
+                System.err.println(e.toString());
+            }
+            if (ex instanceof RuntimeException) {
+                throw ex;
+            }
+            if (ex instanceof Error) {
+                throw ex;
+            }
+            throw new NutsExecutionException(ex.getMessage(), ex, x);
+        }
+        return runWorkspaceCommand(workspace, o,"Workspace started successfully");
+    }
 
+    private static int runWorkspaceCommand(NutsWorkspace workspace, NutsWorkspaceOptions o,String message) throws IOException {
+        if(log.isLoggable(Level.CONFIG)) {
+            log.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
+        }
+        NutsWorkspaceConfigManager conf = null;
+        if (workspace != null) {
+            conf = workspace.getConfigManager();
+        }
         switch (o.getBootCommand()) {
             case VERSION: {
-                PrintStream out = ws.getTerminal().getFormattedOut();
+                if (workspace == null) {
+                    System.out.println("nuts-api :" + getActualVersion());
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                PrintStream out = workspace.getTerminal().getFormattedOut();
                 out.println(
-                        ws.createWorkspaceVersionFormat().addOption(o.getApplicationArguments().length > 0 ? o.getApplicationArguments()[0] : null)
+                        workspace.getFormatManager().createWorkspaceVersionFormat()
+                                .addOptions(o.getApplicationArguments())
+                                .format()
+                );
+                return 0;
+            }
+            case INFO: {
+                if (workspace == null) {
+                    System.out.println("nuts-boot-api          :" + getActualVersion());
+                    System.out.println("nuts-home              :" + (NutsUtils.isEmpty(o.getHome()) ? "<EMPTY>" : o.getHome()));
+                    System.out.println("nuts-workspace         :" + (NutsUtils.isEmpty(o.getWorkspace()) ? "<EMPTY>" : o.getWorkspace()));
+                    System.out.println("nuts-default-workspace :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), null));
+                    System.out.println("nuts-default-programs  :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.PROGRAMS));
+                    System.out.println("nuts-default-config    :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.CONFIG));
+                    System.out.println("nuts-default-var       :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.VAR));
+                    System.out.println("nuts-default-logs      :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.LOGS));
+                    System.out.println("nuts-default-temp      :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.TEMP));
+                    System.out.println("nuts-default-cache     :" + Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.CACHE));
+                    System.out.println("java-home              :" + System.getProperty("java.home"));
+                    System.out.println("java-classpath         :" + System.getProperty("java.class.path"));
+                    System.out.println("java-library-path      :" + System.getProperty("java.library.path"));
+                    System.out.println("os-name                :" + System.getProperty("os.name"));
+                    System.out.println("os-arch                :" + System.getProperty("os.arch"));
+                    System.out.println("os-version             :" + System.getProperty("os.version"));
+                    System.out.println("user-dir               :" + System.getProperty("user.dir"));
+                    System.out.println("user-home              :" + System.getProperty("user.home"));
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                PrintStream out = workspace.getTerminal().getFormattedOut();
+                out.println(
+                        workspace.getFormatManager().createWorkspaceInfoFormat()
+                                .addOptions(o.getApplicationArguments())
                                 .format()
                 );
                 return 0;
             }
             case HELP: {
-                ws.getTerminal().getFormattedOut().println(ws.getHelp());
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                workspace.getTerminal().getFormattedOut().println(workspace.getHelpText());
                 return 0;
             }
             case LICENSE: {
-                ws.getTerminal().getFormattedOut().println(ws.getLicense());
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                workspace.getTerminal().getFormattedOut().println(workspace.getLicenseText());
                 return 0;
             }
             case INSTALL: {
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
                 List<String> ids = new ArrayList<>();
-                NutsConfirmAction conf = NutsConfirmAction.ERROR;
+                NutsConfirmAction confirm = NutsConfirmAction.ERROR;
                 for (String c : o.getApplicationArguments()) {
                     switch (c) {
                         case "-f":
                         case "--force":
-                            conf = NutsConfirmAction.FORCE;
+                            confirm = NutsConfirmAction.FORCE;
                             break;
                         case "-i":
                         case "--ignore":
-                            conf = NutsConfirmAction.IGNORE;
+                            confirm = NutsConfirmAction.IGNORE;
                             break;
                         case "-e":
                         case "--error":
-                            conf = NutsConfirmAction.ERROR;
+                            confirm = NutsConfirmAction.ERROR;
                             break;
                         default:
                             ids.add(c);
@@ -203,21 +340,28 @@ public class Nuts {
                     throw new NutsExecutionException("Missing nuts to install", 1);
                 }
                 for (String id : ids) {
-                    ws.install(id, args, conf, null);
+                    workspace.install(id, o.getApplicationArguments(), confirm, null);
                 }
                 return 0;
             }
             case UNINSTALL: {
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
                 List<String> ids = new ArrayList<>();
-                NutsConfirmAction conf = NutsConfirmAction.ERROR;
+                NutsConfirmAction confirm = NutsConfirmAction.ERROR;
                 boolean deleteData = false;
                 for (String c : o.getApplicationArguments()) {
                     if (c.equals("-f") || c.equals("--force")) {
-                        conf = NutsConfirmAction.FORCE;
+                        confirm = NutsConfirmAction.FORCE;
                     } else if (c.equals("-i") || c.equals("--ignore")) {
-                        conf = NutsConfirmAction.IGNORE;
+                        confirm = NutsConfirmAction.IGNORE;
                     } else if (c.equals("-e") || c.equals("--error")) {
-                        conf = NutsConfirmAction.ERROR;
+                        confirm = NutsConfirmAction.ERROR;
                     } else if (c.equals("-r") || c.equals("--erase")) {
                         deleteData = true;
                     } else {
@@ -228,16 +372,39 @@ public class Nuts {
                     throw new NutsExecutionException("Missing nuts to uninstall", 1);
                 }
                 for (String id : ids) {
-                    ws.uninstall(id, args, conf, deleteData, null);
+                    workspace.uninstall(id, o.getApplicationArguments(), confirm, deleteData, null);
                 }
                 return 0;
             }
             case INSTALL_COMPANIONS: {
-                ws.installCompanionTools(false, null);
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                boolean force = false;
+                boolean silent = false;
+                for (String argument : o.getApplicationArguments()) {
+                    if ("-f".equals(argument) || "--force".equals(argument)) {
+                        force = true;
+                    }else if ("-s".equals(argument) || "--silent".equals(argument)) {
+                        silent = true;
+                    }
+                }
+                workspace.installCompanionTools(force, silent, null);
                 return 0;
             }
             case UPDATE: {
-                if (ws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
                                 .setApplyUpdates(true)
                                 .setEnableMajorUpdates(true)
                                 .setEnableMajorUpdates(true)
@@ -247,7 +414,14 @@ public class Nuts {
                 return 1;
             }
             case CHECK_UPDATES: {
-                if (ws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                if (workspace == null) {
+                    System.out.println(message);
+                    if(log.isLoggable(Level.SEVERE)) {
+                        log.log(Level.SEVERE, message);
+                    }
+                    return 1;
+                }
+                if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
                                 .setApplyUpdates(false)
                                 .setEnableMajorUpdates(true)
                                 .setEnableMajorUpdates(true)
@@ -257,6 +431,9 @@ public class Nuts {
                 return 1;
             }
             case CLEAN: {
+                if(log.isLoggable(Level.SEVERE)) {
+                    log.log(Level.SEVERE, message);
+                }
                 boolean force = false;
                 for (String argument : o.getApplicationArguments()) {
                     if ("-f".equals(argument) || "--force".equals(argument)) {
@@ -264,68 +441,250 @@ public class Nuts {
                     }
                 }
                 List<File> folders = new ArrayList<>();
-                folders.add(new File(ws.getConfigManager().getWorkspaceLocation(), "cache"));
-                folders.add(new File(ws.getConfigManager().getWorkspaceLocation(), "log"));
-                File[] children = new File(ws.getConfigManager().getWorkspaceLocation(), "repositories").listFiles();
+                String workspaceLocation = null;
+                if (workspace != null) {
+                    folders.add(new File(conf.getStoreRoot(RootFolderType.CACHE)));
+                    folders.add(new File(conf.getStoreRoot(RootFolderType.LOGS)));
+                    workspaceLocation = conf.getWorkspaceLocation();
+                } else {
+                    folders.add(new File(Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.CACHE)));
+                    folders.add(new File(Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), RootFolderType.LOGS)));
+                    workspaceLocation = Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), null);
+                }
+                File[] children = new File(workspaceLocation, NutsConstants.FOLDER_NAME_REPOSITORIES).listFiles();
                 if (children != null) {
                     for (File child : children) {
-                        folders.add(new File(child, "components"));
+                        folders.add(new File(child, NutsConstants.FOLDER_NAME_COMPONENTS));
                     }
                 }
-                for (File child : folders) {
-                    if (child.exists()) {
-                        try {
-                            NutsUtils.deleteAndConfirm(child, force);
-                        } catch (NutsUserCancelException e) {
-                            System.err.println(e.getMessage());
-                            return 1;
-                        } catch (Exception e) {
-                            System.err.println(e.toString());
-                            return 1;
-                        }
-                    }
-                }
+                NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force);
                 return 0;
             }
             case RESET: {
+                if(log.isLoggable(Level.SEVERE)) {
+                    log.log(Level.SEVERE, message);
+                }
                 boolean force = false;
                 for (String argument : o.getApplicationArguments()) {
                     if ("-f".equals(argument) || "--force".equals(argument)) {
                         force = true;
                     }
                 }
-                File f = new File(ws.getConfigManager().getWorkspaceLocation());
                 System.out.println("**************");
                 System.out.println("** ATTENTION *");
                 System.out.println("**************");
                 System.out.println("You are about to delete all workspace configuration files.");
                 System.out.println("Are you sure this is what you want ??");
-                try {
-                    NutsUtils.deleteAndConfirm(f, force);
-                } catch (NutsUserCancelException e) {
-                    System.err.println(e.getMessage());
-                    return 1;
-                } catch (Exception e) {
-                    System.err.println(e.toString());
-                    return 1;
+                List<File> folders = new ArrayList<>();
+                if (workspace != null) {
+                    folders.add(new File(conf.getWorkspaceLocation()));
+                    for (RootFolderType value : RootFolderType.values()) {
+                        folders.add(new File(conf.getStoreRoot(value)));
+                    }
+                } else {
+                    folders.add(new File(Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), null)));
+                    for (RootFolderType value : RootFolderType.values()) {
+                        folders.add(new File(Nuts.getDefaultWorkspaceFolder(o.getWorkspace(), o.getHome(), value)));
+                    }
                 }
+                NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force);
                 return 0;
             }
         }
-
-        if (o.getApplicationArguments().length == 0) {
-            ws.getTerminal().getFormattedOut().println(ws.getHelp());
-            return 0;
+        if (workspace != null) {
+            if (o.getApplicationArguments().length == 0) {
+                workspace.getTerminal().getFormattedOut().println(workspace.getWelcomeText());
+                return 0;
+            }
+            return workspace.createExecBuilder()
+                    .setCommand(o.getApplicationArguments())
+                    .setExecutorOptions(o.getExecutorOptions())
+                    .exec()
+                    .getResult();
         }
-        return ws.createExecBuilder()
-                .setCommand(o.getApplicationArguments())
-                .setExecutorOptions(o.getExecutorOptions())
-                .exec()
-                .getResult();
+        System.out.println(message);
+        if(log.isLoggable(Level.SEVERE)) {
+            log.log(Level.SEVERE, message);
+        }
+        return 1;
     }
 
     public static String getActualVersion() {
         return NutsUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"), null).getProperty("project.version", "0.0.0");
     }
 
+    public static String getDefaultNutsHome() {
+        if (Boolean.getBoolean("nuts.debug.emulate-windows")) {
+            return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts".replace("\\", File.separator);
+        }
+        switch (NutsUtils.getPlatformOsFamily()) {
+            case "windows":
+                return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts";
+            default:
+                return System.getProperty("user.home") + "/.nuts";
+        }
+    }
+
+    public static String getDefaultWorkspaceFolder(String workspace, String home, RootFolderType folderType) {
+        String defaultNutsHome = getDefaultNutsHome();
+        if (home == null || home.trim().isEmpty()) {
+            home = defaultNutsHome;
+        }
+        if (workspace == null) {
+            workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
+        }
+        if (workspace.startsWith(home)) {
+            String w = workspace.substring(home.length());
+            while (w.startsWith("/") || w.startsWith("\\")) {
+                w = w.substring(1);
+            }
+            workspace = w;
+        }
+        if (NutsUtils.isAbsolutePath(workspace)) {
+            if (folderType == null) {
+                //root
+                return workspace;
+            }
+            switch (folderType) {
+                case LOGS: {
+                    return workspace + File.separator + "logs";
+                }
+                case VAR: {
+                    return workspace + File.separator + "var";
+                }
+                case CONFIG: {
+                    return workspace + File.separator + "config";
+                }
+                case TEMP: {
+                    return workspace + File.separator + "temp";
+                }
+                case CACHE: {
+                    return workspace + File.separator + "cache";
+                }
+                case PROGRAMS: {
+                    return workspace + File.separator + "programs";
+                }
+                default: {
+                    return workspace + File.separator + folderType.name().toLowerCase();
+                }
+            }
+        } else {
+            if (defaultNutsHome.equals(home)) {
+                if (Boolean.getBoolean("nuts.debug.emulate-windows")) {
+                    if (folderType == null) {
+                        //root
+                        return System.getProperty("user.home") + ("\\AppData\\Local\\nuts\\" + workspace).replace("\\", File.separator);
+                    }
+                    switch (folderType) {
+                        case LOGS: {
+                            return System.getProperty("user.home") + ("\\AppData\\Local\\nuts\\" + workspace + "\\logs").replace("\\", File.separator);
+                        }
+                        case VAR: {
+                            return System.getProperty("user.home") + ("\\AppData\\Local\\nuts\\" + workspace + "\\var").replace("\\", File.separator);
+                        }
+                        case CONFIG: {
+                            return System.getProperty("user.home") + ("\\AppData\\Local\\nuts\\" + workspace + "\\config").replace("\\", File.separator);
+                        }
+                        case TEMP: {
+                            return System.getProperty("user.home") + ("\\AppData\\Roaming\\nuts\\" + workspace + "\\temp").replace("\\", File.separator);
+                        }
+                        case CACHE: {
+                            return System.getProperty("user.home") + ("\\AppData\\Roaming\\nuts\\" + workspace + "\\cache").replace("\\", File.separator);
+                        }
+                        case PROGRAMS: {
+                            return System.getProperty("user.home") + ("\\AppData\\Local\\nuts\\" + workspace + "\\programs").replace("\\", File.separator);
+                        }
+                    }
+                    return System.getProperty("user.home") + ("\\AppData\\nuts\\Local\\" + workspace + "\\" + folderType.toString().toLowerCase()).replace("\\", File.separator);
+                }
+                switch (NutsUtils.getPlatformOsFamily()) {
+                    case "windows": {
+                        if (folderType == null) {
+                            //root
+                            return System.getProperty("user.home") + ("\\AppData\\nuts\\Local\\" + workspace);
+                        }
+                        switch (folderType) {
+                            case LOGS: {
+                                return System.getProperty("user.home") + ("\\AppData\\nuts\\Roaming\\" + workspace + "\\logs");
+                            }
+                            case VAR: {
+                                return System.getProperty("user.home") + ("\\AppData\\nuts\\Roaming\\" + workspace + "\\var");
+                            }
+                            case CONFIG: {
+                                return System.getProperty("user.home") + ("\\AppData\\nuts\\Roaming\\" + workspace + "\\config");
+                            }
+                            case TEMP: {
+                                return System.getProperty("java.io.tmpdir") + "\\nuts\\" + workspace + "\\temp";
+                                //return System.getProperty("user.home") + ("\\AppData\\nuts\\Local\\" + workspace + "\\temp");
+                            }
+                            case CACHE: {
+                                return System.getProperty("user.home") + ("\\AppData\\nuts\\Local\\" + workspace + "\\cache");
+                            }
+                            case PROGRAMS: {
+                                return System.getProperty("user.home") + ("\\AppData\\nuts\\Roaming\\" + workspace + "\\programs");
+                            }
+                        }
+                        return System.getProperty("user.home") + "\\AppData\\nuts\\Local\\" + workspace + "\\" + folderType.name().toLowerCase();
+                    }
+                    default: {
+                        if (folderType == null) {
+                            //root
+                            return System.getProperty("user.home") + "/.nuts/" + workspace;
+                        }
+                        switch (folderType) {
+                            case LOGS: {
+                                return System.getProperty("user.home") + "/.nuts/" + workspace + "/logs";
+                            }
+                            case VAR: {
+                                return System.getProperty("user.home") + "/.nuts/" + workspace + "/var";
+                            }
+                            case CONFIG: {
+                                return System.getProperty("user.home") + "/.nuts/" + workspace + "/config";
+                            }
+                            case TEMP: {
+                                return System.getProperty("java.io.tmpdir") + "/nuts/" + workspace + "/temp";
+                            }
+                            case CACHE: {
+                                return System.getProperty("user.home") + "/.cache/nuts/" + workspace + "/cache";
+                            }
+                            case PROGRAMS: {
+                                return System.getProperty("user.home") + "/.nuts/" + workspace + "/programs";
+                            }
+                            default: {
+                                return System.getProperty("user.home") + "/.nuts/" + workspace + "/" + folderType.name().toLowerCase();
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (folderType == null) {
+                    //root
+                    return home + File.separator + workspace + File.separator;
+                }
+                switch (folderType) {
+                    case LOGS: {
+                        return home + File.separator + workspace + File.separator + "logs";
+                    }
+                    case VAR: {
+                        return home + File.separator + workspace + File.separator + "var";
+                    }
+                    case CONFIG: {
+                        return home + File.separator + workspace + File.separator + "config";
+                    }
+                    case TEMP: {
+                        return home + File.separator + workspace + File.separator + "temp";
+                    }
+                    case CACHE: {
+                        return home + File.separator + workspace + File.separator + "cache";
+                    }
+                    case PROGRAMS: {
+                        return home + File.separator + workspace + File.separator + "programs";
+                    }
+                    default: {
+                        return home + File.separator + workspace + File.separator + folderType.name().toLowerCase();
+                    }
+                }
+            }
+        }
+    }
 }

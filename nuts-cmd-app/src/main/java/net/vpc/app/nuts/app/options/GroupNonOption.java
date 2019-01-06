@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsEffectiveUser;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.toolbox.nsh.NutsConsoleContext;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.commandline.DefaultNonOption;

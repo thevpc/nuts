@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -64,10 +65,8 @@ public class UnzipCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Options options = new Options();
-        PrintStream out = context.getTerminal().getFormattedOut();
         List<String> files = new ArrayList<>();
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -76,7 +75,7 @@ public class UnzipCommand extends AbstractNutsCommand {
             } else if (cmdLine.readAll("-d")) {
                 options.dir = cmdLine.read().getExpression();
             } else if (cmdLine.isOption()) {
-                throw new IllegalArgumentException("Not yet supported");
+                throw new NutsExecutionException("Not yet supported",2);
             } else {
                 String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
                 File file = new File(context.getShell().getAbsolutePath(path));
@@ -84,14 +83,14 @@ public class UnzipCommand extends AbstractNutsCommand {
             }
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("Not yet supported");
+            throw new NutsExecutionException("Not yet supported",2);
         }
         for (String file : files) {
             if (options.l) {
                 ZipUtils.visitZipFile(new File(file), null, new InputStreamVisitor() {
                     @Override
                     public boolean visit(String path, InputStream inputStream) throws IOException {
-                        out.printf("%s\n", path);
+                        context.out().printf("%s\n", path);
                         return true;
                     }
                 });

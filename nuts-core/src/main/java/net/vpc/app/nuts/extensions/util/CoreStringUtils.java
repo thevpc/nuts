@@ -143,12 +143,12 @@ public class CoreStringUtils {
         return sb.toString();
     }
 
-    public static String replaceVars(String format, ObjectConverter<String,String> map) {
+    public static String replaceVars(String format, ObjectConverter<String, String> map) {
         return replaceVars(format, map, new HashSet());
     }
 
-    private static String replaceVars(String format, ObjectConverter<String,String> map, Set<String> visited) {
-        if(format==null){
+    private static String replaceVars(String format, ObjectConverter<String, String> map, Set<String> visited) {
+        if (format == null) {
             return null;
         }
         StringBuffer sb = new StringBuffer();
@@ -214,7 +214,7 @@ public class CoreStringUtils {
 
     /**
      * @param text
-     * @param compact if true, quotes will not be used unless necessary
+     * @param compact         if true, quotes will not be used unless necessary
      * @param entrySeparators
      * @return
      */
@@ -262,6 +262,18 @@ public class CoreStringUtils {
         return sb.toString();
     }
 
+    public static List<String> split(Collection<String> stringCollection, String separators) {
+        List<String> splitted = new ArrayList<>();
+        for (String str : stringCollection) {
+            for (String s1 : split(str, separators)) {
+                if (!s1.isEmpty()) {
+                    splitted.add(s1);
+                }
+            }
+        }
+        return splitted;
+    }
+
     public static List<String> split(String str, String separators) {
         if (str == null) {
             return Collections.EMPTY_LIST;
@@ -299,9 +311,6 @@ public class CoreStringUtils {
         }
         return false;
     }
-
-
-
 
 
 }

@@ -17,6 +17,6 @@ public class DefaultWorkspaceCellFormatter implements TableFormatter.CellFormatt
 
     @Override
     public int stringLength(String value) {
-        return ws.filterText(value).length();
+        return ws.getParseManager().filterText(value).length();
     }
 }

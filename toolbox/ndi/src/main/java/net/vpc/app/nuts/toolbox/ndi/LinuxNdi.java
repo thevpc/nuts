@@ -14,12 +14,12 @@ public class LinuxNdi {
         this.appContext = appContext;
     }
 
-    public void createNutsScript(String id, boolean force, boolean forceBoot,boolean fetch) throws IOException {
+    public void createNutsScript(String id, boolean force, boolean forceBoot, boolean silent, boolean fetch) throws IOException {
         if ("nuts".equals(id)) {
             createBootScript(forceBoot||force,false);
         } else {
-            createBootScript(forceBoot,true);
-            NutsId nutsId = appContext.getWorkspace().parseId(id);
+            createBootScript(false,true);
+            NutsId nutsId = appContext.getWorkspace().getParseManager().parseId(id);
             NutsDefinition fetched=null;
             if(nutsId.getVersion().isEmpty()){
                 fetched = appContext.getWorkspace().fetch(id, null);
@@ -36,16 +36,18 @@ public class LinuxNdi {
             File ff = getScriptFile(n);
             boolean exists = ff.exists();
             if (!force && exists) {
-                appContext.out().printf("Script already exists ==%s==\n", ff.getPath());
+                if(!silent) {
+                    appContext.out().printf("Script already exists ==%s==\n", ff.getPath());
+                }
             } else {
                 String idContent = "RUN : " + nutsId;
-                createScript(n, nutsId.toString(), idContent, "nuts \"" + nutsId+"\" \"$@\"");
+                createScript(n, silent, nutsId.toString(), idContent, "nuts \"" + nutsId+"\" \"$@\"");
             }
         }
     }
 
     public void createBootScript(boolean force,boolean silent) throws IOException {
-        NutsId b = appContext.getWorkspace().getConfigManager().getBootAPI();
+        NutsId b = appContext.getWorkspace().getConfigManager().getRunningContext().getApiId();
         NutsDefinition f = appContext.getWorkspace().fetch(b.toString(), null);
         File ff = getScriptFile("nuts");
         if (!force && ff.exists()) {
@@ -54,7 +56,7 @@ public class LinuxNdi {
             }
         } else {
             String idContent = "BOOT : " + f.getId().toString();
-            createScript("nuts", f.getId().getLongName(), idContent, "java -jar \"" + f.getFile()+"\" \"$@\"");
+            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getFile()+"\" \"$@\"");
         }
     }
 
@@ -63,18 +65,22 @@ public class LinuxNdi {
         return new File(bin, name);
     }
 
-    public File createScript(String name, String desc, String idContent, String content) throws IOException {
+    public File createScript(String name, boolean silent, String desc, String idContent, String content) throws IOException {
         File script = getScriptFile(name);
         if (script.getParentFile() != null) {
             if (!script.getParentFile().exists()) {
-                appContext.out().printf("Creating folder ==%s==\n", script.getParentFile().getPath());
+                if(!silent) {
+                    appContext.out().printf("Creating folder ==%s==\n", script.getParentFile().getPath());
+                }
                 script.getParentFile().mkdirs();
             }
         }
-        if (script.exists()) {
-            appContext.out().printf("Override script ==%s== for ==%s==\n", script.getPath(), desc);
-        } else {
-            appContext.out().printf("Creating script ==%s== for ==%s==\n", script.getPath(), desc);
+        if(!silent) {
+            if (script.exists()) {
+                appContext.out().printf("Install script (with override) ==%s== for ==%s==\n", script.getPath(), desc);
+            } else {
+                appContext.out().printf("Install script ==%s== for ==%s==\n", script.getPath(), desc);
+            }
         }
 
         try (FileWriter w = new FileWriter(script)) {

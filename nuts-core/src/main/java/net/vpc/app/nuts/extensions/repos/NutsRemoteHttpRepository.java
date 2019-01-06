@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsAuthenticationAgent;
 import net.vpc.app.nuts.extensions.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.extensions.util.*;
 import net.vpc.common.io.FileUtils;
@@ -278,7 +277,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     private String httpGetString(String url) {
-        log.log(Level.FINEST, "call url {0}", url);
+        log.log(Level.FINEST, "Get URL{0}", url);
         try {
             return IOUtils.loadString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
         } catch (IOException e) {
@@ -287,7 +286,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     private InputStream httpUpload(String url, NutsTransportParamPart... parts) {
-        log.log(Level.FINEST, "uploading url {0}", url);
+        log.log(Level.FINEST, "Uploading URL {0}", url);
         try {
             return CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
         } catch (IOException e) {
@@ -319,7 +318,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             if (StringUtils.isEmpty(newLogin)) {
                 newLogin = login;
             }
-            credentials = getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class, security.getAuthenticationAgent())
+            credentials = getWorkspace().getConfigManager().createAuthenticationAgent(security.getAuthenticationAgent())
                     .getCredentials(credentials, security.getAuthenticationAgent(),
                             getConfigManager());
         }
@@ -378,7 +377,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = getWorkspace().parseRequiredId(line);
+            NutsId nutsId = getWorkspace().getParseManager().parseRequiredId(line);
             return nutsId.setNamespace(getRepositoryId());
         }
     }

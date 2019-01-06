@@ -29,9 +29,7 @@ public class LocalTomcat {
         while (cmd.hasNext()) {
             if (cmd.isOption()) {
                 if (context.configure(cmd)) {
-                    if (context.isRequiredExit()) {
-                        return context.getExitCode();
-                    }
+                    //
                 } else {
                     cmd.unexpectedArgument("tomcat --local");
                 }
@@ -130,9 +128,7 @@ public class LocalTomcat {
         Helper x = new Helper();
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readBooleanOption("--apps")) != null) {
                 x.apps = a.getBooleanValue();
             } else if ((a = args.readBooleanOption("--domains")) != null) {
@@ -173,9 +169,7 @@ public class LocalTomcat {
         Helper h = new Helper();
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readBooleanOption("--json")) != null) {
                 h.json = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args)) != null) {
@@ -219,9 +213,7 @@ public class LocalTomcat {
         PropsHelper x = new PropsHelper();
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if (x.s == null && (x.s = readBaseServiceArg(args)) != null) {
                 //ok
             } else if ((a = args.readStringOption("--property")) != null) {
@@ -256,15 +248,13 @@ public class LocalTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readStringOption("--instance")) != null) {
                 instance = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(instance);
                 } else {
-                    throw new IllegalArgumentException("Instance name already defined");
+                    throw new NutsExecutionException("Instance name already defined",1);
                 }
             } else if ((a = args.readStringOption("--catalina-version")) != null) {
                 if (c == null) {
@@ -311,7 +301,7 @@ public class LocalTomcat {
                 }
                 LocalTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 if (tomcatAppConfig == null) {
-                    throw new IllegalArgumentException("Missing --app.source");
+                    throw new NutsExecutionException("Missing --app.source",2);
                 }
                 tomcatAppConfig.getConfig().setSourceFilePath(value);
             } else if ((a = args.readStringOption("--app.deploy")) != null) {
@@ -357,9 +347,7 @@ public class LocalTomcat {
         int lastExitCode = 0;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readBaseServiceArg(args)) != null) {
                 s.remove();
                 if (!(s instanceof LocalTomcatConfigService)) {
@@ -372,7 +360,7 @@ public class LocalTomcat {
             }
         }
         if (!processed) {
-            throw new IllegalArgumentException("tomcat --local remove: Invalid parameters");
+            throw new NutsExecutionException("tomcat --local remove: Invalid parameters",2);
         }
         return lastExitCode;
     }
@@ -382,9 +370,7 @@ public class LocalTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readTomcatServiceArg(args)) != null) {
                 return s.stop() ? 0 : 1;
             } else {
@@ -400,9 +386,7 @@ public class LocalTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readTomcatServiceArg(args)) != null) {
                 s.printStatus();
                 return 0;
@@ -422,9 +406,7 @@ public class LocalTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readStringOption("--app")) != null) {
                 app = loadApp(a.getStringValue());
             } else if ((a = args.readStringOption("--version")) != null) {
@@ -440,10 +422,10 @@ public class LocalTomcat {
             }
         }
         if (app == null) {
-            throw new NutsExecutionException("Missing Application", 2);
+            throw new NutsExecutionException("tomcat install: Missing Application", 2);
         }
         if (file == null) {
-            throw new NutsExecutionException("Missing File", 2);
+            throw new NutsExecutionException("tomcat install: Missing File", 2);
         }
         app.install(version, file, true);
         return 0;
@@ -456,9 +438,7 @@ public class LocalTomcat {
         boolean processed = false;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((a = args.readBooleanOption("-a", "--all")) != null) {
                 all = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args)) != null) {
@@ -490,9 +470,7 @@ public class LocalTomcat {
         boolean processed = false;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readBaseServiceArg(args)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 c.deleteTemp();
@@ -514,9 +492,7 @@ public class LocalTomcat {
         boolean processed = false;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readBaseServiceArg(args)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 c.deleteWork();
@@ -543,9 +519,7 @@ public class LocalTomcat {
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
-                if (context.isRequiredExit()) {
-                    return context.getExitCode();
-                }
+                //
             } else if ((s = readBaseServiceArg(args)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 if (path) {
@@ -599,7 +573,7 @@ public class LocalTomcat {
             }
         }
         if (file == null) {
-            throw new NutsExecutionException("Missing File", 2);
+            throw new NutsExecutionException("tomcat deploy: Missing File", 2);
         }
         LocalTomcatConfigService c = loadTomcatConfig(instance);
         c.deployFile(new File(file), contextName, domain);

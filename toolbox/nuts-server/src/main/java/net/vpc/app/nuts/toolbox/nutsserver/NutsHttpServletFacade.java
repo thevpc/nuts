@@ -64,7 +64,7 @@ public class NutsHttpServletFacade {
                                 .setNamespace(context.getServerId())
                         .setGroup("net.vpc.app.nuts")
                         .setName("nuts-server")
-                        .setVersion(context.getWorkspace().getConfigManager().getBootRuntime().getVersion().toString())
+                        .setVersion(context.getWorkspace().getConfigManager().getRunningContext().getRuntimeId().getVersion().toString())
                         .build().toString()
                 );
             }
@@ -246,14 +246,14 @@ public class NutsHttpServletFacade {
                     switch (name) {
                         case "descriptor":
                             try {
-                                descriptor = context.getWorkspace().parseDescriptor(info.getContent());
+                                descriptor = context.getWorkspace().getParseManager().parseDescriptor(info.getContent());
                             }finally{
                                 info.getContent().close();
                             }
                             break;
                         case "content-hash":
                             try {
-                                receivedContentHash = context.getWorkspace().evalContentHash(info.getContent());
+                                receivedContentHash = context.getWorkspace().getIOManager().computeHash(info.getContent());
                             }finally {
                                 info.getContent().close();
                             }
@@ -268,9 +268,9 @@ public class NutsHttpServletFacade {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
                 }
                 NutsId id = context.getWorkspace().deploy(
-                        new NutsDeployment().setContent(contentFile)
+                        context.getWorkspace().createDeploymentBuilder().setContent(contentFile)
                                 .setSha1(receivedContentHash)
-                                .setDescriptor(descriptor),
+                                .setDescriptor(descriptor).build(),
                         context.getSession().copy());
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
@@ -314,7 +314,7 @@ public class NutsHttpServletFacade {
 
                 NutsSession session = ws.createSession();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                session.getTerminal().setOut(ws.createPrintStream(out,false));
+                session.getTerminal().setOut(ws.getIOManager().createPrintStream(out,NutsTerminalMode.FILTERED));
                 session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
                 int result=ws.

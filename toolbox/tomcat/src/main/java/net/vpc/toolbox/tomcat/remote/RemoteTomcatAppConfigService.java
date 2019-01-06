@@ -1,6 +1,7 @@
 package net.vpc.toolbox.tomcat.remote;
 
 import net.vpc.app.nuts.NutsCommandExecBuilder;
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.ssh.SshPath;
@@ -32,7 +33,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
         if (!new File(localWarPath).exists()) {
-            throw new IllegalArgumentException("Missing source war file " + localWarPath);
+            throw new NutsExecutionException("Missing source war file " + localWarPath,2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (StringUtils.isEmpty(remoteTempPath)) {
@@ -97,7 +98,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
                     remoteFilePath
             );
         } else {
-            throw new IllegalArgumentException("Unable to detect file version of " + localWarPath + ".\n" + s.getOutputString());
+            throw new NutsExecutionException("Unable to detect file version of " + localWarPath + ".\n" + s.getOutputString(),2);
         }
     }
 

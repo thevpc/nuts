@@ -299,10 +299,10 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
     private String httpGetString(String url) {
         try {
             String s = IOUtils.loadString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
-            log.log(Level.FINEST, "[SUCCESS] call url {0}", url);
+            log.log(Level.FINEST, "[SUCCESS] Get URL {0}", url);
             return s;
         } catch (IOException e) {
-            log.log(Level.FINEST, "[ERROR  ] call url {0}", url);
+            log.log(Level.FINEST, "[ERROR  ] Get URL {0}", url);
             throw new NutsIOException(e);
         }
     }

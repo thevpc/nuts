@@ -1,6 +1,8 @@
 package net.vpc.toolbox.mysql.remote;
 
 import net.vpc.app.nuts.JsonIO;
+import net.vpc.app.nuts.NutsExecutionException;
+import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.FileUtils;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlDatabaseConfig;
@@ -42,11 +44,11 @@ public class RemoteMysqlConfigService {
 
 
     public RemoteMysqlConfigService saveConfig() {
-        JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         File f = new File(context.getConfigFolder(), name + CLIENT_CONFIG_EXT);
         f.getParentFile().mkdirs();
         try (FileWriter r = new FileWriter(f)) {
-            jsonSerializer.write(config, r, true);
+            jsonSerializer.writeJson(config, r, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -60,13 +62,13 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService loadConfig() {
         if (name == null) {
-            throw new IllegalArgumentException("Missing config name");
+            throw new NutsExecutionException("Missing config name",2);
         }
         File f = new File(context.getConfigFolder(), name + CLIENT_CONFIG_EXT);
         if (f.exists()) {
-            JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+            NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
             try (FileReader r = new FileReader(f)) {
-                config = jsonSerializer.read(r, RemoteMysqlConfig.class);
+                config = jsonSerializer.readJson(r, RemoteMysqlConfig.class);
                 return this;
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -82,9 +84,9 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        JsonIO jsonSerializer = context.getWorkspace().getJsonIO();
+        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         PrintWriter w = new PrintWriter(out);
-        jsonSerializer.write(getConfig(), new PrintWriter(out), true);
+        jsonSerializer.writeJson(getConfig(), new PrintWriter(out), true);
         w.flush();
         return this;
     }
@@ -110,7 +112,7 @@ public class RemoteMysqlConfigService {
     public RemoteMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(appName);
         if (a == null) {
-            throw new IllegalArgumentException("App not found :" + appName);
+            throw new NutsExecutionException("App not found :" + appName,2);
         }
         return new RemoteMysqlDatabaseConfigService(appName, a, this);
     }

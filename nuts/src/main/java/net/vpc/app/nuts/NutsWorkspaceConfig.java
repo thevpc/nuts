@@ -36,7 +36,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     private static final long serialVersionUID = 1;
     private String workspace = null;
-    private String bootAPIVersion = null;
+    private String bootApiVersion = null;
     private String bootRuntime = null;
     private String bootRuntimeDependencies = null;
     private String bootRepositories = null;
@@ -58,7 +58,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     public NutsWorkspaceConfig(NutsWorkspaceConfig other) {
         this.secure = other.isSecure();
         this.workspace = other.getWorkspace();
-        this.bootAPIVersion = other.getBootAPIVersion();
+        this.bootApiVersion = other.getBootApiVersion();
         this.bootRuntime = other.getBootRuntime();
         this.bootRuntimeDependencies = other.getBootRuntimeDependencies();
         this.bootRepositories = other.getBootRepositories();
@@ -198,12 +198,12 @@ public final class NutsWorkspaceConfig implements Serializable {
     }
 
 
-    public String getBootAPIVersion() {
-        return bootAPIVersion;
+    public String getBootApiVersion() {
+        return bootApiVersion;
     }
 
-    public NutsWorkspaceConfig setBootAPIVersion(String bootAPIVersion) {
-        this.bootAPIVersion = bootAPIVersion;
+    public NutsWorkspaceConfig setBootApiVersion(String bootApiVersion) {
+        this.bootApiVersion = bootApiVersion;
         return this;
     }
 

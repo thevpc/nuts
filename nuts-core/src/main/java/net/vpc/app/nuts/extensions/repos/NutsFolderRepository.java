@@ -51,7 +51,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
-                workspace.resolveRepositoryPath(StringUtils.isEmpty(repositoryLocation) ? repositoryId : repositoryLocation),
+                workspace.getRepositoryManager().resolveRepositoryPath(StringUtils.isEmpty(repositoryLocation) ? repositoryId : repositoryLocation),
                 SPEED_FAST);
         extensions.put("src", "-src.zip");
     }

@@ -61,7 +61,7 @@ public class CoreIOUtils {
         for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
             map.put((String) entry.getKey(), (String) entry.getValue());
         }
-        String nutsJarFile = workspace.fetchBootFile(session).getFile();
+        String nutsJarFile = workspace.fetchApiDefinition(session).getFile();
         if (nutsJarFile != null) {
             map.put("nuts.jar", new File(nutsJarFile).getAbsolutePath());
         }
@@ -199,13 +199,13 @@ public class CoreIOUtils {
         PrintStream out = terminal.getOut();
         PrintStream err = terminal.getErr();
         InputStream in = terminal.getIn();
-        if (ws.isStandardOutputStream(out)) {
+        if (ws.getSystemTerminal().isStandardOutputStream(out)) {
             out = null;
         }
-        if (ws.isStandardErrorStream(err)) {
+        if (ws.getSystemTerminal().isStandardErrorStream(err)) {
             err = null;
         }
-        if (ws.isStandardInputStream(in)) {
+        if (ws.getSystemTerminal().isStandardInputStream(in)) {
             in = null;
         }
         ProcessBuilder2 pb = new ProcessBuilder2()
@@ -291,16 +291,16 @@ public class CoreIOUtils {
     }
 
 
-    public static File resolvePath(String path, File baseFolder, String workspaceRoot) {
-        if (StringUtils.isEmpty(workspaceRoot)) {
-            workspaceRoot = NutsConstants.DEFAULT_NUTS_HOME;
+    public static File resolvePath(String path, File baseFolder, String nutsHome) {
+        if (StringUtils.isEmpty(nutsHome)) {
+            nutsHome = Nuts.getDefaultNutsHome();
         }
         if (path != null && path.length() > 0) {
             if (path.startsWith("~")) {
                 if (path.equals("~~")) {
-                    return createFile(workspaceRoot);
+                    return createFile(nutsHome);
                 } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    return createFile(workspaceRoot, path.substring(3));
+                    return createFile(nutsHome, path.substring(3));
                 } else if (path.equals("~")) {
                     return new File(System.getProperty("user.home"));
                 } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
@@ -395,10 +395,36 @@ public class CoreIOUtils {
     }
 
     public static InputStream openStream(String path, Object source, NutsWorkspace workspace, NutsSession session) {
+        String sourceName = String.valueOf(path);
+        boolean monitorable = true;
+        Object o = session.getProperty("monitor-allowed");
+        if(o!=null){
+            o= Convert.toBoolean(o);
+        }
+        if(o instanceof Boolean){
+            monitorable=((Boolean) o).booleanValue();
+        }else {
+            if (source instanceof NutsId) {
+                NutsId d = (NutsId) source;
+                if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
+                    monitorable = false;
+                }
+                if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
+                    monitorable = false;
+                }
+            }
+        }
+        DefaultInputStreamMonitor monitor=null;
+        if (monitorable && log.isLoggable(Level.INFO)) {
+            monitor = new DefaultInputStreamMonitor(session.getTerminal().getOut());
+        }
         InputStream stream = null;
         URLHeader header = null;
         long size = -1;
         try {
+            if(monitor!=null){
+                monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size,null));
+            }
             NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(workspace, path);
             try {
 
@@ -409,6 +435,9 @@ public class CoreIOUtils {
             }
             stream = f.open();
         } catch (IOException e) {
+            if(monitor!=null) {
+                monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
+            }
             throw new NutsIOException(e);
         }
         if (stream != null) {
@@ -420,47 +449,12 @@ public class CoreIOUtils {
         } else {
             log.log(Level.FINEST, "downloading url failed : {0}", new Object[]{path});
         }
-        boolean monitorable = true;
-        Object o = session.getProperty("monitor-allowed");
-        if(o!=null){
-            o= Convert.toBoolean(o);
-        }
-        if(o instanceof Boolean){
-            monitorable=((Boolean) o).booleanValue();
-        }else {
-            if (source instanceof NutsId) {
-                NutsId d = (NutsId) source;
-//            if (CoreNutsUtils.FACE_CATALOG.equals(d.getFace())) {
-//                monitorable = false;
-//            }
-                if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-                if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-//            if (CoreNutsUtils.FACE_DESC.equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("archetype-catalog".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("descriptor".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("main-sha1".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("descriptor-sha1".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-            }
-        }
+
         if (!monitorable) {
             return stream;
         }
-        if (log.isLoggable(Level.INFO)) {
-            return IOUtils.monitor(stream, source, String.valueOf(path), size, new DefaultInputStreamMonitor(session.getTerminal().getOut()));
+        if (monitor!=null) {
+            return IOUtils.monitor(stream, source, sourceName, size, monitor);
         }
         return stream;
 

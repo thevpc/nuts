@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
@@ -59,7 +60,6 @@ public class TailCommand extends AbstractNutsCommand {
         Options options = new Options();
         List<String> files = new ArrayList<>();
         PrintStream out = context.out();
-        boolean noColors=false;
         while (cmdLine.hasNext()) {
             Argument a = cmdLine.read();
             if (a.isOption()) {
@@ -68,7 +68,7 @@ public class TailCommand extends AbstractNutsCommand {
                 }else if (ShellHelper.isInt(a.getString().substring(1))) {
                     options.max = Integer.parseInt(a.getString().substring(1));
                 } else {
-                    throw new IllegalArgumentException("Not yet supported");
+                    throw new NutsExecutionException("Not yet supported",2);
                 }
             } else {
                 String path = a.getString();
@@ -77,7 +77,7 @@ public class TailCommand extends AbstractNutsCommand {
             }
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("Not yet supported");
+            throw new NutsExecutionException("Not yet supported",2);
         }
         for (String file : files) {
             TextFiles.tail(TextFiles.create(file), options.max, out);

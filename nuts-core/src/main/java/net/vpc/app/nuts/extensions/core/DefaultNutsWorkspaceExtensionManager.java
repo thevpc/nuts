@@ -34,6 +34,8 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
                     NutsDefaultFormattedPrintStream.class,
                     NutsNonFormattedPrintStream.class,
                     NutsFormattedPrintStream.class,
+                    NutsFormatFilteredPrintStream.class,
+                    NutsSystemTerminalBase.class,
                     NutsTerminalBase.class,
                     NutsTerminal.class,
                     NutsDescriptorContentParserComponent.class,
@@ -58,15 +60,15 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.getConfigManager().getBootAPI().getVersion().toString(), session);
+        return findWorkspaceExtensions(ws.getConfigManager().getRunningContext().getApiId().getVersion().toString(), session);
     }
 
     @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.getConfigManager().getBootAPI().getVersion().toString();
+            version = ws.getConfigManager().getRunningContext().getApiId().getVersion().toString();
         }
-        NutsId id = ws.getConfigManager().getBootAPI().setVersion(version);
+        NutsId id = ws.getConfigManager().getRunningContext().getApiId().setVersion(version);
         return findExtensions(id, "extensions", session);
     }
 
@@ -204,7 +206,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsSimpleName(ws.parseRequiredId(NutsConstants.NUTS_ID_BOOT_API))) {
+        if (file.getId().equalsSimpleName(ws.getParseManager().parseRequiredId(NutsConstants.NUTS_ID_BOOT_API))) {
             return true;
         }
         try {
@@ -286,7 +288,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     public NutsTerminal createTerminal(Class ignoredClass) {
         NutsTerminalBase termb = createSupported(NutsTerminalBase.class, ws);
         if (termb == null) {
-            throw new NutsUnsupportedOperationException("Should never happen ! Terminal could not be resolved.");
+            throw new NutsExtensionMissingException(NutsTerminalBase.class, "TerminalBase");
         } else {
             if (ignoredClass != null && ignoredClass.equals(termb.getClass())) {
                 return null;

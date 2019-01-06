@@ -28,10 +28,8 @@ public class NutsApplicationContext implements CommandLineContext {
     private String storeId;
     private NutsId appId;
     private boolean verbose;
-    private boolean requiredExit;
     private boolean noColors;
     private long startTimeMillis;
-    private int exitCode;
     private String[] args;
     private TableFormatter.CellFormatter tableCellFormatter;
     private String mode="launch";
@@ -53,7 +51,7 @@ public class NutsApplicationContext implements CommandLineContext {
         String[] args = workspace.getConfigManager().getOptions().getApplicationArguments();
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-execution-mode=")) {
-            String[] execModeCommand = NutsArgumentsParser.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
+            String[] execModeCommand = NutsMinimalCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
             if(execModeCommand.length>0){
                 switch (execModeCommand[0]){
                     case "auto-complete":{
@@ -77,7 +75,7 @@ public class NutsApplicationContext implements CommandLineContext {
                     case "on-update":{
                         mode="on-uninstall";
                         if(execModeCommand.length>1){
-                            appPreviousVersion = workspace.parseVersion(execModeCommand[1]);
+                            appPreviousVersion = workspace.getParseManager().parseVersion(execModeCommand[1]);
                         }
                         modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
                         break;
@@ -104,11 +102,11 @@ public class NutsApplicationContext implements CommandLineContext {
         setErr0(getTerminal().getFormattedErr());
         setOut(getOut0());
         setErr(getErr0());
-        setProgramsFolder(workspace.getStoreRoot(getStoreId(), RootFolderType.PROGRAMS));
-        setConfigFolder(workspace.getStoreRoot(getStoreId(), RootFolderType.CONFIG));
-        setLogsFolder(workspace.getStoreRoot(getStoreId(), RootFolderType.LOGS));
-        setTempFolder(workspace.getStoreRoot(getStoreId(), RootFolderType.TEMP));
-        setVarFolder(workspace.getStoreRoot(getStoreId(), RootFolderType.VAR));
+        setProgramsFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.PROGRAMS));
+        setConfigFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.CONFIG));
+        setLogsFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.LOGS));
+        setTempFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.TEMP));
+        setVarFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.VAR));
         if (wordIndex >= 0) {
             setNoColors(true);
         }
@@ -145,17 +143,13 @@ public class NutsApplicationContext implements CommandLineContext {
                 showHelp();
                 cmd.skipAll();
             }
-            setRequiredExit(true);
-            setExitCode(0);
-            return true;
+            throw new NutsExecutionException("Help",0);
         } else if ((a = cmd.readBooleanOption("--version")) != null) {
             if (cmd.isExecMode()) {
                 out().printf("%s\n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
                 cmd.skipAll();
             }
-            setRequiredExit(true);
-            setExitCode(0);
-            return true;
+            throw new NutsExecutionException("Help",0);
         } else if ((a = cmd.readBooleanOption("--no-colors")) != null) {
             setNoColors(a.getBooleanValue());
             return true;
@@ -166,31 +160,25 @@ public class NutsApplicationContext implements CommandLineContext {
         return false;
     }
 
-    public PrintStream showHelp() {
+    public void showHelp() {
         String h = getWorkspace().resolveDefaultHelpForClass(getAppClass());
         if (h == null) {
             h = "Help is @@missing@@.";
         }
-        return out().printf(h);
+        out().print(h);
     }
 
     public void setNoColors(boolean b) {
         noColors = b;
         if (noColors) {
-            setOut(getWorkspace().createPrintStream(getOut0(), true, true));
-            setErr(getWorkspace().createPrintStream(getErr0(), true, true));
+            getWorkspace().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
+//            setOut(getWorkspace().createPrintStream(getOut0(), true, true));
+//            setErr(getWorkspace().createPrintStream(getErr0(), true, true));
         } else {
-            setOut(getOut0());
-            setErr(getErr0());
+            getWorkspace().getSystemTerminal().setMode(null);
+//            setOut(getOut0());
+//            setErr(getErr0());
         }
-    }
-
-    public boolean isRequiredExit() {
-        return requiredExit;
-    }
-
-    public int getExitCode() {
-        return exitCode;
     }
 
     public Class getAppClass() {
@@ -335,16 +323,6 @@ public class NutsApplicationContext implements CommandLineContext {
         return this;
     }
 
-    public NutsApplicationContext setRequiredExit(boolean requiredExit) {
-        this.requiredExit = requiredExit;
-        return this;
-    }
-
-    public NutsApplicationContext setExitCode(int exitCode) {
-        this.exitCode = exitCode;
-        return this;
-    }
-
     public String[] getArgs() {
         return args;
     }
@@ -370,46 +348,15 @@ public class NutsApplicationContext implements CommandLineContext {
             ArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new IllegalArgumentException("Candidate cannot be null");
+                throw new NutsExecutionException("Candidate cannot be null",2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
-                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + escapeArgument(v));
+                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsMinimalCommandLine.escapeArgument(v));
             } else {
-                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + escapeArgument(v) + " " + escapeArgument(d));
+                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsMinimalCommandLine.escapeArgument(v) + " " + NutsMinimalCommandLine.escapeArgument(d));
             }
             return c;
-        }
-
-        private String escapeArgument(String arg) {
-            StringBuilder sb = new StringBuilder();
-            boolean s = false;
-            if (arg != null) {
-                for (char c : arg.toCharArray()) {
-                    switch (c) {
-                        case '\'':
-                        case '\\': {
-                            sb.append('\\');
-                            sb.append(c);
-                            s = true;
-                            break;
-                        }
-                        case ' ': {
-                            s = true;
-                            sb.append(c);
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                        }
-                    }
-                }
-            }
-            if (s || sb.length() == 0) {
-                sb.insert(0, '\'');
-                sb.append('\'');
-            }
-            return sb.toString();
         }
 
         @Override

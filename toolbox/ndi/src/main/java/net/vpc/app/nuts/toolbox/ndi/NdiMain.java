@@ -16,7 +16,7 @@ public class NdiMain extends NutsApplication {
 
     public LinuxNdi createNdi(NutsApplicationContext appContext) {
         LinuxNdi ndi = null;
-        if (appContext.getWorkspace().getPlatformOs().getName().equals("linux")) {
+        if (appContext.getWorkspace().getConfigManager().getPlatformOs().getName().equals("linux")) {
             ndi = new LinuxNdi(appContext);
         }
         return ndi;
@@ -31,9 +31,10 @@ public class NdiMain extends NutsApplication {
             if ((a = cmd.readNonOption("in", "install")) != null) {
                 LinuxNdi ndi = createNdi(appContext);
                 if (ndi == null) {
-                    throw new IllegalArgumentException("Platform not supported : " + appContext.getWorkspace().getPlatformOs());
+                    throw new NutsExecutionException("Platform not supported : " + appContext.getWorkspace().getConfigManager().getPlatformOs(),2);
                 }
                 boolean force = false;
+                boolean silent = false;
                 boolean forceAll = false;
                 boolean fetch = false;
                 while (cmd.hasNext()) {
@@ -44,13 +45,15 @@ public class NdiMain extends NutsApplication {
                         if (forceAll && !force) {
                             force = true;
                         }
+                    } else if ((a = cmd.readBooleanOption("-s", "--silent")) != null) {
+                        silent = a.getBooleanValue();
                     } else if ((a = cmd.readBooleanOption("-t", "--fetch")) != null) {
                         fetch = a.getBooleanValue();
                     } else if (cmd.isOption()) {
                         cmd.unexpectedArgument("ndi");
                     } else {
                         try {
-                            ndi.createNutsScript(cmd.read().getString(), force, forceAll, fetch);
+                            ndi.createNutsScript(cmd.read().getString(), force, forceAll, silent,fetch);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -66,13 +69,25 @@ public class NdiMain extends NutsApplication {
 
     @Override
     protected int onInstallApplication(NutsApplicationContext applicationContext) {
+        CommandLine cmd=new CommandLine(applicationContext);
+        Argument a;
+        boolean force=false;
+        boolean silent=false;
+        while(cmd.hasNext()){
+            if((a=cmd.readBooleanOption("-f","--force"))!=null) {
+                force = a.getBooleanValue();
+            }else if((a=cmd.readBooleanOption("-s","--silent"))!=null){
+                silent=a.getBooleanValue();
+            }
+        }
         LinuxNdi ndi = createNdi(applicationContext);
         if (ndi != null) {
-            for (String s : new String[]{"nuts", "ndi", "nsh"}) {
+            for (String s : new String[]{"nuts", "ndi", "nsh","nadmin","nfind"}) {
                 try {
-                    ndi.createNutsScript(s, true, true, true);
+                    ndi.createNutsScript(s, force, false, silent,true);
                 } catch (IOException e) {
                     applicationContext.out().println("ndi: " + s + "install failed : " + e.toString());
+                    return 1;
                 }
             }
         }

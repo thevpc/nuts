@@ -62,7 +62,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException("Missing Workspace");
         }
-        NutsTerminal terminal = invokerWorkspace.createTerminal();
+        NutsTerminal terminal = invokerWorkspace.getIOManager().createTerminal(null,null,null);
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -176,9 +176,9 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                 NutsJavaShell cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    PrintStream eout = invokerWorkspace.createPrintStream(out,false);
+                                    PrintStream eout = invokerWorkspace.getIOManager().createPrintStream(out,NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
-                                    NutsTerminal terminal = invokerWorkspace.createTerminal(finalAccept.getInputStream(),
+                                    NutsTerminal terminal = invokerWorkspace.getIOManager().createTerminal(finalAccept.getInputStream(),
                                             eout, eout);
                                     session.setTerminal(terminal);
                                     cli = new NutsJavaShell(invokerWorkspace,session);
@@ -189,7 +189,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
                                             PrintStream out2 = MyNutsServer.this.terminal.getFormattedOut();
-                                            out2.printf("Stopping Server ...\n");
+                                            out2.println("Stopping Server ...");
                                             finalServerSocket.close();
                                             return 0;
                                         }

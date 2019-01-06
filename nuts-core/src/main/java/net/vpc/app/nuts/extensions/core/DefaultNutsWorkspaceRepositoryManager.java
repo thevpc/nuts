@@ -88,7 +88,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
             if(StringUtils.isEmpty(location)){
                 throw new IllegalArgumentException("You should consider specifying location and/or repositoryId");
             }
-            File file=new File(ws.resolveRepositoryPath(location));
+            File file=new File(this.resolveRepositoryPath(location));
             if(file.isDirectory()){
                 if(new File(file,NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME).exists()){
                     NutsRepositoryConfig c=CoreJsonUtils.loadJson(new File(file,NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME),NutsRepositoryConfig.class);
@@ -235,6 +235,16 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
     @Override
     public NutsRepositoryListener[] getRepositoryListeners() {
         return repositoryListeners.toArray(new NutsRepositoryListener[0]);
+    }
+
+    @Override
+    public String resolveRepositoryPath(String repositoryLocation) {
+        String root = this.getRepositoriesRoot();
+        NutsWorkspaceConfigManager configManager = this.ws.getConfigManager();
+        return CoreIOUtils.resolvePath(repositoryLocation,
+                root != null ? new File(root) : CoreIOUtils.createFile(
+                        configManager.getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
+                configManager.getHomeLocation()).getPath();
     }
 
 }

@@ -58,7 +58,7 @@ import static org.jline.reader.impl.ReaderUtils.*;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsJLineTerminal implements NutsTerminalBase {
+public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     private Terminal terminal;
     private LineReader reader;
@@ -66,93 +66,75 @@ public class NutsJLineTerminal implements NutsTerminalBase {
     private PrintStream err;
     private InputStream in;
     private NutsWorkspace workspace;
+    private NutsTerminalMode outMode;
+    private NutsTerminalMode errMode;
 
     public NutsJLineTerminal() {
     }
 
-    public void install(NutsWorkspace workspace, InputStream in, PrintStream out, PrintStream err) {
-        this.workspace = workspace;
+    @Override
+    public void setOutMode(NutsTerminalMode mode) {
+        this.outMode=mode;
+    }
 
-        if (in != null || out != null || err != null || System.console() == null) {
-            throw new NutsIllegalArgumentException("JLineTerminal: Unsupported Console type");
-        } else {
-            TerminalBuilder builder = TerminalBuilder.builder();
-            builder.streams(System.in, System.out);
-            builder.system(true);
+    @Override
+    public NutsTerminalMode getOutMode() {
+        return outMode;
+    }
+
+    @Override
+    public void setErrorMode(NutsTerminalMode mode) {
+        this.errMode=mode;
+    }
+
+    @Override
+    public NutsTerminalMode getErrorMode() {
+        return errMode;
+    }
+
+    public void install(NutsWorkspace workspace) {
+        this.workspace = workspace;
+        TerminalBuilder builder = TerminalBuilder.builder();
+        builder.streams(System.in, System.out);
+        builder.system(true);
+
+        try {
+            terminal = builder.build();
+        } catch (Throwable ex) {
+            //unable to create system terminal
+        }
+        if (terminal == null) {
+            builder.system(false);
             try {
                 terminal = builder.build();
-            } catch (Throwable ex) {
-                //unable to create system terminal
+            } catch (IOException ex) {
+                Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+                throw new NutsIOException(ex);
             }
-            if (terminal == null) {
-                builder.system(false);
-                try {
-                    terminal = builder.build();
-                } catch (IOException ex) {
-                    Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-                    throw new NutsIOException(ex);
-                }
-            }
-
-            reader = LineReaderBuilder.builder()
-                    .completer(new Completer() {
-                        @Override
-                        public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
-                            NutsConsoleContext nutsConsoleContext = (NutsConsoleContext) workspace.getUserProperties().get(NutsConsoleContext.class.getName());
-                            if (nutsConsoleContext != null) {
-                                if (line.wordIndex() == 0) {
-                                    for (Command command : nutsConsoleContext.getShell().getCommands()) {
-                                        candidates.add(new Candidate(command.getName()));
-                                    }
-                                } else {
-                                    String commandName = line.words().get(0);
-                                    int wordIndex = line.wordIndex() - 1;
-                                    List<String> autoCompleteWords = new ArrayList<>(line.words().subList(1, line.words().size()));
-                                    int x = commandName.length();
-                                    String autoCompleteLine = line.line().substring(x);
-                                    List<AutoCompleteCandidate> autoCompleteCandidates =
-                                            nutsConsoleContext.resolveAutoCompleteCandidates(commandName, autoCompleteWords, wordIndex, autoCompleteLine);
-                                    for (Object cmdCandidate0 : autoCompleteCandidates) {
-                                        ArgumentCandidate cmdCandidate = (ArgumentCandidate) cmdCandidate0;
-                                        if (cmdCandidate != null) {
-                                            String value = cmdCandidate.getValue();
-                                            if (!StringUtils.isEmpty(value)) {
-                                                String display = cmdCandidate.getDisplay();
-                                                if (StringUtils.isEmpty(display)) {
-                                                    display = value;
-                                                }
-                                                candidates.add(new Candidate(
-                                                        value,
-                                                        display,
-                                                        null, null, null, null, true
-                                                ));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    })
-                    .terminal(terminal)
-                    //                .completer(completer)
-                    //                .parser(parser)
-                    .build();
-            reader.setVariable(LineReader.HISTORY_FILE, FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), "history"));
-            ((LineReaderImpl) reader).setHistory(new MyHistory(reader,workspace));
-            this.out = workspace.createPrintStream(
-                    new TransparentPrintStream(
-                            reader.getTerminal().output(),
-                            System.out
-                    )
-                    , true);
-            this.err = workspace.createPrintStream(
-                    new TransparentPrintStream(
-                            reader.getTerminal().output(),
-                            System.err
-                    )
-                    , true);//.setColor(NutsPrintStream.RED);
-            this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
         }
+
+        reader = LineReaderBuilder.builder()
+                .completer(new MyCompleter(workspace))
+                .terminal(terminal)
+                //                .completer(completer)
+                //                .parser(parser)
+                .build();
+        reader.setVariable(LineReader.HISTORY_FILE, FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), "history"));
+        ((LineReaderImpl) reader).setHistory(new MyHistory(reader, workspace));
+        this.out = workspace.getIOManager().createPrintStream(
+                new TransparentPrintStream(
+                        reader.getTerminal().output(),
+                        System.out
+                )
+                , NutsTerminalMode.FORMATTED);
+        this.err = workspace.getIOManager().createPrintStream(
+                new TransparentPrintStream(
+                        reader.getTerminal().output(),
+                        System.err
+                )
+                , NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+        this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
+
     }
 
     @Override
@@ -240,7 +222,7 @@ public class NutsJLineTerminal implements NutsTerminalBase {
         private int offset = 0;
         private int index = 0;
 
-        public MyHistory(LineReader reader,NutsWorkspace workspace) {
+        public MyHistory(LineReader reader, NutsWorkspace workspace) {
             attach(reader);
             this.workspace = workspace;
             workspace.addUserPropertyListener(new MapListener<String, Object>() {
@@ -271,8 +253,8 @@ public class NutsJLineTerminal implements NutsTerminalBase {
 
         private void setShellHistory(ShellHistory shellHistory) {
             this.shellHistory = shellHistory;
-            offset=0;
-            index=0;
+            offset = 0;
+            index = 0;
             items.clear();
         }
 
@@ -295,8 +277,7 @@ public class NutsJLineTerminal implements NutsTerminalBase {
                 this.reader = reader;
                 try {
                     load();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     Log.warn("Failed to load history", e);
                 }
             }
@@ -304,10 +285,10 @@ public class NutsJLineTerminal implements NutsTerminalBase {
 
         @Override
         public void load() throws IOException {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 shellHistory.load();
                 maybeResize();
-            }else {
+            } else {
                 Path path = getPath();
                 if (path != null) {
                     try {
@@ -318,9 +299,9 @@ public class NutsJLineTerminal implements NutsTerminalBase {
                                 reader.lines().forEach(l -> {
                                     int idx = l.indexOf(':');
                                     if (idx < 0) {
-                                        throw new IllegalArgumentException("Bad history file syntax! " +
+                                        throw new NutsExecutionException("Bad history file syntax! " +
                                                 "The history file `" + path + "` may be an older history: " +
-                                                "please remove it or use a different history file.");
+                                                "please remove it or use a different history file.", 2);
                                     }
                                     Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
                                     String line = unescape(l.substring(idx + 1));
@@ -342,9 +323,9 @@ public class NutsJLineTerminal implements NutsTerminalBase {
 
         @Override
         public void purge() throws IOException {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 shellHistory.clear();
-            }else {
+            } else {
                 internalClear();
                 Path path = getPath();
                 if (path != null) {
@@ -356,9 +337,9 @@ public class NutsJLineTerminal implements NutsTerminalBase {
 
         @Override
         public void save() throws IOException {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 shellHistory.save();
-            }else {
+            } else {
                 Path path = getPath();
                 if (path != null) {
                     Log.trace("Saving history to: ", path);
@@ -440,17 +421,17 @@ public class NutsJLineTerminal implements NutsTerminalBase {
         }
 
         public int size() {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 return shellHistory.size();
-            }else {
+            } else {
                 return items.size();
             }
         }
 
         public boolean isEmpty() {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 return shellHistory.isEmpty();
-            }else {
+            } else {
                 return items.isEmpty();
             }
         }
@@ -472,17 +453,17 @@ public class NutsJLineTerminal implements NutsTerminalBase {
         }
 
         public String getLast() {
-            if(shellHistory!=null){
-                return  shellHistory.getLast();
-            }else {
+            if (shellHistory != null) {
+                return shellHistory.getLast();
+            } else {
                 return items.getLast().line();
             }
         }
 
         public String get(final int index) {
-            if(shellHistory!=null){
-                return  shellHistory.get(index - offset);
-            }else {
+            if (shellHistory != null) {
+                return shellHistory.get(index - offset);
+            } else {
                 return items.get(index - offset).line();
             }
         }
@@ -513,8 +494,7 @@ public class NutsJLineTerminal implements NutsTerminalBase {
             if (isSet(reader, LineReader.Option.HISTORY_INCREMENTAL)) {
                 try {
                     save();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     Log.warn("Failed to save history", e);
                 }
             }
@@ -540,10 +520,10 @@ public class NutsJLineTerminal implements NutsTerminalBase {
         }
 
         protected void internalAdd(Instant time, String line) {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 shellHistory.add(line);
                 maybeResize();
-            }else {
+            } else {
                 Entry entry = new EntryImpl(offset + items.size(), time, line);
                 items.add(entry);
                 maybeResize();
@@ -551,14 +531,14 @@ public class NutsJLineTerminal implements NutsTerminalBase {
         }
 
         private void maybeResize() {
-            if(shellHistory!=null){
+            if (shellHistory != null) {
                 while (size() > getInt(reader, LineReader.HISTORY_SIZE, DEFAULT_HISTORY_SIZE)) {
                     shellHistory.remove(0);
                     //lastLoaded--;
                     //offset++;
                 }
                 index = size();
-            }else {
+            } else {
                 while (size() > getInt(reader, LineReader.HISTORY_SIZE, DEFAULT_HISTORY_SIZE)) {
                     items.removeFirst();
                     lastLoaded--;
@@ -569,8 +549,8 @@ public class NutsJLineTerminal implements NutsTerminalBase {
         }
 
         public ListIterator<Entry> iterator(int index) {
-            if(shellHistory!=null) {
-                List<Entry> r=new ArrayList<>();
+            if (shellHistory != null) {
+                List<Entry> r = new ArrayList<>();
                 List<String> elements = shellHistory.getElements();
                 for (int i = 0; i < elements.size(); i++) {
                     r.add(new EntryImpl(
@@ -580,7 +560,7 @@ public class NutsJLineTerminal implements NutsTerminalBase {
                     ));
                 }
                 return r.listIterator(index);
-            }else {
+            } else {
                 return items.listIterator(index - offset);
             }
         }
@@ -675,7 +655,7 @@ public class NutsJLineTerminal implements NutsTerminalBase {
          */
         public String current() {
             if (index >= size()) {
-                index=size();
+                index = size();
                 return "";
             }
             return get(index);
@@ -691,7 +671,7 @@ public class NutsJLineTerminal implements NutsTerminalBase {
                 return false;
             }
             if (index > size()) {
-                index=size();
+                index = size();
             }
             index--;
             return true;
@@ -761,5 +741,50 @@ public class NutsJLineTerminal implements NutsTerminalBase {
             return sb.toString();
         }
 
+    }
+
+    private static class MyCompleter implements Completer {
+        private final NutsWorkspace workspace;
+
+        public MyCompleter(NutsWorkspace workspace) {
+            this.workspace = workspace;
+        }
+
+        @Override
+        public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
+            NutsConsoleContext nutsConsoleContext = (NutsConsoleContext) workspace.getUserProperties().get(NutsConsoleContext.class.getName());
+            if (nutsConsoleContext != null) {
+                if (line.wordIndex() == 0) {
+                    for (Command command : nutsConsoleContext.getShell().getCommands()) {
+                        candidates.add(new Candidate(command.getName()));
+                    }
+                } else {
+                    String commandName = line.words().get(0);
+                    int wordIndex = line.wordIndex() - 1;
+                    List<String> autoCompleteWords = new ArrayList<>(line.words().subList(1, line.words().size()));
+                    int x = commandName.length();
+                    String autoCompleteLine = line.line().substring(x);
+                    List<AutoCompleteCandidate> autoCompleteCandidates =
+                            nutsConsoleContext.resolveAutoCompleteCandidates(commandName, autoCompleteWords, wordIndex, autoCompleteLine);
+                    for (Object cmdCandidate0 : autoCompleteCandidates) {
+                        ArgumentCandidate cmdCandidate = (ArgumentCandidate) cmdCandidate0;
+                        if (cmdCandidate != null) {
+                            String value = cmdCandidate.getValue();
+                            if (!StringUtils.isEmpty(value)) {
+                                String display = cmdCandidate.getDisplay();
+                                if (StringUtils.isEmpty(display)) {
+                                    display = value;
+                                }
+                                candidates.add(new Candidate(
+                                        value,
+                                        display,
+                                        null, null, null, null, true
+                                ));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

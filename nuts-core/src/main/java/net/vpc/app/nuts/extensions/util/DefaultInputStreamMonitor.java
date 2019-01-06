@@ -74,6 +74,9 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor , OutputStr
             }else {
                 formattedLine.append(" ([[").append(mf.format(event.getLength())).append("]])");
             }
+            if(event.getException()!=null){
+                formattedLine.append(" @@ERROR@@ ");
+            }
             formattedLine.append(" ``").append(event.getSourceName()).append("`` ");
             while (formattedLine.length() < 80) {
                 formattedLine.append(' ');

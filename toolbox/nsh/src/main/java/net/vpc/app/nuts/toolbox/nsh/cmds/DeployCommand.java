@@ -62,7 +62,6 @@ public class DeployCommand extends AbstractNutsCommand {
         String contentFile = null;
         String descriptorFile = null;
         Argument a;
-        boolean noColors = false;
         NutsWorkspace ws = context.getWorkspace();
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
@@ -102,15 +101,15 @@ public class DeployCommand extends AbstractNutsCommand {
         PrintStream out = context.out();
         if (fileMode) {
             if (StringUtils.isEmpty(contentFile)) {
-                throw new NutsCommandSyntaxError("Missing File");
+                throw new NutsCommandSyntaxError("deploy: Missing File");
             }
             for (String s : context.consoleContext().getShell().expandPath(contentFile)) {
                 NutsId nid = null;
                 nid = ws.deploy(
-                        new NutsDeployment()
+                        ws.createDeploymentBuilder()
                                 .setContentPath(s)
                                 .setDescriptorPath(descriptorFile)
-                                .setRepositoryId(to),
+                                .setRepositoryId(to).build(),
                         context.getSession()
                 );
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
@@ -124,10 +123,10 @@ public class DeployCommand extends AbstractNutsCommand {
                 if (fetched.getFile() != null) {
                     NutsId nid = null;
                     nid = ws.deploy(
-                            new NutsDeployment()
+                            ws.createDeploymentBuilder()
                                     .setContent(new File(fetched.getFile()))
                                     .setDescriptor(fetched.getDescriptor())
-                                    .setRepositoryId(to),
+                                    .setRepositoryId(to).build(),
                             context.getSession()
                     );
                     out.printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);

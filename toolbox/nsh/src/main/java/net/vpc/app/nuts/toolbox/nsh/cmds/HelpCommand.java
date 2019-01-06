@@ -35,9 +35,9 @@ import net.vpc.app.nuts.toolbox.nsh.NutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.toolbox.nsh.options.CommandNonOption;
 import net.vpc.common.commandline.Argument;
+import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -53,8 +53,7 @@ public class HelpCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        PrintStream out = context.getTerminal().getFormattedOut();
+        CommandLine cmdLine = cmdLine(args, context);
         boolean showColors = false;
         List<String> commandNames = new ArrayList<>();
         Argument a;
@@ -73,13 +72,13 @@ public class HelpCommand extends AbstractNutsCommand {
         }
         if (cmdLine.isExecMode()) {
             if (showColors) {
-                String colorsText = context.getWorkspace().getResourceString("/net/vpc/app/nuts/nuts-help-colors.help", HelpCommand.class, "no help found");
-                out.println(colorsText);
+                String colorsText = context.getWorkspace().getIOManager().getResourceString("/net/vpc/app/nuts/toolbox/nuts-help-colors.help", HelpCommand.class, "no help found");
+                context.out().println(colorsText);
             } else {
                 if (commandNames.isEmpty()) {
-                    String helpText = context.getWorkspace().getResourceString("/net/vpc/app/nuts/nsh-help.help", HelpCommand.class, "no help found");
-                    out.println(helpText);
-                    out.println("@@AVAILABLE COMMANDS ARE:@@");
+                    String helpText = context.getWorkspace().getIOManager().getResourceString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class, "no help found");
+                    context.out().println(helpText);
+                    context.out().println("@@AVAILABLE COMMANDS ARE:@@");
                     NutsCommand[] commands = context.getShell().getCommands();
                     Arrays.sort(commands, new Comparator<NutsCommand>() {
                         @Override
@@ -95,18 +94,18 @@ public class HelpCommand extends AbstractNutsCommand {
                         }
                     }
                     for (NutsCommand cmd : commands) {
-                        out.printf("##%s## : ", StringUtils.alignLeft(cmd.getName(), max));
-                        out.println(cmd.getHelpHeader()); //formatted
+                        context.out().printf("##%s## : ", StringUtils.alignLeft(cmd.getName(), max));
+                        context.out().println(cmd.getHelpHeader()); //formatted
                     }
                 } else {
                     for (String commandName : commandNames) {
                         NutsCommand command1 = context.getShell().findCommand(commandName);
                         if (command1 == null) {
-                            context.getTerminal().getFormattedErr().printf("Command not found : %s\n", commandName);
+                            context.err().printf("Command not found : %s\n", commandName);
                         } else {
                             String help = command1.getHelp();
-                            out.printf("==Command== %s\f", commandName);
-                            out.println(help);
+                            context.out().printf("==Command== %s\f", commandName);
+                            context.out().println(help);
                         }
 
                     }

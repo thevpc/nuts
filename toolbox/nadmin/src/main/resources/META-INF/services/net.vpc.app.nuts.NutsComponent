@@ -9,3 +9,5 @@ net.vpc.app.nuts.toolbox.nadmin.config.UserNAdminSubCommand
 net.vpc.app.nuts.toolbox.nadmin.config.WorkspaceNAdminSubCommand
 net.vpc.app.nuts.toolbox.nadmin.config.JavaNAdminSubCommand
 net.vpc.app.nuts.toolbox.nadmin.config.ConfigNAdminSubCommand
+net.vpc.app.nuts.toolbox.nadmin.config.IndexNAdminSubCommand
+net.vpc.app.nuts.toolbox.nadmin.config.ConnectNAdminSubCommand

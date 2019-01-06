@@ -14,6 +14,7 @@
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="vpc-common-utils" />
     <orderEntry type="module" module-name="vpc-common-fprint" />
+    <orderEntry type="library" name="Maven: org.fusesource.jansi:jansi:1.17.1" level="project" />
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-mvn" />
     <orderEntry type="module" module-name="vpc-common-io" />

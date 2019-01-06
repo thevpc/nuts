@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.EnvProvider;
+import net.vpc.app.nuts.NutsAuthenticationAgent;
+import net.vpc.app.nuts.NutsEnvProvider;
 import net.vpc.app.nuts.NutsSecurityException;
 import net.vpc.app.nuts.Singleton;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
@@ -17,7 +18,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
         return NO_SUPPORT;
     }
 
-    public void checkCredentials(String credentialsId, String authenticationAgent,String password, EnvProvider envProvider) {
+    public void checkCredentials(String credentialsId, String authenticationAgent,String password, NutsEnvProvider envProvider) {
         if (StringUtils.isEmpty(password)) {
             throw new NutsSecurityException("Missing old password");
         }
@@ -38,7 +39,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
     }
 
     @Override
-    public String getCredentials(String credentialsId, String authenticationAgent, EnvProvider envProvider) {
+    public String getCredentials(String credentialsId, String authenticationAgent, NutsEnvProvider envProvider) {
         //credentials are already encrypted with default passphrase!
         if (!StringUtils.isEmpty(credentialsId)) {
             credentialsId = new String(CoreSecurityUtils.httpDecrypt(credentialsId.getBytes(), CoreNutsUtils.DEFAULT_PASSPHRASE));
@@ -47,7 +48,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
     }
 
     @Override
-    public String setCredentials(String credentials, String authenticationAgent, EnvProvider envProvider) {
+    public String setCredentials(String credentials, String authenticationAgent, NutsEnvProvider envProvider) {
         if (StringUtils.isEmpty(credentials)) {
             credentials = null;
         } else {

@@ -41,6 +41,8 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
                 }
             }
         }
+        //always save  in admin command!
+        save=true;
         if (save) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 PrintStream out = context.out();

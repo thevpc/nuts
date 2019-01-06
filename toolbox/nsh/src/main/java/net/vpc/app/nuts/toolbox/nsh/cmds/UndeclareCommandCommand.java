@@ -48,9 +48,7 @@ public class UndeclareCommandCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        PrintStream out = context.out();
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {

@@ -5,10 +5,10 @@
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nuts-server</artifactId>
     <name>net.vpc.app.nuts.toolbox.nuts-server</name>
-    <version>0.5.2.0</version>
+    <version>0.5.3.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
-
+    <description>Nuts Repository Server</description>
     <organization>
         <name>vpc open source initiative</name>
         <url>http://tahabensalah.net</url>
@@ -64,22 +64,22 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-cmd-app</artifactId>
-            <version>0.5.2.0</version>
+            <version>0.5.3.0</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>net.vpc.app.nuts</groupId>-->
-            <!--<artifactId>nuts-core</artifactId>-->
-            <!--<version>0.5.0.0</version>-->
+        <!--<groupId>net.vpc.app.nuts</groupId>-->
+        <!--<artifactId>nuts-core</artifactId>-->
+        <!--<version>0.5.0.0</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>net.vpc.common</groupId>
             <artifactId>vpc-common-utils</artifactId>
-            <version>1.22.0</version>
+            <version>1.22.1</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
-            <version>0.5.2.0</version>
+            <version>0.5.3.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -151,7 +151,8 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>  <!-- git commit message -->
+                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}
+                    </message>  <!-- git commit message -->
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->

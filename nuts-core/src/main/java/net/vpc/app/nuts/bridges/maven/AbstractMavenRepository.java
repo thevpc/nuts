@@ -133,7 +133,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             NutsDescriptor nutsDescriptor = null;//parsePomXml(getStream(id, ".pom"), session);
             byte[] bytes = null;
             try {
-                stream = getStream(id, ".pom", CoreNutsUtils.FACE_PACKAGE_HASH, session);
+                stream = getStream(id, ".pom", CoreNutsUtils.FACE_PACKAGE, session);
                 bytes = IOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
@@ -230,7 +230,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             Map<String,String> map = null;
             try{
                 if(f.isFile()) {
-                    map = getWorkspace().getJsonIO().read(f, Map.class);
+                    map = getWorkspace().getIOManager().readJson(f, Map.class);
                 }
             }catch (Exception ex){
                 //
@@ -240,7 +240,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 nutsApp="true".equals(map.get("nutsApplication"));
             }else {
                 try {
-                    ExecutionEntry[] t = CorePlatformUtils.resolveMainClasses(jar);
+                    NutsExecutionEntry[] t = CorePlatformUtils.parseMainClasses(jar);
                     if (t.length > 0) {
                         executable = true;
                         if (t[0].isApp()) {
@@ -251,7 +251,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        getWorkspace().getJsonIO().write(map, f,true);
+                        getWorkspace().getIOManager().writeJson(map, f,true);
                     }catch (Exception ex){
                         //
                     }

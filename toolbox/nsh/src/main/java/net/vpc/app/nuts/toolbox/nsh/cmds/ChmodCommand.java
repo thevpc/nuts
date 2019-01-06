@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -125,7 +126,6 @@ public class ChmodCommand extends AbstractNutsCommand {
         List<File> files = new ArrayList<>();
         Mods m = new Mods();
         Argument a;
-        boolean noColors=false;
         while (cmdLine.hasNext()) {
             String s = cmdLine.read().getString();
             if (context.configure(cmdLine)) {
@@ -137,49 +137,49 @@ public class ChmodCommand extends AbstractNutsCommand {
                     m.user = true;
                     apply(s.substring(1), m, -1);
                 } else {
-                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
+                    throw new NutsExecutionException("chmod: Unsupported option" + s,2);
                 }
             } else if (s.startsWith("+")) {
                 if (isRights(s.substring(1))) {
                     m.user = true;
                     apply(s.substring(1), m, 1);
                 } else {
-                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
+                    throw new NutsExecutionException("chmod: Unsupported option" + s,2);
                 }
             } else if (s.startsWith("u-")) {
                 if (isRights(s.substring(2))) {
                     m.user = true;
                     apply(s.substring(2), m, -1);
                 } else {
-                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
+                    throw new NutsExecutionException("chmod: Unsupported option" + s,2);
                 }
             } else if (s.startsWith("a-")) {
                 if (isRights(s.substring(2))) {
                     m.user = false;
                     apply(s.substring(2), m, -1);
                 } else {
-                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
+                    throw new NutsExecutionException("chmod: Unsupported option" + s,2);
                 }
             } else if (s.startsWith("u+")) {
                 if (isRights(s.substring(2))) {
                     m.user = true;
                     apply(s.substring(2), m, 1);
                 } else {
-                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
+                    throw new NutsExecutionException("chmod: Unsupported option" + s,2);
                 }
             } else if (s.startsWith("a+")) {
                 if (isRights(s.substring(2))) {
                     m.user = false;
                     apply(s.substring(2), m, 1);
                 } else {
-                    throw new IllegalArgumentException("chmod: Unsupported option" + s);
+                    throw new NutsExecutionException("chmod: Unsupported option" + s,2);
                 }
             } else {
                 files.add(new File(context.getShell().getAbsolutePath(s)));
             }
         }
         if (files.isEmpty()) {
-            throw new IllegalArgumentException("chmod: Missing Expression");
+            throw new NutsExecutionException("chmod: Missing Expression",2);
         }
         PrintStream out = context.out();
         for (File f : files) {

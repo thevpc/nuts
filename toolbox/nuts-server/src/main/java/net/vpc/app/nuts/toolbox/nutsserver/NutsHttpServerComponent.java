@@ -95,7 +95,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
-        NutsTerminal terminal = invokerWorkspace.createTerminal();
+        NutsTerminal terminal = invokerWorkspace.getIOManager().createTerminal(null,null,null);
 
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {

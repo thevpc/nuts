@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTerminal;
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.RootFolderType;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
@@ -119,7 +116,7 @@ public class NutsJavaShell extends JavaShell {
         javaShellContext = createContext(this.context, null, null, new Env(), new String[0]);
         context.getUserProperties().put(ConsoleContext.class.getName(), javaShellContext);
         try {
-            histFile=new File(workspace.getStoreRoot(workspace.resolveIdForClass(NutsJavaShell.class)
+            histFile=new File(workspace.getConfigManager().getStoreRoot(workspace.resolveIdForClass(NutsJavaShell.class)
                     .getSimpleNameId().setVersion("LATEST"), RootFolderType.VAR),"nsh.history");
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
@@ -260,7 +257,7 @@ public class NutsJavaShell extends JavaShell {
         final JavaShellNonBlockingInputStream in2;
         try {
             out = new PipedOutputStream();
-            nout = workspace.createPrintStream(out, false);
+            nout = workspace.getIOManager().createPrintStream(out, NutsTerminalMode.FORMATTED);
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
@@ -436,7 +433,7 @@ public class NutsJavaShell extends JavaShell {
 
     protected PrintStream printHeader(PrintStream out) {
         return out.printf("##Nuts## shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
-                context.getWorkspace().getConfigManager().getBootRuntime().getVersion().toString());
+                context.getWorkspace().getConfigManager().getRunningContext().getRuntimeId().getVersion().toString());
     }
 
     //    @Override

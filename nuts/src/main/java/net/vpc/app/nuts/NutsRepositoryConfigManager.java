@@ -10,7 +10,7 @@ import java.util.Properties;
 /**
  * @author vpc
  */
-public interface NutsRepositoryConfigManager extends EnvProvider {
+public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     String getId();
 

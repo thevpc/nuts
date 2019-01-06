@@ -49,13 +49,11 @@ public class VersionCommand extends AbstractNutsCommand {
     }
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
-        PrintStream out = context.getTerminal().getFormattedOut();
         NutsWorkspace ws = context.getWorkspace();
         boolean fancy = false;
         boolean min = false;
         CommandLine cmdLine = new CommandLine(args);
         Argument a;
-        boolean noColors = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
@@ -68,9 +66,8 @@ public class VersionCommand extends AbstractNutsCommand {
             }
 
         }
-        Properties extra = new Properties();
-        out.println(
-                ws.createWorkspaceVersionFormat()
+        context.out().println(
+                ws.getFormatManager().createWorkspaceInfoFormat()
                         .addOption(((fancy ? "fancy" : "") + "," + (min ? "min" : "")))
                         .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .format()

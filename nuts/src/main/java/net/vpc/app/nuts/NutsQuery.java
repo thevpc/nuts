@@ -14,6 +14,12 @@ public interface NutsQuery {
 
     NutsQuery addId(String... value);
 
+    NutsQuery addId(NutsId... value);
+
+    NutsQuery setId(String value);
+
+    NutsQuery setId(NutsId value);
+
     NutsQuery addArch(Collection<String> value);
 
     NutsQuery addArch(String... value);
@@ -54,6 +60,8 @@ public interface NutsQuery {
     String[] getIds();
 
     Set<NutsDependencyScope> getScope();
+
+    NutsQuery setScope(NutsDependencyScope scope);
 
     NutsQuery setScope(Set<NutsDependencyScope> scope);
 
@@ -97,7 +105,7 @@ public interface NutsQuery {
 
     NutsQuery setIdFilter(String filter);
 
-    NutsQuery setIds(List<String> ids);
+    NutsQuery setIds(Collection<String> ids);
 
     NutsSession getSession();
 
@@ -122,6 +130,10 @@ public interface NutsQuery {
     NutsDefinition fetchOne();
 
     NutsDefinition fetchFirst();
+
+    String findNutspathString();
+
+    String findClasspathString();
 
     List<NutsDefinition> fetch();
 

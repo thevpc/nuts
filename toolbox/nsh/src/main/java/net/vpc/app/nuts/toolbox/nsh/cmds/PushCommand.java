@@ -51,9 +51,7 @@ public class PushCommand extends AbstractNutsCommand {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         String repo = null;
         NutsConfirmAction force = NutsConfirmAction.IGNORE;
-        PrintStream out = context.getTerminal().getFormattedOut();
         Argument a;
-        boolean noColors = false;
         do {
             if (context.configure(cmdLine)) {
                 //
@@ -65,7 +63,7 @@ public class PushCommand extends AbstractNutsCommand {
                 String id = cmdLine.readRequiredNonOption(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().push(id, repo, force, context.getSession());
-                    out.printf("%s pushed successfully\n", id);
+                    context.out().printf("%s pushed successfully\n", id);
                 }
             }
         }while (cmdLine.hasNext());

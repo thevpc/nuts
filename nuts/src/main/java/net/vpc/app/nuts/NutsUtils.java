@@ -39,14 +39,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -87,6 +84,54 @@ final class NutsUtils {
             result.add(s);
         }
         return result;
+    }
+
+    /**
+     * BootRuntimeDependencies are separated with any of ':' ',' ';'  ' ' '\n' '\t'
+     * if the path  contains :, it should be escaped with \
+     *
+     * @param str
+     * @return
+     */
+    public static String[] splitBootRuntimeDependencies(String str) {
+        List<String> result = new ArrayList<>();
+        if (str != null) {
+            char[] chars = str.toCharArray();
+            StringBuilder current = new StringBuilder();
+            for (int i = 0; i < chars.length; i++) {
+                switch (chars[i]) {
+                    case '\\': {
+                        if (i + 1 < chars.length && (chars[i + 1] == ':') || chars[i + 1] == '\\' || chars[i + 1] == ',' || chars[i + 1] == ';') {
+                            current.append(chars[i + 1]);
+                            i++;
+                        } else {
+                            current.append('\\');
+                        }
+                        break;
+                    }
+                    case ':':
+                    case ' ':
+                    case ',':
+                    case ';':
+                    case '\t':
+                    case '\n': {
+                        if (current.length() > 0) {
+                            result.add(current.toString());
+                            current.delete(0, current.length());
+                        }
+                        break;
+                    }
+                    default: {
+                        current.append(chars[i]);
+                    }
+                }
+            }
+            if (current.length() > 0) {
+                result.add(current.toString());
+                current.delete(0, current.length());
+            }
+        }
+        return result.toArray(new String[0]);
     }
 
     public static List<String> split(String str, String separators) {
@@ -290,7 +335,7 @@ final class NutsUtils {
 
     public static File resolvePath(String path, File baseFolder, String nutsHome) {
         if (isEmpty(nutsHome)) {
-            nutsHome = NutsConstants.DEFAULT_NUTS_HOME;
+            nutsHome = Nuts.getDefaultNutsHome();
         }
         if (path != null && path.length() > 0) {
             String firstItem = "";
@@ -324,7 +369,7 @@ final class NutsUtils {
         Writer writer = null;
         try {
             File parentFile = file.getParentFile();
-            if(parentFile!=null){
+            if (parentFile != null) {
                 parentFile.mkdirs();
             }
             try {
@@ -361,10 +406,10 @@ final class NutsUtils {
         return props;
     }
 
-    public static Properties loadURLProperties(String url,File cacheFile) {
+    public static Properties loadURLProperties(String url, File cacheFile) {
         try {
             if (url != null) {
-                return loadURLProperties(new URL(url),cacheFile);
+                return loadURLProperties(new URL(url), cacheFile);
             }
         } catch (Exception e) {
             //e.printStackTrace();
@@ -404,7 +449,7 @@ final class NutsUtils {
         return null;
     }
 
-    public static Properties loadURLProperties(URL url,File cacheFile) {
+    public static Properties loadURLProperties(URL url, File cacheFile) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
         InputStream inputStream = null;
@@ -412,10 +457,10 @@ final class NutsUtils {
             try {
                 if (url != null) {
                     inputStream = url.openStream();
-                    if(inputStream!=null) {
+                    if (inputStream != null) {
                         props.load(inputStream);
-                        if(cacheFile!=null && !isFileURL(url.toString())){
-                            copy(url.openStream(),cacheFile,true,true);
+                        if (cacheFile != null && !isFileURL(url.toString())) {
+                            copy(url.openStream(), cacheFile, true, true);
                             log.log(Level.CONFIG, "[CACHED ] Caching props file to    {0}", new Object[]{cacheFile.getPath()});
                         }
                         long time = System.currentTimeMillis() - startTime;
@@ -424,7 +469,7 @@ final class NutsUtils {
                         } else {
                             log.log(Level.CONFIG, "[SUCCESS] Loading props file from  {0}", new Object[]{url.toString()});
                         }
-                    }else{
+                    } else {
                         long time = System.currentTimeMillis() - startTime;
                         if (time > 0) {
                             log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0} (time {1})", new Object[]{url.toString(), formatPeriodMilli(time)});
@@ -460,7 +505,7 @@ final class NutsUtils {
 
     public static String resolveWorkspaceLocation(String home, String workspace) {
         if (home == null) {
-            home = NutsConstants.DEFAULT_NUTS_HOME;
+            home = Nuts.getDefaultNutsHome();
         }
         if (workspace == null) {
             workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
@@ -585,28 +630,28 @@ final class NutsUtils {
                             String val = matcher.group("val");
                             if (k != null) {
                                 switch (k) {
-                                    case "bootAPIVersion": {
-                                        c.setBootAPIVersion(val);
+                                    case "bootApiVersion": {
+                                        c.setApiVersion(val);
                                         break;
                                     }
                                     case "bootRuntime": {
-                                        c.setBootRuntime(val);
+                                        c.setRuntimeId(val);
                                         break;
                                     }
                                     case "bootRepositories": {
-                                        c.setBootRepositories(val);
+                                        c.setRepositories(val);
                                         break;
                                     }
                                     case "bootRuntimeDependencies": {
-                                        c.setBootRuntimeDependencies(val);
+                                        c.setRuntimeDependencies(val);
                                         break;
                                     }
                                     case "bootJavaCommand": {
-                                        c.setBootJavaCommand(val);
+                                        c.setJavaCommand(val);
                                         break;
                                     }
                                     case "bootJavaOptions": {
-                                        c.setBootJavaOptions(val);
+                                        c.setJavaOptions(val);
                                         break;
                                     }
                                 }
@@ -646,9 +691,9 @@ final class NutsUtils {
             repositories = "";
         }
         return new NutsBootConfig()
-                .setBootRuntime(id + "#" + version)
-                .setBootRuntimeDependencies(dependencies)
-                .setBootRepositories(repositories)
+                .setRuntimeId(id + "#" + version)
+                .setRuntimeDependencies(dependencies)
+                .setRepositories(repositories)
                 ;
     }
 
@@ -681,17 +726,29 @@ final class NutsUtils {
         return val * multiplier;
     }
 
-    public static void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String home, String workspace, String extraMessage) {
+    public static void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String home, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
         System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.\n");
         System.err.printf("This component needs Internet connexion to initialize Nuts configuration.\n");
         System.err.printf("Don't panic, once components are downloaded, you will be able to work offline...\n");
         System.err.printf("Here after current environment info :\n");
-        System.err.printf("  nuts-boot-api-version            : %s\n", actualBootConfig.getBootAPIVersion() == null ? "<?> Not Found!" : actualBootConfig.getBootAPIVersion());
-        System.err.printf("  nuts-boot-runtime                : %s\n", actualBootConfig.getBootRuntime() == null ? "<?> Not Found!" : actualBootConfig.getBootRuntime());
-        System.err.printf("  nuts-workspace-api-version       : %s\n", workspaceConfig.getBootAPIVersion() == null ? "<?> Not Found!" : workspaceConfig.getBootAPIVersion());
-        System.err.printf("  nuts-workspace-runtime           : %s\n", workspaceConfig.getBootRuntime() == null ? "<?> Not Found!" : workspaceConfig.getBootRuntime());
+        System.err.printf("  nuts-boot-api-version            : %s\n", actualBootConfig.getApiVersion() == null ? "<?> Not Found!" : actualBootConfig.getApiVersion());
+        System.err.printf("  nuts-boot-runtime                : %s\n", actualBootConfig.getRuntimeId() == null ? "<?> Not Found!" : actualBootConfig.getRuntimeId());
+        System.err.printf("  nuts-workspace-api-version       : %s\n", workspaceConfig.getApiVersion() == null ? "<?> Not Found!" : workspaceConfig.getApiVersion());
+        System.err.printf("  nuts-workspace-runtime           : %s\n", workspaceConfig.getRuntimeId() == null ? "<?> Not Found!" : workspaceConfig.getRuntimeId());
         System.err.printf("  nuts-home                        : %s\n", home);
         System.err.printf("  workspace-location               : %s\n", (workspace == null ? "<default-location>" : workspace));
+        if (bootClassWorldURLs == null || bootClassWorldURLs.length==0) {
+            System.err.printf("  nuts-runtime-classpath           : %s\n", "<none>");
+        } else {
+            for (int i = 0; i < bootClassWorldURLs.length; i++) {
+                URL bootClassWorldURL = bootClassWorldURLs[i];
+                if (i == 0) {
+                    System.err.printf("  nuts-runtime-classpath           : %s\n", String.valueOf(bootClassWorldURL));
+                } else {
+                    System.err.printf("                                     %s\n", String.valueOf(bootClassWorldURL));
+                }
+            }
+        }
         System.err.printf("  java-version                     : %s\n", System.getProperty("java.version"));
         System.err.printf("  java-executable                  : %s\n", System.getProperty("java.home") + "/bin/java");
         System.err.printf("  java-class-path                  : %s\n", System.getProperty("java.class.path"));
@@ -753,13 +810,13 @@ final class NutsUtils {
         return System.getProperty("os.name").toLowerCase().contains("windows");
     }
 
-    public static String[] parseDependenciesFromMaven(URL url,File cacheFile) {
+    public static String[] parseDependenciesFromMaven(URL url, File cacheFile) {
 
         long startTime = System.currentTimeMillis();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setExpandEntityReferences(false);
         DocumentBuilder dBuilder = null;
-        List<String> deps=new ArrayList<>();
+        List<String> deps = new ArrayList<>();
         try {
             dBuilder = dbFactory.newDocumentBuilder();
             InputStream stream = url.openStream();
@@ -780,10 +837,10 @@ final class NutsUtils {
                         Element dependency = toElement(dependenciesChildList.item(j), "dependency");
                         if (dependency != null) {
                             NodeList dependencyChildList = dependency.getChildNodes();
-                            String groupId="";
-                            String artifactId="";
-                            String version="";
-                            String scope="";
+                            String groupId = "";
+                            String artifactId = "";
+                            String version = "";
+                            String scope = "";
                             for (int k = 0; k < dependencyChildList.getLength(); k++) {
                                 Element c = toElement(dependencyChildList.item(k));
                                 if (c != null) {
@@ -808,7 +865,7 @@ final class NutsUtils {
                                 }
                             }
                             if (scope.isEmpty() || scope.equals("compile")) {
-                                deps.add(new BootNutsId(
+                                deps.add(new NutsBootId(
                                         groupId, artifactId, version
                                 ).toString());
                             }
@@ -816,8 +873,8 @@ final class NutsUtils {
                     }
                 }
             }
-            if(cacheFile!=null && !isFileURL(url.toString())){
-                copy(url.openStream(),cacheFile,true,true);
+            if (cacheFile != null && !isFileURL(url.toString())) {
+                copy(url.openStream(), cacheFile, true, true);
                 log.log(Level.CONFIG, "[CACHED ] Caching pom.xml file {0}", new Object[]{cacheFile.getPath()});
             }
             long time = System.currentTimeMillis() - startTime;
@@ -854,18 +911,31 @@ final class NutsUtils {
         return null;
     }
 
-    public static boolean deleteAndConfirm(File directoryName,boolean force) throws IOException {
-        if(directoryName.exists()) {
+    public static int deleteAndConfirmAll(File[] folders, boolean force) throws IOException {
+        int count=0;
+        if(folders!=null) {
+            for (File child : folders) {
+                if (child.exists()) {
+                    NutsUtils.deleteAndConfirm(child, force);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public static boolean deleteAndConfirm(File directory, boolean force) throws IOException {
+        if (directory.exists()) {
             if (!force) {
                 Scanner s = new Scanner(System.in);
-                System.out.println("Deleting folder " + directoryName);
+                System.out.println("Deleting folder " + directory);
                 System.out.print("\t Are you sure? : ");
                 String line = s.nextLine();
                 if (!"y".equals(line) && !"yes".equals(line)) {
                     throw new NutsUserCancelException();
                 }
             }
-            delete(directoryName.getPath());
+            delete(directory.getPath());
             return true;
         }
         return false;
@@ -891,4 +961,25 @@ final class NutsUtils {
             }
         });
     }
+
+    public static String getPlatformOsFamily() {
+        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        if (property.startsWith("linux")) {
+            return "linux";
+        }
+        if (property.startsWith("win")) {
+            return "windows";
+        }
+        if (property.startsWith("mac")) {
+            return "mac";
+        }
+        if (property.startsWith("sunos")) {
+            return "unix";
+        }
+        if (property.startsWith("freebsd")) {
+            return "unix";
+        }
+        return "unknown";
+    }
+
 }

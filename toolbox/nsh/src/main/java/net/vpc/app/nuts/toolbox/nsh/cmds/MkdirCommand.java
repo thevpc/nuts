@@ -29,12 +29,14 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
-import net.vpc.app.nuts.toolbox.nsh.util.FilePath;
 import net.vpc.app.nuts.toolbox.nsh.util.ShellHelper;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
+import net.vpc.common.ssh.SshXFile;
+import net.vpc.common.xfile.XFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,10 +59,9 @@ public class MkdirCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
-        List<FilePath> files = new ArrayList<>();
+        List<XFile> files = new ArrayList<>();
         Options o = new Options();
         Argument a;
-        boolean noColors=false;
         while (cmdLine.hasNext()) {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {
@@ -69,16 +70,16 @@ public class MkdirCommand extends AbstractNutsCommand {
                     o.p = a.getBooleanValue();
                 }
             } else {
-                files.add(FilePath.of(cmdLine.read().getExpression(),context.getShell().getCwd()));
+                files.add(ShellHelper.xfileOf(cmdLine.read().getExpression(),context.getShell().getCwd()));
             }
         }
         if (files.size() < 1) {
-            throw new IllegalArgumentException("Missing parameters");
+            throw new NutsExecutionException("Missing parameters",2);
         }
         ShellHelper.WsSshListener listener = o.verbose ? new ShellHelper.WsSshListener(context.getWorkspace(),context.getSession()) : null;
-        for (FilePath v : files) {
-            if (v instanceof FilePath.SshFilePath) {
-                ((FilePath.SshFilePath) v).setListener(listener);
+        for (XFile v : files) {
+            if (v instanceof SshXFile) {
+                ((SshXFile) v).setListener(listener);
             }
             v.mkdir(o.p);
         }

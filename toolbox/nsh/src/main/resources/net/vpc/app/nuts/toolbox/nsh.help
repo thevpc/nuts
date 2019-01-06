@@ -1,0 +1,8 @@
+**nsh** (or ==nuts== bash) is a portable shell, bash like, implemented in java.
+
+@@SYNOPSIS:@@
+**nsh** \[shell Options\]... {{\<command\>}} | {{\<fle\>}}
+
+@@NUTS OPTIONS:@@
+ [[-x]]
+

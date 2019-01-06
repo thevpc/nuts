@@ -6,9 +6,7 @@
 package net.vpc.app.nuts.extensions.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.core.NutsAuthenticationAgent;
 import net.vpc.app.nuts.extensions.core.NutsEffectiveUserImpl;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
@@ -188,7 +186,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
             }
         }
         if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-            repo.getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class,u.getAuthenticationAgent())
+            repo.getWorkspace().getConfigManager().createAuthenticationAgent(u.getAuthenticationAgent())
                     .checkCredentials(
                     u.getCredentials(),u.getAuthenticationAgent(), oldPassword,
                             repo.getConfigManager()
@@ -209,7 +207,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         }
 
         u.setCredentials(
-                repo.getWorkspace().getExtensionManager().createSupported(NutsAuthenticationAgent.class,u.getAuthenticationAgent())
+                repo.getWorkspace().getConfigManager().createAuthenticationAgent(u.getAuthenticationAgent())
                 .setCredentials(password,u.getAuthenticationAgent(),
                         repo.getConfigManager())
         );
