@@ -1,6 +1,5 @@
 package net.vpc.toolbox.tomcat.remote;
 
-import net.vpc.app.nuts.JsonIO;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.common.io.RuntimeIOException;

@@ -64,6 +64,10 @@ public interface NutsId extends Serializable {
 
     String getFace();
 
+    String getAlternative();
+
+    NutsId setAlternative(String value);
+
     NutsId setFace(String value);
 
     NutsId setQueryProperty(String property, String value);
@@ -87,12 +91,14 @@ public interface NutsId extends Serializable {
     /**
      * return a string representation of this id. All of group, name, version, namespace, queryMap values are printed.
      * This method is equivalent to {@link #toString()}
+     *
      * @return string representation of this id
      */
     String getFullName();
 
     /**
      * return a new instance of NutsId defining only group, name and version, ignoring namespace, and queryMap values.
+     *
      * @return group, name and version only Id instance
      */
     String getLongName();
@@ -100,24 +106,28 @@ public interface NutsId extends Serializable {
     /**
      * returns a string concatenation of group and name (dot separated) ignoring version,namespace, and queryMap values.
      * In group is empty or null, name is returned. Ann null values are trimmed to ""
+     *
      * @return group and name
      */
     String getSimpleName();
 
     /**
      * return a new instance of NutsId defining only group and name ignoring version,namespace, and queryMap values.
+     *
      * @return group and name only Id instance
      */
     NutsId getSimpleNameId();
 
     /**
      * return a new instance of NutsId defining only group, name and version, ignoring namespace, and queryMap values.
+     *
      * @return group, name and version only Id instance
      */
     NutsId getLongNameId();
 
     /**
      * return name part of this id
+     *
      * @return return name part of this id
      */
     String getName();

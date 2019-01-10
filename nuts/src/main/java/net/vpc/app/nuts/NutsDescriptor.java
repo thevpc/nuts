@@ -49,7 +49,7 @@ public interface NutsDescriptor extends Serializable {
 
     String getExt();
 
-    String getFace();
+    String getAlternative();
 
     String[] getArch();
 
@@ -85,9 +85,6 @@ public interface NutsDescriptor extends Serializable {
     Map<String, String> getProperties();
 
     String getDescription();
-
-    String getSHA1();
-
 
     boolean matchesEnv(String arch, String os, String dist, String platform);
 
@@ -150,20 +147,6 @@ public interface NutsDescriptor extends Serializable {
     boolean matchesArch(String arch);
 
     boolean matchesOsdist(String oddist);
-
-    void write(File file) throws NutsIOException;
-
-    void write(PrintStream out) throws NutsIOException;
-
-    void write(OutputStream out) throws NutsIOException;
-
-    void write(Writer out) throws NutsIOException;
-
-    void write(File file, boolean pretty) throws NutsIOException;
-
-    void write(Writer os, boolean pretty) throws NutsIOException;
-
-    String toString(boolean pretty);
 
     NutsDescriptorBuilder builder();
 

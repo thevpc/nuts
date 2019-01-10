@@ -107,7 +107,7 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                         metainf.set(d);
                         break;
                     case "META-INF/nuts.json":
-                        nutsjson.set(CoreNutsUtils.parseNutsDescriptor(inputStream, true));
+                        nutsjson.set(parserContext.getWorkspace().getParseManager().parseDescriptor(inputStream, true));
                         break;
                     default:
                         try {

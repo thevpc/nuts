@@ -10,9 +10,13 @@ public interface NutsParseManager {
 
     NutsDescriptor parseDescriptor(URL url);
 
+    NutsDescriptor parseDescriptor(byte[] bytes);
+
     NutsDescriptor parseDescriptor(File file);
 
     NutsDescriptor parseDescriptor(InputStream stream);
+
+    NutsDescriptor parseDescriptor(InputStream stream,boolean close);
 
     NutsDescriptor parseDescriptor(String descriptorString);
 

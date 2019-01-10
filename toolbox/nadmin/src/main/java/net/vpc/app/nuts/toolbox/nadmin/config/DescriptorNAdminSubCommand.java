@@ -221,14 +221,14 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (save) {
                 if (file != null) {
-                    desc.build().write(new File(file));
+                    ws.getFormatManager().createDescriptorFormat().setPretty(true).format(desc.build(),new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");
                     }
                 }
             } else {
-                context.getTerminal().getFormattedOut().printf("%s\n", desc.build().toString(true));
+                context.getTerminal().getFormattedOut().printf("%s\n", ws.getFormatManager().createDescriptorFormat().setPretty(true).format(desc.build()));
             }
         }
         return true;

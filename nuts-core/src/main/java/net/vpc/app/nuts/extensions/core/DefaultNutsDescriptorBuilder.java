@@ -12,7 +12,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
-    private String face;
+    private String alternative;
     private NutsId[] parents;
     private String packaging;
     private String ext;
@@ -40,14 +40,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public DefaultNutsDescriptorBuilder() {
     }
 
-    public DefaultNutsDescriptorBuilder(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
+    public DefaultNutsDescriptorBuilder(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
                                         NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
                                         String[] arch, String[] os, String[] osdist, String[] platform,
                                         NutsDependency[] dependencies,
                                         NutsDependency[] standardDependencies,
                                         String[] locations, Map<String, String> properties) {
         setId(id);
-        setFace(face);
+        setAlternative(alternative);
         setPackaging(packaging);
         setParents(parents);
         setExecutable(executable);
@@ -80,7 +80,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder set(NutsDescriptorBuilder other) {
         if (other != null) {
             setId(other.getId());
-            setFace(other.getFace());
+            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
@@ -106,7 +106,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder set(NutsDescriptor other) {
         if (other != null) {
             setId(other.getId());
-            setFace(other.getFace());
+            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
@@ -159,8 +159,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setFace(String face) {
-        this.face = face;
+    public NutsDescriptorBuilder setAlternative(String alternative) {
+        this.alternative = alternative;
         return this;
     }
 
@@ -273,8 +273,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    public String getFace() {
-        return face;
+    public String getAlternative() {
+        return alternative;
     }
 
     @Override
@@ -390,7 +390,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptor build() {
         return new DefaultNutsDescriptor(
-                getId(), getFace(), getParents(), getPackaging(), isExecutable(), isNutsApplication(), getExt(), getExecutor(), getInstaller()
+                getId(), getAlternative(), getParents(), getPackaging(), isExecutable(), isNutsApplication(), getExt(), getExecutor(), getInstaller()
                 , getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(),getStandardDependencies(),
                 getLocations(), getProperties()
         );
@@ -530,7 +530,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder applyParents(NutsDescriptor[] parentDescriptors) {
         NutsId n_id = getId();
-        String n_alt = getFace();
+        String n_alt = getAlternative();
         String n_packaging = getPackaging();
         String n_ext = getExt();
         boolean n_executable = isExecutable();
@@ -593,7 +593,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         }
 
         setId(n_id);
-        setFace(n_alt);
+        setAlternative(n_alt);
         setParents(n_parents);
         setPackaging(n_packaging);
         setExecutable(n_executable);
@@ -617,7 +617,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         MapStringMapper map = new MapStringMapper(properties);
 
         NutsId n_id = getId().apply(map);
-        String n_alt = CoreNutsUtils.applyStringProperties(getFace(), map);
+        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
         String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
@@ -643,7 +643,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         }
 
         this.setId(n_id);
-        this.setFace(n_alt);
+        this.setAlternative(n_alt);
         this.setParents(getParents());
         this.setPackaging(n_packaging);
         this.setExecutable(isExecutable());

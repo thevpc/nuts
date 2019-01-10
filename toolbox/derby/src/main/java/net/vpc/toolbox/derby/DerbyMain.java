@@ -101,7 +101,7 @@ public class DerbyMain extends NutsApplication {
         NutsWorkspace ws = appContext.getWorkspace();
         List<String> command = new ArrayList<>();
         List<String> executorOptions = new ArrayList<>();
-        derbyBinHome = new File(ws.getConfigManager().getStoreRoot(resolveNutsId(), RootFolderType.PROGRAMS), "lib");
+        derbyBinHome = new File(ws.getConfigManager().getStoreLocation(resolveNutsId(), StoreFolder.PROGRAMS), "lib");
         String v = derbyVersion;
         String h = derbyDataHome;
         if (v == null) {

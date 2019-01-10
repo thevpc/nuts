@@ -3,7 +3,6 @@ package net.vpc.app.nuts.extensions.repos;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.util.CoreIOUtils;
 import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
-import net.vpc.app.nuts.extensions.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
@@ -15,13 +14,13 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     private AbstractNutsRepository abstractNutsRepository;
     private int speed;
-    private String locationFolder;
+    private String storeLocation;
     private NutsRepositoryConfig config;
     private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
-    public DefaultNutsRepositoryConfigManager(AbstractNutsRepository abstractNutsRepository, String locationFolder, NutsRepositoryConfig config, int speed) {
+    public DefaultNutsRepositoryConfigManager(AbstractNutsRepository abstractNutsRepository, String storeLocation, NutsRepositoryConfig config, int speed) {
         this.abstractNutsRepository = abstractNutsRepository;
-        this.locationFolder = locationFolder;
+        this.storeLocation = storeLocation;
         this.config = config;
         this.speed = speed;
     }
@@ -94,8 +93,8 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         return config;
     }
 
-    public String getLocationFolder() {
-        return locationFolder;
+    public String getStoreLocation() {
+        return storeLocation;
     }
 
     public void setConfig(NutsRepositoryConfig newConfig) {
@@ -153,24 +152,24 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     @Override
     public boolean save() {
-        File file = CoreIOUtils.createFile(getLocationFolder(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
+        File file = CoreIOUtils.createFile(getStoreLocation(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
         boolean created = false;
         if (!file.exists()) {
             created = true;
         }
         boolean saved = false;
-        new File(getLocationFolder()).mkdirs();
+        new File(getStoreLocation()).mkdirs();
         try {
-            CoreJsonUtils.storeJson(getConfig(), file, true);
+            abstractNutsRepository.getWorkspace().getIOManager().writeJson(getConfig(), file, true);
             saved = true;
         } catch (NutsIOException ex) {
             //unable to store;
         }
         if(log.isLoggable(Level.CONFIG)) {
             if (created) {
-                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Created repository " + abstractNutsRepository.getRepositoryId() + " at " + getLocationFolder());
+                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Created repository " + abstractNutsRepository.getRepositoryId() + " at " + getStoreLocation());
             } else {
-                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Updated repository " + abstractNutsRepository.getRepositoryId() + " at " + getLocationFolder());
+                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Updated repository " + abstractNutsRepository.getRepositoryId() + " at " + getStoreLocation());
             }
         }
         return saved;

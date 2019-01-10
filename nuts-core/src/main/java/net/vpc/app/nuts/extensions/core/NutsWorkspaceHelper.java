@@ -102,12 +102,12 @@ public class NutsWorkspaceHelper {
     }
 
     public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
-        Map<String, String> face = id.getQueryMap();
-        if (face.get(NutsConstants.QUERY_FACE) == null && face.get("arch") == null && face.get("os") == null && face.get("osdist") == null && face.get("platform") == null) {
-            face.put("arch", ws.getConfigManager().getPlatformArch().toString());
-            face.put("os", ws.getConfigManager().getPlatformOs().toString());
-            face.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
-            return id.setQuery(face);
+        Map<String, String> qm = id.getQueryMap();
+        if (qm.get(NutsConstants.QUERY_FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
+            qm.put("arch", ws.getConfigManager().getPlatformArch().toString());
+            qm.put("os", ws.getConfigManager().getPlatformOs().toString());
+            qm.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
+            return id.setQuery(qm);
         }
         return id;
     }

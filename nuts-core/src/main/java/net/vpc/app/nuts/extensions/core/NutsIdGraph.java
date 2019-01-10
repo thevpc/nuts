@@ -108,8 +108,8 @@ public class NutsIdGraph {
         id = id.setNamespace(null);
         Map<String, String> m = id.getQueryMap();
         if (m != null && !m.isEmpty()) {
-            if ("default".equals(m.get("face"))) {
-                m.remove("face");
+            if (NutsConstants.QUERY_FACE_DEFAULT_VALUE.equals(m.get(NutsConstants.QUERY_FACE))) {
+                m.remove(NutsConstants.QUERY_FACE);
             }
             id = id.setQuery(m);
         }

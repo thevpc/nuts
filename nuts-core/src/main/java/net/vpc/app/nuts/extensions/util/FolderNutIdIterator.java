@@ -106,7 +106,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     }
                     if (t != null && (filter == null || filter.accept(t.getId()))) {
                         NutsId nutsId = t.getId().setNamespace(repositoryId);
-                        nutsId = nutsId.setFace(StringUtils.isEmpty(t.getFace()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : t.getFace());
+                        nutsId = nutsId.setFace(StringUtils.isEmpty(t.getAlternative()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : t.getAlternative());
                         last = nutsId;
                         break;
                     }

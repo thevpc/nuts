@@ -176,7 +176,8 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = ws.fetchDescriptor(parentId, true, transitiveSession);
+                            NutsSession session2=(transitiveSession.getFetchMode()==NutsFetchMode.REMOTE)?transitiveSession.copy().setFetchMode(NutsFetchMode.ONLINE):transitiveSession;
+                            parentDescriptor = ws.fetchDescriptor(parentId, true, session2);
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
@@ -215,7 +216,8 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetchDescriptor(pid, true, transitiveSession);
+                                NutsSession session2=(transitiveSession.getFetchMode()==NutsFetchMode.REMOTE)?transitiveSession.copy().setFetchMode(NutsFetchMode.ONLINE):transitiveSession;
+                                d = ws.fetchDescriptor(pid, true, session2);
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {

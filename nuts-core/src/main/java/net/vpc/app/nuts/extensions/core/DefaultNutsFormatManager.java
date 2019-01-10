@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.DefaultNutsDescriptorFormat;
 import net.vpc.app.nuts.extensions.util.DefaultNutsIdFormat;
 import net.vpc.app.nuts.extensions.util.DefaultNutsWorkspaceInfoFormat;
 import net.vpc.app.nuts.extensions.util.DefaultNutsWorkspaceVersionFormat;
@@ -27,4 +28,8 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
         return new DefaultNutsWorkspaceInfoFormat(ws);
     }
 
+    @Override
+    public NutsDescriptorFormat createDescriptorFormat() {
+        return new DefaultNutsDescriptorFormat(ws);
+    }
 }

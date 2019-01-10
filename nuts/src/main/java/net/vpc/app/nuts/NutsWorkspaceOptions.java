@@ -31,25 +31,17 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/23/17.
  */
-public final class NutsWorkspaceOptions extends NutsArguments implements Serializable, Cloneable {
+public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     private String home;
     private String bootRuntime;
     private String bootJavaCommand;
     private String bootJavaOptions;
     private String bootRuntimeSourceURL;
-    private String logFolder = null;
-    private String logName = null;
-    private Level logLevel = null;
-    private int logSize = 0;
-    private int logCount = 0;
-    private boolean logInherited = false;
     private String[] bootArguments;
     private String[] applicationArguments;
     private boolean perf = false;
@@ -70,6 +62,17 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
     private NutsClassLoaderProvider classLoaderProvider;
     private String[] executorOptions;
     private NutsBootCommand bootCommand = NutsBootCommand.EXEC;
+    private NutsLogConfig logConfig;
+    private String requiredBootVersion = null;
+    private String programsStoreLocation = null;
+    private String configStoreLocation = null;
+    private String varStoreLocation = null;
+    private String logsStoreLocation = null;
+    private String tempStoreLocation = null;
+    private String cacheStoreLocation = null;
+    private String libStoreLocation = null;
+    private StoreLocationLayout storeLocationLayout = null;
+    private StoreLocationStrategy storeLocationStrategy = null;
 
     public String getWorkspace() {
         return workspace;
@@ -195,13 +198,6 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
     }
 
 
-    public String getLogName() {
-        return logName;
-    }
-
-    public void setLogName(String logName) {
-        this.logName = logName;
-    }
 
     public String getHome() {
         return home;
@@ -236,42 +232,6 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
 
     public NutsWorkspaceOptions setClassLoaderProvider(NutsClassLoaderProvider provider) {
         this.classLoaderProvider = provider;
-        return this;
-    }
-
-    public String getLogFolder() {
-        return logFolder;
-    }
-
-    public NutsWorkspaceOptions setLogFolder(String logFolder) {
-        this.logFolder = logFolder;
-        return this;
-    }
-
-    public Level getLogLevel() {
-        return logLevel;
-    }
-
-    public NutsWorkspaceOptions setLogLevel(Level logLevel) {
-        this.logLevel = logLevel;
-        return this;
-    }
-
-    public int getLogSize() {
-        return logSize;
-    }
-
-    public NutsWorkspaceOptions setLogSize(int logSize) {
-        this.logSize = logSize;
-        return this;
-    }
-
-    public int getLogCount() {
-        return logCount;
-    }
-
-    public NutsWorkspaceOptions setLogCount(int logCount) {
-        this.logCount = logCount;
         return this;
     }
 
@@ -363,12 +323,102 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
         return this;
     }
 
-    public boolean isLogInherited() {
-        return logInherited;
+    public NutsLogConfig getLogConfig() {
+        return logConfig;
     }
 
-    public NutsWorkspaceOptions setLogInherited(boolean logInherited) {
-        this.logInherited = logInherited;
+    public NutsWorkspaceOptions setLogConfig(NutsLogConfig logConfig) {
+        this.logConfig = logConfig;
+        return this;
+    }
+
+    public String getRequiredBootVersion() {
+        return requiredBootVersion;
+    }
+
+    public NutsWorkspaceOptions setRequiredBootVersion(String requiredBootVersion) {
+        this.requiredBootVersion = requiredBootVersion;
+        return this;
+    }
+
+    public StoreLocationLayout getStoreLocationLayout() {
+        return storeLocationLayout;
+    }
+
+    public NutsWorkspaceOptions setStoreLocationLayout(StoreLocationLayout storeLocationLayout) {
+        this.storeLocationLayout = storeLocationLayout;
+        return this;
+    }
+
+    public StoreLocationStrategy getStoreLocationStrategy() {
+        return storeLocationStrategy;
+    }
+
+    public NutsWorkspaceOptions setStoreLocationStrategy(StoreLocationStrategy storeLocationStrategy) {
+        this.storeLocationStrategy = storeLocationStrategy;
+        return this;
+    }
+
+    public String getProgramsStoreLocation() {
+        return programsStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setProgramsStoreLocation(String programsStoreLocation) {
+        this.programsStoreLocation = programsStoreLocation;
+        return this;
+    }
+
+    public String getConfigStoreLocation() {
+        return configStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setConfigStoreLocation(String configStoreLocation) {
+        this.configStoreLocation = configStoreLocation;
+        return this;
+    }
+
+    public String getVarStoreLocation() {
+        return varStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setVarStoreLocation(String varStoreLocation) {
+        this.varStoreLocation = varStoreLocation;
+        return this;
+    }
+
+    public String getLogsStoreLocation() {
+        return logsStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setLogsStoreLocation(String logsStoreLocation) {
+        this.logsStoreLocation = logsStoreLocation;
+        return this;
+    }
+
+    public String getTempStoreLocation() {
+        return tempStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setTempStoreLocation(String tempStoreLocation) {
+        this.tempStoreLocation = tempStoreLocation;
+        return this;
+    }
+
+    public String getCacheStoreLocation() {
+        return cacheStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setCacheStoreLocation(String cacheStoreLocation) {
+        this.cacheStoreLocation = cacheStoreLocation;
+        return this;
+    }
+
+    public String getLibStoreLocation() {
+        return libStoreLocation;
+    }
+
+    public NutsWorkspaceOptions setLibStoreLocation(String libStoreLocation) {
+        this.libStoreLocation = libStoreLocation;
         return this;
     }
 
@@ -414,51 +464,5 @@ public final class NutsWorkspaceOptions extends NutsArguments implements Seriali
         return sb.toString();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NutsWorkspaceOptions that = (NutsWorkspaceOptions) o;
-        return logSize == that.logSize &&
-                logCount == that.logCount &&
-                perf == that.perf &&
-                ignoreIfFound == that.ignoreIfFound &&
-                createIfNotFound == that.createIfNotFound &&
-                saveIfCreated == that.saveIfCreated &&
-                noColors == that.noColors &&
-                readOnly == that.readOnly &&
-                logInherited == that.logInherited &&
-                creationTime == that.creationTime &&
-                Objects.equals(home, that.home) &&
-                Objects.equals(bootRuntime, that.bootRuntime) &&
-                Objects.equals(bootJavaCommand, that.bootJavaCommand) &&
-                Objects.equals(bootJavaOptions, that.bootJavaOptions) &&
-                Objects.equals(bootRuntimeSourceURL, that.bootRuntimeSourceURL) &&
-                Objects.equals(logFolder, that.logFolder) &&
-                Objects.equals(logName, that.logName) &&
-                Objects.equals(logLevel, that.logLevel) &&
-                Arrays.equals(bootArguments, that.bootArguments) &&
-                Arrays.equals(applicationArguments, that.applicationArguments) &&
-                Objects.equals(workspace, that.workspace) &&
-                Objects.equals(archetype, that.archetype) &&
-                Arrays.equals(excludedExtensions, that.excludedExtensions) &&
-                Arrays.equals(excludedRepositories, that.excludedRepositories) &&
-                Objects.equals(login, that.login) &&
-                Objects.equals(password, that.password) &&
-                Objects.equals(autoConfig, that.autoConfig) &&
-                Objects.equals(classLoaderProvider, that.classLoaderProvider) &&
-                Arrays.equals(executorOptions, that.executorOptions) &&
-                bootCommand == that.bootCommand;
-    }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(home, bootRuntime, bootJavaCommand, bootJavaOptions, bootRuntimeSourceURL, logFolder, logName, logLevel, logSize, logCount, perf, workspace, ignoreIfFound, createIfNotFound, saveIfCreated, archetype, login, password, autoConfig, noColors, readOnly, creationTime, classLoaderProvider, bootCommand, logInherited);
-        result = 31 * result + Arrays.hashCode(bootArguments);
-        result = 31 * result + Arrays.hashCode(applicationArguments);
-        result = 31 * result + Arrays.hashCode(excludedExtensions);
-        result = 31 * result + Arrays.hashCode(excludedRepositories);
-        result = 31 * result + Arrays.hashCode(executorOptions);
-        return result;
-    }
 }

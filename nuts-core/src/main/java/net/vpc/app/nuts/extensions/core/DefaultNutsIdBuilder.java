@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -88,7 +88,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(NutsVersion version) {
-        this.version =version;
+        this.version = version;
         return this;
     }
 
@@ -111,8 +111,20 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
+    public String getAlternative() {
+        String s = getQueryMap().get(NutsConstants.QUERY_ALTERNATIVE);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
     public NutsIdBuilder setFace(String value) {
         return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value));
+//                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsIdBuilder setAlternative(String value) {
+        return setQueryProperty(NutsConstants.QUERY_ALTERNATIVE, StringUtils.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
@@ -141,7 +153,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setQuery(Map<String, String> queryMap, boolean merge) {
-        Map<String, String> m=null;
+        Map<String, String> m = null;
         if (merge) {
             m = getQueryMap();
             if (queryMap != null) {
@@ -156,12 +168,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                 }
             }
         } else {
-            m=new HashMap<>();
-            if(queryMap!=null){
+            m = new HashMap<>();
+            if (queryMap != null) {
                 m.putAll(queryMap);
             }
         }
-        this.query= DefaultNutsId.formatQuery(m);
+        this.query = DefaultNutsId.formatQuery(m);
         return this;
     }
 
@@ -282,7 +294,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsIdBuilder apply(ObjectConverter<String,String> properties) {
+    public NutsIdBuilder apply(ObjectConverter<String, String> properties) {
         setNamespace(CoreNutsUtils.applyStringProperties(this.getNamespace(), properties));
         setGroup(CoreNutsUtils.applyStringProperties(this.getGroup(), properties));
         setName(CoreNutsUtils.applyStringProperties(this.getName(), properties));
@@ -292,9 +304,9 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsId build(){
+    public NutsId build() {
         return new DefaultNutsId(
-                namespace,group,name,version==null?null:version.getValue(),query
+                namespace, group, name, version == null ? null : version.getValue(), query
         );
     }
 }

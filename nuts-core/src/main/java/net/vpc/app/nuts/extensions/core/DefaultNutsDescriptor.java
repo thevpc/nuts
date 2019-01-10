@@ -42,7 +42,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
-    private String face;
+    private String alternative;
     private NutsId[] parents;
     private String packaging;
     private String ext;
@@ -70,7 +70,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public DefaultNutsDescriptor(NutsDescriptor d) {
         this(
                 d.getId(),
-                d.getFace(),
+                d.getAlternative(),
                 d.getParents(),
                 d.getPackaging(),
                 d.isExecutable(),
@@ -91,7 +91,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, String face, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
+    public DefaultNutsDescriptor(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
                                  NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
                                  String[] arch, String[] os, String[] osdist, String[] platform,
                                  NutsDependency[] dependencies,
@@ -104,19 +104,19 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             throw new NutsIllegalArgumentException("id should not have query defined in descriptors");
         }
         this.id = id;
-        this.face = face;
-        this.packaging = StringUtils.trim(packaging);
+        this.alternative = StringUtils.trimToNull(alternative);
+        this.packaging = StringUtils.trimToNull(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
         if (parents != null) {
             System.arraycopy(parents, 0, this.parents, 0, this.parents.length);
         }
         this.executable = executable;
         this.nutsApplication = nutsApplication;
-        this.description = StringUtils.trim(description);
-        this.name = StringUtils.trim(name);
+        this.description = StringUtils.trimToNull(description);
+        this.name = StringUtils.trimToNull(name);
         this.executor = executor;
         this.installer = installer;
-        this.ext = StringUtils.trim(ext);
+        this.ext = StringUtils.trimToNull(ext);
         this.arch = CoreCollectionUtils.toArraySet(arch);
         this.os = CoreCollectionUtils.toArraySet(os);
         this.osdist = CoreCollectionUtils.toArraySet(osdist);
@@ -144,8 +144,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
     }
 
-    public String getFace() {
-        return face;
+    public String getAlternative() {
+        return alternative;
     }
 
     @Override
@@ -251,6 +251,31 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public String toString() {
+        return "DefaultNutsDescriptor{" +
+                "id=" + id +
+                ", alternative='" + alternative + '\'' +
+                ", parents=" + Arrays.toString(parents) +
+                ", packaging='" + packaging + '\'' +
+                ", ext='" + ext + '\'' +
+                ", executable=" + executable +
+                ", nutsApplication=" + nutsApplication +
+                ", executor=" + executor +
+                ", installer=" + installer +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", arch=" + Arrays.toString(arch) +
+                ", os=" + Arrays.toString(os) +
+                ", osdist=" + Arrays.toString(osdist) +
+                ", platform=" + Arrays.toString(platform) +
+                ", locations=" + Arrays.toString(locations) +
+                ", dependencies=" + Arrays.toString(dependencies) +
+                ", standardDependencies=" + Arrays.toString(standardDependencies) +
+                ", properties=" + properties +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -259,7 +284,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 executable == that.executable &&
                         nutsApplication == that.nutsApplication &&
                         Objects.equals(id, that.id) &&
-                        Objects.equals(face, that.face) &&
+                        Objects.equals(alternative, that.alternative) &&
                         Arrays.equals(parents, that.parents) &&
                         Objects.equals(packaging, that.packaging) &&
                         Objects.equals(ext, that.ext) &&
@@ -280,7 +305,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(id, face, packaging, ext, executable, nutsApplication, executor, installer, name, description, properties);
+        int result = Objects.hash(id, alternative, packaging, ext, executable, nutsApplication, executor, installer, name, description, properties);
         result = 31 * result + Arrays.hashCode(parents);
         result = 31 * result + Arrays.hashCode(arch);
         result = 31 * result + Arrays.hashCode(os);

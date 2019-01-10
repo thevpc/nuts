@@ -1,12 +1,13 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
 import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
 import net.vpc.common.fprint.parser.DefaultFormattedPrintStreamParser;
+import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 public class DefaultNutsParseManager implements NutsParseManager {
@@ -22,23 +23,68 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
     @Override
     public NutsDescriptor parseDescriptor(URL url) {
-        return CoreNutsUtils.parseNutsDescriptor(url);
+        try {
+            try {
+                return parseDescriptor(url.openStream(), true);
+            } catch (NutsException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw new NutsParseException("Unable to parse url " + url, ex);
+            }
+        } catch (IOException ex) {
+            throw new NutsParseException("Unable to parse url " + url, ex);
+        }
     }
 
     @Override
-    public NutsDescriptor parseDescriptor(File file) {
-        return CoreNutsUtils.parseNutsDescriptor(file);
+    public NutsDescriptor parseDescriptor(byte[] bytes) {
+        return parseDescriptor(new ByteArrayInputStream(bytes), true);
     }
+
+    public NutsDescriptor parseDescriptor(File file) {
+        if (!file.exists()) {
+            throw new NutsNotFoundException("at file " + file);
+        }
+        try {
+            return parseDescriptor(new FileInputStream(file), true);
+        } catch (NutsException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new NutsParseException("Unable to parse file " + file, ex);
+        }
+    }
+
+    public NutsDescriptor parseDescriptor(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return null;
+        }
+        return parseDescriptor(new ByteArrayInputStream(str.getBytes()), true);
+    }
+
+    public NutsDescriptor parseDescriptor(InputStream in, boolean closeStream) {
+        try {
+            return ws.getIOManager().readJson(new InputStreamReader(in), NutsDescriptor.class);
+        } finally {
+            if (closeStream) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    throw new NutsIOException(e);
+                }
+            }
+        }
+    }
+
+//    @Override
+//    public NutsDescriptor parseDescriptor(File file) {
+//        return CoreNutsUtils.parseNutsDescriptor(file);
+//    }
 
     @Override
     public NutsDescriptor parseDescriptor(InputStream stream) {
-        return CoreNutsUtils.parseNutsDescriptor(stream, false);
+        return parseDescriptor(stream, false);
     }
 
-    @Override
-    public NutsDescriptor parseDescriptor(String descriptorString) {
-        return CoreNutsUtils.parseNutsDescriptor(descriptorString);
-    }
 
     @Override
     public NutsDependency parseDependency(String dependency) {

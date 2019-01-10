@@ -116,8 +116,8 @@ public class NutsJavaShell extends JavaShell {
         javaShellContext = createContext(this.context, null, null, new Env(), new String[0]);
         context.getUserProperties().put(ConsoleContext.class.getName(), javaShellContext);
         try {
-            histFile=new File(workspace.getConfigManager().getStoreRoot(workspace.resolveIdForClass(NutsJavaShell.class)
-                    .getSimpleNameId().setVersion("LATEST"), RootFolderType.VAR),"nsh.history");
+            histFile=new File(workspace.getConfigManager().getStoreLocation(workspace.resolveIdForClass(NutsJavaShell.class)
+                    .getSimpleNameId().setVersion("LATEST"), StoreFolder.VAR),"nsh.history");
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
                 getHistory().load(histFile);

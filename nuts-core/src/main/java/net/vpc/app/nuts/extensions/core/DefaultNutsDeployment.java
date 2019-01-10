@@ -29,17 +29,10 @@
  */
 package net.vpc.app.nuts.extensions.core;
 
-import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
+import net.vpc.app.nuts.NutsConfirmAction;
+import net.vpc.app.nuts.NutsDeployment;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.extensions.util.TypedObject;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.InputStreamSource;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Objects;
 
 public class DefaultNutsDeployment implements NutsDeployment {
 

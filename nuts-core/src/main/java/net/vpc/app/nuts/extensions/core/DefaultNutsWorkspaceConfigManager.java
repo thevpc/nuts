@@ -52,7 +52,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 //    private NutsId workspaceBootId;
 //    private NutsId workspaceRuntimeId;
 
-    private NutsBootContext actualBootConfig;
+    private NutsBootContext runningBootConfig;
     private NutsBootContext wsBootConfig;
 //    private NutsId actualBootId;
 //    private NutsId actualRuntimeId;
@@ -61,10 +61,9 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     private ClassLoader bootClassLoader;
     private URL[] bootClassWorldURLs;
     private NutsWorkspaceConfig config = new NutsWorkspaceConfig();
-    private String workspace;
     private String cwd = System.getProperty("user.dir");
     private List<NutsWorkspaceCommandFactory> commandFactories = new ArrayList<>();
-    private ConfigNutsWorkspaceCommandFactory defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory();
+    private ConfigNutsWorkspaceCommandFactory defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(this);
     private boolean configurationChanged = false;
     private NutsWorkspaceOptions options;
     private NutsId platformOs;
@@ -88,7 +87,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public NutsBootContext getRunningContext() {
-        return actualBootConfig;
+        return runningBootConfig;
     }
 
     @Override
@@ -98,15 +97,23 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public NutsBootContext getConfigContext() {
-        return new DefaultNutsBootContext(
-                CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_API + "#" + config.getBootApiVersion()),
-                CoreNutsUtils.parseNutsId(config.getBootRuntime()),
-                config.getBootRuntimeDependencies(),
-                config.getBootRepositories(),
-                config.getBootJavaCommand(),
-                config.getBootJavaOptions()
-        )
-                ;
+        NutsBootConfig cc=new NutsBootConfig();
+        cc.setWorkspace(getHomeLocation());
+        cc.setHome(getHomeLocation());
+        cc.setApiVersion(config.getBootApiVersion());
+        cc.setRuntimeId(config.getBootRuntime());
+        cc.setRuntimeDependencies(config.getBootRuntimeDependencies());
+        cc.setRepositories(config.getBootRepositories());
+        cc.setJavaCommand(config.getBootJavaCommand());
+        cc.setJavaOptions(config.getBootJavaOptions());
+        cc.setProgramsStoreLocation(config.getProgramsStoreLocation());
+        cc.setConfigStoreLocation(config.getConfigStoreLocation());
+        cc.setLogsStoreLocation(config.getLogsStoreLocation());
+        cc.setTempStoreLocation(config.getTempStoreLocation());
+        cc.setCacheStoreLocation(config.getCacheStoreLocation());
+        cc.setVarStoreLocation(config.getVarStoreLocation());
+        cc.setStoreLocationStrategy(config.getStoreLocationStrategy());
+        return new DefaultNutsBootContext(cc);
     }
 
     @Override
@@ -117,7 +124,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 .setRepositories(config.getBootRepositories())
                 .setJavaCommand(config.getBootJavaCommand())
                 .setJavaOptions(config.getBootJavaOptions())
-        ;
+                ;
     }
 
     @Override
@@ -417,9 +424,8 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public boolean isValidWorkspaceFolder(){
-        String workspace = resolveWorkspacePath(this.workspace);
-        File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
+    public boolean isValidWorkspaceFolder() {
+        File file = CoreIOUtils.createFile(runningBootConfig.getWorkspace(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         if (file.isFile() && file.exists()) {
             return true;
         }
@@ -428,7 +434,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public String getWorkspaceLocation() {
-        return workspace;
+        return runningBootConfig.getWorkspace();
     }
 
     @Override
@@ -440,8 +446,8 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public void save() {
         CoreNutsUtils.checkReadOnly(ws);
         ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_SAVE_WORKSPACE, "save");
-        File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
-        CoreJsonUtils.storeJson(config, file, true);
+        File file = CoreIOUtils.createFile(runningBootConfig.getWorkspace(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
+        ws.getIOManager().writeJson(config, file, true);
         NutsRepositoryFilter repositoryFilter = null;
         for (NutsRepository repo : ws.getEnabledRepositories(repositoryFilter)) {
             repo.save();
@@ -465,28 +471,23 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         map.put("nuts.workspace-boot.id", bc.getApiId().toString());
         map.put("nuts.workspace-runtime.id", bc.getRuntimeId().toString());
         map.put("nuts.workspace-runtime.version", bc.getRuntimeId().getVersion().toString());
-        map.put("nuts.workspace-location", NutsWorkspaceHelper.resolveImmediateWorkspacePath(workspace, NutsConstants.DEFAULT_WORKSPACE_NAME, getHomeLocation()));
+        map.put("nuts.workspace-location", runningBootConfig.getWorkspace());
         return map;
     }
 
     public void onInitializeWorkspace(
             NutsWorkspaceOptions options,
-            String workspaceRoot,
-            NutsWorkspaceFactory factory,
-            DefaultNutsBootContext actualBootConfig,
+            DefaultNutsBootContext runningBootConfig,
             DefaultNutsBootContext wsBootConfig,
-            String workspace,
             URL[] bootClassWorldURLs,
             ClassLoader bootClassLoader) {
-        this.nutsHome = StringUtils.isEmpty(workspaceRoot) ? Nuts.getDefaultNutsHome() : workspaceRoot;
+        this.nutsHome = runningBootConfig.getHome();
         this.options = options;
-
-        this.actualBootConfig = actualBootConfig;
+        this.runningBootConfig = runningBootConfig;
         this.wsBootConfig = wsBootConfig;
 
         this.bootClassLoader = bootClassLoader;
         this.bootClassWorldURLs = bootClassWorldURLs == null ? null : Arrays.copyOf(bootClassWorldURLs, bootClassWorldURLs.length);
-        this.workspace =  resolveWorkspacePath(workspace);
     }
 
     public String getBootClassWorldString() {
@@ -562,7 +563,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 + "workspaceBootId=" + getBootContext().getApiId().toString()
                 + ", workspaceRuntimeId=" + getBootContext().getRuntimeId().toString()
                 + ", nutsHome='" + nutsHome + '\''
-                + ", workspace='" + workspace + '\''
+                + ", workspace='" + runningBootConfig.getWorkspace() + '\''
                 + ", cwd=" + cwd
                 + '}';
     }
@@ -684,11 +685,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public String getComponentsLocation() {
-        return getConfig().getComponentsLocation();
-    }
-
-    @Override
     public void setLogLevel(Level levek) {
         CoreLogUtils.setLevel(Level.FINEST);
     }
@@ -757,7 +753,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public boolean installCommand(NutsWorkspaceCommandConfig command,NutsConfirmAction confirmAction) {
+    public boolean installCommand(NutsWorkspaceCommandConfig command, NutsConfirmAction confirmAction) {
         if (command == null
                 || StringUtils.isEmpty(command.getName())
                 || command.getName().contains(" ") || command.getName().contains("/") || command.getName().contains("\\")
@@ -766,15 +762,17 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 || command.getId().getGroup().isEmpty()
                 || command.getCommand() == null
         ) {
-            throw new IllegalArgumentException("Invalid command " + (command == null ? "<NULL>" : command.getName()));
+            throw new NutsIllegalArgumentException("Invalid command " + (command == null ? "<NULL>" : command.getName()));
         }
         if (defaultCommandFactory.findCommand(command.getName(), ws) != null) {
-            if(confirmAction==null){
-                confirmAction=NutsConfirmAction.ERROR;
+            if (confirmAction == null) {
+                confirmAction = NutsConfirmAction.ERROR;
             }
-            switch (confirmAction){
-                case ERROR: throw new IllegalArgumentException("Command already exists " + command.getName());
-                case IGNORE:return false;
+            switch (confirmAction) {
+                case ERROR:
+                    throw new NutsIllegalArgumentException("Command already exists " + command.getName());
+                case IGNORE:
+                    return false;
             }
         }
         defaultCommandFactory.installCommand(command);
@@ -782,11 +780,21 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public void uninstallCommand(String name) {
+    public boolean uninstallCommand(String name, NutsConfirmAction confirmAction) {
         if (StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("Invalid command " + (name == null ? "<NULL>" : name));
+            throw new NutsIllegalArgumentException("Invalid command " + (name == null ? "<NULL>" : name));
+        }
+        NutsWorkspaceCommandConfig command = defaultCommandFactory.findCommand(name, ws);
+        if (command == null) {
+            switch (confirmAction) {
+                case ERROR:
+                    throw new NutsIllegalArgumentException("Command does not exists " + command.getName());
+                case IGNORE:
+                    return false;
+            }
         }
         defaultCommandFactory.uninstallCommand(name);
+        return true;
     }
 
     @Override
@@ -849,14 +857,16 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public void uninstallCommandFactory(String factoryId) {
+    public boolean uninstallCommandFactory(String factoryId, NutsConfirmAction confirmAction) {
         if (factoryId == null || factoryId.isEmpty()) {
             throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
         }
         NutsWorkspaceCommandFactory removeMe = null;
+        NutsWorkspaceCommandFactoryConfig removeMeConfig = null;
         for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
             NutsWorkspaceCommandFactory factory = iterator.next();
             if (factoryId.equals(factory.getFactoryId())) {
+                removeMe = factory;
                 iterator.remove();
                 break;
             }
@@ -866,11 +876,21 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             for (Iterator<NutsWorkspaceCommandFactoryConfig> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
                 NutsWorkspaceCommandFactoryConfig commandFactory = iterator.next();
                 if (factoryId.equals(commandFactory.getFactoryId())) {
+                    removeMeConfig = commandFactory;
                     iterator.remove();
                     break;
                 }
             }
         }
+        if (removeMe == null && removeMeConfig == null) {
+            switch (confirmAction) {
+                case ERROR:
+                    throw new NutsIllegalArgumentException("Command Factory does not exists " + factoryId);
+                case IGNORE:
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -882,158 +902,29 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return new ArrayList<>(all.values());
     }
 
-    private class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
-        @Override
-        public void configure(NutsWorkspaceCommandFactoryConfig config) {
-
-        }
-
-        @Override
-        public String getFactoryId() {
-            return "default";
-        }
-
-        public File getRootFolder() {
-            String storeRoot = getStoreRoot(RootFolderType.PROGRAMS);
-            if (storeRoot == null) {
-                return null;
-            }
-            return new File(storeRoot);
-        }
-
-        @Override
-        public int getPriority() {
-            return Integer.MAX_VALUE;
-        }
-
-        public void uninstallCommand(String name) {
-            File file = new File(getRootFolder(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-            if (file.isFile()) {
-                if (!file.delete()) {
-                    throw new IllegalArgumentException("Unable to delete file " + file.getPath());
-                }
-            }
-        }
-
-        public void installCommand(NutsWorkspaceCommandConfig command) {
-            File file = new File(getRootFolder(), command.getName() + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-            ws.getIOManager().writeJson(command, file, true);
-        }
-
-        @Override
-        public NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace) {
-            File file = new File(getRootFolder(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-            if (file.exists()) {
-                NutsWorkspaceCommandConfig c = ws.getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
-                if (c != null) {
-                    c.setName(name);
-                    return c;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public List<NutsWorkspaceCommandConfig> findCommands(NutsWorkspace workspace) {
-            return findCommands((ObjectFilter<NutsWorkspaceCommandConfig>) null);
-        }
-
-        public List<NutsWorkspaceCommandConfig> findCommands(NutsId id, NutsWorkspace workspace) {
-            return findCommands(new ObjectFilter<NutsWorkspaceCommandConfig>() {
-                @Override
-                public boolean accept(NutsWorkspaceCommandConfig value) {
-                    if (id.getVersion().isEmpty()) {
-                        return value.getId().getSimpleName().equals(id.getSimpleName());
-                    } else {
-                        return value.getId().getLongName().equals(id.getLongName());
-                    }
-                }
-            });
-        }
-
-        public List<NutsWorkspaceCommandConfig> findCommands(ObjectFilter<NutsWorkspaceCommandConfig> filter) {
-            List<NutsWorkspaceCommandConfig> all = new ArrayList<>();
-            File[] files = getRootFolder().listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)) {
-                        NutsWorkspaceCommandConfig c = null;
-                        try {
-                            c = ws.getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
-                        } catch (Exception ex) {
-                            //
-                        }
-                        if (c != null) {
-                            c.setName(file.getName().substring(0, file.getName().length() - 4));
-                            if (filter == null || filter.accept(c)) {
-                                all.add(c);
-                            }
-                        }
-                    }
-                }
-            }
-            return all;
-        }
-    }
-
     @Override
-    public String getStoreRoot(RootFolderType folderType) {
+    public String getStoreLocation(StoreFolder folderType) {
         if (folderType == null) {
-            folderType = RootFolderType.PROGRAMS;
+            folderType = StoreFolder.PROGRAMS;
         }
-        String k = null;
-        String v = null;
-        switch (folderType) {
-            case PROGRAMS: {
-                k = NutsConstants.ENV_STORE_PROGRAMS;
-                break;
-            }
-            case VAR: {
-                k = NutsConstants.ENV_STORE_VAR;
-                break;
-            }
-            case LOGS: {
-                k = NutsConstants.ENV_STORE_LOGS;
-                break;
-            }
-            case CONFIG: {
-                k = NutsConstants.ENV_STORE_CONFIG;
-                break;
-            }
-            case TEMP: {
-                k = NutsConstants.ENV_STORE_TEMP;
-                break;
-            }
-            case CACHE: {
-                k = NutsConstants.ENV_STORE_CACHE;
-                break;
-            }
-            default: {
-                k = NutsConstants.ENV_STORE_TEMP;
-                break;
-            }
-        }
-        v = Nuts.getDefaultWorkspaceFolder(getWorkspaceLocation(),getHomeLocation(),folderType);
-        return CoreIOUtils.resolvePath(getEnv(k, v),
-                new File(ws.getIOManager().resolvePath(getWorkspaceLocation())),
-                getHomeLocation()).getPath();
+        return runningBootConfig.getStoreLocation(folderType);
     }
 
     @Override
-    public String getStoreRoot(String id, RootFolderType folderType) {
-        return getStoreRoot(ws.getParseManager().parseId(id), folderType);
+    public String getStoreLocation(String id, StoreFolder folderType) {
+        return getStoreLocation(ws.getParseManager().parseId(id), folderType);
     }
 
     @Override
-    public String getStoreRoot(NutsId id, RootFolderType folderType) {
+    public String getStoreLocation(NutsId id, StoreFolder folderType) {
         if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
-        String storeRoot = getStoreRoot(folderType);
-        if (storeRoot == null) {
+        String storeLocation = getStoreLocation(folderType);
+        if (storeLocation == null) {
             return null;
         }
-        File groupFolder = new File(storeRoot, id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(storeLocation, id.getGroup().replaceAll("\\.", File.separator));
         if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
@@ -1056,7 +947,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         Set<String> visited = new HashSet<String>();
         while (true) {
             File file = CoreIOUtils.createFile(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
-            NutsWorkspaceConfig nutsWorkspaceConfig = CoreJsonUtils.loadJson(file, NutsWorkspaceConfig.class);
+            NutsWorkspaceConfig nutsWorkspaceConfig = ws.getIOManager().readJson(file, NutsWorkspaceConfig.class);
             if (nutsWorkspaceConfig != null) {
                 String nextWorkspace = nutsWorkspaceConfig.getWorkspace();
                 if (nextWorkspace != null && nextWorkspace.trim().length() > 0) {
@@ -1129,15 +1020,85 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public long getCreationTimeMillis() {
-        return endCreateTime-startCreateTime;
+        return endCreateTime - startCreateTime;
     }
 
     @Override
-    public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent){
+    public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent) {
         NutsAuthenticationAgent supported = ws.getExtensionManager().createSupported(NutsAuthenticationAgent.class, authenticationAgent);
-        if(supported==null){
+        if (supported == null) {
             throw new NutsExtensionMissingException(NutsAuthenticationAgent.class, "AuthenticationAgent");
         }
         return supported;
+    }
+
+    @Override
+    public void setStoreLocation(StoreFolder folderType, String location) {
+        if (folderType == null) {
+            throw new NutsIllegalArgumentException("Invalid store root folder null");
+        }
+        switch (folderType) {
+            case PROGRAMS: {
+                config.setProgramsStoreLocation(location);
+                break;
+            }
+            case CACHE: {
+                config.setCacheStoreLocation(location);
+                break;
+            }
+            case CONFIG: {
+                config.setConfigStoreLocation(location);
+                break;
+            }
+            case LOGS: {
+                config.setLogsStoreLocation(location);
+                break;
+            }
+            case TEMP: {
+                config.setTempStoreLocation(location);
+                break;
+            }
+            case VAR: {
+                config.setVarStoreLocation(location);
+                break;
+            }
+            case LIB: {
+                config.setLibStoreLocation(location);
+                break;
+            }
+            default: {
+                throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+            }
+        }
+    }
+
+    @Override
+    public void setStoreLocationStrategy(StoreLocationStrategy strategy) {
+        if (strategy == null) {
+            strategy = StoreLocationStrategy.SYSTEM;
+        }
+        config.setStoreLocationStrategy(strategy);
+    }
+
+    @Override
+    public StoreLocationStrategy getStoreLocationStrategy() {
+        StoreLocationStrategy s = config.getStoreLocationStrategy();
+        return s == null ? StoreLocationStrategy.SYSTEM : s;
+    }
+    @Override
+    public void setStoreLocationLayout(StoreLocationLayout layout) {
+        if (layout == null) {
+            layout = StoreLocationLayout.SYSTEM;
+        }
+        config.setStoreLocationLayout(layout);
+    }
+
+    @Override
+    public StoreLocationLayout getStoreLocationLayout() {
+        StoreLocationLayout s = config.getStoreLocationLayout();
+        return s == null ? StoreLocationLayout.SYSTEM : s;
+    }
+    public NutsWorkspace getWorkspace(){
+        return ws;
     }
 }

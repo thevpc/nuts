@@ -102,11 +102,11 @@ public class NutsApplicationContext implements CommandLineContext {
         setErr0(getTerminal().getFormattedErr());
         setOut(getOut0());
         setErr(getErr0());
-        setProgramsFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.PROGRAMS));
-        setConfigFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.CONFIG));
-        setLogsFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.LOGS));
-        setTempFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.TEMP));
-        setVarFolder(workspace.getConfigManager().getStoreRoot(getStoreId(), RootFolderType.VAR));
+        setProgramsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.PROGRAMS));
+        setConfigFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.CONFIG));
+        setLogsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.LOGS));
+        setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.TEMP));
+        setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.VAR));
         if (wordIndex >= 0) {
             setNoColors(true);
         }

@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -72,19 +72,19 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected abstract String getPath(NutsId id, String extension);
 
-    protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {
+    protected InputStream getStream(NutsId id, String extension, NutsSession session) {
         String url = getPath(id, extension);
-        return openStream(id, url, id.setFace(face), session);
+        return openStream(id, url, id, session);
     }
 
-    protected String getStreamAsString(NutsId id, String extension, String face, NutsSession session) {
+    protected String getStreamAsString(NutsId id, String extension, NutsSession session) {
         String url = getPath(id, extension);
-        return IOUtils.loadString(openStream(id, url, id.setFace(face), session), true);
+        return IOUtils.loadString(openStream(id, url, id, session), true);
     }
 
-    protected void checkSHA1Hash(NutsId id, String extension, String face, InputStream stream, NutsSession session) throws IOException {
+    protected void checkSHA1Hash(NutsId id, String extension, InputStream stream, NutsSession session) throws IOException {
         try {
-            String rhash = getStreamSHA1(id, extension, face, session);
+            String rhash = getStreamSHA1(id, extension, session);
             String lhash = CoreSecurityUtils.evalSHA1(stream, true);
             if (!rhash.equals(lhash)) {
                 throw new IOException("Invalid file hash " + id);
@@ -94,8 +94,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
     }
 
-    protected String getStreamSHA1(NutsId id, String extension, String face, NutsSession session) {
-        String hash = getStreamAsString(id, extension + ".sha1", face, session).toUpperCase();
+    protected String getStreamSHA1(NutsId id, String extension, NutsSession session) {
+        String hash = getStreamAsString(id, extension + ".sha1", session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
@@ -133,7 +133,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             NutsDescriptor nutsDescriptor = null;//parsePomXml(getStream(id, ".pom"), session);
             byte[] bytes = null;
             try {
-                stream = getStream(id, ".pom", CoreNutsUtils.FACE_PACKAGE, session);
+                stream = getStream(id.setFace(CoreNutsUtils.FACE_PACKAGE), ".pom", session);
                 bytes = IOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getPath(id, ".pom"));
             } finally {
@@ -141,9 +141,9 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id, ".pom", CoreNutsUtils.FACE_DESC_HASH, new ByteArrayInputStream(bytes), session);
+            checkSHA1Hash(id.setFace(CoreNutsUtils.FACE_DESC_HASH), ".pom", new ByteArrayInputStream(bytes), session);
             File jar = new File(getPath(id, resolveExtension(nutsDescriptor)));
-            nutsDescriptor = annotateExecDesc(nutsDescriptor,jar);
+            nutsDescriptor = annotateExecDesc(nutsDescriptor, jar);
             return nutsDescriptor;
         } catch (IOException ex) {
             throw new NutsNotFoundException(id, null, ex);
@@ -155,13 +155,15 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     @Override
     protected String copyToImpl(NutsId id, String localPath, NutsSession session) {
         try {
-            NutsDescriptor d = getWorkspace().fetchDescriptor(id, true, session);
+            //if session remote, demote it to online when reading descriptor
+            NutsSession session2=(session.getFetchMode()==NutsFetchMode.REMOTE)?session.copy().setFetchMode(NutsFetchMode.ONLINE):session;
+            NutsDescriptor d = getWorkspace().fetchDescriptor(id, true, session2);
             String ext = resolveExtension(d);
             if (new File(localPath).isDirectory()) {
                 localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, ext)).getPath();
             }
-            IOUtils.copy(getStream(id, ext, CoreNutsUtils.FACE_PACKAGE, session), new File(localPath), true, true);
-            checkSHA1Hash(id, ext, CoreNutsUtils.FACE_PACKAGE_HASH, new FileInputStream(localPath), session);
+            IOUtils.copy(getStream(id.setFace(CoreNutsUtils.FACE_PACKAGE), ext, session), new File(localPath), true, true);
+            checkSHA1Hash(id.setFace(CoreNutsUtils.FACE_PACKAGE_HASH), ext, new FileInputStream(localPath), session);
             return localPath;
         } catch (NutsIOException ex) {
             throw new NutsNotFoundException(id, null, ex);
@@ -171,20 +173,20 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
 
-
     @Override
     public String copyDescriptorToImpl(NutsId id, String localPath, NutsSession session) {
         NutsDescriptor nutsDescriptor = fetchDescriptor(id, session);
         if (new File(localPath).isDirectory()) {
             localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, "pom")).getPath();
         }
-        nutsDescriptor.write(new File(localPath));
+        getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(nutsDescriptor, new File(localPath));
         return localPath;
     }
 
     @Override
     public String fetchHashImpl(NutsId id, NutsSession session) {
-        return getStreamSHA1(id, ".jar", CoreNutsUtils.FACE_PACKAGE_HASH, null);
+        //TODO fix me, why hash and jar????
+        return getStreamSHA1(id.setFace(CoreNutsUtils.FACE_PACKAGE_HASH), ".jar", null);
     }
 
     @Override
@@ -193,8 +195,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         NutsDescriptor nutsDescriptor = null;
         try {
             try {
-                stream = getStream(id, ".pom", CoreNutsUtils.FACE_DESC, session);
-                nutsDescriptor = MavenUtils.parsePomXml(stream,getPath(id, ".pom"));
+                stream = getStream(id.setFace(CoreNutsUtils.FACE_DESC), ".pom", session);
+                nutsDescriptor = MavenUtils.parsePomXml(stream, getPath(id, ".pom"));
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -205,7 +207,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         } catch (IOException ex) {
             throw new NutsNotFoundException(id, null, ex);
         }
-        return nutsDescriptor.getSHA1();
+        return getWorkspace().getIOManager().getSHA1(nutsDescriptor);
     }
 
 //    @Override
@@ -222,23 +224,23 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 //        throw new NutsNotFoundException(id);
 //    }
 
-    public NutsDescriptor annotateExecDesc(NutsDescriptor nutsDescriptor,File jar) {
-        boolean executable=nutsDescriptor.isExecutable();
-        boolean nutsApp= nutsDescriptor.isNutsApplication();
-        if(jar.getName().toLowerCase().endsWith(".jar") && resolveExtension(nutsDescriptor).equals(".jar") && jar.isFile()){
+    public NutsDescriptor annotateExecDesc(NutsDescriptor nutsDescriptor, File jar) {
+        boolean executable = nutsDescriptor.isExecutable();
+        boolean nutsApp = nutsDescriptor.isNutsApplication();
+        if (jar.getName().toLowerCase().endsWith(".jar") && resolveExtension(nutsDescriptor).equals(".jar") && jar.isFile()) {
             File f = new File(getPath(nutsDescriptor.getId(), ".desc-annotation"));
-            Map<String,String> map = null;
-            try{
-                if(f.isFile()) {
+            Map<String, String> map = null;
+            try {
+                if (f.isFile()) {
                     map = getWorkspace().getIOManager().readJson(f, Map.class);
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 //
             }
-            if(map!=null){
-                executable="true".equals(map.get("executable"));
-                nutsApp="true".equals(map.get("nutsApplication"));
-            }else {
+            if (map != null) {
+                executable = "true".equals(map.get("executable"));
+                nutsApp = "true".equals(map.get("nutsApplication"));
+            } else {
                 try {
                     NutsExecutionEntry[] t = CorePlatformUtils.parseMainClasses(jar);
                     if (t.length > 0) {
@@ -251,8 +253,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        getWorkspace().getIOManager().writeJson(map, f,true);
-                    }catch (Exception ex){
+                        getWorkspace().getIOManager().writeJson(map, f, true);
+                    } catch (Exception ex) {
                         //
                     }
                 } catch (Exception ex) {
@@ -286,7 +288,55 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         } else {
             ext = ("." + d.getPackaging());
         }
-        return "."+ext;
+        return "." + ext;
     }
 
+    protected NutsDefinition getPrivateStoreNutsDefinition(NutsId id, NutsSession session) {
+        if (StringUtils.isEmpty(id.getGroup())) {
+            return null;
+        }
+        if (StringUtils.isEmpty(id.getName())) {
+            return null;
+        }
+        if (id.getVersion().isEmpty()) {
+            return null;
+        }
+        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
+        File artifactFolder = new File(groupFolder, id.getName());
+        if (id.getVersion().isEmpty()) {
+            return null;
+        }
+        File versionFolder = new File(artifactFolder, id.getVersion().getValue());
+        File descFile = new File(versionFolder, getQueryFilename(id, ".pom"));
+
+        if (descFile.isFile()) {
+            NutsDescriptor nutsDescriptor = null;
+            try {
+                nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(descFile), getWorkspace(), session, descFile.getPath());
+            } catch (IOException e) {
+                throw new NutsIOException(e);
+            }
+            File localFile = nutsDescriptor == null ? new File(versionFolder, getQueryFilename(id, nutsDescriptor))
+                    : new File(versionFolder, getQueryFilename(id, nutsDescriptor));
+            if (localFile.isFile()) {
+                if (nutsDescriptor != null) {
+                    nutsDescriptor = annotateExecDesc(nutsDescriptor, localFile);
+                }
+                return new NutsDefinition(id, nutsDescriptor, localFile.getPath(), true, false, null, null);
+            }
+        }
+        return null;
+    }
+
+    protected String getLocalPath(NutsId id, String extension) {
+        String groupId = id.getGroup();
+        String artifactId = id.getName();
+        String version = id.getVersion().getValue();
+        String locationFolder = getPrivateStoreLocation();
+        return new File(locationFolder, groupId.replaceAll("\\.", File.separator) + File.separator + artifactId + File.separator + version + File.separator
+                + getQueryFilename(id, extension)
+        ).getPath();
+    }
+
+    protected abstract String getPrivateStoreLocation();
 }

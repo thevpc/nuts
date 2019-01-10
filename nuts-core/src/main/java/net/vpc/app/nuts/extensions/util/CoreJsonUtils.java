@@ -29,18 +29,7 @@
  */
 package net.vpc.app.nuts.extensions.util;
 
-import net.vpc.app.nuts.JsonIO;
-import net.vpc.app.nuts.NutsIOException;
-import net.vpc.app.nuts.extensions.core.GsonIO;
-import net.vpc.common.io.FileUtils;
-
-import java.io.*;
-
 public class CoreJsonUtils {
-    public static JsonIO get() {
-        return GsonIO.INSTANCE;
-    }
-
     public static void readJsonPartialString(String str, JsonStatus s) {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -93,80 +82,4 @@ public class CoreJsonUtils {
             }
         }
     }
-
-    public static <T> T fromJsonString(String json, Class<T> cls) {
-        try {
-            Reader reader = null;
-            try {
-                reader = new StringReader(json);
-                return get().read(reader, cls);
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-            }
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (IOException ex) {
-            throw new NutsIOException("Error Parsing file " + json, ex);
-        }
-    }
-
-    public static <T> T loadJson(File file, Class<T> cls) {
-        if (!file.exists()) {
-            return null;
-        }
-        try {
-            FileReader reader = null;
-            try {
-                reader = new FileReader(file);
-                return get().read(reader, cls);
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-            }
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (IOException ex) {
-            throw new NutsIOException("Error Parsing file " + file.getPath(), ex);
-        }
-    }
-
-
-    public static String toJsonString(Object structure, boolean pretty) {
-        StringWriter writer = null;
-        try {
-            try {
-                writer = new StringWriter();
-                get().write(structure, writer, pretty);
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-            return writer.toString();
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
-    public static void storeJson(Object structure, File file, boolean pretty) {
-        FileUtils.createParents(file);
-        FileWriter writer = null;
-        try {
-            try {
-                writer = new FileWriter(file);
-                get().write(structure, writer, pretty);
-            } finally {
-                if (writer != null) {
-                    writer.close();
-                }
-            }
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
-
 }

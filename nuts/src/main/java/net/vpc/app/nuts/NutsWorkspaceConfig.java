@@ -42,7 +42,19 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String bootRepositories = null;
     private String bootJavaCommand = null;
     private String bootJavaOptions = null;
-    private String componentsLocation = null;
+    private String programsStoreLocation = null;
+    private String configStoreLocation = null;
+    private String varStoreLocation = null;
+    private String libStoreLocation = null;
+    private String logsStoreLocation = null;
+    private String tempStoreLocation = null;
+    private String cacheStoreLocation = null;
+    /**
+     * valid values are "", "bundle"
+     */
+    private StoreLocationStrategy storeLocationStrategy = null;
+    private StoreLocationLayout storeLocationLayout = null;
+
     private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
     private List<NutsId> extensions = new ArrayList<>();
     private List<NutsWorkspaceCommandFactoryConfig> commandFactories = new ArrayList<>();
@@ -62,7 +74,15 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.bootRuntime = other.getBootRuntime();
         this.bootRuntimeDependencies = other.getBootRuntimeDependencies();
         this.bootRepositories = other.getBootRepositories();
-        this.componentsLocation = other.getComponentsLocation();
+        this.storeLocationStrategy = other.getStoreLocationStrategy();
+        this.storeLocationLayout = other.getStoreLocationLayout();
+        this.programsStoreLocation = other.getProgramsStoreLocation();
+        this.configStoreLocation = other.getConfigStoreLocation();
+        this.varStoreLocation = other.getVarStoreLocation();
+        this.libStoreLocation = other.getLibStoreLocation();
+        this.logsStoreLocation = other.getLogsStoreLocation();
+        this.tempStoreLocation = other.getTempStoreLocation();
+        this.cacheStoreLocation = other.getCacheStoreLocation();
         this.bootJavaCommand = other.getBootJavaCommand();
         this.bootJavaOptions = other.getBootJavaOptions();
         for (NutsRepositoryLocation repository : other.getRepositories()) {
@@ -78,14 +98,6 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.extensions.addAll(Arrays.asList(other.getExtensions()));
         this.env.putAll(other.getEnv());
         this.imports = other.getImports();
-    }
-
-    public String getComponentsLocation() {
-        return componentsLocation;
-    }
-
-    public void setComponentsLocation(String componentsLocation) {
-        this.componentsLocation = componentsLocation;
     }
 
     public String getWorkspace() {
@@ -258,6 +270,87 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setCommandFactories(List<NutsWorkspaceCommandFactoryConfig> commandFactories) {
         this.commandFactories = commandFactories;
+        return this;
+    }
+
+    public String getProgramsStoreLocation() {
+        return programsStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setProgramsStoreLocation(String programsStoreLocation) {
+        this.programsStoreLocation = programsStoreLocation;
+        return this;
+    }
+
+    public String getConfigStoreLocation() {
+        return configStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setConfigStoreLocation(String configStoreLocation) {
+        this.configStoreLocation = configStoreLocation;
+        return this;
+    }
+
+    public String getVarStoreLocation() {
+        return varStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setVarStoreLocation(String varStoreLocation) {
+        this.varStoreLocation = varStoreLocation;
+        return this;
+    }
+
+    public String getLogsStoreLocation() {
+        return logsStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setLogsStoreLocation(String logsStoreLocation) {
+        this.logsStoreLocation = logsStoreLocation;
+        return this;
+    }
+
+    public String getTempStoreLocation() {
+        return tempStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setTempStoreLocation(String tempStoreLocation) {
+        this.tempStoreLocation = tempStoreLocation;
+        return this;
+    }
+
+    public String getCacheStoreLocation() {
+        return cacheStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setCacheStoreLocation(String cacheStoreLocation) {
+        this.cacheStoreLocation = cacheStoreLocation;
+        return this;
+    }
+
+    public StoreLocationStrategy getStoreLocationStrategy() {
+        return storeLocationStrategy;
+    }
+
+    public NutsWorkspaceConfig setStoreLocationStrategy(StoreLocationStrategy storeLocationStrategy) {
+        this.storeLocationStrategy = storeLocationStrategy;
+        return this;
+    }
+
+    public StoreLocationLayout getStoreLocationLayout() {
+        return storeLocationLayout;
+    }
+
+    public NutsWorkspaceConfig setStoreLocationLayout(StoreLocationLayout storeLocationLayout) {
+        this.storeLocationLayout = storeLocationLayout;
+        return this;
+    }
+
+    public String getLibStoreLocation() {
+        return libStoreLocation;
+    }
+
+    public NutsWorkspaceConfig setLibStoreLocation(String libStoreLocation) {
+        this.libStoreLocation = libStoreLocation;
         return this;
     }
 }

@@ -32,7 +32,7 @@ package net.vpc.app.nuts.extensions.installers;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.RootFolderType;
+import net.vpc.app.nuts.StoreFolder;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
 
@@ -55,7 +55,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getConfigManager().getStoreRoot(executionContext.getNutsDefinition().getId(), RootFolderType.PROGRAMS));
+        File installFolder = new File(executionContext.getWorkspace().getConfigManager().getStoreLocation(executionContext.getNutsDefinition().getId(), StoreFolder.PROGRAMS));
 
         String skipRoot = (String) executionContext.getExecutorProperties().remove("unzip-skip-root");
         ZipUtils.unzip((executionContext.getNutsDefinition().getFile()),

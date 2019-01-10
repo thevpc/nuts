@@ -499,8 +499,13 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                 if(command.getId()==null) {
                     throw new NutsExecutionException("Invalid Command Definition "+command,1);
                 }
-                nutToRun = ws.fetch(command.getId(), session);
+                if(command.getCommand()==null || command.getCommand().length==0) {
+                    throw new NutsExecutionException("Invalid Command Definition "+command,1);
+                }
+                nutToRun = ws.fetch(command.getCommand()[0], session);
                 List<String> r=new ArrayList<>(Arrays.asList(command.getCommand()));
+                //remove first element
+                r.remove(0);
                 r.addAll(Arrays.asList(args));
                 args=r.toArray(new String[0]);
             }

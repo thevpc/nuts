@@ -61,7 +61,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
             }
         }
 
-        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
+//        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
         workspace.getConfigManager().addImports("net.vpc.app.nuts.toolbox");
         workspace.getConfigManager().addImports("net.vpc.app");
         workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);

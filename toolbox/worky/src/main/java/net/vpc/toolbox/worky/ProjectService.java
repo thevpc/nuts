@@ -44,8 +44,8 @@ public class ProjectService {
     }
 
     public File getConfigFile() {
-        File storeRoot = new File(appContext.getConfigFolder(), "projects");
-        return new File(storeRoot, config.getId() + ".config");
+        File storeLocation = new File(appContext.getConfigFolder(), "projects");
+        return new File(storeLocation, config.getId() + ".config");
     }
 
     public void save() throws IOException {

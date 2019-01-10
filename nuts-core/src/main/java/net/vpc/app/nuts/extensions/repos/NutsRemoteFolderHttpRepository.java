@@ -89,7 +89,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         throw new NutsUnsupportedOperationException();
     }
 
-    protected InputStream getStream(NutsId id, String extension, String face, NutsSession session) {
+    protected InputStream getStream(NutsId id, String extension, NutsSession session) {
         String url = getPath(id, extension);
         if (URLUtils.isRemoteURL(url)) {
             String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
@@ -97,10 +97,10 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
                 log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " " + StringUtils.alignLeft("\'" + extension + "\'", 20) + " url " + url);
             }
         }
-        return openStream(url, id.setFace(face), session);
+        return openStream(url, id, session);
     }
 
-    protected InputStream getDescStream(NutsId id, String face, NutsSession session) {
+    protected InputStream getDescStream(NutsId id, NutsSession session) {
         String url = getDescPath(id);
         if (URLUtils.isRemoteURL(url)) {
             String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
@@ -108,7 +108,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
                 log.log(Level.FINEST, StringUtils.alignLeft(getRepositoryId(), 20) + " " + message + " url " + url);
             }
         }
-        return openStream(url, id.setFace(face), session);
+        return openStream(url, id, session);
     }
 
     protected String getPath(NutsId id, String extension) {
@@ -130,7 +130,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
     }
 
     protected InputStream openStream(String path, Object source, NutsSession session) {
-        return CoreIOUtils.openStream(path, source, getWorkspace(), session);
+        return getWorkspace().getIOManager().monitorInputStream(path, source, session);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         InputStream stream = null;
         try {
             try {
-                NutsDescriptor descriptor = CoreNutsUtils.parseNutsDescriptor(stream = getDescStream(id, null, session), true);
+                NutsDescriptor descriptor = getWorkspace().getParseManager().parseDescriptor(stream = getDescStream(id, session), true);
                 if (descriptor != null) {
                     //String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                     //if (hash.equals(descriptor.toString())) {
@@ -172,7 +172,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         } else {
             log.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
         }
-        IOUtils.copy(stream, file, mkdirs, true);
+        CoreNutsUtils.copy(stream, file, mkdirs, true);
     }
 
     @Override
@@ -187,7 +187,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         for (String location : desc.getLocations()) {
             if(!StringUtils.isEmpty(location)){
                 try {
-                    CoreIOUtils.downloadPath(location, new File(localPath), location, getWorkspace(), session);
+                    getWorkspace().getIOManager().downloadPath(location, new File(localPath), null, session);
                     return localPath;
                 }catch (Exception ex){
                     //ignore
@@ -321,8 +321,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public String getStoreRoot() {
+    public String getStoreLocation() {
         return null;
     }
-
 }

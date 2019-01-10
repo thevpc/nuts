@@ -60,7 +60,7 @@ public final class NutsConstants {
      * default components root name. By default repositories are stored under
      * ${workspace-location}/components
      */
-    public static final String FOLDER_NAME_COMPONENTS = "components";
+    public static final String FOLDER_NAME_LIB = "lib";
 
     /**
      * default repository type. Nuts workspace can managed different
@@ -73,16 +73,6 @@ public final class NutsConstants {
     public static final String REPOSITORY_TYPE_NUTS_FOLDER = "nuts-folder";
     public static final String REPOSITORY_TYPE_NUTS_SERVER = "nuts-server";
     public static final String REPOSITORY_TYPE_NUTS_MAVEN = "maven";
-
-    /**
-     * Installation Store
-     */
-    public static final String DEFAULT_STORE_PROGRAM = "programs";
-    public static final String DEFAULT_STORE_TEMP = "temp";
-    public static final String DEFAULT_STORE_VAR = "var";
-    public static final String DEFAULT_STORE_LOG = "log";
-    public static final String DEFAULT_STORE_CONFIG = "config";
-    public static final String DEFAULT_STORE_CACHE = "cache";
 
     /**
      * workspace config file name
@@ -124,15 +114,8 @@ public final class NutsConstants {
         RIGHT_PUSH, RIGHT_ADD_REPOSITORY, RIGHT_REMOVE_REPOSITORY, RIGHT_SET_PASSWORD, RIGHT_ADMIN};
 
     public static final String ENV_KEY_EXCLUDE_CORE_EXTENSION = "exclude-core-extension";
-    public static final String ENV_KEY_AUTOSAVE = "autosave";
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
     public static final String ENV_KEY_DEPLOY_PRIORITY = "deploy-priority";
-    public static final String ENV_STORE_PROGRAMS = "workspace-programs";
-    public static final String ENV_STORE_VAR = "workspace-var";
-    public static final String ENV_STORE_LOGS = "workspace-logs";
-    public static final String ENV_STORE_TEMP = "workspace-temp";
-    public static final String ENV_STORE_CONFIG = "workspace-config";
-    public static final String ENV_STORE_CACHE = "workspace-cache";
 
     public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
@@ -145,6 +128,7 @@ public final class NutsConstants {
     public static final String NUTS_ID_BOOT_API = "net.vpc.app.nuts:nuts";
     public static final String NUTS_ID_BOOT_API_PATH = "/"+ NUTS_ID_BOOT_API.replaceAll("[.:]","/");
     public static final String NUTS_ID_BOOT_RUNTIME = "net.vpc.app.nuts:nuts-core";
+    public static final String QUERY_ALTERNATIVE = "alt";
     public static final String QUERY_FACE = "face";
     public static final String QUERY_ARCH = "arch";
     public static final String QUERY_OS = "os";

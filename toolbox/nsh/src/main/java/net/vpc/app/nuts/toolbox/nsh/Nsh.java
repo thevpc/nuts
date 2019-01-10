@@ -6,12 +6,15 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Nsh extends NutsApplication {
+
+    private static final HashSet<String> INTERNAL_COMMANDS = new HashSet<>(Arrays.asList(
+            "showerr", "cd", "set", "unset", "declare-command", "undeclare-command",
+            "login", "logout", "help", "alias"
+    ));
+
     public static void main(String[] args) {
         new Nsh().launchAndExit(args);
     }
@@ -53,7 +56,7 @@ public class Nsh extends NutsApplication {
         NutsCommand[] commands = c.getCommands();
         int count=0;
         for (NutsCommand command : commands) {
-            if(!command.getName().equals("nsh")) {
+            if(!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (cfg.installCommand(
                         new NutsWorkspaceCommandConfig()
@@ -85,9 +88,9 @@ public class Nsh extends NutsApplication {
     protected int onUninstallApplication(NutsApplicationContext applicationContext) {
         try {
             NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
-            cfg.uninstallCommandFactory("nsh");
+            cfg.uninstallCommandFactory("nsh",NutsConfirmAction.IGNORE);
             for (NutsWorkspaceCommand command : cfg.findCommands(applicationContext.getAppId())) {
-                cfg.uninstallCommand(command.getName());
+                cfg.uninstallCommand(command.getName(),NutsConfirmAction.IGNORE);
             }
         } catch (Exception ex) {
             //ignore

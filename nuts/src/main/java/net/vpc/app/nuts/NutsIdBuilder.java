@@ -46,9 +46,13 @@ public interface NutsIdBuilder extends Serializable {
 
     String getFace();
 
+    String getAlternative();
+
     String getClassifier();
 
     NutsIdBuilder setFace(String value);
+
+    NutsIdBuilder setAlternative(String value);
 
     NutsIdBuilder setClassifier(String value);
 
@@ -76,7 +80,7 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsVersion getVersion();
 
-    NutsIdBuilder apply(ObjectConverter<String,String> properties);
+    NutsIdBuilder apply(ObjectConverter<String, String> properties);
 
     NutsId build();
 }

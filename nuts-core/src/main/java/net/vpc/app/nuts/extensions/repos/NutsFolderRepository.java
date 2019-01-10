@@ -70,14 +70,19 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         File localNutFile = new File(getLocalNutDescriptorFile(id).getFile());
         //if (session.getFetchMode() != NutsFetchMode.REMOTE) {
         if (localNutFile.exists()) {
-            return CoreNutsUtils.parseNutsDescriptor(localNutFile);
+            return getWorkspace().getParseManager().parseDescriptor(localNutFile);
         }
         //}
         if (session.isTransitive()) {
             for (NutsRepository remote : getMirrors()) {
-                NutsDescriptor nutsDescriptor = remote.fetchDescriptor(id, session);
+                NutsDescriptor nutsDescriptor = null;
+                try {
+                    nutsDescriptor = remote.fetchDescriptor(id, session);
+                } catch (Exception ex) {
+                    //ignore
+                }
                 if (nutsDescriptor != null) {
-                    nutsDescriptor.write(localNutFile);
+                    getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(nutsDescriptor, localNutFile);
                     return nutsDescriptor;
                 }
             }
@@ -95,13 +100,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //        }
         if (session.isTransitive()) {
             for (NutsRepository remote : getMirrors()) {
-                String hash = remote.fetchHash(id, session);
+                String hash = null;
+                try {
+                    hash = remote.fetchHash(id, session);
+                } catch (Exception ex) {
+                    //
+                }
                 if (hash != null) {
-                    try {
-                        IOUtils.copy(hash, localNutFile, true);
-                    } catch (Exception e) {
-                        throw new NutsIOException(e);
-                    }
+                    CoreNutsUtils.copy(hash, localNutFile, true);
                     return hash;
                 }
             }
@@ -119,13 +125,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //        }
         if (session.isTransitive()) {
             for (NutsRepository remote : getMirrors()) {
-                String hash = remote.fetchDescriptorHash(id, session);
+                String hash = null;
+                try {
+                    hash = remote.fetchDescriptorHash(id, session);
+                } catch (Exception ex) {
+                    //ignore
+                }
                 if (hash != null) {
-                    try {
-                        IOUtils.copy(hash, localNutFile, true);
-                    } catch (Exception e) {
-                        throw new NutsIOException(e);
-                    }
+                    CoreNutsUtils.copy(hash, localNutFile, true);
                     return hash;
                 }
             }
@@ -135,8 +142,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     @Override
     protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
-        if(foundAction==null){
-            foundAction= NutsConfirmAction.ERROR;
+        if (foundAction == null) {
+            foundAction = NutsConfirmAction.ERROR;
         }
         NutsDefinition idFile = getLocalGroupAndArtifactAndVersionFile(id, true);
         File nutDescFile = idFile.getFile() == null ? null : new File(idFile.getFile());
@@ -144,37 +151,29 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsIllegalArgumentException("Invalid descriptor");
         }
         boolean deployed = false;
-        if (foundAction== NutsConfirmAction.ERROR && nutDescFile.exists()) {
+        if (foundAction == NutsConfirmAction.ERROR && nutDescFile.exists()) {
             throw new NutsAlreadytDeployedException(id.toString());
-        }else if(foundAction== NutsConfirmAction.IGNORE && nutDescFile.exists()){
+        } else if (foundAction == NutsConfirmAction.IGNORE && nutDescFile.exists()) {
             //do nothing
-        }else{
+        } else {
             if (nutDescFile.exists()) {
                 log.log(Level.FINE, "Nuts descriptor file Overridden {0}", nutDescFile.getPath());
             }
-            descriptor.write(nutDescFile);
-            try {
-                IOUtils.copy(descriptor.getSHA1(), CoreIOUtils.createFile(nutDescFile.getParent(), nutDescFile.getName() + ".sha1"), true);
-            } catch (Exception e) {
-                throw new NutsIOException(e);
-            }
+            getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor, nutDescFile);
+            CoreNutsUtils.copy(getWorkspace().getIOManager().getSHA1(descriptor), CoreIOUtils.createFile(nutDescFile.getParent(), nutDescFile.getName() + ".sha1"), true);
         }
         File localFile = CoreIOUtils.fileByPath(getLocalGroupAndArtifactAndVersionFile(id, false).getFile());
-        if (foundAction== NutsConfirmAction.ERROR && localFile.exists()) {
+        if (foundAction == NutsConfirmAction.ERROR && localFile.exists()) {
             throw new NutsAlreadytDeployedException(id.toString());
-        }else if(foundAction== NutsConfirmAction.IGNORE && localFile.exists()){
+        } else if (foundAction == NutsConfirmAction.IGNORE && localFile.exists()) {
             //do nothing
-        }else{
-            try {
-                if (localFile.exists()) {
-                    log.log(Level.FINE, "Nuts component  file Overridden {0}", localFile.getPath());
-                }
-                IOUtils.copy(file, localFile, true);
-                IOUtils.copy(CoreSecurityUtils.evalSHA1(localFile), CoreIOUtils.createFile(localFile.getParent(), localFile.getName() + ".sha1"), true);
-            } catch (Exception e) {
-                throw new NutsIOException(e);
+        } else {
+            if (localFile.exists()) {
+                log.log(Level.FINE, "Nuts component  file Overridden {0}", localFile.getPath());
             }
-            NutsDefinition nutsDefinition = new NutsDefinition(id, descriptor, localFile.getPath(), true, false, null,null);
+            CoreNutsUtils.copy(file, localFile, true);
+            CoreNutsUtils.copy(CoreSecurityUtils.evalSHA1(localFile), CoreIOUtils.createFile(localFile.getParent(), localFile.getName() + ".sha1"), true);
+            NutsDefinition nutsDefinition = new NutsDefinition(id, descriptor, localFile.getPath(), true, false, null, null);
             fireOnDeploy(nutsDefinition);
         }
         return idFile.getId();
@@ -216,14 +215,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         if (!session.isTransitive()) {
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                return findInFolder(new File(getStoreRoot()), filter, session);
+                return findInFolder(new File(getStoreLocation()), filter, session);
             } else {
                 return Collections.emptyIterator();
             }
         } else {
             IteratorList<NutsId> iterator = new IteratorList<NutsId>();
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                iterator.addNonEmpty(findInFolder(new File(getStoreRoot()), filter, session));
+                iterator.addNonEmpty(findInFolder(new File(getStoreLocation()), filter, session));
             }
             for (NutsRepository remote : getMirrors()) {
                 Iterator<NutsId> child = null;
@@ -241,46 +240,6 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    //    @Override
-//    protected NutsId resolveIdImpl(NutsId id, NutsSession session) {
-//        NutsDefinition idAndFile = getLocalGroupAndArtifactAndVersionFile(id, false);
-//        File localDescFile = idAndFile == null ? null : idAndFile.getFile();
-////        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-//            if (localDescFile != null && localDescFile.exists()) {
-//                return id.setFace(idAndFile.getId().getFace())
-//                        .setNamespace(getRepositoryId());
-//            }
-////        }
-//        StringBuilder errors = new StringBuilder();
-//        if (session.isTransitive()) {
-//            NutsSession transitiveSession = session.copy().setTransitive(true);
-//            for (NutsRepository repo : getMirrors()) {
-//                int sup = 0;
-//                try {
-//                    sup = repo.getSupportLevel(id, transitiveSession);
-//                } catch (Exception ex) {
-//                    errors.append(ex.toString()).append("\n");
-//                }
-//
-//                if (sup > 0) {
-//                    NutsId id1 = null;
-//                    try {
-//                        id1 = repo.resolveId(id, session);
-//                        if (id1 != null) {
-//                            NutsDescriptor desc = repo.fetchDescriptor(id1, session);
-//                            desc.write(localDescFile);
-//                        }
-//                    } catch (Exception ex) {
-//                        errors.append(ex).append("\n");
-//                    }
-//                    if (id1 != null) {
-//                        return id1;
-//                    }
-//                }
-//            }
-//        }
-//        throw new NutsNotFoundException(id.toString(), errors.toString(), null);
-//    }
     @Override
     protected NutsDefinition fetchImpl(NutsId id, NutsSession session) {
         NutsDefinition nutsDescFile = fetchComponentDesc(id, session);
@@ -292,11 +251,11 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id);
         } else if (!localFile.exists()) {
             for (String location : nutsDescFile.getDescriptor().getLocations()) {
-                if(!StringUtils.isEmpty(location)){
+                if (!StringUtils.isEmpty(location)) {
                     try {
-                        CoreIOUtils.downloadPath(location, localFile, location, getWorkspace(), session);
-                        return prepareInstall(localFile,nutsDescFile,id);
-                    }catch (Exception ex){
+                        getWorkspace().getIOManager().downloadPath(location, localFile, null, session);
+                        return prepareInstall(localFile, nutsDescFile, id);
+                    } catch (Exception ex) {
                         //ignore
                     }
                 }
@@ -323,7 +282,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                             errors.append(ex.toString()).append("\n");
                         }
                         if (ok) {
-                            return prepareInstall(localFile,nutsDescFile,id);
+                            return prepareInstall(localFile, nutsDescFile, id);
                         }
                     }
                 }
@@ -331,22 +290,23 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id.toString(), errors.toString(), null);
         } else {
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                return new NutsDefinition(id, nutsDescFile.getDescriptor(), localFile.getPath(), true, false, null,null);
+                return new NutsDefinition(id, nutsDescFile.getDescriptor(), localFile.getPath(), true, false, null, null);
             } else {
                 throw new NutsNotFoundException(id);
             }
         }
     }
-    protected NutsDefinition prepareInstall(File localFile, NutsDefinition nutsDescFile, NutsId id){
+
+    protected NutsDefinition prepareInstall(File localFile, NutsDefinition nutsDescFile, NutsId id) {
         Boolean executableJar = CorePlatformUtils.getExecutableJar(localFile);
         NutsDescriptor desc = nutsDescFile.getDescriptor();
         if (executableJar != null && desc.isExecutable() != executableJar) {
             NutsDefinition localGroupAndArtifactAndVersionFile = getLocalGroupAndArtifactAndVersionFile(id, true);
             File dlocalFile = CoreIOUtils.fileByPath(localGroupAndArtifactAndVersionFile.getFile());
             desc = desc.setExecutable(executableJar);
-            desc.write(dlocalFile);
+            getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(desc, dlocalFile);
         }
-        NutsDefinition nutsDefinition = new NutsDefinition(id, desc, localFile.getPath(), false, false, null,null);
+        NutsDefinition nutsDefinition = new NutsDefinition(id, desc, localFile.getPath(), false, false, null, null);
         fireOnInstall(nutsDefinition);
         return nutsDefinition;
     }
@@ -355,7 +315,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
-        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
         if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
@@ -368,7 +328,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     protected NutsDefinition loadNutsDefinition(File file, NutsId id) {
         if (file.exists()) {
-            NutsDescriptor d = CoreNutsUtils.parseOrNullNutsDescriptor(file);
+            NutsDescriptor d = file.isFile() ? getWorkspace().getParseManager().parseDescriptor(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getQueryMap();
                 String os = (query.get("os"));
@@ -376,19 +336,19 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 String dist = (query.get("dist"));
                 String platform = (query.get("platform"));
                 if (d.matchesEnv(arch, os, dist, platform)) {
-                    String face = d.getFace();
-                    if (StringUtils.isEmpty(face)) {
-                        face = NutsConstants.QUERY_FACE_DEFAULT_VALUE;
+                    String alternative = d.getAlternative();
+                    if (StringUtils.isEmpty(alternative)) {
+                        alternative = NutsConstants.QUERY_FACE_DEFAULT_VALUE;
                     }
                     return
                             new NutsDefinition(
                                     id.builder()
-                                            .setFace(face)
+                                            .setAlternative(alternative)
                                             .setQuery(NutsConstants.QUERY_EMPTY_ENV, true)
                                             .build(),
                                     d,
                                     file.getPath(),
-                                    true, true, null,null
+                                    true, true, null, null
                             );
                 }
             }
@@ -398,20 +358,20 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     protected NutsDefinition getLocalNutDescriptorFile(NutsId id) {
         File versionFolder = getLocalVersionFolder(id);
-        String face = id.getFace();
-        if(NutsConstants.QUERY_FACE_DEFAULT_VALUE.equals(face)){
+        String alt = id.getAlternative();
+        if (NutsConstants.QUERY_FACE_DEFAULT_VALUE.equals(alt) || StringUtils.isEmpty(alt)) {
             return new NutsDefinition(
-                    id.setFace(face), null,
+                    id.setAlternative(null), null,
                     new File(versionFolder, NutsConstants.NUTS_DESC_FILE_NAME).getPath(),
-                    true, true, null,null
+                    true, true, null, null
             );
         }
-        if (!StringUtils.isEmpty(face)) {
-            File altFile = new File(versionFolder, face);
+        if (!StringUtils.isEmpty(alt)) {
+            File altFile = new File(versionFolder, alt);
             return new NutsDefinition(
-                    id.setFace(face), null,
+                    id.setAlternative(alt), null,
                     new File(altFile, NutsConstants.NUTS_DESC_FILE_NAME).getPath(),
-                    true, true, null,null
+                    true, true, null, null
             );
         }
         File[] subFolders = versionFolder.listFiles();
@@ -471,7 +431,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
         NutsDescriptor d = null;
         try {
-            d = CoreNutsUtils.parseNutsDescriptor(new File(localNutDescriptorFile.getFile()));
+            d = getWorkspace().getParseManager().parseDescriptor(new File(localNutDescriptorFile.getFile()));
         } catch (NutsNotFoundException ex) {
             //
         }
@@ -494,7 +454,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        File groupFolder = new File(getStoreRoot(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
         return new File(groupFolder, id.getName());
     }
 
@@ -508,11 +468,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             if (new File(localPath).isDirectory()) {
                 localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, FileUtils.getFileExtension(file.getFile()))).getPath();
             }
-            try {
-                IOUtils.copy(new File(file.getFile()), new File(localPath), true);
-            } catch (Exception e) {
-                throw new NutsIOException(e);
-            }
+            CoreNutsUtils.copy(new File(file.getFile()), new File(localPath), true);
             return localPath;
         }
         throw new NutsNotFoundException(id);
@@ -558,11 +514,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id);
         } else {
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                try {
-                    IOUtils.copy(localDescFile, new File(localPath), true);
-                } catch (Exception e) {
-                    throw new NutsIOException(e);
-                }
+                CoreNutsUtils.copy(localDescFile, new File(localPath), true);
                 return localPath;
             } else {
                 throw new NutsNotFoundException(id);
@@ -655,7 +607,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(File pathname, NutsSession session) throws IOException {
-                return CoreNutsUtils.parseNutsDescriptor(pathname);
+                return getWorkspace().getParseManager().parseDescriptor(pathname);
             }
         });
     }
@@ -687,9 +639,9 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                             errors.append(ex.toString()).append("\n");
                         }
                         if (found) {
-                            NutsDescriptor desc = CoreNutsUtils.parseNutsDescriptor(localFile);
+                            NutsDescriptor desc = getWorkspace().getParseManager().parseDescriptor(localFile);
                             NutsId ed = getWorkspace().resolveEffectiveId(desc, session);
-                            return new NutsDefinition(ed, desc, localFile.getPath(), false, false, null,null);
+                            return new NutsDefinition(ed, desc, localFile.getPath(), false, false, null, null);
                         }
                     }
                 }
@@ -697,21 +649,21 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id.toString(), errors.toString(), null);
         } else {
             //if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            NutsDescriptor desc = CoreNutsUtils.parseNutsDescriptor(localFile);
+            NutsDescriptor desc = getWorkspace().getParseManager().parseDescriptor(localFile);
             NutsId ed = getWorkspace().resolveEffectiveId(desc, session);
-            return new NutsDefinition(ed, desc, localFile.getPath(), true, false, null,null);
+            return new NutsDefinition(ed, desc, localFile.getPath(), true, false, null, null);
             //
             //throw new NutsNotFoundException(id.toString());
         }
     }
 
-    public String getStoreRoot() {
+    public String getStoreLocation() {
         String n = getConfigManager().getComponentsLocation();
         if (StringUtils.isEmpty(n)) {
-            n = NutsConstants.FOLDER_NAME_COMPONENTS;
+            n = NutsConstants.FOLDER_NAME_LIB;
         }
         n = n.trim();
-        return FileUtils.getAbsolutePath(new File(getConfigManager().getLocationFolder()), n);
+        return FileUtils.getAbsolutePath(new File(getConfigManager().getStoreLocation()), n);
     }
 
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
@@ -734,12 +686,22 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     }
                 }
             }
-            for (NutsRepository mirror : getMirrors()) {
-                try {
-                    NutsDescriptor fetch = mirror.fetchDescriptor(id, session);
-                    return fetch.getId();
-                }catch (Exception ex){
-                    //ignore
+            if (session.isTransitive()) {
+                for (NutsRepository remote : getMirrors()) {
+                    NutsDescriptor nutsDescriptor = null;
+                    try {
+                        nutsDescriptor = remote.fetchDescriptor(id, session);
+                    } catch (Exception ex) {
+                        //ignore
+                    }
+                    if (nutsDescriptor != null) {
+                        NutsId id2 = nutsDescriptor.getId();
+                        File localNutFile = new File(getLocalNutDescriptorFile(id2).getFile());
+                        getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(nutsDescriptor, localNutFile);
+                        if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
+                            bestId = id2;
+                        }
+                    }
                 }
             }
             return bestId;
@@ -747,17 +709,17 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return super.findLatestVersion(id, filter, session);
     }
 
-    public void reindexFolder(){
-        reindexFolder(new File(getStoreRoot()));
+    public void reindexFolder() {
+        reindexFolder(new File(getStoreLocation()));
     }
 
-    private void reindexFolder(File folder){
+    private void reindexFolder(File folder) {
         File[] children = folder.listFiles();
-        TreeSet<String> files=new TreeSet<>();
-        TreeSet<String> folders=new TreeSet<>();
-        if(children!=null){
+        TreeSet<String> files = new TreeSet<>();
+        TreeSet<String> folders = new TreeSet<>();
+        if (children != null) {
             for (File child : children) {
-                if(!child.getName().startsWith(".") && !child.getName().equals("LATEST") && !child.getName().equals("RELEASE")) {
+                if (!child.getName().startsWith(".") && !child.getName().equals("LATEST") && !child.getName().equals("RELEASE")) {
                     if (child.isDirectory()) {
                         reindexFolder(child);
                         folders.add(child.getName());
@@ -767,14 +729,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 }
             }
         }
-        try(PrintStream p=new PrintStream(new File(folder,".files"))){
+        try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
             for (String file : files) {
                 p.println(file);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        try(PrintStream p=new PrintStream(new File(folder,".folders"))){
+        try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
             for (String file : folders) {
                 p.println(file);
             }

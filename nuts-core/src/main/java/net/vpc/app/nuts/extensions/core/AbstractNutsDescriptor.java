@@ -30,14 +30,10 @@
 package net.vpc.app.nuts.extensions.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.extensions.util.CoreJsonUtils;
 import net.vpc.app.nuts.extensions.util.CoreNutsUtils;
-import net.vpc.app.nuts.extensions.util.CoreSecurityUtils;
 import net.vpc.app.nuts.extensions.util.MapStringMapper;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -188,92 +184,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
     }
 
-    @Override
-    public String getSHA1() throws NutsIOException {
-        ByteArrayOutputStream o = new ByteArrayOutputStream();
-        write(o, false);
-        return CoreSecurityUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()), true);
-    }
-
-    @Override
-    public void write(File file) throws NutsIOException {
-        write(file, false);
-    }
-
-    //    @Override
-    public void write(OutputStream os, boolean pretty) throws NutsIOException {
-        OutputStreamWriter o = new OutputStreamWriter(os);
-        write(o, pretty);
-        try {
-            o.flush();
-        } catch (IOException e) {
-            //
-        }
-    }
-
-    @Override
-    public void write(Writer out) throws NutsIOException {
-        write(out, false);
-    }
-
-    @Override
-    public void write(PrintStream out) throws NutsIOException {
-        PrintWriter out1 = new PrintWriter(out);
-        write(out1);
-        out1.flush();
-    }
-
-    @Override
-    public void write(OutputStream out) throws NutsIOException {
-        PrintWriter out1 = new PrintWriter(out);
-        write(out1);
-        out1.flush();
-    }
-
-    @Override
-    public void write(File file, boolean pretty) throws NutsIOException {
-        FileUtils.createParents(file);
-        FileWriter os = null;
-        try {
-            try {
-                os = new FileWriter(file);
-            } catch (IOException e) {
-                throw new NutsIOException(e);
-            }
-            write(os, pretty);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    throw new NutsIOException(e);
-                }
-            }
-        }
-    }
-
-    public String toString(boolean pretty) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        OutputStreamWriter w = new OutputStreamWriter(b);
-        write(w, pretty);
-        try {
-            w.flush();
-        } catch (IOException e) {
-            //
-        }
-        return new String(b.toByteArray());
-    }
-
-    @Override
-    public String toString() {
-        return toString(true);
-    }
-
-    @Override
-    public void write(Writer os, boolean pretty) throws NutsIOException {
-        CoreJsonUtils.get().write(this, os, true);
-    }
-
 
     @Override
     public NutsDescriptor applyProperties() {
@@ -282,11 +192,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor applyParents(NutsDescriptor[] parentDescriptors) {
-        if(parentDescriptors.length==0){
+        if (parentDescriptors.length == 0) {
             return this;
         }
         NutsId n_id = getId();
-        String n_alt = getFace();
+        String n_alt = getAlternative();
         String n_packaging = getPackaging();
         String n_ext = getExt();
         boolean n_executable = isExecutable();
@@ -349,7 +259,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 //        }
         return new DefaultNutsDescriptorBuilder()
                 .setId(n_id)
-                .setFace(n_alt)
+                .setAlternative(n_alt)
                 .setParents(n_parents)
                 .setPackaging(n_packaging)
                 .setExecutable(n_executable)
@@ -374,7 +284,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         MapStringMapper map = new MapStringMapper(properties);
 
         NutsId n_id = getId().apply(map);
-        String n_alt = CoreNutsUtils.applyStringProperties(getFace(), map);
+        String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
         String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
@@ -401,7 +311,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
         return new DefaultNutsDescriptorBuilder()
                 .setId(n_id)
-                .setFace(n_alt)
+                .setAlternative(n_alt)
                 .setParents(getParents())
                 .setPackaging(n_packaging)
                 .setExecutable(isExecutable())
@@ -421,7 +331,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 ;
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, ObjectConverter<String,String> properties) {
+    private NutsId applyNutsIdProperties(NutsId child, ObjectConverter<String, String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -431,7 +341,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, ObjectConverter<String,String> properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, ObjectConverter<String, String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
@@ -447,7 +357,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 exclusions
         );
     }
-
 
 
     @Override
@@ -542,7 +451,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor addProperty(String name, String value) {
-        return builder().addProperty(name,value).build();
+        return builder().addProperty(name, value).build();
     }
 
     @Override
@@ -581,7 +490,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
         return builder().setNutsApplication(nutsApp).build();
     }
-
 
 
     @Override

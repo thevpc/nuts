@@ -64,7 +64,11 @@ public class StandaloneNutsWorkspaceArchetypeComponent implements NutsWorkspaceA
             }
         }
 
-        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
+        for (StoreFolder value : StoreFolder.values()) {
+            workspace.getConfigManager().setStoreLocation(value, null);
+        }
+        workspace.getConfigManager().setStoreLocationStrategy(StoreLocationStrategy.BUNDLE);
+//        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
         workspace.getConfigManager().addImports("net.vpc.app.nuts.toolbox");
         workspace.getConfigManager().addImports("net.vpc.app");
         workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);

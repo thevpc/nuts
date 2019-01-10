@@ -86,7 +86,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
             if (u != null) {
                 NutsExtensionInfo[] s = new NutsExtensionInfo[0];
                 try {
-                    s = CoreJsonUtils.get().read(new InputStreamReader(u.openStream()), NutsExtensionInfo[].class);
+                    s = ws.getIOManager().readJson(new InputStreamReader(u.openStream()), NutsExtensionInfo[].class);
                 } catch (IOException e) {
                     //ignore!
                 }

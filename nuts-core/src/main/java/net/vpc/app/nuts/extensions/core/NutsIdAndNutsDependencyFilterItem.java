@@ -13,11 +13,7 @@ public class NutsIdAndNutsDependencyFilterItem {
 
     public NutsDescriptor getDescriptor(NutsWorkspace ws, NutsSession session) {
         if (descriptor == null) {
-            try {
-                descriptor = ws.fetchDescriptor(id.id, true, session);
-            }catch (NutsNotFoundException ex){
-                descriptor = ws.fetchDescriptor(id.id, true, session);
-            }
+            descriptor = ws.fetchDescriptor(id.id, true, session);
         }
         return descriptor;
     }

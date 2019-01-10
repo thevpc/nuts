@@ -1,6 +1,16 @@
 package net.vpc.app.nuts;
 
-public interface NutsBootContext{
+public interface NutsBootContext {
+
+    String getHome();
+
+    String getWorkspace();
+
+    StoreLocationStrategy getStoreLocationStrategy();
+
+    StoreLocationLayout getStoreLocationLayout();
+
+    String getStoreLocation(StoreFolder folderType);
 
     NutsId getApiId();
 

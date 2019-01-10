@@ -7,7 +7,7 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.RootFolderType;
+import net.vpc.app.nuts.StoreFolder;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.commandline.Argument;
@@ -108,9 +108,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.LOGS);
-        if(storeRoot!=null) {
-            File file = new File(storeRoot);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.LOGS);
+        if(storeLocation!=null) {
+            File file = new File(storeLocation);
             if (file.exists()) {
                 context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
                 if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
@@ -128,9 +128,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
-        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.VAR);
-        if(storeRoot!=null) {
-            File file = new File(storeRoot);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.VAR);
+        if(storeLocation!=null) {
+            File file = new File(storeLocation);
             if (file.exists()) {
                 context.out().printf("@@Deleting@@ ##var## folder %s ...\n", file.getPath());
                 if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
@@ -141,9 +141,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deletePrgrams(NutsApplicationContext context, boolean force) {
-        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.PROGRAMS);
-        if(storeRoot!=null) {
-            File file = new File(storeRoot);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.PROGRAMS);
+        if(storeLocation!=null) {
+            File file = new File(storeLocation);
             if (file.exists()) {
                 context.out().printf("@@Deleting@@ ##programs## folder %s ...\n", file.getPath());
                 if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
@@ -154,9 +154,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {
-        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.CONFIG);
-        if(storeRoot!=null) {
-            File file = new File(storeRoot);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.CONFIG);
+        if(storeLocation!=null) {
+            File file = new File(storeLocation);
             if (file.exists()) {
                 context.out().printf("@@Deleting@@ ##config## folder %s ...\n", file.getPath());
                 if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
@@ -167,9 +167,9 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        String storeRoot = context.getWorkspace().getConfigManager().getStoreRoot(RootFolderType.CACHE);
-        if(storeRoot!=null) {
-            File cache = new File(storeRoot);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.CACHE);
+        if(storeLocation!=null) {
+            File cache = new File(storeLocation);
             if (cache.exists()) {
                 IOUtils.delete(cache);
             }
@@ -180,7 +180,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private static void deleteRepoCache(NutsRepository repository, NutsApplicationContext context, boolean force){
-        String s = repository.getStoreRoot();
+        String s = repository.getStoreLocation();
         if(s!=null){
             File file = new File(s);
             if(file.exists()) {

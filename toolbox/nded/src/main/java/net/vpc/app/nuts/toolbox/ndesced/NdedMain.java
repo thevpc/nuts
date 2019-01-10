@@ -234,7 +234,7 @@ public class NdedMain extends NutsApplication {
         NutsDescriptor desc = b.build();
         this.appContext.out().printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)),("/"+path).replace('/',File.separatorChar));
         this.appContext.out().printf("id         : ==%s==\n", desc.getId());
-        this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging());
+        this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging()==null?"":desc.getPackaging());
         this.appContext.out().printf("ext        : ==%s==\n", desc.getExt());
         if (desc.getLocations().length > 0) {
             this.appContext.out().print("locations  : \n");
@@ -245,8 +245,9 @@ public class NdedMain extends NutsApplication {
         if (!confirm("Confirm ?")) {
             return 1;
         }
-        desc.write(file);
-        desc.write(this.appContext.out());
+        NutsDescriptorFormat nutsDescriptorFormat = appContext.getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true);
+        nutsDescriptorFormat.format(desc,file);
+        nutsDescriptorFormat.format(desc,this.appContext.out());
         return 0;
     }
 

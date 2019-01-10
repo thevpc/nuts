@@ -87,8 +87,8 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             }
             LinkedHashMap<String, String> props = new LinkedHashMap<>();
             props.put("nuts-version", configManager.getRunningContext().getApiId().getVersion().toString());
-            props.put("nuts-boot-api", configManager.getRunningContext().getApiId().toString());
-            props.put("nuts-boot-runtime", configManager.getRunningContext().getRuntimeId().toString());
+            props.put("nuts-api", configManager.getRunningContext().getApiId().toString());
+            props.put("nuts-runtime", configManager.getRunningContext().getRuntimeId().toString());
             URL[] cl = configManager.getBootClassWorldURLs();
             List<String> runtimeClassPath = new ArrayList<>();
             if (cl != null) {
@@ -105,19 +105,21 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
             }
 
-            props.put("nuts-boot-runtime-path", StringUtils.join(":", runtimeClassPath));
+            props.put("nuts-runtime-path", StringUtils.join(":", runtimeClassPath));
             props.put("nuts-home", configManager.getHomeLocation());
             props.put("nuts-workspace", configManager.getWorkspaceLocation());
-            for (RootFolderType folderType : RootFolderType.values()) {
-                props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreRoot(folderType));
+            props.put("nuts-read-only", String.valueOf(configManager.isReadOnly()));
+            props.put("nuts-secure", String.valueOf(configManager.isSecure()));
+            for (StoreFolder folderType : StoreFolder.values()) {
+                props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType));
             }
             props.put("java-version", System.getProperty("java.version"));
             props.put("java-executable", System.getProperty("java.home") + FileUtils.getNativePath("/bin/java"));
             props.put("java-classpath", System.getProperty("java.class.path"));
             props.put("java-library-path", System.getProperty("java.library.path"));
-            props.put("os.name", ws.getConfigManager().getPlatformOs().toString());
-            props.put("os.dist", ws.getConfigManager().getPlatformOsDist().toString());
-            props.put("os.arch", ws.getConfigManager().getPlatformArch().toString());
+            props.put("os-name", ws.getConfigManager().getPlatformOs().toString());
+            props.put("os-dist", ws.getConfigManager().getPlatformOsDist().toString());
+            props.put("os-arch", ws.getConfigManager().getPlatformArch().toString());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             props.put("creation-started", dateFormat.format(ws.getConfigManager().getCreationStartTimeMillis()));
             props.put("creation-finished", dateFormat.format(ws.getConfigManager().getCreationFinishTimeMillis()));
@@ -158,18 +160,18 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                     fancySep = File.pathSeparator;
                 }
                 String value = e.getValue();
-                printKeyValue(out, fancy, len, requireFancy, fancySep, key, value);
+                printKeyValue(out, fancy && requireFancy, len, fancySep, key, value);
             }
         }
         return out.toString();
     }
 
-    private void printKeyValue(PrintStream out, boolean fancy, int len, boolean requireFancy, String fancySep, String key, String value) {
-        if (fancy && requireFancy) {
+    private void printKeyValue(PrintStream out, boolean fancy, int len, String fancySep, String key, String value) {
+        if (fancy) {
             String space = StringUtils.formatLeft("", len + 3) + "[[%s]]";
             String[] split = value.split(fancySep);
             if (split.length == 0) {
-                out.printf(StringUtils.formatLeft(key, len - key.length() + ws.getParseManager().escapeText(key).length()) + " : ");
+                out.print(StringUtils.formatLeft(key, len - key.length() + ws.getParseManager().escapeText(key).length()) + " : ");
             } else {
                 for (int i = 0; i < split.length; i++) {
                     String s = split[i];

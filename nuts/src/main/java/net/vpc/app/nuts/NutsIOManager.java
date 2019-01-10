@@ -8,6 +8,8 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session);
 
+    InputStream monitorInputStream(String path, Object source, NutsSession session);
+
     void writeJson(Object obj, Writer out, boolean pretty);
 
     <T> T readJson(Reader reader, Class<T> cls);
@@ -38,6 +40,7 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     NutsTerminal createTerminal(InputStream in, PrintStream out, PrintStream err);
 
-    void downloadPath(String from, File to, NutsSession session);
+    void downloadPath(String from, File to, Object source,NutsSession session);
 
+    String getSHA1(NutsDescriptor descriptor);
 }

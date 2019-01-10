@@ -7,4 +7,7 @@ public interface NutsFormatManager {
 
     NutsWorkspaceInfoFormat createWorkspaceInfoFormat();
 
+    NutsDescriptorFormat createDescriptorFormat();
+
+
 }

@@ -87,6 +87,6 @@ public class WgetCommand extends AbstractNutsCommand {
             output2=output2.replace("{}",urlName);
         }
         File file= new File(context.getShell().getAbsolutePath(StringUtils.isEmpty(output2)?urlName:output2));
-        context.getWorkspace().getIOManager().downloadPath(path, file, context.getSession());
+        context.getWorkspace().getIOManager().downloadPath(path, file, null,context.getSession());
     }
 }

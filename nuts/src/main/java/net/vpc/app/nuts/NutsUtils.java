@@ -334,9 +334,6 @@ final class NutsUtils {
     }
 
     public static File resolvePath(String path, File baseFolder, String nutsHome) {
-        if (isEmpty(nutsHome)) {
-            nutsHome = Nuts.getDefaultNutsHome();
-        }
         if (path != null && path.length() > 0) {
             String firstItem = "";
             if ('\\' == File.separatorChar) {
@@ -351,7 +348,7 @@ final class NutsUtils {
                 }
             }
             if (firstItem.equals("~~")) {
-                return resolvePath(nutsHome + "/" + path.substring(2), null, null);
+                return resolvePath(nutsHome + "/" + path.substring(2), null, nutsHome);
             } else if (firstItem.equals("~")) {
                 return new File(System.getProperty("user.home"), path.substring(1));
             } else if (isAbsolutePath(path)) {
@@ -614,8 +611,8 @@ final class NutsUtils {
     }
 
 
-    public static NutsBootConfig loadNutsBootConfig(String nutsHome, String workspace) {
-        File versionFile = new File(resolveWorkspaceLocation(nutsHome, workspace), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
+    public static NutsBootConfig loadNutsBootConfig(String workspace) {
+        File versionFile = new File(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (versionFile.isFile()) {
                 String str = readStringFromFile(versionFile);
@@ -652,6 +649,58 @@ final class NutsUtils {
                                     }
                                     case "bootJavaOptions": {
                                         c.setJavaOptions(val);
+                                        break;
+                                    }
+                                    case "workspace": {
+                                        c.setWorkspace(val);
+                                        break;
+                                    }
+                                    case "programsStoreLocation": {
+                                        c.setProgramsStoreLocation(val);
+                                        break;
+                                    }
+                                    case "configStoreLocation": {
+                                        c.setConfigStoreLocation(val);
+                                        break;
+                                    }
+                                    case "varStoreLocation": {
+                                        c.setVarStoreLocation(val);
+                                        break;
+                                    }
+                                    case "logsStoreLocation": {
+                                        c.setLogsStoreLocation(val);
+                                        break;
+                                    }
+                                    case "tempStoreLocation": {
+                                        c.setTempStoreLocation(val);
+                                        break;
+                                    }
+                                    case "cacheStoreLocation": {
+                                        c.setCacheStoreLocation(val);
+                                        break;
+                                    }
+                                    case "storeLocationStrategy": {
+                                        StoreLocationStrategy strategy = StoreLocationStrategy.SYSTEM;
+                                        if(!val.isEmpty()){
+                                            try {
+                                                strategy = StoreLocationStrategy.valueOf(val.toUpperCase());
+                                            }catch (Exception ex){
+                                                //
+                                            }
+                                        }
+                                        c.setStoreLocationStrategy(strategy);
+                                        break;
+                                    }
+                                    case "storeLocationLayout": {
+                                        StoreLocationLayout layout = StoreLocationLayout.SYSTEM;
+                                        if(!val.isEmpty()){
+                                            try {
+                                                layout = StoreLocationLayout.valueOf(val.toUpperCase());
+                                            }catch (Exception ex){
+                                                //
+                                            }
+                                        }
+                                        c.setStoreLocationLayout(layout);
                                         break;
                                     }
                                 }
@@ -726,45 +775,6 @@ final class NutsUtils {
         return val * multiplier;
     }
 
-    public static void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String home, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
-        System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.\n");
-        System.err.printf("This component needs Internet connexion to initialize Nuts configuration.\n");
-        System.err.printf("Don't panic, once components are downloaded, you will be able to work offline...\n");
-        System.err.printf("Here after current environment info :\n");
-        System.err.printf("  nuts-boot-api-version            : %s\n", actualBootConfig.getApiVersion() == null ? "<?> Not Found!" : actualBootConfig.getApiVersion());
-        System.err.printf("  nuts-boot-runtime                : %s\n", actualBootConfig.getRuntimeId() == null ? "<?> Not Found!" : actualBootConfig.getRuntimeId());
-        System.err.printf("  nuts-workspace-api-version       : %s\n", workspaceConfig.getApiVersion() == null ? "<?> Not Found!" : workspaceConfig.getApiVersion());
-        System.err.printf("  nuts-workspace-runtime           : %s\n", workspaceConfig.getRuntimeId() == null ? "<?> Not Found!" : workspaceConfig.getRuntimeId());
-        System.err.printf("  nuts-home                        : %s\n", home);
-        System.err.printf("  workspace-location               : %s\n", (workspace == null ? "<default-location>" : workspace));
-        if (bootClassWorldURLs == null || bootClassWorldURLs.length==0) {
-            System.err.printf("  nuts-runtime-classpath           : %s\n", "<none>");
-        } else {
-            for (int i = 0; i < bootClassWorldURLs.length; i++) {
-                URL bootClassWorldURL = bootClassWorldURLs[i];
-                if (i == 0) {
-                    System.err.printf("  nuts-runtime-classpath           : %s\n", String.valueOf(bootClassWorldURL));
-                } else {
-                    System.err.printf("                                     %s\n", String.valueOf(bootClassWorldURL));
-                }
-            }
-        }
-        System.err.printf("  java-version                     : %s\n", System.getProperty("java.version"));
-        System.err.printf("  java-executable                  : %s\n", System.getProperty("java.home") + "/bin/java");
-        System.err.printf("  java-class-path                  : %s\n", System.getProperty("java.class.path"));
-        System.err.printf("  java-library-path                : %s\n", System.getProperty("java.library.path"));
-        System.err.printf("  os-name                          : %s\n", System.getProperty("os.name"));
-        System.err.printf("  os-arch                          : %s\n", System.getProperty("os.arch"));
-        System.err.printf("  os-version                       : %s\n", System.getProperty("os.version"));
-        System.err.printf("  user-name                        : %s\n", System.getProperty("user.name"));
-        System.err.printf("  user-home                        : %s\n", System.getProperty("user.home"));
-        System.err.printf("  user-dir                         : %s\n", System.getProperty("user.dir"));
-        System.err.printf("Reported Error is :\n");
-        System.err.printf(extraMessage + "\n");
-        System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' argument :\n");
-        System.err.printf("  java -jar nuts.jar --verbose [...]\n");
-        System.err.printf("Now exiting Nuts, Bye!\n");
-    }
 
     public static String formatPeriodMilli(long period) {
         StringBuilder sb = new StringBuilder();
@@ -912,8 +922,8 @@ final class NutsUtils {
     }
 
     public static int deleteAndConfirmAll(File[] folders, boolean force) throws IOException {
-        int count=0;
-        if(folders!=null) {
+        int count = 0;
+        if (folders != null) {
             for (File child : folders) {
                 if (child.exists()) {
                     NutsUtils.deleteAndConfirm(child, force);
@@ -980,6 +990,33 @@ final class NutsUtils {
             return "unix";
         }
         return "unknown";
+    }
+
+    public static boolean isActualJavaCommand(String cmd) {
+        if (cmd == null || cmd.trim().isEmpty()) {
+            return true;
+        }
+        String jh = System.getProperty("java.home").replace("\\", "/");
+        cmd = cmd.replace("\\", "/");
+        if (cmd.equals(jh + "/bin/java")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/bin/java.exe")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/bin/javaw")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/bin/javaw.exe")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/jre/bin/java")) {
+            return true;
+        }
+        if (cmd.equals(jh + "/jre/bin/java.exe")) {
+            return true;
+        }
+        return false;
     }
 
 }

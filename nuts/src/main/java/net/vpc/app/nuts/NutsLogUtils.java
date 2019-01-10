@@ -58,7 +58,17 @@ public final class NutsLogUtils {
     private NutsLogUtils() {
     }
 
-    public static void prepare(Level level, String folder, String name, int maxSize, int count, boolean inheritLog, String home, String workspace) {
+    public static void prepare(NutsLogConfig config, String defaultLogFolder) {
+        if(config==null){
+            return;
+        }
+        Level level=config.getLogLevel();
+        String folder=config.getLogFolder();
+        String name=config.getLogName();
+        int maxSize=config.getLogSize();
+        int count=config.getLogCount();
+        boolean inheritLog=config.isLogInherited();
+
         Logger olderLog = Logger.getLogger(NutsLogUtils.class.getName());
         boolean logged = false;
         String rootPackage = "net.vpc.app.nuts";
@@ -70,8 +80,7 @@ public final class NutsLogUtils {
             name = "nuts-%g.log";
         }
         if (folder == null || NutsUtils.isEmpty(folder)) {
-            String baseFolder = NutsUtils.resolveWorkspaceLocation(home, workspace);
-            folder = baseFolder + "/log/net/vpc/app/nuts/nuts/LATEST";
+            folder = defaultLogFolder;
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {

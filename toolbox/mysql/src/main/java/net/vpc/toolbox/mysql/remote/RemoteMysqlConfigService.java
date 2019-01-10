@@ -1,6 +1,5 @@
 package net.vpc.toolbox.mysql.remote;
 
-import net.vpc.app.nuts.JsonIO;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.app.nuts.app.NutsApplicationContext;

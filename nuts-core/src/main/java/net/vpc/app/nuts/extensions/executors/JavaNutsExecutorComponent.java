@@ -181,7 +181,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         xargs.add(javaHome);
         args.addAll(jvmArgs);
         xargs.addAll(jvmArgs);
-
+        String Dnuts_boot_args_value = NutsMinimalCommandLine.escapeArguments(executionContext.getWorkspace().getConfigManager().getOptions().getBootArguments());
+        if(!StringUtils.isEmpty(Dnuts_boot_args_value)) {
+            String Dnuts_boot_args = "-Dnuts-boot-args=" + Dnuts_boot_args_value;
+            args.add(Dnuts_boot_args);
+            xargs.add(Dnuts_boot_args);
+        }
         if (jar) {
             if (mainClass != null) {
                 executionContext.getTerminal().getFormattedErr().printf("Ignored main-class=%s. running jar!\n", mainClass);

@@ -256,6 +256,12 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
+    public String getAlternative() {
+        String s = getQueryMap().get(NutsConstants.QUERY_ALTERNATIVE);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
     public String getClassifier() {
         String s = getQueryMap().get("classifier");
         return StringUtils.trimToNull(s);
@@ -264,6 +270,12 @@ public class DefaultNutsId implements NutsId {
     @Override
     public NutsId setFace(String value) {
         return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value))
+                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsId setAlternative(String alt) {
+        return setQueryProperty(NutsConstants.QUERY_ALTERNATIVE, StringUtils.trimToNull(alt))
                 .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 

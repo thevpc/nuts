@@ -30,14 +30,11 @@
 package net.vpc.app.nuts.extensions.terminals;
 
 import net.vpc.app.nuts.NutsFormattedPrintStream;
-import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.OutputStreamTransparentAdapter;
-import net.vpc.app.nuts.extensions.util.CorePlatformUtils;
-import net.vpc.common.fprint.*;
-import net.vpc.common.io.IOUtils;
+import net.vpc.common.fprint.FPrint;
+import net.vpc.common.fprint.FormattedPrintStream;
 
-import java.io.*;
-import java.util.Map;
+import java.io.OutputStream;
 
 /**
  * Created by vpc on 2/20/17.

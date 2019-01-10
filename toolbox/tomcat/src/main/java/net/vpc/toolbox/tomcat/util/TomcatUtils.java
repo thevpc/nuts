@@ -1,12 +1,10 @@
 package net.vpc.toolbox.tomcat.util;
 
-import net.vpc.app.nuts.JsonIO;
 import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.app.nuts.NutsWorkspace;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;

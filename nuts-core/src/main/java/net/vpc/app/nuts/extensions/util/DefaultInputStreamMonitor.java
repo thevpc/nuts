@@ -85,7 +85,7 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor , OutputStr
 //                line.delete(80, line.length());
 //            }
             out.println(formattedLine.toString());
-            if (event.getGlobalCount() != event.getLength()) {
+            if (event.getGlobalCount() != event.getLength() && event.getException()==null) {
                 //print command to move cursor to last line!
                 out.print("`move-line-start;move-up`");
             }

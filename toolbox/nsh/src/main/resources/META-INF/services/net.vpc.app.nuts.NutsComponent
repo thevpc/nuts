@@ -1,5 +1,5 @@
 net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal
-net.vpc.app.nuts.toolbox.nsh.cmds.ConsoleCommand
+#net.vpc.app.nuts.toolbox.nsh.cmds.ConsoleCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.DeployCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.ExecCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.VersionCommand

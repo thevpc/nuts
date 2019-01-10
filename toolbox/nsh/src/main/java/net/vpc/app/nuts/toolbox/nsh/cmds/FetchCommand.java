@@ -81,12 +81,12 @@ public class FetchCommand extends AbstractNutsCommand {
                             folder.mkdirs();
                             NutsDescriptor descriptor = context.getWorkspace().fetchDescriptor(id, effective, context.getSession());
                             File target = new File(folder, ws.getFileName(context.getWorkspace().getParseManager().parseId(id), ".effective.nuts"));
-                            descriptor.write(target, true);
+                            context.getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor,target);
                             file = new NutsDefinition(ws.getParseManager().parseRequiredId(id), descriptor, target.getPath(), false, true, null,null);
                         } else {
                             File target = new File(context.getShell().getAbsolutePath(lastLocationFile));
                             NutsDescriptor descriptor = context.getWorkspace().fetchDescriptor(id, effective, context.getSession());
-                            descriptor.write(target, true);
+                            context.getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor,target);
                             file = new NutsDefinition(ws.getParseManager().parseRequiredId(id), descriptor, target.getPath(), false, true, null,null);
                             lastLocationFile = null;
                         }

@@ -49,7 +49,7 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     String getExt();
 
-    String getFace();
+    String getAlternative();
 
     String[] getArch();
 
@@ -77,7 +77,7 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setInstaller(NutsExecutorDescriptor installer);
 
-    NutsDescriptorBuilder setFace(String face);
+    NutsDescriptorBuilder setAlternative(String alternative);
 
     NutsDescriptorBuilder setDescription(String description);
 

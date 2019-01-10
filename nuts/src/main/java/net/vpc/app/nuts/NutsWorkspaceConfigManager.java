@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 
 /**
@@ -64,6 +63,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     /**
      * current context information of requested context (from config)
+     *
      * @return
      */
     NutsBootConfig getBootConfig();
@@ -141,8 +141,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setUsers(NutsUserConfig[] users);
 
-    String getComponentsLocation();
-
     boolean addSdk(String name, NutsSdkLocation location);
 
     NutsSdkLocation findSdkByName(String name, String locationName);
@@ -179,11 +177,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory);
 
-    void uninstallCommandFactory(String name);
+    boolean uninstallCommandFactory(String name, NutsConfirmAction confirmAction);
 
-    boolean installCommand(NutsWorkspaceCommandConfig command,NutsConfirmAction confirmAction);
+    boolean installCommand(NutsWorkspaceCommandConfig command, NutsConfirmAction confirmAction);
 
-    void uninstallCommand(String name);
+    boolean uninstallCommand(String name, NutsConfirmAction confirmAction);
 
     NutsWorkspaceCommand findCommand(String name);
 
@@ -191,11 +189,21 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     List<NutsWorkspaceCommand> findCommands(NutsId id);
 
-    String getStoreRoot(RootFolderType folderType);
+    String getStoreLocation(StoreFolder folderType);
 
-    String getStoreRoot(String id, RootFolderType folderType);
+    void setStoreLocation(StoreFolder folderType, String location);
 
-    String getStoreRoot(NutsId id, RootFolderType folderType);
+    void setStoreLocationStrategy(StoreLocationStrategy strategy);
+
+    StoreLocationStrategy getStoreLocationStrategy();
+
+    void setStoreLocationLayout(StoreLocationLayout layout);
+
+    StoreLocationLayout getStoreLocationLayout();
+
+    String getStoreLocation(String id, StoreFolder folderType);
+
+    String getStoreLocation(NutsId id, StoreFolder folderType);
 
     NutsId getPlatformOs();
 

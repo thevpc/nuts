@@ -347,8 +347,8 @@ public class WorkspaceService {
 
     public List<ProjectService> findProjectServices() {
         List<ProjectService> all = new ArrayList<>();
-        File storeRoot = new File(appContext.getConfigFolder(), "projects");
-        File[] projects = storeRoot.listFiles();
+        File storeLocation = new File(appContext.getConfigFolder(), "projects");
+        File[] projects = storeLocation.listFiles();
         if (projects != null) {
             for (File file : projects) {
                 if (file.isFile() && file.getName().endsWith(".config")) {

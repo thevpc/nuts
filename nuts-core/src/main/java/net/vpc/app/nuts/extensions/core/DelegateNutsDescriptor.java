@@ -47,6 +47,11 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     protected abstract NutsDescriptor getBase();
 
     @Override
+    public String toString() {
+        return "DelegateNutsDescriptor{" + getBase() + "}";
+    }
+
+    @Override
     public NutsExecutorDescriptor getInstaller() {
         return getBase().getInstaller();
     }
@@ -152,8 +157,8 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String getFace() {
-        return getBase().getFace();
+    public String getAlternative() {
+        return getBase().getAlternative();
     }
 
     @Override

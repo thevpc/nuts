@@ -146,7 +146,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase{
 //            LocalTomcatAppConfig a = getTomcatApp(c, appName);
 //            c.getRunningFolder()
 //            String domainDeployPath = getDomainDeployPath(configName, a.getDomain());
-//            Files.copy(ws.getStoreRoot())
+//            Files.copy(ws.getStoreLocation())
 //        }
 //    }
 

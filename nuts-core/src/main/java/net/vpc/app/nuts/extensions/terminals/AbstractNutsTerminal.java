@@ -6,6 +6,7 @@ import net.vpc.app.nuts.extensions.util.DefaultNutsResponseParser;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public abstract class AbstractNutsTerminal implements NutsTerminal {
     protected PrintStream out_getFormatted_Force;
@@ -147,7 +148,30 @@ public abstract class AbstractNutsTerminal implements NutsTerminal {
 
     @Override
     public String readPassword(String prompt) {
-        return CoreIOUtils.readPassword(prompt, getIn(), getOut());
+        InputStream in=getIn();
+        PrintStream out=getOut();
+        Console cons = null;
+        char[] passwd = null;
+        if (in == null) {
+            in = System.in;
+        }
+        if (out == null) {
+            out = System.out;
+        }
+        if (in == System.in && ((cons = System.console()) != null)) {
+            if ((passwd = cons.readPassword("[%s]", prompt)) != null) {
+                String pwd = new String(passwd);
+                Arrays.fill(passwd, ' ');
+                return pwd;
+            } else {
+                return null;
+            }
+        } else {
+            out.print(prompt);
+            out.flush();
+            Scanner s = new Scanner(in);
+            return s.nextLine();
+        }
     }
 
     protected void copyFrom(AbstractNutsTerminal other) {

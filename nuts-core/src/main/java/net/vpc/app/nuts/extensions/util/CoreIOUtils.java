@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.extensions.core.DefaultNutsVersion;
 import net.vpc.common.io.*;
 import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Convert;
 
 import java.io.*;
 import java.net.URL;
@@ -235,38 +234,6 @@ public class CoreIOUtils {
         return pb.start().waitFor().getResult();
     }
 
-
-    public static File[] nonNullArray(File[] array1) {
-        return array1 == null ? new File[0] : array1;
-    }
-
-
-    public static String readPassword(String prompt, InputStream in, PrintStream out) {
-        Console cons = null;
-        char[] passwd = null;
-        if (in == null) {
-            in = System.in;
-        }
-        if (out == null) {
-            out = System.out;
-        }
-        if (in == System.in && ((cons = System.console()) != null)) {
-            if ((passwd = cons.readPassword("[%s]", prompt)) != null) {
-                String pwd = new String(passwd);
-                Arrays.fill(passwd, ' ');
-                return pwd;
-            } else {
-                return null;
-            }
-        } else {
-            out.print(prompt);
-            out.flush();
-            Scanner s = new Scanner(in);
-            return s.nextLine();
-        }
-
-    }
-
     public static File createFile(String path) {
         return new File(FileUtils.getAbsolutePath(path));
     }
@@ -278,7 +245,6 @@ public class CoreIOUtils {
     public static File createFile(String parent, String path) {
         return new File(FileUtils.getAbsolutePath(parent), path);
     }
-
 
     public static URLHeader getURLHeader(URL url) {
         URLHeaderInfo ii = URLUtils.getURLHeader(url);
@@ -388,75 +354,5 @@ public class CoreIOUtils {
             return null;
         }
         return new File(path);
-    }
-
-    public static void downloadPath(String from, File to, Object source, NutsWorkspace workspace, NutsSession session) {
-        IOUtils.copy(openStream(from, source, workspace, session), to, true, true);
-    }
-
-    public static InputStream openStream(String path, Object source, NutsWorkspace workspace, NutsSession session) {
-        String sourceName = String.valueOf(path);
-        boolean monitorable = true;
-        Object o = session.getProperty("monitor-allowed");
-        if(o!=null){
-            o= Convert.toBoolean(o);
-        }
-        if(o instanceof Boolean){
-            monitorable=((Boolean) o).booleanValue();
-        }else {
-            if (source instanceof NutsId) {
-                NutsId d = (NutsId) source;
-                if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-                if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-            }
-        }
-        DefaultInputStreamMonitor monitor=null;
-        if (monitorable && log.isLoggable(Level.INFO)) {
-            monitor = new DefaultInputStreamMonitor(session.getTerminal().getOut());
-        }
-        InputStream stream = null;
-        URLHeader header = null;
-        long size = -1;
-        try {
-            if(monitor!=null){
-                monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size,null));
-            }
-            NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(workspace, path);
-            try {
-
-                header = f.getURLHeader();
-                size = header.getContentLength();
-            } catch (Exception ex) {
-                //ignore error
-            }
-            stream = f.open();
-        } catch (IOException e) {
-            if(monitor!=null) {
-                monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
-            }
-            throw new NutsIOException(e);
-        }
-        if (stream != null) {
-            if (!path.toLowerCase().startsWith("file://")) {
-                log.log(Level.FINE, "downloading file {0}", new Object[]{path});
-            } else {
-                log.log(Level.FINEST, "downloading url {0}", new Object[]{path});
-            }
-        } else {
-            log.log(Level.FINEST, "downloading url failed : {0}", new Object[]{path});
-        }
-
-        if (!monitorable) {
-            return stream;
-        }
-        if (monitor!=null) {
-            return IOUtils.monitor(stream, source, sourceName, size, monitor);
-        }
-        return stream;
-
     }
 }

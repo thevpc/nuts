@@ -91,7 +91,7 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
             File file=new File(this.resolveRepositoryPath(location));
             if(file.isDirectory()){
                 if(new File(file,NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME).exists()){
-                    NutsRepositoryConfig c=CoreJsonUtils.loadJson(new File(file,NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME),NutsRepositoryConfig.class);
+                    NutsRepositoryConfig c=ws.getIOManager().readJson(new File(file,NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME),NutsRepositoryConfig.class);
                     if(c!=null){
                         repositoryId=c.getId();
                         if (StringUtils.isEmpty(type)) {

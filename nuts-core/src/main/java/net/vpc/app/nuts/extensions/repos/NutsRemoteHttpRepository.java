@@ -104,13 +104,13 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             throw new NutsIllegalArgumentException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        descriptor.write(new OutputStreamWriter(descStream));
+        getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor,new OutputStreamWriter(descStream));
         File file1 = new File(file);
         httpUpload(URLUtils.buildUrl(getConfigManager().getLocation(), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", file1.getName(), file1),
-                new NutsTransportParamParamPart("descriptor-hash", descriptor.getSHA1()),
+                new NutsTransportParamParamPart("descriptor-hash", getWorkspace().getIOManager().getSHA1(descriptor)),
                 new NutsTransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(file1)),
                 new NutsTransportParamParamPart("force", String.valueOf(foundAction))
         );
@@ -125,7 +125,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         try {
             try {
                 stream = CoreHttpUtils.getHttpClientFacade(getWorkspace(), getUrl("/fetch-descriptor?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).open();
-                NutsDescriptor descriptor = CoreNutsUtils.parseNutsDescriptor(stream, true);
+                NutsDescriptor descriptor = getWorkspace().getParseManager().parseDescriptor(stream, true);
                 if (descriptor != null) {
                     String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                     if (hash.equals(descriptor.toString())) {
@@ -158,7 +158,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         } else {
             log.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
         }
-        IOUtils.copy(stream, file, mkdirs, true);
+        CoreNutsUtils.copy(stream, file, mkdirs, true);
     }
 
     @Override
@@ -383,8 +383,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public String getStoreRoot() {
+    public String getStoreLocation() {
         return null;
     }
-
 }

@@ -161,5 +161,5 @@ public interface NutsRepository {
 
     int getSpeed();
 
-    String getStoreRoot() ;
+    String getStoreLocation() ;
 }

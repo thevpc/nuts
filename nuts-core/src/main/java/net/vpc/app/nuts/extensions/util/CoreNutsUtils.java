@@ -170,7 +170,7 @@ public class CoreNutsUtils {
     public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR =
             new DefaultNutsDescriptorBuilder()
                     .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
-                    .setFace("face")
+                    .setAlternative("suse")
                     .setName("Application Full Name")
                     .setDescription("Application Description")
                     .setExecutable(true)
@@ -194,7 +194,7 @@ public class CoreNutsUtils {
                     .setDependencies(
                             new NutsDependency[]{
                                     new DefaultNutsDependency(
-                                            "namespace", "group", "name", null,DefaultNutsVersion.valueOf("version"), "compile",
+                                            "namespace", "group", "name", null, DefaultNutsVersion.valueOf("version"), "compile",
                                             "false", new NutsId[0]
                                     )
                             }
@@ -342,70 +342,6 @@ public class CoreNutsUtils {
         }
     }
 
-    public static NutsDescriptor parseOrNullNutsDescriptor(File file) {
-        if (!file.exists()) {
-            return null;
-        }
-        try {
-            return parseNutsDescriptor(new FileInputStream(file), true);
-        } catch (Exception ex) {
-            log.log(Level.SEVERE, "Unable to parse file " + file, ex);
-        }
-        return null;
-    }
-
-    public static NutsDescriptor parseNutsDescriptor(byte[] bytes) {
-        return parseNutsDescriptor(new ByteArrayInputStream(bytes), true);
-    }
-
-    public static NutsDescriptor parseNutsDescriptor(URL url) {
-        try {
-            try {
-                return parseNutsDescriptor(url.openStream(), true);
-            } catch (NutsException ex) {
-                throw ex;
-            } catch (RuntimeException ex) {
-                throw new NutsParseException("Unable to parse url " + url, ex);
-            }
-        } catch (IOException ex) {
-            throw new NutsParseException("Unable to parse url " + url, ex);
-        }
-    }
-
-    public static NutsDescriptor parseNutsDescriptor(File file) {
-        if (!file.exists()) {
-            throw new NutsNotFoundException("at file " + file);
-        }
-        try {
-            return parseNutsDescriptor(new FileInputStream(file), true);
-        } catch (NutsException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new NutsParseException("Unable to parse file " + file, ex);
-        }
-    }
-
-    public static NutsDescriptor parseNutsDescriptor(String str) {
-        if (StringUtils.isEmpty(str)) {
-            return null;
-        }
-        return parseNutsDescriptor(new ByteArrayInputStream(str.getBytes()), true);
-    }
-
-    public static NutsDescriptor parseNutsDescriptor(InputStream in, boolean closeStream) {
-        try {
-            return CoreJsonUtils.get().read(new InputStreamReader(in), NutsDescriptor.class);
-        } finally {
-            if (closeStream) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    throw new NutsIOException(e);
-                }
-            }
-        }
-    }
-
     /**
      * examples : script://groupId:artifactId/version?face
      * script://groupId:artifactId/version script://groupId:artifactId
@@ -467,10 +403,10 @@ public class CoreNutsUtils {
         if (!ext.startsWith(".")) {
             ext = "." + ext;
         }
-        String classifierNamePart = (".json".equals(ext) || ".nuts".equals(ext) || ".pom".equals(ext))?"":
+        String classifierNamePart = (".json".equals(ext) || ".nuts".equals(ext) || ".pom".equals(ext)) ? "" :
                 (StringUtils.isEmpty(classifier) ? "" : (("-") + classifier));
 
-        return id.getName() + "-" + id.getVersion() + classifierNamePart+ext;
+        return id.getName() + "-" + id.getVersion() + classifierNamePart + ext;
     }
 
     public static String[] applyStringProperties(String[] child, ObjectConverter<String, String> properties) {
@@ -490,15 +426,15 @@ public class CoreNutsUtils {
     }
 
     public static NutsVersion applyStringProperties(NutsVersion child, ObjectConverter<String, String> properties) {
-        if(child==null){
+        if (child == null) {
             return child;
         }
         String s = child.getValue();
-        if(StringUtils.isEmpty(s)){
+        if (StringUtils.isEmpty(s)) {
             return DefaultNutsVersion.EMPTY;
         }
-        String s2=applyStringProperties(s,properties);
-        if(!StringUtils.trim(s2).equals(s)){
+        String s2 = applyStringProperties(s, properties);
+        if (!StringUtils.trim(s2).equals(s)) {
             return DefaultNutsVersion.valueOf(s2);
         }
         return child;
@@ -806,10 +742,10 @@ public class CoreNutsUtils {
             //okkay
         } else {
             File temp = CoreIOUtils.createTempFile(contentFile.getName(), false, null);
-            IOUtils.copy(contentFile.open(), temp, true, true);
-            c.contentFile = IOUtils.toInputStreamSource(temp,null,null, new File(ws.getConfigManager().getCwd()));
+            CoreNutsUtils.copy(contentFile.open(), temp, true, true);
+            c.contentFile = IOUtils.toInputStreamSource(temp, null, null, new File(ws.getConfigManager().getCwd()));
             c.addTemp(temp);
-            return characterize(ws, IOUtils.toInputStreamSource(temp, null,null,new File(ws.getConfigManager().getCwd())), session);
+            return characterize(ws, IOUtils.toInputStreamSource(temp, null, null, new File(ws.getConfigManager().getCwd())), session);
         }
         File fileSource = (File) c.contentFile.getSource();
         if ((!fileSource.exists())) {
@@ -818,7 +754,7 @@ public class CoreNutsUtils {
         if (fileSource.isDirectory()) {
             File ext = new File(fileSource, NutsConstants.NUTS_DESC_FILE_NAME);
             if (ext.exists()) {
-                c.descriptor = parseNutsDescriptor(ext);
+                c.descriptor = ws.getParseManager().parseDescriptor(ext);
             } else {
                 c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, session);
             }
@@ -826,7 +762,7 @@ public class CoreNutsUtils {
                 if ("zip".equals(c.descriptor.getExt())) {
                     File zipFilePath = new File(ws.getIOManager().resolvePath(fileSource.getPath() + ".zip"));
                     ZipUtils.zip(fileSource.getPath(), new ZipOptions(), zipFilePath.getPath());
-                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, null,null,new File(ws.getConfigManager().getCwd()));
+                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, null, null, new File(ws.getConfigManager().getCwd()));
                     c.addTemp(zipFilePath);
                 } else {
                     throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
@@ -835,7 +771,7 @@ public class CoreNutsUtils {
         } else if (fileSource.isFile()) {
             File ext = new File(ws.getIOManager().resolvePath(fileSource.getPath() + "." + NutsConstants.NUTS_DESC_FILE_NAME));
             if (ext.exists()) {
-                c.descriptor = parseNutsDescriptor(ext);
+                c.descriptor = ws.getParseManager().parseDescriptor(ext);
             } else {
                 c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, session);
             }
@@ -923,7 +859,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean isDefaultOptional(String s1) {
-        s1=StringUtils.trim(s1);
+        s1 = StringUtils.trim(s1);
         return s1.isEmpty() || s1.equals("false");
     }
 
@@ -1057,11 +993,34 @@ public class CoreNutsUtils {
         }
         return 0;
     }
-    public static void checkReadOnly(NutsWorkspace ws){
-        if(ws.getConfigManager().isReadOnly()){
+
+    public static void checkReadOnly(NutsWorkspace ws) {
+        if (ws.getConfigManager().isReadOnly()) {
             throw new NutsReadOnlyException(ws.getConfigManager().getWorkspaceLocation());
         }
     }
 
+    public static void copy(File from, File to, boolean mkdirs) throws RuntimeIOException {
+        try {
+            IOUtils.copy(from, to, mkdirs);
+        } catch (RuntimeIOException ex) {
+            throw new NutsIOException(ex.getCause());
+        }
+    }
 
+    public static void copy(String from, File to, boolean mkdirs) throws NutsIOException {
+        try {
+            IOUtils.copy(from, to, mkdirs);
+        } catch (RuntimeIOException ex) {
+            throw new NutsIOException(ex.getCause());
+        }
+    }
+
+    public static void copy(InputStream from, File to, boolean mkdirs, boolean closeInput) throws RuntimeIOException {
+        try {
+            IOUtils.copy(from, to, mkdirs, closeInput);
+        } catch (RuntimeIOException ex) {
+            throw new NutsIOException(ex.getCause());
+        }
+    }
 }
