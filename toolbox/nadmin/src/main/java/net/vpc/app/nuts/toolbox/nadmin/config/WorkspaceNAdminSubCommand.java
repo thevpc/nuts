@@ -84,7 +84,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.readAllOnce("-x", "--password")) {
                     password = cmdLine.readRequiredNonOption(new DefaultNonOption("Password")).getStringOrError();
                 } else {
-                    String ws = cmdLine.readRequiredNonOption(new DefaultNonOption("NewWorkspaceName")).getString();
+                    String ws = cmdLine.readRequiredNonOption(new DefaultNonOption("NewWorkspaceName")).getStringExpression();
                     if (cmdLine.isExecMode()) {
                         NutsWorkspace workspace = context.getWorkspace().openWorkspace(
                                 new NutsWorkspaceOptions()
@@ -110,14 +110,14 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else if (cmdLine.readAll("set workspace boot-version")) {
-            String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getString();
+            String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
             NutsBootConfig c = context.getWorkspace().getConfigManager().getBootConfig();
             c.setApiVersion(version);
             context.getWorkspace().getConfigManager().setBootConfig(c);
             cmdLine.unexpectedArgument("config set workspace version");
 
         } else if (cmdLine.readAll("set workspace runtime-version","set workspace runtime-id")) {
-            String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getString();
+            String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
             NutsBootConfig c = context.getWorkspace().getConfigManager().getBootConfig();
             if(version.contains("#")) {
                 c.setRuntimeId(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + version);
@@ -154,7 +154,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.readAllOnce("-x", "--password")) {
                     password = cmdLine.readRequiredNonOption(new DefaultNonOption("Password")).getStringOrError();
                 } else {
-                    String ws = cmdLine.readRequiredNonOption(new FolderNonOption("WorkspacePath")).getString();
+                    String ws = cmdLine.readRequiredNonOption(new FolderNonOption("WorkspacePath")).getStringExpression();
                     wsCount++;
                     cmdLine.unexpectedArgument("config set workspace");
                     processed = true;

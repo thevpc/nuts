@@ -67,7 +67,7 @@ public class UninstallCommand extends AbstractNutsCommand {
                     erase = true;
                 }
             } else {
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     NutsWorkspace ws = context.getWorkspace();
                     boolean file = ws.uninstall(id, args, foundAction, erase, context.getSession());

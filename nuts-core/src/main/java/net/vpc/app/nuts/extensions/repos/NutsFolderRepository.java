@@ -315,7 +315,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
-        File groupFolder = new File(getStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getStoreLocation(), id.getGroup().replace('.', File.separatorChar));
         if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
@@ -454,7 +454,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        File groupFolder = new File(getStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getStoreLocation(), id.getGroup().replace('.', File.separatorChar));
         return new File(groupFolder, id.getName());
     }
 

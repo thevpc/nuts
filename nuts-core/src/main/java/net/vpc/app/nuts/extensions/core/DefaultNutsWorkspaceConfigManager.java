@@ -924,7 +924,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (storeLocation == null) {
             return null;
         }
-        File groupFolder = new File(storeLocation, id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(storeLocation, id.getGroup().replace('.', File.separatorChar));
         if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }

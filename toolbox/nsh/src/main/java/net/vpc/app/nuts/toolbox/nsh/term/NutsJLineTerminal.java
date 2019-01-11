@@ -89,7 +89,6 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         } catch (Throwable ex) {
             //unable to create system terminal
         }
-        System.out.println("Created "+terminal.getClass());
         if (terminal == null) {
             builder.system(false);
             try {

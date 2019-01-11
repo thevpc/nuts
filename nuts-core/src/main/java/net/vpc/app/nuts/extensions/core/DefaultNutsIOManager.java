@@ -71,7 +71,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session) {
         if (length > 0) {
-            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultInputStreamMonitor(session.getTerminal().getOut()));
+            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultInputStreamMonitor(workspace,session.getTerminal().getOut()));
         } else {
             return stream;
         }
@@ -99,14 +99,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         DefaultInputStreamMonitor monitor=null;
         if (monitorable && log.isLoggable(Level.INFO)) {
-            monitor = new DefaultInputStreamMonitor(session.getTerminal().getOut());
+            monitor = new DefaultInputStreamMonitor(workspace,session.getTerminal().getOut());
         }
         InputStream stream = null;
         URLHeader header = null;
         long size = -1;
         try {
             if(monitor!=null){
-                monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size,null));
+                monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size,null));
             }
             NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(workspace, path);
             try {
@@ -119,7 +119,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             stream = f.open();
         } catch (IOException e) {
             if(monitor!=null) {
-                monitor.onProgress(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
+                monitor.onComplete(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
             }
             throw new NutsIOException(e);
         }
@@ -137,7 +137,23 @@ public class DefaultNutsIOManager implements NutsIOManager {
             return stream;
         }
         if (monitor!=null) {
-            return IOUtils.monitor(stream, source, sourceName, size, monitor);
+            DefaultInputStreamMonitor finalMonitor = monitor;
+            //adapt to disable onStart call (it is already invoked)
+            return IOUtils.monitor(stream, source, sourceName, size, new InputStreamMonitor() {
+                @Override
+                public void onStart(InputStreamEvent event) {
+                }
+
+                @Override
+                public void onComplete(InputStreamEvent event) {
+                    finalMonitor.onComplete(event);
+                }
+
+                @Override
+                public boolean onProgress(InputStreamEvent event) {
+                    return finalMonitor.onProgress(event);
+                }
+            });
         }
         return stream;
 

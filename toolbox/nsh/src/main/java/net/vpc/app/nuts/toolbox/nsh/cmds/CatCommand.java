@@ -75,7 +75,7 @@ public class CatCommand extends AbstractNutsCommand {
             } else if (cmdLine.readAll("-E", "--show-ends")) {
                 o.E = true;
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file);
             }

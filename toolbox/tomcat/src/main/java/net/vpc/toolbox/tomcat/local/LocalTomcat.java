@@ -415,7 +415,7 @@ public class LocalTomcat {
                 file = a.getStringValue();
             } else {
                 if (file == null) {
-                    file = args.readNonOption().getString();
+                    file = args.readNonOption().getStringExpression();
                 } else {
                     args.unexpectedArgument("tomcat --local install");
                 }

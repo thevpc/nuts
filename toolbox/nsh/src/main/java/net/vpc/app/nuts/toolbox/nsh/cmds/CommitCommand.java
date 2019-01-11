@@ -53,7 +53,7 @@ public class CommitCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             } else {
-                String contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
+                String contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     for (String s : context.consoleContext().getShell().expandPath(contentFile)) {
                         NutsId nf = context.getWorkspace().commit(

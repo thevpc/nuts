@@ -106,7 +106,9 @@ public class NutsWorkspaceHelper {
         if (qm.get(NutsConstants.QUERY_FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
             qm.put("arch", ws.getConfigManager().getPlatformArch().toString());
             qm.put("os", ws.getConfigManager().getPlatformOs().toString());
-            qm.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
+            if(ws.getConfigManager().getPlatformOsDist()!=null) {
+                qm.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
+            }
             return id.setQuery(qm);
         }
         return id;

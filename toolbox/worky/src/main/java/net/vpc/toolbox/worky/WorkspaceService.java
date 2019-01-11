@@ -116,7 +116,7 @@ public class WorkspaceService {
             } else if (tf.configure(cmd)) {
                 //consumed
             } else if((a = cmd.readNonOption())!=null) {
-                filters.add(a.getString());
+                filters.add(a.getStringExpression());
             }else{
                 cmd.unexpectedArgument("worky list");
             }
@@ -203,7 +203,7 @@ public class WorkspaceService {
             } else if (cmd.readAll("-!p", "--!progress")) {
                 progress = false;
             } else if((a = cmd.readNonOption())!=null) {
-                filters.add(a.getString());
+                filters.add(a.getStringExpression());
             } else {
                 cmd.unexpectedArgument("worky check");
             }

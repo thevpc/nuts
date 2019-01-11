@@ -56,33 +56,12 @@ import java.util.regex.Pattern;
  * Created by vpc on 5/16/17.
  */
 public class CoreNutsUtils {
-    private static final Logger log = Logger.getLogger(CoreNutsUtils.class.getName());
-//        if (source instanceof NutsId) {
-//            NutsId d = (NutsId) source;
-//            if ("maven-metadata".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("archetype-catalog".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("descriptor".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("main-sha1".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//            if ("descriptor-sha1".equals(d.getFace())) {
-//                monitorable = false;
-//            }
-//        }
-
     public static final String FACE_CATALOG = "catalog";
     public static final String FACE_DESC = "descriptor";
     public static final String FACE_PACKAGE = "package";
     public static final String FACE_DESC_HASH = "descriptor-hash";
     public static final String FACE_PACKAGE_HASH = "package-hash";
 
-    //    private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
@@ -236,7 +215,7 @@ public class CoreNutsUtils {
         if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }
-        File groupFolder = new File(root, id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(root, id.getGroup().replace('.', File.separatorChar));
         if (StringUtils.isEmpty(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
@@ -668,9 +647,9 @@ public class CoreNutsUtils {
 //        return help;
 //    }
 //
-    public static String getPath(NutsId id, String ext, String sep) {
+    public static String getPath(NutsId id, String ext, char sep) {
         StringBuilder sb = new StringBuilder();
-        sb.append(id.getGroup().replaceAll("\\.", sep));
+        sb.append(id.getGroup().replace('.', sep));
         sb.append(sep);
         sb.append(id.getName());
         sb.append(sep);

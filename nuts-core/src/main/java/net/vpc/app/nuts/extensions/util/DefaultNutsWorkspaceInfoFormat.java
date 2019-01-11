@@ -118,7 +118,9 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("java-classpath", System.getProperty("java.class.path"));
             props.put("java-library-path", System.getProperty("java.library.path"));
             props.put("os-name", ws.getConfigManager().getPlatformOs().toString());
-            props.put("os-dist", ws.getConfigManager().getPlatformOsDist().toString());
+            if(ws.getConfigManager().getPlatformOsDist()!=null) {
+                props.put("os-dist", ws.getConfigManager().getPlatformOsDist().toString());
+            }
             props.put("os-arch", ws.getConfigManager().getPlatformArch().toString());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             props.put("creation-started", dateFormat.format(ws.getConfigManager().getCreationStartTimeMillis()));

@@ -79,7 +79,7 @@ public class FileVersionMain extends NutsApplication {
                 error = a.getBooleanValue();
             } else {
                 a = commandLine.read();
-                String arg = a.getString();
+                String arg = a.getStringExpression();
                 if (maven || arg.endsWith(".jar") || arg.endsWith(".war") || arg.endsWith(".ear")) {
                     if (commandLine.isExecMode()) {
                         Set<VersionDescriptor> value = null;

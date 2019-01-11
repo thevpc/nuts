@@ -59,7 +59,7 @@ public class CdCommand extends AbstractNutsCommand {
                 break;
             }
         }
-        String folder = cmdLine.readRequiredNonOption(new FolderNonOption("Folder")).getString();
+        String folder = cmdLine.readRequiredNonOption(new FolderNonOption("Folder")).getStringExpression();
         File[] validFiles = FileUtils.findFilesOrError(folder, new File(context.consoleContext().getShell().getCwd()), new FileFilter() {
             @Override
             public boolean accept(File pathname) {

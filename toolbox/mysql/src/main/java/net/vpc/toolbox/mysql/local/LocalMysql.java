@@ -258,7 +258,7 @@ public class LocalMysql {
             }else if ((a = args.readStringOption("--db")) != null) {
                 db = a.getStringValue();
             }else{
-                path = args.readNonOption().getString();
+                path = args.readNonOption().getStringExpression();
                 args.unexpectedArgument("mysql --local restore");
             }
         }
@@ -277,7 +277,7 @@ public class LocalMysql {
             }else if ((a = args.readStringOption("--db")) != null) {
                 db = a.getStringValue();
             }else{
-                path = args.readNonOption().getString();
+                path = args.readNonOption().getStringExpression();
                 args.unexpectedArgument("mysql --local archive");
             }
         }

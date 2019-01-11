@@ -30,13 +30,13 @@ uninstall packages allowing multiple versions of the very same package to  be in
 + find              : searches for existing/installable packages
 
 ## Download Latest stable version
-+ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar)
++ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar)
 
 ## Requirements
 Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
 
 ## Installation
-java -jar nuts-0.5.2.jar
+java -jar nuts-0.5.3.jar
 
 ## Launching
 + [Linux] nuts ...your command here...
@@ -62,6 +62,7 @@ java -jar nuts-0.5.2.jar
     1- First support to Windows platform
         * Support for Console coloring on windows
         * Storing to AppData\\Local and AppData\\Roaming folders
+        * [[DOING]] jline works poorly...
     2- API Change
         * Moved getStoreRoot from NutsWorkspace to NutsWorkspaceConfigManager
         * Added StoreType : CACHE
@@ -72,6 +73,12 @@ java -jar nuts-0.5.2.jar
     5- Added "description" section to pom files
     6- Fixed Archetype support
     7- Added Archetype "standalone" to help bundling and application with all its dependencies
+    8- Fixed Repository Layout where ref repo folder is created twice
+    9- Fixed Multiple pom download issue
+    10- Fixed Gson parsing issue
+    11- Added "Lib" layout store folder for both bootstrap jars and repo jars
+    12- Added alternative descriptor property to support multi architecture nuts
+    13- Added DescriptorFormat interface
 
 ### nuts 0.5.2.0
     1- Global refactoring

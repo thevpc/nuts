@@ -65,13 +65,13 @@ public class HeadCommand extends AbstractNutsCommand {
             if (cmdLine.isOption()) {
                 if (context.configure(cmdLine)) {
                     //
-                }else if (ShellHelper.isInt(cmdLine.get().getString().substring(1))) {
-                    options.max = Integer.parseInt(cmdLine.read().getString().substring(1));
+                }else if (ShellHelper.isInt(cmdLine.get().getStringExpression().substring(1))) {
+                    options.max = Integer.parseInt(cmdLine.read().getStringExpression().substring(1));
                 } else {
                     throw new NutsExecutionException("Not yet supported",2);
                 }
             } else {
-                String path = cmdLine.read().getString();
+                String path = cmdLine.read().getStringExpression();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file.getPath());
             }

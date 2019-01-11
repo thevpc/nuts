@@ -96,7 +96,7 @@ public class PropsCommand extends AbstractNutsCommand {
                     if (cmdLine.readAllOnce("--xml")) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
 
                     } else if (cmdLine.readAllOnce("--system")) {
                         o.sourceFormat = Format.PROPS;
@@ -106,12 +106,12 @@ public class PropsCommand extends AbstractNutsCommand {
                     } else if (cmdLine.readAllOnce("--props")) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
 
                     } else if (cmdLine.readAllOnce("--file")) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
                     } else {
                         cmdLine.unexpectedArgument(getName());
                     }
@@ -128,16 +128,16 @@ public class PropsCommand extends AbstractNutsCommand {
                     } else if (cmdLine.readAllOnce("--to-props-file")) {
                         o.targetFormat = Format.PROPS;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.targetFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
 
                     } else if (cmdLine.readAllOnce("--to-xml-file")) {
                         o.targetFormat = Format.XML;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.targetFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
                     } else if (cmdLine.readAllOnce("--to-file")) {
                         o.targetFormat = Format.AUTO;
                         o.targetType = TargetType.FILE;
-                        o.targetFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.targetFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
 
                     } else if (cmdLine.readAllOnce("--print-props")) {
                         o.targetFormat = Format.PROPS;
@@ -158,7 +158,7 @@ public class PropsCommand extends AbstractNutsCommand {
                     } else if (cmdLine.readAllOnce("--xml")) {
                         o.sourceFormat = Format.XML;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
 
                     } else if (cmdLine.readAllOnce("--system")) {
                         o.sourceFormat = Format.PROPS;
@@ -168,11 +168,11 @@ public class PropsCommand extends AbstractNutsCommand {
                     } else if (cmdLine.readAllOnce("--props")) {
                         o.sourceFormat = Format.PROPS;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
                     } else if (cmdLine.readAllOnce("--file")) {
                         o.sourceFormat = Format.AUTO;
                         o.sourceType = SourceType.FILE;
-                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                        o.sourceFile = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
                     } else {
                         cmdLine.unexpectedArgument(getName());
                     }

@@ -127,7 +127,7 @@ public class ChmodCommand extends AbstractNutsCommand {
         Mods m = new Mods();
         Argument a;
         while (cmdLine.hasNext()) {
-            String s = cmdLine.read().getString();
+            String s = cmdLine.read().getStringExpression();
             if (context.configure(cmdLine)) {
                 //
             }else if (s.startsWith("-")) {

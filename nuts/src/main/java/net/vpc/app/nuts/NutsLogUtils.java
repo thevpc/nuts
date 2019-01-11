@@ -58,7 +58,18 @@ public final class NutsLogUtils {
     private NutsLogUtils() {
     }
 
+    public static void bootstrap(NutsLogConfig config) {
+        if(config==null){
+            return;
+        }
+        prepare(config,System.getProperty("user.home"),true);
+    }
+
     public static void prepare(NutsLogConfig config, String defaultLogFolder) {
+        prepare(config,defaultLogFolder,false);
+    }
+
+    public static void prepare(NutsLogConfig config, String defaultLogFolder,boolean consoleOnly) {
         if(config==null){
             return;
         }
@@ -70,7 +81,8 @@ public final class NutsLogUtils {
         boolean inheritLog=config.isLogInherited();
 
         Logger olderLog = Logger.getLogger(NutsLogUtils.class.getName());
-        boolean logged = false;
+        boolean loggedToFile = false;
+        boolean loggedToConsole = false;
         String rootPackage = "net.vpc.app.nuts";
         if (level == null) {
             level = Level.INFO;
@@ -91,7 +103,7 @@ public final class NutsLogUtils {
         }
         boolean updatedHandler = false;
         boolean updatedLoglevel = false;
-        String[] splitted = rootPackage.split("\\.");
+        String[] splitted = rootPackage.split("[.]");
         Logger[] rootLoggers = new Logger[splitted.length + 1];
         rootLoggers[0] = Logger.getLogger("");
         for (int i = 0; i < splitted.length; i++) {
@@ -122,20 +134,20 @@ public final class NutsLogUtils {
                 if (mh.pattern.equals(pattern) && mh.count == count && mh.limit == maxSize * MEGA) {
                     found = true;
                 } else {
-                    if (!logged) {
-                        logged = true;
+                    if (!loggedToFile) {
+                        loggedToFile = true;
                         olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
                     }
                     rootLogger.removeHandler(mh);
                     mh.close();
                 }
             }else if(handler instanceof MyConsoleHandler){
-                logged = true;
+                loggedToConsole = true;
             }
         }
         if (!found) {
-            if (!logged) {
-                logged = true;
+            if (!loggedToFile) {
+                loggedToFile = true;
                 olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
             }
             File parentFile = new File(pattern).getParentFile();
@@ -144,16 +156,27 @@ public final class NutsLogUtils {
             }
             updatedHandler = true;
             Handler handler = null;
+            boolean consoleAdded=false;
             try {
-                handler = new MyFileHandler(pattern, maxSize * MEGA, count, true);
-                rootLogger.addHandler(handler);
+                if(!consoleOnly) {
+                    handler = new MyFileHandler(pattern, maxSize * MEGA, count, true);
+                    rootLogger.addHandler(handler);
+                }
             } catch (Exception ex) {
+                if(!loggedToConsole) {
+                    handler = new MyConsoleHandler();
+                    handler.setFormatter(LOG_FORMATTER);
+                    rootLogger.setUseParentHandlers(false);
+                    rootLogger.addHandler(handler);
+                    rootLogger.log(Level.SEVERE, "Unable to set File log. Fallback to console log : {0}", ex.toString());
+                    consoleAdded = true;
+                }
+            }
+            if(!loggedToConsole && !consoleAdded && (Level.FINEST.equals(level) || Level.ALL.equals(level))){
                 handler = new MyConsoleHandler();
                 handler.setFormatter(LOG_FORMATTER);
                 rootLogger.setUseParentHandlers(false);
                 rootLogger.addHandler(handler);
-
-                rootLogger.log(Level.SEVERE, "Unable to set File log. Fallback to console log : {0}",ex.toString());
             }
         }
 
@@ -219,7 +242,7 @@ public final class NutsLogUtils {
         private String logLevel(Level l) {
             String v = logLevelCache.get(l);
             if (v == null) {
-                v = ensureSize(l.getLocalizedName(), 6);
+                v = ensureSize(l.getName(), 6);
                 logLevelCache.put(l, v);
             }
             return v;

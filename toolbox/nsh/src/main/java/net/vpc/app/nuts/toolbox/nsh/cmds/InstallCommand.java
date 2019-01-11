@@ -70,11 +70,11 @@ public class InstallCommand extends AbstractNutsCommand {
             } else {
                 NutsWorkspace ws = context.getWorkspace();
                 if (cmdLine.readAllOnce("-r", "--repository")) {
-                    repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getString();
+                    repositoryId = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getStringExpression();
                 } else if (cmdLine.readAllOnce("-s", "--descriptor")) {
-                    descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
+                    descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getStringExpression();
                 } else if (cmdLine.readAllOnce("-t", "--target")) {
-                    descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getString();
+                    descriptorFile = cmdLine.readNonOption(new FileNonOption("Target")).getStringExpression();
                 } else if (cmdLine.readAllOnce("-y", "--deploy", "--no-install")) {
                     deployOnly = true;
                     bundleOnly = false;
@@ -82,7 +82,7 @@ public class InstallCommand extends AbstractNutsCommand {
                     deployOnly = false;
                     bundleOnly = true;
                 } else {
-                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
+                    String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
                     if (cmdLine.isExecMode()) {
                         if (deployOnly) {
                             for (String s : context.getShell().expandPath(id)) {

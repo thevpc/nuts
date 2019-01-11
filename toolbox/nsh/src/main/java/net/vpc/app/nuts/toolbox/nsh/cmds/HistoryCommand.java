@@ -85,7 +85,7 @@ public class HistoryCommand extends AbstractNutsCommand {
                 if(a.isKeyVal()){
                     o.sval=a.getStringValue();
                 }else if(!cmdLine.isEmpty()){
-                    o.sval=cmdLine.read().getString();
+                    o.sval=cmdLine.read().getStringExpression();
                 }
                 cmdLine.unexpectedArgument(getName());
             } else if ((a = cmdLine.readOption("-r", "--read")) != null) {
@@ -93,7 +93,7 @@ public class HistoryCommand extends AbstractNutsCommand {
                 if(a.isKeyVal()){
                     o.sval=a.getStringValue();
                 }else if(!cmdLine.isEmpty()){
-                    o.sval=cmdLine.read().getString();
+                    o.sval=cmdLine.read().getStringExpression();
                 }
                 cmdLine.unexpectedArgument(getName());
             } else {

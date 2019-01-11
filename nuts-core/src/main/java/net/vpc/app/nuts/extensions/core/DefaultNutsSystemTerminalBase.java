@@ -9,14 +9,24 @@ import net.vpc.common.fprint.FPrint;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
+    private static Logger log=Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());
     private Scanner scanner;
     private NutsTerminalMode outMode=NutsTerminalMode.FORMATTED;
     private NutsTerminalMode errMode=NutsTerminalMode.FORMATTED;
     @Override
     public void install(NutsWorkspace workspace) {
         scanner = new Scanner(System.in);
+        if(workspace.getConfigManager().getOptions().isNoColors()) {
+            setOutMode(NutsTerminalMode.FILTERED);
+            setErrorMode(NutsTerminalMode.FILTERED);
+        }else{
+            setOutMode(NutsTerminalMode.FORMATTED);
+            setErrorMode(NutsTerminalMode.FORMATTED);
+        }
     }
 
 
@@ -45,10 +55,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void setOutMode(NutsTerminalMode mode) {
+        log.log(Level.FINEST, "Changing Terminal Out Mode : {0}",mode);
         FPrint.installStdOut(convertMode(this.outMode=mode));
     }
     @Override
     public void setErrorMode(NutsTerminalMode mode) {
+        log.log(Level.FINEST, "Changing Terminal Err Mode : {0}",mode);
         FPrint.installStdErr(convertMode(this.errMode=mode));
     }
 
@@ -65,7 +77,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     @Override
     public String readLine(String promptFormat, Object... params) {
         getOut().printf(promptFormat,params);
-        getOut().printf(" : ");
+        getOut().print(" : ");
         return scanner.nextLine();
     }
 

@@ -73,12 +73,12 @@ public class NutsServerMain extends NutsApplication {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).name = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerName")).getString();
+                        servers.get(servers.size() - 1).name = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerName")).getStringExpression();
                     } else if (cmdLine.readAllOnce("-a", "--address")) {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
-                        servers.get(servers.size() - 1).addr = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerAddress")).getString();
+                        servers.get(servers.size() - 1).addr = cmdLine.readRequiredNonOption(new DefaultNonOption("ServerAddress")).getStringExpression();
 
                     } else if (cmdLine.readAllOnce("-p", "--port")) {
                         if (servers.size() == 0) {
@@ -105,7 +105,7 @@ public class NutsServerMain extends NutsApplication {
                         if (servers.size() == 0) {
                             throw new NutsIllegalArgumentException("nuts-server: Server Type missing");
                         }
-                        String s = cmdLine.readRequiredNonOption(new DefaultNonOption("Workspace")).getString();
+                        String s = cmdLine.readRequiredNonOption(new DefaultNonOption("Workspace")).getStringExpression();
                         int eq = s.indexOf('=');
                         if (eq >= 0) {
                             String serverContext = s.substring(0, eq);
@@ -196,12 +196,12 @@ public class NutsServerMain extends NutsApplication {
                     }
                 }
             } else if (cmdLine.readAll("stop")) {
-                String s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", appContext.getWorkspace())).getString();
+                String s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", appContext.getWorkspace())).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     serverManager.stopServer(s);
                 }
                 while (cmdLine.hasNext()) {
-                    s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", appContext.getWorkspace())).getString();
+                    s = cmdLine.readRequiredNonOption(new ServerNonOption("ServerName", appContext.getWorkspace())).getStringExpression();
                     if (cmdLine.isExecMode()) {
                         serverManager.stopServer(s);
                     }

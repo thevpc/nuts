@@ -49,10 +49,10 @@ public class NutsMvnMain extends NutsApplication {
                     command = "get";
                 } else {
                     command = "default";
-                    args2.add(cmd.read().getString());
+                    args2.add(cmd.read().getStringExpression());
                 }
             }else{
-                args2.add(cmd.read().getString());
+                args2.add(cmd.read().getStringExpression());
             }
         }
         if (command == null) {

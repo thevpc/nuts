@@ -70,7 +70,7 @@ public class ZipCommand extends AbstractNutsCommand {
             } else if (cmdLine.isOption()) {
                 throw new NutsExecutionException("Not yet supported",2);
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 if(outZip==null){
                     outZip=file;

@@ -60,7 +60,7 @@ public class FetchCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else if (cmdLine.readAll("-t", "--to")) {
-                lastLocationFile = (cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getString());
+                lastLocationFile = (cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getStringExpression());
             } else if (cmdLine.readAll("-d", "--desc")) {
                 descMode = true;
             } else if (cmdLine.readAll("-n", "--nuts")) {
@@ -69,7 +69,7 @@ public class FetchCommand extends AbstractNutsCommand {
                 effective = true;
             } else {
                 NutsWorkspace ws = context.getWorkspace();
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     if (descMode) {
                         NutsDefinition file = null;

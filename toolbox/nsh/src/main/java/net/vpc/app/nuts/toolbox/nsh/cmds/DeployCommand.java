@@ -69,13 +69,13 @@ public class DeployCommand extends AbstractNutsCommand {
             }else if (contentFile == null && id == null && cmdLine.readAllOnce("--file", "-f")) {
                 fileMode = true;
             } else if (!idMode && cmdLine.readAllOnce("--desc", "-d")) {
-                descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getString();
+                descriptorFile = cmdLine.readNonOption(new FileNonOption("DescriptorFile")).getStringExpression();
             } else if (cmdLine.readAllOnce("--id", "-i")) {
                 idMode = true;
             } else if (!fileMode && cmdLine.readAllOnce("--source", "-s")) {
-                from = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getString();
+                from = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getStringExpression();
             } else if (cmdLine.readAllOnce("--to", "-t")) {
-                to = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getString();
+                to = cmdLine.readNonOption(new RepositoryNonOption("Repository", ws)).getStringExpression();
             } else {
                 if (contentFile != null || id != null) {
                     cmdLine.unexpectedArgument(getName());
@@ -88,9 +88,9 @@ public class DeployCommand extends AbstractNutsCommand {
                         }
                     }
                     if (fileMode) {
-                        contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getString();
+                        contentFile = cmdLine.readRequiredNonOption(new FileNonOption("File")).getStringExpression();
                     } else if (idMode) {
-                        id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
+                        id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getStringExpression();
                     }
                 }
             }

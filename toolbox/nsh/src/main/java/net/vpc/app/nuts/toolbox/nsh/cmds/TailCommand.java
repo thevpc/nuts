@@ -65,13 +65,13 @@ public class TailCommand extends AbstractNutsCommand {
             if (a.isOption()) {
                 if (context.configure(cmdLine)) {
                     //
-                }else if (ShellHelper.isInt(a.getString().substring(1))) {
-                    options.max = Integer.parseInt(a.getString().substring(1));
+                }else if (ShellHelper.isInt(a.getStringExpression().substring(1))) {
+                    options.max = Integer.parseInt(a.getStringExpression().substring(1));
                 } else {
                     throw new NutsExecutionException("Not yet supported",2);
                 }
             } else {
-                String path = a.getString();
+                String path = a.getStringExpression();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 files.add(file.getPath());
             }

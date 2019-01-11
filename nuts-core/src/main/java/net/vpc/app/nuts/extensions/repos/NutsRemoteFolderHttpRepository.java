@@ -115,7 +115,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/"
+        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 +getQueryFilename(id,extension)
         ));
     }
@@ -124,7 +124,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/"
+        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + "nuts.json"
         ));
     }
@@ -245,7 +245,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
-            String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId)+"/.folders").split("\n");
+            String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId)+"/.folders").split("\n");
             List<NutsId> n=new ArrayList<>();
             for (String s : all) {
                 if(!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)){

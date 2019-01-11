@@ -28,14 +28,14 @@ public class NutsApplicationContext implements CommandLineContext {
     private String storeId;
     private NutsId appId;
     private boolean verbose;
-    private boolean noColors;
+    private NutsTerminalMode terminalMode;
     private long startTimeMillis;
     private String[] args;
     private TableFormatter.CellFormatter tableCellFormatter;
-    private String mode="launch";
+    private String mode = "launch";
 
     /**
-     *  previous version for "on-update" mode
+     * previous version for "on-update" mode
      */
     private NutsVersion appPreviousVersion;
 
@@ -44,7 +44,7 @@ public class NutsApplicationContext implements CommandLineContext {
      */
     private CommandAutoComplete autoComplete;
 
-    private String[] modeArgs=new String[0];
+    private String[] modeArgs = new String[0];
 
 
     public NutsApplicationContext(NutsWorkspace workspace, Class appClass, String storeId) {
@@ -52,36 +52,36 @@ public class NutsApplicationContext implements CommandLineContext {
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-execution-mode=")) {
             String[] execModeCommand = NutsMinimalCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
-            if(execModeCommand.length>0){
-                switch (execModeCommand[0]){
-                    case "auto-complete":{
-                        mode="auto-complete";
-                        if(execModeCommand.length>1){
+            if (execModeCommand.length > 0) {
+                switch (execModeCommand[0]) {
+                    case "auto-complete": {
+                        mode = "auto-complete";
+                        if (execModeCommand.length > 1) {
                             wordIndex = Integer.parseInt(execModeCommand[1]);
                         }
-                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
                         break;
                     }
-                    case "on-install":{
-                        mode="on-install";
-                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                    case "on-install": {
+                        mode = "on-install";
+                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
                         break;
                     }
-                    case "on-uninstall":{
-                        mode="on-uninstall";
-                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                    case "on-uninstall": {
+                        mode = "on-uninstall";
+                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
                         break;
                     }
-                    case "on-update":{
-                        mode="on-uninstall";
-                        if(execModeCommand.length>1){
+                    case "on-update": {
+                        mode = "on-uninstall";
+                        if (execModeCommand.length > 1) {
                             appPreviousVersion = workspace.getParseManager().parseVersion(execModeCommand[1]);
                         }
-                        modeArgs=Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
+                        modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
                         break;
                     }
-                    default:{
-                        throw new NutsExecutionException("Unsupported nuts-execution-mode : "+args[0],205);
+                    default: {
+                        throw new NutsExecutionException("Unsupported nuts-execution-mode : " + args[0], 205);
                     }
                 }
             }
@@ -108,7 +108,7 @@ public class NutsApplicationContext implements CommandLineContext {
         setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.TEMP));
         setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.VAR));
         if (wordIndex >= 0) {
-            setNoColors(true);
+            setTerminalMode(NutsTerminalMode.FILTERED);
         }
         autoComplete = wordIndex >= 0 ? new AppCommandAutoComplete(args, wordIndex, out()) : null;
         tableCellFormatter = new ColoredCellFormatter(this);
@@ -143,15 +143,45 @@ public class NutsApplicationContext implements CommandLineContext {
                 showHelp();
                 cmd.skipAll();
             }
-            throw new NutsExecutionException("Help",0);
+            throw new NutsExecutionException("Help", 0);
         } else if ((a = cmd.readBooleanOption("--version")) != null) {
             if (cmd.isExecMode()) {
                 out().printf("%s\n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
                 cmd.skipAll();
             }
-            throw new NutsExecutionException("Help",0);
-        } else if ((a = cmd.readBooleanOption("--no-colors")) != null) {
-            setNoColors(a.getBooleanValue());
+            throw new NutsExecutionException("Help", 0);
+        } else if ((a = cmd.readOption("--term-system")) != null) {
+            setTerminalMode(null);
+        } else if ((a = cmd.readOption("--term-filtered")) != null) {
+            setTerminalMode(NutsTerminalMode.FILTERED);
+        } else if ((a = cmd.readOption("--term-formatted")) != null) {
+            setTerminalMode(NutsTerminalMode.FORMATTED);
+        } else if ((a = cmd.readOption("--term-inherited")) != null) {
+            setTerminalMode(NutsTerminalMode.INHERITED);
+        } else if ((a = cmd.readOption("--no-colors")) != null) {
+            setTerminalMode(NutsTerminalMode.FILTERED);
+        } else if ((a = cmd.readStringOption("--term")) != null) {
+            String s=a.getStringValue().toLowerCase();
+            switch (s){
+                case "":
+                case "system":
+                    {
+                    setTerminalMode(null);
+                    break;
+                }
+                case "filtered":{
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    break;
+                }
+                case "formatted":{
+                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                    break;
+                }
+                case "inherited":{
+                    setTerminalMode(NutsTerminalMode.INHERITED);
+                    break;
+                }
+            }
             return true;
         } else if ((a = cmd.readBooleanOption("--verbose")) != null) {
             this.setVerbose((a.getBooleanValue()));
@@ -168,17 +198,8 @@ public class NutsApplicationContext implements CommandLineContext {
         out().print(h);
     }
 
-    public void setNoColors(boolean b) {
-        noColors = b;
-        if (noColors) {
-            getWorkspace().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
-//            setOut(getWorkspace().createPrintStream(getOut0(), true, true));
-//            setErr(getWorkspace().createPrintStream(getErr0(), true, true));
-        } else {
-            getWorkspace().getSystemTerminal().setMode(null);
-//            setOut(getOut0());
-//            setErr(getErr0());
-        }
+    public void setTerminalMode(NutsTerminalMode mode) {
+        getWorkspace().getSystemTerminal().setMode(mode);
     }
 
     public Class getAppClass() {
@@ -306,7 +327,7 @@ public class NutsApplicationContext implements CommandLineContext {
     }
 
     public NutsVersion getAppVersion() {
-        return appId==null?null:appId.getVersion();
+        return appId == null ? null : appId.getVersion();
     }
 
     public NutsApplicationContext setAppId(NutsId appId) {
@@ -348,7 +369,7 @@ public class NutsApplicationContext implements CommandLineContext {
             ArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException("Candidate cannot be null",2);
+                throw new NutsExecutionException("Candidate cannot be null", 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
@@ -384,8 +405,8 @@ public class NutsApplicationContext implements CommandLineContext {
         }
     }
 
-    public boolean isNoColors() {
-        return noColors;
+    public NutsTerminalMode getTerminalMode() {
+        return getWorkspace().getSystemTerminal().getOutMode();
     }
 
     public TableFormatter.CellFormatter getTableCellFormatter() {

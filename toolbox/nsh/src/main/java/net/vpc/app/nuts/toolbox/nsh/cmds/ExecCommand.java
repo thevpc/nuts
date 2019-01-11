@@ -60,13 +60,13 @@ public class ExecCommand extends AbstractNutsCommand {
                 }else if ((a=cmdLine.readBooleanOption("-n", "--native"))!=null) {
                     nativeCommand = a.getBooleanValue();
                 }else if (cmdLine.isOption()) {
-                    execOptions.add(cmdLine.read().getString());
+                    execOptions.add(cmdLine.read().getStringExpression());
                 } else {
-                    sargs.add(cmdLine.read().getString());
+                    sargs.add(cmdLine.read().getStringExpression());
                     command = true;
                 }
             } else {
-                sargs.add(cmdLine.read().getString());
+                sargs.add(cmdLine.read().getStringExpression());
             }
         }
         if (!cmdLine.isExecMode()) {

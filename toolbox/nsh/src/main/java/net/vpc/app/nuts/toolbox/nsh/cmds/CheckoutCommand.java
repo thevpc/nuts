@@ -53,8 +53,8 @@ public class CheckoutCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             } else {
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
-                String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getStringExpression();
+                String contentFile = cmdLine.readRequiredNonOption(new FolderNonOption("folder")).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     NutsDefinition nf = context.getWorkspace().checkout(
                             id,

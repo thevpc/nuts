@@ -337,14 +337,14 @@ public class NutsJavaShell extends JavaShell {
                 } else if ((a = cmd.readBooleanOption("-x")) != null) {
                     getOptions().setXtrace(a.getBooleanValue());
                 } else if ((a = cmd.readBooleanOption("-c")) != null) {
-                    nonOptions.add(cmd.read().getString());
+                    nonOptions.add(cmd.read().getStringExpression());
                 } else if(cmd.isOption()){
                     cmd.unexpectedArgument("nsh");
                 }else{
-                    nonOptions.add(cmd.read().getString());
+                    nonOptions.add(cmd.read().getStringExpression());
                 }
             } else {
-                nonOptions.add(cmd.read().getString());
+                nonOptions.add(cmd.read().getStringExpression());
             }
         }
         int ret = 0;
@@ -352,7 +352,7 @@ public class NutsJavaShell extends JavaShell {
             interactive = true;
         }
         if(appContext!=null){
-            javaShellContext.setNoColors(appContext.isNoColors());
+            javaShellContext.setTerminalMode(appContext.getTerminalMode());
             javaShellContext.setVerbose(appContext.isVerbose());
         }
         if (nonOptions.size() > 0) {

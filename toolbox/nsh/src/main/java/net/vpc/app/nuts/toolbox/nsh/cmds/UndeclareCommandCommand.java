@@ -57,7 +57,7 @@ public class UndeclareCommandCommand extends AbstractNutsCommand {
                     cmdLine.unexpectedArgument(getName());
                 }
             } else {
-                String cmd = cmdLine.readNonOption(DefaultNonOption.NAME).getString();
+                String cmd = cmdLine.readNonOption(DefaultNonOption.NAME).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     context.getShell().undeclareCommand(cmd);
                 }

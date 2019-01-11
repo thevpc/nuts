@@ -14,7 +14,7 @@ import java.io.PrintStream;
 public class DefaultNutsCommandContext implements NutsCommandContext {
     private NutsConsoleContext consoleContext;
     private NutsCommand command;
-    private boolean noColors = false;
+    private NutsTerminalMode terminalMode = null;
     private boolean verbose = false;
 
     public DefaultNutsCommandContext(NutsConsoleContext consoleContext, NutsCommand command) {
@@ -41,8 +41,38 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
             }
             cmd.skipAll();
             return true;
-        } else if ((a = cmd.readBooleanOption("--no-colors")) != null) {
-            setNoColors(a.getBooleanValue());
+        } else if ((a = cmd.readOption("--term-system")) != null) {
+            setTerminalMode(null);
+        } else if ((a = cmd.readOption("--term-filtered")) != null) {
+            setTerminalMode(NutsTerminalMode.FILTERED);
+        } else if ((a = cmd.readOption("--term-formatted")) != null) {
+            setTerminalMode(NutsTerminalMode.FORMATTED);
+        } else if ((a = cmd.readOption("--term-inherited")) != null) {
+            setTerminalMode(NutsTerminalMode.INHERITED);
+        } else if ((a = cmd.readOption("--no-colors")) != null) {
+            setTerminalMode(NutsTerminalMode.FILTERED);
+        } else if ((a = cmd.readStringOption("--term")) != null) {
+            String s=a.getStringValue().toLowerCase();
+            switch (s){
+                case "":
+                case "system":
+                {
+                    setTerminalMode(null);
+                    break;
+                }
+                case "filtered":{
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    break;
+                }
+                case "formatted":{
+                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                    break;
+                }
+                case "inherited":{
+                    setTerminalMode(NutsTerminalMode.INHERITED);
+                    break;
+                }
+            }
             return true;
         } else if ((a = cmd.readBooleanOption("--verbose")) != null) {
             this.setVerbose((a.getBooleanValue()));
@@ -69,18 +99,14 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
         return consoleContext.err();
     }
 
-    public boolean isNoColors() {
-        return noColors;
+    public NutsTerminalMode geTerminalMode() {
+        return terminalMode;
     }
 
-    public void setNoColors(boolean noColors) {
-        if(noColors) {
-            getWorkspace().getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
-        }else{
-            getWorkspace().getSystemTerminal().setMode(null);
-        }
-        this.noColors = noColors;
+    public void setTerminalMode(NutsTerminalMode outMode) {
+        getWorkspace().getSystemTerminal().setMode(outMode);
     }
+
 
     public boolean isVerbose() {
         return verbose;

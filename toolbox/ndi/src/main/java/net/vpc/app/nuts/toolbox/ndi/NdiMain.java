@@ -53,7 +53,7 @@ public class NdiMain extends NutsApplication {
                         cmd.unexpectedArgument("ndi");
                     } else {
                         try {
-                            ndi.createNutsScript(cmd.read().getString(), force, forceAll, silent,fetch);
+                            ndi.createNutsScript(cmd.read().getStringExpression(), force, forceAll, silent,fetch);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

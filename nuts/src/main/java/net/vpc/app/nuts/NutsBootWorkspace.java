@@ -107,20 +107,21 @@ public class NutsBootWorkspace {
         this.options = options;
         this.bootId = NutsBootId.parse(NutsConstants.NUTS_ID_BOOT_API + "#" + actualVersion);
         newInstance = true;
-        if(options.getBootCommand()!=null){
-            switch (options.getBootCommand()){
+        if (options.getBootCommand() != null) {
+            switch (options.getBootCommand()) {
                 case UPDATE:
                 case CHECK_UPDATES:
                 case CLEAN:
-                case RESET:
-                    {
+                case RESET: {
                     newInstance = false;
                 }
             }
         }
         runningBootConfig = new NutsBootConfig(options);
+        NutsLogUtils.bootstrap(options.getLogConfig());
+        log.log(Level.CONFIG, "Open Nus Workspace... : app="+Arrays.toString(options.getApplicationArguments())+" ; boot="+Arrays.toString(options.getBootArguments()));
         loadedBootConfig = compile(runningBootConfig);
-        NutsLogUtils.prepare(options.getLogConfig(), Nuts.syspath(runningBootConfig.getStoreLocationLayout() + "/log/net/vpc/app/nuts/nuts/LATEST"));
+        NutsLogUtils.prepare(options.getLogConfig(), Nuts.syspath(runningBootConfig.getLogsStoreLocation() + "/log/net/vpc/app/nuts/nuts/LATEST"));
 
         requiredBootVersion = options.getRequiredBootVersion();
         if (requiredBootVersion == null) {
@@ -320,6 +321,15 @@ public class NutsBootWorkspace {
     }
 
     public int run() throws IOException {
+        switch (this.getOptions().getBootCommand()) {
+            case CLEAN:
+            case RESET: {
+                if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
+                    return 0;
+                }
+            }
+        }
+
         if (isRequiredNewProcess()) {
             startNewProcess();
             return 0;
@@ -373,10 +383,47 @@ public class NutsBootWorkspace {
 
     public NutsWorkspace openWorkspace() {
         if (log.isLoggable(Level.CONFIG)) {
-            log.log(Level.CONFIG, "Open Workspace : {0} @ {1}", new Object[]{
-                    NutsUtils.isEmpty(options.getWorkspace()) ? NutsConstants.DEFAULT_WORKSPACE_NAME : options.getWorkspace(),
-                    this.runningBootConfig.getHome()
-            });
+            log.log(Level.CONFIG, "Open Workspace with config :");
+            log.log(Level.CONFIG, "\t nuts-boot-api                  : {0}", actualVersion);
+
+            log.log(Level.CONFIG, "\t nuts-home                      : {0}", NutsUtils.desc(options.getHome()));
+            log.log(Level.CONFIG, "\t nuts-home           (resolved) : {0}", runningBootConfig.getHome());
+
+            log.log(Level.CONFIG, "\t nuts-workspace                 : {0}", NutsUtils.desc(options.getWorkspace()));
+            log.log(Level.CONFIG, "\t nuts-workspace      (resolved) : {0}", runningBootConfig.getWorkspace());
+
+            log.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", NutsUtils.desc(options.getStoreLocationStrategy()));
+            log.log(Level.CONFIG, "\t nuts-store-strategy (resolved) : {0}", runningBootConfig.getStoreLocationStrategy());
+
+            log.log(Level.CONFIG, "\t nuts-store-layout              : {0}", NutsUtils.desc(options.getStoreLocationLayout()));
+            log.log(Level.CONFIG, "\t nuts-store-layout   (resolved) : {0}", runningBootConfig.getStoreLocationLayout());
+
+            log.log(Level.CONFIG, "\t nuts-store-programs            : {0}", NutsUtils.desc(options.getProgramsStoreLocation()));
+            log.log(Level.CONFIG, "\t nuts-store-programs (resolved) : {0}", runningBootConfig.getProgramsStoreLocation());
+
+            log.log(Level.CONFIG, "\t nuts-store-config              : {0}", NutsUtils.desc(options.getConfigStoreLocation()));
+            log.log(Level.CONFIG, "\t nuts-store-config   (resolved) : {0}", runningBootConfig.getConfigStoreLocation());
+
+            log.log(Level.CONFIG, "\t nuts-store-var                 : {0}", NutsUtils.desc(options.getVarStoreLocation()));
+            log.log(Level.CONFIG, "\t nuts-store-var      (resolved) : {0}", runningBootConfig.getVarStoreLocation());
+
+            log.log(Level.CONFIG, "\t nuts-store-logs                : {0}", NutsUtils.desc(options.getLogsStoreLocation()));
+            log.log(Level.CONFIG, "\t nuts-store-logs     (resolved) : {0}", runningBootConfig.getLogsStoreLocation());
+
+            log.log(Level.CONFIG, "\t nuts-store-temp                : {0}", NutsUtils.desc(options.getTempStoreLocation()));
+            log.log(Level.CONFIG, "\t nuts-store-temp     (resolved) : {0}", runningBootConfig.getTempStoreLocation());
+
+            log.log(Level.CONFIG, "\t nuts-store-cache               : {0}", NutsUtils.desc(options.getCacheStoreLocation()));
+            log.log(Level.CONFIG, "\t nuts-store-cache    (resolved) : {0}", runningBootConfig.getCacheStoreLocation());
+
+            log.log(Level.CONFIG, "\t java-home                      : {0}", System.getProperty("java.home"));
+            log.log(Level.CONFIG, "\t java-classpath                 : {0}", System.getProperty("java.class.path"));
+            log.log(Level.CONFIG, "\t java-library-path              : {0}", System.getProperty("java.library.path"));
+            log.log(Level.CONFIG, "\t os-name                        : {0}", System.getProperty("os.name"));
+            log.log(Level.CONFIG, "\t os-arch                        : {0}", System.getProperty("os.arch"));
+            log.log(Level.CONFIG, "\t os-version                     : {0}", System.getProperty("os.version"));
+            log.log(Level.CONFIG, "\t user-dir                       : {0}", System.getProperty("user.dir"));
+            log.log(Level.CONFIG, "\t user-home                      : {0}", System.getProperty("user.home"));
         }
         OpenWorkspaceData info = new OpenWorkspaceData();
         try {
@@ -385,9 +432,9 @@ public class NutsBootWorkspace {
             if (startTime == 0) {
                 options.setCreationTime(startTime = System.currentTimeMillis());
             }
-            if(!options.isCreateIfNotFound()){
+            if (!options.isCreateIfNotFound()) {
                 //add fail fast test!!
-                if(!new File(runningBootConfig.getWorkspace(),NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME).isFile()){
+                if (!new File(runningBootConfig.getWorkspace(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME).isFile()) {
                     throw new NutsWorkspaceNotFoundException(runningBootConfig.getWorkspace());
                 }
             }
@@ -729,6 +776,7 @@ public class NutsBootWorkspace {
 //    }
 
     private File getBootFile(String path, String repository, String cacheFolder, boolean useCache) {
+        boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         repository = repository.trim();
         repository = expandPath(repository);
         if (useCache && cacheFolder != null) {
@@ -768,7 +816,7 @@ public class NutsBootWorkspace {
         File repoFolder = createFile(this.runningBootConfig.getHome(), repository);
         File ff = resolveFileForRepository(path, repoFolder, repository);
         if (ff != null) {
-            if (cacheFolder != null && Boolean.getBoolean("nuts.cache.cache-local-files")) {
+            if (cacheFolder != null && cacheLocalFiles) {
                 File to = new File(cacheFolder, path);
                 String toc = null;
                 try {
@@ -886,19 +934,28 @@ public class NutsBootWorkspace {
         return false;
     }
 
-    private String resolveWorkspacePath(String workspace, String defaultName) {
+    private String resolveWorkspacePath(String workspace) {
         String home = runningBootConfig.getHome();
         if (home == null) {
             throw new NutsIllegalArgumentException("Null Home");
         }
         if (NutsUtils.isEmpty(workspace)) {
-            File file = NutsUtils.resolvePath(home + "/" + defaultName, new File(home), home);
-            workspace = file == null ? null : file.getPath();
-        } else {
-            File file = NutsUtils.resolvePath(workspace, new File(home), home);
-            workspace = file == null ? null : file.getPath();
+            workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
         }
-        return workspace;
+        String uws = workspace.replace('\\', '/');
+        if (workspace.equals("~")) {
+            throw new NutsIllegalArgumentException("Workspace can not span over hole user home");
+        } else if (workspace.equals("~~")) {
+            throw new NutsIllegalArgumentException("Workspace can not span over hole nuts home");
+        } else if (uws.indexOf('/') < 0) {
+            return home + File.separator + workspace;
+        } else if (uws.startsWith("~/")) {
+            return System.getProperty("user.home") + File.separator + workspace.substring(2);
+        } else if (uws.startsWith("~~/")) {
+            return home + File.separator + workspace.substring(3);
+        } else {
+            return NutsUtils.getAbsolutePath(workspace);
+        }
     }
 
     private NutsClassLoaderProvider getContextClassLoaderProvider() {
@@ -1131,11 +1188,13 @@ public class NutsBootWorkspace {
                 force = true;
             }
         }
-        System.out.println("**************");
-        System.out.println("** ATTENTION *");
-        System.out.println("**************");
-        System.out.println("You are about to delete all workspace configuration files.");
-        System.out.println("Are you sure this is what you want ??");
+        if (!force) {
+            System.out.println("**************");
+            System.out.println("** ATTENTION *");
+            System.out.println("**************");
+            System.out.println("You are about to delete all workspace configuration files.");
+            System.out.println("Are you sure this is what you want ?");
+        }
         List<File> folders = new ArrayList<>();
         if (conf != null) {
             folders.add(new File(conf.getWorkspaceLocation()));
@@ -1266,7 +1325,7 @@ public class NutsBootWorkspace {
         config.setHome(Nuts.getDefaultHomeFolder(null, config.getHome(), config.getStoreLocationLayout()));
         String ws = options.getWorkspace();
         for (int i = 0; i < 36; i++) {
-            ws = resolveWorkspacePath(ws, NutsConstants.DEFAULT_WORKSPACE_NAME);
+            ws = resolveWorkspacePath(ws);
             configLoaded = NutsUtils.loadNutsBootConfig(ws);
             if (configLoaded.getWorkspace() == null || configLoaded.getWorkspace().isEmpty()) {
                 config.setWorkspace(ws);

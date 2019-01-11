@@ -77,7 +77,7 @@ public class LsCommand extends AbstractNutsCommand {
             } else if ((a = cmdLine.readBooleanOption("-l", "--list")) != null) {
                 options.l = a.getBooleanValue();
             } else {
-                String path = cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getString();
+                String path = cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getStringExpression();
                 File file = new File(context.getShell().getAbsolutePath(path));
                 ;
                 if (file.isDirectory()) {

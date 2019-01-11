@@ -105,9 +105,9 @@ public class SshCommand extends AbstractNutsCommand {
                 Argument arg=null;
                 while(c.hasNext()){
                     if((arg=c.readOption("--home"))!=null) {
-                        home = c.readNonOption().getString();
+                        home = c.readNonOption().getStringExpression();
                     }else if((arg=c.readOption("--workspace"))!=null){
-                        workspace=c.readNonOption().getString();
+                        workspace=c.readNonOption().getStringExpression();
                     }else if(c.isNonOption()){
                         break;
                     }else{

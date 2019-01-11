@@ -301,7 +301,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         if (id.getVersion().isEmpty()) {
             return null;
         }
-        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replace('.', File.separatorChar));
         File artifactFolder = new File(groupFolder, id.getName());
         if (id.getVersion().isEmpty()) {
             return null;
@@ -333,7 +333,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
         String locationFolder = getPrivateStoreLocation();
-        return new File(locationFolder, groupId.replaceAll("\\.", File.separator) + File.separator + artifactId + File.separator + version + File.separator
+        return new File(locationFolder, groupId.replace('.', File.separatorChar) + File.separator + artifactId + File.separator + version + File.separator
                 + getQueryFilename(id, extension)
         ).getPath();
     }

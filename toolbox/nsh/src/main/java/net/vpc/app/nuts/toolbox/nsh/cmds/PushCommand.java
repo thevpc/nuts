@@ -56,7 +56,7 @@ public class PushCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else  if (cmdLine.readAllOnce("--repo", "-r")) {
-                repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getString();
+                repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getStringExpression();
             } else if (cmdLine.readAllOnce("--force", "-f")) {
                 force = NutsConfirmAction.FORCE;
             } else {

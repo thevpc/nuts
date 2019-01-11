@@ -72,9 +72,9 @@ public class EchoCommand extends AbstractNutsCommand {
                         out.print(" ");
                     }
                     if (plain) {
-                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getString());
+                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getStringExpression());
                     } else {
-                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getString());
+                        out.print(cmdLine.readRequiredNonOption(new ValueNonOption("value")).getStringExpression());
                     }
                 }
             }

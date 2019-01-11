@@ -67,9 +67,9 @@ public class UpdateCommand extends AbstractNutsCommand {
                 force = NutsConfirmAction.FORCE;
             } else if (cmdLine.readAllOnce("--set-version", "-v")) {
                 force = NutsConfirmAction.FORCE;
-                version = cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getString();
+                version = cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getStringExpression();
             } else {
-                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString();
+                String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
                 ids.add(id);
             }
         }

@@ -141,7 +141,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //            }
 //            throw new NutsIdInvalidFormatException("Missing group for " + id);
 //        }
-//        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
+//        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replace('.', File.separator));
 //        if (StringUtils.isEmpty(id.getName())) {
 //            if (nullIfInvalidName) {
 //                return null;
@@ -210,7 +210,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
+        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replace('.', File.separatorChar));
         return new File(groupFolder, id.getName());
     }
 

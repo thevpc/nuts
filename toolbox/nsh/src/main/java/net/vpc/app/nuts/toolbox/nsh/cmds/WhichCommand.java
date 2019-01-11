@@ -61,7 +61,7 @@ public class WhichCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else {
-                elems.add(cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getString());
+                elems.add(cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression());
 
             }
         }

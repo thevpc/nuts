@@ -80,7 +80,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         List<NutsExtensionInfo> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + CoreNutsUtils.getPath(id, "." + extensionType, "/");
+            String url = r + "/" + CoreNutsUtils.getPath(id, "." + extensionType, '/');
             allUrls.add(url);
             URL u = expandURL(url);
             if (u != null) {
@@ -303,7 +303,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     public URLLocation[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType) {
         List<URLLocation> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
-            String url = r + "/" + CoreNutsUtils.getPath(nutsId, "." + extensionType, "/");
+            String url = r + "/" + CoreNutsUtils.getPath(nutsId, "." + extensionType, '/');
             URL u = expandURL(url);
             bootUrls.add(new URLLocation(url, u));
         }

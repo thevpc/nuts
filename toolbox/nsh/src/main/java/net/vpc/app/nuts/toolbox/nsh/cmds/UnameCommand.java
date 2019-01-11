@@ -80,7 +80,9 @@ public class UnameCommand extends AbstractNutsCommand {
 
             List<String> sb = new ArrayList<>();
             if (!farch && !fos && !fdist) {
-                sb.add(osdist.toString());
+                if(osdist!=null) {
+                    sb.add(osdist.toString());
+                }
                 sb.add(os.toString());
                 sb.add(arch.toString());
             } else {

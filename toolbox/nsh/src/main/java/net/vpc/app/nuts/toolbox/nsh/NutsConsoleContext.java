@@ -31,6 +31,7 @@ package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.CommandAutoComplete;
@@ -80,8 +81,8 @@ public interface NutsConsoleContext extends ConsoleContext {
 
     NutsConsoleContext setVerbose(boolean verbose);
 
-    boolean isNoColors();
+    NutsTerminalMode getTerminalMode();
 
-    NutsConsoleContext setNoColors(boolean noColors);
+    NutsConsoleContext setTerminalMode(NutsTerminalMode mode);
 
 }

@@ -62,7 +62,7 @@ public class FindCommandCommand extends AbstractNutsCommand {
             }else if (cmdLine.isOption()) {
                 cmdLine.skip();
             }else{
-                commands.add(cmdLine.read().getString());
+                commands.add(cmdLine.read().getStringExpression());
             }
         }
         if(commands.isEmpty()){

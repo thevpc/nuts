@@ -92,9 +92,9 @@ public class GrepCommand extends AbstractNutsCommand {
                 return 0;
             } else {
                 if (expression == null) {
-                    expression = cmdLine.readRequiredNonOption(new DefaultNonOption("expression")).getString();
+                    expression = cmdLine.readRequiredNonOption(new DefaultNonOption("expression")).getStringExpression();
                 } else {
-                    String path = cmdLine.readRequiredNonOption(new FileNonOption("file")).getString();
+                    String path = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
                     File file = new File(context.getShell().getAbsolutePath(path));
                     files.add(file);
                 }

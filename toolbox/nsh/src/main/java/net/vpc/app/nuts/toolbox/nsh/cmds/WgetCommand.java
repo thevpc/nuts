@@ -65,9 +65,9 @@ public class WgetCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else if (cmdLine.readAll("-O", "--output-document")) {
-                options.outputDocument = cmdLine.readNonOption().getString();
+                options.outputDocument = cmdLine.readNonOption().getStringExpression();
             } else {
-                files.add( cmdLine.readNonOption().getString());
+                files.add( cmdLine.readNonOption().getStringExpression());
             }
         }
         if (files.isEmpty()) {

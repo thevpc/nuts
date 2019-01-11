@@ -149,11 +149,11 @@ public class NFindMain extends NutsApplication {
             } else if (currentFindWhat == 0 && (a = cmdLine.readOption("--optional-only")) != null) {
                 findContext.acceptOptional = true;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-p", "--pkg")) {
-                findContext.pack.add(cmdLine.readRequiredNonOption(new PackagingNonOption("Packaging", context.getWorkspace())).getString());
+                findContext.pack.add(cmdLine.readRequiredNonOption(new PackagingNonOption("Packaging", context.getWorkspace())).getStringExpression());
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-a", "--arch")) {
-                findContext.arch.add(cmdLine.readRequiredNonOption(new ArchitectureNonOption("Architecture", context.getWorkspace())).getString());
+                findContext.arch.add(cmdLine.readRequiredNonOption(new ArchitectureNonOption("Architecture", context.getWorkspace())).getStringExpression());
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-r", "--repo")) {
-                findContext.repos.add(cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getString());
+                findContext.repos.add(cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getStringExpression());
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-V", "--last-version")) {
                 findContext.latestVersions = true;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-v", "--all-versions")) {
@@ -168,12 +168,12 @@ public class NFindMain extends NutsApplication {
                 if (cmdLine.isExecMode()) {
                     if (findContext.jsflag) {
                         if (findWhats.get(currentFindWhat).jsCode == null) {
-                            findWhats.get(currentFindWhat).jsCode = val.getString();
+                            findWhats.get(currentFindWhat).jsCode = val.getStringExpression();
                         } else {
                             throw new NutsIllegalArgumentException("find: Unsupported mixed and non js find expressions");
                         }
                     } else {
-                        String arg = val.getString();
+                        String arg = val.getStringExpression();
                         if (findWhats.get(currentFindWhat).jsCode == null) {
                             findWhats.get(currentFindWhat).nonjs.add(arg);
                         } else {

@@ -78,7 +78,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
-            String metadataURL = URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/maven-metadata.xml");
+            String metadataURL = URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(CoreNutsUtils.FACE_CATALOG), session);
@@ -200,7 +200,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replaceAll("\\.", "/") + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + extension));
+        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + extension));
     }
 
     @Override

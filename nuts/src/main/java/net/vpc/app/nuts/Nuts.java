@@ -148,7 +148,7 @@ public class Nuts {
 
     public static String getDefaultNutsHome() {
         if (Boolean.getBoolean("nuts.debug.emulate-windows")) {
-            return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts".replace("\\", File.separator);
+            return System.getProperty("user.home") + syspath("\\AppData\\Roaming\\nuts");
         }
         switch (NutsUtils.getPlatformOsFamily()) {
             case "windows":
@@ -225,7 +225,7 @@ public class Nuts {
                 break;
             }
             case TEMP: {
-                return System.getProperty("java.io.tmpdir") + ("/"+System.getProperty("user.name")+"-tmp/nuts".replace("/", File.separator));
+                return System.getProperty("java.io.tmpdir") + syspath(("/"+System.getProperty("user.name")+"-tmp/nuts"));
             }
         }
         throw new NutsIllegalArgumentException("Unsupported " + storeLocationLayout);
@@ -289,6 +289,6 @@ public class Nuts {
     }
 
     public static String syspath(String s) {
-        return s.replace("/", File.separator).replace("\\", File.separator);
+        return s.replace('/', File.separatorChar);
     }
 }

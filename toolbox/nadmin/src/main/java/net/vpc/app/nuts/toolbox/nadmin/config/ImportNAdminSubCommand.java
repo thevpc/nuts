@@ -35,7 +35,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.readAll("import", "ia")) {
             do {
-                String a = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getString();
+                String a = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().getConfigManager().addImports(a);
                 }
@@ -46,7 +46,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.readAll("unimport", "ir")) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getString();
+                String ii = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     context.getWorkspace().getConfigManager().removeImports(ii);
                 }

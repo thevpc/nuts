@@ -64,7 +64,7 @@ public class HelpCommand extends AbstractNutsCommand {
                 showColors = true;
             } else if (cmdLine.isOption()) {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException("Invalid option " + cmdLine.read().getString());
+                    throw new NutsIllegalArgumentException("Invalid option " + cmdLine.read().getStringExpression());
                 }
             } else {
                 commandNames.add(cmdLine.readNonOption(new CommandNonOption("command", context.consoleContext())).getStringOrError());
