@@ -136,7 +136,7 @@ public interface NutsId extends Serializable {
 
     NutsVersion getVersion();
 
-    NutsId apply(ObjectConverter<String, String> properties);
+    NutsId apply(NutsObjectConverter<String, String> properties);
 
     NutsIdBuilder builder();
 }

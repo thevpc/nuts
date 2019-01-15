@@ -62,7 +62,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException("Missing Workspace");
         }
-        NutsTerminal terminal = invokerWorkspace.getIOManager().createTerminal(null,null,null);
+        NutsSessionTerminal terminal = invokerWorkspace.getIOManager().createTerminal();
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -114,9 +114,9 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         NutsWorkspace invokerWorkspace;
         boolean running;
         ServerSocket serverSocket = null;
-        NutsTerminal terminal = null;
+        NutsSessionTerminal terminal = null;
 
-        public MyNutsServer(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsTerminal terminal) {
+        public MyNutsServer(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSessionTerminal terminal) {
             this.serverId = serverId;
             this.finalPort = finalPort;
             this.finalBacklog = finalBacklog;
@@ -178,8 +178,10 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     PrintStream eout = invokerWorkspace.getIOManager().createPrintStream(out,NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
-                                    NutsTerminal terminal = invokerWorkspace.getIOManager().createTerminal(finalAccept.getInputStream(),
-                                            eout, eout);
+                                    NutsSessionTerminal terminal = invokerWorkspace.getIOManager().createTerminal();
+                                    terminal.setIn(finalAccept.getInputStream());
+                                    terminal.setOut(eout);
+                                    terminal.setErr(eout);
                                     session.setTerminal(terminal);
                                     cli = new NutsJavaShell(invokerWorkspace,session);
 //                                    cli.uninstallCommand("server");

@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-@Singleton
+@NutsSingleton
 public interface NutsDefaultRepositoriesProvider extends NutsComponent<NutsWorkspace> {
 
     NutsRepositoryDefinition[] getDefaultRepositories();

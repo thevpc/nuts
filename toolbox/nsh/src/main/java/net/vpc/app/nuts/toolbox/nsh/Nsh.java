@@ -37,6 +37,8 @@ public class Nsh extends NutsApplication {
                 force = a.getBooleanValue();
             }else if((a=cmd.readBooleanOption("-s","--silent"))!=null){
                 silent=a.getBooleanValue();
+            }else{
+                cmd.unexpectedArgument("nsh on-install");
             }
         }
         String nshIdStr = applicationContext.getAppId().toString();

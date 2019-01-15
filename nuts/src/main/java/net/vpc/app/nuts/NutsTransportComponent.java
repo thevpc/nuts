@@ -34,7 +34,7 @@ import java.io.IOException;
 /**
  * Created by vpc on 1/21/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsTransportComponent extends NutsComponent<String> {
 
     NutsHttpConnectionFacade open(String url) throws IOException;

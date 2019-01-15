@@ -61,7 +61,7 @@ public interface NutsSession {
 
     NutsSession setProperties(Map<String, Object> properties);
 
-    NutsTerminal getTerminal();
+    NutsSessionTerminal getTerminal();
 
-    NutsSession setTerminal(NutsTerminal terminal);
+    NutsSession setTerminal(NutsSessionTerminal terminal);
 }

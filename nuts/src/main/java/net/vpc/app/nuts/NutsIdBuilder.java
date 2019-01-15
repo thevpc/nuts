@@ -80,7 +80,7 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsVersion getVersion();
 
-    NutsIdBuilder apply(ObjectConverter<String, String> properties);
+    NutsIdBuilder apply(NutsObjectConverter<String, String> properties);
 
     NutsId build();
 }

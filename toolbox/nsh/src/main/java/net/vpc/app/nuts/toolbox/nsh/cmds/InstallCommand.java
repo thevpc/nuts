@@ -39,7 +39,6 @@ import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
-import java.io.PrintStream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -140,7 +139,7 @@ public class InstallCommand extends AbstractNutsCommand {
         NutsWorkspace ws = context.getWorkspace();
         try {
             file = ws.install(s, new String[0], foundAction, context.getSession());
-        } catch (NutsAlreadytInstalledException ex) {
+        } catch (NutsAlreadtInstalledException ex) {
             context.out().printf("%s already installed\n", s);
             return null;
         } catch (NutsNotInstallableException ex) {

@@ -31,12 +31,12 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.Singleton;
+import net.vpc.app.nuts.NutsSingleton;
 
 /**
  * Created by vpc on 1/24/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsServerComponent extends NutsComponent<ServerConfig> {
 
     /**

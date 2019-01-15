@@ -34,11 +34,9 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode);
 
-    NutsTerminal createDefaultTerminal(InputStream in, PrintStream out, PrintStream err);
-
-    NutsTerminal createTerminal();
-
-    NutsTerminal createTerminal(InputStream in, PrintStream out, PrintStream err);
+    NutsSessionTerminal createTerminal();
+    
+    NutsSessionTerminal createTerminal(NutsTerminalBase parent);
 
     void downloadPath(String from, File to, Object source,NutsSession session);
 

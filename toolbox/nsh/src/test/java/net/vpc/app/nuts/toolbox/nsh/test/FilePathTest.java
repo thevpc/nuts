@@ -34,13 +34,13 @@ public class FilePathTest {
 //        );
 //    }
 
-    @Test
-    public void testKo(){
-        try{
-            XFile.of("ssh://192.168.2.3?password=me&key-file=/home/vpc/my-key.key");
-            Assert.assertTrue(false);
-        }catch (IllegalArgumentException ex){
-            Assert.assertTrue(true);
-        }
-    }
+//    @Test
+//    public void testKo(){
+//        try{
+//            XFile.of("ssh://192.168.2.3?password=me&key-file=/home/vpc/my-key.key");
+//            Assert.assertTrue(false);
+//        }catch (IllegalArgumentException ex){
+//            Assert.assertTrue(true);
+//        }
+//    }
 }

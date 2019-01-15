@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.ArgumentCandidate;
@@ -43,6 +42,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import net.vpc.app.nuts.NutsSessionTerminal;
 
 /**
  * Created by vpc on 1/13/17.
@@ -57,7 +57,7 @@ public interface NutsConsoleContext extends ConsoleContext {
 
     NutsConsoleContext setSession(NutsSession session);
 
-    NutsTerminal getTerminal();
+    NutsSessionTerminal getTerminal();
 
     NutsWorkspace getWorkspace();
 

@@ -1,10 +1,39 @@
+/**
+ * ====================================================================
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
+ *
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * Copyright (C) 2016-2017 Taha BEN SALAH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * ====================================================================
+ */
 package net.vpc.app.nuts;
 
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class NutsArgumentsParser {
+
     private NutsArgumentsParser() {
     }
 
@@ -95,7 +124,36 @@ public final class NutsArgumentsParser {
                     case "--!colors":
                     case "--no-colors": {
                         cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        o.setNoColors(true);
+                        o.setTerminalMode(NutsTerminalMode.FILTERED);
+                        break;
+                    }
+                    case "--term-system": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setTerminalMode(null);
+                        break;
+                    }
+                    case "--term-filtered": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setTerminalMode(NutsTerminalMode.FILTERED);
+                        break;
+                    }
+                    case "--term-formatted": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                        break;
+                    }
+                    case "--term-inherited": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setTerminalMode(NutsTerminalMode.INHERITED);
+                        break;
+                    }
+                    case "--term": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (v.isEmpty()) {
+                            o.setTerminalMode(null);
+                        }else{
+                            o.setTerminalMode(NutsTerminalMode.valueOf(v.trim().toUpperCase()));
+                        }
                         break;
                     }
                     case "--read-only": {
@@ -212,12 +270,12 @@ public final class NutsArgumentsParser {
                     }
                     case "--store-layout": {
                         String v = cmdArgList.getValueFor(cmdArg);
-                        o.setStoreLocationLayout(v.isEmpty() ? null : StoreLocationLayout.valueOf(v.toUpperCase()));
+                        o.setStoreLocationLayout(v.isEmpty() ? null : NutsStoreLocationLayout.valueOf(v.toUpperCase()));
                         break;
                     }
                     case "--store-strategy": {
                         String v = cmdArgList.getValueFor(cmdArg);
-                        o.setStoreLocationStrategy(v.isEmpty() ? null : StoreLocationStrategy.valueOf(v.toUpperCase()));
+                        o.setStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
                         break;
                     }
                     case "--config-location": {
@@ -245,23 +303,23 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--system-layout": {
-                        o.setStoreLocationLayout(StoreLocationLayout.SYSTEM);
+                        o.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
                         break;
                     }
                     case "--windows-layout": {
-                        o.setStoreLocationLayout(StoreLocationLayout.WINDOWS);
+                        o.setStoreLocationLayout(NutsStoreLocationLayout.WINDOWS);
                         break;
                     }
                     case "--linux-layout": {
-                        o.setStoreLocationLayout(StoreLocationLayout.LINUX);
+                        o.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
                         break;
                     }
-                    case "--bundle-strategy": {
-                        o.setStoreLocationStrategy(StoreLocationStrategy.BUNDLE);
+                    case "--standalone-strategy": {
+                        o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         break;
                     }
                     case "--system-strategy": {
-                        o.setStoreLocationStrategy(StoreLocationStrategy.SYSTEM);
+                        o.setStoreLocationStrategy(NutsStoreLocationStrategy.SYSTEM);
                         break;
                     }
                     case "--no-create": {
@@ -299,7 +357,6 @@ public final class NutsArgumentsParser {
         o.setExecutorOptions(executorOptions.toArray(new String[0]));
         return o;
     }
-
 
     private static void parseLogLevel(NutsLogConfig logConfig, NutsMinimalCommandLine.Arg cmdArg, NutsMinimalCommandLine cmdArgList) {
         switch (cmdArg.getKey()) {
@@ -396,6 +453,7 @@ public final class NutsArgumentsParser {
     }
 
     private static class CmdArgList2 extends NutsMinimalCommandLine {
+
         List<String> bootOnlyArgsList = new ArrayList<>();
         List<String> applicationArguments = new ArrayList<>();
 

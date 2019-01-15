@@ -56,6 +56,8 @@ public interface NutsWorkspaceExtensionManager {
      */
     List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session);
 
+    List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session);
+
     List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session);
 
     NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session);
@@ -64,7 +66,7 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsWorkspaceExtension[] getWorkspaceExtensions();
 
-    URLLocation[] getExtensionURLLocations(NutsId id, String appId, String extensionType);
+    NutsURLLocation[] getExtensionURLLocations(NutsId id, String appId, String extensionType);
 
     String[] getExtensionRepositoryLocations(NutsId appId);
 

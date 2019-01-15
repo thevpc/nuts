@@ -52,8 +52,8 @@ public final class NutsWorkspaceConfig implements Serializable {
     /**
      * valid values are "", "bundle"
      */
-    private StoreLocationStrategy storeLocationStrategy = null;
-    private StoreLocationLayout storeLocationLayout = null;
+    private NutsStoreLocationStrategy storeLocationStrategy = null;
+    private NutsStoreLocationLayout storeLocationLayout = null;
 
     private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
     private List<NutsId> extensions = new ArrayList<>();
@@ -327,20 +327,20 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public StoreLocationStrategy getStoreLocationStrategy() {
+    public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public NutsWorkspaceConfig setStoreLocationStrategy(StoreLocationStrategy storeLocationStrategy) {
+    public NutsWorkspaceConfig setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }
 
-    public StoreLocationLayout getStoreLocationLayout() {
+    public NutsStoreLocationLayout getStoreLocationLayout() {
         return storeLocationLayout;
     }
 
-    public NutsWorkspaceConfig setStoreLocationLayout(StoreLocationLayout storeLocationLayout) {
+    public NutsWorkspaceConfig setStoreLocationLayout(NutsStoreLocationLayout storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
     }

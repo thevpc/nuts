@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -44,6 +43,7 @@ import java.nio.file.attribute.FileOwnerAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import net.vpc.app.nuts.NutsSessionTerminal;
 
 /**
  * Created by vpc on 1/7/17.

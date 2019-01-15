@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  */
 public class NutsNotFoundException extends NutsElementNotFoundException {
 
-    private final String nuts;
+    private final String id;
 
     public NutsNotFoundException(NutsId nuts) {
         this(nuts == null ? null : nuts.toString());
@@ -46,24 +46,24 @@ public class NutsNotFoundException extends NutsElementNotFoundException {
 
     public NutsNotFoundException(String nuts) {
         super("No such nuts " + (nuts == null ? "<null>" : nuts));
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
     public NutsNotFoundException(String nuts, String msg, Exception ex) {
         super(
                 NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
     public NutsNotFoundException(NutsId nuts, String msg, Exception ex) {
         super(
                 NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts.toString()) : msg,
                 ex);
-        this.nuts = nuts==null?null:nuts.toString();
+        this.id = nuts==null?null:nuts.toString();
     }
 
-    public String getNuts() {
-        return nuts;
+    public String getId() {
+        return id;
     }
 }

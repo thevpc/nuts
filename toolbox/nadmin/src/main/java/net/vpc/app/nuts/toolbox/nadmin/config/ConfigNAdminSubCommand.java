@@ -7,7 +7,7 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.StoreFolder;
+import net.vpc.app.nuts.NutsStoreFolder;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.commandline.Argument;
@@ -108,7 +108,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.LOGS);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.LOGS);
         if(storeLocation!=null) {
             File file = new File(storeLocation);
             if (file.exists()) {
@@ -128,7 +128,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.VAR);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.VAR);
         if(storeLocation!=null) {
             File file = new File(storeLocation);
             if (file.exists()) {
@@ -141,7 +141,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deletePrgrams(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.PROGRAMS);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.PROGRAMS);
         if(storeLocation!=null) {
             File file = new File(storeLocation);
             if (file.exists()) {
@@ -154,7 +154,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.CONFIG);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.CONFIG);
         if(storeLocation!=null) {
             File file = new File(storeLocation);
             if (file.exists()) {
@@ -167,7 +167,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(StoreFolder.CACHE);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.CACHE);
         if(storeLocation!=null) {
             File cache = new File(storeLocation);
             if (cache.exists()) {

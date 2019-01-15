@@ -40,18 +40,18 @@ public abstract class NutsApplication {
         try {
             System.exit(launch(args));
         } catch (Exception ex) {
-            boolean forceStackTrace=false;
+            int errorCode = 204;
+            boolean showTrace=false;
             for (int i = 0; i < args.length; i++) {
-                if(args[i].startsWith("--")){
+                if(args[i].startsWith("-")){
                     if(args[i].equals("--verbose")){
-                        forceStackTrace=true;
+                        showTrace=true;
                         break;
                     }
                 }else{
                     break;
                 }
             }
-            int errorCode = 204;
             if (ex instanceof NutsExecutionException) {
                 NutsExecutionException ex2 = (NutsExecutionException) ex;
                 if (ex2.getExitCode() == 0) {
@@ -60,24 +60,13 @@ public abstract class NutsApplication {
                 } else {
                     errorCode = ex2.getExitCode();
                 }
-            } else {
-                forceStackTrace=true;
             }
-            try {
-                NutsSession s = null;//ws == null ? null : ws.createSession();
-                PrintStream formattedErr = s == null ? System.err : s.getTerminal().getFormattedErr();
-                String m = ex.getMessage();
-                if (m == null || m.isEmpty()) {
-                    m = ex.toString();
-                }
-                if (m == null || m.isEmpty()) {
-                    m = ex.getClass().getName();
-                }
-                formattedErr.printf("%s\n", m);
-            } catch (Exception xex) {
-                forceStackTrace = true;
+            String m = ex.getMessage();
+            if (m == null || m.length()<5) {
+                m = ex.toString();
             }
-            if (forceStackTrace) {
+            System.err.println(m);
+            if (showTrace) {
                 ex.printStackTrace();
             }
             System.exit(errorCode);
@@ -94,6 +83,13 @@ public abstract class NutsApplication {
             switch (applicationContext.getMode()){
                 case "launch":
                 case "auto-complete":{
+//                    if(!applicationContext.getWorkspace().isInstalled(applicationContext.getAppId(),false,applicationContext.getSession())){
+//                        int i = onInstallApplication(applicationContext);
+//                        if(i!=0){
+//                            throw new NutsExecutionException("Unable to install "+applicationContext.getAppId(),i);
+//                        }
+//                        return i;
+//                    }
                     return launch(applicationContext);
                 }
                 case "on-install":{

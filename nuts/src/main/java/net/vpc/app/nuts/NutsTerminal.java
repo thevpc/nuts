@@ -35,24 +35,8 @@ import java.io.PrintStream;
 /**
  * Created by vpc on 2/20/17.
  */
-@Prototype
 public interface NutsTerminal extends NutsTerminalBase {
+    String readLine(String promptFormat, Object... params);
 
-    PrintStream getFormattedOut();
-
-    PrintStream getFormattedErr();
-
-    PrintStream getFormattedOut(boolean forceNoColors);
-
-    PrintStream getFormattedErr(boolean forceNoColors);
-
-    void setIn(InputStream in);
-
-    void setOut(PrintStream out);
-
-    void setErr(PrintStream out);
-
-    NutsTerminal copy();
-
-    <T> T ask(NutsQuestion<T> question);
+    String readPassword(String prompt, Object... params);
 }

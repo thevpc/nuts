@@ -1,10 +1,10 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.javashell.cmds.CommandContext;
+import net.vpc.app.nuts.NutsSessionTerminal;
 
 public interface NutsCommandContext extends CommandContext {
     NutsConsoleContext consoleContext();
@@ -15,7 +15,7 @@ public interface NutsCommandContext extends CommandContext {
 
     boolean configure(CommandLine cmd);
 
-    NutsTerminal getTerminal();
+    NutsSessionTerminal getTerminal();
 
     NutsJavaShell getShell();
 

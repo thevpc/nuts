@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/23/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsWorkspaceArchetypeComponent extends NutsComponent<Object> {
 
     String getName();

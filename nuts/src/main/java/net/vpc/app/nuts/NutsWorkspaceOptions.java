@@ -56,7 +56,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private String login = null;
     private String password = null;
     private String autoConfig = null;
-    private boolean noColors = false;
+    private NutsTerminalMode terminalMode = null;
     private boolean readOnly = false;
     private long creationTime;
     private NutsClassLoaderProvider classLoaderProvider;
@@ -71,8 +71,8 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
     private String libStoreLocation = null;
-    private StoreLocationLayout storeLocationLayout = null;
-    private StoreLocationStrategy storeLocationStrategy = null;
+    private NutsStoreLocationLayout storeLocationLayout = null;
+    private NutsStoreLocationStrategy storeLocationStrategy = null;
 
     public String getWorkspace() {
         return workspace;
@@ -155,16 +155,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public boolean isNoColors() {
-        return noColors;
-    }
-
-    public NutsWorkspaceOptions setNoColors(boolean noColors) {
-        this.noColors = noColors;
-        return this;
-    }
-
-
     public NutsWorkspaceOptions copy() {
         try {
             NutsWorkspaceOptions t = (NutsWorkspaceOptions) clone();
@@ -177,6 +167,14 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new NutsUnsupportedOperationException("Should never Happen", e);
         }
+    }
+
+    public NutsTerminalMode getTerminalMode() {
+        return terminalMode;
+    }
+
+    public void setTerminalMode(NutsTerminalMode terminalMode) {
+        this.terminalMode = terminalMode;
     }
 
     public long getCreationTime() {
@@ -341,20 +339,20 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public StoreLocationLayout getStoreLocationLayout() {
+    public NutsStoreLocationLayout getStoreLocationLayout() {
         return storeLocationLayout;
     }
 
-    public NutsWorkspaceOptions setStoreLocationLayout(StoreLocationLayout storeLocationLayout) {
+    public NutsWorkspaceOptions setStoreLocationLayout(NutsStoreLocationLayout storeLocationLayout) {
         this.storeLocationLayout = storeLocationLayout;
         return this;
     }
 
-    public StoreLocationStrategy getStoreLocationStrategy() {
+    public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public NutsWorkspaceOptions setStoreLocationStrategy(StoreLocationStrategy storeLocationStrategy) {
+    public NutsWorkspaceOptions setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }

@@ -30,14 +30,14 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsComponent;
-import net.vpc.app.nuts.Singleton;
+import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.javashell.cmds.Command;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsCommand extends NutsComponent<Object>, Command<NutsCommandContext> {
 
 //    String getName();

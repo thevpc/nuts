@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  */
 public class NutsNotExecutableException extends NutsExecutionException {
 
-    private final String nuts;
+    private final String id;
 
     public NutsNotExecutableException(NutsId nuts) {
         this(nuts == null ? null : nuts.toString());
@@ -42,10 +42,10 @@ public class NutsNotExecutableException extends NutsExecutionException {
 
     public NutsNotExecutableException(String nuts) {
         super("Not executable " + (nuts == null ? "<null>" : nuts), -1);
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
-    public String getNuts() {
-        return nuts;
+    public String getId() {
+        return id;
     }
 }

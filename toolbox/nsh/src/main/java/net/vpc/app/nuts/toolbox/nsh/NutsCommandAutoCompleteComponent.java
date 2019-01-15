@@ -30,12 +30,12 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsComponent;
-import net.vpc.app.nuts.Singleton;
+import net.vpc.app.nuts.NutsSingleton;
 
 /**
  * Created by vpc on 3/7/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsCommandAutoCompleteComponent extends NutsComponent<NutsCommand> {
 
     void autoComplete(NutsCommand command, NutsCommandContext context);

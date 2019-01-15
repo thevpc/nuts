@@ -1,6 +1,6 @@
 package net.vpc.app.nuts.toolbox.nsh.term;
 
-import net.vpc.app.nuts.MapListener;
+import net.vpc.app.nuts.NutsMapListener;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.javashell.ShellHistory;
@@ -37,7 +37,7 @@ class NutsJLineHistory implements History {
     public NutsJLineHistory(LineReader reader, NutsWorkspace workspace) {
         attach(reader);
         this.workspace = workspace;
-        workspace.addUserPropertyListener(new MapListener<String, Object>() {
+        workspace.addUserPropertyListener(new NutsMapListener<String, Object>() {
 
             @Override
             public void entryAdded(String name, Object value) {

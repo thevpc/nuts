@@ -38,7 +38,7 @@ class NutsJLineCompleter implements Completer {
                 List<AutoCompleteCandidate> autoCompleteCandidates =
                         nutsConsoleContext.resolveAutoCompleteCandidates(commandName, autoCompleteWords, wordIndex, autoCompleteLine);
                 for (Object cmdCandidate0 : autoCompleteCandidates) {
-                    ArgumentCandidate cmdCandidate = (ArgumentCandidate) cmdCandidate0;
+                    AutoCompleteCandidate cmdCandidate = (AutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
                         if (!StringUtils.isEmpty(value)) {

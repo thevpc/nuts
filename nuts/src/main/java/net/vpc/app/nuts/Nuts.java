@@ -3,77 +3,72 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 /**
+ * Nuts Boot Class
  * Created by vpc on 1/5/17.
  */
 public class Nuts {
 
-    private static final Logger log = Logger.getLogger(Nuts.class.getName());
-
+    /**
+     * main method
+     * This Main will call System.exit() at completion
+     * @param args main arguments
+     */
     public static void main(String[] args) {
         try {
             System.exit(uncheckedMain(args));
         } catch (Exception ex) {
-            boolean showErrorClass = false;
             int errorCode = 204;
-            //inherit error code from exception
-            if (ex instanceof NutsExecutionException) {
-                errorCode = ((NutsExecutionException) ex).getExitCode();
-            }
             boolean showTrace = false;
             for (int i = 0; i < args.length; i++) {
                 if (args[i].startsWith("-")) {
                     if (args[i].equals("--verbose")) {
                         showTrace = true;
-                        showErrorClass = true;
                     }
                 } else {
                     break;
                 }
             }
-            if (ex.getClass().getName().startsWith("java.lang.")) {
-                //this is a common error
-                showTrace = true;
-                showErrorClass = true;
+            if (ex instanceof NutsExecutionException) {
+                NutsExecutionException ex2 = (NutsExecutionException) ex;
+                if (ex2.getExitCode() == 0) {
+                    System.exit(0);
+                    return;
+                } else {
+                    errorCode = ex2.getExitCode();
+                }
             }
             String m = ex.getMessage();
-            if (m == null || m.isEmpty()) {
-                m = ex.toString();
-            }
-            if (m == null || m.isEmpty()) {
-                m = ex.getClass().getName();
-            }
-            if (showErrorClass) {
+            if (m == null || m.length() < 5) {
                 m = ex.toString();
             }
             System.err.println(m);
@@ -84,18 +79,24 @@ public class Nuts {
         }
     }
 
+    /**
+     * Creates a workspace using "--nuts-boot-args" configuration argument.
+     * This method is to be called by child processes of nuts to inherit workspace configuration.
+     * @param args arguments
+     * @return NutsWorkspace instance
+     */
     public static NutsWorkspace openInheritedWorkspace(String[] args) {
         long startTime = System.currentTimeMillis();
-        NutsBootWorkspace boot=null;
+        NutsBootWorkspace boot = null;
         if (args.length > 0 && args[0].startsWith("--nuts-boot-args=")) {
             boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(args[0].substring("--nuts-boot-args=".length())));
-            boot.getOptions().setApplicationArguments(Arrays.copyOfRange(args,1,args.length));
-        }else{
+            boot.getOptions().setApplicationArguments(Arrays.copyOfRange(args, 1, args.length));
+        } else {
             String d = System.getProperty("nuts-boot-args");
-            if(d!=null){
+            if (d != null) {
                 boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(d));
                 boot.getOptions().setApplicationArguments(args);
-            }else {
+            } else {
                 NutsWorkspaceOptions t = new NutsWorkspaceOptions();
                 t.setApplicationArguments(args);
                 boot = new NutsBootWorkspace(t);
@@ -108,6 +109,11 @@ public class Nuts {
         return openWorkspace(boot.getOptions().setCreateIfNotFound(true));
     }
 
+    /**
+     * creates a workspace. Nuts Boot arguments are passed in <code>args</code>
+     * @param args nuts boot arguments
+     * @return new NutsWorkspace instance
+     */
     public static NutsWorkspace openWorkspace(String[] args) {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
@@ -120,14 +126,28 @@ public class Nuts {
         return openWorkspace(boot.getOptions().setCreateIfNotFound(true));
     }
 
+    /**
+     * creates a default workspace (no boot options)
+     * @return new NutsWorkspace instance
+     */
     public static NutsWorkspace openWorkspace() {
         return openWorkspace((NutsWorkspaceOptions) null);
     }
 
+    /**
+     * creates a workspace at location <code>workspace</code>
+     * @param workspace workspace location
+     * @return new NutsWorkspace instance
+     */
     public static NutsWorkspace openWorkspace(String workspace) {
         return openWorkspace(new NutsWorkspaceOptions().setWorkspace(workspace));
     }
 
+    /**
+     * creates a workspace using the given options
+     * @param options boot options
+     * @return new NutsWorkspace instance
+     */
     public static NutsWorkspace openWorkspace(NutsWorkspaceOptions options) {
         if (options == null) {
             options = new NutsWorkspaceOptions();
@@ -138,29 +158,29 @@ public class Nuts {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
-
+    /**
+     * unchecked (may throw exception) main of Nuts application.
+     * This Main will never call System.exit()
+     * @param args boot arguments
+     * @return return code
+     * @throws Exception error exception
+     */
     public static int uncheckedMain(String[] args) throws Exception {
         //long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
         return boot.run();
     }
 
-
-    public static String getDefaultNutsHome() {
-        if (Boolean.getBoolean("nuts.debug.emulate-windows")) {
-            return System.getProperty("user.home") + syspath("\\AppData\\Roaming\\nuts");
-        }
-        switch (NutsUtils.getPlatformOsFamily()) {
-            case "windows":
-                return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts";
-            default:
-                return System.getProperty("user.home") + "/.nuts";
-        }
-    }
-
-    public static String getDefaultHomeFolder(StoreFolder folderType, String home,StoreLocationLayout storeLocationLayout) {
-        if(folderType==null){
-            folderType= StoreFolder.CONFIG;
+    /**
+     * resolves nuts home folder
+     * @param folderType
+     * @param home
+     * @param storeLocationLayout
+     * @return
+     */
+    public static String resolveHomeFolder(NutsStoreFolder folderType, String home, NutsStoreLocationLayout storeLocationLayout) {
+        if (folderType == null) {
+            folderType = NutsStoreFolder.CONFIG;
         }
         boolean absolute = false;
         if (home == null || home.trim().isEmpty()) {
@@ -171,11 +191,11 @@ public class Nuts {
             }
         }
 
-        if (storeLocationLayout == null || storeLocationLayout == StoreLocationLayout.SYSTEM) {
+        if (storeLocationLayout == null || storeLocationLayout == NutsStoreLocationLayout.SYSTEM) {
             if ("windows".equals(NutsUtils.getPlatformOsFamily())) {
-                storeLocationLayout = StoreLocationLayout.WINDOWS;
+                storeLocationLayout = NutsStoreLocationLayout.WINDOWS;
             } else {
-                storeLocationLayout = StoreLocationLayout.LINUX;
+                storeLocationLayout = NutsStoreLocationLayout.LINUX;
             }
         }
         switch (folderType) {
@@ -183,60 +203,109 @@ public class Nuts {
             case VAR:
             case CONFIG:
             case PROGRAMS:
-            case LIB:
-                {
+            case LIB: {
                 if (absolute) {
-                    return syspath(home);
+                    return NutsUtils.syspath(home);
                 } else if (home.isEmpty()) {
                     switch (storeLocationLayout) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts");
+                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts");
                         case LINUX:
-                            return System.getProperty("user.home") + syspath("/.nuts");
+                            return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
                     }
                 } else {
                     switch (storeLocationLayout) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/boot/" + home);
+                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts/boot/" + home);
                         case LINUX:
-                            return System.getProperty("user.home") + syspath("/.nuts/boot/" + home);
+                            return System.getProperty("user.home") + NutsUtils.syspath("/.nuts/boot/" + home);
                     }
                 }
                 break;
             }
             case CACHE: {
                 if (absolute) {
-                    return syspath(home);
+                    return NutsUtils.syspath(home);
                 } else if (home.isEmpty()) {
                     switch (storeLocationLayout) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts");
+                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
                         case LINUX:
-                            return System.getProperty("user.home") + syspath("/.cache/nuts");
+                            return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts");
                     }
                 } else {
                     switch (storeLocationLayout) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/boot/" + home);
+                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts/boot/" + home);
                         case LINUX:
-                            return System.getProperty("user.home") + syspath("/.cache/nuts/boot/" + home);
+                            return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts/boot/" + home);
                     }
                 }
                 break;
             }
             case TEMP: {
-                return System.getProperty("java.io.tmpdir") + syspath(("/"+System.getProperty("user.name")+"-tmp/nuts"));
+                switch (storeLocationLayout) {
+                    case WINDOWS:
+                        //on windows temp folder is user defined
+                        return System.getProperty("java.io.tmpdir") + NutsUtils.syspath("/nuts");
+                    case LINUX:
+                        //on linux temp folder is shared. will add user folder as descriminator
+                        return System.getProperty("java.io.tmpdir") + NutsUtils.syspath(("/" + System.getProperty("user.name") + "/nuts"));
+                }
             }
         }
         throw new NutsIllegalArgumentException("Unsupported " + storeLocationLayout);
     }
 
-    public static String getDefaultWorkspaceFolder(String path,StoreFolder folderType, String home,String workspace,StoreLocationStrategy storeLocationStrategy) {
+    /**
+     * resolves and expands path (folderType) for a given workspace
+     * @param folderType store type
+     * @param config boot config. Should contain home,workspace, and all StoreLocation information
+     * @return resolved folder location
+     */
+    public static String resolveWorkspaceFolder(NutsStoreFolder folderType, NutsBootConfig config) {
+        String workspace=config.getWorkspace();
+        String home=Nuts.resolveHomeFolder(NutsStoreFolder.CONFIG, config.getHome(), config.getStoreLocationLayout());
+        String path=null;
+        switch (folderType){
+            case PROGRAMS:{
+                path=config.getProgramsStoreLocation();
+                break;
+            }
+            case CACHE:{
+                path=config.getCacheStoreLocation();
+                break;
+            }
+            case LOGS:{
+                path=config.getLogsStoreLocation();
+                break;
+            }
+            case TEMP:{
+                path=config.getTempStoreLocation();
+                break;
+            }
+            case CONFIG:{
+                path=config.getConfigStoreLocation();
+                break;
+            }
+            case VAR:{
+                path=config.getVarStoreLocation();
+                break;
+            }
+            case LIB:{
+                path=config.getLibStoreLocation();
+                break;
+            }
+            default:{
+                throw new NutsIllegalArgumentException("Unexpected "+folderType);
+            }
+        }
         if (path != null && !path.trim().isEmpty() && NutsUtils.isAbsolutePath(path)) {
             return path;
         }
+        NutsStoreLocationStrategy storeLocationStrategy=config.getStoreLocationStrategy();
         if (storeLocationStrategy == null) {
-            storeLocationStrategy = StoreLocationStrategy.SYSTEM;
+            storeLocationStrategy = NutsStoreLocationStrategy.SYSTEM;
         }
         if (home == null || home.trim().isEmpty()) {
             throw new NutsIllegalArgumentException("Missing Home");
@@ -251,44 +320,33 @@ public class Nuts {
             }
             workspace = w;
         }
-        String workspaceName=new File(workspace).getName();
+        String workspaceName = new File(workspace).getName();
         if (NutsUtils.isAbsolutePath(workspace)) {
-            if (folderType == null) {
-                //root
-                return workspace;
-            }
             String name = folderType.name().toLowerCase();
             switch (folderType) {
                 case LOGS:
                 case VAR:
                 case CONFIG:
                 case PROGRAMS:
-                case LIB:
-                    {
+                case LIB: {
                     return workspace + File.separator + name;
                 }
                 case TEMP:
                 case CACHE: {
-                    if (storeLocationStrategy == StoreLocationStrategy.BUNDLE) {
+                    if (storeLocationStrategy == NutsStoreLocationStrategy.STANDALONE) {
                         return workspace + File.separator + name;
                     }
-                    return home + syspath("/" + workspaceName + "/" + name);
+                    return home + NutsUtils.syspath("/" + workspaceName + "/" + name);
                 }
             }
         } else {
-            if (folderType == null) {
-                return home;
-            }
             String name = folderType.name().toLowerCase();
-            if (storeLocationStrategy == StoreLocationStrategy.BUNDLE) {
-                return home + syspath("/" + workspaceName + "/" + name);
+            if (storeLocationStrategy == NutsStoreLocationStrategy.STANDALONE) {
+                return home + NutsUtils.syspath("/" + workspaceName + "/" + name);
             }
-            return home + syspath("/" + workspaceName + "/" + name);
+            return home + NutsUtils.syspath("/" + workspaceName + "/" + name);
         }
         throw new NutsIllegalArgumentException("Unsupported");
     }
 
-    public static String syspath(String s) {
-        return s.replace('/', File.separatorChar);
-    }
 }

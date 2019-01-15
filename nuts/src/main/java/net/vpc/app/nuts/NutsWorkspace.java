@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * Created by vpc on 1/5/17.
  */
-@Prototype
+@NutsPrototype
 public interface NutsWorkspace extends NutsComponent<Object> {
 
     /**
@@ -117,7 +117,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     boolean isFetched(NutsId id, NutsSession session);
 
-    void installCompanionTools(boolean force, boolean silent, NutsSession session);
+    void installCompanionTools(boolean ask, boolean force, boolean silent, NutsSession session);
 
     NutsDefinition fetchApiDefinition(NutsSession session);
 
@@ -139,17 +139,17 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsSystemTerminal getSystemTerminal();
 
-    NutsTerminal getTerminal();
+    NutsSessionTerminal getTerminal();
 
-    void setTerminal(NutsTerminal newTerminal);
+    void setTerminal(NutsSessionTerminal newTerminal);
 
     NutsSession createSession();
 
-    void addUserPropertyListener(MapListener<String, Object> listener);
+    void addUserPropertyListener(NutsMapListener<String, Object> listener);
 
-    void removeUserPropertyListener(MapListener<String, Object> listener);
+    void removeUserPropertyListener(NutsMapListener<String, Object> listener);
 
-    MapListener<String, Object>[] getUserPropertyListeners();
+    NutsMapListener<String, Object>[] getUserPropertyListeners();
 
     void removeWorkspaceListener(NutsWorkspaceListener listener);
 

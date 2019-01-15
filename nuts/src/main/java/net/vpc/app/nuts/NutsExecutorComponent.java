@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/7/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
 
     NutsId getId();

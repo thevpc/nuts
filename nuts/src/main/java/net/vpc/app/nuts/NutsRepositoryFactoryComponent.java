@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepoInfo> {
 
     NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace);

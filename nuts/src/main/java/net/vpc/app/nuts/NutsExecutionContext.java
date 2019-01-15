@@ -49,7 +49,7 @@ public interface NutsExecutionContext {
 
     NutsSession getSession();
 
-    NutsTerminal getTerminal();
+    NutsSessionTerminal getTerminal();
 
     Properties getEnv();
 

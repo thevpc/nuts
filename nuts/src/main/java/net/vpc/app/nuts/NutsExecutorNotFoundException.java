@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  */
 public class NutsExecutorNotFoundException extends NutsElementNotFoundException {
 
-    private final String nuts;
+    private final String id;
 
     public NutsExecutorNotFoundException(NutsId nuts) {
         this(nuts == null ? null : nuts.toString());
@@ -46,24 +46,24 @@ public class NutsExecutorNotFoundException extends NutsElementNotFoundException 
 
     public NutsExecutorNotFoundException(String nuts) {
         super("No such nuts executor " + (nuts == null ? "<null>" : nuts));
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
     public NutsExecutorNotFoundException(String nuts, String msg, Exception ex) {
         super(
                 NutsUtils.isEmpty(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
     public NutsExecutorNotFoundException(NutsId nuts, String msg, Exception ex) {
         super(
                 NutsUtils.isEmpty(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts.toString()) : msg,
                 ex);
-        this.nuts = nuts==null?null:nuts.toString();
+        this.id = nuts==null?null:nuts.toString();
     }
 
-    public String getNuts() {
-        return nuts;
+    public String getId() {
+        return id;
     }
 }

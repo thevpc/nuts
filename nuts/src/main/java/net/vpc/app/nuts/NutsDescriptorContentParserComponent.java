@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 1/15/17.
  */
-@Singleton
+@NutsSingleton
 public interface NutsDescriptorContentParserComponent extends NutsComponent<Object> {
 
     NutsDescriptor parse(NutsDescriptorContentParserContext parserContext);

@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  */
 public class NutsNotInstallableException extends NutsElementNotFoundException {
 
-    private final String nuts;
+    private final String id;
 
     public NutsNotInstallableException(NutsId nuts) {
         this(nuts == null ? null : nuts.toString());
@@ -42,17 +42,17 @@ public class NutsNotInstallableException extends NutsElementNotFoundException {
 
     public NutsNotInstallableException(String nuts) {
         super("No such nuts " + (nuts == null ? "<null>" : nuts));
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
     public NutsNotInstallableException(String nuts, String msg, Exception ex) {
         super(
                 NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
-        this.nuts = nuts;
+        this.id = nuts;
     }
 
-    public String getNuts() {
-        return nuts;
+    public String getId() {
+        return id;
     }
 }

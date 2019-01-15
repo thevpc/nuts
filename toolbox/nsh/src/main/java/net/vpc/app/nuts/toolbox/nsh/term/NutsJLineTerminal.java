@@ -38,8 +38,6 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by vpc on 2/20/17.
@@ -60,7 +58,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     @Override
     public void setOutMode(NutsTerminalMode mode) {
-        this.outMode=mode;
+        this.outMode = mode;
     }
 
     @Override
@@ -70,7 +68,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     @Override
     public void setErrorMode(NutsTerminalMode mode) {
-        this.errMode=mode;
+        this.errMode = mode;
     }
 
     @Override
@@ -83,22 +81,15 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         TerminalBuilder builder = TerminalBuilder.builder();
         builder.streams(System.in, System.out);
         builder.system(true);
+        builder.dumb(false);
 
         try {
             terminal = builder.build();
         } catch (Throwable ex) {
             //unable to create system terminal
+            //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NutsIOException(ex);
         }
-        if (terminal == null) {
-            builder.system(false);
-            try {
-                terminal = builder.build();
-            } catch (IOException ex) {
-                Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-                throw new NutsIOException(ex);
-            }
-        }
-
         reader = LineReaderBuilder.builder()
                 .completer(new NutsJLineCompleter(workspace))
                 .terminal(terminal)
@@ -109,13 +100,13 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));
         this.out = workspace.getIOManager().createPrintStream(
                 new TransparentPrintStream(
-                        reader.getTerminal().output(),
+                        new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 )
                 , NutsTerminalMode.FORMATTED);
         this.err = workspace.getIOManager().createPrintStream(
                 new TransparentPrintStream(
-                        reader.getTerminal().output(),
+                        new PrintStream(reader.getTerminal().output(), true),
                         System.err
                 )
                 , NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
@@ -129,10 +120,12 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public String readLine(String promptFormat, Object... params) {
+    public String readLine(PrintStream out, String prompt, Object... params) {
         String readLine = null;
         try {
-            readLine = reader.readLine(promptFormat);
+            out.printf(prompt, params);
+            out.print(" : ");
+            readLine = reader.readLine("");
         } catch (UserInterruptException e) {
             throw new InterruptShellException();
         }
@@ -145,8 +138,10 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public String readPassword(String prompt) {
-        return reader.readLine(prompt, '*');
+    public String readPassword(PrintStream out, String prompt, Object... params) {
+        out.printf(prompt, params);
+        out.print(" : ");
+        return reader.readLine("", '*');
     }
 
     @Override
@@ -164,7 +159,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         return err;
     }
 
-    private static class TransparentInputStream extends FilterInputStream implements InputStreamTransparentAdapter {
+    private static class TransparentInputStream extends FilterInputStream implements NutsInputStreamTransparentAdapter {
         private InputStream root;
 
         public TransparentInputStream(InputStream in, InputStream root) {
@@ -178,7 +173,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         }
     }
 
-    private static class TransparentPrintStream extends PrintStream implements OutputStreamTransparentAdapter {
+    private static class TransparentPrintStream extends PrintStream implements NutsOutputStreamTransparentAdapter {
         private OutputStream root;
 
         public TransparentPrintStream(OutputStream out, OutputStream root) {

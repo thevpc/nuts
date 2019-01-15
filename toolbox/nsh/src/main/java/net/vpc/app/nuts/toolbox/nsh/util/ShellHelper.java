@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.toolbox.nsh.util;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.ssh.SshListener;
@@ -9,6 +8,7 @@ import net.vpc.common.xfile.XFile;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsSessionTerminal;
 
 public class ShellHelper {
     public static XFile xfileOf(String expression, String cwd) {
@@ -73,7 +73,7 @@ public class ShellHelper {
         }
     }
 
-    public static boolean readAccept(NutsTerminal t) {
+    public static boolean readAccept(NutsSessionTerminal t) {
         while (true) {
             String v = t.readLine("Accept (y/n) : ?");
             if (v == null) {

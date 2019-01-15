@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -45,9 +45,9 @@ import java.util.zip.ZipFile;
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its
  * dependencies and for creating workspaces using the method
- * {@link #openWorkspace()} . NutsBootWorkspace
- * is also responsible of managing local jar cache folder located at
- * $root/default-workspace/cache where $root is the nuts root folder (~/.nuts) defined by
+ * {@link #openWorkspace()} . NutsBootWorkspace is also responsible of managing
+ * local jar cache folder located at $root/default-workspace/cache where $root
+ * is the nuts root folder (~/.nuts) defined by
  * <pre>
  *   ~/.nuts/default-workspace/cache
  *       └── net
@@ -97,8 +97,7 @@ public class NutsBootWorkspace {
         if (options == null) {
             options = new NutsWorkspaceOptions()
                     .setCreateIfNotFound(true)
-                    .setSaveIfCreated(true)
-            ;
+                    .setSaveIfCreated(true);
         }
         if (options.getCreationTime() == 0) {
             options.setCreationTime(creationTime);
@@ -119,9 +118,9 @@ public class NutsBootWorkspace {
         }
         runningBootConfig = new NutsBootConfig(options);
         NutsLogUtils.bootstrap(options.getLogConfig());
-        log.log(Level.CONFIG, "Open Nus Workspace... : app="+Arrays.toString(options.getApplicationArguments())+" ; boot="+Arrays.toString(options.getBootArguments()));
+        log.log(Level.CONFIG, "Open Nus Workspace... : app=" + Arrays.toString(options.getApplicationArguments()) + " ; boot=" + Arrays.toString(options.getBootArguments()));
         loadedBootConfig = compile(runningBootConfig);
-        NutsLogUtils.prepare(options.getLogConfig(), Nuts.syspath(runningBootConfig.getLogsStoreLocation() + "/log/net/vpc/app/nuts/nuts/LATEST"));
+        NutsLogUtils.prepare(options.getLogConfig(), NutsUtils.syspath(runningBootConfig.getLogsStoreLocation() + "/log/net/vpc/app/nuts/nuts/LATEST"));
 
         requiredBootVersion = options.getRequiredBootVersion();
         if (requiredBootVersion == null) {
@@ -149,7 +148,6 @@ public class NutsBootWorkspace {
         this.contextClassLoaderProvider = options.getClassLoaderProvider() == null ? NutsDefaultClassLoaderProvider.INSTANCE : options.getClassLoaderProvider();
     }
 
-
     public boolean isRequiredNewProcess() {
         return newInstance;
     }
@@ -173,7 +171,7 @@ public class NutsBootWorkspace {
         File file = NutsUtils.resolveOrDownloadJar(NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion,
                 new String[]{
                         defaultWorkspaceLibFolder,
-                        System.getProperty("user.home") + Nuts.syspath("/.m2/repository"),
+                        System.getProperty("user.home") + NutsUtils.syspath("/.m2/repository"),
                         NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
                         NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
                         NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
@@ -188,9 +186,9 @@ public class NutsBootWorkspace {
                             .setApiVersion(requiredBootVersion)
                             .setRuntimeId(null)
                             .setJavaCommand(bootJavaCommand)
-                            .setJavaOptions(bootJavaCommand)
-                    , options.getHome()
-                    , options.getWorkspace(), null,
+                            .setJavaOptions(bootJavaCommand),
+                    options.getHome(),
+                    options.getWorkspace(), null,
                     errors.toString()
             );
             throw new NutsIllegalArgumentException("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion);
@@ -274,7 +272,7 @@ public class NutsBootWorkspace {
             bootRuntime = NutsBootId.parse(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
         }
         String[] repositories = NutsUtils.splitUrlStrings(info.actualBootConfig.getRepositories()).toArray(new String[0]);
-        File f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, true);
+        File f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !reset);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(this.runningBootConfig.getWorkspace(), "Unable to load " + bootRuntime);
         }
@@ -322,11 +320,23 @@ public class NutsBootWorkspace {
 
     public int run() throws IOException {
         switch (this.getOptions().getBootCommand()) {
-            case CLEAN:
+            case CLEAN: {
+                if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
+                    return 0;
+                }
+                if (!Boolean.getBoolean("nut.workspace-clean")) {
+                    return actionReset(null);
+                }
+                return actionClean(null);
+            }
             case RESET: {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
+                if (!Boolean.getBoolean("nut.workspace-reset")) {
+                    return actionReset(null);
+                }
+                break;
             }
         }
 
@@ -374,6 +384,7 @@ public class NutsBootWorkspace {
     }
 
     private static class OpenWorkspaceData {
+
         NutsBootConfig bootConfig0 = null;
         NutsBootConfig actualBootConfig = null;
         URL[] bootClassWorldURLs = null;
@@ -444,7 +455,11 @@ public class NutsBootWorkspace {
                 throw ex;
             } catch (Throwable ex) {
                 info = new OpenWorkspaceData();
-                openWorkspaceAttempt(info, true);
+                try {
+                    openWorkspaceAttempt(info, true);
+                } catch (Throwable ex2) {
+                    throw ex;
+                }
             }
             return info.nutsWorkspace;
         } catch (NutsReadOnlyException ex) {
@@ -463,10 +478,10 @@ public class NutsBootWorkspace {
                         .setRuntimeId(runtimeId);
             }
             showError(
-                    info.actualBootConfig
-                    , info.bootConfig0
-                    , this.runningBootConfig.getHome()
-                    , options.getWorkspace(),
+                    info.actualBootConfig,
+                    info.bootConfig0,
+                    this.runningBootConfig.getHome(),
+                    options.getWorkspace(),
                     info.bootClassWorldURLs,
                     ex.toString()
             );
@@ -476,7 +491,6 @@ public class NutsBootWorkspace {
             throw new NutsIllegalArgumentException("Unable to locate valid nuts-core components", ex);
         }
     }
-
 
     private URL[] resolveClassWorldURLs(Collection<File> list) {
         List<URL> urls = new ArrayList<>();
@@ -515,7 +529,7 @@ public class NutsBootWorkspace {
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
         }
-        initial.add(workspaceLocation + "/repositories/local/components");
+        initial.add("${workspace}/" + NutsConstants.FOLDER_NAME_REPOSITORIES + "/" + NutsConstants.DEFAULT_REPOSITORY_NAME + "/" + NutsConstants.FOLDER_NAME_LIB);
         initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT);
         initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL);
         initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT);
@@ -530,7 +544,7 @@ public class NutsBootWorkspace {
         String repositories = bootConfig0.getRepositories();
         List<String> resolvedBootRepositories = new ArrayList<>();
         if (NutsUtils.isEmpty(runtimeId) || NutsUtils.isEmpty(repositories)) {
-            resolvedBootRepositories.add(libFolder);
+            resolvedBootRepositories.add("${lib}");
             resolvedBootRepositories.addAll(Arrays.asList(NutsUtils.splitAndRemoveDuplicates(this.runtimeSourceURL, NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT)));
             for (String repo : resolvedBootRepositories) {
                 URL urlString = buildURL(repo, bootAPIPropertiesPath);
@@ -557,7 +571,6 @@ public class NutsBootWorkspace {
             }
         }
 
-
         if (NutsUtils.isEmpty(runtimeId)) {
             runtimeId = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + apiId.getVersion() + ".0";
             log.log(Level.CONFIG, "[ERROR  ] Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
@@ -569,7 +582,7 @@ public class NutsBootWorkspace {
         List<NutsBootConfig> all = new ArrayList<>();
 
         resolvedBootRepositories.clear();
-        resolvedBootRepositories.add(libFolder);
+        resolvedBootRepositories.add("${lib}");
         resolvedBootRepositories.addAll(Arrays.asList(resolveBootConfigRepositories(/*repositories*/)));
 
         String bootRuntimePropertiesPath = getPathFile(_runtimeId, "nuts.properties");
@@ -578,7 +591,7 @@ public class NutsBootWorkspace {
             URL urlString = buildURL(u, bootRuntimePropertiesPath);
             if (urlString != null) {
                 try {
-                    Properties p = NutsUtils.loadURLProperties(urlString, new File(libFolder, Nuts.syspath(bootAPIPropertiesPath)));
+                    Properties p = NutsUtils.loadURLProperties(urlString, new File(libFolder, NutsUtils.syspath(bootAPIPropertiesPath)));
                     if (p != null && !p.isEmpty()) {
                         cp = NutsUtils.createNutsBootConfig(p);
                         cp = bootConfig0.copy()
@@ -626,7 +639,7 @@ public class NutsBootWorkspace {
                 String pomPath = getPathFile(bootRuntimeNutsId, getFileName(bootRuntimeNutsId, "pom"));
                 URL urlString = buildURL(repoURL, pomPath);
                 if (urlString != null) {
-                    String[] bootNutsIds = NutsUtils.parseDependenciesFromMaven(urlString, new File(libFolder, Nuts.syspath(pomPath)));
+                    String[] bootNutsIds = NutsUtils.parseDependenciesFromMaven(urlString, new File(libFolder, NutsUtils.syspath(pomPath)));
                     if (bootNutsIds != null) {
                         NutsBootConfig bcc = bootConfig0.copy()
                                 .setApiVersion(apiId.getVersion())
@@ -642,7 +655,7 @@ public class NutsBootWorkspace {
                         p.setProperty("project.name", apiId.getGroupId() + ":" + apiId.getArtifactId());
                         p.setProperty("runtimeId", bootRuntimeNutsId.toString());
                         p.setProperty("repositories", bcc.getRepositories());
-                        File cacheFile = new File(libFolder, Nuts.syspath(bootAPIPropertiesPath));
+                        File cacheFile = new File(libFolder, NutsUtils.syspath(bootAPIPropertiesPath));
                         NutsUtils.storeProperties(p, cacheFile);
                         log.log(Level.CONFIG, "[CACHED ] Caching properties file {0}", new Object[]{cacheFile.getPath()});
 
@@ -654,7 +667,7 @@ public class NutsBootWorkspace {
 //                        p.setProperty("runtimeId",bootRuntimeNutsId.toString());
 //                        p.setProperty("repositories",bcc.getRepositories());
                         p.setProperty("project.dependencies.compile", bcc.getRuntimeDependencies() == null ? "" : bcc.getRuntimeDependencies());
-                        cacheFile = new File(libFolder, Nuts.syspath(bootRuntimePropertiesPath));
+                        cacheFile = new File(libFolder, NutsUtils.syspath(bootRuntimePropertiesPath));
                         NutsUtils.storeProperties(p, cacheFile);
                         log.log(Level.CONFIG, "[CACHED ] Caching properties file {0}", new Object[]{cacheFile.getPath()});
                         break;
@@ -686,20 +699,60 @@ public class NutsBootWorkspace {
         return cp;
     }
 
-    protected String expandPath(String path) {
-        String home = this.runningBootConfig.getHome();
-        if (path.startsWith(home + File.separator)) {
-            path = home + File.separator + path.substring(home.length() + 1);
+    protected String expandPath(String path, String base) {
+//        String home = this.runningBootConfig.getHome();
+//        if (path.startsWith(home + File.separator)) {
+//            path = home + File.separator + path.substring(home.length() + 1);
+//        }
+        path = NutsUtils.replaceDollarString(path, new NutsObjectConverter<String, String>() {
+            @Override
+            public String convert(String from) {
+                switch (from) {
+                    case "home":
+                        return runningBootConfig.getHome();
+                    case "workspace":
+                        return runningBootConfig.getWorkspace();
+                    case "user.home":
+                        return System.getProperty("user.home");
+                    case "config":
+                        return runningBootConfig.getConfigStoreLocation();
+                    case "lib":
+                        return runningBootConfig.getLibStoreLocation();
+                    case "programs":
+                        return runningBootConfig.getProgramsStoreLocation();
+                    case "cache":
+                        return runningBootConfig.getCacheStoreLocation();
+                    case "temp":
+                        return runningBootConfig.getTempStoreLocation();
+                    case "logs":
+                        return runningBootConfig.getLogsStoreLocation();
+                    case "var":
+                        return runningBootConfig.getVarStoreLocation();
+                }
+                return "${" + from + "}";
+            }
+        });
+        if (NutsUtils.isRemoteURL(path) || path.startsWith("file:")) {
+            return path;
         }
-        if (path.startsWith("~" + File.separator)) {
+        if (path.startsWith("~/") || path.startsWith("~\\")) {
             path = System.getProperty("user.home") + path.substring(1);
         }
-        return path;
+        if (path.startsWith("~~/") || path.startsWith("~~\\")) {
+            path = runningBootConfig.getHome() + path.substring(1);
+        }
+        if (base == null) {
+            base = System.getProperty("user.dir");
+        }
+        if (new File(path).isAbsolute()) {
+            return path;
+        }
+        return base + File.separator + path;
     }
 
     protected URL expandURL(String url) throws MalformedURLException {
-        url = expandPath(url);
-        if (NutsUtils.isRemoteURL(url)) {
+        url = expandPath(url, runningBootConfig.getWorkspace());
+        if (NutsUtils.isRemoteURL(url) || url.startsWith("file:")) {
             return new URL(url);
         }
         return new File(url).toURI().toURL();
@@ -717,6 +770,7 @@ public class NutsBootWorkspace {
     }
 
     private URL buildURL(String base, String path) {
+        base = expandPath(base, runningBootConfig.getWorkspace());
         try {
             if (NutsUtils.isRemoteURL(base)) {
                 if (!base.endsWith("/") && !path.endsWith("/")) {
@@ -761,7 +815,7 @@ public class NutsBootWorkspace {
         return id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/" + name;
     }
 
-//    private String getPath(NutsBootId id, String ext) {
+    //    private String getPath(NutsBootId id, String ext) {
 //        String ff = id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/nuts." + ext;
 //        System.out.println(ff);
 //        return ff;
@@ -769,16 +823,14 @@ public class NutsBootWorkspace {
 //    private String getPath(NutsBootId id, String ext) {
 //        return id.groupId.replace('.', '/') + '/' + id.artifactId + '/' + id.version + "/" + getFileName(id, ext);
 //    }
-
 //    private File getBootFile(NutsBootId id, String fileName, String repository, File cacheFolder, boolean useCache) {
 //        String path = getPathFile(id, fileName);
 //        return getBootFile(path, repository, cacheFolder, useCache);
 //    }
-
     private File getBootFile(String path, String repository, String cacheFolder, boolean useCache) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         repository = repository.trim();
-        repository = expandPath(repository);
+        repository = expandPath(repository, runningBootConfig.getWorkspace());
         if (useCache && cacheFolder != null) {
 
             File f = new File(cacheFolder, path.replace('/', File.separatorChar));
@@ -987,11 +1039,11 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 PrintStream out = workspace.getTerminal().getFormattedOut();
-                out.println(
-                        workspace.getFormatManager().createWorkspaceVersionFormat()
-                                .addOptions(o.getApplicationArguments())
-                                .format()
-                );
+
+                workspace.getFormatManager().createWorkspaceVersionFormat()
+                        .addOptions(o.getApplicationArguments())
+                        .format(out);
+                out.println();
                 return 0;
             }
             case INFO: {
@@ -1019,11 +1071,10 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 PrintStream out = workspace.getTerminal().getFormattedOut();
-                out.println(
-                        workspace.getFormatManager().createWorkspaceInfoFormat()
-                                .addOptions(o.getApplicationArguments())
-                                .format()
-                );
+                workspace.getFormatManager().createWorkspaceInfoFormat()
+                        .addOptions(o.getApplicationArguments())
+                        .format(out);
+                out.println();
                 return 0;
             }
             case HELP: {
@@ -1119,7 +1170,7 @@ public class NutsBootWorkspace {
                         silent = true;
                     }
                 }
-                workspace.installCompanionTools(force, silent, null);
+                workspace.installCompanionTools(!force, force, silent, null);
                 return 0;
             }
             case UPDATE: {
@@ -1130,8 +1181,8 @@ public class NutsBootWorkspace {
                 if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
                                 .setApplyUpdates(true)
                                 .setEnableMajorUpdates(true)
-                                .setEnableMajorUpdates(true)
-                        , null).length > 0) {
+                                .setEnableMajorUpdates(true),
+                        null).length > 0) {
                     return 0;
                 }
                 return 1;
@@ -1144,8 +1195,8 @@ public class NutsBootWorkspace {
                 if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
                                 .setApplyUpdates(false)
                                 .setEnableMajorUpdates(true)
-                                .setEnableMajorUpdates(true)
-                        , null).length > 0) {
+                                .setEnableMajorUpdates(true),
+                        null).length > 0) {
                     return 0;
                 }
                 return 1;
@@ -1179,7 +1230,7 @@ public class NutsBootWorkspace {
                 .getResult();
     }
 
-    private void actionReset(NutsWorkspace workspace) throws IOException {
+    private int actionReset(NutsWorkspace workspace) throws IOException {
         NutsWorkspaceOptions o = getOptions();
         NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.getConfigManager();
         boolean force = false;
@@ -1198,7 +1249,7 @@ public class NutsBootWorkspace {
         List<File> folders = new ArrayList<>();
         if (conf != null) {
             folders.add(new File(conf.getWorkspaceLocation()));
-            for (StoreFolder value : StoreFolder.values()) {
+            for (NutsStoreFolder value : NutsStoreFolder.values()) {
                 folders.add(new File(conf.getStoreLocation(value)));
             }
         } else {
@@ -1212,6 +1263,7 @@ public class NutsBootWorkspace {
             folders.add(new File(runningBootConfig.getConfigStoreLocation()));
         }
         NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force);
+        return 0;
     }
 
     private int actionClean(NutsWorkspace workspace) throws IOException {
@@ -1236,9 +1288,9 @@ public class NutsBootWorkspace {
         }
         List<File> folders = new ArrayList<>();
         if (workspace != null) {
-            folders.add(new File(conf.getStoreLocation(StoreFolder.LIB)));
-            folders.add(new File(conf.getStoreLocation(StoreFolder.CACHE)));
-            folders.add(new File(conf.getStoreLocation(StoreFolder.LOGS)));
+            folders.add(new File(conf.getStoreLocation(NutsStoreFolder.LIB)));
+            folders.add(new File(conf.getStoreLocation(NutsStoreFolder.CACHE)));
+            folders.add(new File(conf.getStoreLocation(NutsStoreFolder.LOGS)));
         } else {
             folders.add(new File(runningBootConfig.getLibStoreLocation()));
             folders.add(new File(runningBootConfig.getCacheStoreLocation()));
@@ -1261,12 +1313,11 @@ public class NutsBootWorkspace {
         }
     }
 
-
     public static String getActualVersion() {
         return NutsUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"), null).getProperty("project.version", "0.0.0");
     }
 
-    public static void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String home, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
+    public void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String home, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
         System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.\n");
         System.err.printf("This component needs Internet connexion to initialize Nuts configuration.\n");
         System.err.printf("Don't panic, once components are downloaded, you will be able to work offline...\n");
@@ -1285,6 +1336,8 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-store-logs                  : %s\n", workspaceConfig.getLogsStoreLocation());
         System.err.printf("  nuts-home                        : %s\n", home);
         System.err.printf("  workspace-location               : %s\n", (workspace == null ? "<default-location>" : workspace));
+        System.err.printf("  boot-args                        : %s\n", Arrays.toString(options.getBootArguments()));
+        System.err.printf("  app-args                         : %s\n", Arrays.toString(options.getApplicationArguments()));
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s\n", "<none>");
         } else {
@@ -1322,7 +1375,7 @@ public class NutsBootWorkspace {
      */
     private NutsBootConfig compile(NutsBootConfig config) {
         NutsBootConfig configLoaded = null;
-        config.setHome(Nuts.getDefaultHomeFolder(null, config.getHome(), config.getStoreLocationLayout()));
+        config.setHome(Nuts.resolveHomeFolder(null, config.getHome(), config.getStoreLocationLayout()));
         String ws = options.getWorkspace();
         for (int i = 0; i < 36; i++) {
             ws = resolveWorkspacePath(ws);
@@ -1346,18 +1399,18 @@ public class NutsBootWorkspace {
         }
 
         if (config.getStoreLocationLayout() == null) {
-            config.setStoreLocationLayout(StoreLocationLayout.SYSTEM);
+            config.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
         }
         if (config.getStoreLocationStrategy() == null) {
-            config.setStoreLocationStrategy(StoreLocationStrategy.SYSTEM);
+            config.setStoreLocationStrategy(NutsStoreLocationStrategy.SYSTEM);
         }
-        config.setProgramsStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getProgramsStoreLocation(), StoreFolder.PROGRAMS, Nuts.getDefaultHomeFolder(StoreFolder.PROGRAMS, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
-        config.setLogsStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getLogsStoreLocation(), StoreFolder.LOGS, Nuts.getDefaultHomeFolder(StoreFolder.LOGS, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
-        config.setVarStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getVarStoreLocation(), StoreFolder.VAR, Nuts.getDefaultHomeFolder(StoreFolder.VAR, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
-        config.setCacheStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getCacheStoreLocation(), StoreFolder.CACHE, Nuts.getDefaultHomeFolder(StoreFolder.CACHE, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
-        config.setLibStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getLibStoreLocation(), StoreFolder.LIB, Nuts.getDefaultHomeFolder(StoreFolder.LIB, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
-        config.setTempStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getTempStoreLocation(), StoreFolder.TEMP, Nuts.getDefaultHomeFolder(StoreFolder.TEMP, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
-        config.setConfigStoreLocation(Nuts.getDefaultWorkspaceFolder(config.getConfigStoreLocation(), StoreFolder.CONFIG, Nuts.getDefaultHomeFolder(StoreFolder.CONFIG, config.getHome(), config.getStoreLocationLayout()), config.getWorkspace(), config.getStoreLocationStrategy()));
+        config.setProgramsStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.PROGRAMS, config));
+        config.setLogsStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.LOGS, config));
+        config.setVarStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.VAR, config));
+        config.setCacheStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.CACHE, config));
+        config.setLibStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.LIB, config));
+        config.setTempStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.TEMP, config));
+        config.setConfigStoreLocation(Nuts.resolveWorkspaceFolder(NutsStoreFolder.CONFIG, config));
         return configLoaded;
     }
 

@@ -59,32 +59,35 @@ java -jar nuts-0.5.3.jar
 
 ## Change Log
 ### nuts 0.5.3.0
-    1- First support to Windows platform
+    1- (WINDOWS) First support to Windows platform
         * Support for Console coloring on windows
         * Storing to AppData\\Local and AppData\\Roaming folders
-        * [[DOING]] jline works poorly...
-    2- API Change
+        * ndi is not yet supported!
+    2- (LINUX,UNIX) ndi no more stores to ~/bin but instead it updates .bashrc to point to current workspace
+        added a confirmation question.
+    3- API Change
         * Moved getStoreRoot from NutsWorkspace to NutsWorkspaceConfigManager
-        * Added StoreType : CACHE
-        * Introduced NutsDeploymentBuilder
-        * Introduced NutsIoManager,NutsParseManager,NutsFormatManager
-    3- Fixed Log configuration, introduced --log-inherited to enable inherited log-handlers
-    4- Fixed support for install/uninstall hooks
-    5- Added "description" section to pom files
-    6- Fixed Archetype support
-    7- Added Archetype "standalone" to help bundling and application with all its dependencies
-    8- Fixed Repository Layout where ref repo folder is created twice
-    9- Fixed Multiple pom download issue
-    10- Fixed Gson parsing issue
-    11- Added "Lib" layout store folder for both bootstrap jars and repo jars
-    12- Added alternative descriptor property to support multi architecture nuts
-    13- Added DescriptorFormat interface
+        * Added StoreType : CACHE,LIB
+        * Introduced NutsDeploymentBuilder,NutsIoManager,NutsParseManager,NutsFormatManager,DescriptorFormat
+        * Introduced NutsSessionTerminal,NutsSystemTerminal
+        * Added description, alternative (to support multi architecture nuts) descriptor properties
+    4- Added Archetype "standalone" to help bundling and application with all its dependencies
+    5- Several fixes
+        * Fixed Log configuration, introduced --log-inherited to enable inherited log-handlers
+        * Fixed support for install/uninstall hooks
+        * Fixed Repository Layout where ref repo folder is created twice
+        * Fixed Multiple pom download issue
+        * Fixed Gson parsing issue
+        * Fixed autocomplete support
+    6- nsh 
+        * introduced pwd,set unset,alias,unalias,autocomplete commands
+        * fixed support to autocomplete
+    7- TODO 
+        * Code Comments
+        * Help files
 
 ### nuts 0.5.2.0
     1- Global refactoring
-        * Introduced NutsCommandExecBuilder
-        * Introduced NutsDependencyBuilder
-        * Introduced NutsDeploymentBuilder
-        * Introduced NutsIdBuilder
-        * Introduced NutsClassLoaderBuilder
+        * Introduced NutsCommandExecBuilder, NutsDependencyBuilder, NutsDeploymentBuilder, 
+            NutsIdBuilder, NutsClassLoaderBuilder
     2- Extracted nsh commands as regular nuts package (nadmin, nfind)

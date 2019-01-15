@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.toolbox.nsh;
 
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.commandline.Argument;
@@ -10,6 +9,7 @@ import net.vpc.common.javashell.Env;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsSessionTerminal;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
     private NutsConsoleContext consoleContext;
@@ -132,7 +132,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     }
 
     @Override
-    public NutsTerminal getTerminal() {
+    public NutsSessionTerminal getTerminal() {
         return consoleContext.getTerminal();
     }
 

@@ -90,19 +90,7 @@ public class NutsJavaShell extends JavaShell {
         context.setSession(session);
         //add default commands
         List<Command> allCommand=new ArrayList<>();
-        allCommand.add(new EnvCmd());
-        allCommand.add(new AliasCmd());
         allCommand.add(new ExitCmd());
-//        allCommand.add(new PropsCmd());
-        allCommand.add(new SetCmd());
-//        allCommand.add(new SetPropCmd());
-        allCommand.add(new ShowerrCmd());
-        allCommand.add(new UnsetCmd());
-        allCommand.add(new UnaliasCmd());
-        allCommand.add(new UnexportCmd());
-        allCommand.add(new TypeCmd());
-        allCommand.add(new SourceCmd());
-        allCommand.add(new PwdCmd());
 
         for (NutsCommand command : workspace.getExtensionManager().createAllSupported(NutsCommand.class, this)) {
             NutsCommand old = findCommand(command.getName());
@@ -117,7 +105,7 @@ public class NutsJavaShell extends JavaShell {
         context.getUserProperties().put(ConsoleContext.class.getName(), javaShellContext);
         try {
             histFile=new File(workspace.getConfigManager().getStoreLocation(workspace.resolveIdForClass(NutsJavaShell.class)
-                    .getSimpleNameId().setVersion("LATEST"), StoreFolder.VAR),"nsh.history");
+                    .getSimpleNameId().setVersion("LATEST"), NutsStoreFolder.VAR),"nsh.history");
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
                 getHistory().load(histFile);
@@ -309,7 +297,7 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public int run(String[] args) {
-        NutsTerminal terminal = context.getTerminal();
+        NutsSessionTerminal terminal = context.getTerminal();
         PrintStream out = terminal.getFormattedOut();
         PrintStream err = terminal.getFormattedErr();
         List<String> nonOptions = new ArrayList<>();
@@ -351,6 +339,9 @@ public class NutsJavaShell extends JavaShell {
         if (nonOptions.isEmpty()) {
             interactive = true;
         }
+        if(!cmd.isExecMode()){
+            return 0;
+        }
         if(appContext!=null){
             javaShellContext.setTerminalMode(appContext.getTerminalMode());
             javaShellContext.setVerbose(appContext.isVerbose());
@@ -387,7 +378,7 @@ public class NutsJavaShell extends JavaShell {
     }
 
     protected int runInteractive(PrintStream out) {
-        NutsTerminal terminal = null;
+        NutsSessionTerminal terminal = null;
         printHeader(out);
 
         while (true) {

@@ -13,7 +13,7 @@ import java.util.Objects;
 public class NutsApplicationContext implements CommandLineContext {
     public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "@@Candidate@@: ";
     private final Class appClass;
-    private final NutsTerminal terminal;
+    private final NutsSessionTerminal terminal;
     private NutsWorkspace workspace;
     private NutsSession session;
     private PrintStream out;
@@ -22,6 +22,8 @@ public class NutsApplicationContext implements CommandLineContext {
     private PrintStream err0;
     private String programsFolder;
     private String configFolder;
+    private String libFolder;
+    private String cacheFolder;
     private String logsFolder;
     private String tempFolder;
     private String varFolder;
@@ -102,11 +104,13 @@ public class NutsApplicationContext implements CommandLineContext {
         setErr0(getTerminal().getFormattedErr());
         setOut(getOut0());
         setErr(getErr0());
-        setProgramsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.PROGRAMS));
-        setConfigFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.CONFIG));
-        setLogsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.LOGS));
-        setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.TEMP));
-        setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), StoreFolder.VAR));
+        setProgramsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.PROGRAMS));
+        setConfigFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.CONFIG));
+        setLogsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.LOGS));
+        setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.TEMP));
+        setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.VAR));
+        setLibFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.LIB));
+        setCacheFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.CACHE));
         if (wordIndex >= 0) {
             setTerminalMode(NutsTerminalMode.FILTERED);
         }
@@ -206,11 +210,11 @@ public class NutsApplicationContext implements CommandLineContext {
         return appClass;
     }
 
-    public NutsTerminal terminal() {
+    public NutsSessionTerminal terminal() {
         return terminal;
     }
 
-    public NutsTerminal getTerminal() {
+    public NutsSessionTerminal getTerminal() {
         return terminal;
     }
 
@@ -428,6 +432,24 @@ public class NutsApplicationContext implements CommandLineContext {
 
     public NutsApplicationContext setAppPreviousVersion(NutsVersion previousVersion) {
         this.appPreviousVersion = previousVersion;
+        return this;
+    }
+
+    public String getLibFolder() {
+        return libFolder;
+    }
+
+    public NutsApplicationContext setLibFolder(String libFolder) {
+        this.libFolder = libFolder;
+        return this;
+    }
+
+    public String getCacheFolder() {
+        return cacheFolder;
+    }
+
+    public NutsApplicationContext setCacheFolder(String cacheFolder) {
+        this.cacheFolder = cacheFolder;
         return this;
     }
 }

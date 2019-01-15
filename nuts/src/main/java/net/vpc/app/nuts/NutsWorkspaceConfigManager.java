@@ -189,21 +189,21 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     List<NutsWorkspaceCommand> findCommands(NutsId id);
 
-    String getStoreLocation(StoreFolder folderType);
+    String getStoreLocation(NutsStoreFolder folderType);
 
-    void setStoreLocation(StoreFolder folderType, String location);
+    void setStoreLocation(NutsStoreFolder folderType, String location);
 
-    void setStoreLocationStrategy(StoreLocationStrategy strategy);
+    void setStoreLocationStrategy(NutsStoreLocationStrategy strategy);
 
-    StoreLocationStrategy getStoreLocationStrategy();
+    NutsStoreLocationStrategy getStoreLocationStrategy();
 
-    void setStoreLocationLayout(StoreLocationLayout layout);
+    void setStoreLocationLayout(NutsStoreLocationLayout layout);
 
-    StoreLocationLayout getStoreLocationLayout();
+    NutsStoreLocationLayout getStoreLocationLayout();
 
-    String getStoreLocation(String id, StoreFolder folderType);
+    String getStoreLocation(String id, NutsStoreFolder folderType);
 
-    String getStoreLocation(NutsId id, StoreFolder folderType);
+    String getStoreLocation(NutsId id, NutsStoreFolder folderType);
 
     NutsId getPlatformOs();
 

@@ -20,7 +20,7 @@ public class TomcatMain extends NutsApplication {
     public int launch(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         if (args.length == 0) {
-            throw new NutsExecutionException("Expected --remote or --server",2);
+            throw new NutsExecutionException("Expected --local or --remote",2);
         }
         List<String> argsList = new ArrayList<>();
         CommandLine cmd = new CommandLine(args);
@@ -28,16 +28,12 @@ public class TomcatMain extends NutsApplication {
         while (cmd.hasNext()) {
             Argument a = cmd.read();
             if (local == null) {
-                if (a.getExpression().equals("--remote") || a.getExpression().equals("-r")) {
+                if(appContext.configure(cmd)){
+                    //
+                }else if (a.getExpression().equals("--remote") || a.getExpression().equals("-r")) {
                     local = false;
                 } else if (a.getExpression().equals("--local") || a.getExpression().equals("-l")) {
                     local = true;
-                } else if (a.getExpression().equals("--version")) {
-                    appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf("%s\n", appContext.getWorkspace().resolveIdForClass(getClass()).getVersion());
-                    return 0;
-                } else if (a.getExpression().equals("--help")) {
-                    appContext.getWorkspace().createSession().getTerminal().getFormattedOut().printf(appContext.getWorkspace().resolveDefaultHelpForClass(getClass()));
-                    return 0;
                 } else if (a.isOption()) {
                     argsList.add(a.getExpression());
                 } else {

@@ -94,7 +94,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
     }
 
 
-    public NutsTerminal getTerminal() {
+    public NutsSessionTerminal getTerminal() {
         if (commandContext != null) {
             return commandContext.getTerminal();
         }
@@ -290,9 +290,9 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                                         if (display == null) {
                                             display = value;
                                         }
-                                        autoComplete.getCandidates().add(new DefaultArgumentCandidate(
+                                        autoComplete.addCandidate(
                                                 value, display
-                                        ));
+                                        );
                                     }
                                 } else {
                                     //ignore all the rest!

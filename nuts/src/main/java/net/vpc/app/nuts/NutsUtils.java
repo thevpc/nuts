@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
  * Created by vpc on 1/15/17.
  */
 final class NutsUtils {
+
     private static final Logger log = Logger.getLogger(NutsUtils.class.getName());
     private static Pattern JSON_BOOT_KEY_VAL = Pattern.compile("\"(?<key>(.+))\"\\s*:\\s*\"(?<val>[^\"]*)\"");
 
@@ -87,8 +88,8 @@ final class NutsUtils {
     }
 
     /**
-     * BootRuntimeDependencies are separated with any of ':' ',' ';'  ' ' '\n' '\t'
-     * if the path  contains :, it should be escaped with \
+     * BootRuntimeDependencies are separated with any of ':' ',' ';' ' ' '\n'
+     * '\t' if the path contains :, it should be escaped with \
      *
      * @param str
      * @return
@@ -319,7 +320,7 @@ final class NutsUtils {
     }
 
     public static File resolvePath(String path, File baseFolder, String nutsHome) {
-        System.out.println("resolvePath "+path+" :: "+baseFolder+" ::"+nutsHome);
+        System.out.println("resolvePath " + path + " :: " + baseFolder + " ::" + nutsHome);
         if (path != null && path.length() > 0) {
             String firstItem = "";
             if ('\\' == File.separatorChar) {
@@ -336,7 +337,7 @@ final class NutsUtils {
             if (firstItem.equals("~~")) {
                 System.out.println("\t ##1");
                 return resolvePath(nutsHome + File.separator + path.substring(2), null, nutsHome);
-            }else if (path.indexOf('/')<0 && path.indexOf('\\')<0) {
+            } else if (path.indexOf('/') < 0 && path.indexOf('\\') < 0) {
                 System.out.println("\t ##2");
                 return resolvePath(nutsHome + File.separator + path.substring(2), null, nutsHome);
             } else if (firstItem.equals("~")) {
@@ -494,28 +495,13 @@ final class NutsUtils {
         return (url.startsWith("http://") || url.startsWith("https://"));
     }
 
-    public static String resolveWorkspaceLocation(String home, String workspace) {
-        if (home == null) {
-            home = Nuts.getDefaultNutsHome();
-        }
-        if (workspace == null) {
-            workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
-        }
-        String baseFolder = (new File(workspace).isAbsolute() ? workspace : (home + "/" + workspace));
-        baseFolder = baseFolder.replace('\\', '/');
-        if (baseFolder.startsWith("~/")) {
-            baseFolder = System.getProperty("user.home") + baseFolder.substring(1);
-        }
-        return baseFolder.replace('/', File.separatorChar);
-    }
-
     public static String toMavenFileName(String nutsId, String extension) {
         String[] arr = nutsId.split("[:#]");
-        return arr[1] +
-                "-" +
-                arr[2] +
-                "." +
-                extension;
+        return arr[1]
+                + "-"
+                + arr[2]
+                + "."
+                + extension;
     }
 
     public static String toMavenPath(String nutsId) {
@@ -604,6 +590,17 @@ final class NutsUtils {
         return null;
     }
 
+    public static String replaceDollarString(String path, NutsObjectConverter<String, String> m) {
+        Pattern compiled = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
+        Matcher matcher = compiled.matcher(path);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String x = m.convert(matcher.group("name"));
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
 
     public static NutsBootConfig loadNutsBootConfig(String workspace) {
         File versionFile = new File(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
@@ -614,7 +611,7 @@ final class NutsUtils {
                 if (str.length() > 0) {
                     loadedFile = true;
                     if (log.isLoggable(Level.FINEST)) {
-                        log.log(Level.FINEST, "Loading Workspace Config {0}" , versionFile.getPath());
+                        log.log(Level.FINEST, "Loading Workspace Config {0}", versionFile.getPath());
                     }
                     str = str.trim();
                     if (str.length() > 0) {
@@ -721,10 +718,10 @@ final class NutsUtils {
                                         if (log.isLoggable(Level.FINEST)) {
                                             log.log(Level.FINEST, "\tLoaded Workspace Config {0}={1}", new Object[]{k, val});
                                         }
-                                        StoreLocationStrategy strategy = StoreLocationStrategy.SYSTEM;
+                                        NutsStoreLocationStrategy strategy = NutsStoreLocationStrategy.SYSTEM;
                                         if (!val.isEmpty()) {
                                             try {
-                                                strategy = StoreLocationStrategy.valueOf(val.toUpperCase());
+                                                strategy = NutsStoreLocationStrategy.valueOf(val.toUpperCase());
                                             } catch (Exception ex) {
                                                 //
                                             }
@@ -736,10 +733,10 @@ final class NutsUtils {
                                         if (log.isLoggable(Level.FINEST)) {
                                             log.log(Level.FINEST, "\tLoaded Workspace Config {0}={1}", new Object[]{k, val});
                                         }
-                                        StoreLocationLayout layout = StoreLocationLayout.SYSTEM;
+                                        NutsStoreLocationLayout layout = NutsStoreLocationLayout.SYSTEM;
                                         if (!val.isEmpty()) {
                                             try {
-                                                layout = StoreLocationLayout.valueOf(val.toUpperCase());
+                                                layout = NutsStoreLocationLayout.valueOf(val.toUpperCase());
                                             } catch (Exception ex) {
                                                 //
                                             }
@@ -766,7 +763,6 @@ final class NutsUtils {
         return new NutsBootConfig();
     }
 
-
     public static List<String> splitUrlStrings(String repositories) {
         return split(repositories, "\n;", true);
     }
@@ -791,8 +787,7 @@ final class NutsUtils {
         return new NutsBootConfig()
                 .setRuntimeId(id + "#" + version)
                 .setRuntimeDependencies(dependencies)
-                .setRepositories(repositories)
-                ;
+                .setRepositories(repositories);
     }
 
     public static int parseFileSize(String s) {
@@ -823,7 +818,6 @@ final class NutsUtils {
         }
         return val * multiplier;
     }
-
 
     public static String formatPeriodMilli(long period) {
         StringBuilder sb = new StringBuilder();
@@ -971,11 +965,15 @@ final class NutsUtils {
     }
 
     public static int deleteAndConfirmAll(File[] folders, boolean force) throws IOException {
+        return deleteAndConfirmAll(folders, force,new boolean[1]);
+    }
+    
+    public static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll) throws IOException {
         int count = 0;
         if (folders != null) {
             for (File child : folders) {
                 if (child.exists()) {
-                    NutsUtils.deleteAndConfirm(child, force);
+                    NutsUtils.deleteAndConfirm(child, force, refForceAll);
                     count++;
                 }
             }
@@ -983,14 +981,18 @@ final class NutsUtils {
         return count;
     }
 
-    public static boolean deleteAndConfirm(File directory, boolean force) throws IOException {
+    public static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll) throws IOException {
         if (directory.exists()) {
-            if (!force) {
+            if (!force && !refForceAll[0]) {
                 Scanner s = new Scanner(System.in);
                 System.out.println("Deleting folder " + directory);
-                System.out.print("\t Are you sure? : ");
+                System.out.print("\t Are you sure [y/n] ? : ");
                 String line = s.nextLine();
-                if (!"y".equals(line) && !"yes".equals(line)) {
+                if ("y".equalsIgnoreCase(line) || "yes".equalsIgnoreCase(line)) {
+                    //ok
+                } else if ("a".equalsIgnoreCase(line) && !"all".equalsIgnoreCase(line)) {
+                    refForceAll[0]=true;
+                } else {
                     throw new NutsUserCancelException();
                 }
             }
@@ -1007,7 +1009,7 @@ final class NutsUtils {
 
             @Override
             public FileVisitResult visitFile(Path file,
-                                             BasicFileAttributes attrs) throws IOException {
+                    BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
@@ -1074,5 +1076,9 @@ final class NutsUtils {
         }
         String ss = s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
+    }
+
+    public static String syspath(String s) {
+        return s.replace('/', File.separatorChar);
     }
 }

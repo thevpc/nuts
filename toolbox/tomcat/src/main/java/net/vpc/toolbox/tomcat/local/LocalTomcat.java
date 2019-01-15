@@ -332,6 +332,9 @@ public class LocalTomcat {
                 args.unexpectedArgument("tomcat --local add");
             }
         }
+        if (c == null) {
+            c = loadOrCreateTomcatConfig(null);
+        }
         if (c != null) {
             c.save();
             //just check it is installed!!

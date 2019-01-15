@@ -1,5 +1,6 @@
 package net.vpc.app.nuts;
 
+import java.io.PrintStream;
 import java.util.Properties;
 
 public interface NutsWorkspaceVersionFormat {
@@ -12,4 +13,5 @@ public interface NutsWorkspaceVersionFormat {
     NutsWorkspaceVersionFormat addOptions(String... o);
 
     String format();
+    void format(PrintStream out);
 }
