@@ -98,7 +98,6 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                         NutsDescriptor d =new DefaultNutsDescriptorBuilder()
                                 .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
                                 .setExecutable(mainClass.isSet())
-                                .setExt("jar")
                                 .setPackaging("jar")
                                 .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
                                 .build();
@@ -139,7 +138,6 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             baseNutsDescriptor =new DefaultNutsDescriptorBuilder()
                     .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
                     .setExecutable(true)
-                    .setExt("jar")
                     .setPackaging("jar")
                     .build();
         }

@@ -61,7 +61,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
-        String storeFolder = nutMainFile.getInstallFolder();
+        String storeFolder = nutMainFile.getInstallation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorOptions();
         String[] appArgs = executionContext.getArgs();
 //        String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecutorOptions());
@@ -93,7 +93,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(dir));
         return CoreIOUtils.execAndWait(
                 nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),

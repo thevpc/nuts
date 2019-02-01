@@ -41,8 +41,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     protected String nutsPath;
     protected String workspaceLocation;
     protected String workspaceBootRuntime;
-    protected String home;
-    protected String workspaceBootURL;
+   protected String workspaceBootURL;
     protected String workspaceExcludedRepositories;
     protected String workspaceExcludedExtensions;
     protected String workspaceArchetype;
@@ -141,7 +140,6 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
             nutsWorkspace =
                     Nuts.openWorkspace(
                     new NutsWorkspaceOptions()
-                            .setHome(getHome())
                             .setBootRuntime(getWorkspaceBootRuntime())
                             .setBootRuntimeSourceURL(getRuntimeSourceURL())
                             .setClassLoaderProvider(new NutsSingletonClassLoaderProvider(getParent()))
@@ -365,14 +363,6 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
 
     public void setWorkspaceBootURL(String workspaceBootURL) {
         this.workspaceBootURL = workspaceBootURL;
-    }
-
-    public String getHome() {
-        return home;
-    }
-
-    public void setHome(String home) {
-        this.home = home;
     }
 
     public String getWorkspaceExcludedRepositories() {

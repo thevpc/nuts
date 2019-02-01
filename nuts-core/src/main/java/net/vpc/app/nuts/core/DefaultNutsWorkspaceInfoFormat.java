@@ -112,8 +112,8 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             }
 
             props.put("nuts-runtime-path", StringUtils.join(":", runtimeClassPath));
-            props.put("nuts-home", configManager.getHomeLocation());
             props.put("nuts-workspace", configManager.getWorkspaceLocation());
+            props.put("nuts-workspace-id", configManager.getUuid());
             props.put("nuts-read-only", String.valueOf(configManager.isReadOnly()));
             props.put("nuts-secure", String.valueOf(configManager.isSecure()));
             for (NutsStoreFolder folderType : NutsStoreFolder.values()) {
@@ -129,6 +129,9 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             }
             props.put("os-arch", ws.getConfigManager().getPlatformArch().toString());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            props.put("user-name", System.getProperty("user.name"));
+            props.put("user-home", System.getProperty("user.home"));
+            props.put("user-dir", System.getProperty("user.dir"));
             props.put("creation-started", dateFormat.format(ws.getConfigManager().getCreationStartTimeMillis()));
             props.put("creation-finished", dateFormat.format(ws.getConfigManager().getCreationFinishTimeMillis()));
             props.put("creation-within", Chronometer.formatPeriodMilli(ws.getConfigManager().getCreationTimeMillis()).trim());

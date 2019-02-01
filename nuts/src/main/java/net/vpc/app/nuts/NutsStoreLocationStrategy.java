@@ -29,7 +29,16 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ *
+ */
 public enum NutsStoreLocationStrategy {
+    /**
+     * Default location strategy. locations will be exploded to distinct roots
+     */
+    EXPLODED,
+    /**
+     * locations will be located at the very same root folder
+     */
     STANDALONE,
-    SYSTEM,
 }

@@ -39,14 +39,14 @@ import net.vpc.common.strings.StringUtils;
 public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
-    public int getSupportLevel(NutsRepoInfo criteria) {
+    public int getSupportLevel(NutsRepositoryLocation criteria) {
         String repositoryType = criteria.getType();
         String location = criteria.getLocation();
         if (
                 !NutsConstants.REPOSITORY_TYPE_NUTS.equals(repositoryType)
                         && !NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(repositoryType)
                         && !NutsConstants.REPOSITORY_TYPE_NUTS_SERVER.equals(repositoryType)
-                ) {
+        ) {
             return NO_SUPPORT;
         }
         if (StringUtils.isEmpty(location)) {
@@ -62,20 +62,23 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
+    public NutsRepository create(NutsRepositoryLocation location, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         if (
-                NutsConstants.REPOSITORY_TYPE_NUTS.equals(repositoryType)
-                        || NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(repositoryType)
-                        || NutsConstants.REPOSITORY_TYPE_NUTS_SERVER.equals(repositoryType)
-                ) {
-            if (location == null || !location.contains("://")) {
-                return new NutsFolderRepository(repositoryId, location, workspace, parentRepository);
+                NutsConstants.REPOSITORY_TYPE_NUTS.equals(location.getType())
+                        || NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(location.getType())
+                        || NutsConstants.REPOSITORY_TYPE_NUTS_SERVER.equals(location.getType())
+        ) {
+            if (StringUtils.isEmpty(location.getLocation())) {
+                return new NutsFolderRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot);
             }
-            if (location.startsWith("http://") || location.startsWith("https://")) {
-                if (NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(repositoryType)) {
-                    return (new NutsRemoteFolderHttpRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));
+            if (!location.getLocation().contains("://")) {
+                return new NutsFolderRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot);
+            }
+            if (location.getLocation().startsWith("http://") || location.getLocation().startsWith("https://")) {
+                if (NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(location.getType())) {
+                    return (new NutsRemoteFolderHttpRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot));
                 }
-                return (new NutsRemoteHttpRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));
+                return (new NutsRemoteHttpRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot));
             }
         }
         return null;
@@ -84,7 +87,7 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return new NutsRepositoryDefinition[]{
-                new NutsRepositoryDefinition("system", FileUtils.getNativePath(workspace.getConfigManager().getPlatformOsLibPath() + "/nuts/system-repository"), "nuts", false,NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL)
+                new NutsRepositoryDefinition("system", FileUtils.getNativePath(workspace.getConfigManager().getPlatformOsLibPath() + "/nuts/system-repository"), "nuts", false, NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL)
         };
     }
 }

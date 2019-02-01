@@ -121,9 +121,9 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                log.log(Level.CONFIG, "[SUCCESS] Loading pom.xml file from  {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
+                log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
             } else {
-                log.log(Level.CONFIG, "[SUCCESS] Loading pom.xml file from  {0}", new Object[]{urlDesc});
+                log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0}", new Object[]{urlDesc});
             }
 
             return new DefaultNutsDescriptorBuilder()
@@ -131,7 +131,6 @@ public class MavenUtils {
                     .setParents(pom.getParent()==null? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
                     .setExecutable(executable)
-                    .setExt("war".equals(pom.getPackaging()) ? "war" : "jar")
                     .setName(pom.getArtifactId())
                     .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})
@@ -143,9 +142,9 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                log.log(Level.CONFIG, "[ERROR  ] Loading pom.xml file from  {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
+                log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
             } else {
-                log.log(Level.CONFIG, "[ERROR  ] Loading pom.xml file from  {0}", new Object[]{urlDesc});
+                log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
             }
             throw new NutsParseException("Error Parsing " + urlDesc, e);
         }
@@ -176,7 +175,7 @@ public class MavenUtils {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
                             NutsSession session2=(transitiveSession.getFetchMode()==NutsFetchMode.REMOTE)?transitiveSession.copy().setFetchMode(NutsFetchMode.ONLINE):transitiveSession;
-                            parentDescriptor = ws.fetchDescriptor(parentId, true, session2);
+                            parentDescriptor = ws.fetch(parentId).setIncludeEffective(true).setSession(session2).fetchDescriptor();
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
@@ -216,7 +215,7 @@ public class MavenUtils {
                         if (d == null) {
                             try {
                                 NutsSession session2=(transitiveSession.getFetchMode()==NutsFetchMode.REMOTE)?transitiveSession.copy().setFetchMode(NutsFetchMode.ONLINE):transitiveSession;
-                                d = ws.fetchDescriptor(pid, true, session2);
+                                d = ws.fetch(pid).setIncludeEffective(true).setSession(session2).fetchDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {

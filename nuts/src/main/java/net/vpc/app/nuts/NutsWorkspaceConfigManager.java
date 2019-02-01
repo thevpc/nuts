@@ -74,13 +74,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     boolean isReadOnly();
 
-    /**
-     * nuts root folder. It defaults to "~/.nuts"
-     *
-     * @return nuts root folder
-     */
-    String getHomeLocation();
-
     void setEnv(String property, String value);
 
     Map<String, String> getRuntimeProperties();
@@ -131,9 +124,9 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     void addRepository(NutsRepositoryLocation repository);
 
 
-    void removeRepository(String repositoryId);
+    void removeRepository(String repositoryName);
 
-    NutsRepositoryLocation getRepository(String repositoryId);
+    NutsRepositoryLocation getRepository(String repositoryName);
 
     boolean containsExtension(NutsId extensionId);
 
@@ -189,6 +182,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     List<NutsWorkspaceCommand> findCommands(NutsId id);
 
+    String getHome(NutsStoreFolder folderType);
+
     String getStoreLocation(NutsStoreFolder folderType);
 
     void setStoreLocation(NutsStoreFolder folderType, String location);
@@ -196,6 +191,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     void setStoreLocationStrategy(NutsStoreLocationStrategy strategy);
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
     void setStoreLocationLayout(NutsStoreLocationLayout layout);
 
@@ -220,5 +217,13 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     long getCreationTimeMillis();
 
     NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent);
+
+    String getDefaultIdFilename(NutsId id);
+
+    String getDefaultIdExtension(NutsId id);
+
+    NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
+
+    String getUuid();
 }
 

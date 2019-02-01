@@ -136,7 +136,7 @@ public class HistoryCommand extends AbstractNutsCommand {
                 if(o.sval==null) {
                     shistory.save();
                 }else{
-                    shistory.save(new File(context.getWorkspace().getIOManager().resolvePath(o.sval)));
+                    shistory.save(new File(context.getWorkspace().getIOManager().expandPath(o.sval)));
                 }
                 return 0;
             }
@@ -145,7 +145,7 @@ public class HistoryCommand extends AbstractNutsCommand {
                     shistory.clear();
                     shistory.load();
                 }else{
-                    shistory.load(new File(context.getWorkspace().getIOManager().resolvePath(o.sval)));
+                    shistory.load(new File(context.getWorkspace().getIOManager().expandPath(o.sval)));
                 }
                 return 0;
             }

@@ -43,7 +43,7 @@ import java.util.Stack;
  */
 public class FolderNutIdIterator implements Iterator<NutsId> {
 
-    private String repositoryId;
+    private NutsRepository repository;
     private NutsId last;
     private Stack<File> stack = new Stack<File>();
     private NutsIdFilter filter;
@@ -53,8 +53,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private long visitedFoldersCount;
     private long visitedFilesCount;
 
-    public FolderNutIdIterator(NutsWorkspace workspace, String repositoryId, File folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model) {
-        this.repositoryId = repositoryId;
+    public FolderNutIdIterator(NutsWorkspace workspace, NutsRepository repository, File folder, NutsIdFilter filter, NutsSession session, FolderNutIdIteratorModel model) {
+        this.repository = repository;
         this.session = session;
         this.filter = filter;
         this.workspace = workspace;
@@ -105,7 +105,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                         t = nutsDescriptor;
                     }
                     if (t != null && (filter == null || filter.accept(t.getId()))) {
-                        NutsId nutsId = t.getId().setNamespace(repositoryId);
+                        NutsId nutsId = t.getId().setNamespace(repository.getName());
                         nutsId = nutsId.setFace(StringUtils.isEmpty(t.getAlternative()) ? NutsConstants.QUERY_FACE_DEFAULT_VALUE : t.getAlternative());
                         last = nutsId;
                         break;

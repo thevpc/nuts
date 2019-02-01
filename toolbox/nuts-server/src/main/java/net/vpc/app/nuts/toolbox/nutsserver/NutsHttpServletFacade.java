@@ -77,12 +77,12 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDefinition fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id, context.getSession().copy().setTransitive(transitive));
+                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchDefinition();
                 } catch (Exception exc) {
                     //
                 }
-                if (fetch != null && fetch.getFile() != null && new File(fetch.getFile()).exists()) {
-                    context.sendResponseFile(200, new File(fetch.getFile()));
+                if (fetch != null && fetch.getContent().getFile() != null && new File(fetch.getContent().getFile()).exists()) {
+                    context.sendResponseFile(200, new File(fetch.getContent().getFile()));
                 } else {
                     context.sendError(404, "File Note Found");
                 }
@@ -96,7 +96,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDescriptor fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetchDescriptor(id, false, context.getSession().copy().setTransitive(transitive));
+                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchDescriptor();
                 } catch (Exception exc) {
                     //
                 }
@@ -115,7 +115,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetchHash(id, context.getSession().copy().setTransitive(transitive));
+                    hash = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchContentHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -134,7 +134,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetchDescriptorHash(id, context.getSession().copy().setTransitive(transitive));
+                    hash = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchDescriptorHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -173,7 +173,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsId fetch = null;
                 try {
-                    fetch = context.getWorkspace().resolveId(id, context.getSession().copy().setTransitive(transitive));
+                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchId();
                 } catch (Exception exc) {
                     //
                 }
@@ -259,7 +259,11 @@ public class NutsHttpServletFacade {
                             }
                             break;
                         case "content":
-                            contentFile = createTempFile(descriptor,null);
+                            contentFile =context.getWorkspace().getIOManager().createTempFile(
+                                    context.getWorkspace().getConfigManager().getDefaultIdFilename(
+                                            descriptor.getId().setFaceDescriptor()
+                                    )
+                            );
                             IOUtils.copy(info.getContent(), contentFile, true, true);
                             break;
                     }
@@ -457,46 +461,4 @@ public class NutsHttpServletFacade {
         String path;
     }
 
-    public static File createTempFile(NutsDescriptor descriptor, File directory) {
-        String prefix = "temp-";
-        String ext = null;
-        if (descriptor != null) {
-            ext = StringUtils.trim(descriptor.getExt());
-            prefix = StringUtils.trim(descriptor.getId().getGroup()) + "-" + StringUtils.trim(descriptor.getId().getName()) + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
-            if (prefix.length() < 3) {
-                prefix = prefix + "tmp";
-            }
-            if (!ext.isEmpty()) {
-                ext = "." + ext;
-                if (ext.length() < 3) {
-                    ext = ".tmp" + ext;
-                }
-            } else {
-                ext = "-nuts";
-            }
-        }
-        ext = ext + ".nuts";
-        try {
-            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), directory);
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
-//    private List<String> parsePath(String requestURI) {
-//        List<String> list = new ArrayList<String>(Arrays.asList(requestURI.split("/")));
-//        for (Iterator<String> iterator = list.iterator(); iterator.hasNext(); ) {
-//            String s = iterator.next();
-//            if (s.trim().length() == 0) {
-//                iterator.remove();
-//            }
-//        }
-//        for (int i = list.size() - 1; i >= 0; i--) {
-//            if (list.get(i).equals("..")) {
-//                list.remove(i);
-//                i++;
-//            }
-//        }
-//        return list;
-//    }
 }

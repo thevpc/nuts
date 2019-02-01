@@ -128,7 +128,7 @@ public class BashNutsDescriptorContentParserComponent implements NutsDescriptorC
                 return new DefaultNutsDescriptorBuilder()
                         .setId(CoreNutsUtils.parseNutsId("temp:sh#1.0"))
                         .setExecutable(true)
-                        .setExt("sh")
+//                        .setExt("sh")
                         .setPackaging("sh")
                         .setExecutor(new NutsExecutorDescriptor(BASH))
                         .build();

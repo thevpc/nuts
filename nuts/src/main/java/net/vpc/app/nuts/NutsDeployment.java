@@ -30,7 +30,7 @@
 package net.vpc.app.nuts;
 
 public interface NutsDeployment {
-    String getRepositoryId();
+    String getRepositoryName();
 
     NutsConfirmAction getFoundAction();
 

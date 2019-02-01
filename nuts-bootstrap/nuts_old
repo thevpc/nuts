@@ -36,7 +36,7 @@ check_file_size () {
     if [ -f "$1" ] ; then
         actualsize=$(wc -c <"$1")
     fi
-    echo $actualsize;
+    echo ${actualsize};
 }
 
 base=$(dirname $0)

@@ -117,9 +117,43 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
+    public String getOs() {
+        String s = getQueryMap().get(NutsConstants.QUERY_OS);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getOsdist() {
+        String s = getQueryMap().get(NutsConstants.QUERY_OSDIST);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getPlatform() {
+        String s = getQueryMap().get(NutsConstants.QUERY_PLATFORM);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getArch() {
+        String s = getQueryMap().get(NutsConstants.QUERY_ARCH);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
     public NutsIdBuilder setFace(String value) {
         return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsIdBuilder setFaceComponent() {
+        return setFace(NutsConstants.FACE_COMPONENT);
+    }
+
+    @Override
+    public NutsIdBuilder setFaceDescriptor() {
+        return setFace(NutsConstants.FACE_DESCRIPTOR);
     }
 
     @Override
@@ -138,6 +172,36 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     public NutsIdBuilder setClassifier(String value) {
         return setQueryProperty("classifier", StringUtils.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsIdBuilder setScope(String value) {
+        return setQueryProperty(NutsConstants.QUERY_SCOPE, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsIdBuilder setOptional(String value) {
+        return setQueryProperty(NutsConstants.QUERY_OPTIONAL, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsIdBuilder setPackaging(String value) {
+        return setQueryProperty(NutsConstants.QUERY_PACKAGING, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsIdBuilder setPlatform(String value) {
+        return setQueryProperty(NutsConstants.QUERY_PLATFORM, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsIdBuilder setOs(String value) {
+        return setQueryProperty(NutsConstants.QUERY_OSDIST, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsIdBuilder setOsdist(String value) {
+        return setQueryProperty(NutsConstants.QUERY_OS, StringUtils.trimToNull(value));
     }
 
     @Override

@@ -37,7 +37,6 @@ import java.util.Arrays;
  */
 public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
-    private String home;
     private String bootRuntime;
     private String bootJavaCommand;
     private String bootJavaOptions;
@@ -49,6 +48,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private boolean ignoreIfFound;
     private boolean createIfNotFound;
     private boolean saveIfCreated;
+    /**
+     * if true, all means are deployed to recover from corrupted workspace.
+     * This flag may alter current used version of nuts to update to latest.
+     */
+    private boolean recover;
     private String archetype;
     private String[] excludedExtensions;
     private String[] excludedRepositories;
@@ -73,6 +77,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private String libStoreLocation = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
+    private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
 
     public String getWorkspace() {
         return workspace;
@@ -192,17 +197,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
-        return this;
-    }
-
-
-
-    public String getHome() {
-        return home;
-    }
-
-    public NutsWorkspaceOptions setHome(String home) {
-        this.home = home;
         return this;
     }
 
@@ -357,6 +351,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
+    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+        return repositoryStoreLocationStrategy;
+    }
+
+    public NutsWorkspaceOptions setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
+        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+        return this;
+    }
+
     public String getProgramsStoreLocation() {
         return programsStoreLocation;
     }
@@ -420,14 +423,19 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
+    public boolean isRecover() {
+        return recover;
+    }
+
+    public NutsWorkspaceOptions setRecover(boolean recover) {
+        this.recover = recover;
+        return this;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("NutsBootOptions(");
         boolean empty = true;
-        if (home != null) {
-            sb.append("home=").append(home);
-            empty = false;
-        }
         if (bootRuntime != null) {
             if (!empty) {
                 sb.append(", ");

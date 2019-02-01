@@ -12,7 +12,9 @@ import java.util.Properties;
  */
 public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
-    String getId();
+    String getUuid();
+
+    String getName();
 
     String getType();
 
@@ -25,11 +27,9 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     String getLocation();
 
-    String getComponentsLocation();
-
-    void setComponentsLocation(String location);
-
     String getStoreLocation();
+
+    String getStoreLocation(NutsStoreFolder folderType);
 
     void removeUser(String userId);
 

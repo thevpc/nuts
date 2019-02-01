@@ -64,11 +64,37 @@ public interface NutsId extends Serializable {
 
     String getFace();
 
+    String getScope();
+
     String getAlternative();
+
+    NutsId setScope(String value);
+
+    NutsId setOptional(String value);
 
     NutsId setAlternative(String value);
 
     NutsId setFace(String value);
+
+    NutsId setPackaging(String value);
+
+    NutsId setPlatform(String value);
+
+    NutsId setOsdist(String value);
+
+    NutsId setOs(String value);
+
+    String getOs();
+
+    String getOsdist();
+
+    String getPlatform();
+
+    String getArch();
+
+    NutsId setFaceComponent();
+
+    NutsId setFaceDescriptor();
 
     NutsId setQueryProperty(String property, String value);
 
@@ -136,7 +162,11 @@ public interface NutsId extends Serializable {
 
     NutsVersion getVersion();
 
+    String getOptional();
+
     NutsId apply(NutsObjectConverter<String, String> properties);
 
     NutsIdBuilder builder();
+
+    boolean isOptional();
 }

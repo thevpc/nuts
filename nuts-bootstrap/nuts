@@ -32,4 +32,4 @@ if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
 fi
 
 
-$JAVA_CMD -jar "$base/nuts.jar" $*
+${JAVA_CMD} -jar "$base/nuts.jar" $*

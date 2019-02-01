@@ -58,7 +58,6 @@ public class NutsHttpServlet extends HttpServlet {
     private NutsHttpServletFacade facade;
     private String serverId = "";
     private String workspaceLocation = null;
-    private String root = null;
     private String runtimeId = null;
     private String runtimeSourceURL = null;
     private int adminServerPort = -1;
@@ -73,7 +72,6 @@ public class NutsHttpServlet extends HttpServlet {
         Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
         NutsWorkspace workspace = Nuts.openWorkspace(
                 new NutsWorkspaceOptions()
-                        .setHome(root)
                         .setBootRuntime(runtimeId)
                         .setBootRuntimeSourceURL(runtimeSourceURL)
                         .setWorkspace(workspaceLocation)
@@ -96,7 +94,6 @@ public class NutsHttpServlet extends HttpServlet {
             NutsWorkspace ws = workspacesByLocation.get(location);
             if (ws == null) {
                 ws = Nuts.openWorkspace(new NutsWorkspaceOptions()
-                        .setHome(root)
                         .setBootRuntime(runtimeId)
                         .setBootRuntimeSourceURL(runtimeSourceURL)
                         .setWorkspace(location)
@@ -150,7 +147,6 @@ public class NutsHttpServlet extends HttpServlet {
         }
         adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
         workspaceLocation = config.getInitParameter("nuts-workspace-location");
-        root = config.getInitParameter("nuts-workspace-root");
         runtimeId = config.getInitParameter("nuts-runtime-id");
         runtimeSourceURL = config.getInitParameter("nuts-source-url");
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));

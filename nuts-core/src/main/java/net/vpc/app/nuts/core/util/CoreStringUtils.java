@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 public class CoreStringUtils {
 
     private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)}");
+    public static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
     public static int parseInt(String v1, int defaultValue) {
         try {
@@ -312,5 +313,15 @@ public class CoreStringUtils {
         return false;
     }
 
+    public static String replaceDollarString(String path, NutsObjectConverter<String, String> m) {
+        Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String x = m.convert(matcher.group("name"));
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
 
 }

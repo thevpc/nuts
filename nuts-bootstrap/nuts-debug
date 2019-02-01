@@ -23,8 +23,8 @@ base=$(dirname $0)
 
 JAVA_CMD='java'
 
-if [ x"$JAVA_HOME" != "x" ] ; then
-    JAVA_CMD="$JAVA_HOME/bin/java";
+if [ x"${JAVA_HOME}" != "x" ] ; then
+    JAVA_CMD="${JAVA_HOME}/bin/java";
 fi
 
 if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
@@ -32,4 +32,4 @@ if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
 fi
 
 
-$JAVA_CMD -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -jar "$base/nuts.jar" $*
+${JAVA_CMD} -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -jar "$base/nuts.jar" $*

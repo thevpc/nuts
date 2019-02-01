@@ -1,27 +1,27 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
+ * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
- *
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 public final class NutsBootConfig implements Cloneable {
-    private String home = null;
     private String apiVersion = null;
     private String runtimeId = null;
     private String runtimeDependencies = null;
@@ -45,10 +44,8 @@ public final class NutsBootConfig implements Cloneable {
     private String logsStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
-    /**
-     * valid values are "", "bundle"
-     */
     private NutsStoreLocationStrategy storeLocationStrategy = null;
+    private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
 
     public NutsBootConfig() {
@@ -56,9 +53,9 @@ public final class NutsBootConfig implements Cloneable {
 
     public NutsBootConfig(NutsWorkspaceOptions options) {
         if (options != null) {
-            this.setHome(options.getHome());
             this.setWorkspace(options.getWorkspace());
             this.setStoreLocationStrategy(options.getStoreLocationStrategy());
+            this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
             this.setStoreLocationLayout(options.getStoreLocationLayout());
             this.setProgramsStoreLocation(options.getProgramsStoreLocation());
             this.setLibStoreLocation(options.getLibStoreLocation());
@@ -86,6 +83,7 @@ public final class NutsBootConfig implements Cloneable {
             this.logsStoreLocation = context.getStoreLocation(NutsStoreFolder.LOGS);
             this.tempStoreLocation = context.getStoreLocation(NutsStoreFolder.TEMP);
             this.storeLocationStrategy = context.getStoreLocationStrategy();
+            this.repositoryStoreLocationStrategy = context.getRepositoryStoreLocationStrategy();
             this.storeLocationLayout = context.getStoreLocationLayout();
         }
     }
@@ -244,15 +242,6 @@ public final class NutsBootConfig implements Cloneable {
         return this;
     }
 
-    public String getHome() {
-        return home;
-    }
-
-    public NutsBootConfig setHome(String home) {
-        this.home = home;
-        return this;
-    }
-
     public NutsStoreLocationLayout getStoreLocationLayout() {
         return storeLocationLayout;
     }
@@ -269,5 +258,123 @@ public final class NutsBootConfig implements Cloneable {
     public NutsBootConfig setLibStoreLocation(String libStoreLocation) {
         this.libStoreLocation = libStoreLocation;
         return this;
+    }
+
+    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+        return repositoryStoreLocationStrategy;
+    }
+
+    public NutsBootConfig setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
+        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
+        if (!NutsUtils.isEmpty(apiVersion)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("apiVersion='").append(apiVersion).append('\'');
+        }
+        if (!NutsUtils.isEmpty(runtimeId)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("runtimeId='").append(runtimeId).append('\'');
+        }
+        if (!NutsUtils.isEmpty(runtimeDependencies)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("runtimeDependencies='").append(runtimeDependencies).append('\'');
+        }
+        if (!NutsUtils.isEmpty(repositories)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("repositories='").append(repositories).append('\'');
+        }
+        if (!NutsUtils.isEmpty(javaCommand)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("javaCommand='").append(javaCommand).append('\'');
+        }
+        if (!NutsUtils.isEmpty(javaOptions)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("javaOptions='").append(javaOptions).append('\'');
+        }
+        if (!NutsUtils.isEmpty(workspace)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("workspace='").append(workspace).append('\'');
+        }
+        if (!NutsUtils.isEmpty(programsStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("programsStoreLocation='").append(programsStoreLocation).append('\'');
+        }
+        if (!NutsUtils.isEmpty(libStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("libStoreLocation='").append(libStoreLocation).append('\'');
+        }
+        if (!NutsUtils.isEmpty(configStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("configStoreLocation='").append(configStoreLocation).append('\'');
+        }
+        if (!NutsUtils.isEmpty(varStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("varStoreLocation='").append(varStoreLocation).append('\'');
+        }
+        if (!NutsUtils.isEmpty(logsStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("logsStoreLocation='").append(logsStoreLocation).append('\'');
+        }
+        if (!NutsUtils.isEmpty(tempStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("tempStoreLocation='").append(tempStoreLocation).append('\'');
+        }
+        if (!NutsUtils.isEmpty(cacheStoreLocation)) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("cacheStoreLocation='").append(cacheStoreLocation).append('\'');
+        }
+        if (storeLocationStrategy != null) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("storeLocationStrategy=").append(storeLocationStrategy);
+        }
+        if (repositoryStoreLocationStrategy != null) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("repositoryStoreLocationStrategy=").append(repositoryStoreLocationStrategy);
+        }
+        if (storeLocationLayout != null) {
+            if(sb.length()>0) {
+                sb.append(", ");
+            }
+            sb.append("storeLocationLayout=").append(storeLocationLayout);
+        }
+        sb.append('}');
+        return sb.toString();
     }
 }

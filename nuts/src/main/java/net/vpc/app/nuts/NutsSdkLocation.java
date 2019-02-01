@@ -15,11 +15,13 @@ import java.util.Objects;
 public class NutsSdkLocation implements Serializable {
 
     public static final long serialVersionUID = 1;
+    private String type;
     private String name;
     private String path;
     private String version;
 
-    public NutsSdkLocation(String name, String path, String version) {
+    public NutsSdkLocation(String type,String name, String path, String version) {
+        this.type = type;
         this.name = name;
         this.path = path;
         this.version = version;
@@ -28,16 +30,28 @@ public class NutsSdkLocation implements Serializable {
     public NutsSdkLocation() {
     }
 
-    public void setName(String name) {
+    public String getType() {
+        return type;
+    }
+
+    public NutsSdkLocation setType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public NutsSdkLocation setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setPath(String path) {
+    public NutsSdkLocation setPath(String path) {
         this.path = path;
+        return this;
     }
 
-    public void setVersion(String version) {
+    public NutsSdkLocation setVersion(String version) {
         this.version = version;
+        return this;
     }
 
     public String getVersion() {
@@ -52,42 +66,6 @@ public class NutsSdkLocation implements Serializable {
         return path;
     }
 
-    @Override
-    public String toString() {
-        return name + " (version " + version + " , path " + path + ")";
-    }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.name);
-        hash = 89 * hash + Objects.hashCode(this.path);
-        hash = 89 * hash + Objects.hashCode(this.version);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NutsSdkLocation other = (NutsSdkLocation) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        if (!Objects.equals(this.path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(this.version, other.version)) {
-            return false;
-        }
-        return true;
-    }
 
 }

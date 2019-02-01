@@ -83,7 +83,7 @@ public class CpCommand extends AbstractNutsCommand {
                 if (StringUtils.isEmpty(value)) {
                     throw new NutsExecutionException("Empty File Path",2);
                 }
-                files.add(XFile.of(value.contains("://")?value: context.getWorkspace().getIOManager().resolvePath(value)));
+                files.add(XFile.of(value.contains("://")?value: context.getWorkspace().getIOManager().expandPath(value)));
             }
         }
         if (files.size() < 2) {

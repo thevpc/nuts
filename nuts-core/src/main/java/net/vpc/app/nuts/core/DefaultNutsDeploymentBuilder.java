@@ -12,7 +12,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
     private Object descriptor;
     private String sha1;
     private String descSHA1;
-    private String repositoryId;
+    private String repositoryName;
     private NutsConfirmAction foundAction;
     private NutsWorkspace ws;
 
@@ -112,13 +112,13 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
         return this;
     }
 
-    public String getRepositoryId() {
-        return repositoryId;
+    public String getRepositoryName() {
+        return repositoryName;
     }
 
     @Override
-    public NutsDeploymentBuilder setRepositoryId(String repositoryId) {
-        this.repositoryId = repositoryId;
+    public NutsDeploymentBuilder setRepositoryName(String repositoryId) {
+        this.repositoryName = repositoryId;
         return this;
     }
 
@@ -129,7 +129,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
         e.setDescriptor(descriptor);
         e.setDescSHA1(descSHA1);
         e.setFoundAction(foundAction);
-        e.setRepositoryId(repositoryId);
+        e.setRepositoryName(repositoryName);
         e.setSha1(sha1);
         return e;
     }
@@ -141,7 +141,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
         hash = 19 * hash + Objects.hashCode(this.descriptor);
         hash = 19 * hash + Objects.hashCode(this.sha1);
         hash = 19 * hash + Objects.hashCode(this.descSHA1);
-        hash = 19 * hash + Objects.hashCode(this.repositoryId);
+        hash = 19 * hash + Objects.hashCode(this.repositoryName);
         hash = 19 * hash + Objects.hashCode(this.foundAction);
         return hash;
     }
@@ -167,7 +167,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
         if (!Objects.equals(this.descSHA1, other.descSHA1)) {
             return false;
         }
-        if (!Objects.equals(this.repositoryId, other.repositoryId)) {
+        if (!Objects.equals(this.repositoryName, other.repositoryName)) {
             return false;
         }
         if (!Objects.equals(this.content, other.content)) {
@@ -181,7 +181,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
 
     @Override
     public String toString() {
-        return "NutsDeployment{" + "content=" + content + ", descriptor=" + descriptor + ", sha1=" + sha1 + ", descSHA1=" + descSHA1 + ", repositoryId=" + repositoryId + ", foundAction=" + foundAction + '}';
+        return "NutsDeployment{" + "content=" + content + ", descriptor=" + descriptor + ", sha1=" + sha1 + ", descSHA1=" + descSHA1 + ", repositoryName=" + repositoryName + ", foundAction=" + foundAction + '}';
     }
 
 

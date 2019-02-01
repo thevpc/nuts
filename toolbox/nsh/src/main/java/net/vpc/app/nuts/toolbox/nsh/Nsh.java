@@ -75,7 +75,9 @@ public class Nsh extends NutsApplication {
         if(!silent){
             applicationContext.out().printf("Installed ==%s== nsh commands.\n", count);
         }
-        cfg.save();
+        if(!applicationContext.getWorkspace().getConfigManager().isReadOnly()) {
+            cfg.save();
+        }
         return 0;
     }
 

@@ -35,6 +35,7 @@ import java.util.*;
 public final class NutsWorkspaceConfig implements Serializable {
 
     private static final long serialVersionUID = 1;
+    private String uuid = null;
     private String workspace = null;
     private String bootApiVersion = null;
     private String bootRuntime = null;
@@ -49,20 +50,18 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logsStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
-    /**
-     * valid values are "", "bundle"
-     */
+    private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
 
-    private final Map<String, NutsRepositoryLocation> repositories = new LinkedHashMap<>();
+    private List<NutsRepositoryLocation> repositories = new ArrayList<>();
     private List<NutsId> extensions = new ArrayList<>();
     private List<NutsWorkspaceCommandFactoryConfig> commandFactories = new ArrayList<>();
     private Properties env = new Properties();
-    private Map<String, List<NutsSdkLocation>> sdk = new HashMap<>();
-    private String[] imports = new String[0];
+    private List<NutsSdkLocation> sdk = new ArrayList<>();
+    private List<String> imports = new ArrayList<>();
     private boolean secure = false;
-    private Map<String, NutsUserConfig> security = new HashMap<>();
+    private List<NutsUserConfig> users = new ArrayList<>();
 
     public NutsWorkspaceConfig() {
     }
@@ -85,19 +84,12 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.cacheStoreLocation = other.getCacheStoreLocation();
         this.bootJavaCommand = other.getBootJavaCommand();
         this.bootJavaOptions = other.getBootJavaOptions();
-        for (NutsRepositoryLocation repository : other.getRepositories()) {
-            this.repositories.put(repository.getId(), repository);
-        }
-        for (NutsUserConfig repository : other.getSecurity()) {
-            this.security.put(repository.getUser(), repository);
-        }
-        for (Map.Entry<String, List<NutsSdkLocation>> e : other.getSdk().entrySet()) {
-            List<NutsSdkLocation> value = e.getValue();
-            this.sdk.put(e.getKey(), value == null ? new ArrayList<>() : new ArrayList<>(value));
-        }
-        this.extensions.addAll(Arrays.asList(other.getExtensions()));
+        this.repositories.addAll(other.getRepositories());
+        this.users.addAll(other.getUsers());
+        this.sdk.addAll(other.getSdk());
+        this.extensions.addAll(other.getExtensions());
         this.env.putAll(other.getEnv());
-        this.imports = other.getImports();
+        this.imports = new ArrayList<>(other.getImports());
     }
 
     public String getWorkspace() {
@@ -110,57 +102,25 @@ public final class NutsWorkspaceConfig implements Serializable {
     }
 
 
-    public NutsRepositoryLocation[] getRepositories() {
-        return repositories.values().toArray(new NutsRepositoryLocation[0]);
+    public List<NutsRepositoryLocation> getRepositories() {
+        return repositories;
     }
 
+    public void setRepositories(NutsRepositoryLocation[] repositories){
+        this.repositories=new ArrayList<>(Arrays.asList(repositories));
+    }
 
-    public String[] getImports() {
+    public List<String> getImports() {
         return imports;
     }
 
-
     public void setImports(String[] imports) {
-        this.imports = imports;
+        this.imports = new ArrayList<>(Arrays.asList(imports));
     }
 
 
-    public NutsRepositoryLocation getRepository(String repositoryId) {
-        return this.repositories.get(repositoryId);
-    }
-
-
-    public void addRepository(NutsRepositoryLocation repository) {
-        this.repositories.put(repository.getId(), repository);
-    }
-
-
-    public void removeRepository(String repositoryId) {
-        this.repositories.remove(repositoryId);
-    }
-
-
-    public boolean containsRepository(String repositoryId) {
-        return repositories.containsKey(repositoryId);
-    }
-
-
-    public void addExtension(NutsId extensionId) {
-        this.extensions.add(extensionId);
-    }
-
-
-    public void removeExtension(NutsId extensionId) {
-        extensions.remove(extensionId);
-    }
-
-    public void updateExtensionAt(int index, NutsId extensionId) {
-        extensions.set(index, extensionId);
-    }
-
-
-    public NutsId[] getExtensions() {
-        return extensions.toArray(new NutsId[0]);
+    public List<NutsId> getExtensions() {
+        return extensions;
     }
 
 
@@ -168,35 +128,22 @@ public final class NutsWorkspaceConfig implements Serializable {
         return env;
     }
 
-
     public void setEnv(Properties env) {
         this.env = env;
     }
 
 
-    public void removeSecurity(String securityId) {
-        security.remove(securityId);
+    public void setUsers(NutsUserConfig[] users) {
+        this.users=new ArrayList<>(Arrays.asList(users));
     }
 
 
-    public void setSecurity(NutsUserConfig securityEntityConfig) {
-        if (securityEntityConfig != null) {
-            security.put(securityEntityConfig.getUser(), securityEntityConfig);
-        }
+    public List<NutsUserConfig> getUsers() {
+        return users;
     }
 
-
-    public NutsUserConfig getSecurity(String id) {
-        return security.get(id);
-    }
-
-
-    public NutsUserConfig[] getSecurity() {
-        return security.values().toArray(new NutsUserConfig[0]);
-    }
-
-    public Map<String, List<NutsSdkLocation>> getSdk() {
-        return sdk == null ? new HashMap<>() : sdk;
+    public List<NutsSdkLocation> getSdk() {
+        return sdk;
     }
 
 
@@ -268,8 +215,29 @@ public final class NutsWorkspaceConfig implements Serializable {
         return commandFactories;
     }
 
-    public NutsWorkspaceConfig setCommandFactories(List<NutsWorkspaceCommandFactoryConfig> commandFactories) {
-        this.commandFactories = commandFactories;
+    public NutsWorkspaceConfig addCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory) {
+        if (commandFactory != null) {
+            this.commandFactories.add(commandFactory);
+        }
+        return this;
+    }
+
+    public NutsWorkspaceConfig removeCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory) {
+        this.commandFactories.remove(commandFactory);
+        return this;
+    }
+
+    public NutsWorkspaceConfig setCommandFactories(NutsWorkspaceCommandFactoryConfig[] commandFactories) {
+        if (commandFactories == null) {
+            this.commandFactories = new ArrayList<>();
+        } else {
+            this.commandFactories = new ArrayList<>(commandFactories.length);
+            for (NutsWorkspaceCommandFactoryConfig commandFactory : commandFactories) {
+                if (commandFactory != null) {
+                    this.commandFactories.add(commandFactory);
+                }
+            }
+        }
         return this;
     }
 
@@ -351,6 +319,34 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setLibStoreLocation(String libStoreLocation) {
         this.libStoreLocation = libStoreLocation;
+        return this;
+    }
+
+    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+        return repositoryStoreLocationStrategy;
+    }
+
+    public void setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
+        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public NutsWorkspaceConfig setUuid(String uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
+    public NutsWorkspaceConfig setSdk(NutsSdkLocation[] sdks) {
+        if (sdks != null) {
+            for (NutsSdkLocation s : sdks) {
+                if (s != null) {
+                    this.sdk.add(s);
+                }
+            }
+        }
         return this;
     }
 }

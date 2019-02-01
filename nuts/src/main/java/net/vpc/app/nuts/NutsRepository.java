@@ -47,15 +47,18 @@ public interface NutsRepository {
 
     boolean isTransientRepository();
 
-    String getRepositoryId();
+    String getUuid();
 
-    String getRepositoryLocation();
+    String getName();
 
     NutsWorkspace getWorkspace();
 
     NutsRepository getParentRepository();
 
     NutsRepositoryConfigManager getConfigManager();
+
+
+    String getStoreLocation(NutsStoreFolder folderType);
 
     NutsRepositorySecurityManager getSecurityManager();
 
@@ -71,17 +74,9 @@ public interface NutsRepository {
 
     void push(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session);
 
-    NutsDefinition fetch(NutsId id, NutsSession session);
-
     NutsDescriptor fetchDescriptor(NutsId id, NutsSession session);
 
-    String copyTo(NutsId id, String localPath, NutsSession session);
-
-    String copyDescriptorTo(NutsId id, String localPath, NutsSession session);
-
-    String fetchHash(NutsId id, NutsSession session);
-
-    String fetchDescriptorHash(NutsId id, NutsSession session);
+    NutsContent fetchContent(NutsId id, String localPath, NutsSession session);
 
     Iterator<NutsId> find(NutsIdFilter filter, NutsSession session);
 
@@ -102,13 +97,11 @@ public interface NutsRepository {
 
     /**
      *
-     * @param repositoryId
      * @param location
-     * @param type
      * @param autoCreate
      * @return
      */
-    NutsRepository addMirror(String repositoryId, String location, String type, boolean autoCreate);
+    NutsRepository addMirror(NutsRepositoryLocation location, boolean autoCreate);
 
     /**
      *

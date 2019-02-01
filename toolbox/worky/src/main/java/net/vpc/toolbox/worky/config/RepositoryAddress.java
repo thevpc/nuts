@@ -3,18 +3,8 @@ package net.vpc.toolbox.worky.config;
 import java.util.Objects;
 
 public class RepositoryAddress {
-    private String nutsHome;
     private String nutsWorkspace;
     private String nutsRepository;
-
-    public String getNutsHome() {
-        return nutsHome;
-    }
-
-    public RepositoryAddress setNutsHome(String nutsHome) {
-        this.nutsHome = nutsHome;
-        return this;
-    }
 
     public String getNutsWorkspace() {
         return nutsWorkspace;
@@ -39,14 +29,13 @@ public class RepositoryAddress {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RepositoryAddress that = (RepositoryAddress) o;
-        return Objects.equals(nutsHome, that.nutsHome) &&
-                Objects.equals(nutsWorkspace, that.nutsWorkspace) &&
+        return Objects.equals(nutsWorkspace, that.nutsWorkspace) &&
                 Objects.equals(nutsRepository, that.nutsRepository);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(nutsHome, nutsWorkspace, nutsRepository);
+        return Objects.hash(nutsWorkspace, nutsRepository);
     }
 }

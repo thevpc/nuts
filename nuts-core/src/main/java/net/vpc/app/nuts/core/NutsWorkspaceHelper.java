@@ -113,15 +113,15 @@ public class NutsWorkspaceHelper {
         return id;
     }
 
-    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
-        if (StringUtils.isEmpty(workspace)) {
-            File file = CoreIOUtils.resolvePath(workspaceRoot + "/" + defaultName, null, workspaceRoot);
-            workspace = file == null ? null : file.getPath();
-        } else {
-            File file = CoreIOUtils.resolvePath(workspace, null, workspaceRoot);
-            workspace = file == null ? null : file.getPath();
-        }
-        return workspace;
-    }
+//    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
+//        if (StringUtils.isEmpty(workspace)) {
+//            File file = CoreIOUtils.expandPath(workspaceRoot + "/" + defaultName, null, workspaceRoot);
+//            workspace = file == null ? null : file.getPath();
+//        } else {
+//            File file = CoreIOUtils.expandPath(workspace, null, workspaceRoot);
+//            workspace = file == null ? null : file.getPath();
+//        }
+//        return workspace;
+//    }
 
 }

@@ -50,8 +50,8 @@ public class CoreIOUtils {
 
     public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
-        File installerFile = nutMainFile.getFile() == null ? null : new File(nutMainFile.getFile());
-        File storeFolder = nutMainFile.getInstallFolder() == null ? null : new File(nutMainFile.getInstallFolder());
+        File installerFile = nutMainFile.getContent().getFile() == null ? null : new File(nutMainFile.getContent().getFile());
+        File storeFolder = nutMainFile.getInstallation().getInstallFolder() == null ? null : new File(nutMainFile.getInstallation().getInstallFolder());
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -60,7 +60,7 @@ public class CoreIOUtils {
         for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
             map.put((String) entry.getKey(), (String) entry.getValue());
         }
-        String nutsJarFile = workspace.fetchApiDefinition(session).getFile();
+        String nutsJarFile = workspace.fetchApiDefinition(session).getContent().getFile();
         if (nutsJarFile != null) {
             map.put("nuts.jar", new File(nutsJarFile).getAbsolutePath());
         }
@@ -69,7 +69,7 @@ public class CoreIOUtils {
         map.put("nuts.id.name", id.getName());
         map.put("nuts.id.fullName", id.getSimpleName());
         map.put("nuts.id.group", id.getGroup());
-        map.put("nuts.file", nutMainFile.getFile());
+        map.put("nuts.file", nutMainFile.getContent().getFile());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
 
         map.put("nuts.java", defaultJavaCommand);
@@ -105,9 +105,9 @@ public class CoreIOUtils {
                     return resolveJavaCommand(javaVer, workspace);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition = null;
-                    nutsDefinition = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API, session);
-                    if (nutsDefinition.getFile() != null) {
-                        return ("<::expand::> " + convert("java") + " -jar " + nutsDefinition.getFile());
+                    nutsDefinition = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API).setSession(session).fetchDefinition();
+                    if (nutsDefinition.getContent().getFile() != null) {
+                        return ("<::expand::> " + convert("java") + " -jar " + nutsDefinition.getContent().getFile());
                     }
                     return null;
                 }
@@ -170,6 +170,7 @@ public class CoreIOUtils {
         NutsSdkLocation bestJava = workspace.getConfigManager().getSdk("java", requestedJavaVersion);
         if (bestJava == null) {
             NutsSdkLocation current = new NutsSdkLocation(
+                    "java",
                     "java.home",
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
@@ -257,97 +258,7 @@ public class CoreIOUtils {
     }
 
 
-    public static File resolvePath(String path, File baseFolder, String nutsHome) {
-        if (StringUtils.isEmpty(nutsHome)) {
-            nutsHome = getDefaultNutsHome();
-        }
-        if (path != null && path.length() > 0) {
-            if (path.startsWith("~")) {
-                if (path.equals("~~")) {
-                    return createFile(nutsHome);
-                } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    return createFile(nutsHome, path.substring(3));
-                } else if (path.equals("~")) {
-                    return new File(System.getProperty("user.home"));
-                } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
-                    return createFile(System.getProperty("user.home"), path.substring(2));
-                } else if (baseFolder != null) {
-                    return createFile(baseFolder, path);
-                } else {
-                    return CoreIOUtils.createFile(path);
-                }
-            } else if (FileUtils.isAbsolutePath(path)) {
-                return new File(path);
-            } else if (baseFolder != null) {
-                return createFile(baseFolder, path);
-            } else {
-                return CoreIOUtils.createFile(path);
-            }
-        }
-        return baseFolder;
-    }
 
-    public static File createTempFile(NutsDescriptor descriptor, boolean desc, File directory) {
-        String prefix = "temp-";
-        String ext = null;
-        if (descriptor != null) {
-            ext = StringUtils.trim(descriptor.getExt());
-            prefix = StringUtils.trim(descriptor.getId().getGroup())
-                    + "-" + StringUtils.trim(descriptor.getId().getName())
-                    + "-" + StringUtils.trim(descriptor.getId().getVersion().getValue());
-            if (prefix.length() < 3) {
-                prefix = prefix + "tmp";
-            }
-            if (!ext.isEmpty()) {
-                ext = "." + ext;
-                if (ext.length() < 3) {
-                    ext = ".tmp" + ext;
-                }
-            } else {
-                ext = "-nuts";
-            }
-        }
-        if (desc) {
-            ext = ext + ".nuts";
-        }
-        try {
-            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), directory);
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
-    public static File createTempFile(String name, boolean desc, File directory) {
-        String prefix = "temp-";
-        String ext = null;
-        if (name != null) {
-            ext = FileUtils.getFileExtension(name);
-            prefix = name;
-            if (prefix.length() < 3) {
-                prefix = prefix + "tmp";
-            }
-            if (!ext.isEmpty()) {
-                ext = "." + ext;
-                if (ext.length() < 3) {
-                    ext = ".tmp" + ext;
-                }
-            } else {
-                ext = "-nuts";
-            }
-        }
-        if (desc) {
-            ext = ext + ".nuts";
-        }
-        try {
-            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), directory);
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
-    public static File createTempFile(NutsDescriptor descriptor, boolean descFile) {
-        return createTempFile(descriptor, descFile, null);
-    }
 
     public static File fileByPath(String path) {
         if (path == null) {
@@ -365,6 +276,7 @@ public class CoreIOUtils {
                 return System.getProperty("user.home") + "/.nuts";
         }
     }
+
     public static String getPlatformOsFamily() {
         String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         if (property.startsWith("linux")) {
@@ -384,4 +296,7 @@ public class CoreIOUtils {
         }
         return "unknown";
     }
-}
+
+    public static String getAbsolutePath(String path) {
+        return new File(path).toPath().toAbsolutePath().normalize().toString();
+    }}

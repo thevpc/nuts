@@ -109,7 +109,7 @@ public class DeployCommand extends AbstractNutsCommand {
                         ws.createDeploymentBuilder()
                                 .setContentPath(s)
                                 .setDescriptorPath(descriptorFile)
-                                .setRepositoryId(to).build(),
+                                .setRepositoryName(to).build(),
                         context.getSession()
                 );
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
@@ -119,14 +119,14 @@ public class DeployCommand extends AbstractNutsCommand {
                 throw new NutsCommandSyntaxError("Missing Id");
             }
             for (NutsId nutsId : ws.createQuery().setSession(context.getSession()).addId(id).setLatestVersions(true).setRepositoryFilter(from).find()) {
-                NutsDefinition fetched = ws.fetch(nutsId.toString(), context.getSession());
-                if (fetched.getFile() != null) {
+                NutsDefinition fetched = ws.fetch(nutsId).setSession(context.getSession()).fetchDefinition();
+                if (fetched.getContent().getFile() != null) {
                     NutsId nid = null;
                     nid = ws.deploy(
                             ws.createDeploymentBuilder()
-                                    .setContent(new File(fetched.getFile()))
+                                    .setContent(new File(fetched.getContent().getFile()))
                                     .setDescriptor(fetched.getDescriptor())
-                                    .setRepositoryId(to).build(),
+                                    .setRepositoryName(to).build(),
                             context.getSession()
                     );
                     out.printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);

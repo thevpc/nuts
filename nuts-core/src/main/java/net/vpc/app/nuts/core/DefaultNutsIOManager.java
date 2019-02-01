@@ -5,7 +5,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.*;
-import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.Convert;
 import net.vpc.common.util.MapBuilder;
 
@@ -16,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 
 public class DefaultNutsIOManager implements NutsIOManager {
@@ -24,6 +24,46 @@ public class DefaultNutsIOManager implements NutsIOManager {
     private NutsWorkspace workspace;
     private static Gson GSON;
     private static Gson GSON_PRETTY;
+    private final NutsObjectConverter<String, String> pathExpansionConverter = new NutsObjectConverter<String, String>() {
+        @Override
+        public String convert(String from) {
+            switch (from) {
+                case "home.config":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.CONFIG);
+                case "home.programs":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.PROGRAMS);
+                case "home.lib":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.LIB);
+                case "home.temp":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.TEMP);
+                case "home.var":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.VAR);
+                case "home.cache":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.CACHE);
+                case "home.logs":
+                    return workspace.getConfigManager().getHome(NutsStoreFolder.LOGS);
+                case "workspace":
+                    return workspace.getConfigManager().getRunningContext().getWorkspace();
+                case "user.home":
+                    return System.getProperty("user.home");
+                case "config":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.CONFIG);
+                case "lib":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.LIB);
+                case "programs":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.PROGRAMS);
+                case "cache":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.CACHE);
+                case "temp":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.TEMP);
+                case "logs":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.LOGS);
+                case "var":
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.VAR);
+            }
+            return "${" + from + "}";
+        }
+    };
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
         this.workspace = workspace;
@@ -89,10 +129,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
         } else {
             if (source instanceof NutsId) {
                 NutsId d = (NutsId) source;
-                if (CoreNutsUtils.FACE_PACKAGE_HASH.equals(d.getFace())) {
+                if (NutsConstants.FACE_COMPONENT_HASH.equals(d.getFace())) {
                     monitorable = false;
                 }
-                if (CoreNutsUtils.FACE_DESC_HASH.equals(d.getFace())) {
+                if (NutsConstants.FACE_DESC_HASH.equals(d.getFace())) {
                     monitorable = false;
                 }
             }
@@ -207,11 +247,41 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public String resolvePath(String path) {
-        if (StringUtils.isEmpty(path)) {
-            return path;
+    public String expandPath(String path) {
+        return expandPath(path, workspace.getConfigManager().getCwd());
+    }
+
+    public String expandPath(String path, String baseFolder) {
+        if (path != null && path.length() > 0) {
+            path = CoreStringUtils.replaceDollarString(path, pathExpansionConverter);
+            if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
+                return path;
+            }
+            if (path.startsWith("~")) {
+                if (path.equals("~~")) {
+                    String nutsHome = workspace.getConfigManager().getHome(NutsStoreFolder.CONFIG);
+                    return CoreIOUtils.getAbsolutePath(nutsHome);
+                } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
+                    String nutsHome = workspace.getConfigManager().getHome(NutsStoreFolder.CONFIG);
+                    return CoreIOUtils.getAbsolutePath(nutsHome + File.separator + path.substring(3));
+                } else if (path.equals("~")) {
+                    return (System.getProperty("user.home"));
+                } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
+                    return System.getProperty("user.home") + File.separator + path.substring(2);
+                } else if (baseFolder != null) {
+                    return CoreIOUtils.getAbsolutePath(baseFolder + File.separator + path);
+                } else {
+                    return CoreIOUtils.getAbsolutePath(path);
+                }
+            } else if (FileUtils.isAbsolutePath(path)) {
+                return CoreIOUtils.getAbsolutePath(path);
+            } else if (baseFolder != null) {
+                return CoreIOUtils.getAbsolutePath(baseFolder + File.separator + path);
+            } else {
+                return CoreIOUtils.getAbsolutePath(path);
+            }
         }
-        return FileUtils.getAbsolutePath(new File(workspace.getConfigManager().getCwd()), path);
+        return CoreIOUtils.getAbsolutePath(baseFolder);
     }
 
     @Override
@@ -230,7 +300,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 }
             }
         } catch (IOException e) {
-            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load main help", e);
+            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load text from "+resource, e);
         }
         if (help == null) {
             help = defaultValue;//"no help found";
@@ -351,6 +421,44 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public void downloadPath(String from, File to, Object source, NutsSession session) {
         CoreNutsUtils.copy(monitorInputStream(from, source, session), to, true, true);
+    }
+
+    @Override
+    public File createTempFile(String name) {
+        return createTempFile(name, null);
+    }
+
+    @Override
+    public File createTempFile(String name, NutsRepository repository) {
+        File folder = null;
+        if (repository == null) {
+            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+        } else {
+            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+        }
+        String prefix = "temp-";
+        String ext = null;
+        if (name != null) {
+            ext = FileUtils.getFileExtension(name);
+            prefix = name;
+            if (prefix.length() < 3) {
+                prefix = prefix + "tmp";
+            }
+            if (!ext.isEmpty()) {
+                ext = "." + ext;
+                if (ext.length() < 3) {
+                    ext = ".tmp" + ext;
+                }
+            } else {
+                ext = "-nuts";
+            }
+        }
+        try {
+            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), folder);
+        } catch (IOException e) {
+            throw new NutsIOException(e);
+        }
+
     }
 
     @Override

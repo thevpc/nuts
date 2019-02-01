@@ -203,7 +203,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
             throw new NutsIllegalArgumentException("Missing password");
         }
         if(log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, StringUtils.alignLeft(repo.getRepositoryId(), 20) + " Update user credentials " + username);
+            log.log(Level.FINEST, StringUtils.alignLeft(repo.getName(), 20) + " Update user credentials " + username);
         }
 
         u.setCredentials(

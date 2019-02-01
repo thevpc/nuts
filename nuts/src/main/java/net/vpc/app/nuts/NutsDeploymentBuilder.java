@@ -60,7 +60,7 @@ public interface NutsDeploymentBuilder {
 
     NutsDeploymentBuilder setDescriptor(NutsDescriptor descriptor);
 
-    NutsDeploymentBuilder setRepositoryId(String repositoryId);
+    NutsDeploymentBuilder setRepositoryName(String repositoryId);
 
     NutsDeployment build();
 }

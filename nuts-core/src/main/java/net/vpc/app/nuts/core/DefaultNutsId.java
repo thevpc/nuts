@@ -256,6 +256,12 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
+    public String getScope() {
+        String s = getQueryMap().get(NutsConstants.QUERY_SCOPE);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
     public String getAlternative() {
         String s = getQueryMap().get(NutsConstants.QUERY_ALTERNATIVE);
         return StringUtils.trimToNull(s);
@@ -270,13 +276,79 @@ public class DefaultNutsId implements NutsId {
     @Override
     public NutsId setFace(String value) {
         return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value))
-                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsId setScope(String value) {
+        return setQueryProperty(NutsConstants.QUERY_SCOPE, StringUtils.trimToNull(value))
+                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsId setOptional(String value) {
+        return setQueryProperty(NutsConstants.QUERY_OPTIONAL, StringUtils.trimToNull(value))
+                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NutsId setAlternative(String alt) {
         return setQueryProperty(NutsConstants.QUERY_ALTERNATIVE, StringUtils.trimToNull(alt))
-                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
+    public NutsId setPackaging(String value) {
+        return setQueryProperty(NutsConstants.QUERY_PACKAGING, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsId setPlatform(String value) {
+        return setQueryProperty(NutsConstants.QUERY_PLATFORM, StringUtils.trimToNull(value));
+    }
+
+    @Override
+    public NutsId setOsdist(String value) {
+        return setQueryProperty(NutsConstants.QUERY_OSDIST, StringUtils.trimToNull(value));
+    }
+    @Override
+    public NutsId setOs(String value) {
+        return setQueryProperty(NutsConstants.QUERY_OS, StringUtils.trimToNull(value));
+    }
+
+
+    @Override
+    public String getOs() {
+        String s = getQueryMap().get(NutsConstants.QUERY_OS);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getOsdist() {
+        String s = getQueryMap().get(NutsConstants.QUERY_OSDIST);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getPlatform() {
+        String s = getQueryMap().get(NutsConstants.QUERY_PLATFORM);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public String getArch() {
+        String s = getQueryMap().get(NutsConstants.QUERY_ARCH);
+        return StringUtils.trimToNull(s);
+    }
+
+    @Override
+    public NutsId setFaceComponent() {
+        return setFace(NutsConstants.FACE_COMPONENT);
+    }
+
+    @Override
+    public NutsId setFaceDescriptor() {
+        return setFace(NutsConstants.FACE_DESCRIPTOR);
     }
 
     @Override
@@ -441,6 +513,17 @@ public class DefaultNutsId implements NutsId {
         }
         return sb.toString();
     }
+
+    public boolean isOptional() {
+        return Boolean.parseBoolean(getOptional());
+    }
+
+    @Override
+    public String getOptional() {
+        String s = getQueryMap().get(NutsConstants.QUERY_OPTIONAL);
+        return StringUtils.trimToNull(s);
+    }
+
 
     @Override
     public boolean equals(Object o) {

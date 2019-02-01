@@ -48,7 +48,19 @@ public interface NutsIdBuilder extends Serializable {
 
     String getAlternative();
 
+    String getOs();
+
+    String getOsdist();
+
+    String getPlatform();
+
+    String getArch();
+
     String getClassifier();
+
+    NutsIdBuilder setFaceComponent();
+
+    NutsIdBuilder setFaceDescriptor();
 
     NutsIdBuilder setFace(String value);
 
@@ -56,11 +68,23 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder setClassifier(String value);
 
+    NutsIdBuilder setScope(String value);
+
+    NutsIdBuilder setOptional(String value);
+
+    NutsIdBuilder setPlatform(String value);
+
+    NutsIdBuilder setOs(String value);
+
+    NutsIdBuilder setOsdist(String value);
+
     NutsIdBuilder setQueryProperty(String property, String value);
 
     NutsIdBuilder setQuery(Map<String, String> queryMap, boolean merge);
 
     NutsIdBuilder setQuery(Map<String, String> queryMap);
+
+    NutsIdBuilder setPackaging(String packaging);
 
     NutsIdBuilder unsetQuery();
 
@@ -84,3 +108,6 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsId build();
 }
+
+
+

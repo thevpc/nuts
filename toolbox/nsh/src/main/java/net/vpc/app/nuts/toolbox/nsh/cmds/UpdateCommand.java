@@ -98,7 +98,7 @@ public class UpdateCommand extends AbstractNutsCommand {
     private void update(String id, NutsConfirmAction uptoDateAction, NutsCommandContext context) throws IOException {
         NutsWorkspace ws = context.getWorkspace();
         NutsDefinition file = ws.update(id, uptoDateAction, context.getSession());
-        if (file.isCached()) {
+        if (file.getContent().isCached()) {
             context.out().printf("%s **already installed**\n", file.getId());
         } else {
             context.out().printf("%s ##installed successfully##\n", file.getId());

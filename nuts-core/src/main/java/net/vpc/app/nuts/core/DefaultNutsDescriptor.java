@@ -45,7 +45,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String alternative;
     private NutsId[] parents;
     private String packaging;
-    private String ext;
+//    private String ext;
     private boolean executable;
     private boolean nutsApplication;
     private NutsExecutorDescriptor executor;
@@ -75,7 +75,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getPackaging(),
                 d.isExecutable(),
                 d.isNutsApplication(),
-                d.getExt(),
+//                d.getExt(),
                 d.getExecutor(),
                 d.getInstaller(),
                 d.getName(),
@@ -91,7 +91,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
+    public DefaultNutsDescriptor(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication,
+//                                 String ext,
                                  NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
                                  String[] arch, String[] os, String[] osdist, String[] platform,
                                  NutsDependency[] dependencies,
@@ -116,7 +117,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.name = StringUtils.trimToNull(name);
         this.executor = executor;
         this.installer = installer;
-        this.ext = StringUtils.trimToNull(ext);
+//        this.ext = StringUtils.trimToNull(ext);
         this.arch = CoreCollectionUtils.toArraySet(arch);
         this.os = CoreCollectionUtils.toArraySet(os);
         this.osdist = CoreCollectionUtils.toArraySet(osdist);
@@ -188,10 +189,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return executor;
     }
 
-    @Override
-    public String getExt() {
-        return ext;
-    }
+//    @Override
+//    public String getExt() {
+//        return ext;
+//    }
 
     @Override
     public String getPackaging() {
@@ -257,7 +258,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 ", alternative='" + alternative + '\'' +
                 ", parents=" + Arrays.toString(parents) +
                 ", packaging='" + packaging + '\'' +
-                ", ext='" + ext + '\'' +
+//                ", ext='" + ext + '\'' +
                 ", executable=" + executable +
                 ", nutsApplication=" + nutsApplication +
                 ", executor=" + executor +
@@ -287,7 +288,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                         Objects.equals(alternative, that.alternative) &&
                         Arrays.equals(parents, that.parents) &&
                         Objects.equals(packaging, that.packaging) &&
-                        Objects.equals(ext, that.ext) &&
+//                        Objects.equals(ext, that.ext) &&
                         Objects.equals(executor, that.executor) &&
                         Objects.equals(installer, that.installer) &&
                         Objects.equals(name, that.name) &&
@@ -305,7 +306,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(id, alternative, packaging, ext, executable, nutsApplication, executor, installer, name, description, properties);
+        int result = Objects.hash(id, alternative, packaging,
+//                ext,
+                executable, nutsApplication, executor, installer, name, description, properties);
         result = 31 * result + Arrays.hashCode(parents);
         result = 31 * result + Arrays.hashCode(arch);
         result = 31 * result + Arrays.hashCode(os);

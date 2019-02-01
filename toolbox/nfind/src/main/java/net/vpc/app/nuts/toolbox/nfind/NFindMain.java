@@ -616,9 +616,8 @@ public class NFindMain extends NutsApplication {
         if(!nid.getVersion().isSingleValue()){
             return new ArrayList<>();
         }
-        for (NutsDependency dependency : ws.fetchDescriptor(id, true, session
-                .setProperty("monitor-allowed", false)
-        ).getDependencies(findContext.equivalentDependencyFilter)) {
+        for (NutsDependency dependency : ws.fetch(id).setSession(session.setProperty("monitor-allowed", false)).setIncludeEffective(true).fetchDescriptor()
+                .getDependencies(findContext.equivalentDependencyFilter)) {
             all.add(dependency);
         }
         ArrayList<NutsDependency> a = new ArrayList<>(all);
@@ -709,8 +708,8 @@ public class NFindMain extends NutsApplication {
                 .dependenciesOnly()
                 .setSort(true)
                 .fetch();
-        Set<String> immediateSelfDependencies = toDependencySet(ws.fetchDescriptor(info.nuts.toString(), false, session).getDependencies());
-        Set<String> immediateInheritedDependencies = toDependencySet(ws.fetchDescriptor(info.nuts.toString(), true, session).getDependencies());
+        Set<String> immediateSelfDependencies = toDependencySet(ws.fetch(info.nuts).setSession(session).setIncludeEffective(false).fetchDescriptor().getDependencies());
+        Set<String> immediateInheritedDependencies = toDependencySet(ws.fetch(info.nuts).setSession(session).setIncludeEffective(true).fetchDescriptor().getDependencies());
         int packagingSize = 3;
         int archSizeSize = 2;
         for (NutsDefinition dd : depsFiles) {
@@ -776,7 +775,7 @@ public class NFindMain extends NutsApplication {
         } else {
             status += "d";
         }
-        switch (StringUtils.trim(dd.getScope()).toLowerCase()) {
+        switch (StringUtils.trim(dd.getId().getScope()).toLowerCase()) {
             case "":
             case "compile": {
                 status += ".";
@@ -969,7 +968,8 @@ public class NFindMain extends NutsApplication {
 
         public boolean isInstalled(boolean checkDependencies) {
             if (this.is_installed == null) {
-                this.is_installed = isFetched() && ws.isInstalled(nuts.toString(), checkDependencies, session);
+                this.is_installed = isFetched() &&
+                        ws.fetch(nuts).setSession(session).includeDependencies(checkDependencies).fetchDefinition().getInstallation().isInstalled();
             }
             return this.is_installed;
         }
@@ -980,9 +980,9 @@ public class NFindMain extends NutsApplication {
                 if (this.isFetched()) {
                     NutsId nut2 = null;
                     try {
-                        nut2 = ws.resolveId(nuts.setVersion(null).toString(), session.copy()
+                        nut2 = ws.fetch(nuts.setVersion(null)).setSession(session.copy()
                                 .setProperty("monitor-allowed", false)
-                                .setTransitive(true).setFetchMode(NutsFetchMode.REMOTE));
+                                .setTransitive(true).setFetchMode(NutsFetchMode.REMOTE)).fetchId();
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -997,15 +997,15 @@ public class NFindMain extends NutsApplication {
         public File getFile() {
             if (_fetchedFile == null) {
                 try {
-                    _fetchedFile = ws.fetch(nuts, session.copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE));
+                    _fetchedFile = ws.fetch(nuts).setSession(session.copy().setTransitive(true).setFetchMode(NutsFetchMode.OFFLINE)).fetchDefinition();
                 } catch (Exception ex) {
-                    _fetchedFile = new NutsDefinition(null, null, null, false, false, null, null);
+                    //
                 }
             }
-            if (_fetchedFile.getFile() == null) {
+            if (_fetchedFile==null || _fetchedFile.getContent().getFile() == null) {
                 return null;
             }
-            return new File(_fetchedFile.getFile());
+            return new File(_fetchedFile.getContent().getFile());
         }
 
         public NutsDescriptor getDescriptor() {
@@ -1015,9 +1015,11 @@ public class NFindMain extends NutsApplication {
 //                        System.out.println("");
 //                    }
                 try {
-                    descriptor = ws.fetchDescriptor(nuts.toString(), true, session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE));
+                    descriptor = ws.fetch(nuts).setSession(session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE)).setIncludeEffective(true)
+                    .fetchDescriptor();
                 } catch (Exception ex) {
-                    descriptor = ws.fetchDescriptor(nuts.toString(), false, session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE));
+                    descriptor = ws.fetch(nuts).setSession(session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE)).setIncludeEffective(false)
+                    .fetchDescriptor();
                 }
             }
             return descriptor;

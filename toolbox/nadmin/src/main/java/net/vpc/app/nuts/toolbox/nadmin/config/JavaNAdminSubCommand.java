@@ -52,7 +52,9 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 cmdLine.unexpectedArgument("config java");
                 if (autoSave) {
-                    conf.save();
+                    if(!ws.getConfigManager().isReadOnly()) {
+                        conf.save();
+                    }
                 }
             } else {
                 while (cmdLine.hasNext()) {
@@ -62,7 +64,9 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (autoSave) {
-                    conf.save();
+                    if(!ws.getConfigManager().isReadOnly()) {
+                        conf.save();
+                    }
                 }
             }
             return true;
@@ -81,7 +85,9 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (autoSave) {
-                conf.save();
+                if(!ws.getConfigManager().isReadOnly()) {
+                    conf.save();
+                }
             }
             return true;
         } else if (cmdLine.readAll("list java")) {

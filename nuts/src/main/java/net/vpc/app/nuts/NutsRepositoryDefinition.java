@@ -33,14 +33,14 @@ public class NutsRepositoryDefinition {
     public static final int ORDER_USER_LOCAL=1000;
     public static final int ORDER_SYSTEM_LOCAL=2000;
     public static final int ORDER_USER_REMOTE=10000;
-    private String id;
+    private String name;
     private String location;
     private String type;
     private boolean proxied;
     private int order;
 
-    public NutsRepositoryDefinition(String id, String location, String type, boolean proxied, int order) {
-        this.id = id;
+    public NutsRepositoryDefinition(String name, String location, String type, boolean proxied, int order) {
+        this.name = name;
         this.location = location;
         this.type = type;
         this.proxied = proxied;
@@ -51,8 +51,8 @@ public class NutsRepositoryDefinition {
         return order;
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     public String getLocation() {

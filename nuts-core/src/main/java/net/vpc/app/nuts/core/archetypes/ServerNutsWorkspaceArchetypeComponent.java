@@ -49,7 +49,12 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.DEFAULT_REPOSITORY_NAME, NutsConstants.REPOSITORY_TYPE_NUTS, true);
+        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(
+                new NutsRepositoryLocation()
+                        .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                        .setLocation(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                        .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
+                , true);
         defaultRepo.getConfigManager().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
         workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 

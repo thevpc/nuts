@@ -26,13 +26,13 @@ public class LinuxNdi implements SystemNdi {
             NutsId nutsId = appContext.getWorkspace().getParseManager().parseId(id);
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isEmpty()) {
-                fetched = appContext.getWorkspace().fetch(id, null);
+                fetched = appContext.getWorkspace().fetch(id).fetchDefinition();
                 nutsId = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
             if (fetch) {
                 if (fetched == null) {
-                    fetched = appContext.getWorkspace().fetch(id, null);
+                    fetched = appContext.getWorkspace().fetch(id).fetchDefinition();
                 }
                 //appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
             }
@@ -52,7 +52,7 @@ public class LinuxNdi implements SystemNdi {
 
     public void createBootScript(boolean force, boolean silent) throws IOException {
         NutsId b = appContext.getWorkspace().getConfigManager().getRunningContext().getApiId();
-        NutsDefinition f = appContext.getWorkspace().fetch(b.toString(), null);
+        NutsDefinition f = appContext.getWorkspace().fetch(b).fetchDefinition();
         File ff = getScriptFile("nuts");
         if (!force && ff.exists()) {
             if (!silent) {
@@ -60,7 +60,7 @@ public class LinuxNdi implements SystemNdi {
             }
         } else {
             String idContent = "BOOT : " + f.getId().toString();
-            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getFile() + "\" \"$@\"");
+            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getContent().getFile() + "\" \"$@\"");
         }
     }
 

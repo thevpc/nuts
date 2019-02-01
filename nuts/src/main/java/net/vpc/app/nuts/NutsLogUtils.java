@@ -136,7 +136,7 @@ public final class NutsLogUtils {
                 } else {
                     if (!loggedToFile) {
                         loggedToFile = true;
-                        olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+                        olderLog.log(Level.CONFIG, "Switching log to file {0}", new Object[]{pattern});
                     }
                     rootLogger.removeHandler(mh);
                     mh.close();
@@ -148,7 +148,7 @@ public final class NutsLogUtils {
         if (!found) {
             if (!loggedToFile) {
                 loggedToFile = true;
-                olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+                olderLog.log(Level.CONFIG, "Switching log to file {0}", new Object[]{pattern});
             }
             File parentFile = new File(pattern).getParentFile();
             if (parentFile != null) {
@@ -203,7 +203,7 @@ public final class NutsLogUtils {
             }
         }
 //        if (updatedHandler || updatedLoglevel) {
-//            olderLog.log(Level.CONFIG, "Switching log config to file {0}", new Object[]{pattern});
+//            olderLog.log(Level.CONFIG, "Switching log to file {0}", new Object[]{pattern});
 //        }
     }
 

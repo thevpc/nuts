@@ -22,20 +22,20 @@ VARIATIONS:
   the id will be resolved as the folder\'s name. If the <repoType> is not type
   the default repository type will be used.
 
-##config## (add repo| ar) <repositoryId> <repoLocation> [<repoType>]
+##config## (add repo| ar) <repositoryName> <repoLocation> [<repoType>]
 
 
 ##config## (remove repo| rr) <repoLocationOrId>
 
 ##config## (list repos| rr)
 
-##config## (edit repo| er) <repositoryId> <workspace action verb and arguments>
+##config## (edit repo| er) <repositoryName> <workspace action verb and arguments>
 
-##config## (edit repo| er) <repositoryId> (add repo| ar) <repoLocation> [<repoType>]
+##config## (edit repo| er) <repositoryName> (add repo| ar) <repoLocation> [<repoType>]
 
-##config## (edit repo| er) <repositoryId> (remove repo| rr) <repoLocationOrId>
+##config## (edit repo| er) <repositoryName> (remove repo| rr) <repoLocationOrId>
 
-##config## (edit repo| er) <repositoryId> (list repos| lr) <repoLocationOrId>
+##config## (edit repo| er) <repositoryName> (list repos| lr) <repoLocationOrId>
 
 ##config## (add extension| ax) [<extensionId>]...
 

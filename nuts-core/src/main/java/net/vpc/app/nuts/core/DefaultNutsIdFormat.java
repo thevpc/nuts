@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.Map;
@@ -116,7 +117,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         String exclusions = m.get("exclusions");
         NutsIdBuilder idBuilder = id.builder();
         if (omitEnv) {
-            idBuilder.setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
+            idBuilder.setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
         }
         if (omitFace) {
             idBuilder.setQueryProperty(NutsConstants.QUERY_FACE, null);
@@ -156,14 +157,14 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             sb.append("#");
             sb.append(ws.getParseManager().escapeText(id.getVersion().toString()));
         }
-        boolean firstQ=true;
+        boolean firstQ = true;
 
 
-        if(!StringUtils.isEmpty(classifier)){
-            if(firstQ){
+        if (!StringUtils.isEmpty(classifier)) {
+            if (firstQ) {
                 sb.append("{{?}}");
-                firstQ=false;
-            }else{
+                firstQ = false;
+            } else {
                 sb.append("{{&}}");
             }
             sb.append("{{classifier}}=**");
@@ -173,37 +174,37 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         }
 
 //        if (highlightScope) {
-            if (!StringUtils.isEmpty(scope) && !"compile".equals(scope)) {
-                if(firstQ){
-                    sb.append("{{?}}");
-                    firstQ=false;
-                }else{
-                    sb.append("{{&}}");
-                }
-                sb.append("{{scope}}=**");
-                sb.append("**");
-                sb.append(ws.getParseManager().escapeText(scope));
-                sb.append("**");
+        if (!StringUtils.isEmpty(scope) && !"compile".equals(scope)) {
+            if (firstQ) {
+                sb.append("{{?}}");
+                firstQ = false;
+            } else {
+                sb.append("{{&}}");
             }
+            sb.append("{{scope}}=**");
+            sb.append("**");
+            sb.append(ws.getParseManager().escapeText(scope));
+            sb.append("**");
+        }
 //        }
 //        if (highlightOptional) {
-            if (!StringUtils.isEmpty(optional) && !"false".equals(optional)) {
-                if(firstQ){
-                    sb.append("{{?}}");
-                    firstQ=false;
-                }else{
-                    sb.append("{{&}}");
-                }
-                sb.append("{{optional}}=**");
-                sb.append(ws.getParseManager().escapeText(optional));
-                sb.append("**");
-            }
-//        }
-        if(!StringUtils.isEmpty(exclusions)){
-            if(firstQ){
+        if (!StringUtils.isEmpty(optional) && !"false".equals(optional)) {
+            if (firstQ) {
                 sb.append("{{?}}");
-                firstQ=false;
-            }else{
+                firstQ = false;
+            } else {
+                sb.append("{{&}}");
+            }
+            sb.append("{{optional}}=**");
+            sb.append(ws.getParseManager().escapeText(optional));
+            sb.append("**");
+        }
+//        }
+        if (!StringUtils.isEmpty(exclusions)) {
+            if (firstQ) {
+                sb.append("{{?}}");
+                firstQ = false;
+            } else {
                 sb.append("{{&}}");
             }
             sb.append("{{exclusions}}=@@");
@@ -212,22 +213,21 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         }
         if (!StringUtils.isEmpty(id.getQuery())) {
             for (Map.Entry<String, String> ee : id.getQueryMap().entrySet()) {
-                switch (ee.getKey()){
+                switch (ee.getKey()) {
                     case "exclusions":
                     case "optional":
                     case "scope":
-                    case "classifier":
-                        {
+                    case "classifier": {
                         break;
                     }
-                    default:{
-                        if(firstQ){
+                    default: {
+                        if (firstQ) {
                             sb.append("{{?}}");
-                            firstQ=false;
-                        }else{
+                            firstQ = false;
+                        } else {
                             sb.append("{{&}}");
                         }
-                        sb.append("<<"+ws.getParseManager().escapeText(ee.getKey())+">>=");
+                        sb.append("<<" + ws.getParseManager().escapeText(ee.getKey()) + ">>=");
                         sb.append(ws.getParseManager().escapeText(exclusions));
 //                        sb.append("");
                     }

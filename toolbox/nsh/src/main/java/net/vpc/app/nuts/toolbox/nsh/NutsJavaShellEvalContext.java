@@ -34,7 +34,6 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.AbstractCommandAutoComplete;
 import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.CommandAutoComplete;
-import net.vpc.common.commandline.DefaultArgumentCandidate;
 import net.vpc.common.javashell.*;
 import net.vpc.common.javashell.cmds.Command;
 import net.vpc.common.javashell.cmds.CommandContext;
@@ -254,7 +253,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                     .find();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDescriptor d = ws.fetchDescriptor(selectedId.toString(), true, this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE));
+                NutsDescriptor d = ws.fetch(selectedId).setIncludeEffective(true).setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE)).fetchDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts-autocomplete-support"));
                 if (
                         "true".equalsIgnoreCase(nuts_autocomplete_support)

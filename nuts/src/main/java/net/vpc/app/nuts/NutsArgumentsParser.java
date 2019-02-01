@@ -52,6 +52,7 @@ public final class NutsArgumentsParser {
             if (cmdArg.isOption()) {
                 switch (cmdArg.getKey()) {
                     //dash  should be the very last argument
+                    case "-v":
                     case "--boot-version":
                     case "--boot-api-version": {
                         o.setRequiredBootVersion(cmdArgList.getValueFor(cmdArg));
@@ -65,11 +66,9 @@ public final class NutsArgumentsParser {
                         cmdArgList.consumeApplicationArguments();
                         break;
                     }
-                    case "--home": {
-                        o.setHome(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--workspace": {
+                    case "-w":
+                    case "--workspace":
+                        {
                         o.setWorkspace(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
@@ -110,13 +109,16 @@ public final class NutsArgumentsParser {
                         o.setBootJavaOptions(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
-                    case "--save": {
+                    case "-s":
+                    case "--save":{
                         cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setSaveIfCreated(true);
                         break;
                     }
                     case "--no-save":
-                    case "--!save": {
+                    case "--!save":
+                    case "-!s":
+                        {
                         cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setSaveIfCreated(false);
                         break;
@@ -156,9 +158,30 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--read-only": {
+                    case "-r":
+                    case "--read-only":{
                         cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setReadOnly(true);
+                        break;
+                    }
+                    case "-!r":
+                    case "--!read-only":{
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setReadOnly(false);
+                        break;
+                    }
+                    case "-0":
+                    case "--recover":
+                        {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setRecover(true);
+                        break;
+                    }
+                    case "-!0":
+                    case "--!recover":
+                        {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setRecover(false);
                         break;
                     }
                     case "-version":
@@ -219,7 +242,9 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--help": {
+                    case "-?":
+                    case "--help":
+                        {
                         o.setBootCommand(NutsBootCommand.HELP);
                         cmdArgList.consumeApplicationArguments();
                         break;
@@ -314,12 +339,23 @@ public final class NutsArgumentsParser {
                         o.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
                         break;
                     }
-                    case "--standalone-strategy": {
+                    case "--standalone":
+                    case "--standalone-workspace":
+                        {
                         o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         break;
                     }
-                    case "--system-strategy": {
-                        o.setStoreLocationStrategy(NutsStoreLocationStrategy.SYSTEM);
+                    case "--exploded":
+                    case "--exploded-workspace": {
+                        o.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+                        break;
+                    }
+                    case "--exploded-repositories": {
+                        o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+                        break;
+                    }
+                    case "--standalone-repositories": {
+                        o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         break;
                     }
                     case "--no-create": {

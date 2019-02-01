@@ -31,11 +31,11 @@ package net.vpc.app.nuts;
 
 public interface NutsBootContext {
 
-    String getHome();
-
     String getWorkspace();
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
+
+    NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
     NutsStoreLocationLayout getStoreLocationLayout();
 

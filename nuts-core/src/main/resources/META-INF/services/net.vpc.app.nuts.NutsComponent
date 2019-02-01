@@ -13,7 +13,6 @@ net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase
 net.vpc.app.nuts.core.archetypes.ServerNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.core.archetypes.MinimalNutsWorkspaceArchetypeComponent
 net.vpc.app.nuts.core.archetypes.DefaultNutsWorkspaceArchetypeComponent
-net.vpc.app.nuts.core.archetypes.StandaloneNutsWorkspaceArchetypeComponent
 
 net.vpc.app.nuts.core.installers.ZipNutsInstallerComponent
 

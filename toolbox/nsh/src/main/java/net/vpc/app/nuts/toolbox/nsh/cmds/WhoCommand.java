@@ -38,7 +38,6 @@ import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -107,7 +106,7 @@ public class WhoCommand extends AbstractNutsCommand {
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !StringUtils.isEmpty(ruser.getMappedUser()))) {
-                    context.out().printf("[ [[%s]] ]: \n", repository.getRepositoryId());
+                    context.out().printf("[ [[%s]] ]: \n", repository.getName());
                     Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
                     Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));

@@ -40,7 +40,7 @@ public class DefaultNutsDeployment implements NutsDeployment {
     private Object descriptor;
     private String sha1;
     private String descSHA1;
-    private String repositoryId;
+    private String repositoryName;
     private NutsConfirmAction foundAction;
     private NutsWorkspace ws;
 
@@ -99,12 +99,12 @@ public class DefaultNutsDeployment implements NutsDeployment {
         return descriptor;
     }
 
-    public String getRepositoryId() {
-        return repositoryId;
+    public String getRepositoryName() {
+        return repositoryName;
     }
 
-    public DefaultNutsDeployment setRepositoryId(String repositoryId) {
-        this.repositoryId = repositoryId;
+    public DefaultNutsDeployment setRepositoryName(String repositoryName) {
+        this.repositoryName = repositoryName;
         return this;
     }
 

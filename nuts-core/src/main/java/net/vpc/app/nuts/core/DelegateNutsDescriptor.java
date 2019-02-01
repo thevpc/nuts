@@ -67,11 +67,6 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor setExt(String ext) {
-        return getBase().setExt(ext);
-    }
-
-    @Override
     public NutsDescriptor setExecutor(NutsExecutorDescriptor executor) {
         return getBase().setExecutor(executor);
     }
@@ -111,10 +106,10 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
         return getBase().getExecutor();
     }
 
-    @Override
-    public String getExt() {
-        return getBase().getExt();
-    }
+//    @Override
+//    public String getExt() {
+//        return getBase().getExt();
+//    }
 
     @Override
     public String getPackaging() {

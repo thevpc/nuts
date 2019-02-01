@@ -29,10 +29,8 @@
  */
 package net.vpc.app.nuts.core.installers;
 
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.NutsStoreFolder;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.common.io.UnzipOptions;
 import net.vpc.common.io.ZipUtils;
 
@@ -55,15 +53,15 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        File installFolder = new File(executionContext.getWorkspace().getConfigManager().getStoreLocation(executionContext.getNutsDefinition().getId(), NutsStoreFolder.PROGRAMS));
+        DefaultNutsDefinition nutsDefinition = (DefaultNutsDefinition)executionContext.getNutsDefinition();
+        File installFolder = new File(executionContext.getWorkspace().getConfigManager().getStoreLocation(nutsDefinition.getId(), NutsStoreFolder.PROGRAMS));
 
         String skipRoot = (String) executionContext.getExecutorProperties().remove("unzip-skip-root");
-        ZipUtils.unzip((executionContext.getNutsDefinition().getFile()),
+        ZipUtils.unzip((nutsDefinition.getContent().getFile()),
                 installFolder.getPath(),
                 new UnzipOptions().setSkipRoot("true".equalsIgnoreCase(skipRoot))
         );
-        executionContext.getNutsDefinition().setInstallFolder(installFolder.getPath());
-        executionContext.getNutsDefinition().setInstalled(true);
+        nutsDefinition.setInstallation(new NutsInstallInfo(true,installFolder.getPath()));
         if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
                     .createExecBuilder()

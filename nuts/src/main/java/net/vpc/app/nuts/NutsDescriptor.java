@@ -47,7 +47,7 @@ public interface NutsDescriptor extends Serializable {
 
     String getPackaging();
 
-    String getExt();
+//    String getExt();
 
     String getAlternative();
 
@@ -97,7 +97,7 @@ public interface NutsDescriptor extends Serializable {
     NutsDescriptor setExecutor(NutsExecutorDescriptor executor);
 
 
-    NutsDescriptor setExt(String ext);
+//    NutsDescriptor setExt(String ext);
 
     NutsDescriptor addProperty(String name, String value);
 
@@ -150,4 +150,5 @@ public interface NutsDescriptor extends Serializable {
 
     NutsDescriptorBuilder builder();
 
+    NutsDescriptor setAlternative(String alternative);
 }

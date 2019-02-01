@@ -93,10 +93,10 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
         List<String> app = new ArrayList<>();
         app.add(NUTS_SHELL);
-        app.add(nutMainFile.getFile());
+        app.add(nutMainFile.getContent().getFile());
         app.addAll(Arrays.asList(appArgs));
 
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(dir));
         return executionContext.getWorkspace()
                 .createExecBuilder()
                 .setCommand(app)

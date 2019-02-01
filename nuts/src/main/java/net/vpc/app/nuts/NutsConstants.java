@@ -126,36 +126,32 @@ public final class NutsConstants {
     public static final String USER_ANONYMOUS = "anonymous";
 
     public static final String NUTS_ID_BOOT_API = "net.vpc.app.nuts:nuts";
-    public static final String NUTS_ID_BOOT_API_PATH = "/"+ NUTS_ID_BOOT_API.replaceAll("[.:]","/");
     public static final String NUTS_ID_BOOT_RUNTIME = "net.vpc.app.nuts:nuts-core";
     public static final String QUERY_ALTERNATIVE = "alt";
     public static final String QUERY_FACE = "face";
+    public static final String QUERY_SCOPE = "scope";
+    public static final String QUERY_OPTIONAL = "optional";
     public static final String QUERY_ARCH = "arch";
     public static final String QUERY_OS = "os";
     public static final String QUERY_OSDIST = "osdist";
     public static final String QUERY_PLATFORM = "platform";
     public static final String QUERY_FACE_DEFAULT_VALUE = "default";
-    public static final String QUERY_FILE = "file";
+    public static final String ALTERNATIVE_DEFAULT_VALUE = "default";
+    public static final String QUERY_PACKAGING = "packaging";
     public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
     public static final String URL_BOOTSTRAP_REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
     public static final String URL_BOOTSTRAP_REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
-//    public static final String URL_BOOTSTRAP_REMOTE_MAVEN_GIT = "https://github.com/thevpc/vpc-public-maven/raw/master/";
     public static final String URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL = "http://repo.maven.apache.org/maven2/";
     public static final String URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL = "~/.m2/repository";
-    public static final String URL_BOOTSTRAP_LOCAL = "~/.nuts/remote-bootstrap";
-    public static final String URL_COMPONENTS_REMOTE = URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL+";"+ URL_BOOTSTRAP_REMOTE_NUTS_GIT;
-//    public static final String URL_COMPONENTS_LOCAL = URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL//+";"+DEFAULT_NUTS_HOME+"/bootstrap";
+    public static final String URL_BOOTSTRAP_LOCAL = "${home.config}/.vpc-public-nuts";
+    public static final String FACE_CATALOG = "catalog";
+    public static final String FACE_DESCRIPTOR = "descriptor";
+    public static final String FACE_COMPONENT = "package";
+    public static final String FACE_DESC_HASH = "descriptor-hash";
+    public static final String FACE_COMPONENT_HASH = "package-hash";
 
-    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
-    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
     public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
 
-    static {
-        _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_ARCH, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_OS, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_OSDIST, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_PLATFORM, null);
-    }
 
     private NutsConstants() {
     }

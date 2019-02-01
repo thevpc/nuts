@@ -71,6 +71,8 @@ java -jar nuts-0.5.3.jar
         * Introduced NutsDeploymentBuilder,NutsIoManager,NutsParseManager,NutsFormatManager,DescriptorFormat
         * Introduced NutsSessionTerminal,NutsSystemTerminal
         * Added description, alternative (to support multi architecture nuts) descriptor properties
+        * Removed descriptor/id 'ext' and 'file' parameters. 'packaging' should be more than enough
+        * Removed Maps from config. Replaced by plain arrays
     4- Added Archetype "standalone" to help bundling and application with all its dependencies
     5- Several fixes
         * Fixed Log configuration, introduced --log-inherited to enable inherited log-handlers

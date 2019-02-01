@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Map;
 
 public interface NutsSession {

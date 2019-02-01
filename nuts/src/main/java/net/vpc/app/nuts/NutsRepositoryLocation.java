@@ -35,7 +35,7 @@ public class NutsRepositoryLocation implements Serializable{
 
     private static final long serialVersionUID = 1;
 
-    private String id;
+    private String name;
     private String type;
     private String location;
     private boolean enabled = true;
@@ -44,14 +44,14 @@ public class NutsRepositoryLocation implements Serializable{
     }
 
     public NutsRepositoryLocation(NutsRepositoryLocation other) {
-        this.id = other.getId();
+        this.name = other.getName();
         this.type = other.getType();
         this.location = other.getLocation();
         this.enabled = other.isEnabled();
     }
 
-    public NutsRepositoryLocation(String id, String location, String type) {
-        this.id = id;
+    public NutsRepositoryLocation(String name, String location, String type) {
+        this.name = name;
         this.type = type;
         this.location = location;
     }
@@ -60,32 +60,36 @@ public class NutsRepositoryLocation implements Serializable{
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public NutsRepositoryLocation setEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public NutsRepositoryLocation setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public NutsRepositoryLocation setType(String type) {
         this.type = type;
+        return this;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public NutsRepositoryLocation setLocation(String location) {
         this.location = location;
+        return this;
     }
 
     public boolean equals(Object o) {
@@ -114,6 +118,10 @@ public class NutsRepositoryLocation implements Serializable{
 
     @Override
     public String toString() {
-        return "NutsRepositoryLocation{" + "id=" + id + ", type=" + type + ", location=" + location + ", enabled=" + enabled + '}';
+        return "NutsRepositoryLocation{" + "name=" + name + ", type=" + type + ", location=" + location + ", enabled=" + enabled + '}';
+    }
+
+    public NutsRepositoryLocation copy() {
+        return new NutsRepositoryLocation(this);
     }
 }

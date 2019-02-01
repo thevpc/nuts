@@ -1,7 +1,7 @@
 ==``    _   __      __       ``==
 ==``   / | / /_  __/ /______ ``==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
 ==``  /  |/ / / / / __/ ___/ ``==  <<The Open Source Package Manager for __Java__ (TM)>>
-==`` / /|  / /_/ / /_(__  )  ``==  <<and other __things__>> ... by ==vpc==
+==`` / /|  / /_/ / /_(__  )  ``==  <<and other __Things__>> ... by ==vpc==
 ==``/_/ |_/\\__,_/\\__/____/ ``==    __http://github.com/thevpc/nuts__
     version [[${nuts.workspace-runtime.version}]]
 
@@ -48,9 +48,11 @@ Boot Runtime Version: ${nuts.workspace-runtime.version}
 Java         Version: ${java.version} (${java.vm.name})
 
 @@NUTS OPTIONS:@@
+ [[-h]] {{\<workspaces-home-location\>}}
  [[--home]] {{\<workspaces-home-location\>}}
       root location containing all workspaces.
       this defaults to ~/.nuts where ~ refers to the users\'s home directory.
+ [[-w]] {{\<workspace-location\>}}
  [[--workspace]] {{\<workspace-location\>}}
       workspace location to open.
       this defaults to default-workspace. Typically this refers to ~/.nuts/default-workspace
@@ -77,16 +79,26 @@ Java         Version: ${java.version} (${java.vm.name})
       workspace password
       if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
       specify user credentials (see --login)
- [[--save]]
+ [[--recover]]  or [[-0]]
+      try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
+ [[--save]]  or [[-s]]
       saves workspace if newly created
- [[--no-save]] or [[--!save]]
+ [[--no-save]] or [[--!save]]  or [[-!s]]
       do not save workspace if newly created
- [[--no-colors]] or [[--!colors]]
+ [[--no-colors]] or [[--!colors]]  or [[-!c]]
       disable console coloring
- [[--version]] or [[-version]]
-      show version, libraries and locations used for booting ==nuts==
- [[--perf]]
-      show startup time in ms
+ [[--standalone]] or [[--standalone-strategy]]
+       will boot with standalone strategy so that all file will be stored in the workspace folder
+       overriding workspace config.
+ [[--exploded]] or [[--exploded-strategy]]
+       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
+       particularly will be stored elsewhere depending on on configuration
+ [[--system-layout]] or [[--system]]
+       will use current system layout to resolve folder candidates for log,config,programs ...etc.
+ [[--windows-layout]]
+       will use windows layout to resolve folder candidates for log,config,programs ...etc.
+ [[--linux-layout]]
+       will use linux/unix layout to resolve folder candidates for log,config,programs ...etc.
  [[--exclude-extensions]]     {{\<extension-id-list\>}}
       exclude extensions from being loaded at runtime. list is separated with characters " ,;"
  [[--exclude-repositories]]   {{\<repository-list\>}}
@@ -94,6 +106,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--boot-runtime]] {{\<runtime-id-or-version\>}}
       load runtime (nuts-core) version. either version may be expressed or full nuts implementation
       (other than nuts-core) should be defined
+ [[-v]] {{\<boot-api-version\>}}
  [[--boot-version]] {{\<boot-api-version\>}}
  [[--boot-api-version]] {{\<boot-api-version\>}}
       run a new instance of ==nuts== with the specified version
@@ -103,6 +116,8 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--boot-java]]      {{\<java-home\>}}
  [[--boot-java-home]] {{\<java-home\>}}
       java home to run new instance of nuts
+[[--perf]]
+      show startup time in ms
 
  [[--verbose]] , [[--log-finest]]  , [[--log-info]] , [[--log-fine]] ,
  [[--log-finer]] , [[--log-severe]] , [[--log-warning]] ,
@@ -122,7 +137,7 @@ Java         Version: ${java.version} (${java.vm.name})
       define the number of files to use (in rotating log)
 
 @@NUTS COMMAND:@@
- [[--help]]
+ [[--help]] or [[-?]]
       show this help and exit
  [[--license]]
       show license and exit
@@ -138,6 +153,8 @@ Java         Version: ${java.version} (${java.vm.name})
        clean (delete) ==nuts== cache folders
  [[--reset]]
        reset (delete) ==nuts== workspace folder
+ [[--version]] or [[-version]]
+      show version, libraries and locations used for booting ==nuts==
 
 @@EXAMPLES:@@
        ==nuts== [[--help]]

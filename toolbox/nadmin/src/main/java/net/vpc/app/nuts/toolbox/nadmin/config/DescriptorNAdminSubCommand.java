@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author vpc
  */
 public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
@@ -49,24 +48,24 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                         desc.setExecutable(value);
                     }
                 });
-            } else if (cmdLine.readAll("-ext")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("ext", "jar")).getStringExpression();
-                all.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        desc.setExt(value);
-                    }
-                });
             } else if (cmdLine.readAll("-packaging")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("packaging",  "jar")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("packaging", "jar")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
                         desc.setPackaging(value);
                     }
                 });
+            } else if (cmdLine.readAll("-alternative")) {
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("alternative")).getStringExpression();
+                all.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        desc.setAlternative(value);
+                    }
+                });
             } else if (cmdLine.readAll("-name")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("name",  "my-name")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("name", "my-name")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -91,7 +90,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 });
 
             } else if (cmdLine.readAll("-add-os")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os",  "os")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os", "os")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -108,7 +107,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 });
 
             } else if (cmdLine.readAll("-add-osdist")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os",  "os")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os", "os")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -116,7 +115,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
             } else if (cmdLine.readAll("-remove-osdist")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os",  "os")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os", "os")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -150,7 +149,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 });
             } else if (cmdLine.readAll("-remove-arch")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os",  "os")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os", "os")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -169,7 +168,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     });
                 }
             } else if (cmdLine.readAll("-remove-property")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os",  "os")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("os", "os")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -178,7 +177,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 });
 
             } else if (cmdLine.readAll("-add-dependency")) {
-                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("dependency",  "my-group:my-name#1.0")).getStringExpression();
+                final String value = cmdLine.readRequiredNonOption(new ValueNonOption("dependency", "my-group:my-name#1.0")).getStringExpression();
                 all.add(new Runnable() {
                     @Override
                     public void run() {
@@ -196,10 +195,10 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
             } else if (cmdLine.readAll("-file")) {
                 file = cmdLine.readRequiredNonOption(new FileNonOption("file")).getStringExpression();
             } else if (cmdLine.readAll("-save")) {
-                save = cmdLine.readRequiredNonOption(new ValueNonOption("save",  "true", "false")).getBoolean();
+                save = cmdLine.readRequiredNonOption(new ValueNonOption("save", "true", "false")).getBoolean();
             } else {
                 if (!cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException("config new|update descriptor: Unsupported option "+cmdLine.get());
+                    throw new NutsIllegalArgumentException("config new|update descriptor: Unsupported option " + cmdLine.get());
                 }
             }
         }
@@ -221,7 +220,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (save) {
                 if (file != null) {
-                    ws.getFormatManager().createDescriptorFormat().setPretty(true).format(desc.build(),new File(file));
+                    ws.getFormatManager().createDescriptorFormat().setPretty(true).format(desc.build(), new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");

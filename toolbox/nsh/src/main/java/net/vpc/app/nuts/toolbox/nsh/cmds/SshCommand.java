@@ -39,6 +39,7 @@ import net.vpc.common.ssh.SShConnection;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,14 +100,11 @@ public class SshCommand extends AbstractNutsCommand {
         ) {
             List<String> cmd = new ArrayList<>();
             if(o.invokeNuts){
-                String home=null;
                 String workspace=null;
                 CommandLine c=new CommandLine(o.cmd.subList(1,o.cmd.size()));
                 Argument arg=null;
                 while(c.hasNext()){
-                    if((arg=c.readOption("--home"))!=null) {
-                        home = c.readNonOption().getStringExpression();
-                    }else if((arg=c.readOption("--workspace"))!=null){
+                    if((arg=c.readOption("--workspace"))!=null){
                         workspace=c.readNonOption().getStringExpression();
                     }else if(c.isNonOption()){
                         break;
@@ -122,15 +120,15 @@ public class SshCommand extends AbstractNutsCommand {
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo","$HOME");
                     userHome= sshSession.getOutputString().trim();
-                    if(StringUtils.isEmpty(home)){
-                        home=userHome+"/.nuts";
-                    }
                     if(StringUtils.isEmpty(workspace)){
-                        workspace=home+"/default-workspace";
+                        workspace=userHome+"/.nuts/default-workspace";
                     }
                     String goodJar=null;
                     for (String jar : new String[]{
-                            home+"/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar",
+                            //if standalone
+                            workspace+"/cache/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar",
+                            //if system layout
+                            userHome+"/.cache/nuts/"+new File(workspace).getName()+"/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar",
                             userHome+"/bin/nuts.jar",
                             userHome+"/usr/local/nuts/nuts.jar",
                     }) {
@@ -150,8 +148,8 @@ public class SshCommand extends AbstractNutsCommand {
                             throw new NutsExecutionException("Unable to resolve Nuts Jar File",2);
                         }else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
-                            sshSession.setFailFast(true).copyLocalToRemote(from, home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
-                            goodJar=home + "/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
+                            sshSession.setFailFast(true).copyLocalToRemote(from, workspace+"/cache/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
+                            goodJar=workspace+"/cache/bootstrap/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
 //                            NutsDefinition[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getRuntimeId())
 //                                    .setIncludeMain(true),
 //                                    context.getSession());

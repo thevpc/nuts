@@ -229,44 +229,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (!StringUtils.isEmpty(namespace)) {
-            sb.append(namespace).append("://");
-        }
-        if (!StringUtils.isEmpty(group)) {
-            sb.append(group).append(":");
-        }
-        sb.append(name);
-        if (!StringUtils.isEmpty(version.getValue())) {
-            sb.append("#").append(version);
-        }
-        Map<String, String> p = new TreeMap<>();
-        if (!StringUtils.isEmpty(scope)) {
-            if (!scope.equals("compile")) {
-                p.put("scope", scope);
-            }
-        }
-        if (!StringUtils.isEmpty(optional)) {
-            if (!optional.equals("false")) {
-                p.put("optional", optional);
-            }
-        }
-        if (!p.isEmpty()) {
-            sb.append("?");
-            int i = 0;
-            for (Map.Entry<String, String> e : p.entrySet()) {
-                if (i > 0) {
-                    sb.append('&');
-                }
-                sb.append(CoreStringUtils.simpleQuote(e.getKey(), true, "&="));
-                if (e.getValue() != null) {
-                    sb.append('=');
-                    sb.append(CoreStringUtils.simpleQuote(e.getValue(), true, "&="));
-                }
-                i++;
-            }
-        }
-        return sb.toString();
+        return build().toString();
     }
 
     @Override

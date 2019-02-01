@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
+import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.CollectionUtils;
 
@@ -47,12 +48,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
     public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN), workspace, parentRepository,
-                CoreIOUtils.resolvePath(repositoryId,
-                        root != null ? new File(root) : CoreIOUtils.createFile(
-                                workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getHomeLocation()).getPath(),
-                SPEED_FAST);
+        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN), workspace, parentRepository,root,SPEED_FAST);
     }
 
     @Override
@@ -74,12 +70,12 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected String getStreamSHA1(NutsId id, String extension, NutsSession session) {
-        return CoreSecurityUtils.evalSHA1(getStream(id.setFace(CoreNutsUtils.FACE_PACKAGE_HASH), extension, session), true);
+    protected String getStreamSHA1(NutsId id, NutsSession session) {
+        return CoreSecurityUtils.evalSHA1(getStream(id.setFace(NutsConstants.FACE_COMPONENT_HASH), session), true);
     }
 
     @Override
-    protected void checkSHA1Hash(NutsId id, String extension, InputStream stream, NutsSession session) {
+    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsSession session) {
         try {
             stream.close();
         } catch (IOException e) {
@@ -88,8 +84,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected String getPath(NutsId id, String extension) {
-        return getLocalPath(id,extension);
+    protected String getIdPath(NutsId id) {
+        return new File(getConfigManager().getLocation(), CoreNutsUtils.syspath(getIdRelativePath(id))).getPath();
     }
 
     @Override
@@ -97,112 +93,30 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         return null;
     }
 
-    protected String getPrivateStoreLocation() {
-        return CoreIOUtils.resolvePath(getConfigManager().getLocation(),
-                new File(getConfigManager().getStoreLocation()),
-                getWorkspace().getConfigManager().getHomeLocation()).getPath();
+    public File getIdFile(NutsId id) {
+        String p = getIdRelativePath(id);
+        if (p != null) {
+            return new File(getConfigManager().getLocation(), p);
+        }
+        return null;
     }
 
     @Override
-    protected NutsDefinition fetchImpl(NutsId id, NutsSession session) {
-        NutsDefinition nutsDefinition = getPrivateStoreNutsDefinition(id, session);
+    protected NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            if (nutsDefinition != null && nutsDefinition.getFile() != null && new File(nutsDefinition.getFile()).exists()) {
-                NutsDescriptor desc = nutsDefinition.getDescriptor();
-                if (desc != null) {
-                    NutsId id2 = getWorkspace().resolveEffectiveId(desc, session);
-                    id2 = id2.setFace(id.getFace());
-                    return new NutsDefinition(id2, desc, nutsDefinition.getFile(), true, false, null,null);
+            File f = getIdFile(id);
+            if (f != null && f.exists()) {
+                if (localPath == null) {
+                    return new NutsContent(f.getPath(), true, false);
+                } else {
+                    IOUtils.copy(f, new File(localPath), true);
+                    return new NutsContent(localPath, true, false);
                 }
             }
         }
         throw new NutsNotFoundException(id);
     }
 
-    //    protected NutsDescriptor getLocalNutDescriptor(NutsId id, boolean nullIfInvalidName, NutsSession session) throws IOException {
-//        File localNutDescriptorFile = getLocalNutDescriptorFile(id, nullIfInvalidName);
-//        if (localNutDescriptorFile == null || !localNutDescriptorFile.exists()) {
-//            return null;
-//        }
-//        NutsDescriptor nutsDescriptor = parsePomXml(new FileInputStream(localNutDescriptorFile), session);
-//        File localFile = getLocalGroupAndArtifactAndVersionFile(id, false, session);
-//        if (localFile != null && localFile.isFile()) {
-//            File localDescFile = getLocalGroupAndArtifactAndVersionFile(id, true, session);
-//            if (localDescFile != null && localDescFile.exists()) {
-//                nutsDescriptor = nutsDescriptor.setExecutable(isExecutableJar(localFile));
-//            }
-//        }
-//        return nutsDescriptor;
-//    }
-//    protected File getLocalNutDescriptorFile(NutsId id, boolean nullIfInvalidName) {
-//        if (StringUtils.isEmpty(id.getGroup())) {
-//            if (nullIfInvalidName) {
-//                return null;
-//            }
-//            throw new NutsIdInvalidFormatException("Missing group for " + id);
-//        }
-//        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replace('.', File.separator));
-//        if (StringUtils.isEmpty(id.getName())) {
-//            if (nullIfInvalidName) {
-//                return null;
-//            }
-//            throw new NutsIdInvalidFormatException("Missing name for " + id.toString());
-//        }
-//        File artifactFolder = new File(groupFolder, id.getName());
-//        if (id.getVersion().isEmpty()) {
-//            if (nullIfInvalidName) {
-//                return null;
-//            }
-//            throw new NutsIdInvalidFormatException("Missing version for " + id.toString());
-//        }
-//        File versionFolder = new File(artifactFolder, id.getVersion().getValue());
-//        //check default face
-//
-//        String name = id.getName() + "-" + id.getVersion().getValue();
-//        String ext = ".pom";
-//        return new File(versionFolder, name + ext);
-//    }
-
-
-    //    protected File getLocalGroupAndArtifactAndVersionFile(NutsId id, boolean desc, NutsSession session) throws IOException {
-//        if (StringUtils.isEmpty(id.getGroup())) {
-//            return null;
-//        }
-//        if (StringUtils.isEmpty(id.getName())) {
-//            return null;
-//        }
-//        if (id.getVersion().isEmpty()) {
-//            return null;
-//        }
-//        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replaceAll("\\.", File.separator));
-//        File artifactFolder = new File(groupFolder, id.getName());
-//        if (id.getVersion().isEmpty()) {
-//            if (id.getQueryMap().isEmpty()) {
-//                return artifactFolder;
-//            } else {
-//                throw new NutsIllegalArgumentsException("Invalid id " + id);
-//            }
-//        }
-//        File versionFolder = new File(artifactFolder, id.getVersion().getValue());
-//        Map<String, String> query = id.getQueryMap();
-//        NutsId fid = id;
-//        if (desc) {
-//            query.put(NutsConstants.QUERY_FILE, "pom");
-//            fid = fid.setQuery(query);
-//            if(true){
-//                // TODO
-//                throw new NutsIllegalArgumentsException("Checik this later");
-//            }
-//            //return new File(versionFolder, getQueryFilename(fid, d));
-//        }
-//        NutsDescriptor d = getLocalNutDescriptor(id, true, session);
-//        if (d == null) {
-//            return null;
-//            //throw new NutsIllegalArgumentsException("Invalid nuts " + id);
-//        }
-//
-//        return new File(versionFolder, getQueryFilename(fid, d));
-//    }
     protected File getLocalGroupAndArtifactFile(NutsId id) {
         if (StringUtils.isEmpty(id.getGroup())) {
             return null;
@@ -210,7 +124,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        File groupFolder = new File(getPrivateStoreLocation(), id.getGroup().replace('.', File.separatorChar));
+        File groupFolder = new File(getConfigManager().getLocation(), id.getGroup().replace('.', File.separatorChar));
         return new File(groupFolder, id.getName());
     }
 
@@ -220,9 +134,17 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             if (id.getVersion().isSingleValue()) {
-                final NutsDescriptor d = parsePomDescriptor(id, session);
-                if (d != null) {
-                    return new ArrayList<>(Collections.singletonList(id.setNamespace(getRepositoryId())));
+                File f = getIdFile(id.setFaceDescriptor());
+                if (f != null && f.exists()) {
+                    NutsDescriptor d = null;
+                    try {
+                        d = parsePomDescriptor(f, session);
+                    } catch (IOException ex) {
+                        //
+                    }
+                    if (d != null) {
+                        return new ArrayList<>(Collections.singletonList(id.setNamespace(getName())));
+                    }
                 }
                 return Collections.emptyList();
             }
@@ -242,34 +164,22 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
         if (nutsDescriptor.getId().getName() == null) {
             //why?
-            if(log.isLoggable(Level.FINE)) {
+            if (log.isLoggable(Level.FINE)) {
                 log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
             }
             return null;
         }
         if (pathname.getName().endsWith(".pom")) {
             File loc = new File(pathname.getPath().substring(0, pathname.getPath().length() - 4) + ".jar");
-            nutsDescriptor = annotateExecDesc(nutsDescriptor,loc);
+            nutsDescriptor = annotateExecDesc(nutsDescriptor, loc);
         }
         return nutsDescriptor;
-    }
-
-    protected NutsDescriptor parsePomDescriptor(NutsId id, NutsSession session) {
-        File file = new File(getLocalGroupAndArtifactFile(id), id.getVersion().getValue() + File.separatorChar + id.getName() + '-' + id.getVersion().getValue() + ".pom");
-        if (file.exists()) {
-            try {
-                return parsePomDescriptor(file, session);
-            } catch (Exception any) {
-                //ignore
-            }
-        }
-        return null;
     }
 
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
         if (id.getVersion().isEmpty() && filter == null) {
             File file = getLocalGroupAndArtifactFile(id);
-            NutsId bestId=null;
+            NutsId bestId = null;
             if (file.exists()) {
                 File[] versionFolders = file.listFiles(new FileFilter() {
                     @Override
@@ -280,8 +190,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 if (versionFolders != null) {
                     for (File versionFolder : versionFolders) {
                         NutsId id2 = id.setVersion(versionFolder.getName());
-                        String fn=getQueryFilename(id2,".pom");
-                        if(new File(versionFolder,fn).isFile()) {
+                        String fn = getIdFilename(id2.setFaceDescriptor());
+                        if (new File(versionFolder, fn).isFile()) {
                             if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                                 bestId = id2;
                             }
@@ -298,7 +208,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (folder == null || !folder.exists() || !folder.isDirectory()) {
             return Collections.emptyIterator();
         }
-        return new FolderNutIdIterator(getWorkspace(), getRepositoryId(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getWorkspace(), this, folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 MavenFolderRepository.this.undeploy(id, session);
@@ -319,34 +229,22 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     @Override
     protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            String locationFolder = getPrivateStoreLocation();
+            String locationFolder = getConfigManager().getLocation();
             return findInFolder(new File(locationFolder), filter, session);
         }
         return Collections.emptyIterator();
     }
 
-//    @Override
-//    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
-//        InputStream stream = null;
-//        try {
-//            NutsDescriptor nutsDescriptor = null;//parsePomXml(getStream(id, ".pom"), session);
-//            byte[] bytes = null;
-//            try {
-//                stream = getStream(id, ".pom");
-//                bytes = IOUtils.loadByteArray(stream, true);
-//                nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session);
-//            } finally {
-//                if (stream != null) {
-//                    stream.close();
-//                }
-//            }
-//            checkSHA1Hash(id, ".pom", new ByteArrayInputStream(bytes));
-//            String ext = resolveExtension(nutsDescriptor);
-//            File jar = new File(getPath(id, ext));
-//            nutsDescriptor = nutsDescriptor.setExecutable(PlatformUtils.isExecutableJar(jar));
-//            return nutsDescriptor;
-//        } catch (IOException ex) {
-//            throw new NutsNotFoundException(id.toString(), null, ex);
-//        }
-//    }
+    public String getStoreLocation(NutsStoreFolder folderType) {
+        switch (folderType) {
+            case LIB: {
+                return getStoreLocation();
+            }
+            //cache not supported!
+            case CACHE: {
+                return null;
+            }
+        }
+        return super.getStoreLocation(folderType);
+    }
 }

@@ -80,7 +80,7 @@ public class Nuts {
     }
 
     /**
-     * Creates a workspace using "--nuts-boot-args" configuration argument.
+     * opens a workspace using "--nuts-boot-args" configuration argument.
      * This method is to be called by child processes of nuts to inherit workspace configuration.
      * @param args arguments
      * @return NutsWorkspace instance
@@ -144,7 +144,7 @@ public class Nuts {
     }
 
     /**
-     * creates a workspace using the given options
+     * opens a workspace using the given options
      * @param options boot options
      * @return new NutsWorkspace instance
      */
@@ -172,25 +172,16 @@ public class Nuts {
     }
 
     /**
-     * resolves nuts home folder
-     * @param folderType
-     * @param home
-     * @param storeLocationLayout
-     * @return
+     * resolves nuts home folder. Home folder is the root for nuts folders. It depends on folder type and store layout.
+     * For instance log folder type is stored for windows and linux in distinct folders.
+     * @param folderType folder type to resolve home for
+     * @param storeLocationLayout location layout to resolve home for
+     * @return home folder path
      */
-    public static String resolveHomeFolder(NutsStoreFolder folderType, String home, NutsStoreLocationLayout storeLocationLayout) {
+    public static String resolveHomeFolder(NutsStoreFolder folderType, NutsStoreLocationLayout storeLocationLayout) {
         if (folderType == null) {
             folderType = NutsStoreFolder.CONFIG;
         }
-        boolean absolute = false;
-        if (home == null || home.trim().isEmpty()) {
-            home = "";
-        } else {
-            if (new File(home).isAbsolute()) {
-                absolute = true;
-            }
-        }
-
         if (storeLocationLayout == null || storeLocationLayout == NutsStoreLocationLayout.SYSTEM) {
             if ("windows".equals(NutsUtils.getPlatformOsFamily())) {
                 storeLocationLayout = NutsStoreLocationLayout.WINDOWS;
@@ -204,42 +195,20 @@ public class Nuts {
             case CONFIG:
             case PROGRAMS:
             case LIB: {
-                if (absolute) {
-                    return NutsUtils.syspath(home);
-                } else if (home.isEmpty()) {
-                    switch (storeLocationLayout) {
-                        case WINDOWS:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts");
-                        case LINUX:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
-                    }
-                } else {
-                    switch (storeLocationLayout) {
-                        case WINDOWS:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts/boot/" + home);
-                        case LINUX:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/.nuts/boot/" + home);
-                    }
+                switch (storeLocationLayout) {
+                    case WINDOWS:
+                        return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts");
+                    case LINUX:
+                        return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
                 }
                 break;
             }
             case CACHE: {
-                if (absolute) {
-                    return NutsUtils.syspath(home);
-                } else if (home.isEmpty()) {
-                    switch (storeLocationLayout) {
-                        case WINDOWS:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
-                        case LINUX:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts");
-                    }
-                } else {
-                    switch (storeLocationLayout) {
-                        case WINDOWS:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts/boot/" + home);
-                        case LINUX:
-                            return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts/boot/" + home);
-                    }
+                switch (storeLocationLayout) {
+                    case WINDOWS:
+                        return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
+                    case LINUX:
+                        return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts");
                 }
                 break;
             }
@@ -249,7 +218,7 @@ public class Nuts {
                         //on windows temp folder is user defined
                         return System.getProperty("java.io.tmpdir") + NutsUtils.syspath("/nuts");
                     case LINUX:
-                        //on linux temp folder is shared. will add user folder as descriminator
+                        //on linux temp folder is shared. will add user folder as discriminator
                         return System.getProperty("java.io.tmpdir") + NutsUtils.syspath(("/" + System.getProperty("user.name") + "/nuts"));
                 }
             }
@@ -257,96 +226,6 @@ public class Nuts {
         throw new NutsIllegalArgumentException("Unsupported " + storeLocationLayout);
     }
 
-    /**
-     * resolves and expands path (folderType) for a given workspace
-     * @param folderType store type
-     * @param config boot config. Should contain home,workspace, and all StoreLocation information
-     * @return resolved folder location
-     */
-    public static String resolveWorkspaceFolder(NutsStoreFolder folderType, NutsBootConfig config) {
-        String workspace=config.getWorkspace();
-        String home=Nuts.resolveHomeFolder(NutsStoreFolder.CONFIG, config.getHome(), config.getStoreLocationLayout());
-        String path=null;
-        switch (folderType){
-            case PROGRAMS:{
-                path=config.getProgramsStoreLocation();
-                break;
-            }
-            case CACHE:{
-                path=config.getCacheStoreLocation();
-                break;
-            }
-            case LOGS:{
-                path=config.getLogsStoreLocation();
-                break;
-            }
-            case TEMP:{
-                path=config.getTempStoreLocation();
-                break;
-            }
-            case CONFIG:{
-                path=config.getConfigStoreLocation();
-                break;
-            }
-            case VAR:{
-                path=config.getVarStoreLocation();
-                break;
-            }
-            case LIB:{
-                path=config.getLibStoreLocation();
-                break;
-            }
-            default:{
-                throw new NutsIllegalArgumentException("Unexpected "+folderType);
-            }
-        }
-        if (path != null && !path.trim().isEmpty() && NutsUtils.isAbsolutePath(path)) {
-            return path;
-        }
-        NutsStoreLocationStrategy storeLocationStrategy=config.getStoreLocationStrategy();
-        if (storeLocationStrategy == null) {
-            storeLocationStrategy = NutsStoreLocationStrategy.SYSTEM;
-        }
-        if (home == null || home.trim().isEmpty()) {
-            throw new NutsIllegalArgumentException("Missing Home");
-        }
-        if (workspace == null || workspace.isEmpty()) {
-            workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
-        }
-        if (workspace.startsWith(home)) {
-            String w = workspace.substring(home.length());
-            while (w.startsWith("/") || w.startsWith("\\")) {
-                w = w.substring(1);
-            }
-            workspace = w;
-        }
-        String workspaceName = new File(workspace).getName();
-        if (NutsUtils.isAbsolutePath(workspace)) {
-            String name = folderType.name().toLowerCase();
-            switch (folderType) {
-                case LOGS:
-                case VAR:
-                case CONFIG:
-                case PROGRAMS:
-                case LIB: {
-                    return workspace + File.separator + name;
-                }
-                case TEMP:
-                case CACHE: {
-                    if (storeLocationStrategy == NutsStoreLocationStrategy.STANDALONE) {
-                        return workspace + File.separator + name;
-                    }
-                    return home + NutsUtils.syspath("/" + workspaceName + "/" + name);
-                }
-            }
-        } else {
-            String name = folderType.name().toLowerCase();
-            if (storeLocationStrategy == NutsStoreLocationStrategy.STANDALONE) {
-                return home + NutsUtils.syspath("/" + workspaceName + "/" + name);
-            }
-            return home + NutsUtils.syspath("/" + workspaceName + "/" + name);
-        }
-        throw new NutsIllegalArgumentException("Unsupported");
-    }
+
 
 }

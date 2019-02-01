@@ -1,7 +1,7 @@
 ==``    _   __      __       ``==
 ==``   / | / /_  __/ /______ ``==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
 ==``  /  |/ / / / / __/ ___/ ``==  <<The Open Source Package Manager for __Java__ (TM)>>
-==`` / /|  / /_/ / /_(__  )  ``==  <<and other __things__>> ... by ==vpc==
+==`` / /|  / /_/ / /_(__  )  ``==  <<and other __Things__>> ... by ==vpc==
 ==``/_/ |_/\\__,_/\\__/____/ ``==    __http://github.com/thevpc/nuts__
     version [[${nuts.workspace-runtime.version}]]
 

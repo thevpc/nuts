@@ -30,7 +30,10 @@
 package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.common.strings.StringUtils;
+
+import java.io.File;
 
 /**
  * Created by vpc on 1/15/17.
@@ -49,7 +52,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     }
 
     @Override
-    public int getSupportLevel(NutsRepoInfo criteria) {
+    public int getSupportLevel(NutsRepositoryLocation criteria) {
         if (criteria == null) {
             return DEFAULT_SUPPORT;
         }
@@ -71,13 +74,13 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     }
 
     @Override
-    public NutsRepository create(String repositoryId, String location, String repositoryType, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
-        if (NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN.equals(repositoryType)) {
-            if (location.startsWith("http://") || location.startsWith("https://")) {
-                return (new MavenRemoteRepository(repositoryId, location, workspace, parentRepository, repositoryRoot));
+    public NutsRepository create(NutsRepositoryLocation loc, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
+        if (NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN.equals(loc.getType())) {
+            if (loc.getLocation().startsWith("http://") || loc.getLocation().startsWith("https://")) {
+                return (new MavenRemoteRepository(loc.getName(), loc.getLocation(), workspace, parentRepository, repositoryRoot));
             }
-            if (!location.contains("://")) {
-                return new MavenFolderRepository(repositoryId, location, workspace, parentRepository, repositoryRoot);
+            if (!loc.getLocation().contains("://")) {
+                return new MavenFolderRepository(loc.getName(), loc.getLocation(), workspace, parentRepository, repositoryRoot);
             }
         }
         return null;

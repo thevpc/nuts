@@ -198,7 +198,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         NutsId n_id = getId();
         String n_alt = getAlternative();
         String n_packaging = getPackaging();
-        String n_ext = getExt();
+//        String n_ext = getExt();
         boolean n_executable = isExecutable();
         String n_name = getName();
         String n_desc = getDescription();
@@ -232,7 +232,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
             //packaging is not inherited!!
             //n_packaging = applyStringInheritance(n_packaging, parentDescriptor.getPackaging());
-            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
+//            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
@@ -263,7 +263,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setParents(n_parents)
                 .setPackaging(n_packaging)
                 .setExecutable(n_executable)
-                .setExt(n_ext)
+//                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
                 .setName(n_name)
@@ -286,7 +286,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         NutsId n_id = getId().apply(map);
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
-        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
+//        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
         String n_desc = CoreNutsUtils.applyStringProperties(getDescription(), map);
         NutsExecutorDescriptor n_executor = getExecutor();
@@ -315,7 +315,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setParents(getParents())
                 .setPackaging(n_packaging)
                 .setExecutable(isExecutable())
-                .setExt(n_ext)
+//                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
                 .setName(n_name)
@@ -460,14 +460,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public NutsDescriptor setExt(String ext) {
-        if (StringUtils.trim(ext).equals(getExt())) {
-            return this;
-        }
-        return builder().setExt(ext).build();
-    }
-
-    @Override
     public NutsDescriptor setPackaging(String packaging) {
         if (StringUtils.trim(packaging).equals(getPackaging())) {
             return this;
@@ -481,6 +473,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
             return this;
         }
         return builder().setExecutable(executable).build();
+    }
+
+    @Override
+    public NutsDescriptor setAlternative(String alternative) {
+        if (StringUtils.trim(alternative).equals(getAlternative())) {
+            return this;
+        }
+        return builder().setAlternative(alternative).build();
     }
 
     @Override

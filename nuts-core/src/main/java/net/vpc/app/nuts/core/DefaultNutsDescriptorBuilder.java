@@ -15,7 +15,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private String alternative;
     private NutsId[] parents;
     private String packaging;
-    private String ext;
+//    private String ext;
     private boolean executable;
     private boolean nutsApplication;
     private NutsExecutorDescriptor executor;
@@ -56,7 +56,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setName(name);
         setExecutor(executor);
         setInstaller(installer);
-        setExt(ext);
+//        setExt(ext);
         setArch(arch);
         setOs(os);
         setOsdist(osdist);
@@ -89,7 +89,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setName(other.getName());
             setExecutor(other.getExecutor());
             setInstaller(other.getInstaller());
-            setExt(other.getExt());
+//            setExt(other.getExt());
             setArch(other.getArch());
             setOs(other.getOs());
             setOsdist(other.getOsdist());
@@ -115,7 +115,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setName(other.getName());
             setExecutor(other.getExecutor());
             setInstaller(other.getInstaller());
-            setExt(other.getExt());
+//            setExt(other.getExt());
             setArch(other.getArch());
             setOs(other.getOs());
             setOsdist(other.getOsdist());
@@ -182,11 +182,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    @Override
-    public NutsDescriptorBuilder setExt(String ext) {
-        this.ext = StringUtils.trim(ext);
-        return this;
-    }
+//    @Override
+//    public NutsDescriptorBuilder setExt(String ext) {
+//        this.ext = StringUtils.trim(ext);
+//        return this;
+//    }
 
     public NutsDescriptorBuilder addPlatform(String platform) {
         if (platform != null) {
@@ -320,10 +320,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return executor;
     }
 
-    @Override
-    public String getExt() {
-        return ext;
-    }
+//    @Override
+//    public String getExt() {
+//        return ext;
+//    }
 
     @Override
     public String getPackaging() {
@@ -390,7 +390,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptor build() {
         return new DefaultNutsDescriptor(
-                getId(), getAlternative(), getParents(), getPackaging(), isExecutable(), isNutsApplication(), getExt(), getExecutor(), getInstaller()
+                getId(), getAlternative(), getParents(), getPackaging(), isExecutable(), isNutsApplication(),
+//                getExt(),
+                getExecutor(), getInstaller()
                 , getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(),getStandardDependencies(),
                 getLocations(), getProperties()
         );
@@ -532,7 +534,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         NutsId n_id = getId();
         String n_alt = getAlternative();
         String n_packaging = getPackaging();
-        String n_ext = getExt();
+//        String n_ext = getExt();
         boolean n_executable = isExecutable();
         String n_name = getName();
         String n_desc = getDescription();
@@ -566,7 +568,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
             //packaging is not inherited!!
             //n_packaging = applyStringInheritance(n_packaging, parentDescriptor.getPackaging());
-            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
+//            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
@@ -583,21 +585,21 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         n_osdist.addAll(Arrays.asList(getOsdist()));
         n_platform.addAll(Arrays.asList(getPlatform()));
         NutsId[] n_parents = new NutsId[0];
-        if (n_packaging.isEmpty() && n_ext.isEmpty()) {
-            n_packaging = "jar";
-            n_ext = "jar";
-        } else if (n_packaging.isEmpty()) {
-            n_packaging = n_ext;
-        } else {
-            n_ext = n_packaging;
-        }
+//        if (n_packaging.isEmpty() && n_ext.isEmpty()) {
+//            n_packaging = "jar";
+//            n_ext = "jar";
+//        } else if (n_packaging.isEmpty()) {
+//            n_packaging = n_ext;
+//        } else {
+//            n_ext = n_packaging;
+//        }
 
         setId(n_id);
         setAlternative(n_alt);
         setParents(n_parents);
         setPackaging(n_packaging);
         setExecutable(n_executable);
-        setExt(n_ext);
+//        setExt(n_ext);
         setExecutor(n_executor);
         setInstaller(n_installer);
         setName(n_name);
@@ -619,7 +621,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         NutsId n_id = getId().apply(map);
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
-        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
+//        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
         String n_name = CoreNutsUtils.applyStringProperties(getName(), map);
         String n_desc = CoreNutsUtils.applyStringProperties(getDescription(), map);
         NutsExecutorDescriptor n_executor = getExecutor();
@@ -647,7 +649,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.setParents(getParents());
         this.setPackaging(n_packaging);
         this.setExecutable(isExecutable());
-        this.setExt(n_ext);
+//        this.setExt(n_ext);
         this.setExecutor(n_executor);
         this.setInstaller(n_installer);
         this.setName(n_name);

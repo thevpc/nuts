@@ -20,7 +20,9 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     <T> void writeJson(Object obj, PrintStream printStream, boolean pretty);
 
-    String resolvePath(String path);
+    String expandPath(String path);
+
+    String expandPath(String path, String baseFolder);
 
     String getResourceString(String resource, Class cls, String defaultValue);
 
@@ -35,10 +37,14 @@ public interface NutsIOManager extends NutsComponent<Object> {
     PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode);
 
     NutsSessionTerminal createTerminal();
-    
+
     NutsSessionTerminal createTerminal(NutsTerminalBase parent);
 
-    void downloadPath(String from, File to, Object source,NutsSession session);
+    void downloadPath(String from, File to, Object source, NutsSession session);
+
+    File createTempFile(String name);
+
+    File createTempFile(String name, NutsRepository repository);
 
     String getSHA1(NutsDescriptor descriptor);
 }

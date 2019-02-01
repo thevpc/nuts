@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core.terminals;
 
+import net.vpc.app.nuts.NutsIOManager;
 import net.vpc.app.nuts.NutsSystemTerminalBase;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -30,8 +31,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
         }
         setOutMode(terminalMode);
         setErrorMode(terminalMode);
-        this.out = workspace.getIOManager().createPrintStream(System.out, NutsTerminalMode.FORMATTED);
-        this.err = workspace.getIOManager().createPrintStream(System.err, NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+        NutsIOManager ioManager = workspace.getIOManager();
+        this.out = ioManager.createPrintStream(System.out, NutsTerminalMode.FORMATTED);
+        this.err = ioManager.createPrintStream(System.err, NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
         this.in = System.in;
         scanner = new Scanner(this.in);
 

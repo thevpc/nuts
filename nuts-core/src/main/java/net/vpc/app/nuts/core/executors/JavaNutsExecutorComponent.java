@@ -196,12 +196,12 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getTerminal().getFormattedErr().printf("Ignored class-path=%s. running jar!\n", classPath);
             }
             args.add("-jar");
-            args.add(nutMainFile.getFile());
+            args.add(nutMainFile.getContent().getFile());
             xargs.add("-jar");
             xargs.add(executionContext.getWorkspace().getFormatManager().createIdFormat().format(nutMainFile.getId()));
         } else {
             if (mainClass == null) {
-                File file = CoreIOUtils.fileByPath(nutMainFile.getFile());
+                File file = CoreIOUtils.fileByPath(nutMainFile.getContent().getFile());
                 if (file != null) {
                     //check manifest!
                     NutsExecutionEntry[] classes = CorePlatformUtils.parseMainClasses(file);
@@ -218,11 +218,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             StringBuilder xsb = new StringBuilder();
             StringBuilder sb = new StringBuilder();
             xsb.append(nutsIdFormat.format(nutMainFile.getId()));
-            sb.append(nutMainFile.getFile());
+            sb.append(nutMainFile.getContent().getFile());
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
-                if (nutsDefinition.getFile() != null) {
+                if (nutsDefinition.getContent().getFile() != null) {
                     sb.append(File.pathSeparatorChar);
-                    sb.append(nutsDefinition.getFile());
+                    sb.append(nutsDefinition.getContent().getFile());
                     xsb.append(";");
                     xsb.append(nutsIdFormat.format(nutsDefinition.getId()));
                 }
@@ -299,7 +299,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
 
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().resolvePath(dir));
+        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(dir));
         return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory
@@ -325,8 +325,9 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         for (NutsId nutsId : ns.find()) {
-            NutsDefinition f = executionContext.getWorkspace().fetch(nutsId, executionContext.getSession());
-            classPath.add(f.getFile());
+            NutsDefinition f = executionContext.getWorkspace()
+                    .fetch(nutsId).setSession(executionContext.getSession()).setIncludeInstallInformation(true).fetchDefinition();
+            classPath.add(f.getContent().getFile());
         }
     }
 

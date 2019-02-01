@@ -7,7 +7,7 @@ echo "detected nuts      version $bootVersion"
 echo "detected nuts-core version $runtimeVersion"
 vpc_public_nuts=$HOME/vpc-public-nuts
 
-bootPath=$vpc_public_nuts/net/vpc/app/nuts/nuts/$bootVersion
+bootPath=$vpc_public_nuts/net/vpc/app/nuts/nuts/${bootVersion}
 bootLatestPath=$vpc_public_nuts/net/vpc/app/nuts/nuts/LATEST
 mkdir -p $bootPath
 mkdir -p $bootLatestPath

@@ -2,6 +2,7 @@ package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.common.io.FileUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
@@ -68,24 +69,14 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     }
 
     @Override
-    public String getId() {
-        return getConfig().getId();
+    public String getName() {
+        return getConfig().getName();
     }
 
     @Override
     public String getLocation() {
         return getConfig().getLocation();
     }
-
-    @Override
-    public String getComponentsLocation() {
-        return getConfig().getComponentsLocation();
-    }
-    @Override
-    public void setComponentsLocation(String location) {
-        getConfig().setComponentsLocation(location);
-    }
-
 
     //@Override
     public NutsRepositoryConfig getConfig() {
@@ -94,6 +85,68 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     public String getStoreLocation() {
         return storeLocation;
+    }
+
+    @Override
+    public String getStoreLocation(NutsStoreFolder folderType) {
+        String n = "";
+        switch (folderType) {
+            case PROGRAMS: {
+                n = getConfig().getProgramsStoreLocation();
+                break;
+            }
+            case TEMP: {
+                n = getConfig().getTempStoreLocation();
+                break;
+            }
+            case CACHE: {
+                n = getConfig().getCacheStoreLocation();
+                break;
+            }
+            case CONFIG: {
+                n = getConfig().getConfigStoreLocation();
+                break;
+            }
+            case LOGS: {
+                n = getConfig().getLogsStoreLocation();
+                break;
+            }
+            case VAR: {
+                n = getConfig().getVarStoreLocation();
+                break;
+            }
+            case LIB: {
+                n = getConfig().getLibStoreLocation();
+                break;
+            }
+        }
+        NutsStoreLocationStrategy strategy = getConfig().getStoreLocationStrategy();
+        if (strategy == null) {
+            strategy = NutsStoreLocationStrategy.values()[0];
+        }
+        switch (strategy) {
+            case STANDALONE: {
+                if (StringUtils.isEmpty(n)) {
+                    n = folderType.toString().toLowerCase();
+                }
+                n = n.trim();
+                return FileUtils.getAbsoluteFile(new File(getStoreLocation(), n)).getPath();
+            }
+            case EXPLODED: {
+                String storeLocation = abstractNutsRepository.getWorkspace().getConfigManager().getStoreLocation(folderType);
+                //uuid is added as
+                return storeLocation
+                        + File.separator + NutsConstants.FOLDER_NAME_REPOSITORIES
+                        + File.separator + getName()
+                        + File.separator + getUuid() //added uuid discriminator
+                        ;
+            }
+        }
+        throw new NutsIllegalArgumentException("Unsupported strategy type " + strategy);
+    }
+
+    public String getUuid() {
+        return getConfig().getUuid();
     }
 
     public void setConfig(NutsRepositoryConfig newConfig) {
@@ -164,11 +217,11 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         } catch (NutsIOException ex) {
             //unable to store;
         }
-        if(log.isLoggable(Level.CONFIG)) {
+        if (log.isLoggable(Level.CONFIG)) {
             if (created) {
-                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Created repository " + abstractNutsRepository.getRepositoryId() + " at " + getStoreLocation());
+                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getName(), 20) + " Created repository " + abstractNutsRepository.getName() + " at " + getStoreLocation());
             } else {
-                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getRepositoryId(), 20) + " Updated repository " + abstractNutsRepository.getRepositoryId() + " at " + getStoreLocation());
+                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getName(), 20) + " Updated repository " + abstractNutsRepository.getName() + " at " + getStoreLocation());
             }
         }
         return saved;
@@ -181,6 +234,6 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     @Override
     public String getEnv(String property, String defaultValue) {
-        return getEnv(property,defaultValue,true);
+        return getEnv(property, defaultValue, true);
     }
 }

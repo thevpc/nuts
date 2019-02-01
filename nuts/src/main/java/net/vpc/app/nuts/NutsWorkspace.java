@@ -37,6 +37,7 @@ import java.util.Map;
 @NutsPrototype
 public interface NutsWorkspace extends NutsComponent<Object> {
 
+    String getUuid();
     /**
      * Open a new workspace with the provided options.
      * When options is null, it i considered as a new empty instance of the options class.
@@ -47,29 +48,14 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     String copyTo(String id, String localPath, NutsSession session);
 
-    NutsDefinition fetchWithDependencies(NutsId id, NutsDependencyScope[] scopes, boolean includeOptional, NutsSession session);
+    NutsFetch fetch(NutsId id);
 
-    NutsDefinition fetch(String id, NutsSession session);
-
-    NutsDefinition fetchWithDependencies(String id, NutsDependencyScope[] scopes, boolean includeOptional, NutsSession session);
-
-    NutsDescriptor fetchDescriptor(String id, boolean effective, NutsSession session);
-
-    NutsDescriptor fetchDescriptor(NutsId idString, boolean effective, NutsSession session);
-
-    String fetchHash(String id, NutsSession session);
-
-    String fetchDescriptorHash(String id, NutsSession session);
+    NutsFetch fetch(String id);
 
     boolean isFetched(String id, NutsSession session);
 
-    NutsDefinition fetch(NutsId id, NutsSession session);
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
-
-    NutsId resolveId(NutsId id, NutsSession session);
-
-    NutsId resolveId(String id, NutsSession session);
 
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession session);
 
@@ -90,10 +76,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsId commit(String folder, NutsSession session);
 
     NutsDefinition update(NutsId id, NutsConfirmAction uptoDateAction, NutsSession session);
-
-    boolean isInstalled(String id, boolean checkDependencies, NutsSession session);
-
-    boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session);
 
     boolean uninstall(String id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session);
 
@@ -144,6 +126,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     void setTerminal(NutsSessionTerminal newTerminal);
 
     NutsSession createSession();
+
+    String copyTo(NutsId id, String localPath, NutsSession session);
 
     void addUserPropertyListener(NutsMapListener<String, Object> listener);
 

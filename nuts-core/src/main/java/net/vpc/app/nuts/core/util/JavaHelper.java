@@ -122,6 +122,7 @@ public class JavaHelper {
             return null;
         }
         NutsSdkLocation loc = new NutsSdkLocation();
+        loc.setType("java");
         loc.setName(type + " " + jdkVersion);
         loc.setVersion(jdkVersion);
         loc.setPath(path);

@@ -4,7 +4,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 public final class DefaultNutsBootContext implements NutsBootContext {
-    private final String home;
     private final String workspace;
     private final NutsId bootAPI;
     private final NutsId bootRuntime;
@@ -13,13 +12,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final String bootJavaCommand;
     private final String bootJavaOptions;
     private final NutsStoreLocationStrategy storeLocationStrategy;
+    private final NutsStoreLocationStrategy repositoryStoreLocationStrategy;
     private final NutsStoreLocationLayout storeLocationLayout;
     private final String[] storeLocations;
 
-    public DefaultNutsBootContext(String home, String workspace, NutsId bootAPI, NutsId bootRuntime, String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
-                                  String[] locations, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationLayout storeLocationLayout
+    public DefaultNutsBootContext(String workspace, NutsId bootAPI, NutsId bootRuntime,
+                                  String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
+                                  String[] locations, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy
     ) {
-        this.home = home;
         this.workspace = workspace;
         this.bootAPI = bootAPI;
         this.bootRuntime = bootRuntime;
@@ -29,6 +29,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.bootJavaOptions = bootJavaOptions;
         this.storeLocationStrategy = storeLocationStrategy;
         this.storeLocationLayout = storeLocationLayout;
+        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
         storeLocations = new String[NutsStoreFolder.values().length];
         for (int i = 0; i < storeLocations.length; i++) {
             storeLocations[i] = locations[i];
@@ -36,7 +37,6 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     public DefaultNutsBootContext(NutsBootConfig c) {
-        this.home = c.getHome();
         this.workspace = c.getWorkspace();
         this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_API + "#" + c.getApiVersion());
         this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#") ?
@@ -47,6 +47,7 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.bootJavaCommand = c.getJavaCommand();
         this.bootJavaOptions = c.getJavaOptions();
         this.storeLocationStrategy = c.getStoreLocationStrategy();
+        this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
         this.storeLocationLayout = c.getStoreLocationLayout();
         storeLocations = new String[NutsStoreFolder.values().length];
         for (int i = 0; i < storeLocations.length; i++) {
@@ -117,11 +118,6 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     @Override
-    public String getHome() {
-        return home;
-    }
-
-    @Override
     public String getWorkspace() {
         return workspace;
     }
@@ -129,6 +125,11 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     @Override
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
+    }
+
+    @Override
+    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+        return repositoryStoreLocationStrategy;
     }
 
     @Override

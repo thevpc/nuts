@@ -27,75 +27,24 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         String name="nadmin config";
         Argument a;
         if (cmdLine.readAll("delete log")) {
-            boolean force=false;
-            while(cmdLine.hasNext()) {
-                if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                    force=a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument(name);
-                }
-            }
-            deleteLog(context,force);
+            deleteLog(context,readForce(cmdLine,name));
             return true;
         } else if (cmdLine.readAll("delete var")) {
-            boolean force=false;
-            while(cmdLine.hasNext()) {
-                if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                    force=a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument(name);
-                }
-            }
-            deleteVar(context,force);
-            cmdLine.unexpectedArgument(name);
+            deleteVar(context,readForce(cmdLine,name));
             return true;
         } else if (cmdLine.readAll("delete programs")) {
-            boolean force=false;
-            while(cmdLine.hasNext()) {
-                if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                    force=a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument(name);
-                }
-            }
-            deletePrgrams(context,force);
-            cmdLine.unexpectedArgument(name);
+            deletePrograms(context,readForce(cmdLine,name));
             return true;
         } else if (cmdLine.readAll("delete config")) {
-            boolean force=false;
-            while(cmdLine.hasNext()) {
-                if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                    force=a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument(name);
-                }
-            }
-            deleteConfig(context,force);
-            cmdLine.unexpectedArgument(name);
+            deleteConfig(context,readForce(cmdLine,name));
             return true;
-        } else if (cmdLine.readAll("delete-cache")) {
-            boolean force=false;
-            while(cmdLine.hasNext()) {
-                if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                    force=a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument(name);
-                }
-            }
-            cmdLine.unexpectedArgument(name);
+        } else if (cmdLine.readAll("delete cache")) {
+            deleteCache(context,readForce(cmdLine,name));
             return true;
         } else if (cmdLine.readAll("cleanup")) {
-            boolean force=false;
-            while(cmdLine.hasNext()) {
-                if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                    force=a.getBooleanValue();
-                }else{
-                    cmdLine.unexpectedArgument(name);
-                }
-            }
-            deleteCache(context,force);
+            boolean force = readForce(cmdLine, name);
+            deleteCache(context, force);
             deleteLog(context,force);
-            cmdLine.unexpectedArgument(name);
             return true;
         }else{
             return false;
@@ -108,57 +57,30 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.LOGS);
-        if(storeLocation!=null) {
-            File file = new File(storeLocation);
-            if (file.exists()) {
-                context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
-                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                    IOUtils.delete(file);
-                }
-            }
-            file = new File(context.getWorkspace().getConfigManager().getHomeLocation(), "log");
-            if (file.exists()) {
-                context.out().printf("@@Deleting@@ ##log## folder %s ...\n", file.getPath());
-                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                    IOUtils.delete(file);
-                }
-            }
-        }
+        deleteFolder(context,force,NutsStoreFolder.LOGS);
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.VAR);
-        if(storeLocation!=null) {
-            File file = new File(storeLocation);
-            if (file.exists()) {
-                context.out().printf("@@Deleting@@ ##var## folder %s ...\n", file.getPath());
-                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                    IOUtils.delete(file);
-                }
-            }
-        }
+        deleteFolder(context, force,NutsStoreFolder.VAR);
     }
 
-    private void deletePrgrams(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.PROGRAMS);
-        if(storeLocation!=null) {
-            File file = new File(storeLocation);
-            if (file.exists()) {
-                context.out().printf("@@Deleting@@ ##programs## folder %s ...\n", file.getPath());
-                if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                    IOUtils.delete(file);
-                }
-            }
-        }
+    private void deletePrograms(NutsApplicationContext context, boolean force) {
+        deleteFolder(context, force,NutsStoreFolder.PROGRAMS);
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.CONFIG);
+        deleteFolder(context, force,NutsStoreFolder.CONFIG);
+    }
+
+    private void deleteFolder(NutsApplicationContext context, boolean force,NutsStoreFolder folder) {
+        deleteFolder(context,context.getWorkspace().getConfigManager().getStoreLocation(folder),folder.name().toLowerCase(),force);
+    }
+
+    private void deleteFolder(NutsApplicationContext context, String storeLocation, String name,boolean force) {
         if(storeLocation!=null) {
             File file = new File(storeLocation);
             if (file.exists()) {
-                context.out().printf("@@Deleting@@ ##config## folder %s ...\n", file.getPath());
+                context.out().printf("@@Deleting@@ ##%s## folder %s ...\n", name,file.getPath());
                 if (force || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
                     IOUtils.delete(file);
                 }
@@ -180,7 +102,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private static void deleteRepoCache(NutsRepository repository, NutsApplicationContext context, boolean force){
-        String s = repository.getStoreLocation();
+        String s = repository.getStoreLocation(NutsStoreFolder.CACHE);
         if(s!=null){
             File file = new File(s);
             if(file.exists()) {
@@ -194,5 +116,16 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
             deleteRepoCache(mirror,context,force);
         }
     }
-
+    private boolean readForce(CommandLine cmdLine,String name){
+        boolean force=false;
+        Argument a;
+        while(cmdLine.hasNext()) {
+            if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
+                force=a.getBooleanValue();
+            }else{
+                cmdLine.unexpectedArgument(name);
+            }
+        }
+        return force;
+    }
 }

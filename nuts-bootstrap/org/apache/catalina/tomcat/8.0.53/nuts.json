@@ -2,7 +2,6 @@
   "id": "org.apache.catalina:tomcat#8.0.53",
   "parents": [],
   "packaging": "zip",
-  "ext": "zip",
   "executable": false,
   "name": "",
   "description": "",

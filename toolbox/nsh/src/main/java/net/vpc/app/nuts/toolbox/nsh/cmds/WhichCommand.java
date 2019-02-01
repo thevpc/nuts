@@ -81,7 +81,7 @@ public class WhichCommand extends AbstractNutsCommand {
         } else {
             for (String id : elems) {
                 if (cmdLine.isExecMode()) {
-                    NutsId found = validWorkspace.resolveId(id, context.getSession());
+                    NutsId found = validWorkspace.fetch(id).setSession(context.getSession()).fetchId();
                     if (found == null) {
                         context.err().printf("%s not found\n", id);
                         ret = 1;
@@ -134,7 +134,7 @@ public class WhichCommand extends AbstractNutsCommand {
 
         NutsDefinition core = null;
         try {
-            core = workspace.fetch(NutsConstants.NUTS_ID_BOOT_RUNTIME, session.copy().setFetchMode(NutsFetchMode.OFFLINE));
+            core = workspace.fetch(NutsConstants.NUTS_ID_BOOT_RUNTIME).setSession(session.copy().setFetchMode(NutsFetchMode.OFFLINE)).fetchDefinition();
         } catch (Exception e) {
             //ignore
         }
@@ -142,7 +142,7 @@ public class WhichCommand extends AbstractNutsCommand {
             if (core == null) {
                 cp_nutsCoreFile = "not found, will be downloaded on need";
             } else {
-                cp_nutsCoreFile = core.getFile();
+                cp_nutsCoreFile = core.getContent().getFile();
             }
         }
         map.put("nuts.workspace.version", workspace.getConfigManager().getRunningContext().getApiId().getVersion().getValue());

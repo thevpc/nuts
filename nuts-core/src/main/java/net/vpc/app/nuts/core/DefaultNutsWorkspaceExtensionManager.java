@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 
 /**
@@ -129,7 +130,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         NutsId oldId = CoreNutsUtils.finNutsIdBySimpleName(id, extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
-            NutsId nutsId = ws.resolveId(id, session);
+            NutsId nutsId = ws.fetch(id).setSession(session).fetchId();
             if (StringUtils.isEmpty(id.getGroup())) {
                 id = id.setGroup(nutsId.getGroup());
             }
@@ -185,7 +186,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         }
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (!isLoadedClassPath(nutsDefinition, session)) {
-                this.workspaceExtensionsClassLoader.addFile(new File(nutsDefinition.getFile()));
+                this.workspaceExtensionsClassLoader.addFile(new File(nutsDefinition.getContent().getFile()));
             }
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, toWire, this.workspaceExtensionsClassLoader);
@@ -215,10 +216,10 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
         }
         try {
             //            NutsDefinition file = fetch(id.toString(), session);
-            if (file.getFile() != null) {
+            if (file.getContent().getFile() != null) {
                 ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(file.getFile());
+                    zipFile = new ZipFile(file.getContent().getFile());
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
@@ -334,7 +335,7 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
 
     protected URL expandURL(String url) {
         try {
-            url = CoreNutsUtils.expandPath(url, ws);
+            url = ws.getIOManager().expandPath(url);
             if (URLUtils.isRemoteURL(url)) {
                 return new URL(url);
             }

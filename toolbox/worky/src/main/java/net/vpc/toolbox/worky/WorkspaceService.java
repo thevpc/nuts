@@ -482,10 +482,6 @@ public class WorkspaceService {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue());
                 setWorkspaceConfig(conf);
-            }else if((a=cmd.readStringOption("-h","--home"))!=null){
-                WorkspaceConfig conf = getWorkspaceConfig();
-                conf.getDefaultRepositoryAddress().setNutsHome(a.getStringValue());
-                setWorkspaceConfig(conf);
             }else{
                 cmd.unexpectedArgument("worky set");
             }

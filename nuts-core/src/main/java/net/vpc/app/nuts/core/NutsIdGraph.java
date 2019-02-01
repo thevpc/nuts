@@ -90,8 +90,14 @@ public class NutsIdGraph {
         }
         Set<NutsIdNode> toaddOk = new HashSet<>();
         for (NutsIdNode nutsId : wildIds) {
-            NutsId nutsId1 = ws.resolveId(nutsId.id, session);
-            toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter));
+            try {
+                NutsId nutsId1 = ws.fetch(nutsId.id).setSession(session).fetchId();
+                toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter));
+            }catch (NutsNotFoundException ex){
+                if(!nutsId.id.isOptional()){
+                    throw ex;
+                }
+            }
         }
         if (!toaddOk.isEmpty()) {
             push0(toaddOk);

@@ -12,7 +12,7 @@ bootLatestPath="$vpc_public_nuts/net/vpc/app/nuts/nuts/LATEST"
 cp --mkdir "$base/nuts/target/classes/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties" "$bootPath/nuts.properties"
 
 
-echo $bootVersion > "$vpc_public_nuts/version.txt"
+echo ${bootVersion} > "$vpc_public_nuts/version.txt"
 
 
 properties set "bootRuntimeId" "net.vpc.app.nuts:nuts-core#$runtimeVersion" "$bootPath/nuts.properties"

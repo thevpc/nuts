@@ -125,7 +125,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
             if (comment.toString().trim().isEmpty()) {
                 return new DefaultNutsDescriptorBuilder()
                         .setId( CoreNutsUtils.parseNutsId("temp:nsh#1.0"))
-                        .setExt("nsh")
+                        .setPackaging("nsh")
                         .setExecutor(new NutsExecutorDescriptor(NSH))
                         .build()
                         ;

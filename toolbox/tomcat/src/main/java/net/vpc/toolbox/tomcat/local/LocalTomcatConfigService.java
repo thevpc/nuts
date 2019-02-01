@@ -138,7 +138,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String h = getConfig().getCatalinaHome();
         if (TomcatUtils.isEmpty(h)) {
             NutsDefinition f = getCatalinaNutsDefinition();
-            return f.getInstallFolder();
+            return f.getInstallation().getInstallFolder();
         } else {
             return h;
         }
@@ -271,7 +271,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             catalinaNutsDefinition = context.getWorkspace().install("org.apache.catalina:tomcat#" + catalinaVersion + "*", new String[0], NutsConfirmAction.IGNORE, context.getSession().copy().addListeners(new NutsInstallListener() {
                 @Override
                 public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
-                    context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallFolder());
+                    context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
                 }
             }));
         }

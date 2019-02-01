@@ -32,7 +32,6 @@ package net.vpc.app.nuts.core.repos;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.*;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
@@ -50,12 +49,8 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     private static final Logger log = Logger.getLogger(NutsRemoteHttpRepository.class.getName());
     private NutsId remoteId;
 
-    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
-                root != null ? root : CoreIOUtils.resolvePath(repositoryId, CoreIOUtils.createFile(
-                        workspace.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES),
-                        workspace.getConfigManager().getHomeLocation()).getPath()
-                , SPEED_SLOW);
+    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
+        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository, repositoryRoot, SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(url + "/version"));
         } catch (Exception ex) {
@@ -104,7 +99,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
             throw new NutsIllegalArgumentException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor,new OutputStreamWriter(descStream));
+        getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor, new OutputStreamWriter(descStream));
         File file1 = new File(file);
         httpUpload(URLUtils.buildUrl(getConfigManager().getLocation(), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
@@ -147,68 +142,20 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         throw new NutsNotFoundException(id);
     }
 
-    private void httpDownloadToFile(String path, File file, boolean mkdirs) throws IOException {
-        InputStream stream = CoreHttpUtils.getHttpClientFacade(getWorkspace(), path).open();
-        if (stream != null) {
-            if (!path.toLowerCase().startsWith("file://")) {
-                log.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
-            } else {
-                log.log(Level.FINEST, "downloading url {0} to file {1}", new Object[]{path, file});
-            }
-        } else {
-            log.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
-        }
-        CoreNutsUtils.copy(stream, file, mkdirs, true);
-    }
-
-    @Override
-    protected String copyToImpl(NutsId id, String localPath, NutsSession session) {
+    protected void copyToImpl(NutsId id, String localPath, NutsSession session) {
         boolean transitive = session.isTransitive();
-        if (new File(localPath).isDirectory()) {
-            NutsDescriptor desc = fetchDescriptor(id, session);
-            localPath = new File(localPath, CoreNutsUtils.getNutsFileName(id, FileUtils.getFileExtension(desc.getExt()))).getPath();
-        }
 
         try {
-            httpDownloadToFile(getUrl("/fetch?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), new File(localPath), true);
+            helperHttpDownloadToFile(getUrl("/fetch?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), new File(localPath), true);
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = CoreSecurityUtils.evalSHA1(new File(localPath));
             if (rhash.equals(lhash)) {
-                return localPath;
+                return;
             }
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
         throw new NutsNotFoundException(id);
-    }
-
-    @Override
-    public String copyDescriptorToImpl(NutsId id, String localPath, NutsSession session) {
-        boolean transitive = session.isTransitive();
-        try {
-            httpDownloadToFile(getUrl("/fetch-descriptor?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), new File(localPath), true);
-            String rhash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-            String lhash = CoreSecurityUtils.evalSHA1(new File(localPath));
-
-            if (rhash.equals(lhash)) {
-                return localPath;
-            }
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-        throw new NutsNotFoundException(id);
-    }
-
-    @Override
-    protected String fetchHashImpl(NutsId id, NutsSession session) {
-        boolean transitive = session.isTransitive();
-        return httpGetString(getUrl("/fetch-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-    }
-
-    @Override
-    public String fetchDescriptorHashImpl(NutsId id, NutsSession session) {
-        boolean transitive = session.isTransitive();
-        return httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
     }
 
     @Override
@@ -264,16 +211,37 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
 //        if (val > 1) {
 //            return val;
 //        }
-//        String s = httpGetString(getPath("/get-support/?id=" + HttpUtils.urlEncodeString(id.toString())  + (transitive ? ("&transitive") : "") + resolveAuthURLPart()));
+//        String s = httpGetString(getIdPath("/get-support/?id=" + HttpUtils.urlEncodeString(id.toString())  + (transitive ? ("&transitive") : "") + resolveAuthURLPart()));
 //        return s == null ? -1 : Integer.parseInt(s);
 //    }
+//    @Override
+//    public NutsDefinition fetchImpl(NutsId id, NutsSession session) {
+//        return helperFetchImplByCopy(id,session);
+//    }
+
     @Override
-    public NutsDefinition fetchImpl(NutsId id, NutsSession session) {
-        NutsDescriptor descriptor = fetchDescriptor(id, session);
-        String tempFile = CoreIOUtils.createTempFile(descriptor, false).getPath();
-        copyTo(id, tempFile, session);
-        NutsDescriptor ed = getWorkspace().resolveEffectiveDescriptor(descriptor, session);
-        return new NutsDefinition(ed.getId(), descriptor, tempFile, false, true, null,null);
+    protected NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
+        boolean transitive = session.isTransitive();
+        boolean temp = false;
+        if (localPath == null) {
+            temp = true;
+            String p = getIdFilename(id);
+            localPath = getWorkspace().getIOManager().createTempFile(new File(p).getName(), this).getPath();
+        }
+
+        try {
+            helperHttpDownloadToFile(getUrl("/fetch?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), new File(localPath), true);
+            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
+            String lhash = CoreSecurityUtils.evalSHA1(new File(localPath));
+            if (rhash.equals(lhash)) {
+                return new NutsContent(localPath, false, temp);
+            }
+        } catch (IOException ex) {
+            throw new NutsNotFoundException(id, ex);
+            //
+        }
+        throw new NutsNotFoundException(id);
+
     }
 
     private String httpGetString(String url) {
@@ -378,7 +346,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         @Override
         public NutsId next() {
             NutsId nutsId = getWorkspace().getParseManager().parseRequiredId(line);
-            return nutsId.setNamespace(getRepositoryId());
+            return nutsId.setNamespace(getName());
         }
     }
 

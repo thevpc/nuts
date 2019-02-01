@@ -32,9 +32,9 @@ public class NdedMain extends NutsApplication {
             }else if((a=commandLine.readStringOption("--id"))!=null){
                 String v = a.getStringValue();
                 builder0.setId(v);
-            }else if((a=commandLine.readStringOption("--ext"))!=null){
+            }else if((a=commandLine.readStringOption("--alternative"))!=null){
                 String v = a.getStringValue();
-                builder0.setExt(v);
+                builder0.setAlternative(v);
             }else if((a=commandLine.readStringOption("--name"))!=null){
                 String v = a.getStringValue();
                 builder0.setName(v);
@@ -110,12 +110,12 @@ public class NdedMain extends NutsApplication {
                 b.setPackaging(s);
             }
         }
-        if (!nullOnly || isEmpty(b.getExt())) {
-            String s = checkParam("ext", b.getExt());
-            if (s != null) {
-                b.setExt(s);
-            }
-        }
+//        if (!nullOnly || isEmpty(b.getExt())) {
+//            String s = checkParam("ext", b.getExt());
+//            if (s != null) {
+//                b.setExt(s);
+//            }
+//        }
         if (!nullOnly || b.getArch().length == 0) {
             String s = checkParam("arch", Arrays.toString(b.getArch()));
             if (!isEmpty(s)) {
@@ -166,10 +166,6 @@ public class NdedMain extends NutsApplication {
         if (isEmpty(b.getPackaging())) {
             error = true;
             appContext.err().print("Missing packaging\n");
-        }
-        if (isEmpty(b.getExt())) {
-            error = true;
-            appContext.err().print("Missing ext\n");
         }
         if(isEmpty(home)){
             error = true;
@@ -235,7 +231,6 @@ public class NdedMain extends NutsApplication {
         this.appContext.out().printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)),("/"+path).replace('/',File.separatorChar));
         this.appContext.out().printf("id         : ==%s==\n", desc.getId());
         this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging()==null?"":desc.getPackaging());
-        this.appContext.out().printf("ext        : ==%s==\n", desc.getExt());
         if (desc.getLocations().length > 0) {
             this.appContext.out().print("locations  : \n");
             for (String s : b.getLocations()) {

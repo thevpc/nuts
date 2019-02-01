@@ -17,7 +17,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     public static final Logger log = Logger.getLogger(DefaultNutsCommandExecBuilder.class.getName());
     private static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
-            .setExt("exe")
             .setPackaging("exe")
             .setExecutable(true)
             .setExecutor(new NutsExecutorDescriptor(CoreNutsUtils.parseNutsId("exec")))
@@ -476,20 +475,21 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                     //this is a native file?
                     c.descriptor = TEMP_DESC;
                 }
-                NutsDefinition nutToRun = new NutsDefinition(
+                NutsDefinition nutToRun = new DefaultNutsDefinition(
+                        ws,null,
                         c.descriptor.getId(),
                         c.descriptor,
-                        ((File) c.contentFile.getSource()).getPath(),
-                        false,
-                        c.temps.size() > 0,
-                        null,null
+                        new NutsContent(((File) c.contentFile.getSource()).getPath(),
+                                false,
+                                c.temps.size() > 0),
+                        null
                 );
                 result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failSafe, session);
             }
         } else if(cmdName.contains(":")){
             NutsDefinition nutToRun = null;
-            nutToRun = ws.fetchWithDependencies(cmdName, null, false, session);
-            if (!ws.isInstalled(nutToRun.getId(), true, session)) {
+            nutToRun = ws.fetch(cmdName).setSession(session).includeDependencies().fetchDefinition();
+            if (!nutToRun.getInstallation().isInstalled()) {
                 ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
                 ws.install(nutToRun.getId().toString(), args, NutsConfirmAction.FORCE, session);
             }
@@ -498,9 +498,9 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             NutsWorkspaceCommand command = ws.getConfigManager().findCommand(cmdName);
             NutsDefinition nutToRun = null;
             if (command == null) {
-                nutToRun = ws.fetch(cmdName, session);
+                nutToRun = ws.fetch(cmdName).setSession(session).fetchDefinition();
                 log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
-                if (!ws.isInstalled(nutToRun.getId(), false, session)) {
+                if (!nutToRun.getInstallation().isInstalled()) {
                     ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
                     ws.install(nutToRun.getId(), args, NutsConfirmAction.FORCE, session);
                 }
@@ -511,7 +511,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                 if(command.getCommand()==null || command.getCommand().length==0) {
                     throw new NutsExecutionException("Invalid Command Definition "+command,1);
                 }
-                nutToRun = ws.fetch(command.getCommand()[0], session);
+                nutToRun = ws.fetch(command.getCommand()[0]).setSession(session).fetchDefinition();
                 List<String> r=new ArrayList<>(Arrays.asList(command.getCommand()));
                 //remove first element
                 r.remove(0);
