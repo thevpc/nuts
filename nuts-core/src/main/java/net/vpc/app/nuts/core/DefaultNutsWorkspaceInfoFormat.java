@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.io.ByteArrayPrintStream;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.strings.StringUtils;
@@ -114,13 +115,22 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("nuts-runtime-path", StringUtils.join(":", runtimeClassPath));
             props.put("nuts-workspace", configManager.getWorkspaceLocation());
             props.put("nuts-workspace-id", configManager.getUuid());
-            props.put("nuts-read-only", String.valueOf(configManager.isReadOnly()));
             props.put("nuts-secure", String.valueOf(configManager.isSecure()));
+            props.put("nuts-store-layout", String.valueOf(configManager.getStoreLocationLayout()));
+            props.put("nuts-store-strategy", String.valueOf(configManager.getStoreLocationStrategy()));
+            props.put("nuts-repo-store-strategy", String.valueOf(configManager.getRepositoryStoreLocationStrategy()));
+            props.put("nuts-option-save-if-created", String.valueOf(configManager.getOptions().isSaveIfCreated()));
+            props.put("nuts-option-create-if-not-found", String.valueOf(configManager.getOptions().isCreateIfNotFound()));
+            props.put("nuts-option-ignore-if-found", String.valueOf(configManager.getOptions().isIgnoreIfFound()));
+            props.put("nuts-option-perf", String.valueOf(configManager.getOptions().isPerf()));
+            props.put("nuts-option-recover", String.valueOf(configManager.getOptions().isRecover()));
+            props.put("nuts-option-read-only", String.valueOf(configManager.getOptions().isReadOnly()));
+            props.put("nuts-option-skip-companions", String.valueOf(configManager.getOptions().isSkipPostCreateInstallCompanionTools()));
             for (NutsStoreFolder folderType : NutsStoreFolder.values()) {
                 props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType));
             }
             props.put("java-version", System.getProperty("java.version"));
-            props.put("java-executable", System.getProperty("java.home") + FileUtils.getNativePath("/bin/java"));
+            props.put("java-executable", CoreNutsUtils.resolveJavaCommand(null));
             props.put("java-classpath", System.getProperty("java.class.path"));
             props.put("java-library-path", System.getProperty("java.library.path"));
             props.put("os-name", ws.getConfigManager().getPlatformOs().toString());

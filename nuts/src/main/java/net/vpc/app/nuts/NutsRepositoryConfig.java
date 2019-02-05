@@ -30,17 +30,13 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class NutsRepositoryConfig implements Serializable {
 
-    private static final long serialVersionUID = 1;
-    private final Map<String, NutsRepositoryLocation> mirrors = new HashMap<>();
-    private final Map<String, NutsUserConfig> users = new HashMap<>();
-    private String name;
+    private static final long serialVersionUID = 2;
     private String uuid;
+    private String name;
     private String type;
     private String location;
     private String programsStoreLocation = null;
@@ -52,7 +48,9 @@ public class NutsRepositoryConfig implements Serializable {
     private String cacheStoreLocation = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
-    private Properties env = new Properties();
+    private Properties env;
+    private List<NutsRepositoryLocation> mirrors;
+    private List<NutsUserConfig> users;
 
     public NutsRepositoryConfig() {
     }
@@ -72,12 +70,13 @@ public class NutsRepositoryConfig implements Serializable {
         this.tempStoreLocation = other.tempStoreLocation;
         this.cacheStoreLocation = other.cacheStoreLocation;
         this.storeLocationStrategy = other.storeLocationStrategy;
-        this.env.putAll(other.getEnv());
-        for (NutsRepositoryLocation mirror : other.getMirrors()) {
-            addMirror(mirror);
-        }
-        for (NutsUserConfig secu : other.getUsers()) {
-            setUser(secu);
+        this.mirrors = other.getMirrors()==null?null:new ArrayList<>(other.getMirrors());
+        this.users = other.getUsers()==null?null:new ArrayList<>(other.getUsers());
+        if(other.getEnv()==null){
+            this.env=null;
+        }else{
+            this.env=new Properties();
+            this.env.putAll(other.getEnv());
         }
     }
 
@@ -214,100 +213,22 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
-    public NutsRepositoryConfig removeMirror(String repositoryId) {
-        mirrors.remove(repositoryId);
+    public List<NutsRepositoryLocation> getMirrors() {
+        return mirrors;
+    }
+
+    public NutsRepositoryConfig setMirrors(List<NutsRepositoryLocation> mirrors) {
+        this.mirrors = mirrors;
         return this;
     }
 
-
-    public NutsRepositoryConfig addMirror(NutsRepositoryLocation c) {
-        if (c != null) {
-            mirrors.put(c.getName(), c);
-        }
+    public NutsRepositoryConfig setUsers(List<NutsUserConfig> users) {
+        this.users = users;
         return this;
     }
 
-
-    public NutsRepositoryLocation getMirror(String id) {
-        return mirrors.get(id);
-    }
-
-
-    public NutsRepositoryLocation[] getMirrors() {
-        return mirrors.values().toArray(new NutsRepositoryLocation[0]);
-    }
-
-
-    public NutsRepositoryConfig setMirrors(NutsRepositoryLocation[] mirrors) {
-        this.mirrors.clear();
-        for (NutsRepositoryLocation mirror : mirrors) {
-            addMirror(mirror);
-        }
-        return this;
-    }
-
-
-    public String getEnv(String property, String defaultValue) {
-        String o = getEnv().getProperty(property);
-        if (NutsUtils.isEmpty(o)) {
-            return defaultValue;
-        }
-        return o;
-    }
-
-
-    public NutsRepositoryConfig setUsers(NutsUserConfig securityEntityConfig) {
-        if (securityEntityConfig != null) {
-            users.put(securityEntityConfig.getUser(), securityEntityConfig);
-        }
-        return this;
-    }
-
-
-    public NutsRepositoryConfig setEnv(String property, String value) {
-        if (NutsUtils.isEmpty(value)) {
-            getEnv().remove(property);
-        } else {
-            getEnv().setProperty(property, value);
-        }
-        return this;
-    }
-
-
-    public NutsRepositoryConfig removeUser(String securityId) {
-        users.remove(securityId);
-        return this;
-    }
-
-
-    public NutsRepositoryConfig setUser(NutsUserConfig securityEntityConfig) {
-        users.put(securityEntityConfig.getUser(), securityEntityConfig);
-        return this;
-    }
-
-
-    public NutsUserConfig getUser(String userId) {
-        NutsUserConfig config = users.get(userId);
-        if (config == null) {
-            if (NutsConstants.USER_ADMIN.equals(userId) || NutsConstants.USER_ANONYMOUS.equals(userId)) {
-                config = new NutsUserConfig(userId, null, null, null, null);
-                users.put(userId, config);
-            }
-        }
-        return config;
-    }
-
-
-    public NutsUserConfig[] getUsers() {
-        return users.values().toArray(new NutsUserConfig[0]);
-    }
-
-
-    public void setSecurity(NutsUserConfig[] securityEntityConfigs) {
-        this.users.clear();
-        for (NutsUserConfig conf : securityEntityConfigs) {
-            setUser(conf);
-        }
+    public List<NutsUserConfig> getUsers() {
+        return users;
     }
 
 

@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreHttpUtils;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.io.URLUtils;
 import net.vpc.common.strings.StringUtils;
@@ -46,11 +45,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
+public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
-    private static final Logger log = Logger.getLogger(NutsRemoteFolderHttpRepository.class.getName());
+    private static final Logger log = Logger.getLogger(NutsHttpFolderRepository.class.getName());
 
-    public NutsRemoteFolderHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
+    public NutsHttpFolderRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,repositoryRoot, SPEED_SLOW);
     }
 
@@ -99,7 +98,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
+        return (URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + "nuts.json"
         ));
     }
@@ -141,7 +140,7 @@ public class NutsRemoteFolderHttpRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
-            String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId)+"/.folders").split("\n");
+            String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId)+"/.folders").split("\n");
             List<NutsId> n=new ArrayList<>();
             for (String s : all) {
                 if(!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)){

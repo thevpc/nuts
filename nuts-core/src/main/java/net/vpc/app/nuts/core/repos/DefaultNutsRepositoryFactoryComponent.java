@@ -76,9 +76,9 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
             }
             if (location.getLocation().startsWith("http://") || location.getLocation().startsWith("https://")) {
                 if (NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(location.getType())) {
-                    return (new NutsRemoteFolderHttpRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot));
+                    return (new NutsHttpFolderRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot));
                 }
-                return (new NutsRemoteHttpRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot));
+                return (new NutsHttpSrvRepository(location.getName(), location.getLocation(), workspace, parentRepository, repositoryRoot));
             }
         }
         return null;

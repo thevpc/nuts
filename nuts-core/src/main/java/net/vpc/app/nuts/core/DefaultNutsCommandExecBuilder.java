@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
+import net.vpc.common.util.ArrayUtils;
 
 public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     public static final Logger log = Logger.getLogger(DefaultNutsCommandExecBuilder.class.getName());
@@ -470,7 +471,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_EXEC, cmdName);
         int result = 0;
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(cmdName, "path", cmdName, new File(ws.getConfigManager().getCwd())), session)) {
+            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(cmdName, "path", cmdName, new File(".")), session)) {
                 if (c.descriptor == null) {
                     //this is a native file?
                     c.descriptor = TEMP_DESC;
@@ -505,18 +506,13 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                     ws.install(nutToRun.getId(), args, NutsConfirmAction.FORCE, session);
                 }
             } else {
-                if(command.getId()==null) {
-                    throw new NutsExecutionException("Invalid Command Definition "+command,1);
-                }
-                if(command.getCommand()==null || command.getCommand().length==0) {
-                    throw new NutsExecutionException("Invalid Command Definition "+command,1);
-                }
                 nutToRun = ws.fetch(command.getCommand()[0]).setSession(session).fetchDefinition();
                 List<String> r=new ArrayList<>(Arrays.asList(command.getCommand()));
                 //remove first element
                 r.remove(0);
                 r.addAll(Arrays.asList(args));
                 args=r.toArray(new String[0]);
+                executorOptions= ArrayUtils.concatArrays(command.getExecutorOptions(),executorOptions);
             }
             //load all needed dependencies!
             result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failSafe, session);

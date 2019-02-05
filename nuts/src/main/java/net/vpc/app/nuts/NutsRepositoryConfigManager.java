@@ -25,6 +25,19 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
     void setEnv(String property, String value);
 
 
+    /**
+     * return repository location
+     *
+     * @param expand when true, location will be expanded (~ and $ params will be expanded)
+     * @return repository location
+     */
+    String getLocation(boolean expand);
+
+    /**
+     * equivalent to {{@link #getLocation(boolean)}} with false value
+     *
+     * @return repository location
+     */
     String getLocation();
 
     String getStoreLocation();
@@ -46,13 +59,14 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     void addMirror(NutsRepositoryLocation c);
 
-
     NutsRepositoryLocation getMirror(String id);
 
 
     NutsRepositoryLocation[] getMirrors();
 
-    boolean save();
+    boolean save(boolean force);
+
+    void save();
 
     Properties getEnv(boolean inherit);
 

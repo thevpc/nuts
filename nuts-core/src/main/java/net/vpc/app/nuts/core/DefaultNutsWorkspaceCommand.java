@@ -5,9 +5,10 @@ import net.vpc.app.nuts.NutsWorkspaceCommand;
 
 public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     private String name;
-    private NutsId id;
+    private NutsId owner;
     private String factoryId;
     private String[] command;
+    private String[] executorOptions;
 
     public String getName() {
         return name;
@@ -18,12 +19,12 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
         return this;
     }
 
-    public NutsId getId() {
-        return id;
+    public NutsId getOwner() {
+        return owner;
     }
 
-    public DefaultNutsWorkspaceCommand setId(NutsId id) {
-        this.id = id;
+    public DefaultNutsWorkspaceCommand setOwner(NutsId owner) {
+        this.owner = owner;
         return this;
     }
 
@@ -42,6 +43,16 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
 
     public DefaultNutsWorkspaceCommand setCommand(String[] command) {
         this.command = command;
+        return this;
+    }
+
+    @Override
+    public String[] getExecutorOptions() {
+        return executorOptions;
+    }
+
+    public DefaultNutsWorkspaceCommand setExecutorOptions(String[] executorOptions) {
+        this.executorOptions = executorOptions;
         return this;
     }
 }

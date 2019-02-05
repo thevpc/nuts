@@ -5,7 +5,7 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.5.2.0
+/_/ |_/\__,_/\__/____/   version 0.5.3.0
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
@@ -73,6 +73,8 @@ java -jar nuts-0.5.3.jar
         * Added description, alternative (to support multi architecture nuts) descriptor properties
         * Removed descriptor/id 'ext' and 'file' parameters. 'packaging' should be more than enough
         * Removed Maps from config. Replaced by plain arrays
+        * Removed workspace.cwd
+        * Removed Temp File/Folder support
     4- Added Archetype "standalone" to help bundling and application with all its dependencies
     5- Several fixes
         * Fixed Log configuration, introduced --log-inherited to enable inherited log-handlers
@@ -81,6 +83,7 @@ java -jar nuts-0.5.3.jar
         * Fixed Multiple pom download issue
         * Fixed Gson parsing issue
         * Fixed autocomplete support
+        * Fixed bad json format recovery
     6- nsh 
         * introduced pwd,set unset,alias,unalias,autocomplete commands
         * fixed support to autocomplete

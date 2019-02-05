@@ -85,7 +85,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     @Override
     protected String getIdPath(NutsId id) {
-        return new File(getConfigManager().getLocation(), CoreNutsUtils.syspath(getIdRelativePath(id))).getPath();
+        return new File(getConfigManager().getLocation(true), CoreNutsUtils.syspath(getIdRelativePath(id))).getPath();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     public File getIdFile(NutsId id) {
         String p = getIdRelativePath(id);
         if (p != null) {
-            return new File(getConfigManager().getLocation(), p);
+            return new File(getConfigManager().getLocation(true), p);
         }
         return null;
     }
@@ -124,7 +124,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        File groupFolder = new File(getConfigManager().getLocation(), id.getGroup().replace('.', File.separatorChar));
+        File groupFolder = new File(getConfigManager().getLocation(true), id.getGroup().replace('.', File.separatorChar));
         return new File(groupFolder, id.getName());
     }
 
@@ -229,7 +229,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     @Override
     protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            String locationFolder = getConfigManager().getLocation();
+            String locationFolder = getConfigManager().getLocation(true);
             return findInFolder(new File(locationFolder), filter, session);
         }
         return Collections.emptyIterator();

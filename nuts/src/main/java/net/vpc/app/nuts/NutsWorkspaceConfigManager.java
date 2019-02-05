@@ -78,10 +78,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     Map<String, String> getRuntimeProperties();
 
-    String getCwd();
-
-    void setCwd(String file);
-
     String resolveNutsJarFile();
 
     void addImports(String... importExpression);
@@ -106,6 +102,13 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     boolean updateExtension(NutsId extensionId);
 
+    /**
+     * save config file if force is activated or non read only and some changes was detected in config file
+     *
+     * @param force when true, save will always be performed
+     */
+    boolean save(boolean force);
+
     void save();
 
     URL[] getBootClassWorldURLs();
@@ -120,9 +123,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setSecure(boolean secure);
 
-
     void addRepository(NutsRepositoryLocation repository);
-
 
     void removeRepository(String repositoryName);
 

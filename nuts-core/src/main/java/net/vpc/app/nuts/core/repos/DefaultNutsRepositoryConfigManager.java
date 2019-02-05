@@ -2,36 +2,43 @@ package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
+    private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
-    private AbstractNutsRepository abstractNutsRepository;
+    private AbstractNutsRepository repository;
     private int speed;
     private String storeLocation;
     private NutsRepositoryConfig config;
-    private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
+    private Map<String, NutsRepositoryLocation> configMirrors = new LinkedHashMap<>();
+    private Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
+    private boolean configurationChanged = false;
 
-    public DefaultNutsRepositoryConfigManager(AbstractNutsRepository abstractNutsRepository, String storeLocation, NutsRepositoryConfig config, int speed) {
-        this.abstractNutsRepository = abstractNutsRepository;
+    public DefaultNutsRepositoryConfigManager(AbstractNutsRepository repository, String storeLocation, NutsRepositoryConfig config, int speed) {
+        this.repository = repository;
         this.storeLocation = storeLocation;
-        this.config = config;
         this.speed = speed;
+        setConfig(config);
     }
 
     @Override
     public String getEnv(String key, String defaultValue, boolean inherit) {
-        String t = getConfig().getEnv(key, null);
+        String t = null;
+        if (config.getEnv() != null) {
+            t = config.getEnv().getProperty(defaultValue);
+        }
         if (!StringUtils.isEmpty(t)) {
             return t;
         }
-        t = abstractNutsRepository.getWorkspace().getConfigManager().getEnv(key, null);
+        t = repository.getWorkspace().getConfigManager().getEnv(key, null);
         if (!StringUtils.isEmpty(t)) {
             return t;
         }
@@ -42,15 +49,30 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     public Properties getEnv(boolean inherit) {
         Properties p = new Properties();
         if (inherit) {
-            p.putAll(abstractNutsRepository.getWorkspace().getConfigManager().getEnv());
+            p.putAll(repository.getWorkspace().getConfigManager().getEnv());
         }
-        p.putAll(getConfig().getEnv());
+        if (config.getEnv() != null) {
+            p.putAll(config.getEnv());
+        }
         return p;
     }
 
     @Override
     public void setEnv(String property, String value) {
-        getConfig().setEnv(property, value);
+        if (StringUtils.isEmpty(value)) {
+            if (config.getEnv() != null) {
+                config.getEnv().remove(property);
+                fireConfigurationChanged();
+            }
+        } else {
+            if (config.getEnv() == null) {
+                config.setEnv(new Properties());
+            }
+            if (!value.equals(config.getEnv().getProperty(property))) {
+                config.getEnv().setProperty(property, value);
+                fireConfigurationChanged();
+            }
+        }
     }
 
     @Override
@@ -60,27 +82,31 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     @Override
     public String getType() {
-        return getConfig().getType();
+        return config.getType();
     }
 
     @Override
     public String getGroups() {
-        return getConfig().getGroups();
+        return config.getGroups();
     }
 
     @Override
     public String getName() {
-        return getConfig().getName();
+        return config.getName();
     }
 
     @Override
     public String getLocation() {
-        return getConfig().getLocation();
+        return config.getLocation();
     }
 
-    //@Override
-    public NutsRepositoryConfig getConfig() {
-        return config;
+    @Override
+    public String getLocation(boolean expand) {
+        String s = config.getLocation();
+        if (s != null && expand) {
+            s = repository.getWorkspace().getIOManager().expandPath(s);
+        }
+        return s;
     }
 
     public String getStoreLocation() {
@@ -92,35 +118,35 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         String n = "";
         switch (folderType) {
             case PROGRAMS: {
-                n = getConfig().getProgramsStoreLocation();
+                n = config.getProgramsStoreLocation();
                 break;
             }
             case TEMP: {
-                n = getConfig().getTempStoreLocation();
+                n = config.getTempStoreLocation();
                 break;
             }
             case CACHE: {
-                n = getConfig().getCacheStoreLocation();
+                n = config.getCacheStoreLocation();
                 break;
             }
             case CONFIG: {
-                n = getConfig().getConfigStoreLocation();
+                n = config.getConfigStoreLocation();
                 break;
             }
             case LOGS: {
-                n = getConfig().getLogsStoreLocation();
+                n = config.getLogsStoreLocation();
                 break;
             }
             case VAR: {
-                n = getConfig().getVarStoreLocation();
+                n = config.getVarStoreLocation();
                 break;
             }
             case LIB: {
-                n = getConfig().getLibStoreLocation();
+                n = config.getLibStoreLocation();
                 break;
             }
         }
-        NutsStoreLocationStrategy strategy = getConfig().getStoreLocationStrategy();
+        NutsStoreLocationStrategy strategy = config.getStoreLocationStrategy();
         if (strategy == null) {
             strategy = NutsStoreLocationStrategy.values()[0];
         }
@@ -133,7 +159,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
                 return FileUtils.getAbsoluteFile(new File(getStoreLocation(), n)).getPath();
             }
             case EXPLODED: {
-                String storeLocation = abstractNutsRepository.getWorkspace().getConfigManager().getStoreLocation(folderType);
+                String storeLocation = repository.getWorkspace().getConfigManager().getStoreLocation(folderType);
                 //uuid is added as
                 return storeLocation
                         + File.separator + NutsConstants.FOLDER_NAME_REPOSITORIES
@@ -146,30 +172,48 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     }
 
     public String getUuid() {
-        return getConfig().getUuid();
+        return config.getUuid();
     }
 
     public void setConfig(NutsRepositoryConfig newConfig) {
         this.config = newConfig;
+        configUsers.clear();
+        if (config.getUsers() != null) {
+            for (NutsUserConfig user : config.getUsers()) {
+                configUsers.put(user.getUser(), user);
+            }
+        }
+        configMirrors.clear();
+        if (config.getMirrors() != null) {
+            for (NutsRepositoryLocation repo : config.getMirrors()) {
+                configMirrors.put(repo.getName(), repo);
+            }
+        }
+        fireConfigurationChanged();
     }
 
     @Override
     public void setUser(NutsUserConfig user) {
-        getConfig().setUser(user);
+        configUsers.put(user.getUser(), user);
+        fireConfigurationChanged();
     }
 
     @Override
     public void removeUser(String userId) {
-        getConfig().removeUser(userId);
+        if (configUsers.containsKey(userId)) {
+            configUsers.remove(userId);
+            fireConfigurationChanged();
+        }
     }
 
     @Override
     public NutsUserConfig getUser(String userId) {
-        NutsUserConfig u = getConfig().getUser(userId);
+        NutsUserConfig u = configUsers.get(userId);
         if (u == null) {
             if (NutsConstants.USER_ADMIN.equals(userId) || NutsConstants.USER_ANONYMOUS.equals(userId)) {
                 u = new NutsUserConfig(userId, null, null, null, null);
-                getConfig().setUser(u);
+                configUsers.put(userId, u);
+                fireConfigurationChanged();
             }
         }
         return u;
@@ -177,54 +221,75 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     @Override
     public NutsUserConfig[] getUsers() {
-        return getConfig().getUsers();
+        return configUsers.values().toArray(new NutsUserConfig[0]);
     }
 
     public void removeMirror(String repositoryId) {
-        getConfig().removeMirror(repositoryId);
-    }
-
-
-    public void addMirror(NutsRepositoryLocation c) {
-        if (c != null) {
-            getConfig().addMirror(c);
+        if (configMirrors.remove(repositoryId) != null) {
+            fireConfigurationChanged();
         }
     }
 
+    public void addMirror(NutsRepositoryLocation c) {
+        String mirrorName = c.getName();
+        if (!CoreNutsUtils.isValidIdentifier(mirrorName)) {
+            throw new NutsInvalidRepositoryException(mirrorName, "Invalid repository name : " + mirrorName);
+        }
+        if (log.isLoggable(Level.FINEST)) {
+            log.log(Level.FINEST, StringUtils.alignLeft(getName(), 20) + " add repo " + mirrorName);
+        }
+        if (configMirrors.containsKey(c.getName())) {
+            throw new NutsIllegalArgumentException("Mirror with same name already exists : " + c.getName());
+        }
+        configMirrors.put(c.getName(), c);
 
-    public NutsRepositoryLocation getMirror(String id) {
-        return getConfig().getMirror(id);
+        fireConfigurationChanged();
+    }
+
+
+    public NutsRepositoryLocation getMirror(String name) {
+        return configMirrors.get(name);
     }
 
 
     public NutsRepositoryLocation[] getMirrors() {
-        return getConfig().getMirrors();
+        return configMirrors.values().toArray(new NutsRepositoryLocation[0]);
     }
 
 
     @Override
-    public boolean save() {
+    public boolean save(boolean force) {
+        if (force || (!repository.getWorkspace().getConfigManager().isReadOnly() && isConfigurationChanged())) {
+            save();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void save() {
+        CoreNutsUtils.checkReadOnly(repository.getWorkspace());
+        repository.getSecurityManager().checkAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY, "save-repository");
         File file = CoreIOUtils.createFile(getStoreLocation(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
         boolean created = false;
         if (!file.exists()) {
             created = true;
         }
-        boolean saved = false;
         new File(getStoreLocation()).mkdirs();
-        try {
-            abstractNutsRepository.getWorkspace().getIOManager().writeJson(getConfig(), file, true);
-            saved = true;
-        } catch (NutsIOException ex) {
-            //unable to store;
+        if (config.getEnv() != null && config.getEnv().isEmpty()) {
+            config.setEnv(null);
         }
+        config.setMirrors(configMirrors.isEmpty() ? null : new ArrayList<>(configMirrors.values()));
+        config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
+        repository.getWorkspace().getIOManager().writeJson(config, file, true);
+        configurationChanged = false;
         if (log.isLoggable(Level.CONFIG)) {
             if (created) {
-                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getName(), 20) + " Created repository " + abstractNutsRepository.getName() + " at " + getStoreLocation());
+                log.log(Level.CONFIG, StringUtils.alignLeft(repository.getName(), 20) + " Created repository " + repository.getName() + " at " + getStoreLocation());
             } else {
-                log.log(Level.CONFIG, StringUtils.alignLeft(abstractNutsRepository.getName(), 20) + " Updated repository " + abstractNutsRepository.getName() + " at " + getStoreLocation());
+                log.log(Level.CONFIG, StringUtils.alignLeft(repository.getName(), 20) + " Updated repository " + repository.getName() + " at " + getStoreLocation());
             }
         }
-        return saved;
     }
 
     @Override
@@ -236,4 +301,18 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     public String getEnv(String property, String defaultValue) {
         return getEnv(property, defaultValue, true);
     }
+
+    private void fireConfigurationChanged() {
+        setConfigurationChanged(true);
+    }
+
+    public NutsRepositoryConfigManager setConfigurationChanged(boolean configurationChanged) {
+        this.configurationChanged = configurationChanged;
+        return this;
+    }
+
+    public boolean isConfigurationChanged() {
+        return configurationChanged;
+    }
+
 }

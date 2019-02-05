@@ -72,17 +72,11 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
                         .setLocation(null)
                 , autoCreate);
         //Dont need to add mirror if repository is already loadable from config!
-        NutsRepository m = null;
-        try {
-            m = proxy.getMirror(config.getName() + "-ref");
-        } catch (NutsRepositoryNotFoundException ex) {
-            //
-        }
-        if (m == null) {
+        if (!proxy.containsMirror(config.getName() + "-ref")) {
             return proxy.addMirror(new NutsRepositoryLocation()
-                    .setName(config.getName() + "-ref")
-                    .setLocation(config.getLocation())
-                    .setType(config.getType())
+                            .setName(config.getName() + "-ref")
+                            .setLocation(config.getLocation())
+                            .setType(config.getType())
                     , autoCreate);
         }
         return proxy;

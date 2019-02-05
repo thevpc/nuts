@@ -34,9 +34,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
@@ -140,19 +137,18 @@ final class NutsUtils {
     }
 
     public static String readStringFromURL(URL requestURL) throws IOException {
-        File f=toFile(requestURL);
-        if(f!=null) {
+        File f = toFile(requestURL);
+        if (f != null) {
             return new String(Files.readAllBytes(f.toPath()));
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(requestURL.openStream(), out,true,true);
+        copy(requestURL.openStream(), out, true, true);
         return new String(out.toByteArray());
     }
 
     public static String readStringFromFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
     }
-
 
 
     public static boolean isAbsolutePath(String location) {
@@ -230,7 +226,7 @@ final class NutsUtils {
                     }
                 }
             }
-            inputStream=null;
+            inputStream = null;
             try {
                 if (url != null) {
                     String urlString = url.toString();
@@ -250,33 +246,26 @@ final class NutsUtils {
                                 if (pp != null) {
                                     pp.mkdirs();
                                 }
-                                boolean cachedRecovered=cacheFile.isFile();
+                                boolean cachedRecovered = cacheFile.isFile();
                                 if (urlFile != null) {
-                                    Files.copy(urlFile.toPath(), cacheFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                    copy(urlFile, cacheFile);
                                 } else {
-                                    InputStream is = null;
-                                    try {
-                                        Files.copy(is = url.openStream(), cacheFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                                    } finally {
-                                        if (is != null) {
-                                            is.close();
-                                        }
-                                    }
+                                    copy(url, cacheFile);
                                 }
                                 long time = System.currentTimeMillis() - startTime;
-                                if(cachedRecovered) {
-                                    log.log(Level.CONFIG, "[RECOV. ] Cached props file to    {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
-                                }else{
-                                    log.log(Level.CONFIG, "[CACHED ] Cached props file to    {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
+                                if (cachedRecovered) {
+                                    log.log(Level.CONFIG, "[RECOV. ] Cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
+                                } else {
+                                    log.log(Level.CONFIG, "[CACHED ] Cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, formatPeriodMilli(time)});
                                 }
                                 return props;
                             }
                         }
                         long time = System.currentTimeMillis() - startTime;
-                        log.log(Level.CONFIG, "[SUCCESS] Loading props file from  {0}"+ ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
+                        log.log(Level.CONFIG, "[SUCCESS] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
                     } else {
                         long time = System.currentTimeMillis() - startTime;
-                        log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}"+ ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
+                        log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, formatPeriodMilli(time)});
                     }
                 }
             } finally {
@@ -286,7 +275,7 @@ final class NutsUtils {
             }
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}"+ ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
+            log.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
             //e.printStackTrace();
         }
         return props;
@@ -343,18 +332,11 @@ final class NutsUtils {
         throw new NutsIOException("Nuts not found " + nutsId);
     }
 
-    public static boolean isFileURL(String url) {
-        if (url.startsWith("http://") || url.startsWith("https://")) {
-            return false;
-        }
-        return true;
-    }
-
     public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
         String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, ext);
         String mvnUrl = repo;
         String sep = "/";
-        if (isFileURL(repo)) {
+        if (!isURL(repo)) {
             sep = File.separator;
         }
         if (!mvnUrl.endsWith("/") && !mvnUrl.endsWith(sep)) {
@@ -368,19 +350,15 @@ final class NutsUtils {
         for (String r : repositories) {
             log.fine("Checking " + nutsId + " jar from " + r);
             String path = resolveMavenFullPath(r, nutsId, "jar");
-            if (!isFileURL(r)) {
+            File file = toFile(r);
+            if (file == null) {
                 try {
                     File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
-                    if (cachedFile.getParentFile() != null) {
-                        cachedFile.getParentFile().mkdirs();
-                    }
-                    ReadableByteChannel rbc = Channels.newChannel(new URL(path).openStream());
-                    FileOutputStream fos = new FileOutputStream(cachedFile);
-                    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                    copy(new URL(path), cachedFile);
                     log.log(Level.CONFIG, "[CACHED ] Cached jar file {0}", new Object[]{cachedFile.getPath()});
                     return cachedFile;
                 } catch (Exception ex) {
-                    System.err.printf("Unable to load " + nutsId + " from " + r + ".\n");
+                    log.log(Level.SEVERE, "[ERROR  ] Unable to load " + nutsId + " from " + r + ".\n");
                     //ex.printStackTrace();
                     //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                 }
@@ -390,7 +368,7 @@ final class NutsUtils {
                 if (f.isFile()) {
                     return f;
                 } else {
-                    System.err.printf("Unable to load " + nutsId + " from " + r + ".\n");
+                    log.log(Level.SEVERE, "Unable to load " + nutsId + " from " + r + ".\n");
                 }
             }
         }
@@ -427,98 +405,98 @@ final class NutsUtils {
                             switch (k) {
                                 case "bootApiVersion": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setApiVersion(val);
                                     break;
                                 }
                                 case "bootRuntime": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setRuntimeId(val);
                                     break;
                                 }
                                 case "bootRepositories": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setRepositories(val);
                                     break;
                                 }
                                 case "bootRuntimeDependencies": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setRuntimeDependencies(val);
                                     break;
                                 }
                                 case "bootJavaCommand": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setJavaCommand(val);
                                     break;
                                 }
                                 case "bootJavaOptions": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setJavaOptions(val);
                                     break;
                                 }
                                 case "workspace": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setWorkspace(val);
                                     break;
                                 }
                                 case "programsStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setProgramsStoreLocation(val);
                                     break;
                                 }
                                 case "configStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setConfigStoreLocation(val);
                                     break;
                                 }
                                 case "varStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setVarStoreLocation(val);
                                     break;
                                 }
                                 case "logsStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setLogsStoreLocation(val);
                                     break;
                                 }
                                 case "tempStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setTempStoreLocation(val);
                                     break;
                                 }
                                 case "cacheStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     c.setCacheStoreLocation(val);
                                     break;
                                 }
                                 case "storeLocationStrategy": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     NutsStoreLocationStrategy strategy = NutsStoreLocationStrategy.values()[0];
                                     if (!val.isEmpty()) {
@@ -533,7 +511,7 @@ final class NutsUtils {
                                 }
                                 case "storeLocationLayout": {
                                     if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\tLoaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
                                     NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[0];
                                     if (!val.isEmpty()) {
@@ -652,15 +630,19 @@ final class NutsUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
+        String exe = getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
+            if (NutsUtils.isEmpty(javaHome) || "null".equals(javaHome)) {
+                //this may happen is using a precompiled image (such as with graalvm)
+                return exe;
+            }
         }
-        String exe = getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
 
-    public static String[] parseDependenciesFromMaven(URL url, File cacheFile, boolean useCache,boolean cacheRemoteOnly) {
+    public static String[] parseDependenciesFromMaven(URL url, File cacheFile, boolean useCache, boolean cacheRemoteOnly) {
 
         long startTime = System.currentTimeMillis();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -669,9 +651,9 @@ final class NutsUtils {
         List<String> deps = new ArrayList<>();
         InputStream documentStream = null;
         boolean enabledCache = true;
-        boolean loadedCache=false;
-        boolean cachedFile=false;
-        boolean cacheFileOverridden=false;
+        boolean loadedCache = false;
+        boolean cachedFile = false;
+        boolean cacheFileOverridden = false;
         if (useCache && cacheFile != null && cacheFile.isFile()) {
             try {
                 documentStream = new FileInputStream(cacheFile);
@@ -684,25 +666,18 @@ final class NutsUtils {
         try {
             if (enabledCache) {
                 if (cacheFile != null) {
-                    cacheFileOverridden=cacheFile.isFile();
+                    cacheFileOverridden = cacheFile.isFile();
                     File furl = toFile(url);
-                    if (!cacheRemoteOnly || furl!=null) {
-                        if (furl!=null) {
-                            if(cacheFile.getParentFile()!=null){
+                    if (!cacheRemoteOnly || furl != null) {
+                        if (furl != null) {
+                            if (cacheFile.getParentFile() != null) {
                                 cacheFile.getParentFile().mkdirs();
                             }
-                            Files.copy(furl.toPath(), cacheFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            NutsUtils.copy(furl, cacheFile);
                         } else {
-                            InputStream is = null;
-                            try {
-                                Files.copy(is = url.openStream(), cacheFile.toPath());
-                            } finally {
-                                if (is != null) {
-                                    is.close();
-                                }
-                            }
+                            NutsUtils.copy(url, cacheFile);
                         }
-                        cachedFile=true;
+                        cachedFile = true;
                         documentStream = new FileInputStream(cacheFile);
                     }
                 }
@@ -765,21 +740,21 @@ final class NutsUtils {
                 }
             }
             long time = System.currentTimeMillis() - startTime;
-            if(loadedCache){
-                log.log(Level.CONFIG, "[SUCCESS] Loaded cached pom file {0}"+((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-            }else if(cachedFile){
-                if(cacheFileOverridden) {
+            if (loadedCache) {
+                log.log(Level.CONFIG, "[SUCCESS] Loaded cached pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
+            } else if (cachedFile) {
+                if (cacheFileOverridden) {
                     log.log(Level.CONFIG, "[RECOV. ] Cached pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
-                }else{
+                } else {
                     log.log(Level.CONFIG, "[CACHED ] Cached pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
                 }
-            }else{
-                log.log(Level.CONFIG, "[SUCCESS] Loaded pom file {0}"+((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
+            } else {
+                log.log(Level.CONFIG, "[SUCCESS] Loaded pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
             }
             return deps.toArray(new String[0]);
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}"+((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
+            log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{url.toString(), formatPeriodMilli(time)});
             return null;
         } finally {
             if (documentStream != null) {
@@ -884,7 +859,11 @@ final class NutsUtils {
         if (cmd == null || cmd.trim().isEmpty()) {
             return true;
         }
-        String jh = System.getProperty("java.home").replace("\\", "/");
+        String javaHome = System.getProperty("java.home");
+        if (NutsUtils.isEmpty(javaHome) || "null".equals(javaHome)) {
+            return cmd.equals("java") || cmd.equals("java.exe") || cmd.equals("javaw.exe") || cmd.equals("javaw");
+        }
+        String jh = javaHome.replace("\\", "/");
         cmd = cmd.replace("\\", "/");
         if (cmd.equals(jh + "/bin/java")) {
             return true;
@@ -929,25 +908,91 @@ final class NutsUtils {
         }
     }
 
-    public static File toFile(URL url){
-        if(url==null){
+    public static File toFile(String url) {
+        if (isEmpty(url)) {
             return null;
         }
-        if("file".equals(url.getProtocol())){
+        URL u = null;
+        try {
+            u = new URL(url);
+            return toFile(u);
+        } catch (MalformedURLException e) {
+            //
+            return new File(url);
+        }
+    }
+
+    public static File toFile(URL url) {
+        if (url == null) {
+            return null;
+        }
+        if ("file".equals(url.getProtocol())) {
             try {
-                return  Paths.get(url.toURI()).toFile();
+                return Paths.get(url.toURI()).toFile();
             } catch (URISyntaxException e) {
                 //
             }
         }
         return null;
     }
-    public static String toUserString(URL url){
-        if(url==null){
-            return "<NULL>";
+
+    public static void copy(InputStream ff, File to) throws IOException {
+        if (to.getParentFile() != null) {
+            to.getParentFile().mkdirs();
         }
-        File f=toFile(url);
-        if(f!=null){
+        try {
+            Files.copy(ff, to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            throw ex;
+        } finally {
+            if (ff != null) {
+                ff.close();
+            }
+        }
+    }
+
+    public static void copy(File ff, File to) throws IOException {
+        if (to.getParentFile() != null) {
+            to.getParentFile().mkdirs();
+        }
+        try {
+            Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            throw ex;
+        }
+    }
+
+    public static void copy(URL url, File to) throws IOException {
+        try {
+            InputStream in = url.openStream();
+            if (in == null) {
+                throw new IOException("Empty Stream " + url);
+            }
+            if (to.getParentFile() != null) {
+                if (!to.getParentFile().isDirectory()) {
+                    boolean mkdirs = to.getParentFile().mkdirs();
+                    if (!mkdirs) {
+                        log.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
+                    }
+                }
+            }
+            ReadableByteChannel rbc = Channels.newChannel(in);
+            FileOutputStream fos = new FileOutputStream(to);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
+            throw ex;
+        }
+    }
+
+    public static String formatURL(URL url) {
+        if (url == null) {
+            return "<EMPTY>";
+        }
+        File f = toFile(url);
+        if (f != null) {
             return f.getPath();
         }
         return url.toString();

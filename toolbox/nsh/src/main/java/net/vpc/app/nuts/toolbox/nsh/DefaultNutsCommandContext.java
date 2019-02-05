@@ -9,7 +9,9 @@ import net.vpc.common.javashell.Env;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+
 import net.vpc.app.nuts.NutsSessionTerminal;
+import net.vpc.common.strings.StringUtils;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
     private NutsConsoleContext consoleContext;
@@ -49,26 +51,50 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
             setTerminalMode(NutsTerminalMode.FORMATTED);
         } else if ((a = cmd.readOption("--term-inherited")) != null) {
             setTerminalMode(NutsTerminalMode.INHERITED);
-        } else if ((a = cmd.readOption("--no-colors")) != null) {
+        } else if ((a = cmd.readOption("--no-color")) != null) {
             setTerminalMode(NutsTerminalMode.FILTERED);
-        } else if ((a = cmd.readStringOption("--term")) != null) {
-            String s=a.getStringValue().toLowerCase();
-            switch (s){
-                case "":
-                case "system":
-                {
-                    setTerminalMode(null);
-                    break;
-                }
-                case "filtered":{
-                    setTerminalMode(NutsTerminalMode.FILTERED);
-                    break;
-                }
-                case "formatted":{
+        } else if ((a = cmd.readImmediateStringOption("--color")) != null) {
+            switch (StringUtils.trim(a.getValue()).toLowerCase()) {
+                case "always":
+                case "true":
+                case "formatted": {
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
                 }
-                case "inherited":{
+                case "never":
+                case "false":
+                case "filtered": {
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    break;
+                }
+                case "inherited": {
+                    setTerminalMode(NutsTerminalMode.INHERITED);
+                    break;
+                }
+                case "auto":
+                case "default":
+                case "": {
+                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                    break;
+                }
+            }
+        } else if ((a = cmd.readStringOption("--term")) != null) {
+            String s = a.getStringValue().toLowerCase();
+            switch (s) {
+                case "":
+                case "system": {
+                    setTerminalMode(null);
+                    break;
+                }
+                case "filtered": {
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    break;
+                }
+                case "formatted": {
+                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                    break;
+                }
+                case "inherited": {
                     setTerminalMode(NutsTerminalMode.INHERITED);
                     break;
                 }

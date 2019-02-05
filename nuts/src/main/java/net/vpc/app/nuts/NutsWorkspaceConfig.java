@@ -34,7 +34,7 @@ import java.util.*;
 
 public final class NutsWorkspaceConfig implements Serializable {
 
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 2;
     private String uuid = null;
     private String workspace = null;
     private String bootApiVersion = null;
@@ -54,9 +54,9 @@ public final class NutsWorkspaceConfig implements Serializable {
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
 
-    private List<NutsRepositoryLocation> repositories = new ArrayList<>();
-    private List<NutsId> extensions = new ArrayList<>();
-    private List<NutsWorkspaceCommandFactoryConfig> commandFactories = new ArrayList<>();
+    private List<NutsRepositoryLocation> repositories;
+    private List<NutsId> extensions;
+    private List<NutsWorkspaceCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
@@ -84,12 +84,17 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.cacheStoreLocation = other.getCacheStoreLocation();
         this.bootJavaCommand = other.getBootJavaCommand();
         this.bootJavaOptions = other.getBootJavaOptions();
-        this.repositories.addAll(other.getRepositories());
-        this.users.addAll(other.getUsers());
-        this.sdk.addAll(other.getSdk());
-        this.extensions.addAll(other.getExtensions());
-        this.env.putAll(other.getEnv());
-        this.imports = new ArrayList<>(other.getImports());
+        this.repositories=other.getRepositories()==null?null:new ArrayList<>(other.getRepositories());;
+        this.users=other.getUsers()==null?null:new ArrayList<>(other.getUsers());
+        this.sdk=other.getSdk()==null?null:new ArrayList<>(other.getSdk());
+        this.extensions=other.getExtensions()==null?null:new ArrayList<>(other.getExtensions());
+        this.imports = other.getImports()==null?null:new ArrayList<>(other.getImports());
+        if(other.getEnv()==null){
+            this.env=null;
+        }else{
+            this.env=new Properties();
+            this.env.putAll(other.getEnv());
+        }
     }
 
     public String getWorkspace() {
@@ -106,16 +111,16 @@ public final class NutsWorkspaceConfig implements Serializable {
         return repositories;
     }
 
-    public void setRepositories(NutsRepositoryLocation[] repositories){
-        this.repositories=new ArrayList<>(Arrays.asList(repositories));
+    public void setRepositories(List<NutsRepositoryLocation> repositories) {
+        this.repositories = repositories;
     }
 
     public List<String> getImports() {
         return imports;
     }
 
-    public void setImports(String[] imports) {
-        this.imports = new ArrayList<>(Arrays.asList(imports));
+    public void setImports(List<String> imports) {
+        this.imports = imports;
     }
 
 
@@ -123,6 +128,20 @@ public final class NutsWorkspaceConfig implements Serializable {
         return extensions;
     }
 
+    public NutsWorkspaceConfig setExtensions(List<NutsId> extensions) {
+        this.extensions = extensions;
+        return this;
+    }
+
+    public NutsWorkspaceConfig setCommandFactories(List<NutsWorkspaceCommandFactoryConfig> commandFactories) {
+        this.commandFactories = commandFactories;
+        return this;
+    }
+
+    public NutsWorkspaceConfig setSdk(List<NutsSdkLocation> sdk) {
+        this.sdk = sdk;
+        return this;
+    }
 
     public Properties getEnv() {
         return env;
@@ -133,10 +152,9 @@ public final class NutsWorkspaceConfig implements Serializable {
     }
 
 
-    public void setUsers(NutsUserConfig[] users) {
-        this.users=new ArrayList<>(Arrays.asList(users));
+    public void setUsers(List<NutsUserConfig> users) {
+        this.users = users;
     }
-
 
     public List<NutsUserConfig> getUsers() {
         return users;
@@ -215,31 +233,6 @@ public final class NutsWorkspaceConfig implements Serializable {
         return commandFactories;
     }
 
-    public NutsWorkspaceConfig addCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory) {
-        if (commandFactory != null) {
-            this.commandFactories.add(commandFactory);
-        }
-        return this;
-    }
-
-    public NutsWorkspaceConfig removeCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory) {
-        this.commandFactories.remove(commandFactory);
-        return this;
-    }
-
-    public NutsWorkspaceConfig setCommandFactories(NutsWorkspaceCommandFactoryConfig[] commandFactories) {
-        if (commandFactories == null) {
-            this.commandFactories = new ArrayList<>();
-        } else {
-            this.commandFactories = new ArrayList<>(commandFactories.length);
-            for (NutsWorkspaceCommandFactoryConfig commandFactory : commandFactories) {
-                if (commandFactory != null) {
-                    this.commandFactories.add(commandFactory);
-                }
-            }
-        }
-        return this;
-    }
 
     public String getProgramsStoreLocation() {
         return programsStoreLocation;
@@ -336,17 +329,6 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setUuid(String uuid) {
         this.uuid = uuid;
-        return this;
-    }
-
-    public NutsWorkspaceConfig setSdk(NutsSdkLocation[] sdks) {
-        if (sdks != null) {
-            for (NutsSdkLocation s : sdks) {
-                if (s != null) {
-                    this.sdk.add(s);
-                }
-            }
-        }
         return this;
     }
 }

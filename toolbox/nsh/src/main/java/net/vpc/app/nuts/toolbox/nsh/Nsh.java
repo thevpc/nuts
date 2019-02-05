@@ -65,7 +65,7 @@ public class Nsh extends NutsApplication {
                                 .setFactoryId("nsh")
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
-                                .setId(applicationContext.getAppId()),
+                                .setOwner(applicationContext.getAppId()),
                         force ? NutsConfirmAction.FORCE : NutsConfirmAction.IGNORE
                 )) {
                     count++;
@@ -75,9 +75,7 @@ public class Nsh extends NutsApplication {
         if(!silent){
             applicationContext.out().printf("Installed ==%s== nsh commands.\n", count);
         }
-        if(!applicationContext.getWorkspace().getConfigManager().isReadOnly()) {
-            cfg.save();
-        }
+        cfg.save(false);
         return 0;
     }
 

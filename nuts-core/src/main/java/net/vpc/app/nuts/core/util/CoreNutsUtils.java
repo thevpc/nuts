@@ -686,9 +686,9 @@ public class CoreNutsUtils {
         } else {
             File temp = ws.getIOManager().createTempFile(contentFile.getName());
             CoreNutsUtils.copy(contentFile.open(), temp, true, true);
-            c.contentFile = IOUtils.toInputStreamSource(temp, null, null, new File(ws.getConfigManager().getCwd()));
+            c.contentFile = IOUtils.toInputStreamSource(temp, null, null, null);
             c.addTemp(temp);
-            return characterize(ws, IOUtils.toInputStreamSource(temp, null, null, new File(ws.getConfigManager().getCwd())), session);
+            return characterize(ws, IOUtils.toInputStreamSource(temp, null, null, null), session);
         }
         File fileSource = (File) c.contentFile.getSource();
         if ((!fileSource.exists())) {
@@ -705,7 +705,7 @@ public class CoreNutsUtils {
                 if ("zip".equals(c.descriptor.getPackaging())) {
                     File zipFilePath = new File(ws.getIOManager().expandPath(fileSource.getPath() + ".zip"));
                     ZipUtils.zip(fileSource.getPath(), new ZipOptions(), zipFilePath.getPath());
-                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, null, null, new File(ws.getConfigManager().getCwd()));
+                    c.contentFile = IOUtils.toInputStreamSource(zipFilePath, null, null, null);
                     c.addTemp(zipFilePath);
                 } else {
                     throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
@@ -992,8 +992,8 @@ public class CoreNutsUtils {
                 if (sb.charAt(0) == '/' || sb.charAt(0) == '\\') {
                     sb.delete(0, 1);
                     updated = true;
-                }else if(sb.charAt(sb.length()-1) == '/' || sb.charAt(sb.length()-1) == '\\'){
-                    sb.delete(sb.length()-1, sb.length());
+                } else if (sb.charAt(sb.length() - 1) == '/' || sb.charAt(sb.length() - 1) == '\\') {
+                    sb.delete(sb.length() - 1, sb.length());
                     updated = true;
                 }
             }
@@ -1004,4 +1004,34 @@ public class CoreNutsUtils {
     public static String syspath(String s) {
         return s.replace('/', File.separatorChar);
     }
+
+    public static String resolveJavaCommand(String javaHome) {
+        String exe = CoreIOUtils.getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
+        if (javaHome == null || javaHome.isEmpty()) {
+            javaHome = System.getProperty("java.home");
+            if (StringUtils.isEmpty(javaHome) || "null".equals(javaHome)) {
+                //this may happen is using a precompiled image (such as with graalvm)
+                return exe;
+            }
+        }
+        return javaHome + File.separator + "bin" + File.separator + exe;
+    }
+
+    public static boolean isValidIdentifier(String s) {
+        if (s == null || s.length() == 0) {
+            return false;
+        }
+        char[] c = s.toCharArray();
+        if (!Character.isJavaIdentifierStart(c[0])) {
+            return false;
+        }
+        for (int i = 1; i < c.length; i++) {
+            if (!Character.isJavaIdentifierPart(c[i]) && c[i] != '-') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

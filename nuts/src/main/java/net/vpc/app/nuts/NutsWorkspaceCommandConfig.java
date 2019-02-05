@@ -30,17 +30,18 @@
 package net.vpc.app.nuts;
 
 public class NutsWorkspaceCommandConfig {
-    private NutsId id;
+    private NutsId owner;
     private String name;
     private String factoryId;
     private String[] command;
+    private String[] executorOptions;
 
-    public NutsId getId() {
-        return id;
+    public NutsId getOwner() {
+        return owner;
     }
 
-    public NutsWorkspaceCommandConfig setId(NutsId id) {
-        this.id = id;
+    public NutsWorkspaceCommandConfig setOwner(NutsId owner) {
+        this.owner = owner;
         return this;
     }
 
@@ -68,6 +69,15 @@ public class NutsWorkspaceCommandConfig {
 
     public NutsWorkspaceCommandConfig setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String[] getExecutorOptions() {
+        return executorOptions;
+    }
+
+    public NutsWorkspaceCommandConfig setExecutorOptions(String[] executorOptions) {
+        this.executorOptions = executorOptions;
         return this;
     }
 }

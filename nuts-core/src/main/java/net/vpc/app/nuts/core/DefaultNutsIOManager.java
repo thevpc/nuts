@@ -5,6 +5,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.*;
+import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.Convert;
 import net.vpc.common.util.MapBuilder;
 
@@ -164,13 +165,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
             throw new NutsIOException(e);
         }
         if (stream != null) {
-            if (!path.toLowerCase().startsWith("file://")) {
-                log.log(Level.FINE, "downloading file {0}", new Object[]{path});
+            if (path.toLowerCase().startsWith("file://")) {
+                log.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
             } else {
-                log.log(Level.FINEST, "downloading url {0}", new Object[]{path});
+                log.log(Level.FINEST, "[START  ] Downloading url {0}", new Object[]{path});
             }
         } else {
-            log.log(Level.FINEST, "downloading url failed : {0}", new Object[]{path});
+            log.log(Level.FINEST, "[ERROR  ] Downloading url failed : {0}", new Object[]{path});
         }
 
         if (!monitorable) {
@@ -187,6 +188,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 @Override
                 public void onComplete(InputStreamEvent event) {
                     finalMonitor.onComplete(event);
+                    if (event.getException() != null) {
+                        log.log(Level.FINEST, "[ERROR    ] Download Failed    : {0}", new Object[]{path});
+                    } else {
+                        log.log(Level.FINEST, "[SUCCESS  ] Download Succeeded : {0}", new Object[]{path});
+                    }
                 }
 
                 @Override
@@ -248,7 +254,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public String expandPath(String path) {
-        return expandPath(path, workspace.getConfigManager().getCwd());
+        return expandPath(path, workspace.getConfigManager().getWorkspaceLocation());
     }
 
     public String expandPath(String path, String baseFolder) {
@@ -300,7 +306,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 }
             }
         } catch (IOException e) {
-            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load text from "+resource, e);
+            Logger.getLogger(Nuts.class.getName()).log(Level.SEVERE, "Unable to load text from " + resource, e);
         }
         if (help == null) {
             help = defaultValue;//"no help found";
@@ -429,6 +435,41 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public File createTempFolder(String name) {
+        return createTempFolder(name, null);
+    }
+
+    @Override
+    public File createTempFolder(String name, NutsRepository repository) {
+        File folder = null;
+        if (repository == null) {
+            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+        } else {
+            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+        }
+        final File temp;
+        if (StringUtils.isEmpty(name)) {
+            name = "temp-";
+        } else if (name.length() < 3) {
+            name += "-temp-";
+        }
+        try {
+            temp = File.createTempFile(name, Long.toString(System.nanoTime()), folder);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        if (!(temp.delete())) {
+            throw new RuntimeException("Could not delete temp file: " + temp.getAbsolutePath());
+        }
+
+        if (!(temp.mkdir())) {
+            throw new RuntimeException("Could not create temp directory: " + temp.getAbsolutePath());
+        }
+
+        return (temp);
+    }
+
+    @Override
     public File createTempFile(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
@@ -438,11 +479,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         String prefix = "temp-";
         String ext = null;
-        if (name != null) {
+        if (!StringUtils.isEmpty(name)) {
             ext = FileUtils.getFileExtension(name);
             prefix = name;
             if (prefix.length() < 3) {
-                prefix = prefix + "tmp";
+                prefix = prefix + "-temp-";
             }
             if (!ext.isEmpty()) {
                 ext = "." + ext;

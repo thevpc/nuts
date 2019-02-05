@@ -132,7 +132,7 @@ public class LinuxNdi implements SystemNdi {
                     }else if("cancel".equalsIgnoreCase(r)){
                         return;
                     }else{
-                        appContext.out().print(" @@D\\'ont you get it?@@ You need to type 'ok', 'why' or 'cancel' !\n");
+                        appContext.out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !\n");
                     }
                 }
             }

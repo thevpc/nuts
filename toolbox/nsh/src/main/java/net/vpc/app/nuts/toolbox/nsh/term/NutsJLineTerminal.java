@@ -124,7 +124,6 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         String readLine = null;
         try {
             out.printf(prompt, params);
-            out.print(" : ");
             readLine = reader.readLine("");
         } catch (UserInterruptException e) {
             throw new InterruptShellException();
@@ -140,7 +139,6 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     @Override
     public String readPassword(PrintStream out, String prompt, Object... params) {
         out.printf(prompt, params);
-        out.print(" : ");
         return reader.readLine("", '*');
     }
 

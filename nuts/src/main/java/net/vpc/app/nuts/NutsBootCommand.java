@@ -4,7 +4,7 @@ public enum NutsBootCommand {
     EXEC,
     VERSION,
     INFO,
-    INSTALL_COMPANIONS,
+    INSTALL_COMPANION_TOOLS,
     HELP,
     LICENSE,
     RESET,

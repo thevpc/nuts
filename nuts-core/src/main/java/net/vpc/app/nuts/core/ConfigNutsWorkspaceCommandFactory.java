@@ -73,9 +73,9 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
             @Override
             public boolean accept(NutsWorkspaceCommandConfig value) {
                 if (id.getVersion().isEmpty()) {
-                    return value.getId().getSimpleName().equals(id.getSimpleName());
+                    return value.getOwner().getSimpleName().equals(id.getSimpleName());
                 } else {
-                    return value.getId().getLongName().equals(id.getLongName());
+                    return value.getOwner().getLongName().equals(id.getLongName());
                 }
             }
         });

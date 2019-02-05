@@ -48,6 +48,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private boolean ignoreIfFound;
     private boolean createIfNotFound;
     private boolean saveIfCreated;
+    private boolean skipPostCreateInstallCompanionTools;
     /**
      * if true, all means are deployed to recover from corrupted workspace.
      * This flag may alter current used version of nuts to update to latest.
@@ -429,6 +430,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setRecover(boolean recover) {
         this.recover = recover;
+        return this;
+    }
+
+    public boolean isSkipPostCreateInstallCompanionTools() {
+        return skipPostCreateInstallCompanionTools;
+    }
+
+    public NutsWorkspaceOptions setSkipPostCreateInstallCompanionTools(boolean skipPostCreateInstallCompanionTools) {
+        this.skipPostCreateInstallCompanionTools = skipPostCreateInstallCompanionTools;
         return this;
     }
 

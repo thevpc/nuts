@@ -36,6 +36,10 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -134,7 +138,7 @@ public class CoreIOUtils {
         }
         args = args2.toArray(new String[0]);
 
-        File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), args[0]);
+        File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), args[0]);
         if (file.exists() && !file.canExecute()) {
             if (!file.setExecutable(true)) {
                 if (log.isLoggable(Level.WARNING)) {
@@ -147,9 +151,9 @@ public class CoreIOUtils {
             }
         }
         if (directory == null) {
-            directory = new File(workspace.getConfigManager().getCwd());
+            directory = new File(workspace.getConfigManager().getWorkspaceLocation());
         } else {
-            directory = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), directory.getPath());
+            directory = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), directory.getPath());
         }
         return execAndWait(workspace, args, envmap, directory, terminal, showCommand, failFast);
     }
@@ -157,7 +161,7 @@ public class CoreIOUtils {
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
         String bestJavaPath = resolveJdkLocation(requestedJavaVersion, workspace).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
-            File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getCwd()), bestJavaPath);
+            File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), bestJavaPath);
             if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
                 bestJavaPath = CoreIOUtils.createFile(bestJavaPath, "bin/java").getPath();
             }
@@ -299,4 +303,68 @@ public class CoreIOUtils {
 
     public static String getAbsolutePath(String path) {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
-    }}
+    }
+
+    public static void copy(InputStream ff, File to) throws IOException {
+        if (to.getParentFile() != null) {
+            to.getParentFile().mkdirs();
+        }
+        try {
+            Files.copy(ff, to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            throw ex;
+        } finally {
+            if (ff != null) {
+                ff.close();
+            }
+        }
+    }
+
+    public static void copy(File ff, File to) throws IOException {
+        if (to.getParentFile() != null) {
+            to.getParentFile().mkdirs();
+        }
+        try {
+            Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            throw ex;
+        }
+    }
+
+    public static void move(File ff, File to) throws IOException {
+        if (to.getParentFile() != null) {
+            to.getParentFile().mkdirs();
+        }
+        try {
+            Files.move(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error moving {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+            throw ex;
+        }
+    }
+
+    public static void copy(URL url, File to) throws IOException {
+        try {
+            InputStream in = url.openStream();
+            if(in==null){
+                throw new IOException("Empty Stream "+url);
+            }
+            if (to.getParentFile() != null) {
+                if(!to.getParentFile().isDirectory()) {
+                    boolean mkdirs = to.getParentFile().mkdirs();
+                    if(!mkdirs) {
+                        log.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
+                    }
+                }
+            }
+            ReadableByteChannel rbc = Channels.newChannel(in);
+            FileOutputStream fos = new FileOutputStream(to);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        } catch (IOException ex) {
+            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
+            throw ex;
+        }
+    }
+}

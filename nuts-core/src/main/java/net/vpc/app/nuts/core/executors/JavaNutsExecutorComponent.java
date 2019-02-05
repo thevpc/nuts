@@ -64,7 +64,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsIdFormat nutsIdFormat = executionContext.getWorkspace().getFormatManager().createIdFormat().setOmitNamespace(true);
-        NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+        NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+        String contentFile = nutsMainDef.getContent().getFile();
 
         List<String> app = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
 
@@ -91,6 +92,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         String mainClass = null;
         boolean mainClassApp = false;
         String dir = executionContext.getCwd();
+        boolean excludeBase = false;
         boolean showCommand = false;
         boolean jar = false;
         List<String> classPath = new ArrayList<>();
@@ -148,6 +150,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i];
             } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
+            } else if (arg.startsWith("--exclude-base")) {
+                excludeBase=true;
             } else {
                 jvmArgs.add(arg);
             }
@@ -159,11 +163,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 javaHome = "${java}";
             }
         } else {
-            javaHome = javaHome + "/bin/java";
+            javaHome = CoreNutsUtils.resolveJavaCommand(javaHome);
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsDescriptor descriptor = nutMainFile.getDescriptor();
+        NutsDescriptor descriptor = nutsMainDef.getDescriptor();
         descriptor = executionContext.getWorkspace().resolveEffectiveDescriptor(descriptor, executionContext.getSession());
         nutsDefinitions.addAll(
                 executionContext.getWorkspace()
@@ -196,12 +200,16 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 executionContext.getTerminal().getFormattedErr().printf("Ignored class-path=%s. running jar!\n", classPath);
             }
             args.add("-jar");
-            args.add(nutMainFile.getContent().getFile());
+            if(!excludeBase) {
+                args.add(contentFile);
+            }else{
+                throw new NutsIllegalArgumentException("Cannot exclude base with jar modifier");
+            }
             xargs.add("-jar");
-            xargs.add(executionContext.getWorkspace().getFormatManager().createIdFormat().format(nutMainFile.getId()));
+            xargs.add(executionContext.getWorkspace().getFormatManager().createIdFormat().format(nutsMainDef.getId()));
         } else {
             if (mainClass == null) {
-                File file = CoreIOUtils.fileByPath(nutMainFile.getContent().getFile());
+                File file = CoreIOUtils.fileByPath(contentFile);
                 if (file != null) {
                     //check manifest!
                     NutsExecutionEntry[] classes = CorePlatformUtils.parseMainClasses(file);
@@ -211,14 +219,16 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 }
             }
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException("Missing Main Class for " + nutMainFile.getId());
+                throw new NutsIllegalArgumentException("Missing Main Class for " + nutsMainDef.getId());
             }
             xargs.add("--nuts-path");
             args.add("-classpath");
             StringBuilder xsb = new StringBuilder();
             StringBuilder sb = new StringBuilder();
-            xsb.append(nutsIdFormat.format(nutMainFile.getId()));
-            sb.append(nutMainFile.getContent().getFile());
+            if(!excludeBase) {
+                xsb.append(nutsIdFormat.format(nutsMainDef.getId()));
+                sb.append(contentFile);
+            }
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 if (nutsDefinition.getContent().getFile() != null) {
                     sb.append(File.pathSeparatorChar);
@@ -239,7 +249,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
                 List<String> possibleClasses = CoreStringUtils.split(mainClass, ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutMainFile.getId());
+                        throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutsMainDef.getId());
                     case 1:
                         xargs.add(mainClass);
                         args.add(mainClass);
@@ -300,7 +310,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(dir));
-        return CoreIOUtils.execAndWait(nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
+        return CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory
                 , executionContext.getTerminal(), showCommand, executionContext.isFailFast()

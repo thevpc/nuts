@@ -44,7 +44,11 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     File createTempFile(String name);
 
+    File createTempFolder(String name);
+
     File createTempFile(String name, NutsRepository repository);
+
+    File createTempFolder(String name, NutsRepository repository);
 
     String getSHA1(NutsDescriptor descriptor);
 }

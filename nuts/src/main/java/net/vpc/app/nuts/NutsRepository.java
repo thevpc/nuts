@@ -63,8 +63,8 @@ public interface NutsRepository {
     NutsRepositorySecurityManager getSecurityManager();
 
     /**
-     * @param id descriptor Id, mandatory as descriptor may not being effective
-     * (id is variable or inherited)
+     * @param id          descriptor Id, mandatory as descriptor may not being effective
+     *                    (id is variable or inherited)
      * @param descriptor
      * @param file
      * @param foundAction
@@ -88,15 +88,15 @@ public interface NutsRepository {
 
     NutsRepository[] getMirrors();
 
+    boolean containsMirror(String repositoryIdPath);
+
     /**
-     *
      * @param repositoryIdPath
      * @return
      */
     NutsRepository getMirror(String repositoryIdPath);
 
     /**
-     *
      * @param location
      * @param autoCreate
      * @return
@@ -104,43 +104,38 @@ public interface NutsRepository {
     NutsRepository addMirror(NutsRepositoryLocation location, boolean autoCreate);
 
     /**
-     *
      * @param repositoryId
      */
     void removeMirror(String repositoryId);
 
     /**
-     *
      * @return
      */
-    boolean save();
+    void save();
+
+    void save(boolean force);
 
     /**
-     *
      * @param autoCreate
      */
     void open(boolean autoCreate);
 
     /**
-     *
      * @param listener
      */
     void removeRepositoryListener(NutsRepositoryListener listener);
 
     /**
-     *
      * @param listener
      */
     void addRepositoryListener(NutsRepositoryListener listener);
 
     /**
-     *
      * @return
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
     /**
-     *
      * @param enabled
      */
     void setEnabled(boolean enabled);
@@ -154,5 +149,5 @@ public interface NutsRepository {
 
     int getSpeed();
 
-    String getStoreLocation() ;
+    String getStoreLocation();
 }

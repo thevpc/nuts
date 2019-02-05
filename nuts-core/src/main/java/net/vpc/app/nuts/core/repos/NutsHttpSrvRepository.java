@@ -44,12 +44,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NutsRemoteHttpRepository extends AbstractNutsRepository {
+public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
-    private static final Logger log = Logger.getLogger(NutsRemoteHttpRepository.class.getName());
+    private static final Logger log = Logger.getLogger(NutsHttpSrvRepository.class.getName());
     private NutsId remoteId;
 
-    public NutsRemoteHttpRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
+    public NutsHttpSrvRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository, repositoryRoot, SPEED_SLOW);
         try {
             remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(url + "/version"));
@@ -79,7 +79,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
     }
 
     public String getUrl(String path) {
-        return URLUtils.buildUrl(getConfigManager().getLocation(), path);
+        return URLUtils.buildUrl(getConfigManager().getLocation(true), path);
     }
 
     public NutsId getRemoteId() {
@@ -101,7 +101,7 @@ public class NutsRemoteHttpRepository extends AbstractNutsRepository {
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor, new OutputStreamWriter(descStream));
         File file1 = new File(file);
-        httpUpload(URLUtils.buildUrl(getConfigManager().getLocation(), "/deploy?" + resolveAuthURLPart()),
+        httpUpload(URLUtils.buildUrl(getConfigManager().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", file1.getName(), file1),

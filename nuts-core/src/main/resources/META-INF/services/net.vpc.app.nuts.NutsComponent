@@ -22,6 +22,7 @@ net.vpc.app.nuts.core.parsers.JarNutsDescriptorContentParserComponent
 net.vpc.app.nuts.core.parsers.NutsShellDescriptorContentParserComponent
 
 net.vpc.app.nuts.core.executors.JavaNutsExecutorComponent
+net.vpc.app.nuts.core.executors.JavaSourceNutsExecutorComponent
 net.vpc.app.nuts.core.executors.NutsShellNutsExecutorComponent
 net.vpc.app.nuts.core.executors.ProcessNutsExecutorComponent
 

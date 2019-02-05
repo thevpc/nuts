@@ -38,7 +38,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/6/17.
  */
-public class DefaultNutsDefinition implements NutsDefinition{
+public class DefaultNutsDefinition implements NutsDefinition {
 
     private NutsId id;
     private NutsDescriptor descriptor;
@@ -48,7 +48,7 @@ public class DefaultNutsDefinition implements NutsDefinition{
     private NutsRepository repository;
     private NutsWorkspace ws;
 
-    public DefaultNutsDefinition(NutsWorkspace ws,NutsRepository repo,NutsId id, NutsDescriptor descriptor, NutsContent content,NutsInstallInfo install) {
+    public DefaultNutsDefinition(NutsWorkspace ws, NutsRepository repo, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInfo install) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -57,15 +57,15 @@ public class DefaultNutsDefinition implements NutsDefinition{
         this.repository = repo;
     }
 
-    public DefaultNutsDefinition(DefaultNutsDefinition other) {
+    public DefaultNutsDefinition(NutsDefinition other) {
         if (other != null) {
-            this.descriptor = other.descriptor;
-            this.content = other.content;
-            this.id = other.id;
-            this.install = other.install;
-            this.ws = other.ws;
-            this.repository = other.repository;
-            this.effectiveDescriptor = other.effectiveDescriptor;
+            this.descriptor = other.getDescriptor();
+            this.content = other.getContent();
+            this.id = other.getId();
+            this.install = other.getInstallation();
+            this.ws = other.getRepository() == null ? null : other.getRepository().getWorkspace();
+            this.repository = other.getRepository();
+            this.effectiveDescriptor = other.getEffectiveDescriptor();
         }
     }
 
@@ -86,7 +86,7 @@ public class DefaultNutsDefinition implements NutsDefinition{
     }
 
     public String getFile() {
-        return content == null ?null: content.getFile();
+        return content == null ? null : content.getFile();
     }
 
     @Override
@@ -115,8 +115,8 @@ public class DefaultNutsDefinition implements NutsDefinition{
 
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
-        if(effectiveDescriptor==null){
-            effectiveDescriptor=ws.resolveEffectiveDescriptor(getDescriptor(),null);
+        if (effectiveDescriptor == null) {
+            effectiveDescriptor = ws.resolveEffectiveDescriptor(getDescriptor(), null);
         }
         return effectiveDescriptor;
     }

@@ -82,7 +82,7 @@ public class NutsJavaShell extends JavaShell {
     }
 
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session) {
-        super.setCwd(workspace.getConfigManager().getCwd());
+        //super.setCwd(workspace.getConfigManager().getCwd());
         context = new NutsJavaShellEvalContext(this, new String[0], null, null, null, workspace, session, new Env());
         this.workspace = workspace;
         context.setWorkspace(workspace);
@@ -234,7 +234,6 @@ public class NutsJavaShell extends JavaShell {
     @Override
     public void setCwd(String cwd) {
         super.setCwd(cwd);
-        workspace.getConfigManager().setCwd(cwd);
     }
 
 

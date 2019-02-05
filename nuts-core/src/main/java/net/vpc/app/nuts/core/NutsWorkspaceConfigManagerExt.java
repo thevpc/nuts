@@ -7,8 +7,6 @@ import java.net.URL;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager{
 
-    NutsWorkspaceConfig getConfig();
-
     void setStartCreateTimeMillis(long currentTimeMillis);
 
     void onInitializeWorkspace(NutsWorkspaceOptions options, DefaultNutsBootContext defaultNutsBootContext, DefaultNutsBootContext defaultNutsBootContext1, URL[] bootClassWorldURLs, ClassLoader classLoader);
@@ -28,4 +26,12 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
 
     ClassLoader getBootClassLoader();
+
+    void setBootApiVersion(String value);
+
+    void setBootRuntime(String value);
+
+    void setBootRuntimeDependencies(String value);
+
+    void setBootRepositories(String value);
 }

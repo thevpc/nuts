@@ -38,9 +38,11 @@ import java.util.Map;
 public interface NutsWorkspace extends NutsComponent<Object> {
 
     String getUuid();
+
     /**
      * Open a new workspace with the provided options.
      * When options is null, it i considered as a new empty instance of the options class.
+     *
      * @param options creation options
      * @return a new instance of workspace
      */
@@ -174,5 +176,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsCommandExecBuilder createExecBuilder();
 
     NutsDeploymentBuilder createDeploymentBuilder();
+
+    void save(boolean force);
+
+    void save();
 }
 

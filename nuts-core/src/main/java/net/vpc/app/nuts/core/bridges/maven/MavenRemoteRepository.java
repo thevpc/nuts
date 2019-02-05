@@ -77,7 +77,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
-            String metadataURL = URLUtils.buildUrl(getConfigManager().getLocation(), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
+            String metadataURL = URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
                 metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.FACE_CATALOG), session);
@@ -117,14 +117,18 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     @Override
     public Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
-        String url = URLUtils.buildUrl(getConfigManager().getLocation(), "/archetype-catalog.xml");
-        InputStream s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation()).setFace(NutsConstants.FACE_CATALOG), session);
+        String url = URLUtils.buildUrl(getConfigManager().getLocation(true), "/archetype-catalog.xml");
+        InputStream s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", getConfigManager().getLocation(true)).setFace(NutsConstants.FACE_CATALOG), session);
         return MavenUtils.createArchetypeCatalogIterator(s, filter, true);
     }
 
     private NutsRepository getLocalMavenRepo() {
         for (NutsRepository nutsRepository : getWorkspace().getRepositoryManager().getRepositories()) {
-            if (nutsRepository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN) && nutsRepository.getConfigManager().getLocation().equals("~/.m2")) {
+            if (nutsRepository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN)
+                    &&
+                CoreIOUtils.getAbsolutePath(nutsRepository.getConfigManager().getLocation(true))
+                .equals(CoreIOUtils.getAbsolutePath(getWorkspace().getIOManager().expandPath("~/.m2")))
+            ) {
                 return nutsRepository;
             }
         }
@@ -151,7 +155,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         if (wrapper == null) {
             wrapper = getWrapper();
         }
-        if (wrapper != null && wrapper.get(id, getConfigManager().getLocation(), session)) {
+        if (wrapper != null && wrapper.get(id, getConfigManager().getLocation(true), session)) {
             NutsRepository loc = getLocalMavenRepo();
             if (loc != null) {
                 return loc.fetchContent(id, localPath, session.copy().setFetchMode(NutsFetchMode.OFFLINE));

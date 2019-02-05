@@ -97,7 +97,7 @@ public class RemoteMysqlDatabaseConfigService {
                 .setCommand(
                         "nsh",
                         "cp",
-                        "--no-colors",
+                        "--no-color",
                         archiveResult.path,
                         remoteFullFilePath
                 ).setSession(context.getSession())

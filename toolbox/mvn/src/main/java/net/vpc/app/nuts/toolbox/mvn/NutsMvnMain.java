@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.toolbox.mvn;
 
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
@@ -91,7 +92,7 @@ public class NutsMvnMain extends NutsApplication {
                     if (repo != null) {
                         System.setProperty("repoUrl", repo);
                     }
-                    File dir = createTempPom();
+                    File dir = createTempPom(appContext.getWorkspace());
                     boolean r = callMvn(o, dir.getPath(), "dependency:get");
                     try {
                         delete(dir);
@@ -128,8 +129,8 @@ public class NutsMvnMain extends NutsApplication {
         }
     }
 
-    private static File createTempPom() {
-        File d = createTempDirectory();
+    private static File createTempPom(NutsWorkspace ws) {
+        File d = ws.getIOManager().createTempFolder(null);
         try (PrintWriter out = new PrintWriter(new File(d,"filename.txt"))) {
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                     "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
@@ -203,23 +204,5 @@ public class NutsMvnMain extends NutsApplication {
             }
         });
         return deleted;
-    }
-
-    public static File createTempDirectory() throws RuntimeException {
-        final File temp;
-        try {
-            temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-        if (!(temp.delete())) {
-            throw new RuntimeException("Could not delete temp file: " + temp.getAbsolutePath());
-        }
-
-        if (!(temp.mkdir())) {
-            throw new RuntimeException("Could not create temp directory: " + temp.getAbsolutePath());
-        }
-
-        return (temp);
     }
 }

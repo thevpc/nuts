@@ -31,13 +31,10 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -338,7 +335,7 @@ public class NutsBootWorkspace {
         log.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : {1}", new Object[]{info.bootClassWorldURLs.length, Arrays.asList(info.bootClassWorldURLs)});
         if (log.isLoggable(Level.CONFIG)) {
             for (URL bootClassWorldURL : info.bootClassWorldURLs) {
-                log.log(Level.CONFIG, "\t {0}", new Object[]{bootClassWorldURL});
+                log.log(Level.CONFIG, "\t {0}", new Object[]{NutsUtils.formatURL(bootClassWorldURL)});
             }
         }
         info.workspaceClassLoader = info.bootClassWorldURLs.length == 0 ? getContextClassLoader() : new URLClassLoader(info.bootClassWorldURLs, getContextClassLoader());
@@ -355,7 +352,7 @@ public class NutsBootWorkspace {
             //should never happen
             System.err.print("Unable to load Workspace Component from ClassPath : \n");
             for (URL url : info.bootClassWorldURLs) {
-                System.err.printf("\t%s\n", NutsUtils.toUserString(url));
+                System.err.printf("\t %s\n", NutsUtils.formatURL(url));
             }
             log.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(info.bootClassWorldURLs));
             throw new NutsInvalidWorkspaceException(this.runningBootConfig.getWorkspace(), "Unable to load Workspace Component from ClassPath : " + Arrays.asList(info.bootClassWorldURLs));
@@ -366,7 +363,7 @@ public class NutsBootWorkspace {
         if (recover) {
 //            info.nutsWorkspace.getConfigManager().setBootConfig(new NutsBootConfig());
             if (!info.nutsWorkspace.getConfigManager().isReadOnly()) {
-                info.nutsWorkspace.getConfigManager().save();
+                info.nutsWorkspace.save();
             }
         }
     }
@@ -473,7 +470,7 @@ public class NutsBootWorkspace {
             log.log(Level.CONFIG, "\t os-name                        : {0}", System.getProperty("os.name"));
             log.log(Level.CONFIG, "\t os-arch                        : {0}", System.getProperty("os.arch"));
             log.log(Level.CONFIG, "\t os-version                     : {0}", System.getProperty("os.version"));
-            log.log(Level.CONFIG, "\t user-name                       : {0}", System.getProperty("user.name"));
+            log.log(Level.CONFIG, "\t user-name                      : {0}", System.getProperty("user.name"));
             log.log(Level.CONFIG, "\t user-dir                       : {0}", System.getProperty("user.dir"));
             log.log(Level.CONFIG, "\t user-home                      : {0}", System.getProperty("user.home"));
         }
@@ -599,7 +596,7 @@ public class NutsBootWorkspace {
                             runtimeId = wruntimeId;
                             repositories = wrepositories;
                             if (log.isLoggable(Level.CONFIG)) {
-                                log.log(Level.CONFIG, "[SUCCESS] Loaded  boot props : runtimeId=" + runtimeId + " ; repositories=" + repositories);
+                                log.log(Level.CONFIG, "Boot " + runtimeId + " with repositories " + repositories);
                             }
                             break;
                             //no need to log, already done in NutsUtils. loadURLProperties
@@ -624,7 +621,7 @@ public class NutsBootWorkspace {
         //will load only from local cached file!!
         String bootRuntimePropertiesPath = getPathFile(_runtimeId, "nuts.properties");
         NutsBootConfig goodCp = null;
-        if(!recover) {
+        if (!recover) {
             File cacheFile = new File(cacheFolder, NutsUtils.syspath(bootRuntimePropertiesPath));
             try {
                 Properties p = NutsUtils.loadURLProperties(cacheFile.toURI().toURL(), null, !recover);
@@ -871,17 +868,17 @@ public class NutsBootWorkspace {
                 return null;
             }
         }
-        File localFile=null;
-        if(NutsUtils.isURL(repository)) {
+        File localFile = null;
+        if (NutsUtils.isURL(repository)) {
             try {
                 localFile = NutsUtils.toFile(new URL(repository));
             } catch (Exception ex) {
                 //ignore
             }
-        }else{
-            localFile=new File(repository);
+        } else {
+            localFile = new File(repository);
         }
-        if (localFile==null) {
+        if (localFile == null) {
             if (cacheFolder == null) {
                 return null;
             }
@@ -892,30 +889,17 @@ public class NutsBootWorkspace {
                 urlPath += "/";
             }
             urlPath += path;
-            InputStream from = null;
             try {
-                from = new URL(urlPath).openStream();
+                NutsUtils.copy(new URL(urlPath), to);
                 log.log(Level.CONFIG, "[SUCCESS] Loading  {0}", new Object[]{urlPath});
-                if (to.getParentFile() != null) {
-                    to.getParentFile().mkdirs();
-                }
-                Files.copy(from, to.toPath());
                 ok = to;
             } catch (IOException ex) {
                 log.log(Level.CONFIG, "[ERROR  ] Loading  {0}", new Object[]{urlPath});
                 //not found
-            } finally {
-                if (from != null) {
-                    try {
-                        from.close();
-                    } catch (IOException e) {
-                        //
-                    }
-                }
             }
             return ok;
         } else {
-            repository=localFile.getPath();
+            repository = localFile.getPath();
         }
         File repoFolder = createFile(getHome(NutsStoreFolder.CONFIG), repository);
         File ff = null;
@@ -949,10 +933,10 @@ public class NutsBootWorkspace {
                         ext = "jar";
                     }
                     if (to.isFile()) {
-                        Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        NutsUtils.copy(ff, to);
                         log.log(Level.CONFIG, "[RECOV. ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     } else {
-                        Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        NutsUtils.copy(ff, to);
                         log.log(Level.CONFIG, "[CACHED ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     }
                     return to;
@@ -1198,7 +1182,7 @@ public class NutsBootWorkspace {
                 }
                 return 0;
             }
-            case INSTALL_COMPANIONS: {
+            case INSTALL_COMPANION_TOOLS: {
                 if (workspace == null) {
                     fallbackInstallActionUnavailable(message);
                     return 1;
@@ -1384,14 +1368,15 @@ public class NutsBootWorkspace {
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
-                    System.err.printf("  nuts-runtime-classpath           : %s\n", NutsUtils.toUserString(bootClassWorldURL));
+                    System.err.printf("  nuts-runtime-classpath           : %s\n", NutsUtils.formatURL(bootClassWorldURL));
                 } else {
-                    System.err.printf("                                     %s\n", NutsUtils.toUserString(bootClassWorldURL));
+                    System.err.printf("                                     %s\n", NutsUtils.formatURL(bootClassWorldURL));
                 }
             }
         }
         System.err.printf("  java-version                     : %s\n", System.getProperty("java.version"));
-        System.err.printf("  java-executable                  : %s\n", System.getProperty("java.home") + "/bin/java");
+        String javaHome = System.getProperty("java.home");
+        System.err.printf("  java-executable                  : %s\n", NutsUtils.resolveJavaCommand(null));
         System.err.printf("  java-class-path                  : %s\n", System.getProperty("java.class.path"));
         System.err.printf("  java-library-path                : %s\n", System.getProperty("java.library.path"));
         System.err.printf("  os-name                          : %s\n", System.getProperty("os.name"));
