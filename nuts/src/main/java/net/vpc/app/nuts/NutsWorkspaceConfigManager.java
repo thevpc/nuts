@@ -226,5 +226,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
 
     String getUuid();
+
+    ClassLoader getBootClassLoader();
+
+    NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
+
+    NutsRepositoryLocation[] getRepositories();
 }
 

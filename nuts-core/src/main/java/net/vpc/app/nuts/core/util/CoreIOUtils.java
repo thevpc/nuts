@@ -32,13 +32,17 @@ package net.vpc.app.nuts.core.util;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.common.io.*;
+import net.vpc.common.strings.StringConverterMap;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.logging.Level;
@@ -98,7 +102,7 @@ public class CoreIOUtils {
         if (env != null) {
             map.putAll(env);
         }
-        MapStringMapper mapper = new MapStringMapper(map) {
+        StringConverterMap mapper = new StringConverterMap(map) {
             @Override
             public String convert(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
@@ -120,7 +124,7 @@ public class CoreIOUtils {
         };
         for (Map.Entry<String, String> e : map.entrySet()) {
             String k = e.getKey();
-            if(!StringUtils.isEmpty(k)) {
+            if (!StringUtils.isEmpty(k)) {
                 k = k.replace('.', '_');
                 if (!StringUtils.isEmpty(e.getValue())) {
                     envmap.put(k, e.getValue());
@@ -129,7 +133,7 @@ public class CoreIOUtils {
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = StringUtils.trim(CoreStringUtils.replaceVars(arg, mapper));
+            String s = StringUtils.trim(StringUtils.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
                 Collections.addAll(args2, StringUtils.parseCommandline(s));
             } else {
@@ -219,14 +223,13 @@ public class CoreIOUtils {
                 .setOutput(out)
                 .setErr(err)
                 .setDirectory(directory)
-                .setFailFast(failFast)
-                ;
-        if(out==null && err==null && in==null){
+                .setFailFast(failFast);
+        if (out == null && err == null && in == null) {
             pb.inheritIO();
         }
 
         if (log.isLoggable(Level.FINE)) {
-            log.log(Level.FINE, "[exec] "+pb.getCommandString());
+            log.log(Level.FINE, "[exec] " + pb.getCommandString());
         }
         if (showCommand) {
             if (terminal.getOut() instanceof NutsFormattedPrintStream) {
@@ -234,7 +237,7 @@ public class CoreIOUtils {
             } else {
                 terminal.getOut().print("exec ");
             }
-            terminal.getOut().printf("%s\n",pb.getCommandString());
+            terminal.getOut().printf("%s\n", pb.getCommandString());
         }
         return pb.start().waitFor().getResult();
     }
@@ -260,8 +263,6 @@ public class CoreIOUtils {
         x.setLastModified(ii.getLastModified());
         return x;
     }
-
-
 
 
     public static File fileByPath(String path) {
@@ -348,13 +349,13 @@ public class CoreIOUtils {
     public static void copy(URL url, File to) throws IOException {
         try {
             InputStream in = url.openStream();
-            if(in==null){
-                throw new IOException("Empty Stream "+url);
+            if (in == null) {
+                throw new IOException("Empty Stream " + url);
             }
             if (to.getParentFile() != null) {
-                if(!to.getParentFile().isDirectory()) {
+                if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
-                    if(!mkdirs) {
+                    if (!mkdirs) {
                         log.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
                     }
                 }
@@ -367,4 +368,63 @@ public class CoreIOUtils {
             throw ex;
         }
     }
+
+    public static URL[] toURL(String[] all) throws MalformedURLException {
+        List<URL> urls = new ArrayList<>();
+        if (all != null) {
+            for (String s : all) {
+                if (!StringUtils.isEmpty(s)) {
+                    try {
+                        URL u = new URL(s);
+                        urls.add(u);
+                    } catch (MalformedURLException e) {
+                        //
+                        urls.add(new File(s).toURI().toURL());
+                    }
+                }
+            }
+        }
+        return urls.toArray(new URL[0]);
+    }
+
+    public static URL[] toURL(File[] all) throws MalformedURLException {
+        List<URL> urls = new ArrayList<>();
+        if (all != null) {
+            for (File s : all) {
+                if (s != null) {
+                    urls.add(s.toURI().toURL());
+                }
+            }
+        }
+        return urls.toArray(new URL[0]);
+    }
+
+    public static File toFile(String url) {
+        if (StringUtils.isEmpty(url)) {
+            return null;
+        }
+        URL u = null;
+        try {
+            u = new URL(url);
+            return toFile(u);
+        } catch (MalformedURLException e) {
+            //
+            return new File(url);
+        }
+    }
+
+    public static File toFile(URL url) {
+        if (url == null) {
+            return null;
+        }
+        if ("file".equals(url.getProtocol())) {
+            try {
+                return Paths.get(url.toURI()).toFile();
+            } catch (URISyntaxException e) {
+                //
+            }
+        }
+        return null;
+    }
+
 }

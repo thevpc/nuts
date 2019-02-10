@@ -111,10 +111,15 @@ public class NutsApplicationContext implements CommandLineContext {
         setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.VAR));
         setLibFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.LIB));
         setCacheFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.CACHE));
-        if (wordIndex >= 0) {
+        if ("auto-complete".equals(mode)) {
             setTerminalMode(NutsTerminalMode.FILTERED);
+            if(wordIndex<0){
+                wordIndex=args.length;
+            }
+            autoComplete = new AppCommandAutoComplete(args, wordIndex, out());
+        }else {
+            autoComplete = null;
         }
-        autoComplete = wordIndex >= 0 ? new AppCommandAutoComplete(args, wordIndex, out()) : null;
         tableCellFormatter = new ColoredCellFormatter(this);
     }
 

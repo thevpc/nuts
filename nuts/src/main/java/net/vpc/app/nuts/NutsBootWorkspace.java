@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import sun.tools.jar.resources.jar;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -208,14 +210,18 @@ public class NutsBootWorkspace {
         }
 
         String defaultWorkspaceLibFolder = runningBootConfig.getLibStoreLocation();
+        List<String> repos = new ArrayList<>();
+        repos.add(defaultWorkspaceLibFolder);
+        if (!Boolean.getBoolean("nuts.boot.no-m2")) {
+            repos.add(System.getProperty("user.home") + NutsUtils.syspath("/.m2/repository"));
+        }
+        repos.addAll(Arrays.asList(
+                NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
+                NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
+                NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
+        ));
         File file = NutsUtils.resolveOrDownloadJar(NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion,
-                new String[]{
-                        defaultWorkspaceLibFolder,
-                        System.getProperty("user.home") + NutsUtils.syspath("/.m2/repository"),
-                        NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
-                        NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
-                        NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
-                },
+                repos.toArray(new String[0]),
                 defaultWorkspaceLibFolder
         );
         if (file == null) {
@@ -374,7 +380,7 @@ public class NutsBootWorkspace {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
-                if (!Boolean.getBoolean("nut.workspace-clean")) {
+                if (!Boolean.getBoolean("nut.boot.workspace-clean")) {
                     return actionReset(null);
                 }
                 return actionClean(null);
@@ -383,7 +389,7 @@ public class NutsBootWorkspace {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
-                if (!Boolean.getBoolean("nut.workspace-reset")) {
+                if (!Boolean.getBoolean("nut.boot.workspace-reset")) {
                     return actionReset(null);
                 }
                 break;
@@ -561,7 +567,9 @@ public class NutsBootWorkspace {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
 //        initial.add(home + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
-        initial.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
+        if (!Boolean.getBoolean("nuts.boot.no-m2")) {
+            initial.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
+        }
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
         }
@@ -665,8 +673,11 @@ public class NutsBootWorkspace {
                 runtimeId0 = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + runtimeVersion;
             }
             log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
-            LinkedHashSet<String> jarRepositories = new LinkedHashSet(Arrays.asList(
-                    NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL,
+            LinkedHashSet<String> jarRepositories = new LinkedHashSet();
+            if (!Boolean.getBoolean("nuts.boot.no-m2")) {
+                jarRepositories.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
+            }
+            jarRepositories.addAll(Arrays.asList(
                     NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
                     NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL,
                     NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT
@@ -1124,9 +1135,11 @@ public class NutsBootWorkspace {
                     fallbackInstallActionUnavailable(message);
                     return 1;
                 }
-                List<String> ids = new ArrayList<>();
+                Map<String, List<String>> ids = new LinkedHashMap<>();
                 NutsConfirmAction confirm = NutsConfirmAction.ERROR;
-                for (String c : o.getApplicationArguments()) {
+                String[] applicationArguments = o.getApplicationArguments();
+                for (int i = 0; i < applicationArguments.length; i++) {
+                    String c = applicationArguments[i];
                     switch (c) {
                         case "-f":
                         case "--force":
@@ -1140,16 +1153,25 @@ public class NutsBootWorkspace {
                         case "--error":
                             confirm = NutsConfirmAction.ERROR;
                             break;
-                        default:
-                            ids.add(c);
+                        default: {
+                            ArrayList<String> args = new ArrayList<>();
+                            ids.put(c, args);
+                            if (i + 1 < applicationArguments.length && "--".equals(applicationArguments[i + 1])) {
+                                i += 2;
+                                while (i < applicationArguments.length) {
+                                    args.add(applicationArguments[i]);
+                                    i++;
+                                }
+                            }
                             break;
+                        }
                     }
                 }
                 if (ids.isEmpty()) {
                     throw new NutsExecutionException("Missing nuts to install", 1);
                 }
-                for (String id : ids) {
-                    workspace.install(id, o.getApplicationArguments(), confirm, null);
+                for (Map.Entry<String, List<String>> id : ids.entrySet()) {
+                    workspace.install(id.getKey(), id.getValue().toArray(new String[0]), confirm, null);
                 }
                 return 0;
             }
@@ -1158,27 +1180,47 @@ public class NutsBootWorkspace {
                     fallbackInstallActionUnavailable(message);
                     return 1;
                 }
-                List<String> ids = new ArrayList<>();
+                Map<String, List<String>> ids = new LinkedHashMap<>();
                 NutsConfirmAction confirm = NutsConfirmAction.ERROR;
                 boolean deleteData = false;
-                for (String c : o.getApplicationArguments()) {
-                    if (c.equals("-f") || c.equals("--force")) {
-                        confirm = NutsConfirmAction.FORCE;
-                    } else if (c.equals("-i") || c.equals("--ignore")) {
-                        confirm = NutsConfirmAction.IGNORE;
-                    } else if (c.equals("-e") || c.equals("--error")) {
-                        confirm = NutsConfirmAction.ERROR;
-                    } else if (c.equals("-r") || c.equals("--erase")) {
-                        deleteData = true;
-                    } else {
-                        ids.add(c);
+                String[] applicationArguments = o.getApplicationArguments();
+                for (int i = 0; i < applicationArguments.length; i++) {
+                    String c = applicationArguments[i];
+                    switch (c) {
+                        case "-f":
+                        case "--force":
+                            confirm = NutsConfirmAction.FORCE;
+                            break;
+                        case "-i":
+                        case "--ignore":
+                            confirm = NutsConfirmAction.IGNORE;
+                            break;
+                        case "-e":
+                        case "--error":
+                            confirm = NutsConfirmAction.ERROR;
+                            break;
+                        case "-r":
+                        case "--erase":
+                            deleteData = true;
+                            break;
+                        default:
+                            ArrayList<String> args = new ArrayList<>();
+                            ids.put(c, args);
+                            if (i + 1 < applicationArguments.length && "--".equals(applicationArguments[i + 1])) {
+                                i += 2;
+                                while (i < applicationArguments.length) {
+                                    args.add(applicationArguments[i]);
+                                    i++;
+                                }
+                            }
+                            break;
                     }
                 }
                 if (ids.isEmpty()) {
                     throw new NutsExecutionException("Missing nuts to uninstall", 1);
                 }
-                for (String id : ids) {
-                    workspace.uninstall(id, o.getApplicationArguments(), confirm, deleteData, null);
+                for (Map.Entry<String, List<String>> id : ids.entrySet()) {
+                    workspace.uninstall(id.getKey(), id.getValue().toArray(new String[0]), confirm, deleteData, null);
                 }
                 return 0;
             }
@@ -1251,6 +1293,7 @@ public class NutsBootWorkspace {
         return workspace.createExecBuilder()
                 .setCommand(o.getApplicationArguments())
                 .setExecutorOptions(o.getExecutorOptions())
+                .setExecutionType(o.getExecutionType())
                 .exec()
                 .getResult();
     }
@@ -1362,6 +1405,11 @@ public class NutsBootWorkspace {
         System.err.printf("  workspace-location               : %s\n", (workspace == null ? "<default-location>" : workspace));
         System.err.printf("  nuts-boot-args                   : %s\n", Arrays.toString(options.getBootArguments()));
         System.err.printf("  nuts-app-args                    : %s\n", Arrays.toString(options.getApplicationArguments()));
+        System.err.printf("  option-recover                   : %s\n", options.isRecover());
+        System.err.printf("  option-read-only                 : %s\n", options.isReadOnly());
+        System.err.printf("  option-create-if-not-found       : %s\n", options.isCreateIfNotFound());
+        System.err.printf("  option-ignore-if-found           : %s\n", options.isIgnoreIfFound());
+        System.err.printf("  option-save-if-created           : %s\n", options.isSaveIfCreated());
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s\n", "<none>");
         } else {
@@ -1375,7 +1423,6 @@ public class NutsBootWorkspace {
             }
         }
         System.err.printf("  java-version                     : %s\n", System.getProperty("java.version"));
-        String javaHome = System.getProperty("java.home");
         System.err.printf("  java-executable                  : %s\n", NutsUtils.resolveJavaCommand(null));
         System.err.printf("  java-class-path                  : %s\n", System.getProperty("java.class.path"));
         System.err.printf("  java-library-path                : %s\n", System.getProperty("java.library.path"));
@@ -1387,8 +1434,10 @@ public class NutsBootWorkspace {
         System.err.printf("  user-dir                         : %s\n", System.getProperty("user.dir"));
         System.err.print("Reported Error is :\n");
         System.err.print(extraMessage + "\n");
-        System.err.print("If the problem persists you may want to get more debug info by adding '--verbose' argument :\n");
-        System.err.print("  java -jar nuts.jar --verbose [...]\n");
+        System.err.print("If the problem persists you may want to get more debug info by adding '--verbose' argument.\n");
+        System.err.print("You may also enable recover mode to ignore existing cache info with '--recover' argument.\n");
+        System.err.print("Here is the proper command : \n");
+        System.err.print("  java -jar nuts.jar --verbose --recover [...]\n");
         System.err.print("Now exiting Nuts, Bye!\n");
     }
 

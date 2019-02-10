@@ -63,282 +63,88 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int exec(NutsExecutionContext executionContext) {
-        NutsIdFormat nutsIdFormat = executionContext.getWorkspace().getFormatManager().createIdFormat().setOmitNamespace(true);
         NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         String contentFile = nutsMainDef.getContent().getFile();
-
-        List<String> app = new ArrayList<>(Arrays.asList(executionContext.getArgs()));
+        JavaExecutorOptions joptions = new JavaExecutorOptions(
+                nutsMainDef, executionContext.getArgs(),
+                executionContext.getExecutorOptions(),
+                executionContext.getCwd(),
+                executionContext.getWorkspace(),
+                executionContext.getSession());
 
         StringKeyValueList runnerProps = new StringKeyValueList();
         if (executionContext.getExecutorDescriptor() != null) {
             runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
         }
 
-
         if (executionContext.getEnv() != null) {
             runnerProps.add((Map) executionContext.getEnv());
         }
 
-        List<String> jvmArgs = new ArrayList<String>();
-
         HashMap<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getBootArgumentsString();
-        if(!StringUtils.isEmpty(bootArgumentsString)) {
+        if (!StringUtils.isEmpty(bootArgumentsString)) {
             osEnv.put("nuts_boot_args", bootArgumentsString);
-            jvmArgs.add("-Dnuts.boot.args=" + bootArgumentsString);
-        }
-        String javaVersion = null;//runnerProps.getProperty("java.version");
-        String javaHome = null;//runnerProps.getProperty("java.version");
-        String mainClass = null;
-        boolean mainClassApp = false;
-        String dir = executionContext.getCwd();
-        boolean excludeBase = false;
-        boolean showCommand = false;
-        boolean jar = false;
-        List<String> classPath = new ArrayList<>();
-        String[] execArgs = executionContext.getExecutorOptions();
-        //will accept all -- and - based options!
-        for (int i = 0; i < execArgs.length; i++) {
-            String arg = execArgs[i];
-            if (arg.equals("--java-version") || arg.equals("-java-version")) {
-                i++;
-                javaVersion = execArgs[i];
-            } else if (arg.startsWith("--java-version=") || arg.startsWith("-java-version=")) {
-                javaVersion = execArgs[i].substring(arg.indexOf('=') + 1);
-
-            } else if (arg.equals("--java-home") || arg.equals("-java-home")) {
-                i++;
-                javaHome = execArgs[i];
-            } else if (
-                    arg.startsWith("--java-home=")
-                            || arg.startsWith("-java-home=")
-            ) {
-                javaHome = execArgs[i].substring(arg.indexOf('=') + 1);
-
-            } else if (
-                    arg.equals("--class-path") || arg.equals("--classpath") || arg.equals("--cp")
-                            || arg.equals("-class-path") || arg.equals("-classpath") || arg.equals("-cp")
-            ) {
-                i++;
-                addToCp(classPath, execArgs[i]);
-            } else if (
-                    arg.startsWith("--class-path=") || arg.startsWith("--classpath=") || arg.startsWith("--cp=")
-                            || arg.startsWith("-class-path=") || arg.startsWith("-classpath=") || arg.startsWith("-cp=")
-            ) {
-                addToCp(classPath, execArgs[i].substring(arg.indexOf('=') + 1));
-
-            } else if (arg.equals("--nuts-path") || arg.equals("--nutspath") || arg.equals("--np")) {
-                i++;
-                npToCp(executionContext, classPath, execArgs[i]);
-            } else if (arg.startsWith("--nuts-path=") || arg.startsWith("--nutspath=") || arg.startsWith("--np=")) {
-                npToCp(executionContext, classPath, execArgs[i].substring(arg.indexOf('=') + 1));
-
-            } else if (arg.equals("--jar") || arg.equals("-jar")) {
-                jar = true;
-            } else if (arg.equals("--main-class") || arg.equals("-main-class") || arg.equals("--class") || arg.equals("-class")) {
-                i++;
-                mainClass = execArgs[i];
-            } else if (
-                    arg.startsWith("--main-class=") || arg.startsWith("-main-class=") || arg.startsWith("--class=")
-                            || arg.startsWith("-class=")
-            ) {
-                mainClass = execArgs[i].substring(arg.indexOf('=') + 1);
-            } else if (arg.equals("--show-command") || arg.equals("-show-command")) {
-                showCommand = true;
-            } else if (arg.equals("--dir") || arg.equals("-dir")) {
-                i++;
-                dir = execArgs[i];
-            } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
-                dir = execArgs[i].substring(arg.indexOf('=') + 1);
-            } else if (arg.startsWith("--exclude-base")) {
-                excludeBase=true;
-            } else {
-                jvmArgs.add(arg);
-            }
-        }
-        if (javaHome == null) {
-            if (!StringUtils.isEmpty(javaVersion)) {
-                javaHome = "${java#" + javaVersion + "}";
-            } else {
-                javaHome = "${java}";
-            }
-        } else {
-            javaHome = CoreNutsUtils.resolveJavaCommand(javaHome);
+            joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
         }
 
-        List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsDescriptor descriptor = nutsMainDef.getDescriptor();
-        descriptor = executionContext.getWorkspace().resolveEffectiveDescriptor(descriptor, executionContext.getSession());
-        nutsDefinitions.addAll(
-                executionContext.getWorkspace()
-                        .createQuery().addId(descriptor.getId())
-                        .setSession(executionContext.getSession().copy().setTransitive(true))
-                        .addScope(NutsDependencyScope.PROFILE_RUN)
-                        .setIncludeOptional(false)
-                        .includeDependencies()
-                        .fetch()
-
-        );
         List<String> xargs = new ArrayList<String>();
         List<String> args = new ArrayList<String>();
-        args.add(javaHome);
-        xargs.add(javaHome);
-        args.addAll(jvmArgs);
-        xargs.addAll(jvmArgs);
-        String Dnuts_boot_args_value =executionContext.getWorkspace().getConfigManager().getOptions().getBootArguments()==null?null:
+
+        xargs.add(joptions.getJavaHome());
+        xargs.addAll(joptions.getJvmArgs());
+
+        args.add(joptions.getJavaHome());
+        args.addAll(joptions.getJvmArgs());
+
+        String Dnuts_boot_args_value = executionContext.getWorkspace().getConfigManager().getOptions().getBootArguments() == null ? null :
                 NutsMinimalCommandLine.escapeArguments(executionContext.getWorkspace().getConfigManager().getOptions().getBootArguments());
-        if(!StringUtils.isEmpty(Dnuts_boot_args_value)) {
+        if (!StringUtils.isEmpty(Dnuts_boot_args_value)) {
             String Dnuts_boot_args = "-Dnuts-boot-args=" + Dnuts_boot_args_value;
-            args.add(Dnuts_boot_args);
             xargs.add(Dnuts_boot_args);
+            args.add(Dnuts_boot_args);
         }
-        if (jar) {
-            if (mainClass != null) {
-                executionContext.getTerminal().getFormattedErr().printf("Ignored main-class=%s. running jar!\n", mainClass);
-            }
-            if (!classPath.isEmpty()) {
-                executionContext.getTerminal().getFormattedErr().printf("Ignored class-path=%s. running jar!\n", classPath);
-            }
-            args.add("-jar");
-            if(!excludeBase) {
-                args.add(contentFile);
-            }else{
-                throw new NutsIllegalArgumentException("Cannot exclude base with jar modifier");
-            }
+        if (joptions.isJar()) {
             xargs.add("-jar");
             xargs.add(executionContext.getWorkspace().getFormatManager().createIdFormat().format(nutsMainDef.getId()));
+
+            args.add("-jar");
+            args.add(contentFile);
         } else {
-            if (mainClass == null) {
-                File file = CoreIOUtils.fileByPath(contentFile);
-                if (file != null) {
-                    //check manifest!
-                    NutsExecutionEntry[] classes = CorePlatformUtils.parseMainClasses(file);
-                    if (classes.length > 0) {
-                        mainClass = StringUtils.join(":", classes, NutsExecutionEntry::getName);
-                    }
-                }
-            }
-            if (mainClass == null) {
-                throw new NutsIllegalArgumentException("Missing Main Class for " + nutsMainDef.getId());
-            }
             xargs.add("--nuts-path");
+            xargs.add(StringUtils.join(File.pathSeparator, joptions.getNutsPath()));
+            xargs.add(joptions.getMainClass());
+
             args.add("-classpath");
-            StringBuilder xsb = new StringBuilder();
-            StringBuilder sb = new StringBuilder();
-            if(!excludeBase) {
-                xsb.append(nutsIdFormat.format(nutsMainDef.getId()));
-                sb.append(contentFile);
-            }
-            for (NutsDefinition nutsDefinition : nutsDefinitions) {
-                if (nutsDefinition.getContent().getFile() != null) {
-                    sb.append(File.pathSeparatorChar);
-                    sb.append(nutsDefinition.getContent().getFile());
-                    xsb.append(";");
-                    xsb.append(nutsIdFormat.format(nutsDefinition.getId()));
-                }
-            }
-            for (String cp : classPath) {
-                sb.append(File.pathSeparatorChar);
-                sb.append(cp);
-                xsb.append(";");
-                xsb.append(cp);
-            }
-            args.add(sb.toString());
-            xargs.add(xsb.toString());
-            if (mainClass.contains(":")) {
-                List<String> possibleClasses = CoreStringUtils.split(mainClass, ":");
-                switch (possibleClasses.size()) {
-                    case 0:
-                        throw new NutsIllegalArgumentException("Missing Main-Class in Manifest for " + nutsMainDef.getId());
-                    case 1:
-                        xargs.add(mainClass);
-                        args.add(mainClass);
-                        break;
-                    default:
-                        while (true) {
-                            PrintStream out = executionContext.getTerminal().getFormattedOut();
-                            out.printf("Multiple runnable classes detected  - actually [[%s]] . Select one :\n", possibleClasses.size());
-                            for (int i = 0; i < possibleClasses.size(); i++) {
-                                out.printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));
-                            }
-                            String line = executionContext.getTerminal().readLine("Enter class ==%s== or ==%s== to run it. Type @@%s@@ to cancel : ", "#", "name", "cancel");
-                            if (line != null) {
-                                if (line.equals("cancel")) {
-                                    return -1;
-                                }
-                                if (CoreStringUtils.isInt(line)) {
-                                    int i = Integer.parseInt(line);
-                                    if (i >= 1 && i <= possibleClasses.size()) {
-                                        xargs.add(possibleClasses.get(i - 1));
-                                        args.add(possibleClasses.get(i - 1));
-                                        break;
-                                    }
-                                } else {
-                                    for (String possibleClass : possibleClasses) {
-                                        if (possibleClass.equals(line)) {
-                                            xargs.add(possibleClass);
-                                            args.add(possibleClass);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                }
-            } else {
-                xargs.add(mainClass);
-                args.add(mainClass);
-            }
+            args.add(StringUtils.join(File.pathSeparator, joptions.getClassPath()));
+            args.add(joptions.getMainClass());
         }
-        xargs.addAll(app);
-        args.addAll(app);
-        if (showCommand) {
+        xargs.addAll(joptions.getApp());
+        args.addAll(joptions.getApp());
+        if (joptions.isShowCommand()) {
             PrintStream out = executionContext.getTerminal().getOut();
 //            out.println("==[nuts-exec]== " + NutsArgumentsParser.escapeArguments(xargs.toArray(new String[0])));
             out.println("==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 String xarg = xargs.get(i);
-                if(i>0 && xargs.get(i-1).equals("--nuts-path")){
+                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
                     for (String s : xarg.split(";")) {
                         out.println("\t\t\t " + s);
                     }
-                }else {
+                } else {
                     out.println("\t\t " + xarg);
                 }
             }
         }
 
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(dir));
+        File directory = StringUtils.isEmpty(joptions.getDir()) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(joptions.getDir()));
         return CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory
-                , executionContext.getTerminal(), showCommand, executionContext.isFailFast()
+                , executionContext.getTerminal(), joptions.isShowCommand(), executionContext.isFailFast()
         );
 
     }
 
-    private void addToCp(List<String> classPath, String value) {
-        for (String n : CoreStringUtils.split(value, ":;, ")) {
-            if (!StringUtils.isEmpty(n)) {
-                classPath.add(n);
-            }
-        }
-    }
-
-    private void npToCp(NutsExecutionContext executionContext, List<String> classPath, String value) {
-        NutsQuery ns = executionContext.getWorkspace().createQuery().setLatestVersions(true)
-                .setSession(executionContext.getSession());
-        for (String n : CoreStringUtils.split(value, ";, ")) {
-            if (!StringUtils.isEmpty(n)) {
-                ns.addId(n);
-            }
-        }
-        for (NutsId nutsId : ns.find()) {
-            NutsDefinition f = executionContext.getWorkspace()
-                    .fetch(nutsId).setSession(executionContext.getSession()).setIncludeInstallInformation(true).fetchDefinition();
-            classPath.add(f.getContent().getFile());
-        }
-    }
 
 }

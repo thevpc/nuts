@@ -55,21 +55,6 @@ import java.util.logging.Logger;
 public class MavenUtils {
     private static final Logger log = Logger.getLogger(MavenUtils.class.getName());
 
-    public static NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
-        try {
-            byte[] bytes = IOUtils.loadByteArray(stream, -1, true);
-            int skip = 0;
-            while (skip < bytes.length && Character.isWhitespace(bytes[skip])) {
-                skip++;
-            }
-            ByteArrayInputStream ok = new ByteArrayInputStream(bytes);
-            ok.skip(skip);
-            return parsePomXml0(ok, urlDesc);
-        } catch (IOException e) {
-            throw new NutsIOException(e);
-        }
-    }
-
     public static NutsId[] toNutsId(PomId[] ids) {
         NutsId[] a=new NutsId[ids.length];
         for (int i = 0; i < ids.length; i++) {
@@ -107,14 +92,28 @@ public class MavenUtils {
         );
     }
 
-    public static NutsDescriptor parsePomXml0(InputStream stream, String urlDesc) {
+    public static NutsDescriptor parsePomXml(InputStream stream, String urlDesc) {
         long startTime = System.currentTimeMillis();
         try {
             if (stream == null) {
                 return null;
             }
-            Pom pom = new PomXmlParser().parse(stream);
-            boolean executable = true;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+            byte[] bytes = IOUtils.loadByteArray(stream);
+            Pom pom = new PomXmlParser().parse(new ByteArrayInputStream(bytes));
+            boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+            boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
+            if("true".equals(pom.getProperties().get("nuts.executable"))){
+                executable=true;
+            }else if(new String(bytes)
+                    .matches("^.*?((<mainClass>)|(<goal>exec-war-only</goal>)).*$")){
+                executable=true;
+            }
+            if("true".equals(pom.getProperties().get("nuts.application"))){
+                application=true;
+            }
+            if(application){
+                executable=true;
+            }
             if (pom.getPackaging().isEmpty()) {
                 pom.setPackaging("jar");
             }
@@ -131,6 +130,7 @@ public class MavenUtils {
                     .setParents(pom.getParent()==null? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
                     .setExecutable(executable)
+                    .setNutsApplication(application)
                     .setName(pom.getArtifactId())
                     .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})

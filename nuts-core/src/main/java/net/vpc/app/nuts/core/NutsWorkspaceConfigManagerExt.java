@@ -5,15 +5,13 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.net.URL;
 
-public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager{
+public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
     void setStartCreateTimeMillis(long currentTimeMillis);
 
     void onInitializeWorkspace(NutsWorkspaceOptions options, DefaultNutsBootContext defaultNutsBootContext, DefaultNutsBootContext defaultNutsBootContext1, URL[] bootClassWorldURLs, ClassLoader classLoader);
 
     void setConfig(NutsWorkspaceConfig config);
-
-    NutsRepositoryLocation[] getRepositories();
 
     void setEndCreateTimeMillis(long currentTimeMillis);
 
@@ -22,10 +20,6 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     File getConfigFile();
 
     boolean load();
-
-    NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
-
-    ClassLoader getBootClassLoader();
 
     void setBootApiVersion(String value);
 

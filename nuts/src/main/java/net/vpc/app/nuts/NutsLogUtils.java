@@ -45,7 +45,7 @@ import java.util.logging.Formatter;
  * @creationdate 9/16/12 10:00 PM
  */
 public final class NutsLogUtils {
-    private static boolean verboseLog=Boolean.getBoolean("nuts.log.verbose");
+    private static boolean verboseLog=Boolean.getBoolean("nuts.boot.log.verbose");
     public static final LogFormatter LOG_FORMATTER = new LogFormatter();
     public static final Filter NUTS_LOG_FILTER = new Filter() {
         @Override

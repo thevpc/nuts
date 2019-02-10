@@ -3,7 +3,9 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreCollectionUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.MapStringMapper;
+import net.vpc.app.nuts.core.util.NutsObjectConverterUtilAdapter;
+import net.vpc.common.strings.StringConverter;
+import net.vpc.common.strings.StringConverterMap;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
@@ -616,9 +618,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
-        MapStringMapper map = new MapStringMapper(properties);
+        StringConverter map = new StringConverterMap(properties);
 
-        NutsId n_id = getId().apply(map);
+        NutsId n_id = getId().apply(new NutsObjectConverterUtilAdapter(map));
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
 //        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
@@ -664,7 +666,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, NutsObjectConverter<String, String> properties) {
+    private NutsId applyNutsIdProperties(NutsId child, StringConverter properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -674,7 +676,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, NutsObjectConverter<String, String> properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringConverter properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);

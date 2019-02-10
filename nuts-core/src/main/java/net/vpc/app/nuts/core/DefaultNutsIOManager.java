@@ -5,6 +5,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.*;
+import net.vpc.common.strings.StringConverter;
+import net.vpc.common.strings.StringConverterMap;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.Convert;
 import net.vpc.common.util.MapBuilder;
@@ -25,7 +27,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     private NutsWorkspace workspace;
     private static Gson GSON;
     private static Gson GSON_PRETTY;
-    private final NutsObjectConverter<String, String> pathExpansionConverter = new NutsObjectConverter<String, String>() {
+    private final StringConverter pathExpansionConverter = new StringConverter() {
         @Override
         public String convert(String from) {
             switch (from) {
@@ -111,7 +113,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session) {
         if (length > 0) {
-            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultInputStreamMonitor(workspace, session.getTerminal().getOut()));
+            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(workspace, session.getTerminal().getOut()));
         } else {
             return stream;
         }
@@ -138,15 +140,22 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 }
             }
         }
-        DefaultInputStreamMonitor monitor = null;
-        if (monitorable && log.isLoggable(Level.INFO)) {
-            monitor = new DefaultInputStreamMonitor(workspace, session.getTerminal().getOut());
+        if (!CoreNutsUtils.getSystemBoolean("nuts.monitor.enabled", true)) {
+            monitorable = false;
         }
+        DefaultNutsInputStreamMonitor monitor = null;
+        if (monitorable && log.isLoggable(Level.INFO)) {
+            monitor = new DefaultNutsInputStreamMonitor(workspace, session.getTerminal().getOut());
+        }
+        boolean verboseMode =
+                CoreNutsUtils.getSystemBoolean("nuts.monitor.start", false)
+                        ||
+                        workspace.getConfigManager().getOptions().getLogConfig() != null && workspace.getConfigManager().getOptions().getLogConfig().getLogLevel() == Level.FINEST;
         InputStream stream = null;
         NutsURLHeader header = null;
         long size = -1;
         try {
-            if (monitor != null) {
+            if (verboseMode && monitor != null) {
                 monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
             }
             NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(workspace, path);
@@ -159,7 +168,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             }
             stream = f.open();
         } catch (IOException e) {
-            if (monitor != null) {
+            if (verboseMode && monitor != null) {
                 monitor.onComplete(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
             }
             throw new NutsIOException(e);
@@ -178,7 +187,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
             return stream;
         }
         if (monitor != null) {
-            DefaultInputStreamMonitor finalMonitor = monitor;
+            DefaultNutsInputStreamMonitor finalMonitor = monitor;
+            if (!verboseMode) {
+                monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
+            }
             //adapt to disable onStart call (it is already invoked)
             return IOUtils.monitor(stream, source, sourceName, size, new InputStreamMonitor() {
                 @Override
@@ -259,7 +271,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     public String expandPath(String path, String baseFolder) {
         if (path != null && path.length() > 0) {
-            path = CoreStringUtils.replaceDollarString(path, pathExpansionConverter);
+            path = StringUtils.replaceDollarPlaceHolders(path, pathExpansionConverter);
             if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
                 return path;
             }
@@ -313,7 +325,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
         props.putAll(workspace.getConfigManager().getRuntimeProperties());
-        help = CoreStringUtils.replaceVars(help, new MapStringMapper(props));
+        help = StringUtils.replaceDollarPlaceHolders(help, new StringConverterMap(props));
         return help;
     }
 

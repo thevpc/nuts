@@ -26,9 +26,13 @@ public class MvnClient {
             case INIT:{
                 status=Status.DIRTY;
                 try {
-                    ws.fetch(NET_VPC_APP_NUTS_MVN).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE)).includeDependencies().fetchDefinition();
+                    ws.fetch(NET_VPC_APP_NUTS_MVN).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE))
+                            .setAcceptOptional(false)
+                            .includeDependencies().fetchDefinition();
                     for (NutsId nutsId : ws.createQuery().includeDependencies().find()) {
-                        ws.fetch(nutsId).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE)).includeDependencies().fetchDefinition();
+                        ws.fetch(nutsId).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE))
+                                .setAcceptOptional(false)
+                                .includeDependencies().fetchDefinition();
                     }
                     status=Status.SUCCESS;
                 }catch (Exception ex){

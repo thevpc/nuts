@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
+import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.common.commandline.Argument;
@@ -49,7 +50,7 @@ public class ExecCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         List<String> sargs = new ArrayList<>();
-        boolean nativeCommand = false;
+        NutsExecutionType executionType = null;
         boolean command = false;
         Argument a;
         List<String> execOptions=new ArrayList<>();
@@ -58,7 +59,17 @@ public class ExecCommand extends AbstractNutsCommand {
                 if (context.configure(cmdLine)) {
                     //
                 }else if ((a=cmdLine.readBooleanOption("-n", "--native"))!=null) {
-                    nativeCommand = a.getBooleanValue();
+                    if(a.getBooleanValue()) {
+                        executionType = NutsExecutionType.NATIVE;
+                    }
+                }else if ((a=cmdLine.readBooleanOption("-m", "--embedded"))!=null) {
+                    if(a.getBooleanValue()) {
+                        executionType = NutsExecutionType.EMBEDDED;
+                    }
+                }else if ((a=cmdLine.readBooleanOption("-x", "--external"))!=null) {
+                    if(a.getBooleanValue()) {
+                        executionType = NutsExecutionType.EXTERNAL;
+                    }
                 }else if (cmdLine.isOption()) {
                     execOptions.add(cmdLine.read().getStringExpression());
                 } else {
@@ -74,7 +85,7 @@ public class ExecCommand extends AbstractNutsCommand {
         }
         return context.getWorkspace()
                 .createExecBuilder()
-                .setNativeCommand(nativeCommand)
+                .setExecutionType(executionType)
                 .setCommand(sargs)
                 .setExecutorOptions(execOptions)
                 .setEnv(context.consoleContext().env().getEnv())

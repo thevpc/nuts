@@ -68,6 +68,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private String[] executorOptions;
     private NutsBootCommand bootCommand = NutsBootCommand.EXEC;
     private NutsLogConfig logConfig;
+    private NutsExecutionType executionType = NutsExecutionType.EXTERNAL;
     private String requiredBootVersion = null;
     private String programsStoreLocation = null;
     private String configStoreLocation = null;
@@ -158,6 +159,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
 
     public NutsWorkspaceOptions setPassword(String password) {
         this.password = password;
+        return this;
+    }
+
+    public NutsExecutionType getExecutionType() {
+        return executionType;
+    }
+
+    public NutsWorkspaceOptions setExecutionType(NutsExecutionType executionType) {
+        this.executionType = executionType;
         return this;
     }
 

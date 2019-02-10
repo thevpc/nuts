@@ -169,10 +169,6 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             }
             return null;
         }
-        if (pathname.getName().endsWith(".pom")) {
-            File loc = new File(pathname.getPath().substring(0, pathname.getPath().length() - 4) + ".jar");
-            nutsDescriptor = annotateExecDesc(nutsDescriptor, loc);
-        }
         return nutsDescriptor;
     }
 

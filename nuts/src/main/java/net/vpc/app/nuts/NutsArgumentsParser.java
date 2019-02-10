@@ -65,6 +65,39 @@ public final class NutsArgumentsParser {
                         //ignore
                         break;
                     }
+                    case "--embedded": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setExecutionType(NutsExecutionType.EMBEDDED);
+                        //ignore
+                        break;
+                    }
+                    case "--!embedded": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        //ignore
+                        break;
+                    }
+                    case "--external": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setExecutionType(NutsExecutionType.EXTERNAL);
+                        //ignore
+                        break;
+                    }
+                    case "--!external": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        //ignore
+                        break;
+                    }
+                    case "--native": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        o.setExecutionType(NutsExecutionType.NATIVE);
+                        //ignore
+                        break;
+                    }
+                    case "--!native": {
+                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                        //ignore
+                        break;
+                    }
                     case "-": {
                         if (cmdArg.getValue() != null) {
                             throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
@@ -261,12 +294,12 @@ public final class NutsArgumentsParser {
                         o.setRecover(false);
                         break;
                     }
-                    case "--skip-post-create-install-companions": {
+                    case "--skip-install-companions": {
                         cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setSkipPostCreateInstallCompanionTools(true);
                         break;
                     }
-                    case "--!skip-post-create-install-companions": {
+                    case "--!skip-install-companions": {
                         cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
                         o.setRecover(false);
                         break;

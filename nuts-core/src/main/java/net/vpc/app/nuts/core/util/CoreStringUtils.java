@@ -46,19 +46,6 @@ import java.util.regex.Pattern;
 public class CoreStringUtils {
 
     private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)}");
-    public static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
-
-    public static int parseInt(String v1, int defaultValue) {
-        try {
-            if (StringUtils.isEmpty(v1)) {
-                return defaultValue;
-            }
-            return Integer.parseInt(StringUtils.trim(v1));
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
-    }
-
 
     public static int getStartingInt(String v1) {
         StringBuilder sb = new StringBuilder();
@@ -72,18 +59,6 @@ public class CoreStringUtils {
             return Integer.parseInt(sb.toString());
         }
         return -1;
-    }
-
-    public static boolean isInt(String v1) {
-        try {
-            if (v1.length() == 0) {
-                return false;
-            }
-            Integer.parseInt(v1);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     public static String simpexpToRegexp(String pattern) {
@@ -311,17 +286,6 @@ public class CoreStringUtils {
             throw new NutsIOException(ex);
         }
         return false;
-    }
-
-    public static String replaceDollarString(String path, NutsObjectConverter<String, String> m) {
-        Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            String x = m.convert(matcher.group("name"));
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
     }
 
 }

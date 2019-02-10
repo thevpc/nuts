@@ -20,6 +20,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
     public NutsId parseId(String id) {
         return CoreNutsUtils.parseNutsId(id);
     }
+
     @Override
     public NutsDescriptor parseDescriptor(URL url) {
         try {
@@ -106,12 +107,31 @@ public class DefaultNutsParseManager implements NutsParseManager {
 
     @Override
     public NutsExecutionEntry[] parseExecutionEntries(File file) {
-        return CorePlatformUtils.parseMainClasses(file);
+        if (file.getName().toLowerCase().endsWith(".jar")) {
+            try {
+                FileInputStream in = null;
+                try {
+                    in = new FileInputStream(file);
+                    return parseExecutionEntries(in, "java");
+                } finally {
+                    if (in != null) {
+                        in.close();
+                    }
+                }
+            } catch (IOException ex) {
+                throw new NutsIOException(ex);
+            }
+        } else {
+            return new NutsExecutionEntry[0];
+        }
     }
 
     @Override
     public NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type) {
-        return CorePlatformUtils.parseMainClasses(inputStream);
+        if ("java".equals(type)) {
+            return CorePlatformUtils.parseMainClasses(inputStream);
+        }
+        return new NutsExecutionEntry[0];
     }
 
     @Override

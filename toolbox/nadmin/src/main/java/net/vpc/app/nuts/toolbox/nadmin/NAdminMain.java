@@ -43,7 +43,7 @@ public class NAdminMain extends NutsApplication {
                 }
 
                 if (!cmdLine.isExecMode()) {
-                    return -1;
+                    return 0;
                 }
                 if (cmdLine.hasNext()) {
                     PrintStream out = context.err();

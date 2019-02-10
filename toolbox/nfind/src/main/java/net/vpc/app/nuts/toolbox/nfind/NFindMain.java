@@ -43,7 +43,7 @@ public class NFindMain extends NutsApplication {
                 }
                 if (findWhats.get(currentFindWhat).nonjs.size() > 0) {
                     if (!cmdLine.isExecMode()) {
-                        return -1;
+                        return 0;
                     }
                     throw new NutsIllegalArgumentException("find: Unsupported mixed and non js find expressions");
                 }
@@ -969,7 +969,7 @@ public class NFindMain extends NutsApplication {
         public boolean isInstalled(boolean checkDependencies) {
             if (this.is_installed == null) {
                 this.is_installed = isFetched() &&
-                        ws.fetch(nuts).setSession(session).includeDependencies(checkDependencies).fetchDefinition().getInstallation().isInstalled();
+                        ws.fetch(nuts).setSession(session).setAcceptOptional(false).includeDependencies(checkDependencies).fetchDefinition().getInstallation().isInstalled();
             }
             return this.is_installed;
         }

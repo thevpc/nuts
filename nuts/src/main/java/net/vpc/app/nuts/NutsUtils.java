@@ -683,7 +683,7 @@ final class NutsUtils {
                 }
             }
             dBuilder = dbFactory.newDocumentBuilder();
-            if (documentStream != null) {
+            if (documentStream == null) {
                 documentStream = url.openStream();
             }
             if (documentStream == null) {

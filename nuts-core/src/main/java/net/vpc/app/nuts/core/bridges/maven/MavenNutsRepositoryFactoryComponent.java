@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
@@ -41,7 +42,7 @@ import java.io.File;
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     private static final NutsRepositoryDefinition[] DEFAULTS = {
-            new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, Boolean.getBoolean("nuts.cache.cache-local-files"),NutsRepositoryDefinition.ORDER_USER_LOCAL),
+            new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, CoreNutsUtils.getSystemBoolean("nuts.cache.cache-local-files",false),NutsRepositoryDefinition.ORDER_USER_LOCAL),
             new NutsRepositoryDefinition("maven-central", "http://repo.maven.apache.org/maven2/", NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, true,NutsRepositoryDefinition.ORDER_USER_REMOTE),
             new NutsRepositoryDefinition("vpc-public-maven", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, true,NutsRepositoryDefinition.ORDER_USER_REMOTE),
             new NutsRepositoryDefinition("vpc-public-nuts", "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master", NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER, true,NutsRepositoryDefinition.ORDER_USER_REMOTE)

@@ -18,41 +18,47 @@ public class LinuxNdi implements SystemNdi {
     }
 
     @Override
-    public void createNutsScript(String id, boolean force, boolean forceBoot, boolean silent, boolean fetch) throws IOException {
-        if ("nuts".equals(id)) {
-            createBootScript(forceBoot || force, false);
+    public void createNutsScript(NdiScriptOptions options ) throws IOException {
+        if ("nuts".equals(options.getId())) {
+            createBootScript(options.isForceBoot() || options.isForce(), false);
         } else {
             createBootScript(false, true);
-            NutsId nutsId = appContext.getWorkspace().getParseManager().parseId(id);
+            NutsId nutsId = appContext.getWorkspace().getParseManager().parseId(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isEmpty()) {
-                fetched = appContext.getWorkspace().fetch(id).fetchDefinition();
+                fetched = appContext.getWorkspace().fetch(options.getId()).fetchDefinition();
                 nutsId = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
-            if (fetch) {
+            if (options.isFetch()) {
                 if (fetched == null) {
-                    fetched = appContext.getWorkspace().fetch(id).fetchDefinition();
+                    fetched = appContext.getWorkspace().fetch(options.getId()).fetchDefinition();
                 }
                 //appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
             }
             String n = nutsId.getName();
             File ff = getScriptFile(n);
             boolean exists = ff.exists();
-            if (!force && exists) {
-                if (!silent) {
+            if (!options.isForce() && exists) {
+                if (!options.isSilent()) {
                     appContext.out().printf("Script already exists ==%s==\n", ff.getPath());
                 }
             } else {
                 String idContent = "RUN : " + nutsId;
-                createScript(n, silent, nutsId.toString(), idContent, "nuts \"" + nutsId + "\" \"$@\"");
+                StringBuilder command=new StringBuilder("nuts ");
+                if(options.getExecType()!=null){
+                    command.append("--").append(options.getExecType().toString());
+                }
+                command.append(" \"").append(nutsId).append("\"");
+                command.append(" \"$@\"");
+                createScript(n, options.isSilent(), nutsId.toString(), idContent, command.toString());
             }
         }
     }
 
     public void createBootScript(boolean force, boolean silent) throws IOException {
         NutsId b = appContext.getWorkspace().getConfigManager().getRunningContext().getApiId();
-        NutsDefinition f = appContext.getWorkspace().fetch(b).fetchDefinition();
+        NutsDefinition f = appContext.getWorkspace().fetch(b).setAcceptOptional(false).fetchDefinition();
         File ff = getScriptFile("nuts");
         if (!force && ff.exists()) {
             if (!silent) {

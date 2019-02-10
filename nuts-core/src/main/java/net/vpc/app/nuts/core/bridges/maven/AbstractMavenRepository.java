@@ -138,8 +138,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 }
             }
             checkSHA1Hash(id.setFace(NutsConstants.FACE_DESC_HASH), new ByteArrayInputStream(bytes), session);
-            File jar = new File(getIdPath(getWorkspace().getConfigManager().createComponentFaceId(idDesc, nutsDescriptor)));
-            nutsDescriptor = annotateExecDesc(nutsDescriptor, jar);
             return nutsDescriptor;
         } catch (IOException ex) {
             throw new NutsNotFoundException(id, null, ex);
@@ -147,51 +145,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             throw new NutsNotFoundException(id, null, ex);
         }
     }
-
-    //TODO call this in workspace!!!
-    public NutsDescriptor annotateExecDesc(NutsDescriptor nutsDescriptor, File jar) {
-        boolean executable = nutsDescriptor.isExecutable();
-        boolean nutsApp = nutsDescriptor.isNutsApplication();
-        if (jar.getName().toLowerCase().endsWith(".jar") && jar.isFile()) {
-            File f = new File(jar.getPath() + ".info");
-            Map<String, String> map = null;
-            try {
-                if (f.isFile()) {
-                    map = getWorkspace().getIOManager().readJson(f, Map.class);
-                }
-            } catch (Exception ex) {
-                //
-            }
-            if (map != null) {
-                executable = "true".equals(map.get("executable"));
-                nutsApp = "true".equals(map.get("nutsApplication"));
-            } else {
-                try {
-                    NutsExecutionEntry[] t = CorePlatformUtils.parseMainClasses(jar);
-                    if (t.length > 0) {
-                        executable = true;
-                        if (t[0].isApp()) {
-                            nutsApp = true;
-                        }
-                    }
-                    try {
-                        map = new LinkedHashMap<>();
-                        map.put("executable", String.valueOf(executable));
-                        map.put("nutsApplication", String.valueOf(nutsApp));
-                        getWorkspace().getIOManager().writeJson(map, f, true);
-                    } catch (Exception ex) {
-                        //
-                    }
-                } catch (Exception ex) {
-                    //
-                }
-            }
-        }
-        nutsDescriptor = nutsDescriptor.setExecutable(executable);
-        nutsDescriptor = nutsDescriptor.setNutsApplication(nutsApp);
-        return nutsDescriptor;
-    }
-
 
     protected String getIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();

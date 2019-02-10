@@ -755,21 +755,7 @@ public class CorePlatformUtils {
         }
     }
 
-    public static NutsExecutionEntry[] parseMainClasses(File jarFile) {
-        try {
-            FileInputStream in=null;
-            try {
-                in = new FileInputStream(jarFile);
-                return parseMainClasses(in);
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-            }
-        } catch (IOException ex) {
-            throw new NutsIOException(ex);
-        }
-    }
+
 
     public static NutsExecutionEntry[] parseMainClasses(InputStream jarStream) {
 

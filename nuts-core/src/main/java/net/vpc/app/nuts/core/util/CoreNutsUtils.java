@@ -39,8 +39,9 @@ import net.vpc.app.nuts.core.filters.repository.NutsRepositoryFilterAnd;
 import net.vpc.app.nuts.core.filters.version.NutsVersionFilterAnd;
 import net.vpc.app.nuts.core.filters.version.NutsVersionFilterOr;
 import net.vpc.common.io.*;
+import net.vpc.common.strings.StringConverter;
 import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Filter;
+import net.vpc.common.util.*;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -53,6 +54,7 @@ import java.util.regex.Pattern;
  */
 public class CoreNutsUtils {
 
+    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
@@ -397,6 +399,10 @@ public class CoreNutsUtils {
 //    }
 
     public static String[] applyStringProperties(String[] child, NutsObjectConverter<String, String> properties) {
+        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
+    }
+
+    public static String[] applyStringProperties(String[] child, StringConverter properties) {
         String[] vals = new String[child.length];
         for (int i = 0; i < vals.length; i++) {
             vals[i] = applyStringProperties(child[i], properties);
@@ -405,6 +411,10 @@ public class CoreNutsUtils {
     }
 
     public static Map<String, String> applyMapProperties(Map<String, String> child, NutsObjectConverter<String, String> properties) {
+        return applyMapProperties(child, properties == null ? null : new StringConverterAdapter(properties));
+    }
+
+    public static Map<String, String> applyMapProperties(Map<String, String> child, StringConverter properties) {
         Map<String, String> m2 = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : child.entrySet()) {
             m2.put(applyStringProperties(entry.getKey(), properties), applyStringProperties(entry.getValue(), properties));
@@ -412,7 +422,7 @@ public class CoreNutsUtils {
         return m2;
     }
 
-    public static NutsVersion applyStringProperties(NutsVersion child, NutsObjectConverter<String, String> properties) {
+    public static NutsVersion applyStringProperties(NutsVersion child, StringConverter properties) {
         if (child == null) {
             return child;
         }
@@ -428,10 +438,14 @@ public class CoreNutsUtils {
     }
 
     public static String applyStringProperties(String child, NutsObjectConverter<String, String> properties) {
+        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
+    }
+
+    public static String applyStringProperties(String child, StringConverter properties) {
         if (StringUtils.isEmpty(child)) {
             return null;
         }
-        return CoreStringUtils.replaceVars(child, properties);
+        return StringUtils.replaceDollarPlaceHolders(child, properties);
     }
 
     public static String applyStringInheritance(String child, String parent) {
@@ -566,30 +580,6 @@ public class CoreNutsUtils {
                 faceMap == null ? null : faceMap.get("osdist"),
                 faceMap == null ? null : faceMap.get("platform"));
     }
-
-//    public static NutsDescriptorFilter createNutsDescriptorFilter(NutsIdFilter id) {
-//        return new NutsDescriptorFilterById(id);
-//    }
-//
-//    public static NutsDescriptorFilter createNutsDescriptorFilter(TypedObject object) {
-//        if (object == null) {
-//            return null;
-//        }
-//        if (object.getType().equals(NutsDescriptorFilter.class)) {
-//            return (NutsDescriptorFilter) object.getValue();
-//        }
-//        throw new NutsIllegalArgumentException("createNutsDescriptorFilter Not yet supported from type " + object.getType().getName());
-//    }
-//
-//    public static NutsIdFilter createNutsIdFilter(TypedObject object) {
-//        if (object == null) {
-//            return null;
-//        }
-//        if (object.getType().equals(NutsIdFilter.class)) {
-//            return (NutsIdFilter) object.getValue();
-//        }
-//        throw new NutsIllegalArgumentException("createNutsIdFilter Not yet supported from type " + object.getType().getName());
-//    }
 
     public static NutsDependencyFilter And(NutsDependencyFilter... all) {
         return new NutsDependencyFilterAnd(all);
@@ -1034,4 +1024,32 @@ public class CoreNutsUtils {
         return true;
     }
 
+    public static boolean getSystemBoolean(String property, boolean defaultValue) {
+        return getSystemBoolean(property, defaultValue, null);
+    }
+
+    public static boolean getSystemBoolean(String property, boolean defaultValue, BooleanParserConfig p) {
+        if (p == null) {
+            p = BooleanParserConfig.LENIENT
+                    .setTrueStringRegexp("true|enable|yes|always|y")
+                    .setFalseStringRegexp("false|disable|no|never|n")
+                    .setNullValue(defaultValue)
+                    .setInvalidValue(defaultValue)
+            ;
+        }
+        return Convert.toBoolean(System.getProperty(property), p);
+    }
+
+    private static class StringConverterAdapter implements StringConverter {
+        private final NutsObjectConverter<String, String> properties;
+
+        public StringConverterAdapter(NutsObjectConverter<String, String> properties) {
+            this.properties = properties;
+        }
+
+        @Override
+        public String convert(String str) {
+            return properties.convert(str);
+        }
+    }
 }

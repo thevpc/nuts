@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 /**
  * @author vpc
  */
-public class DefaultInputStreamMonitor implements InputStreamMonitor, NutsOutputStreamTransparentAdapter {
+public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOutputStreamTransparentAdapter {
 
     private static DecimalFormat df = new DecimalFormat("##0.00");
     private static BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
@@ -26,7 +26,7 @@ public class DefaultInputStreamMonitor implements InputStreamMonitor, NutsOutput
     private int minLength;
     private NutsWorkspace ws;
 
-    public DefaultInputStreamMonitor(NutsWorkspace ws,PrintStream out) {
+    public DefaultNutsInputStreamMonitor(NutsWorkspace ws, PrintStream out) {
         this.out = out;
         this.ws = ws;
     }

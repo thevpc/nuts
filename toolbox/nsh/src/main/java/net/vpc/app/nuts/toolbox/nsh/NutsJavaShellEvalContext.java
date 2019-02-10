@@ -253,10 +253,12 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                     .find();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDescriptor d = ws.fetch(selectedId).setIncludeEffective(true).setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE)).fetchDescriptor();
-                String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts-autocomplete-support"));
+                NutsDefinition def = ws.fetch(selectedId).setIncludeEffective(true).setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE)).fetchDefinition();
+                NutsDescriptor d = def.getDescriptor();
+                String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (
-                        "true".equalsIgnoreCase(nuts_autocomplete_support)
+                        d.isNutsApplication() ||
+                                "true".equalsIgnoreCase(nuts_autocomplete_support)
                                 || "supported".equalsIgnoreCase(nuts_autocomplete_support)
                 ) {
                     NutsCommandExecBuilder t = ws.createExecBuilder()

@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.NutsCommandExecBuilder;
+import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsSdkLocation;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.FileUtils;
@@ -82,7 +83,7 @@ public class JavaHelper {
         String jdkVersion = null;
         try {
             NutsCommandExecBuilder b = ws.createExecBuilder()
-                    .setNativeCommand(true)
+                    .setExecutionType(NutsExecutionType.NATIVE)
                     .setCommand(javaExePath.getPath(), "-version")
                     .setRedirectErrorStream()
                     .grabOutputString()
