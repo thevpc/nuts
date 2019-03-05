@@ -7,6 +7,10 @@ package net.vpc.nuts.toolbox.feenoo;
 
 import net.vpc.common.strings.StringComparator;
 import net.vpc.common.strings.StringComparators;
+import net.vpc.nuts.toolbox.feenoo.filters.JavaSourceFilter;
+import net.vpc.nuts.toolbox.feenoo.filters.PathSourceFilter;
+import net.vpc.nuts.toolbox.feenoo.processors.JavaSourceFormatter;
+import net.vpc.nuts.toolbox.feenoo.processors.PathSourceFormatter;
 import net.vpc.nuts.toolbox.feenoo.sources.SourceFactory;
 
 import java.io.File;
@@ -16,7 +20,6 @@ import java.util.List;
 import static net.vpc.nuts.toolbox.feenoo.SourceNavigator.navigate;
 
 /**
- *
  * @author vpc
  */
 public class Feenoo {
@@ -93,7 +96,7 @@ public class Feenoo {
                     }
                 }
             } else {
-                for (String p : arg.split(":")) {
+                for (String p : arg.split("[:;]")) {
                     if (p.length() > 0) {
                         paths.add(p);
                     }
@@ -108,7 +111,7 @@ public class Feenoo {
                 return;
             }
             for (String path : paths) {
-                navigate(SourceFactory.create(new File(path)), new JavaTypeLookup(type, file));
+                navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(type, file), new JavaSourceFormatter());
             }
         } else if (file != null) {
             if (paths.isEmpty()) {
@@ -118,7 +121,7 @@ public class Feenoo {
                 return;
             }
             for (String path : paths) {
-                navigate(SourceFactory.create(new File(path)), new FileLookup(file));
+                navigate(SourceFactory.create(new File(path)), new PathSourceFilter(file), new PathSourceFormatter());
             }
         } else {
             System.err.println("missing arguments");
@@ -148,7 +151,7 @@ public class Feenoo {
         System.out.println("feenoo -t String . foo.zip");
         System.out.println("   search for type which name contains 'String' (case sensitive) in folders . and foo.zip");
         System.out.println("feenoo -it String . foo.zip");
-        System.out.println("   search for type which name contains 'String' or 'STRING' (case insensitive) in folders . and foo.zip");
+        System.out.println("   search for type which name contains 'String' or 'STRING' (case insensitive) in both folder . and foo.zip");
         System.out.println("feenoo -t ^java.lang.String$ . foo.zip");
         System.out.println("   search for type which exact name 'java.lang.String' in folders . and foo.zip");
     }

@@ -75,8 +75,7 @@ public class NutsHttpServlet extends HttpServlet {
                         .setBootRuntime(runtimeId)
                         .setBootRuntimeSourceURL(runtimeSourceURL)
                         .setWorkspace(workspaceLocation)
-                        .setCreateIfNotFound(true)
-                        .setSaveIfCreated(true)
+                        .setOpenMode(NutsWorkspaceOpenMode.DEFAULT)
                         .setArchetype("server")
         );
         DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace);
@@ -97,8 +96,7 @@ public class NutsHttpServlet extends HttpServlet {
                         .setBootRuntime(runtimeId)
                         .setBootRuntimeSourceURL(runtimeSourceURL)
                         .setWorkspace(location)
-                        .setCreateIfNotFound(true)
-                        .setSaveIfCreated(true)
+                        .setOpenMode(NutsWorkspaceOpenMode.DEFAULT)
                         .setArchetype("server")
                 );
                 workspacesByLocation.put(location, ws);

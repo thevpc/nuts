@@ -40,6 +40,7 @@ import java.util.*;
 public class NutsSessionImpl implements Cloneable, NutsSession {
 
     private boolean transitive = true;
+    private boolean indexEnabled = true;
     private NutsFetchMode fetchMode = NutsFetchMode.ONLINE;
     private NutsSessionTerminal terminal;
     private Map<String, Object> properties = new HashMap<>();
@@ -155,6 +156,17 @@ public class NutsSessionImpl implements Cloneable, NutsSession {
                 properties.remove(key);
             }
         }
+        return this;
+    }
+
+    @Override
+    public boolean isIndexEnabled() {
+        return indexEnabled;
+    }
+
+    @Override
+    public NutsSession setIndexEnabled(boolean indexEnabled) {
+        this.indexEnabled = indexEnabled;
         return this;
     }
 

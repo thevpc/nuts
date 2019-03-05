@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
+import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.commandline.CommandLine;
@@ -39,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,7 +65,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
     }
 
     @Override
-    public int getSupportLevel(Object param) {
+    public int getSupportLevel(NutsJavaShell param) {
         return supportLevel;
     }
 
@@ -119,7 +121,9 @@ public abstract class AbstractNutsCommand implements NutsCommand {
             if (autoComplete == null) {
                 throw new NutsIllegalArgumentException("Missing Auto Complete");
             }
-            NutsCommandAutoCompleteComponent best = context.getWorkspace().getExtensionManager().createSupported(NutsCommandAutoCompleteComponent.class, this);
+            NutsCommandAutoCompleteComponent best = context.getWorkspace().getExtensionManager().createServiceLoader(
+                    NutsCommandAutoCompleteComponent.class,NutsCommand.class,NutsCommandAutoCompleteComponent.class.getClassLoader())
+                    .loadBest(this);
             if (best != null) {
                 best.autoComplete(this, context);
             } else {
@@ -137,5 +141,6 @@ public abstract class AbstractNutsCommand implements NutsCommand {
 
     @Override
     public abstract int exec(String[] args, NutsCommandContext context) throws Exception;
+
 
 }

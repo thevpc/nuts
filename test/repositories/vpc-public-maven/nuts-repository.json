@@ -1,15 +1,21 @@
 {
-  "mirrors": {
-    "vpc-public-maven-ref": {
-      "id": "vpc-public-maven-ref",
+  "uuid": "49f87f48-c163-4d97-897b-a154ea643b71",
+  "name": "vpc-public-maven",
+  "type": "nuts",
+  "storeLocationStrategy": "EXPLODED",
+  "mirrors": [
+    {
+      "name": "vpc-public-maven-ref",
       "type": "maven",
       "location": "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master",
       "enabled": true
     }
-  },
-  "users": {},
-  "id": "vpc-public-maven",
-  "type": "nuts",
-  "location": "vpc-public-maven",
-  "env": {}
+  ],
+  "users": [
+    {
+      "user": "anonymous",
+      "groups": [],
+      "rights": []
+    }
+  ]
 }

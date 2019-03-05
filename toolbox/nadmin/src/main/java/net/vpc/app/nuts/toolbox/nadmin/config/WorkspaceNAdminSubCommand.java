@@ -90,9 +90,8 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                 new NutsWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
-                                        .setCreateIfNotFound(true)
-                                        .setSaveIfCreated(save)
-                                        .setCreateIfNotFound(ignoreIdFound)
+                                        .setOpenMode(ignoreIdFound?NutsWorkspaceOpenMode.DEFAULT:NutsWorkspaceOpenMode.CREATE)
+                                        .setReadOnly(!save)
                         );
                         if (!StringUtils.isEmpty(login)) {
                             workspace.getSecurityManager().login(login, password);
@@ -163,8 +162,8 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                 new NutsWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
-                                        .setSaveIfCreated(save)
-                                        .setCreateIfNotFound(createIfNotFound)
+                                        .setReadOnly(!save)
+                                        .setOpenMode(createIfNotFound?NutsWorkspaceOpenMode.DEFAULT : NutsWorkspaceOpenMode.OPEN)
                         );
                         if (!StringUtils.isEmpty(login)) {
                             workspace.getSecurityManager().login(login, password);

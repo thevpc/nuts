@@ -74,6 +74,10 @@ public interface NutsWorkspaceExtensionManager {
 
     <T> List<T> discoverInstances(Class<T> type, ClassLoader bootClassLoader);
 
+    <T extends NutsComponent<B>,B> NutsServiceLoader<T,B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
+
+    <T extends NutsComponent<B>,B> NutsServiceLoader<T,B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
+
     <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria);
 
     <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);

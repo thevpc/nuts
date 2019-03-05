@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.5.3</version>
+    <version>0.5.4</version>
     <name>net.vpc.app.nuts</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -42,8 +42,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <github.global.server>github</github.global.server>
     </properties>
 

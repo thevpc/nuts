@@ -6,7 +6,9 @@
 package net.vpc.nuts.toolbox.feenoo.sources;
 
 import net.vpc.nuts.toolbox.feenoo.Source;
+import net.vpc.nuts.toolbox.feenoo._Utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +17,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- *
  * @author vpc
  */
 public class ZipEntrySource implements Source {
@@ -27,8 +28,9 @@ public class ZipEntrySource implements Source {
     private String internalPath;
     private ZipEntry entry;
     private ZipInputStream zip;
+    private byte[] bytes;
 
-    public ZipEntrySource(ZipEntry entry, ZipInputStream zip,String prefixPath) {
+    public ZipEntrySource(ZipEntry entry, ZipInputStream zip, String prefixPath) {
         this.stream = !entry.getName().endsWith("/");
         this.directory = !stream;
         this.entry = entry;
@@ -50,14 +52,14 @@ public class ZipEntrySource implements Source {
 
     @Override
     public String getExternalPath() {
-        return prefixPath+":"+internalPath;
+        return prefixPath + ":" + internalPath;
     }
 
     @Override
     public String getInternalPath() {
         return internalPath;
     }
-    
+
 
     @Override
     public boolean isFolder() {
@@ -66,7 +68,10 @@ public class ZipEntrySource implements Source {
 
     @Override
     public InputStream openStream() throws IOException {
-        return new NonClosableInputStream(zip);
+        if (bytes == null) {
+            bytes = _Utils.toByteArray(zip);
+        }
+        return new ByteArrayInputStream(bytes);
     }
 
     @Override
@@ -74,5 +79,5 @@ public class ZipEntrySource implements Source {
         return Collections.EMPTY_LIST;
     }
 
-    
+
 }

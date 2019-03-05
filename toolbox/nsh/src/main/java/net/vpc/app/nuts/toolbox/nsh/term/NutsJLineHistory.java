@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static org.jline.reader.LineReader.HISTORY_IGNORE;
 import static org.jline.reader.impl.ReaderUtils.*;
@@ -108,16 +109,19 @@ class NutsJLineHistory implements History {
                         Log.trace("Loading history from: ", path);
                         try (BufferedReader reader = Files.newBufferedReader(path)) {
                             internalClear();
-                            reader.lines().forEach(l -> {
-                                int idx = l.indexOf(':');
-                                if (idx < 0) {
-                                    throw new NutsExecutionException("Bad history file syntax! " +
-                                            "The history file `" + path + "` may be an older history: " +
-                                            "please remove it or use a different history file.", 2);
+                            reader.lines().forEach(new Consumer<String>() {
+                                @Override
+                                public void accept(String l) {
+                                    int idx = l.indexOf(':');
+                                    if (idx < 0) {
+                                        throw new NutsExecutionException("Bad history file syntax! " +
+                                                "The history file `" + path + "` may be an older history: " +
+                                                "please remove it or use a different history file.", 2);
+                                    }
+                                    Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
+                                    String line = unescape(l.substring(idx + 1));
+                                    NutsJLineHistory.this.internalAdd(time, line);
                                 }
-                                Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
-                                String line = unescape(l.substring(idx + 1));
-                                internalAdd(time, line);
                             });
                             lastLoaded = items.size();
                             nbEntriesInFile = lastLoaded;

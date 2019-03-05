@@ -10,6 +10,8 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     InputStream monitorInputStream(String path, Object source, NutsSession session);
 
+    String toJsonString(Object obj, boolean pretty);
+
     void writeJson(Object obj, Writer out, boolean pretty);
 
     <T> T readJson(Reader reader, Class<T> cls);

@@ -18,7 +18,7 @@
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
-    <orderEntry type="module" module-name="vpc-common-xfile" />
+    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-xfile:1.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>

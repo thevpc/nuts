@@ -232,5 +232,9 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
 
     NutsRepositoryLocation[] getRepositories();
+
+    String getDefaultIdComponentExtension(String packaging);
+
+    NutsWorkspaceListManager createWorkspaceListManager(String name);
 }
 

@@ -146,37 +146,26 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
     }
 
+
     protected String getIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();
         String f = StringUtils.trim(q.get(NutsConstants.QUERY_FACE));
         switch (f) {
             case NutsConstants.FACE_DESCRIPTOR: {
-                return "pom";
+                return ".pom";
             }
             case NutsConstants.FACE_DESC_HASH: {
-                return "pom.sha1";
+                return ".pom.sha1";
             }
             case NutsConstants.FACE_CATALOG: {
-                return "catalog";
+                return ".catalog";
             }
             case NutsConstants.FACE_COMPONENT_HASH: {
                 return getIdExtension(id.setFaceComponent()) + ".sha1";
             }
             case NutsConstants.FACE_COMPONENT: {
                 String packaging = q.get(NutsConstants.QUERY_PACKAGING);
-                if (StringUtils.isEmpty(packaging)) {
-                    throw new NutsIllegalArgumentException("Unsupported empty Packaging");
-                }
-                if (!StringUtils.isEmpty(packaging)) {
-                    switch (packaging) {
-                        case "bundle":
-                        case "nuts-extension":
-                        case "maven-archetype":
-                            return "jar";
-                    }
-                    return packaging;
-                }
-                return packaging;
+                return getIdComponentExtension(packaging);
             }
             default: {
                 throw new IllegalArgumentException("Unsupported fact " + f);

@@ -195,6 +195,11 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
+    public NutsIdBuilder setArch(String value) {
+        return setQueryProperty(NutsConstants.QUERY_ARCH, StringUtils.trimToNull(value));
+    }
+
+    @Override
     public NutsIdBuilder setOs(String value) {
         return setQueryProperty(NutsConstants.QUERY_OSDIST, StringUtils.trimToNull(value));
     }

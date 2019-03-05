@@ -38,17 +38,17 @@ public abstract class NutsApplication {
 
     public void launchAndExit(String[] args) {
         try {
-            System.exit(launch(args));
+            System.exit(launch((NutsWorkspace) null,args));
         } catch (Exception ex) {
             int errorCode = 204;
-            boolean showTrace=false;
+            boolean showTrace = false;
             for (int i = 0; i < args.length; i++) {
-                if(args[i].startsWith("-")){
-                    if(args[i].equals("--verbose")){
-                        showTrace=true;
+                if (args[i].startsWith("-")) {
+                    if (args[i].equals("--verbose")) {
+                        showTrace = true;
                         break;
                     }
-                }else{
+                } else {
                     break;
                 }
             }
@@ -62,7 +62,7 @@ public abstract class NutsApplication {
                 }
             }
             String m = ex.getMessage();
-            if (m == null || m.length()<5) {
+            if (m == null || m.length() < 5) {
                 m = ex.toString();
             }
             System.err.println(m);
@@ -74,15 +74,21 @@ public abstract class NutsApplication {
     }
 
     public int launch(String[] args) {
+        return launch(null,args);
+    }
+
+    public int launch(NutsWorkspace ws, String[] args) {
         long startTimeMillis = System.currentTimeMillis();
-        NutsWorkspace ws = Nuts.openInheritedWorkspace(args);
-        NutsApplicationContext applicationContext=null;
+        if (ws == null) {
+            ws = Nuts.openInheritedWorkspace(args);
+        }
+        NutsApplicationContext applicationContext = null;
         try {
-            applicationContext = createApplicationContext(ws);
+            applicationContext = createApplicationContext(ws, args);
             applicationContext.setStartTimeMillis(startTimeMillis);
-            switch (applicationContext.getMode()){
+            switch (applicationContext.getMode()) {
                 case "launch":
-                case "auto-complete":{
+                case "auto-complete": {
 //                    if(!applicationContext.getWorkspace().isInstalled(applicationContext.getAppId(),false,applicationContext.getSession())){
 //                        int i = onInstallApplication(applicationContext);
 //                        if(i!=0){
@@ -92,17 +98,17 @@ public abstract class NutsApplication {
 //                    }
                     return launch(applicationContext);
                 }
-                case "on-install":{
+                case "on-install": {
                     return onInstallApplication(applicationContext);
                 }
-                case "on-update":{
+                case "on-update": {
                     return onUpdateApplication(applicationContext);
                 }
-                case "on-uninstall":{
+                case "on-uninstall": {
                     return onUninstallApplication(applicationContext);
                 }
             }
-            throw new NutsExecutionException("Unsupported execution mode "+applicationContext.getMode(),204);
+            throw new NutsExecutionException("Unsupported execution mode " + applicationContext.getMode(), 204);
         } catch (NutsExecutionException ex) {
             if (ex.getExitCode() == 0) {
                 return 0;
@@ -111,20 +117,20 @@ public abstract class NutsApplication {
         }
     }
 
-    protected int onInstallApplication(NutsApplicationContext applicationContext){
+    protected int onInstallApplication(NutsApplicationContext applicationContext) {
         return 0;
     }
 
-    protected int onUpdateApplication(NutsApplicationContext applicationContext){
+    protected int onUpdateApplication(NutsApplicationContext applicationContext) {
         return 0;
     }
 
-    protected int onUninstallApplication(NutsApplicationContext applicationContext){
+    protected int onUninstallApplication(NutsApplicationContext applicationContext) {
         return 0;
     }
 
-    protected NutsApplicationContext createApplicationContext(NutsWorkspace ws) {
-        return new NutsApplicationContext(ws, getClass(), null);
+    protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args) {
+        return new NutsApplicationContext(ws, args, getClass(), null);
     }
 
     public abstract int launch(NutsApplicationContext applicationContext);

@@ -76,7 +76,12 @@ public class DefaultNutsQuery implements NutsQuery {
     private final List<String> repos = new ArrayList<>();
     private DefaultNutsWorkspace ws;
     private boolean includeMain = true;
+    private boolean ignoreNotFound = false;
     private boolean includeDependencies = false;
+    private boolean includeContent = true;
+    private boolean includeInstallInfo = true;
+    private boolean includeEffectiveDesc = false;
+    private boolean ignoreCache = false;
     private Boolean acceptOptional = null;
 
     public DefaultNutsQuery(DefaultNutsWorkspace ws) {
@@ -659,7 +664,7 @@ public class DefaultNutsQuery implements NutsQuery {
         }
         List<NutsId> r = li.build();
         if (this.isSort()) {
-            r.sort(NutsIdComparator.INSTANCE);
+            r.sort(DefaultNutsIdComparator.INSTANCE);
         }
         return r;
     }
@@ -675,13 +680,17 @@ public class DefaultNutsQuery implements NutsQuery {
         for (NutsId nutsId : mi) {
             NutsDefinition r = null;
             try {
-                r = ws.fetchDefinition(nutsId, null, true, false, true, false, s);
+                r = ws.fetchDefinition(nutsId, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), s);
             }catch (NutsNotFoundException ex){
-                if(!nutsId.isOptional()){
-                    throw ex;
+                if(!isIgnoreNotFound()){
+                    if(!nutsId.isOptional()){
+                        throw ex;
+                    }
                 }
             }
-            li.add(r);
+            if(r!=null) {
+                li.add(r);
+            }
         }
         return li;
     }
@@ -708,7 +717,7 @@ public class DefaultNutsQuery implements NutsQuery {
             @Override
             public NutsDefinition next() {
                 NutsId p = base.next();
-                return ws.fetchDefinition(p, null, true, false, true, false, s);
+                return ws.fetchDefinition(p, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), s);
             }
         };
     }
@@ -720,26 +729,11 @@ public class DefaultNutsQuery implements NutsQuery {
                 getAcceptOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getAcceptOptional()),
                 getDependencyFilter()
         ));
-        NutsIdGraph graph = new NutsIdGraph(ws, session);
+        NutsIdGraph graph = new NutsIdGraph(ws, session,ignoreNotFound);
         graph.push(ids, dependencyFilter);
         return graph.collect(ids, ids);
     }
 
-
-    private static class NutsIdComparator implements Comparator<NutsId> {
-        public static final NutsIdComparator INSTANCE = new NutsIdComparator();
-
-        @Override
-        public int compare(NutsId o1, NutsId o2) {
-            int x = o1.getSimpleName().compareTo(o2.getSimpleName());
-            if (x != 0) {
-                return x;
-            }
-            //latests versions first
-            x = o1.getVersion().compareTo(o2.getVersion());
-            return -x;
-        }
-    }
 
     @Override
     public NutsQuery dependenciesOnly() {
@@ -804,5 +798,50 @@ public class DefaultNutsQuery implements NutsQuery {
             }
         }
         return sb.toString();
+    }
+
+    public boolean isIgnoreNotFound() {
+        return ignoreNotFound;
+    }
+
+    public DefaultNutsQuery setIgnoreNotFound(boolean ignoreNotFound) {
+        this.ignoreNotFound = ignoreNotFound;
+        return this;
+    }
+
+    public boolean isIncludeFile() {
+        return includeContent;
+    }
+
+    public NutsQuery setIncludeFile(boolean includeContent) {
+        this.includeContent = includeContent;
+        return this;
+    }
+
+    public boolean isIncludeInstallInformation() {
+        return includeInstallInfo;
+    }
+
+    public NutsQuery setIncludeInstallInformation(boolean includeInstallInfo) {
+        this.includeInstallInfo = includeInstallInfo;
+        return this;
+    }
+
+    public boolean isIncludeEffectiveDesc() {
+        return includeEffectiveDesc;
+    }
+
+    public NutsQuery setIncludeEffectiveDesc(boolean includeEffectiveDesc) {
+        this.includeEffectiveDesc = includeEffectiveDesc;
+        return this;
+    }
+
+    public boolean isIgnoreCache() {
+        return ignoreCache;
+    }
+
+    public NutsQuery setIgnoreCache(boolean ignoreCache) {
+        this.ignoreCache = ignoreCache;
+        return this;
     }
 }

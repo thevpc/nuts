@@ -50,7 +50,14 @@ public class NutsApplicationContext implements CommandLineContext {
 
 
     public NutsApplicationContext(NutsWorkspace workspace, Class appClass, String storeId) {
-        String[] args = workspace.getConfigManager().getOptions().getApplicationArguments();
+        this(workspace,
+                workspace.getConfigManager().getOptions().getApplicationArguments(),
+                appClass,
+                storeId
+        );
+    }
+
+    public NutsApplicationContext(NutsWorkspace workspace, String[] args,Class appClass, String storeId) {
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-execution-mode=")) {
             String[] execModeCommand = NutsMinimalCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
@@ -113,14 +120,24 @@ public class NutsApplicationContext implements CommandLineContext {
         setCacheFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.CACHE));
         if ("auto-complete".equals(mode)) {
             setTerminalMode(NutsTerminalMode.FILTERED);
-            if(wordIndex<0){
-                wordIndex=args.length;
+            if (wordIndex < 0) {
+                wordIndex = args.length;
             }
             autoComplete = new AppCommandAutoComplete(args, wordIndex, out());
-        }else {
+        } else {
             autoComplete = null;
         }
         tableCellFormatter = new ColoredCellFormatter(this);
+        workspace.addWorkspaceListener(new NutsWorkspaceListenerAdapter(){
+            @Override
+            public void onUpdateProperty(String property, Object oldValue, Object newValue) {
+                switch (property){
+                    case "systemTerminal":{
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     public String getMode() {
@@ -167,26 +184,54 @@ public class NutsApplicationContext implements CommandLineContext {
             setTerminalMode(NutsTerminalMode.FORMATTED);
         } else if ((a = cmd.readOption("--term-inherited")) != null) {
             setTerminalMode(NutsTerminalMode.INHERITED);
-        } else if ((a = cmd.readOption("--no-colors")) != null) {
+        } else if ((a = cmd.readOption("--no-color")) != null) {
             setTerminalMode(NutsTerminalMode.FILTERED);
         } else if ((a = cmd.readStringOption("--term")) != null) {
-            String s=a.getStringValue().toLowerCase();
-            switch (s){
+            String s = a.getStringValue().toLowerCase();
+            switch (s) {
                 case "":
                 case "system":
+                case "auto":
                     {
                     setTerminalMode(null);
                     break;
                 }
-                case "filtered":{
+                case "filtered":
+                case "never": {
                     setTerminalMode(NutsTerminalMode.FILTERED);
                     break;
                 }
-                case "formatted":{
+                case "formatted":
+                case "always":{
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
                 }
-                case "inherited":{
+                case "inherited": {
+                    setTerminalMode(NutsTerminalMode.INHERITED);
+                    break;
+                }
+            }
+            return true;
+        } else if ((a = cmd.readStringOption("--color")) != null) {
+            String s = a.getStringValue().toLowerCase();
+            switch (s) {
+                case "":
+                case "system":
+                case "auto": {
+                    setTerminalMode(null);
+                    break;
+                }
+                case "filtered":
+                case "never": {
+                    setTerminalMode(NutsTerminalMode.FILTERED);
+                    break;
+                }
+                case "formatted":
+                case "always": {
+                    setTerminalMode(NutsTerminalMode.FORMATTED);
+                    break;
+                }
+                case "inherited": {
                     setTerminalMode(NutsTerminalMode.INHERITED);
                     break;
                 }

@@ -36,6 +36,8 @@ import net.vpc.common.strings.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by vpc on 1/5/17.
@@ -63,11 +65,12 @@ public class DefaultNutsId implements NutsId {
     public static String formatQuery(Map<String, String> query) {
         StringBuilder sb = new StringBuilder();
         if (query != null) {
-            for (Map.Entry<String, String> entry : query.entrySet()) {
+            Set<String> sortedKeys=new TreeSet<>(query.keySet());
+            for (String k : sortedKeys) {
                 if (sb.length() > 0) {
                     sb.append("&");
                 }
-                sb.append(entry.getKey()).append("=").append(entry.getValue());
+                sb.append(k).append("=").append(query.get(k));
             }
         }
         return StringUtils.trimToNull(sb.toString());
@@ -194,7 +197,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public DefaultNutsId setGroup(String newGroup) {
-        if(StringUtils.trim(group).equals(StringUtils.trim(newGroup))){
+        if (StringUtils.trim(group).equals(StringUtils.trim(newGroup))) {
             return this;
         }
         return new DefaultNutsId(
@@ -208,7 +211,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setNamespace(String newNamespace) {
-        if(StringUtils.trim(namespace).equals(StringUtils.trim(newNamespace))){
+        if (StringUtils.trim(namespace).equals(StringUtils.trim(newNamespace))) {
             return this;
         }
         return new DefaultNutsId(
@@ -223,7 +226,7 @@ public class DefaultNutsId implements NutsId {
     @Override
     public NutsId setVersion(String newVersion) {
         NutsVersion nv = DefaultNutsVersion.valueOf(newVersion);
-        if(nv.equals(version)){
+        if (nv.equals(version)) {
             return this;
         }
         return new DefaultNutsId(
@@ -237,7 +240,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setName(String newName) {
-        if(StringUtils.trim(name).equals(StringUtils.trim(newName))){
+        if (StringUtils.trim(name).equals(StringUtils.trim(newName))) {
             return this;
         }
         return new DefaultNutsId(
@@ -298,6 +301,12 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
+    public NutsId setArch(String alt) {
+        return setQueryProperty(NutsConstants.QUERY_ARCH, StringUtils.trimToNull(alt))
+                .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
+    }
+
+    @Override
     public NutsId setPackaging(String value) {
         return setQueryProperty(NutsConstants.QUERY_PACKAGING, StringUtils.trimToNull(value));
     }
@@ -311,6 +320,7 @@ public class DefaultNutsId implements NutsId {
     public NutsId setOsdist(String value) {
         return setQueryProperty(NutsConstants.QUERY_OSDIST, StringUtils.trimToNull(value));
     }
+
     @Override
     public NutsId setOs(String value) {
         return setQueryProperty(NutsConstants.QUERY_OS, StringUtils.trimToNull(value));
@@ -353,8 +363,8 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setQueryProperty(String property, String value) {
-        if (value == null || value.length()==0) {
-            if(query!=null && !query.isEmpty()) {
+        if (value == null || value.length() == 0) {
+            if (query != null && !query.isEmpty()) {
                 Map<String, String> m = getQueryMap();
                 m.remove(property);
                 return setQuery(m);
@@ -385,10 +395,10 @@ public class DefaultNutsId implements NutsId {
             return setQuery(m);
         } else {
             String m = DefaultNutsId.formatQuery(queryMap);
-            if(m==null){
-                m="";
+            if (m == null) {
+                m = "";
             }
-            if(m.equals(query==null?"":query)){
+            if (m.equals(query == null ? "" : query)) {
                 return this;
             }
             return new DefaultNutsId(
@@ -413,7 +423,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setQuery(String query) {
-        if(StringUtils.trim(this.query).equals(query)){
+        if (StringUtils.trim(this.query).equals(query)) {
             return this;
         }
         return new DefaultNutsId(
@@ -457,7 +467,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId getLongNameId() {
-        return new DefaultNutsId(null, group, name, version,"");
+        return new DefaultNutsId(null, group, name, version, "");
     }
 
 

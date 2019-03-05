@@ -114,6 +114,14 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     }
 
+    public void uninstall(){
+        try {
+            reader.getTerminal().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public int getSupportLevel(Object criteria) {
         return DEFAULT_SUPPORT + 1;
@@ -186,4 +194,8 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     }
 
+    @Override
+    public NutsTerminalBase getParent() {
+        return null;
+    }
 }

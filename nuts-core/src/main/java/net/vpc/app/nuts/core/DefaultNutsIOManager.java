@@ -2,6 +2,8 @@ package net.vpc.app.nuts.core;
 
 import com.google.gson.*;
 import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
+import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.core.util.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.*;
@@ -218,6 +220,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public String toJsonString(Object obj, boolean pretty) {
+        StringWriter w=new StringWriter();
+        writeJson(obj,w,pretty);
+        return w.toString();
+    }
+
+    @Override
     public void writeJson(Object obj, Writer out, boolean pretty) {
         getGson(pretty).toJson(obj, out);
         try {
@@ -363,7 +372,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         if (mode == NutsTerminalMode.FORMATTED) {
             if (workspace.getConfigManager().getOptions().getTerminalMode() == NutsTerminalMode.FILTERED) {
-                //if nuts started with --no-colors modifier, will disable FORMATTED terminal mode
+                //if nuts started with --no-color modifier, will disable FORMATTED terminal mode
                 mode = NutsTerminalMode.FILTERED;
             }
         }
@@ -410,7 +419,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsSessionTerminal createTerminal(NutsTerminalBase parent) {
         if (parent == null) {
-            parent = workspace.getSystemTerminal();
+            parent = new AbstractSystemTerminalAdapter(){
+                @Override
+                public NutsSystemTerminalBase getParent() {
+                    return  workspace.getSystemTerminal();
+                }
+            };
         }
         NutsSessionTerminalBase termb = workspace.getExtensionManager().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {

@@ -1,8 +1,14 @@
 {
-  "mirrors": {},
-  "users": {},
-  "id": "maven-central-ref",
+  "uuid": "b9e72ed2-ef37-444e-ac6e-3f96cce41beb",
+  "name": "maven-central-ref",
   "type": "maven",
   "location": "http://repo.maven.apache.org/maven2/",
-  "env": {}
+  "storeLocationStrategy": "EXPLODED",
+  "users": [
+    {
+      "user": "anonymous",
+      "groups": [],
+      "rights": []
+    }
+  ]
 }

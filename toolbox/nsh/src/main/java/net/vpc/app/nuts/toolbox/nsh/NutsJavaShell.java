@@ -92,7 +92,9 @@ public class NutsJavaShell extends JavaShell {
         List<Command> allCommand=new ArrayList<>();
         allCommand.add(new ExitCmd());
 
-        for (NutsCommand command : workspace.getExtensionManager().createAllSupported(NutsCommand.class, this)) {
+        for (NutsCommand command : workspace.getExtensionManager().
+                createServiceLoader(NutsCommand.class,NutsJavaShell.class,NutsCommand.class.getClassLoader())
+                .loadAll(this)) {
             NutsCommand old = findCommand(command.getName());
             if (old != null && old.getSupportLevel(this) >= command.getSupportLevel(this)) {
                 continue;

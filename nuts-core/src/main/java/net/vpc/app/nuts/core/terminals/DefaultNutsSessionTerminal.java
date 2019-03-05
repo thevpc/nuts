@@ -253,4 +253,8 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
         return DEFAULT_SUPPORT;
     }
 
+    @Override
+    public void uninstall() {
+
+    }
 }

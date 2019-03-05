@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-md-12">
+    <nb-card>
+      <nb-card-header>
+        Workspace Repositories
+      </nb-card-header>
+      <nb-card-body>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="source"
+          (deleteConfirm)="deleteRepository($event)"
+          (createConfirm)="addRepository($event)"
+          #repositoryTable>
+        </ng2-smart-table>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

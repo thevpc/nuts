@@ -159,7 +159,7 @@ public class ProjectService {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = Nuts.openWorkspace(
                                 new NutsWorkspaceOptions()
-                                        .setCreateIfNotFound(false)
+                                        .setOpenMode(NutsWorkspaceOpenMode.OPEN)
                                         .setReadOnly(true)
                                         .setWorkspace(a.getNutsWorkspace())
                         );

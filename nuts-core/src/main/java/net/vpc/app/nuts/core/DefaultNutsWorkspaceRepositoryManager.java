@@ -38,7 +38,6 @@ import java.io.File;
 import java.util.*;
 
 /**
- *
  * @author vpc
  */
 class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryManager {
@@ -46,9 +45,23 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
     private Map<String, NutsRepository> repositories = new LinkedHashMap<>();
     private final DefaultNutsWorkspace ws;
     private List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
+    private NutsIndexStoreClientFactory indexStoreClientFactory;
 
     DefaultNutsWorkspaceRepositoryManager(final DefaultNutsWorkspace ws) {
         this.ws = ws;
+        try {
+            indexStoreClientFactory = ws.getExtensionManager().createSupported(NutsIndexStoreClientFactory.class, ws);
+        } catch (Exception ex) {
+            //
+        }
+        if (indexStoreClientFactory == null) {
+            indexStoreClientFactory = new DummyNutsIndexStoreClientFactory();
+        }
+    }
+
+    @Override
+    public NutsIndexStoreClientFactory getIndexStoreClientFactory() {
+        return indexStoreClientFactory;
     }
 
     @Override
@@ -197,13 +210,18 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         }
         NutsRepositoryFactoryComponent factory_ = ws.getExtensionManager().createSupported(NutsRepositoryFactoryComponent.class, location);
         if (factory_ != null) {
-            String root=ws.getIOManager().expandPath(location.getName(),
+            String root = ws.getIOManager().expandPath(location.getName(),
                     repositoriesRoot != null ? repositoriesRoot : CoreIOUtils.createFile(ws.getConfigManager().getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES).getPath()
-                    );
+            );
 
             NutsRepository r = factory_.create(location, ws, null, root);
             if (r != null) {
                 r.open(autoCreate);
+                if(r.getConfigManager().isIndexEnabled()) {
+                    getIndexStoreClientFactory().subscribe(r);
+                }else{
+                    getIndexStoreClientFactory().unsubscribe(r);
+                }
                 wireRepository(r);
                 return r;
             }
@@ -247,4 +265,55 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
                         configManager.getWorkspaceLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES).getPath());
     }
 
+    private static class DummyNutsIndexStoreClient implements NutsIndexStoreClient {
+        @Override
+        public List<NutsId> findVersions(NutsId id, NutsSession session) {
+            return null;
+        }
+
+        @Override
+        public Iterator<NutsId> find(NutsIdFilter filter, NutsSession session) {
+            return null;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+        }
+
+        @Override
+        public void invalidate(NutsId id) {
+
+        }
+
+        @Override
+        public void revalidate(NutsId id) {
+
+        }
+    }
+
+    private static class DummyNutsIndexStoreClientFactory implements NutsIndexStoreClientFactory {
+        @Override
+        public int getSupportLevel(NutsWorkspace criteria) {
+            return 0;
+        }
+
+        @Override
+        public boolean subscribe(NutsRepository repository) {
+            return true;
+        }
+
+        @Override
+        public void unsubscribe(NutsRepository repository) {
+
+        }
+        @Override
+        public NutsIndexStoreClient createNutsIndexStoreClient(NutsRepository repository) {
+            return new DummyNutsIndexStoreClient();
+        }
+    }
 }

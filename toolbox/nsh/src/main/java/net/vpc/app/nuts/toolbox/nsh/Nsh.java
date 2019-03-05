@@ -3,6 +3,7 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
+import net.vpc.app.nuts.toolbox.nsh.term.NutsJLineTerminal;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 
@@ -22,6 +23,12 @@ public class Nsh extends NutsApplication {
     @Override
     public int launch(NutsApplicationContext applicationContext) {
         String[] args = applicationContext.getArgs();
+        NutsSystemTerminal st = applicationContext.getWorkspace().getSystemTerminal();
+        if(st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal){
+            //that's ok
+        }else{
+            applicationContext.getWorkspace().setSystemTerminal(new NutsJLineTerminal());
+        }
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         return c.run(args);
     }
@@ -44,8 +51,8 @@ public class Nsh extends NutsApplication {
         String nshIdStr = applicationContext.getAppId().toString();
         NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
 //        HashMap<String, String> parameters = new HashMap<>();
-//        parameters.put("list", nshIdStr + " --no-colors -c find-command");
-//        parameters.put("find", nshIdStr + " --no-colors -c find-command %n");
+//        parameters.put("list", nshIdStr + " --no-color -c find-command");
+//        parameters.put("find", nshIdStr + " --no-color -c find-command %n");
 //        parameters.put("exec", nshIdStr + " -c %n");
 //        cfg.installCommandFactory(
 //                new NutsWorkspaceCommandFactoryConfig()

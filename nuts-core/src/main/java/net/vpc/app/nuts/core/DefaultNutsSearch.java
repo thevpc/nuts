@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
+
 public class DefaultNutsSearch {
     private NutsRepositoryFilter repositoryFilter;
     private NutsVersionFilter versionFilter;

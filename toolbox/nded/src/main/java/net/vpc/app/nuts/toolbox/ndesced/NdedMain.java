@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class NdedMain extends NutsApplication {
 
     private NutsApplicationContext appContext;
-    private NutsWorkspaceExtensionManager f;
+//    private NutsWorkspaceExtensionManager f;
 
     private String home = null;
     private boolean interactive = false;
@@ -203,7 +203,7 @@ public class NdedMain extends NutsApplication {
     public int launch(NutsApplicationContext appContext) {
         this.appContext = appContext;
         String[] args=appContext.getArgs();
-        f = this.appContext.getWorkspace().getExtensionManager();
+//        f = this.appContext.getWorkspace().getExtensionManager();
         NutsDescriptorBuilder b = this.appContext.getWorkspace().createDescriptorBuilder();
         fillArgs(b);
         this.appContext.out().print("[[Creating new Nuts descriptor...]]\n");

@@ -51,6 +51,7 @@ public class NutsRepositoryConfig implements Serializable {
     private Properties env;
     private List<NutsRepositoryLocation> mirrors;
     private List<NutsUserConfig> users;
+    private boolean indexEnabled;
 
     public NutsRepositoryConfig() {
     }
@@ -70,6 +71,7 @@ public class NutsRepositoryConfig implements Serializable {
         this.tempStoreLocation = other.tempStoreLocation;
         this.cacheStoreLocation = other.cacheStoreLocation;
         this.storeLocationStrategy = other.storeLocationStrategy;
+        this.indexEnabled = other.indexEnabled;
         this.mirrors = other.getMirrors()==null?null:new ArrayList<>(other.getMirrors());
         this.users = other.getUsers()==null?null:new ArrayList<>(other.getUsers());
         if(other.getEnv()==null){
@@ -231,6 +233,14 @@ public class NutsRepositoryConfig implements Serializable {
         return users;
     }
 
+    public boolean isIndexEnabled() {
+        return indexEnabled;
+    }
+
+    public NutsRepositoryConfig setIndexEnabled(boolean indexEnabled) {
+        this.indexEnabled = indexEnabled;
+        return this;
+    }
 
     public String toString() {
         return "NutsRepositoryConfig{" + "mirrors=" + mirrors + ", users=" + users + ", name=" + name + ", uuid=" + uuid + ", type=" + type + ", location=" + location + ", groups=" + groups + ", env=" + env + '}';

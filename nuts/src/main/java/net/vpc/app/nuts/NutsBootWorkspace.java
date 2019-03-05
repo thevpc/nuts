@@ -136,9 +136,7 @@ public class NutsBootWorkspace {
 
     public NutsBootWorkspace(NutsWorkspaceOptions options) {
         if (options == null) {
-            options = new NutsWorkspaceOptions()
-                    .setCreateIfNotFound(true)
-                    .setSaveIfCreated(true);
+            options = new NutsWorkspaceOptions();
         }
         if (options.getCreationTime() == 0) {
             options.setCreationTime(creationTime);
@@ -365,7 +363,7 @@ public class NutsBootWorkspace {
         }
         ((NutsWorkspaceImpl) info.nutsWorkspace).initializeWorkspace(factoryInstance, info.actualBootConfig, info.bootConfig0,
                 info.bootClassWorldURLs,
-                info.workspaceClassLoader, options.copy().setIgnoreIfFound(true));
+                info.workspaceClassLoader, options.copy());
         if (recover) {
 //            info.nutsWorkspace.getConfigManager().setBootConfig(new NutsBootConfig());
             if (!info.nutsWorkspace.getConfigManager().isReadOnly()) {
@@ -467,9 +465,7 @@ public class NutsBootWorkspace {
             log.log(Level.CONFIG, "\t nuts-store-cache               : {0}", NutsUtils.formatLogValue(options.getCacheStoreLocation(), runningBootConfig.getCacheStoreLocation()));
             log.log(Level.CONFIG, "\t option-recover                 : {0}", options.isRecover());
             log.log(Level.CONFIG, "\t option-read-only               : {0}", options.isReadOnly());
-            log.log(Level.CONFIG, "\t option-create-if-not-found     : {0}", options.isCreateIfNotFound());
-            log.log(Level.CONFIG, "\t option-ignore-if-found         : {0}", options.isIgnoreIfFound());
-            log.log(Level.CONFIG, "\t option-save-if-created         : {0}", options.isSaveIfCreated());
+            log.log(Level.CONFIG, "\t option-open-mode               : {0}", options.getOpenMode()==null?NutsWorkspaceOpenMode.DEFAULT:options.getOpenMode());
             log.log(Level.CONFIG, "\t java-home                      : {0}", System.getProperty("java.home"));
             log.log(Level.CONFIG, "\t java-classpath                 : {0}", System.getProperty("java.class.path"));
             log.log(Level.CONFIG, "\t java-library-path              : {0}", System.getProperty("java.library.path"));
@@ -483,7 +479,7 @@ public class NutsBootWorkspace {
         OpenWorkspaceData info = new OpenWorkspaceData();
         try {
 
-            if (!options.isCreateIfNotFound()) {
+            if (options.getOpenMode()==NutsWorkspaceOpenMode.OPEN) {
                 //add fail fast test!!
                 if (!new File(runningBootConfig.getWorkspace(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME).isFile()) {
                     throw new NutsWorkspaceNotFoundException(runningBootConfig.getWorkspace());
@@ -1407,9 +1403,7 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-app-args                    : %s\n", Arrays.toString(options.getApplicationArguments()));
         System.err.printf("  option-recover                   : %s\n", options.isRecover());
         System.err.printf("  option-read-only                 : %s\n", options.isReadOnly());
-        System.err.printf("  option-create-if-not-found       : %s\n", options.isCreateIfNotFound());
-        System.err.printf("  option-ignore-if-found           : %s\n", options.isIgnoreIfFound());
-        System.err.printf("  option-save-if-created           : %s\n", options.isSaveIfCreated());
+        System.err.printf("  option-open-mode                 : %s\n", options.getOpenMode()==null?NutsWorkspaceOpenMode.DEFAULT:options.getOpenMode());
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s\n", "<none>");
         } else {

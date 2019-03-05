@@ -1182,11 +1182,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public String getDefaultIdFilename(NutsId id) {
         String classifier = "";
         String ext = getDefaultIdExtension(id);
-        if (!StringUtils.isEmpty(ext)) {
-            if (!ext.startsWith(".")) {
-                ext = "." + ext;
-            }
-        }
         if (!ext.equals(".nuts") && !ext.equals(".pom")) {
             String c = id.getClassifier();
             if (!StringUtils.isEmpty(c)) {
@@ -1198,37 +1193,56 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
 
     @Override
+    public String getDefaultIdComponentExtension(String packaging) {
+        if (StringUtils.isEmpty(packaging)) {
+            throw new NutsIllegalArgumentException("Unsupported empty Packaging");
+        }
+        switch (packaging) {
+            case "bundle":
+            case "nuts-extension":
+            case "maven-archetype":
+            case "maven-plugin":
+            case "ejb":
+                return ".jar";
+            case "dll":
+            case "so":
+            case "jnilib":
+                return "-natives.jar";
+            case "war":
+                return ".war";
+            case "jar":
+                return ".jar";
+            case "ear":
+                return ".ear";
+            case "pom":
+                return ".pom";
+            case "nuts":
+                return ".nuts";
+            case "rar":
+                return ".rar";
+        }
+        return "." + packaging;
+    }
+
+    @Override
     public String getDefaultIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();
         String f = StringUtils.trim(q.get(NutsConstants.QUERY_FACE));
         switch (f) {
             case NutsConstants.FACE_DESCRIPTOR: {
-                return "nuts";
+                return ".nuts";
             }
             case NutsConstants.FACE_DESC_HASH: {
-                return "nuts.sha1";
+                return ".nuts.sha1";
             }
             case NutsConstants.FACE_CATALOG: {
-                return "catalog";
+                return ".catalog";
             }
             case NutsConstants.FACE_COMPONENT_HASH: {
                 return getDefaultIdExtension(id.setFaceComponent()) + ".sha1";
             }
             case NutsConstants.FACE_COMPONENT: {
-                String packaging = q.get(NutsConstants.QUERY_PACKAGING);
-                if (StringUtils.isEmpty(packaging)) {
-                    throw new NutsIllegalArgumentException("Unsupported empty Packaging");
-                }
-                if (!StringUtils.isEmpty(packaging)) {
-                    switch (packaging) {
-                        case "bundle":
-                        case "nuts-extension":
-                        case "maven-archetype":
-                            return "jar";
-                    }
-                    return packaging;
-                }
-                return packaging;
+                return getDefaultIdComponentExtension(q.get(NutsConstants.QUERY_PACKAGING));
             }
             default: {
                 throw new IllegalArgumentException("Unsupported fact " + f);
@@ -1311,5 +1325,8 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         }
     }
 
-
+    @Override
+    public NutsWorkspaceListManager createWorkspaceListManager(String name) {
+        return new DefaultNutsWorkspaceListManager(ws,name);
+    }
 }

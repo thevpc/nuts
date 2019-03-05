@@ -8,12 +8,16 @@
     <file url="file://$PROJECT_DIR$/nuts-tomcat-classloader" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/derby" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/feenoo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/file-version" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/mvn" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/mysql" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/toolbox/nde" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/nadmin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/nded" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/ndi" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/nfind" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/nsh" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/nuts-clown" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/toolbox/nuts-indexer" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/nuts-server" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/tomcat" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/toolbox/worky" charset="UTF-8" />
@@ -40,6 +44,7 @@
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java-test" charset="UTF-8" />
+    <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruplot" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/application" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/branding" charset="UTF-8" />
     <file url="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves-studio/hadruwaves-studio-core" charset="UTF-8" />

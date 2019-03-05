@@ -53,4 +53,9 @@ public class NutsWorkspaceListenerAdapter implements NutsWorkspaceListener {
     public void onCreateWorkspace(NutsWorkspace workspace) {
 
     }
+
+    @Override
+    public void onUpdateProperty(String property, Object oldValue, Object newValue) {
+
+    }
 }

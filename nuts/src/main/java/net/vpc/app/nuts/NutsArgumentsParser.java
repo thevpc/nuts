@@ -39,15 +39,15 @@ public final class NutsArgumentsParser {
 
     public static NutsWorkspaceOptions parseNutsArguments(String[] bootArguments) {
         List<String> showError = new ArrayList<>();
-        NutsWorkspaceOptions o = new NutsWorkspaceOptions().setCreateIfNotFound(true);
+        NutsWorkspaceOptions o = new NutsWorkspaceOptions();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
         HashSet<String> tempRepositories = new HashSet<>();
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
-        o.setSaveIfCreated(true);
         NutsMinimalCommandLine.Arg cmdArg;
-        CmdArgList2 cmdArgList = new CmdArgList2(bootArguments);
+        List<String> applicationArguments = new ArrayList<>();
+        NutsMinimalCommandLine cmdArgList = new NutsMinimalCommandLine(bootArguments);
         while ((cmdArg = cmdArgList.next()) != null) {
             if (cmdArg.isOption()) {
                 switch (cmdArg.getKey()) {
@@ -66,35 +66,35 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--embedded": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setExecutionType(NutsExecutionType.EMBEDDED);
                         //ignore
                         break;
                     }
                     case "--!embedded": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--external": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setExecutionType(NutsExecutionType.EXTERNAL);
                         //ignore
                         break;
                     }
                     case "--!external": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--native": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setExecutionType(NutsExecutionType.NATIVE);
                         //ignore
                         break;
                     }
                     case "--!native": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
@@ -102,13 +102,14 @@ public final class NutsArgumentsParser {
                         if (cmdArg.getValue() != null) {
                             throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
                         }
-                        cmdArgList.applicationArguments.add(NutsConstants.NUTS_SHELL);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.add(NutsConstants.NUTS_SHELL);
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "-w":
                     case "--workspace": {
-                        o.setWorkspace(cmdArgList.getValueFor(cmdArg));
+                        String file = cmdArgList.getValueFor(cmdArg);
+                        o.setWorkspace(file);
                         break;
                     }
                     case "-!w":
@@ -192,67 +193,56 @@ public final class NutsArgumentsParser {
                         //ignore
                         break;
                     }
-                    case "-s":
-                    case "--save": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        o.setSaveIfCreated(true);
-                        break;
-                    }
-                    case "--no-save":
-                    case "--!save":
-                    case "-!s": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        o.setSaveIfCreated(false);
-                        break;
-                    }
-                    case "--colors": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                    case "--color":
+                        {
+
                         o.setTerminalMode(NutsTerminalMode.FORMATTED);
                         break;
                     }
-                    case "--!colors":
-                    case "--no-colors": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+                    case "--!color":
+                    case "--no-color":
+                        {
+
                         o.setTerminalMode(NutsTerminalMode.FILTERED);
                         break;
                     }
                     case "--term-system": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setTerminalMode(null);
                         break;
                     }
                     case "--!term-system": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--term-filtered": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setTerminalMode(NutsTerminalMode.FILTERED);
                         break;
                     }
                     case "--!term-filtered": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--term-formatted": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setTerminalMode(NutsTerminalMode.FORMATTED);
                         break;
                     }
                     case "--!term-formatted": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--term-inherited": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setTerminalMode(NutsTerminalMode.INHERITED);
                         break;
                     }
                     case "--!term-inherited": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
@@ -272,127 +262,139 @@ public final class NutsArgumentsParser {
                     }
                     case "-r":
                     case "--read-only": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setReadOnly(true);
                         break;
                     }
                     case "-!r":
                     case "--!read-only": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setReadOnly(false);
                         break;
                     }
                     case "-0":
                     case "--recover": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setRecover(true);
                         break;
                     }
                     case "-!0":
                     case "--!recover": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
+                        o.setRecover(false);
+                        break;
+                    }
+                    case "-g":
+                    case "--global": {
+
+                        o.setGlobal(true);
+                        break;
+                    }
+                    case "-!g":
+                    case "--!global": {
+
                         o.setRecover(false);
                         break;
                     }
                     case "--skip-install-companions": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setSkipPostCreateInstallCompanionTools(true);
                         break;
                     }
                     case "--!skip-install-companions": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setRecover(false);
                         break;
                     }
                     case "-version":
                     case "--version": {
                         o.setBootCommand(NutsBootCommand.VERSION);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "-!version":
                     case "--!version": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--info": {
                         o.setBootCommand(NutsBootCommand.INFO);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!info": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--update": {
                         o.setBootCommand(NutsBootCommand.UPDATE);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!update": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--clean": {
                         o.setBootCommand(NutsBootCommand.CLEAN);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!clean": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--reset": {
                         o.setBootCommand(NutsBootCommand.RESET);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!reset": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--install-companions": {
                         o.setBootCommand(NutsBootCommand.INSTALL_COMPANION_TOOLS);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!install-companions": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--check-updates": {
                         o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!check-updates": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--install": {
                         o.setBootCommand(NutsBootCommand.INSTALL);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!install": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--uninstall": {
                         o.setBootCommand(NutsBootCommand.UNINSTALL);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!uninstall": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
@@ -402,36 +404,36 @@ public final class NutsArgumentsParser {
                             if (cmdArg.isOption()) {
                                 executorOptions.add(cmdArg.getArg());
                             } else {
-                                cmdArgList.applicationArguments.add(cmdArg.getArg());
-                                cmdArgList.consumeApplicationArguments();
+                                applicationArguments.add(cmdArg.getArg());
+                                applicationArguments.addAll(cmdArgList.removeAll());
                             }
                         }
                         break;
                     }
                     case "--!exec": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "-?":
                     case "--help": {
                         o.setBootCommand(NutsBootCommand.HELP);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "-!?":
                     case "--!help": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--license": {
                         o.setBootCommand(NutsBootCommand.LICENSE);
-                        cmdArgList.consumeApplicationArguments();
+                        applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "--!license": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
@@ -467,7 +469,7 @@ public final class NutsArgumentsParser {
                     case "--!log-folder":
                     case "--!log-count":
                     case "--!log-inherited": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                     }
                     case "--exclude-extension": {
@@ -498,22 +500,48 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--perf": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setPerf(true);
                         break;
                     }
                     case "--!perf": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--auto-config": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setAutoConfig(cmdArg.getKey() == null ? "" : cmdArg.getKey());
                         break;
                     }
                     case "--!auto-config": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
+                        //ignore
+                        break;
+                    }
+                    case "--open-mode": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        o.setOpenMode(v.isEmpty() ? null : NutsWorkspaceOpenMode.valueOf(v.toUpperCase()));
+                        break;
+                    }
+                    case "--!open-mode": {
+                        cmdArgList.getValueFor(cmdArg);
+                        //ignore
+                        break;
+                    }
+                    case "--open": {
+                        o.setOpenMode(NutsWorkspaceOpenMode.OPEN);
+                        break;
+                    }
+                    case "--!open": {
+                        //ignore
+                        break;
+                    }
+                    case "--create": {
+                        o.setOpenMode(NutsWorkspaceOpenMode.CREATE);
+                        break;
+                    }
+                    case "--!create": {
                         //ignore
                         break;
                     }
@@ -533,6 +561,16 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--!store-strategy": {
+                        cmdArgList.getValueFor(cmdArg);
+                        //ignore
+                        break;
+                    }
+                    case "--repo-store-strategy": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        o.setRepositoryStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
+                        break;
+                    }
+                    case "--!repo-store-strategy": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
@@ -592,97 +630,82 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--system-layout": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
                         break;
                     }
                     case "--!system-layout": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--windows-layout": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setStoreLocationLayout(NutsStoreLocationLayout.WINDOWS);
                         break;
                     }
                     case "--!windows-layout": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         //ignore
                         break;
                     }
                     case "--linux-layout": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
                         break;
                     }
                     case "--!linux-layout": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         break;
                     }
                     case "--standalone":
                     case "--standalone-workspace": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         break;
                     }
                     case "--!standalone":
                     case "--!standalone-workspace": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         break;
                     }
                     case "--exploded":
                     case "--exploded-workspace": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         break;
                     }
                     case "--!exploded":
                     case "--!exploded-workspace": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         break;
                     }
                     case "--exploded-repositories": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         break;
                     }
                     case "--!exploded-repositories": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         break;
                     }
                     case "--standalone-repositories": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         break;
                     }
                     case "--!standalone-repositories": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        break;
-                    }
-                    case "--create": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        o.setCreateIfNotFound(true);
-                        break;
-                    }
-                    case "--no-create": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        o.setCreateIfNotFound(false);
-                        break;
-                    }
-                    case "--!create": {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
-                        o.setCreateIfNotFound(false);
+
                         break;
                     }
                     default: {
-                        cmdArgList.bootOnlyArgsList.add(cmdArg.getArg());
+
                         showError.add("nuts: invalid option [[" + cmdArg.getArg() + "]]");
                     }
                 }
             } else {
-                cmdArgList.applicationArguments.add(cmdArg.getArg());
-                cmdArgList.consumeApplicationArguments();
+                applicationArguments.add(cmdArg.getArg());
+                applicationArguments.addAll(cmdArgList.removeAll());
             }
         }
 
@@ -701,8 +724,7 @@ public final class NutsArgumentsParser {
                 throw new NutsIllegalArgumentException(errorMessage.toString());
             }
         }
-        o.setBootArguments(cmdArgList.bootOnlyArgsList.toArray(new String[0]));
-        o.setApplicationArguments(cmdArgList.applicationArguments.toArray(new String[0]));
+        o.setApplicationArguments(applicationArguments.toArray(new String[0]));
         o.setExecutorOptions(executorOptions.toArray(new String[0]));
         return o;
     }
@@ -738,9 +760,6 @@ public final class NutsArgumentsParser {
             case "--log-severe":
             case "--log-all":
             case "--log-off": {
-                if (cmdArgList instanceof CmdArgList2) {
-                    ((CmdArgList2) cmdArgList).bootOnlyArgsList.add(cmdArg.getArg());
-                }
                 String id = cmdArg.getKey();
                 if (cmdArg.getKey().startsWith("--log-")) {
                     id = id.substring("--log-".length());
@@ -798,26 +817,6 @@ public final class NutsArgumentsParser {
                 }
                 break;
             }
-        }
-    }
-
-    private static class CmdArgList2 extends NutsMinimalCommandLine {
-
-        List<String> bootOnlyArgsList = new ArrayList<>();
-        List<String> applicationArguments = new ArrayList<>();
-
-        public CmdArgList2(String[] args) {
-            super(args);
-        }
-
-        public String getValueFor(Arg cmdArg) {
-            String v = super.getValueFor(cmdArg);
-            bootOnlyArgsList.add(cmdArg.getKey() + "=" + v);
-            return v;
-        }
-
-        public void consumeApplicationArguments() {
-            applicationArguments.addAll(removeAll());
         }
     }
 

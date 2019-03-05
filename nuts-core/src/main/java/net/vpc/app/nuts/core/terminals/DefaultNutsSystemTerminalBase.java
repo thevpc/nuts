@@ -1,9 +1,6 @@
 package net.vpc.app.nuts.core.terminals;
 
-import net.vpc.app.nuts.NutsIOManager;
-import net.vpc.app.nuts.NutsSystemTerminalBase;
-import net.vpc.app.nuts.NutsTerminalMode;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
 import net.vpc.common.fprint.AnsiPrintStreamSupport;
 import net.vpc.common.fprint.FPrint;
 
@@ -109,5 +106,15 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     @Override
     public PrintStream getErr() {
         return this.err;
+    }
+
+    @Override
+    public void uninstall() {
+
+    }
+
+    @Override
+    public NutsTerminalBase getParent() {
+        return null;
     }
 }

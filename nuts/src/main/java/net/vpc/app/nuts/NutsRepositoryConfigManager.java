@@ -71,4 +71,8 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
     Properties getEnv(boolean inherit);
 
     String getEnv(String key, String defaultValue, boolean inherit);
+
+    void setIndexEnabled(boolean enabled);
+
+    boolean isIndexEnabled();
 }

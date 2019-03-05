@@ -48,4 +48,7 @@ public interface NutsTerminalBase extends NutsComponent<Object> {
 
     PrintStream getErr();
 
+    void uninstall();
+
+    NutsTerminalBase getParent();
 }

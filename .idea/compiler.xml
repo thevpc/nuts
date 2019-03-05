@@ -9,11 +9,13 @@
         <module name="derby" />
         <module name="feenoo" />
         <module name="feenoo (2)" />
+        <module name="file-version" />
         <module name="hadrumaths" />
         <module name="hadrumaths-scala" />
         <module name="hadrumaths-scala-examples" />
         <module name="hadrumaths-scala-helloworld" />
         <module name="hadrumaths-test" />
+        <module name="hadruplot" />
         <module name="hadruwaves" />
         <module name="hadruwaves-java-examples" />
         <module name="hadruwaves-puppets" />
@@ -32,6 +34,7 @@
         <module name="mvn" />
         <module name="mvn-box" />
         <module name="mysql" />
+        <module name="nadmin" />
         <module name="nb-launcher" />
         <module name="nde" />
         <module name="nded" />
@@ -40,11 +43,14 @@
         <module name="ndi" />
         <module name="ndi (1)" />
         <module name="netbeans-launcher" />
+        <module name="nfind" />
         <module name="nsh" />
         <module name="nuts" />
         <module name="nuts-clown" />
         <module name="nuts-cmd-app" />
         <module name="nuts-core" />
+        <module name="nuts-http-repo" />
+        <module name="nuts-indexer" />
         <module name="nuts-server" />
         <module name="nuts-servlet" />
         <module name="nuts-sh" />
@@ -71,20 +77,21 @@
     <bytecodeTargetLevel>
       <module name="derby" target="1.8" />
       <module name="derby (1)" target="1.8" />
-      <module name="feenoo" target="1.7" />
+      <module name="feenoo" target="1.8" />
       <module name="feenoo (1)" target="1.7" />
       <module name="feenoo (2)" target="1.7" />
       <module name="file-version" target="1.8" />
       <module name="file-version (1)" target="1.8" />
       <module name="hadrumaths" target="1.8" />
-      <module name="hadrumaths-scala" target="1.8" />
-      <module name="hadrumaths-scala-examples" target="1.8" />
+      <module name="hadrumaths-scala" target="1.7" />
+      <module name="hadrumaths-scala-examples" target="1.7" />
       <module name="hadrumaths-scala-helloworld" target="1.8" />
       <module name="hadrumaths-test" target="1.8" />
-      <module name="hadruwaves" target="1.8" />
+      <module name="hadruplot" target="1.7" />
+      <module name="hadruwaves" target="1.7" />
       <module name="hadruwaves-java-examples" target="1.8" />
       <module name="hadruwaves-puppets" target="1.7" />
-      <module name="hadruwaves-scala" target="1.8" />
+      <module name="hadruwaves-scala" target="1.7" />
       <module name="hadruwaves-scala-examples" target="1.8" />
       <module name="hadruwaves-scala-helloworld" target="1.8" />
       <module name="hadruwaves-studio-app" target="1.7" />
@@ -94,51 +101,61 @@
       <module name="hadruwaves-studio-standalone" target="1.5" />
       <module name="hadruwaves-test" target="1.8" />
       <module name="hadruwaves-tutorial" target="1.8" />
-      <module name="inspector-gadget" target="1.8" />
-      <module name="java-shell" target="1.8" />
-      <module name="jvmon" target="1.8" />
+      <module name="inspector-gadget" target="1.7" />
+      <module name="java-shell" target="1.7" />
+      <module name="jvmon" target="1.7" />
       <module name="maven-archiver" target="1.5" />
       <module name="mvn" target="1.8" />
       <module name="mvn-box" target="1.8" />
       <module name="mysql" target="1.8" />
+      <module name="nadmin" target="1.8" />
       <module name="nb-launcher" target="1.8" />
       <module name="nde" target="1.8" />
-      <module name="nded" target="1.8" />
+      <module name="nded" target="1.7" />
       <module name="ndesc-ed" target="1.8" />
       <module name="ndesc-ed (1)" target="1.8" />
       <module name="ndi" target="1.8" />
       <module name="ndi (1)" target="1.8" />
       <module name="netbeans-launcher" target="1.8" />
+      <module name="nfind" target="1.8" />
       <module name="nsh" target="1.8" />
-      <module name="nuts" target="1.8" />
-      <module name="nuts-clown" target="1.5" />
+      <module name="nuts" target="1.7" />
+      <module name="nuts-clown" target="1.8" />
       <module name="nuts-cmd-app" target="1.8" />
       <module name="nuts-core" target="1.8" />
+      <module name="nuts-http-repo" target="1.5" />
+      <module name="nuts-indexer" target="1.8" />
       <module name="nuts-root" target="1.5" />
       <module name="nuts-server" target="1.8" />
-      <module name="nuts-servlet" target="1.8" />
+      <module name="nuts-servlet" target="1.7" />
       <module name="nuts-sh" target="1.8" />
-      <module name="nuts-tomcat-classloader" target="1.8" />
+      <module name="nuts-tomcat-classloader" target="1.7" />
       <module name="scholar-mw" target="1.5" />
       <module name="tomcat" target="1.8" />
       <module name="vpc-common-classpath" target="1.7" />
       <module name="vpc-common-commandline" target="1.7" />
       <module name="vpc-common-desktop-automation" target="1.7" />
       <module name="vpc-common-fprint" target="1.7" />
-      <module name="vpc-common-io" target="1.8" />
+      <module name="vpc-common-io" target="1.7" />
       <module name="vpc-common-io-compress" target="1.7" />
       <module name="vpc-common-io-ext-compress" target="1.7" />
       <module name="vpc-common-io-osapi" target="1.7" />
-      <module name="vpc-common-mvn" target="1.8" />
+      <module name="vpc-common-mvn" target="1.7" />
       <module name="vpc-common-sql" target="1.7" />
       <module name="vpc-common-ssh" target="1.7" />
-      <module name="vpc-common-strings" target="1.8" />
-      <module name="vpc-common-swings" target="1.8" />
-      <module name="vpc-common-utils" target="1.8" />
+      <module name="vpc-common-strings" target="1.7" />
+      <module name="vpc-common-swings" target="1.7" />
+      <module name="vpc-common-utils" target="1.7" />
       <module name="vpc-pheromone-app" target="1.8" />
-      <module name="worky" target="1.8" />
+      <module name="worky" target="1.7" />
       <module name="worky (1)" target="1.8" />
-      <module name="writer-maven-plugin" target="1.8" />
+      <module name="writer-maven-plugin" target="1.7" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="nuts-clown" options="-parameters" />
+      <module name="nuts-indexer" options="-parameters" />
+    </option>
   </component>
 </project>

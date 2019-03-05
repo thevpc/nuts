@@ -1,8 +1,14 @@
 {
-  "mirrors": {},
-  "users": {},
-  "id": "maven-local",
+  "uuid": "b6933aa1-b13a-4e42-b565-015174322dbe",
+  "name": "maven-local",
   "type": "maven",
-  "location": "~/.m2/repository",
-  "env": {}
+  "location": "/home/vpc/.m2/repository",
+  "storeLocationStrategy": "EXPLODED",
+  "users": [
+    {
+      "user": "anonymous",
+      "groups": [],
+      "rights": []
+    }
+  ]
 }

@@ -115,4 +115,9 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     public int getSupportLevel(Object criteria) {
         return base.getSupportLevel(criteria);
     }
+
+    @Override
+    public void uninstall() {
+
+    }
 }

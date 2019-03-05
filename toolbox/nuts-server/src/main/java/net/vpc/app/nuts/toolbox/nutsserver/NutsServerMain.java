@@ -50,7 +50,7 @@ public class NutsServerMain extends NutsApplication {
             if (cmdLine.readAll("start")) {
                 List<SrvInfo> servers = new ArrayList<SrvInfo>();
                 boolean autocreate = false;
-                boolean save = true;
+                boolean readOnly = false;
                 String archetype = "server"; //default archetype for server
 
                 while (cmdLine.hasNext()) {
@@ -59,7 +59,9 @@ public class NutsServerMain extends NutsApplication {
                     } else if (cmdLine.readAllOnce("-h", "--archetype")) {
                         archetype = cmdLine.readRequiredNonOption(new ArchitectureNonOption("Archetype", appContext.getWorkspace())).getStringOrError();
                     } else if (cmdLine.readAllOnce("-!s", "--no-save")) {
-                        save = false;
+                        readOnly = true;
+                    } else if (cmdLine.readAllOnce("--read-only")) {
+                        readOnly = true;
                     } else if (cmdLine.readAllOnce("--http")) {
                         servers.add(new SrvInfo());
                         servers.get(servers.size() - 1).serverType = "http";
@@ -144,8 +146,8 @@ public class NutsServerMain extends NutsApplication {
                                     nutsWorkspace = appContext.getWorkspace().openWorkspace(
                                             new NutsWorkspaceOptions()
                                                     .setWorkspace(entry.getValue())
-                                                    .setCreateIfNotFound(autocreate)
-                                                    .setSaveIfCreated(save)
+                                                    .setOpenMode(autocreate?NutsWorkspaceOpenMode.DEFAULT : NutsWorkspaceOpenMode.OPEN)
+                                                    .setReadOnly(readOnly)
                                                     .setArchetype(archetype)
                                     );
                                     allWorkspaces.put(entry.getValue(), nutsWorkspace);

@@ -3,12 +3,14 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/toolbox/derby/derby.iml" filepath="$PROJECT_DIR$/toolbox/derby/derby.iml" />
-      <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/feenoo/feenoo.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/feenoo/feenoo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/feenoo/feenoo.iml" filepath="$PROJECT_DIR$/toolbox/feenoo/feenoo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/file-version/file-version.iml" filepath="$PROJECT_DIR$/toolbox/file-version/file-version.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java/hadrumaths.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java/hadrumaths.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-scala/hadrumaths-scala.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-scala/hadrumaths-scala.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-scala-examples/hadrumaths-scala-examples.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-scala-examples/hadrumaths-scala-examples.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-scala-helloworld/hadrumaths-scala-helloworld.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-scala-helloworld/hadrumaths-scala-helloworld.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java-test/hadrumaths-test.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java-test/hadrumaths-test.iml" />
+      <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruplot/hadruplot.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruplot/hadruplot.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java/hadruwaves.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java/hadruwaves.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-examples/hadruwaves-java-examples.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-java-examples/hadruwaves-java-examples.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-puppets/hadruwaves-puppets.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruwaves/hadruwaves-puppets/hadruwaves-puppets.iml" />
@@ -27,15 +29,19 @@
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/jvmon.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/mvn/mvn.iml" filepath="$PROJECT_DIR$/toolbox/mvn/mvn.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/mysql/mysql.iml" filepath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nadmin/nadmin.iml" filepath="$PROJECT_DIR$/toolbox/nadmin/nadmin.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nde/nde.iml" filepath="$PROJECT_DIR$/toolbox/nde/nde.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nded/nded.iml" filepath="$PROJECT_DIR$/toolbox/nded/nded.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/ndi/ndi.iml" filepath="$PROJECT_DIR$/toolbox/ndi/ndi.iml" />
       <module fileurl="file://$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" filepath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/netbeans-launcher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nfind/nfind.iml" filepath="$PROJECT_DIR$/toolbox/nfind/nfind.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nsh/nsh.iml" filepath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts/nuts.iml" filepath="$PROJECT_DIR$/nuts/nuts.iml" />
-      <module fileurl="file://$PROJECT_DIR$/nuts-clown/nuts-clown.iml" filepath="$PROJECT_DIR$/nuts-clown/nuts-clown.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nuts-clown/nuts-clown.iml" filepath="$PROJECT_DIR$/toolbox/nuts-clown/nuts-clown.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-cmd-app/nuts-cmd-app.iml" filepath="$PROJECT_DIR$/nuts-cmd-app/nuts-cmd-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-core/nuts-core.iml" filepath="$PROJECT_DIR$/nuts-core/nuts-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nuts-http-repo/nuts-http-repo.iml" filepath="$PROJECT_DIR$/toolbox/nuts-http-repo/nuts-http-repo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/toolbox/nuts-indexer/nuts-indexer.iml" filepath="$PROJECT_DIR$/toolbox/nuts-indexer/nuts-indexer.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-root.iml" filepath="$PROJECT_DIR$/nuts-root.iml" />
       <module fileurl="file://$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" filepath="$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/nuts-servlet/nuts-servlet.iml" filepath="$PROJECT_DIR$/nuts-servlet/nuts-servlet.iml" />

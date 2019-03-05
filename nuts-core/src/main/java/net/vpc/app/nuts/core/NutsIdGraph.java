@@ -45,10 +45,13 @@ public class NutsIdGraph {
     private final Set<NutsIdNode> wildeIds = new LinkedHashSet<>();
     private final DefaultNutsWorkspace ws;
     private final NutsSession session;
+    private final boolean ignoreNotFound;
+    private int maxComplexity=300;
 
-    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session) {
+    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session,boolean ignoreNotFound) {
         this.ws = ws;
         this.session = session;
+        this.ignoreNotFound = ignoreNotFound;
     }
 
     public NutsIdInfo resolveBest(Set<NutsIdInfo> ids) {
@@ -78,18 +81,22 @@ public class NutsIdGraph {
             }
         }
 
-        Set<NutsIdNode> wildIds = new HashSet<>(this.wildeIds);
+        Map<String,NutsIdNode> wildIds = new HashMap<>();
+        for (NutsIdNode wildeId : this.wildeIds) {
+            wildIds.put(cleanup(wildeId.id).toString(),wildeId);
+        }
         for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
             for (NutsIdInfo node2 : node1.nodes) {
                 for (NutsIdNode node3 : node2.nodes) {
                     if (!node3.getVersion().isSingleValue()) {
-                        wildIds.add(node3);
+                        String key = cleanup(node3.id).toString();
+                        wildIds.put(key,node3);
                     }
                 }
             }
         }
         Set<NutsIdNode> toaddOk = new HashSet<>();
-        for (NutsIdNode nutsId : wildIds) {
+        for (NutsIdNode nutsId : wildIds.values()) {
             try {
                 NutsId nutsId1 = ws.fetch(nutsId.id).setSession(session).fetchId();
                 toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter));
@@ -100,6 +107,10 @@ public class NutsIdGraph {
             }
         }
         if (!toaddOk.isEmpty()) {
+            maxComplexity--;
+            if(maxComplexity<0){
+                System.out.println("Why");
+            }
             push0(toaddOk);
         }
     }
@@ -136,14 +147,35 @@ public class NutsIdGraph {
         return collect(all,null);
     }
 
+    private NutsId uniformNutsId(NutsId id){
+        NutsIdBuilder b = id.builder();
+        Map<String, String> m = b.getQueryMap();
+        Map<String, String> ok=new HashMap<>();
+        ok.put(NutsConstants.QUERY_ARCH,m.get(NutsConstants.QUERY_ARCH));
+        ok.put(NutsConstants.QUERY_OSDIST,m.get(NutsConstants.QUERY_OSDIST));
+        ok.put(NutsConstants.QUERY_OS,m.get(NutsConstants.QUERY_OS));
+        ok.put(NutsConstants.QUERY_PLATFORM,m.get(NutsConstants.QUERY_PLATFORM));
+        ok.put(NutsConstants.QUERY_ALTERNATIVE,m.get(NutsConstants.QUERY_ALTERNATIVE));
+        ok.put(NutsConstants.QUERY_CLASSIFIER,m.get(NutsConstants.QUERY_CLASSIFIER));
+        b.setNamespace(null);
+        b.setQuery(ok);
+        return b.build();
+    }
+
     public NutsId[] collect(Collection<NutsId> ids, Collection<NutsId> exclude) {
         Set<NutsIdInfo> collected = new HashSet<>();
         for (NutsId id : ids) {
             visit(context.getNutsIdInfo(id, true), collected);
         }
+        Set<NutsId> excludeSet=new HashSet<>();
+        if(exclude!=null) {
+            for (NutsId nutsId : exclude) {
+                excludeSet.add(uniformNutsId(nutsId));
+            }
+        }
         List<NutsId> r = new ArrayList<>();
         for (NutsIdInfo n : collected) {
-            if (exclude==null || !exclude.contains(n.id)) {
+            if (!excludeSet.contains(uniformNutsId(n.id))) {
                 r.add(n.id);
             }
         }
@@ -199,14 +231,24 @@ public class NutsIdGraph {
         for (NutsIdNode id : ids) {
             stack.push(new NutsIdAndNutsDependencyFilterItem(id));
         }
+        int processed=0;
         while (!stack.isEmpty()) {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
             if (acceptVisit(curr)) {
                 if (curr.id.getVersion().isSingleValue()) {
-                    if (curr.getDescriptor(ws, session) != null) {
+                    NutsDescriptor effDescriptor = null;
+                    try {
+                        effDescriptor = curr.getEffDescriptor(ws, session);
+                    }catch (NutsNotFoundException ex){
+                        if(!curr.id.id.isOptional() && !ignoreNotFound){
+                            throw ex;
+                        }
+                    }
+                    if (effDescriptor != null) {
+                        processed++;
                         context.register(curr.id);
                         int currentOrder = 0;
-                        NutsDependency[] dependencies = curr.getDescriptor(ws, session).getDependencies(curr.id.filter);
+                        NutsDependency[] dependencies = effDescriptor.getDependencies(curr.id.filter);
                         for (NutsDependency dept : dependencies) {
                             NutsId[] exclusions = dept.getExclusions();
                             NutsDependencyFilter filter2 = ws.createNutsDependencyFilter(curr.id.filter, exclusions);
@@ -235,7 +277,9 @@ public class NutsIdGraph {
                 }
             }
         }
-        this.fixConflicts();
+        if(processed>0) {
+            this.fixConflicts();
+        }
     }
 
     private NutsId prepareDepId(NutsDependency dept, NutsId item) {

@@ -128,6 +128,7 @@ public final class NutsConstants {
     public static final String NUTS_ID_BOOT_API = "net.vpc.app.nuts:nuts";
     public static final String NUTS_ID_BOOT_RUNTIME = "net.vpc.app.nuts:nuts-core";
     public static final String QUERY_ALTERNATIVE = "alt";
+    public static final String QUERY_CLASSIFIER = "classifier";
     public static final String QUERY_FACE = "face";
     public static final String QUERY_SCOPE = "scope";
     public static final String QUERY_OPTIONAL = "optional";

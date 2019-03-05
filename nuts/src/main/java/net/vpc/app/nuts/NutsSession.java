@@ -59,6 +59,10 @@ public interface NutsSession {
 
     NutsSession setProperties(Map<String, Object> properties);
 
+    boolean isIndexEnabled();
+
+    NutsSession setIndexEnabled(boolean indexEnabled);
+
     NutsSessionTerminal getTerminal();
 
     NutsSession setTerminal(NutsSessionTerminal terminal);

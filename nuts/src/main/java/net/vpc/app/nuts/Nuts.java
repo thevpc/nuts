@@ -106,7 +106,7 @@ public class Nuts {
             throw new IllegalArgumentException("Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());
         }
         boot.getOptions().setCreationTime(startTime);
-        return openWorkspace(boot.getOptions().setCreateIfNotFound(true));
+        return openWorkspace(boot.getOptions());
     }
 
     /**
@@ -123,7 +123,7 @@ public class Nuts {
         if (boot.getOptions().getCreationTime() == 0) {
             boot.getOptions().setCreationTime(startTime);
         }
-        return openWorkspace(boot.getOptions().setCreateIfNotFound(true));
+        return openWorkspace(boot.getOptions());
     }
 
     /**

@@ -357,6 +357,16 @@ class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionMana
     }
 
     @Override
+    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
+        return createServiceLoader(serviceType, criteriaType, null);
+    }
+
+    @Override
+    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+        return new DefaultNutsServiceLoader<T, B>(serviceType,criteriaType, classLoader);
+    }
+
+    @Override
     public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria) {
         return objectFactory.createSupported(type, supportCriteria);
     }

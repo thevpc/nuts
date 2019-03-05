@@ -74,6 +74,8 @@ public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder setPlatform(String value);
 
+    NutsIdBuilder setArch(String value);
+
     NutsIdBuilder setOs(String value);
 
     NutsIdBuilder setOsdist(String value);

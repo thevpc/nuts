@@ -62,4 +62,6 @@ public interface NutsWorkspaceRepositoryManager {
     NutsRepositoryListener[] getRepositoryListeners();
 
     String resolveRepositoryPath(String repositoryLocation);
+
+    NutsIndexStoreClientFactory getIndexStoreClientFactory();
 }

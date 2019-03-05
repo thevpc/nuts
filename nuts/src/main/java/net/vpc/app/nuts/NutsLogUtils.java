@@ -89,7 +89,7 @@ public final class NutsLogUtils {
         }
         int MEGA = 1024 * 1024;
         if (name == null || NutsUtils.isEmpty(name)) {
-            name = "nuts-%g.log";
+            name = new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSS").format(new Date())+  "-nuts-%g.log";
         }
         if (folder == null || NutsUtils.isEmpty(folder)) {
             folder = defaultLogFolder;

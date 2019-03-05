@@ -38,7 +38,7 @@ import net.vpc.common.javashell.cmds.Command;
  * Created by vpc on 1/7/17.
  */
 @NutsSingleton
-public interface NutsCommand extends NutsComponent<Object>, Command<NutsCommandContext> {
+public interface NutsCommand extends NutsComponent<NutsJavaShell>, Command<NutsCommandContext> {
 
 //    String getName();
 

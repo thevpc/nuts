@@ -59,6 +59,6 @@ public interface NutsSessionTerminal extends NutsSessionTerminalBase,NutsTermina
     
     void setParent(NutsTerminalBase parent);
     
-    public NutsTerminalBase getParent();
+    NutsTerminalBase getParent();
 
 }

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/nuts-clown" />
+    <file type="web" url="file://$PROJECT_DIR$/toolbox/nuts-clown" />
+    <file type="web" url="file://$PROJECT_DIR$/toolbox/nuts-http-repo" />
+    <file type="web" url="file://$PROJECT_DIR$/toolbox/nuts-indexer" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
@@ -24,7 +26,6 @@
         <option value="$PROJECT_DIR$/nuts-mvn/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nb-launcher/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/netbeans-launcher/pom.xml" />
-        <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/feenoo/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-commandline/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io-ext-compress/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/inspector-gadget/pom.xml" />
@@ -40,7 +41,6 @@
     </option>
     <option name="ignoredFiles">
       <set>
-        <option value="$PROJECT_DIR$/toolbox/feenoo/pom.xml" />
         <option value="$PROJECT_DIR$/toolbox/worky/pom.xml" />
       </set>
     </option>

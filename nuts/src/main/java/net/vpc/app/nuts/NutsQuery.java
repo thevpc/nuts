@@ -150,4 +150,26 @@ public interface NutsQuery {
     NutsQuery setAcceptOptional(Boolean acceptOptional);
 
     NutsQuery setIncludeOptional(boolean includeOptional);
+
+    boolean isIgnoreNotFound();
+
+    NutsQuery setIgnoreNotFound(boolean ignoreNotFound);
+
+    boolean isIncludeFile();
+
+    NutsQuery setIncludeFile(boolean includeContent);
+
+    boolean isIncludeInstallInformation() ;
+
+    NutsQuery setIncludeInstallInformation(boolean includeInstallInfo) ;
+
+    boolean isIncludeEffectiveDesc() ;
+
+    NutsQuery setIncludeEffectiveDesc(boolean includeEffectiveDesc) ;
+
+
+    boolean isIgnoreCache() ;
+
+    NutsQuery setIgnoreCache(boolean ignoreCache) ;
+
 }

@@ -15,5 +15,5 @@ public interface SourceProcessor {
      * @param source
      * @return false if stop processing
      */
-    boolean process(Source source);
+    void process(Source source);
 }

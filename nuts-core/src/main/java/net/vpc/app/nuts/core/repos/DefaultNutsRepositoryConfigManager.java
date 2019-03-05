@@ -75,6 +75,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         }
     }
 
+
     @Override
     public int getSpeed() {
         return speed;
@@ -190,6 +191,19 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
             }
         }
         fireConfigurationChanged();
+    }
+
+    @Override
+    public void setIndexEnabled(boolean enabled) {
+        if (enabled != config.isIndexEnabled()) {
+            config.setIndexEnabled(enabled);
+            fireConfigurationChanged();
+        }
+    }
+
+    @Override
+    public boolean isIndexEnabled() {
+        return config.isIndexEnabled();
     }
 
     @Override

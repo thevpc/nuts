@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>tomcat</artifactId>
-    <version>0.5.3.0</version>
+    <version>0.5.4.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.tomcat</name>
     <description>Nuts Tomcat Toolbox</description>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-cmd-app</artifactId>
-            <version>0.5.3.0</version>
+            <version>0.5.4.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>

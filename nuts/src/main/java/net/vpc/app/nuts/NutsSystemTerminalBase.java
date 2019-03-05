@@ -39,6 +39,7 @@ public interface NutsSystemTerminalBase extends NutsComponent<Object>,NutsTermin
 
     void install(NutsWorkspace workspace);
 
+
     void setOutMode(NutsTerminalMode mode);
 
     NutsTerminalMode getOutMode();

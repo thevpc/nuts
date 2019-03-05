@@ -20,7 +20,7 @@ import java.util.zip.ZipInputStream;
 /**
  * @author vpc
  */
-public class ZipSource extends SourceAdater {
+public class ZipSource extends SourceAdapter {
 
     public ZipSource(Source source) {
         super(source);

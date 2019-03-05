@@ -101,6 +101,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     boolean isFetched(NutsId id, NutsSession session);
 
+    NutsWorkspace setSystemTerminal(NutsSystemTerminalBase term);
+
     void installCompanionTools(boolean ask, boolean force, boolean silent, NutsSession session);
 
     NutsDefinition fetchApiDefinition(NutsSession session);

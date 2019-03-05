@@ -74,6 +74,8 @@ public interface NutsId extends Serializable {
 
     NutsId setAlternative(String value);
 
+    NutsId setArch(String value);
+
     NutsId setFace(String value);
 
     NutsId setPackaging(String value);

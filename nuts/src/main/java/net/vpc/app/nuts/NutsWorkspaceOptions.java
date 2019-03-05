@@ -30,7 +30,9 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by vpc on 1/23/17.
@@ -41,19 +43,21 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private String bootJavaCommand;
     private String bootJavaOptions;
     private String bootRuntimeSourceURL;
-    private String[] bootArguments;
+//    private String[] bootArguments;
     private String[] applicationArguments;
     private boolean perf = false;
     private String workspace = null;
-    private boolean ignoreIfFound;
-    private boolean createIfNotFound;
-    private boolean saveIfCreated;
     private boolean skipPostCreateInstallCompanionTools;
+    private NutsWorkspaceOpenMode openMode=NutsWorkspaceOpenMode.DEFAULT;
     /**
      * if true, all means are deployed to recover from corrupted workspace.
      * This flag may alter current used version of nuts to update to latest.
      */
     private boolean recover;
+    /**
+     * if true consider global/system repository
+     */
+    private boolean global;
     private String archetype;
     private String[] excludedExtensions;
     private String[] excludedRepositories;
@@ -90,30 +94,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public boolean isIgnoreIfFound() {
-        return ignoreIfFound;
+    public boolean isGlobal() {
+        return global;
     }
 
-    public NutsWorkspaceOptions setIgnoreIfFound(boolean ignoreIfFound) {
-        this.ignoreIfFound = ignoreIfFound;
-        return this;
-    }
-
-    public boolean isCreateIfNotFound() {
-        return createIfNotFound;
-    }
-
-    public NutsWorkspaceOptions setCreateIfNotFound(boolean createIfNotFound) {
-        this.createIfNotFound = createIfNotFound;
-        return this;
-    }
-
-    public boolean isSaveIfCreated() {
-        return saveIfCreated;
-    }
-
-    public NutsWorkspaceOptions setSaveIfCreated(boolean saveIfCreated) {
-        this.saveIfCreated = saveIfCreated;
+    public NutsWorkspaceOptions setGlobal(boolean global) {
+        this.global = global;
         return this;
     }
 
@@ -177,7 +163,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
             t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
             t.setTransientRepositories(t.getTransientRepositories() == null ? null : Arrays.copyOf(t.getTransientRepositories(), t.getTransientRepositories().length));
-            t.setBootArguments(t.getBootArguments() == null ? null : Arrays.copyOf(t.getBootArguments(), t.getBootArguments().length));
             t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
             return t;
         } catch (CloneNotSupportedException e) {
@@ -239,24 +224,155 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     }
 
     public String getBootArgumentsString() {
-        if (bootArguments == null) {
-            return "";
-        }
-        return NutsMinimalCommandLine.escapeArguments(bootArguments);
+        return NutsMinimalCommandLine.escapeArguments(getBootArguments());
     }
 
     public String[] getBootArguments() {
-        return bootArguments;
-    }
+        List<String> all=new ArrayList<>();
+        if(!NutsUtils.isEmpty(bootRuntime)){
+            all.add("--boot-runtime");
+            all.add(bootRuntime);
+        }
+        if(!NutsUtils.isEmpty(bootJavaCommand)){
+            all.add("--java");
+            all.add(bootJavaCommand);
+        }
+        if(!NutsUtils.isEmpty(bootJavaOptions)){
+            all.add("--java-options");
+            all.add(bootJavaOptions);
+        }
+        if(!NutsUtils.isEmpty(bootJavaOptions)){
+            all.add("--java-options");
+            all.add(bootJavaOptions);
+        }
+        if(!NutsUtils.isEmpty(workspace)){
+            all.add("--workspace");
+            all.add(NutsUtils.getAbsolutePath(workspace));
+        }
+        if(!NutsUtils.isEmpty(archetype)){
+            all.add("--archetype");
+            all.add(archetype);
+        }
+        if(!NutsUtils.isEmpty(login)){
+            all.add("--login");
+            all.add(login);
+        }
+        if(!NutsUtils.isEmpty(password)){
+            all.add("--password");
+            all.add(password);
+        }
+        if(!NutsUtils.isEmpty(requiredBootVersion)){
+            all.add("--boot-version");
+            all.add(requiredBootVersion);
+        }
+        if(!NutsUtils.isEmpty(autoConfig)){
+            all.add("--auto-config");
+            all.add(autoConfig);
+        }
+        if(storeLocationLayout!=null){
+            all.add("--store-layout");
+            all.add(storeLocationLayout.toString().toLowerCase());
+        }
+        if(storeLocationStrategy!=null){
+            all.add("--store-strategy");
+            all.add(storeLocationStrategy.toString().toLowerCase());
+        }
+        if(repositoryStoreLocationStrategy!=null){
+            all.add("--repo-store-strategy");
+            all.add(repositoryStoreLocationStrategy.toString().toLowerCase());
+        }
+        if(!NutsUtils.isEmpty(programsStoreLocation)){
+            all.add("--programs-location");
+            all.add(programsStoreLocation);
+        }
+        if(!NutsUtils.isEmpty(configStoreLocation)){
+            all.add("--config-location");
+            all.add(configStoreLocation);
+        }
+        if(!NutsUtils.isEmpty(varStoreLocation)){
+            all.add("--var-location");
+            all.add(varStoreLocation);
+        }
+        if(!NutsUtils.isEmpty(logsStoreLocation)){
+            all.add("--logs-location");
+            all.add(logsStoreLocation);
+        }
+        if(!NutsUtils.isEmpty(tempStoreLocation)){
+            all.add("--temp-location");
+            all.add(tempStoreLocation);
+        }
+        if(!NutsUtils.isEmpty(cacheStoreLocation)){
+            all.add("--cache-location");
+            all.add(cacheStoreLocation);
+        }
+        if(!NutsUtils.isEmpty(libStoreLocation)){
+            all.add("--cache-location");
+            all.add(libStoreLocation);
+        }
 
-    public NutsWorkspaceOptions setBootArguments(String[] bootArguments) {
-        this.bootArguments = bootArguments;
-        return this;
+        if(terminalMode!=null){
+            all.add("--term");
+            all.add(terminalMode.toString());
+        }
+        if(logConfig!=null){
+            if(logConfig.getLogLevel()!=null){
+                all.add("--log-"+logConfig.getLogLevel().toString().toLowerCase());
+            }
+            if(logConfig.getLogCount()>0){
+                all.add("--log-count");
+                all.add(String.valueOf(logConfig.getLogCount()));
+            }
+            if(logConfig.getLogSize()>0){
+                all.add("--log-size");
+                all.add(String.valueOf(logConfig.getLogSize()));
+            }
+            if(!NutsUtils.isEmpty(logConfig.getLogFolder())){
+                all.add("--log-folder");
+                all.add(NutsUtils.getAbsolutePath(logConfig.getLogFolder()));
+            }
+            if(!NutsUtils.isEmpty(logConfig.getLogName())){
+                all.add("--log-name");
+                all.add(logConfig.getLogName());
+            }
+            if(logConfig.isLogInherited()){
+                all.add("--log-inherited");
+            }
+        }
+        if(excludedExtensions!=null && excludedExtensions.length>0){
+            all.add("--exclude-extension");
+            all.add(NutsUtils.join(";",excludedExtensions));
+        }
+        if(excludedRepositories!=null && excludedRepositories.length>0){
+            all.add("--exclude-repository");
+            all.add(NutsUtils.join(";",excludedRepositories));
+        }
+        if(transientRepositories!=null && transientRepositories.length>0){
+            all.add("--repository");
+            all.add(NutsUtils.join(";",transientRepositories));
+        }
+
+        if(global){
+            all.add("--global");
+        }
+        if(readOnly){
+            all.add("--read-only");
+        }
+        if(skipPostCreateInstallCompanionTools){
+            all.add("--skip-install-companions");
+        }
+        if(recover){
+            all.add("--recover");
+        }
+        if(perf){
+            all.add("--perf");
+        }
+        return all.toArray(new String[0]);
     }
 
     public String[] getApplicationArguments() {
         return applicationArguments;
     }
+
 
     public NutsWorkspaceOptions setApplicationArguments(String[] applicationArguments) {
         this.applicationArguments = applicationArguments;
@@ -452,6 +568,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         return this;
     }
 
+    public NutsWorkspaceOpenMode getOpenMode() {
+        return openMode;
+    }
+
+    public NutsWorkspaceOptions setOpenMode(NutsWorkspaceOpenMode openMode) {
+        this.openMode = openMode;
+        return this;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("NutsBootOptions(");
@@ -480,9 +605,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         if (!empty) {
             sb.append(", ");
         }
-        sb.append("ignoreIfFound=").append(ignoreIfFound);
-        sb.append(", createIfNotFound=").append(createIfNotFound);
-        sb.append(", saveIfCreated=").append(saveIfCreated);
         sb.append(", archetype=").append(archetype);
         sb.append(", excludedExtensions=").append(Arrays.toString(excludedExtensions == null ? new String[0] : excludedExtensions));
         sb.append(", excludedRepositories=").append(Arrays.toString(excludedRepositories == null ? new String[0] : excludedRepositories));
