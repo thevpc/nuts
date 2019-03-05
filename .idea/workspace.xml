@@ -5,182 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="379c9d86-ad5b-40ff-bfba-0e47cd4149f7" name="Default" comment="v0.5.4&#10;Added WorkspaceList&#10;Integrated Nasreddine Bac Ali (NBA) Indexer (lucene) (added NutsIndexStoreClient Session.isIndexEnabled()...)&#10;Integrated Nasreddine Bac Ali (NBA) Clown (web front)&#10;Renamed older clown project to &quot;nuts-http-repo&quot;&#10;Updated feenoo to search by Java class versions&#10;Changed openMode in Workspace&#10;Added embedded mode to enable running nuts component into nuts own JVM&#10;Added createServiceLoader for custom class loading&#10;chaged --colors to --color (to use standard bash option naming)">
-      <change afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIdComparator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsServiceLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceListManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/AbstractSystemTerminalAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIndexStoreClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIndexStoreClientFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsServiceLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceLocation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceOpenMode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/_Utils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/filters/JavaSourceFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/filters/PathSourceFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/processors/JavaSourceFormatter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/processors/PathSourceFormatter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/resources/META-INF/services/net.vpc.app.nuts.toolbox.nsh.NutsCommand" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/angular.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/gulpfile.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/karma.conf.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/protractor.conf.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/proxy.conf.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/core.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/data/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/data/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/data/data.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/data/state.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/data/users.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/module-import-guard.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/utils/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@core/utils/analytics.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/footer/footer.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/footer/footer.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/header/header.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/header/header.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/header/header.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/layout-direction-switcher/layout-direction-switcher.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/ngx-table-switcher/workspace-enable-switcher.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/ngx-table-switcher/workspace-enable-switcher.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/search-input/search-input.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/search-input/search-input.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/switcher/switcher.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/switcher/switcher.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-settings/theme-settings.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-settings/theme-settings.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-switcher/theme-switcher.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-switcher/theme-switcher.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-switcher/theme-switcher.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-switcher/themes-switcher-list/theme-switcher-list.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/theme-switcher/themes-switcher-list/themes-switcher-list.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/workspace-switcher/workspace-switcher-list/workspace-switcher-list.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/workspace-switcher/workspace-switcher-list/workspace-switcher-list.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/workspace-switcher/workspace-switcher.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/workspace-switcher/workspace-switcher.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/components/workspace-switcher/workspace-switcher.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/directives/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/one-column/one-column.layout.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/one-column/one-column.layout.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/sample/sample.layout.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/sample/sample.layout.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/three-columns/three-columns.layout.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/three-columns/three-columns.layout.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/two-columns/two-columns.layout.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/layouts/two-columns/two-columns.layout.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/capitalize.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/eva-icons.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/number-with-commas.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/plural.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/round.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/pipes/timing.pipe.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/bootstrap-rtl.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/font-size.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/pace.theme.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/styles.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/theme.corporate.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/theme.cosmic.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/theme.default.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/styles/themes.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/@theme/theme.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/app-routing.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/app.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/app.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/dashboard/dashboard.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/dashboard/dashboard.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/dashboard/dashboard.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/dashboard/dashboard.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/miscellaneous/miscellaneous-routing.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/miscellaneous/miscellaneous.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/miscellaneous/miscellaneous.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/miscellaneous/not-found/not-found.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/miscellaneous/not-found/not-found.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/miscellaneous/not-found/not-found.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component-list/nuts-component-list.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component-list/nuts-component-list.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component-list/nuts-component-list.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component/nuts-component.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component/nuts-component.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component/nuts-component.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-repository/nuts-repository.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-repository/nuts-repository.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-repository/nuts-repository.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-repository/nuts-repository.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-repository/nuts-repository.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-repository/nuts-repository.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-workspace/nuts-workspace.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-workspace/nuts-workspace.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-workspace/nuts-workspace.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-workspace/nuts-workspace.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-workspace/nuts-workspace.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-workspace/nuts-workspace.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/pages-menu.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/pages-routing.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/pages.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/pages.module.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/data/news.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/alan.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/eva.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/jack.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/kate.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/kitten-corporate.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/lee.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/images/nick.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/leaflet-countries/countries.geo.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/assets/map/world.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/environments/environment.prod.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/environments/environment.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/favicon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/main.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/polyfills.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/tsconfig.app.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/tsconfig.spec.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/client/typings.d.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/NutsClownApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsComponentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsRepositoryService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsWorkspaceService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/webapp/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/webapp/favicon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/webapp/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/test/java/net/vpc/app/nuts/NutsClownApplicationTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/tsconfig.app.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/tsconfig.e2e.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/tsconfig.spec.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-clown/tslint.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/target/maven-archiver/pom.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/DataService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsComponentResource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsRepositoryResource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsWorkspacePool.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/RefreshDataService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/resources/META-INF/services/net.vpc.app.nuts.toolbox.nutsserver.NutsServerComponent" afterDir="false" />
       <change afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java/src/main/java/net/vpc/scholar/hadrumaths/BooleanRefs.java" afterDir="false" />
       <change afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java/src/main/java/net/vpc/scholar/hadrumaths/ComplexAsDoubleValues.java" afterDir="false" />
       <change afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadrumaths/hadrumaths-java/src/main/java/net/vpc/scholar/hadrumaths/format/impl/ReminderObjectFormat.java" afterDir="false" />
@@ -230,146 +54,7 @@
       <change afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruplot/src/main/java/net/vpc/scholar/hadruplot/console/PlotConsoleLogProgressMonitor.java" afterDir="false" />
       <change afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/hadruplot/src/main/java/net/vpc/scholar/hadruplot/util/PlotUtils.java" afterDir="false" />
       <change afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/tutorials/hadruwaves-tutorial/src/main/java/net/vpc/scholar/mentoring/ch02_hadrumaths/T06_ScalarProducts.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war_exploded.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_scholar_hadrumaths_3_1_21.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_scholar_hadrumaths_scala_3_1_21.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_scholar_hadruwaves_3_1_21.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_scholar_hadruwaves_scala_3_1_21.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jfree_jcommon_1_0_23.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jfree_jfreechart_1_0_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jzy3d_jzy3d_api_1_0_0_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jzy3d_jzy3d_jdt_core_1_0_0_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_scala_lang_scala_library_2_12_4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_scala_lang_scala_library_2_12_4.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_scalanlp_jblas_1_2_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/scala_compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-bootstrap/nuts-bundle.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-bootstrap/nuts-bundle.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-bootstrap/nuts.jar" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-bootstrap/nuts.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-clown/nuts-clown.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/nuts-http-repo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-clown/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-clown/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-clown/src/main/webapp/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/src/main/webapp/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-cmd-app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-cmd-app/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-cmd-app/src/main/java/net/vpc/app/nuts/app/NutsApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-cmd-app/src/main/java/net/vpc/app/nuts/app/NutsApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-cmd-app/src/main/java/net/vpc/app/nuts/app/NutsApplicationContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-cmd-app/src/main/java/net/vpc/app/nuts/app/NutsApplicationContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIOManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIOManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsId.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsId.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIdBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIdBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsQuery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspace.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspace.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceConfigManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceConfigManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceExtensionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceExtensionManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceInfoFormat.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceInfoFormat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceRepositoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceRepositoryManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/NutsIdAndNutsDependencyFilterItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/NutsIdAndNutsDependencyFilterItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/NutsIdGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/NutsIdGraph.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/NutsSessionImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/NutsSessionImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/bridges/maven/AbstractMavenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/bridges/maven/AbstractMavenRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/filters/version/DefaultNutsVersionFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/filters/version/DefaultNutsVersionFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/AbstractNutsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/AbstractNutsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/DefaultNutsRepositoryConfigManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/DefaultNutsRepositoryConfigManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/DefaultNutsSessionTerminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/DefaultNutsSessionTerminal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/DefaultNutsSystemTerminalBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/DefaultNutsSystemTerminalBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/DefaultSystemTerminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/DefaultSystemTerminal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/UnmodifiableTerminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/terminals/UnmodifiableTerminal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/nuts-servlet.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/nuts-servlet.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/src/main/java/net/vpc/app/nuts/extensions/servers/NutsHttpServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/src/main/java/net/vpc/app/nuts/extensions/servers/NutsHttpServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/classes/net/vpc/app/nuts/extensions/servers/NutsHttpServlet$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/classes/net/vpc/app/nuts/extensions/servers/NutsHttpServlet$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/classes/net/vpc/app/nuts/extensions/servers/NutsHttpServlet.class" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/classes/net/vpc/app/nuts/extensions/servers/NutsHttpServlet.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/dependency/java-shell-0.7.1.jar" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/dependency/java-shell-0.7.1.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-tomcat-classloader/nuts-tomcat-classloader.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-tomcat-classloader/nuts-tomcat-classloader.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-tomcat-classloader/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-tomcat-classloader/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-tomcat-classloader/src/main/java/net/vpc/app/nuts/tomcatclassloader/NutsTomcatClassLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-tomcat-classloader/src/main/java/net/vpc/app/nuts/tomcatclassloader/NutsTomcatClassLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/nuts.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/nuts.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/Nuts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsArgumentsParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsArgumentsParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootWorkspace.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsBootWorkspace.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIOManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIOManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsId.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsId.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIdBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIdBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsInstallListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsInstallListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsLogUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsLogUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsQuery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfigManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfigManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsSessionTerminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsSessionTerminal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsSystemTerminalBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsSystemTerminalBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsTerminalBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsTerminalBase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspace.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspace.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceConfigManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceConfigManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceExtensionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceExtensionManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListenerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListenerAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceOptions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceRepositoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceRepositoryManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/log/net/vpc/app/nuts/nuts/LATEST/nuts-0.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/nuts-workspace.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/nuts-workspace.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/local/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/local/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/maven-central/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/maven-central/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/maven-central/repositories/maven-central-ref/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/maven-central/repositories/maven-central-ref/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/maven-local/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/maven-local/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/null/nuts/system-repository/nuts-repository.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/vpc-public-maven/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/vpc-public-maven/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/vpc-public-maven/repositories/vpc-public-maven-ref/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/vpc-public-maven/repositories/vpc-public-maven-ref/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/vpc-public-nuts/nuts-repository.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/repositories/vpc-public-nuts/nuts-repository.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/repositories/vpc-public-nuts/repositories/nuts-repository.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/derby/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/derby/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/feenoo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/feenoo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/Feenoo.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/Feenoo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/FileLookup.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/FileLookup.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/JavaTypeLookup.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/SourceNavigator.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/SourceNavigator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/SourceProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/SourceProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/JavaTypeSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/JavaTypeSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/SourceAdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/SourceAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/ZipEntrySource.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/ZipEntrySource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/ZipSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/src/main/java/net/vpc/nuts/toolbox/feenoo/sources/ZipSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/file-version/file-version.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/file-version/file-version.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/file-version/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/file-version/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/mvn/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/mvn/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/mysql/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/mysql/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nadmin/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nadmin/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nadmin/src/main/java/net/vpc/app/nuts/toolbox/nadmin/config/WorkspaceNAdminSubCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nadmin/src/main/java/net/vpc/app/nuts/toolbox/nadmin/config/WorkspaceNAdminSubCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nded/nded.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nded/nded.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nded/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nded/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nded/src/main/java/net/vpc/app/nuts/toolbox/ndesced/NdedMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nded/src/main/java/net/vpc/app/nuts/toolbox/ndesced/NdedMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/ndi/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/ndi/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nfind/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nfind/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/AbstractNutsCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/AbstractNutsCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/Nsh.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/Nsh.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/NutsCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/NutsCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/NutsJavaShell.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/NutsJavaShell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/term/NutsJLineHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/term/NutsJLineHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/term/NutsJLineTerminal.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/term/NutsJLineTerminal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/src/main/resources/META-INF/services/net.vpc.app.nuts.NutsComponent" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/src/main/resources/META-INF/services/net.vpc.app.nuts.NutsComponent" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-server/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/DefaultNutsWorkspaceServerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/DefaultNutsWorkspaceServerManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/java/net/vpc/app/nuts/toolbox/nutsserver/NutsServerMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/src/main/resources/META-INF/services/net.vpc.app.nuts.NutsComponent" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-server/src/main/resources/META-INF/services/net.vpc.app.nuts.NutsComponent" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/tomcat/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/tomcat/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/remote/RemoteTomcatAppConfigService.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/tomcat/src/main/java/net/vpc/toolbox/tomcat/remote/RemoteTomcatAppConfigService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/tomcat/tomcat.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/tomcat/tomcat.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/worky/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/worky/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/worky/src/main/java/net/vpc/toolbox/worky/ProjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/worky/src/main/java/net/vpc/toolbox/worky/ProjectService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/worky/worky.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/worky/worky.iml" afterDir="false" />
       <change beforePath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/compiler.xml" beforeDir="false" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/encodings.xml" beforeDir="false" afterPath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/.idea/libraries/Maven__net_vpc_common_gomail_1_2_6.xml" beforeDir="false" />
@@ -1099,15 +784,6 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIndexStoreClientFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceRepositoryManager.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="493">
@@ -1128,28 +804,73 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/DefaultNutsRepositoryFactoryComponent.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="730">
-              <caret line="89" column="123" selection-start-line="89" selection-start-column="123" selection-end-line="89" selection-end-column="123" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceConfigManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="209" column="11" selection-start-line="209" selection-start-column="11" selection-end-line="209" selection-end-column="11" />
+            <state relative-caret-position="264">
+              <caret line="204" selection-start-line="204" selection-end-line="204" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/filters/version/DefaultNutsVersionFilter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="57" column="34" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/pom.xml">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerApplication.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
+              <folding>
+                <element signature="e#346#347#0" expanded="true" />
+                <element signature="e#419#420#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/toolbox/nadmin/src/main/java/net/vpc/app/nuts/toolbox/nadmin/NAdminMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="14" column="37" selection-start-line="14" selection-start-column="37" selection-end-line="14" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nuts-cmd-app/src/main/java/net/vpc/app/nuts/app/NutsApplication.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1470">
+              <caret line="103" column="35" lean-forward="true" selection-start-line="103" selection-start-column="35" selection-end-line="103" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceConfigManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
-              <caret line="1054" column="59" selection-start-line="1054" selection-start-column="59" selection-end-line="1054" selection-end-column="59" />
+            <state relative-caret-position="-2">
+              <caret line="1032" column="91" selection-start-line="1032" selection-start-column="8" selection-end-line="1032" selection-end-column="91" />
             </state>
           </provider>
         </entry>
@@ -1159,27 +880,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="388">
               <caret line="103" column="32" selection-start-line="103" selection-start-column="32" selection-end-line="103" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfig.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="235" column="37" selection-start-line="235" selection-start-column="37" selection-end-line="235" selection-end-column="37" />
-              <folding>
-                <element signature="e#7321#7322#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceRepositoryManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="53" column="19" selection-start-line="53" selection-start-column="19" selection-end-line="53" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -1298,7 +998,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/nuts-clown/pom.xml" />
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceLocation.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/toolbox/nuts-indexer/pom.xml" />
@@ -1349,6 +1048,7 @@
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfig.java" />
         <option value="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/DefaultNutsRepositoryConfigManager.java" />
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfigManager.java" />
+        <option value="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/filters/version/DefaultNutsVersionFilter.java" />
       </list>
     </option>
   </component>
@@ -1367,44 +1067,7 @@
   </component>
   <component name="MavenProjectNavigator">
     <treeState>
-      <expand>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.app.nuts.nuts-builder" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.app.nuts.nuts-builder" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.app.nuts.nuts-clown" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.app.nuts.nuts-clown" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.common.vpc-common-strings" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.common.vpc-common-strings" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.common.vpc-common-utils" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="net.vpc.common.vpc-common-utils" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
-        </path>
-      </expand>
+      <expand />
       <select />
     </treeState>
   </component>
@@ -1415,7 +1078,7 @@
     <scope name="local-nuts" pattern="src[nuts]:*..*||src[nuts-core]:*..*" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1919" />
+    <option name="x" value="-1" />
     <option name="y" value="-1" />
     <option name="width" value="1922" />
     <option name="height" value="1052" />
@@ -1479,7 +1142,22 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nuts" type="462c0819:PsiDirectoryNode" />
+              <item name="webapps" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope" />
     </panes>
   </component>
@@ -1490,7 +1168,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551745461320" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551780549426" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="full.screen.before.presentation.mode" value="false" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/toolbox/nsh/src/main/java/net/vpc/app/nuts/toolbox/nsh/util" />
@@ -2018,7 +1696,7 @@
       <workItem from="1551470792488" duration="2276000" />
       <workItem from="1551517268110" duration="20508000" />
       <workItem from="1551638271940" duration="2843000" />
-      <workItem from="1551719587731" duration="25180000" />
+      <workItem from="1551719587731" duration="27251000" />
     </task>
     <task id="LOCAL-00001" summary="added version command">
       <created>1504116893614</created>
@@ -2244,7 +1922,14 @@
       <option name="project" value="LOCAL" />
       <updated>1543150969171</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="v0.5.4&#10;Added WorkspaceList&#10;Integrated Nasreddine Bac Ali (NBA) Indexer (lucene) (added NutsIndexStoreClient Session.isIndexEnabled()...)&#10;Integrated Nasreddine Bac Ali (NBA) Clown (web front)&#10;Renamed older clown project to &quot;nuts-http-repo&quot;&#10;Updated feenoo to search by Java class versions&#10;Changed openMode in Workspace&#10;Added embedded mode to enable running nuts component into nuts own JVM&#10;Added createServiceLoader for custom class loading&#10;chaged --colors to --color (to use standard bash option naming)">
+      <created>1551745483633</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1551745483633</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2280,7 +1965,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1014419000" />
+    <option name="totallyTimeSpent" value="1016490000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -2292,9 +1977,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1919" y="-1" width="1922" height="1052" extended-state="6" />
+    <frame x="-1" y="-1" width="1922" height="1082" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21931697" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2113127" />
       <window_info id="Structure" order="1" weight="0.16168623" />
       <window_info id="Web" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
@@ -2306,7 +1991,7 @@
       <window_info anchor="bottom" id="TypeScript" order="1" />
       <window_info anchor="bottom" id="Message" order="2" />
       <window_info anchor="bottom" id="Find" order="3" weight="0.5520607" />
-      <window_info anchor="bottom" id="Run" order="4" weight="0.33188722" />
+      <window_info anchor="bottom" id="Run" order="4" visible="true" weight="0.18172269" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" weight="0.32976446" />
@@ -2322,7 +2007,7 @@
       <window_info anchor="right" id="Bean Validation" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24919957" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" visible="true" weight="0.1430096" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.1430096" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
       <window_info anchor="right" id="Theme Preview" order="5" />
@@ -2331,7 +2016,7 @@
       <window_info anchor="right" id="CDI" order="8" />
       <window_info anchor="right" id="Coverage" order="9" sideWeight="0.50179857" side_tool="true" weight="0.31643543" />
       <window_info anchor="right" id="Maven Projects" order="10" sideWeight="0.49820143" visible="true" weight="0.09284952" />
-      <window_info anchor="right" id="Maven" order="11" weight="0.14407684" />
+      <window_info anchor="right" id="Maven" order="11" weight="0.20170757" />
     </layout>
     <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27395833" />
@@ -2396,7 +2081,8 @@
     <MESSAGE value="v0.5.0&#10;Fixed resource location" />
     <MESSAGE value="v0.5.0&#10;Added Worky tool" />
     <MESSAGE value="v0.5.0&#10;Cleaned Bootsrap sequence&#10;Introduced NutsApplication class" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.5.0&#10;Cleaned Bootsrap sequence&#10;Introduced NutsApplication class" />
+    <MESSAGE value="v0.5.4&#10;Added WorkspaceList&#10;Integrated Nasreddine Bac Ali (NBA) Indexer (lucene) (added NutsIndexStoreClient Session.isIndexEnabled()...)&#10;Integrated Nasreddine Bac Ali (NBA) Clown (web front)&#10;Renamed older clown project to &quot;nuts-http-repo&quot;&#10;Updated feenoo to search by Java class versions&#10;Changed openMode in Workspace&#10;Added embedded mode to enable running nuts component into nuts own JVM&#10;Added createServiceLoader for custom class loading&#10;chaged --colors to --color (to use standard bash option naming)" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.5.4&#10;Added WorkspaceList&#10;Integrated Nasreddine Bac Ali (NBA) Indexer (lucene) (added NutsIndexStoreClient Session.isIndexEnabled()...)&#10;Integrated Nasreddine Bac Ali (NBA) Clown (web front)&#10;Renamed older clown project to &quot;nuts-http-repo&quot;&#10;Updated feenoo to search by Java class versions&#10;Changed openMode in Workspace&#10;Added embedded mode to enable running nuts component into nuts own JVM&#10;Added createServiceLoader for custom class loading&#10;chaged --colors to --color (to use standard bash option naming)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2666,63 +2352,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="126" selection-start-line="126" selection-end-line="126" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#7405#7406#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsDescriptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="208" column="23" selection-start-line="208" selection-start-column="23" selection-end-line="208" selection-end-column="23" />
-          <folding>
-            <element signature="e#7288#7289#0" expanded="true" />
-            <element signature="e#7323#7324#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsDescriptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="74" column="21" selection-start-line="74" selection-start-column="21" selection-end-line="74" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsDefinition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="37" column="17" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsFetch.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="47" selection-start-line="47" selection-end-line="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/bridges/maven/AbstractMavenRepository.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="144" selection-start-line="144" selection-end-line="144" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/5.0.12.RELEASE/spring-context-5.0.12.RELEASE.jar!/org/springframework/scheduling/support/ScheduledMethodRunnable.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/5.0.12.RELEASE/spring-context-5.0.12.RELEASE.jar!/org/springframework/scheduling/support/DelegatingErrorHandlingRunnable.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="146">
@@ -3011,7 +2640,7 @@
     <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsIndexStoreClientFactory.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
         </state>
       </provider>
     </entry>
@@ -3052,13 +2681,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="730">
           <caret line="89" column="123" selection-start-line="89" selection-start-column="123" selection-end-line="89" selection-end-column="123" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceConfigManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="1054" column="59" selection-start-line="1054" selection-start-column="59" selection-end-line="1054" selection-end-column="59" />
         </state>
       </provider>
     </entry>
@@ -3103,8 +2725,68 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceConfigManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="209" column="11" selection-start-line="209" selection-start-column="11" selection-end-line="209" selection-end-column="11" />
+        <state relative-caret-position="264">
+          <caret line="204" selection-start-line="204" selection-end-line="204" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/filters/version/DefaultNutsVersionFilter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="57" column="34" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/pom.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot/2.0.8.RELEASE/spring-boot-2.0.8.RELEASE.jar!/org/springframework/boot/SpringApplication.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="138" column="47" selection-start-line="138" selection-start-column="47" selection-end-line="138" selection-end-column="47" />
+          <folding>
+            <element signature="e#4450#4451#0" expanded="true" />
+            <element signature="e#4508#4509#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
+          <folding>
+            <element signature="e#346#347#0" expanded="true" />
+            <element signature="e#419#420#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/toolbox/nadmin/src/main/java/net/vpc/app/nuts/toolbox/nadmin/NAdminMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="14" column="37" selection-start-line="14" selection-start-column="37" selection-end-line="14" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-cmd-app/src/main/java/net/vpc/app/nuts/app/NutsApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1470">
+          <caret line="103" column="35" lean-forward="true" selection-start-line="103" selection-start-column="35" selection-end-line="103" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceConfigManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2">
+          <caret line="1032" column="91" selection-start-line="1032" selection-start-column="8" selection-end-line="1032" selection-end-column="91" />
         </state>
       </provider>
     </entry>
