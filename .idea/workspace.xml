@@ -5,244 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="379c9d86-ad5b-40ff-bfba-0e47cd4149f7" name="Default" comment="v0.5.4&#10;Edit NutsWorkspaceListManager (getWorkspaces)&#10;Edit nuts-indexer&#10;Add DefaultNutsIndexStoreClient and DefaultNutsIndexStoreClientFactory">
-      <change afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIndexStoreClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsIndexStoreClientFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/nuts_clown_war_exploded.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__asm_asm_3_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_jniloader_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_core_1_1_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_native_ref_java_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_native_system_java_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_ref_linux_armhf_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_ref_linux_i686_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_ref_linux_x86_64_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_ref_osx_x86_64_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_ref_win_i686_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_ref_win_x86_64_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_system_linux_armhf_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_system_linux_i686_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_system_linux_x86_64_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_system_osx_x86_64_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_system_win_i686_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_fommil_netlib_netlib_native_system_win_x86_64_natives_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_wumpz_diffutils_2_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_android_tools_dx_1_7.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_8_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_lanterna_lanterna_3_1_0_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_lanterna_lanterna_native_integration_3_1_0_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_miglayout_miglayout_3_7_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nativelibs4java_bridj_0_6_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nativelibs4java_javacl_1_0_0_RC2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nativelibs4java_javacl_core_1_0_0_RC2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nativelibs4java_nativelibs4java_utils_1_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nativelibs4java_opencl4java_1_0_0_RC2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_oracle_ojdbc14_10_2_0_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_net_commons_net_2_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__de_mukis_de_mukis_jama_2_0_0_M1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__it_sauronsoftware_cron4j_cron4j_2_2_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__java_oo_javac8_oo_plugin_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_activation_activation_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_help_javahelp_2_0_05.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_mail_mail_1_5_0_b01.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_3_8_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_11.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_16.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_5_1_35.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_4_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_4_2_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_4_4_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_platform_4_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_platform_4_2_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sf_opencsv_opencsv_2_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_f2j_arpack_combined_all_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_jexcelapi_jxl_2_6.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_jmatio_jmatio_1_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_common_vpc_common_config_1_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_common_vpc_common_log_1_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_common_vpc_common_prs_2_2_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_common_vpc_common_swings_prs_2_3_8.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_toolbox_jlauncher_1_4_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_vpc_upa_upa_api_1_2_0_48.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_math3_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_derby_derby_10_13_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_derby_derbyclient_10_13_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_extras_beanshell_bsh_2_1_0_pre.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_felix_org_apache_felix_framework_4_2_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_felix_org_apache_felix_main_4_2_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_aether_provider_3_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_artifact_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_core_3_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_model_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_model_builder_3_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_plugin_api_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_repository_metadata_3_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_settings_3_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_maven_settings_builder_3_0_5.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_maven_plugin_tools_maven_plugin_annotations_3_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_0_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_classworlds_2_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_interpolation_1_14.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_plexus_plexus_utils_2_0_6.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jgit_org_eclipse_jgit_4_4_1_201607150455_r.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jblas_jblas_1_2_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jfree_jfreechart_1_5_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_main_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_android_aarch64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_android_armv6_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_linux_amd64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_linux_armv6_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_linux_armv6hf_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_linux_i586_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_macosx_universal_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_solaris_amd64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_solaris_i586_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_windows_amd64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_gluegen_gluegen_rt_natives_windows_i586_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_main_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_android_aarch64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_android_armv6_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_linux_amd64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_linux_armv6_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_linux_armv6hf_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_linux_i586_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_macosx_universal_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_solaris_amd64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_solaris_i586_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_windows_amd64_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jogamp_jogl_jogl_all_natives_windows_i586_2_3_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jzy3d_jzy3d_api_1_0_1_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jzy3d_jzy3d_jdt_core_1_0_1_SNAPSHOT.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_annotations_common_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_htmlui_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_intent_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_io_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_progress_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_progress_nb_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_api_templates_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_core_multiview_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_core_netigso_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_lib_uihandler_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_libs_asm_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_libs_javafx_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_libs_junit4_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_libs_osgi_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_autoupdate_services_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_autoupdate_ui_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_editor_mimelookup_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_keyring_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_nbjunit_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_options_api_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_print_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_queries_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_sampler_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_sendopts_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_modules_settings_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_spi_quicksearch_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_swing_outline_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_swing_plaf_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_netbeans_swing_tabcontrol_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_actions_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_awt_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_dialogs_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_execution_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_explorer_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_filesystems_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_filesystems_compat8_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_filesystems_nb_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_io_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_loaders_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_modules_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_nodes_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_text_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_util_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_util_lookup_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_util_ui_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_api_org_openide_windows_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_asm_all_5_0_1_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_boot_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_boot_fx_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_boot_script_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_geo_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_json_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_net_java_html_sound_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_org_eclipse_osgi_3_9_1_v20140110_1610_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_org_netbeans_html_ko4j_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_org_netbeans_html_xhr4j_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_osgi_cmpn_4_2_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_osgi_core_5_0_0_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_swing_layout_1_0_4_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_testng_6_8_1_dist_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_external_updater_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_bootstrap_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_core_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_core_startup_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_core_startup_base_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_core_ui_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_core_windows_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_insane_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_libs_felix_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_libs_jna_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_libs_jna_platform_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_modules_autoupdate_cli_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_modules_favorites_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_modules_keyring_fallback_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_modules_masterfs_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_netbeans_modules_org_netbeans_modules_options_keymap_RELEASE82.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_ojalgo_ojalgo_31_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_asm_asm_all_5_0_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_scala_lang_scala_library_2_12_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_smurn_jply_0_2_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_aether_aether_api_1_13_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_aether_aether_impl_1_13_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_aether_aether_spi_1_13_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_aether_aether_util_1_13_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_plexus_plexus_cipher_1_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_sisu_sisu_guice_noaop_2_1_7.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_sisu_sisu_inject_bean_1_4_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_sonatype_sisu_sisu_inject_plexus_1_4_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-cmd-app/nuts-cmd-app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-cmd-app/nuts-cmd-app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/nuts-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/nuts-core.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceListManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceListManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-root.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-root.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/nuts-servlet.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/nuts-servlet.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/dependency/java-shell-0.7.1.jar" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/dependency/java-shell-0.7.1.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts-servlet/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/nuts-servlet/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceLocation.java" beforeDir="false" afterPath="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceLocation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/derby/derby.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/derby/derby.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/feenoo/feenoo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/feenoo/feenoo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/file-version/file-version.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/file-version/file-version.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/mvn/mvn.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/mvn/mvn.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/mysql/mysql.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nadmin/nadmin.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nadmin/nadmin.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nded/nded.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nded/nded.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/ndi/ndi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/ndi/ndi.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nfind/nfind.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nfind/nfind.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nsh/nsh.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsWorkspaceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsWorkspaceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-http-repo/nuts-http-repo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/nuts-http-repo.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-http-repo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-http-repo/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-http-repo/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/NutsIndexerUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/DataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/DataService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsComponentResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsComponentResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsRepositoryResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/NutsRepositoryResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/RefreshDataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-indexer/src/main/java/net/vpc/app/nuts/indexer/services/RefreshDataService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/nuts-server/nuts-server.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox/tomcat/tomcat.iml" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox/tomcat/tomcat.iml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/nuts-clown/target/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -421,7 +185,7 @@
         <entry file="file://$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsWorkspaceService.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="225">
-              <caret line="52" column="37" lean-forward="true" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
+              <caret line="52" column="37" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -435,14 +199,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceListManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
+            <state relative-caret-position="1103">
               <caret line="85" column="20" selection-start-line="85" selection-start-column="20" selection-end-line="85" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" column="8" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -579,7 +352,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/toolbox/nuts-clown/src/client/app/pages/nuts-components/nuts-component-list/nuts-component-list.component.ts" />
         <option value="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsComponentService.java" />
         <option value="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/NutsClownApplication.java" />
         <option value="$PROJECT_DIR$/toolbox/nuts-clown/pom.xml" />
@@ -630,6 +402,7 @@
         <option value="$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsWorkspaceListManager.java" />
         <option value="$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsWorkspaceService.java" />
         <option value="$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceListManager.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -751,67 +524,7 @@
             <path>
               <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
               <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="clown" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="clown" type="462c0819:PsiDirectoryNode" />
-              <item name="services" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nuts-root" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nuts" type="462c0819:PsiDirectoryNode" />
-              <item name="toolbox" type="462c0819:PsiDirectoryNode" />
-              <item name="nuts-clown" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="nuts-servlet" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -827,7 +540,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551805849222" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551805987981" />
     <property name="editor.config.ad.shown" value="true" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="full.screen.before.presentation.mode" value="false" />
@@ -1365,7 +1078,7 @@
       <workItem from="1551638271940" duration="2843000" />
       <workItem from="1551719587731" duration="27251000" />
       <workItem from="1551782150541" duration="761000" />
-      <workItem from="1551782984547" duration="21153000" />
+      <workItem from="1551782984547" duration="21342000" />
     </task>
     <task id="LOCAL-00001" summary="added version command">
       <created>1504116893614</created>
@@ -1598,7 +1311,14 @@
       <option name="project" value="LOCAL" />
       <updated>1551745483633</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="v0.5.4&#10;Edit NutsWorkspaceListManager (getWorkspaces)&#10;Edit nuts-indexer&#10;Add DefaultNutsIndexStoreClient and DefaultNutsIndexStoreClientFactory">
+      <created>1551805859393</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1551805859393</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1634,7 +1354,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1038404000" />
+    <option name="totallyTimeSpent" value="1038593000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1658,12 +1378,12 @@
       <window_info id="Capture Tool" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info id="Learn" order="8" />
-      <window_info anchor="bottom" id="Run Dashboard" visible="true" weight="0.43393782" />
+      <window_info anchor="bottom" id="Run Dashboard" weight="0.43393782" />
       <window_info anchor="bottom" id="Spring" order="0" />
       <window_info anchor="bottom" id="TypeScript" order="1" />
       <window_info anchor="bottom" id="Message" order="2" />
       <window_info anchor="bottom" id="Find" order="3" weight="0.5518135" />
-      <window_info anchor="bottom" id="Run" order="4" weight="0.4222798" />
+      <window_info anchor="bottom" id="Run" order="4" visible="true" weight="0.4222798" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" weight="0.32976446" />
@@ -1757,7 +1477,8 @@
     <MESSAGE value="v0.5.0&#10;Added Worky tool" />
     <MESSAGE value="v0.5.0&#10;Cleaned Bootsrap sequence&#10;Introduced NutsApplication class" />
     <MESSAGE value="v0.5.4&#10;Added WorkspaceList&#10;Integrated Nasreddine Bac Ali (NBA) Indexer (lucene) (added NutsIndexStoreClient Session.isIndexEnabled()...)&#10;Integrated Nasreddine Bac Ali (NBA) Clown (web front)&#10;Renamed older clown project to &quot;nuts-http-repo&quot;&#10;Updated feenoo to search by Java class versions&#10;Changed openMode in Workspace&#10;Added embedded mode to enable running nuts component into nuts own JVM&#10;Added createServiceLoader for custom class loading&#10;chaged --colors to --color (to use standard bash option naming)" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.5.4&#10;Added WorkspaceList&#10;Integrated Nasreddine Bac Ali (NBA) Indexer (lucene) (added NutsIndexStoreClient Session.isIndexEnabled()...)&#10;Integrated Nasreddine Bac Ali (NBA) Clown (web front)&#10;Renamed older clown project to &quot;nuts-http-repo&quot;&#10;Updated feenoo to search by Java class versions&#10;Changed openMode in Workspace&#10;Added embedded mode to enable running nuts component into nuts own JVM&#10;Added createServiceLoader for custom class loading&#10;chaged --colors to --color (to use standard bash option naming)" />
+    <MESSAGE value="v0.5.4&#10;Edit NutsWorkspaceListManager (getWorkspaces)&#10;Edit nuts-indexer&#10;Add DefaultNutsIndexStoreClient and DefaultNutsIndexStoreClientFactory" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.5.4&#10;Edit NutsWorkspaceListManager (getWorkspaces)&#10;Edit nuts-indexer&#10;Add DefaultNutsIndexStoreClient and DefaultNutsIndexStoreClientFactory" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2015,17 +1736,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/nuts/src/main/java/net/vpc/app/nuts/NutsRepositoryConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="237" column="5" lean-forward="true" selection-start-line="237" selection-start-column="5" selection-end-line="237" selection-end-column="5" />
-          <folding>
-            <element signature="e#7286#7287#0" expanded="true" />
-            <element signature="e#7321#7322#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/repos/DefaultNutsRepositoryConfigManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -2430,7 +2140,7 @@
     <entry file="file://$PROJECT_DIR$/toolbox/nuts-clown/src/main/java/net/vpc/app/nuts/clown/services/NutsWorkspaceService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
-          <caret line="52" column="37" lean-forward="true" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
+          <caret line="52" column="37" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
         </state>
       </provider>
     </entry>
@@ -2443,11 +2153,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nuts-core/src/main/java/net/vpc/app/nuts/core/DefaultNutsWorkspaceListManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
+        <state relative-caret-position="1103">
           <caret line="85" column="20" selection-start-line="85" selection-start-column="20" selection-end-line="85" selection-end-column="20" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="8" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
         </state>
       </provider>
     </entry>
