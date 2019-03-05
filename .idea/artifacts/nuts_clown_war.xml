@@ -1,13 +1,13 @@
 <component name="ArtifactManager">
   <artifact type="war" name="nuts-clown:war">
-    <output-path>$PROJECT_DIR$/nuts-clown/target</output-path>
+    <output-path>$PROJECT_DIR$/toolbox/nuts-clown/target</output-path>
     <properties id="maven-jee-properties">
       <options>
         <module>nuts-clown</module>
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="nuts-http-server-0.5.3.0.war">
+    <root id="archive" name="nuts-clown-0.5.4.0.war">
       <element id="artifact" artifact-name="nuts-clown:war exploded" />
     </root>
   </artifact>

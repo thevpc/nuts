@@ -124,6 +124,7 @@
       <module name="nuts-cmd-app" target="1.8" />
       <module name="nuts-core" target="1.8" />
       <module name="nuts-http-repo" target="1.5" />
+      <module name="nuts-http-server" target="1.5" />
       <module name="nuts-indexer" target="1.8" />
       <module name="nuts-root" target="1.5" />
       <module name="nuts-server" target="1.8" />

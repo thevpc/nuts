@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.StringReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("indexer/components")
@@ -22,22 +23,14 @@ public class NutsComponentResource {
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> getAll(@RequestParam("workspace") String workspace) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
-        List<Map<String, Object>> result = this.dataService.
+        List<Map<String, String>> rows = this.dataService.
                 getAllData(NutsIndexerUtils.getCacheDir(ws, "components"));
-
-        for (Map<String, Object> res : result) {
-            String[] array =ws.getIOManager().readJson(new StringReader(res.get("dependencies").toString()),String[].class);
-            List<Map<String, String>> dependencies = new ArrayList<>();
-            for (String s : array) {
-                dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)));
-            }
-            res.put("dependencies", dependencies);
-        }
-        return ResponseEntity.ok(result);
+        List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
+        return ResponseEntity.ok(resData);
     }
 
     @GetMapping(value = "dependencies", produces = "application/json")
-    public ResponseEntity<List<Map<String, Object>>> getDependencies(@RequestParam("workspace") String workspace,
+    public ResponseEntity<List<Map<String, String>>> getDependencies(@RequestParam("workspace") String workspace,
                                                                      @RequestParam("name") String name,
                                                                      @RequestParam("namespace") String namespace,
                                                                      @RequestParam("group") String group,
@@ -47,29 +40,56 @@ public class NutsComponentResource {
                                                                      @RequestParam("arch") String arch,
                                                                      @RequestParam("face") String face,
                                                                      @RequestParam("scope") String scope,
-                                                                     @RequestParam("alternative") String alternative) {
+                                                                     @RequestParam("alternative") String alternative,
+                                                                     @RequestParam("all") Boolean all) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
-        Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                ws.createIdBuilder()
-                        .setName(name)
-                        .setNamespace(namespace)
-                        .setGroup(group)
-                        .setVersion(version)
-                        .setArch(arch)
-                        .setOs(os)
-                        .setOsdist(osdist)
-                        .setFace(face)
-                        .setScope(scope)
-                        .setAlternative(alternative)
-                        .build());
-        List<Map<String, Object>> result = this.dataService.
-                searchData(NutsIndexerUtils.getCacheDir(ws, "components"), data);
-        if (!result.isEmpty()) {
-            Map[] array =ws.getIOManager().readJson(new StringReader(result.get(0).get("dependencies").toString()),Map[].class);
-            List<Map<String, Object>> dependencies = new ArrayList(Arrays.asList(array));
-            result = dependencies;
+        NutsId id = ws.createIdBuilder()
+                .setName(name)
+                .setNamespace(namespace)
+                .setGroup(group)
+                .setVersion(version)
+                .setArch(arch)
+                .setOs(os)
+                .setOsdist(osdist)
+                .setFace(face)
+                .setScope(scope)
+                .setAlternative(alternative)
+                .build();
+        List<Map<String, String>> result;
+        if (all) {
+            result = this.dataService.getAllDependencies(ws, NutsIndexerUtils.getCacheDir(ws, "components"), id);
+        } else {
+            result = this.dataService.getDependencies(ws, NutsIndexerUtils.getCacheDir(ws, "components"), id);
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "allVersions", produces = "application/json")
+    public ResponseEntity<List<Map<String, Object>>> getAllVersions(@RequestParam("workspace") String workspace,
+                                                                    @RequestParam("name") String name,
+                                                                    @RequestParam("namespace") String namespace,
+                                                                    @RequestParam("group") String group,
+                                                                    @RequestParam("os") String os,
+                                                                    @RequestParam("osdist") String osdist,
+                                                                    @RequestParam("arch") String arch,
+                                                                    @RequestParam("face") String face,
+                                                                    @RequestParam("scope") String scope,
+                                                                    @RequestParam("alternative") String alternative) {
+        NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
+        NutsId id = ws.createIdBuilder()
+                .setName(name)
+                .setNamespace(namespace)
+                .setGroup(group)
+                .setArch(arch)
+                .setOs(os)
+                .setOsdist(osdist)
+                .setFace(face)
+                .setScope(scope)
+                .setAlternative(alternative)
+                .build();
+        List<Map<String, String>> rows = this.dataService.getAllVersions(ws, NutsIndexerUtils.getCacheDir(ws, "components"), id);
+        List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
+        return ResponseEntity.ok(resData);
     }
 
     @GetMapping(value = "delete", produces = "application/json")
@@ -102,5 +122,26 @@ public class NutsComponentResource {
         return getAll(workspace);
     }
 
-
+    private List<Map<String, Object>> cleanNutsIdMap(NutsWorkspace ws, List<Map<String, String>> rows) {
+        List<Map<String, Object>> resData = new ArrayList<>();
+        for (Map<String, String> row : rows) {
+            Map<String, Object> d = new HashMap<>(row);
+            String[] array = ws.getIOManager().readJson(new StringReader(row.get("dependencies")), String[].class);
+            List<Map<String, String>> dependencies = new ArrayList<>();
+            for (String s : array) {
+                dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)));
+            }
+            d.put("dependencies", dependencies);
+            if (d.containsKey("allDependencies")) {
+                array = ws.getIOManager().readJson(new StringReader(row.get("allDependencies")), String[].class);
+                List<Map<String, String>> allDependencies = new ArrayList<>();
+                for (String s : array) {
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)));
+                }
+                d.put("allDependencies", allDependencies);
+            }
+            resData.add(d);
+        }
+        return resData;
+    }
 }

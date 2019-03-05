@@ -2,10 +2,7 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Class for managing a Workspace list
@@ -15,7 +12,7 @@ import java.util.UUID;
  */
 public interface NutsWorkspaceListManager {
 
-    Map<String, NutsWorkspaceLocation> getWorkspaces();
+    List<NutsWorkspaceLocation> getWorkspaces();
 
     NutsWorkspaceListConfig getConfig();
 
@@ -23,9 +20,7 @@ public interface NutsWorkspaceListManager {
 
     NutsWorkspace addWorkspace(String name);
 
-    void save();
-
-    boolean deleteWorkspace(String name);
+    boolean removeWorkspace(String name);
 
     void onOffWorkspace(String name, Boolean value);
 }

@@ -9,8 +9,8 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/../../common/java-shell/pom.xml" />
-        <option value="$PROJECT_DIR$/../../common/maven/writer-maven-plugin/pom.xml" />
+        <option value="$USER_HOME$/common/java-shell/pom.xml" />
+        <option value="$USER_HOME$/common/maven/writer-maven-plugin/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-io/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-utils/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/scholar/scholar-mw/pom.xml" />
@@ -19,7 +19,7 @@
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-swings/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-strings/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-desktop-automation/pom.xml" />
-        <option value="$PROJECT_DIR$/../../toolbox/mvn-box/pom.xml" />
+        <option value="$USER_HOME$/toolbox/mvn-box/pom.xml" />
         <option value="$PROJECT_DIR$/nuts-servlet/pom.xml" />
         <option value="$PROJECT_DIR$/nuts-sh/pom.xml" />
         <option value="$PROJECT_DIR$/nuts-server/pom.xml" />
@@ -34,9 +34,11 @@
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/common/vpc-common/vpc-common-mvn/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/jvmon/pom.xml" />
         <option value="$USER_HOME$/data-vpc/Data/xprojects/net/vpc/apps/nuts/toolbox/worky/pom.xml" />
-        <option value="$PROJECT_DIR$/../../common/vpc-common/vpc-common-fprint/pom.xml" />
-        <option value="$PROJECT_DIR$/../../common/pheromone/vpc-pheromone-app/pom.xml" />
-        <option value="$PROJECT_DIR$/../../common/vpc-common/vpc-common-ssh/pom.xml" />
+        <option value="$USER_HOME$/common/vpc-common/vpc-common-fprint/pom.xml" />
+        <option value="$USER_HOME$/common/pheromone/vpc-pheromone-app/pom.xml" />
+        <option value="$USER_HOME$/common/vpc-common/vpc-common-ssh/pom.xml" />
+        <option value="$PROJECT_DIR$/toolbox/nuts-clown/pom.xml" />
+        <option value="$PROJECT_DIR$/toolbox/nuts-http-repo/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
