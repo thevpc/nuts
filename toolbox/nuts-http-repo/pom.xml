@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.vpc.app.nuts</groupId>
-    <artifactId>nuts-http-server</artifactId>
-    <name>net.vpc.app.nuts.nuts-http-server</name>
+    <artifactId>nuts-http-repo</artifactId>
+    <name>net.vpc.app.nuts.nuts-http-repo</name>
     <version>0.5.4.0</version>
     <packaging>war</packaging>
     <description>Nuts Web Front End</description>

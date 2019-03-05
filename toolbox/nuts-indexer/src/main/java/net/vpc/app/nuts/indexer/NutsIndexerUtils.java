@@ -9,22 +9,21 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.io.StringWriter;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class NutsIndexerUtils {
 
     public static Path getCacheDir(NutsWorkspace ws, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
         String m = (String) ws.getUserProperties().get(k);
-        if(m==null){
-            m=ws.getConfigManager()
+        if (m == null) {
+            m = ws.getConfigManager()
                     .getStoreLocation(ws.resolveIdForClass(NutsRepositoryResource.class)
                                     .getSimpleNameId()
                                     .setVersion("LATEST"),
-                            NutsStoreFolder.CACHE)+File.separator+ new File(ws.getConfigManager().getWorkspaceLocation()).getName()+"-"+ws.getUuid() + "/" + entity;
-            ws.getUserProperties().put(k,m);
+                            NutsStoreFolder.CACHE) + File.separator + new File(ws.getConfigManager().getWorkspaceLocation()).getName() + "-" + ws.getUuid() + "/" + entity;
+            ws.getUserProperties().put(k, m);
         }
         return new File(m).toPath();
     }
@@ -62,38 +61,45 @@ public class NutsIndexerUtils {
 
     public static Map<String, String> nutsIdToMap(NutsId id) {
         Map<String, String> entity = new HashMap<>();
-        _condPut(entity,"name", id.getName());
-        _condPut(entity,"namespace", id.getNamespace());
-        _condPut(entity,"group", id.getGroup());
-        _condPut(entity,"version", id.getVersion().getValue());
-//        _condPut(entity,"face", id.getFace());
-        _condPut(entity,"os", id.getOs());
-        _condPut(entity,"osdist", id.getOsdist());
-        _condPut(entity,"scope", StringUtils.isEmpty(id.getScope())?"compile":id.getScope());
-        _condPut(entity,"arch", id.getArch());
-        _condPut(entity,"classifier", id.getClassifier());
-        _condPut(entity,"alternative", id.getAlternative());
+        id = id.setFace(StringUtils.isEmpty(id.getFace()) ? "default" : id.getFace())
+                .setScope(StringUtils.isEmpty(id.getScope()) ? "compile" : id.getScope());
+        _condPut(entity, "name", id.getName());
+        _condPut(entity, "namespace", id.getNamespace());
+        _condPut(entity, "group", id.getGroup());
+        _condPut(entity, "version", id.getVersion().getValue());
+        _condPut(entity, "face", id.getFace());
+        _condPut(entity, "os", id.getOs());
+        _condPut(entity, "osdist", id.getOsdist());
+        _condPut(entity, "scope", id.getScope());
+        _condPut(entity, "arch", id.getArch());
+        _condPut(entity, "classifier", id.getClassifier());
+        _condPut(entity, "alternative", id.getAlternative());
+        _condPut(entity, "stringId", id.toString());
         return entity;
     }
 
     public static Map<String, String> nutsDependencyToMap(NutsDependency dependency) {
         Map<String, String> entity = new HashMap<>();
-        _condPut(entity,"name", dependency.getName());
-        _condPut(entity,"namespace", dependency.getNamespace());
-        _condPut(entity,"group", dependency.getGroup());
-        _condPut(entity,"version", dependency.getVersion().getValue());
-//        _condPut(entity,"face", dependency.getId().getFace());
-        _condPut(entity,"os", dependency.getId().getOs());
-        _condPut(entity,"osdist", dependency.getId().getOsdist());
-        _condPut(entity,"scope", dependency.getScope());
-        _condPut(entity,"arch", dependency.getId().getArch());
-        _condPut(entity,"classifier", dependency.getId().getClassifier());
-        _condPut(entity,"alternative", dependency.getId().getAlternative());
+        _condPut(entity, "name", dependency.getName());
+        _condPut(entity, "namespace", dependency.getNamespace());
+        _condPut(entity, "group", dependency.getGroup());
+        _condPut(entity, "version", dependency.getVersion().getValue());
+        dependency.getId().setFace(StringUtils.isEmpty(dependency.getId().getFace()) ? "default" : dependency.getId().getFace());
+        _condPut(entity, "face", dependency.getId().getFace());
+        _condPut(entity, "os", dependency.getId().getOs());
+        _condPut(entity, "osdist", dependency.getId().getOsdist());
+        dependency.getId().setScope(StringUtils.isEmpty(dependency.getId().getScope()) ? "compile" : dependency.getId().getScope());
+        _condPut(entity, "scope", dependency.getScope());
+        _condPut(entity, "arch", dependency.getId().getArch());
+        _condPut(entity, "classifier", dependency.getId().getClassifier());
+        _condPut(entity, "alternative", dependency.getId().getAlternative());
+        _condPut(entity, "stringId", dependency.getId().toString());
         return entity;
     }
-    private static void _condPut(Map<String, String> m, String k, String v){
-        if(!trim(v).isEmpty()){
-            m.put(k,v);
+
+    private static void _condPut(Map<String, String> m, String k, String v) {
+        if (!trim(v).isEmpty()) {
+            m.put(k, v);
         }
     }
 
@@ -123,28 +129,34 @@ public class NutsIndexerUtils {
                 .build();
     }
 
-    public static NutsId mapToNutsId(Map<String, Object> map, NutsWorkspace ws) {
+    public static NutsId mapToNutsId(Map<String, String> map, NutsWorkspace ws) {
         return ws.createIdBuilder()
-                .setName(trim((String) map.get("name")))
-                .setNamespace(trim((String) map.get("namespace")))
-                .setGroup(trim((String) map.get("group")))
-                .setVersion(trim((String) map.get("version")))
-                .setOs(trim((String) map.get("os")))
-                .setOsdist(trim((String) map.get("osdist")))
-                .setClassifier(trim((String) map.get("classifier")))
-                .setScope(trim((String) map.get("scope")))
-                .setArch(trim((String) map.get("arch")))
-                .setAlternative(trim((String) map.get("alternative")))
+                .setName(trim(map.get("name")))
+                .setNamespace(trim(map.get("namespace")))
+                .setGroup(trim(map.get("group")))
+                .setVersion(trim(map.get("version")))
+                .setOs(trim(map.get("os")))
+                .setOsdist(trim(map.get("osdist")))
+                .setClassifier(trim(map.get("classifier")))
+                .setScope(trim(map.get("scope")))
+                .setArch(trim(map.get("arch")))
+                .setAlternative(trim(map.get("alternative")))
                 .build();
     }
 
-    public static Query mapToQuery(Map<String, String> map) {
+    public static Query mapToQuery(Map<String, String> map, String... exclus) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        Set<String> set = Arrays.stream(exclus).collect(Collectors.toSet());
+        if (set.size() > 0) {
+            set.add("stringId");
+        }
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            builder.add(new PhraseQuery.Builder()
-                            .add(new Term(entry.getKey(),
-                                    trim(entry.getValue()))).build(),
-                    BooleanClause.Occur.MUST);
+            if (!set.contains(entry.getKey())) {
+                builder.add(new PhraseQuery.Builder()
+                                .add(new Term(entry.getKey(),
+                                        trim(entry.getValue()))).build(),
+                        BooleanClause.Occur.MUST);
+            }
         }
         builder.add(new BooleanClause(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD));
         return builder.build();

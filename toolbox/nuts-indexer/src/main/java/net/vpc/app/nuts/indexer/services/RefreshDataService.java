@@ -19,11 +19,11 @@ public class RefreshDataService {
 
     private static final Logger logger = LoggerFactory.getLogger(RefreshDataService.class);
 
-    private NutsWorkspaceListManager workspaceManager= Nuts.openWorkspace().getConfigManager().createWorkspaceListManager("clown");
+    private NutsWorkspaceListManager workspaceManager = Nuts.openWorkspace().getConfigManager().createWorkspaceListManager("clown");
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void refreshData() {
-        Collection<NutsWorkspaceLocation> workspaceLocations = this.workspaceManager.getWorkspaces().values();
+        List<NutsWorkspaceLocation> workspaceLocations = this.workspaceManager.getWorkspaces();
         for (NutsWorkspaceLocation workspace : workspaceLocations) {
             if (!workspace.isEnabled()) {
                 continue;
@@ -44,29 +44,34 @@ public class RefreshDataService {
 
     private void refreshComponentsData(String workspace) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
-        Set<NutsId> oldData = this.dataService
+        Map<String, NutsId> oldData = this.dataService
                 .getAllData(NutsIndexerUtils.getCacheDir(ws, "components"))
                 .stream()
-                .map((map)->NutsIndexerUtils.mapToNutsId(map,ws))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
         Iterator<NutsDefinition> definitions = ws.createQuery().setIgnoreNotFound(true).setIncludeInstallInformation(false).setIncludeFile(false).fetchIterator();
         List<Map<String, String>> dataToIndex = new ArrayList<>();
+        Map<String, Boolean> visited = new HashMap<>();
         while (definitions.hasNext()) {
-            NutsDefinition definition=definitions.next();
-            if (oldData.contains(definition.getId())) {
-                oldData.remove(definition.getId());
+            NutsDefinition definition = definitions.next();
+            Map<String, String> id = NutsIndexerUtils.nutsIdToMap(definition.getId());
+            if (oldData.containsKey(id.get("stringId"))) {
+                visited.put(id.get("stringId"), true);
+                oldData.remove(id.get("stringId"));
                 continue;
             }
-            Map<String, String> entity = NutsIndexerUtils.nutsIdToMap(definition.getId());
+
+            if (visited.getOrDefault(id.get("stringId"), false)) {
+                continue;
+            }
+            visited.put(id.get("stringId"), true);
+
             NutsDependency[] directDependencies = definition.getDescriptor().getDependencies();
-            entity.put("dependencies",ws.getIOManager().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()),true));
-            List<NutsId> allDependencies = ws.createQuery().dependenciesOnly().addId(definition.getId()).setIgnoreNotFound(true).setIncludeInstallInformation(false).setIncludeFile(false).find();
-            entity.put("allDependencies",ws.getIOManager().toJsonString(allDependencies.stream().map(Object::toString).collect(Collectors.toList()),true));
-            dataToIndex.add(entity);
+            id.put("dependencies", ws.getIOManager().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()), true));
+            dataToIndex.add(id);
         }
         this.dataService.indexMultipleData(NutsIndexerUtils.getCacheDir(ws, "components"), dataToIndex);
         this.dataService.deleteMultipleData(NutsIndexerUtils.getCacheDir(ws, "components"),
-                oldData.stream()
+                oldData.values().stream()
                         .map(NutsIndexerUtils::nutsIdToMap)
                         .collect(Collectors.toList()));
     }

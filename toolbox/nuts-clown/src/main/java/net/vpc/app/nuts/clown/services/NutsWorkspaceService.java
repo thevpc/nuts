@@ -24,7 +24,6 @@ public class NutsWorkspaceService {
     public ResponseEntity<List<Map<String, String>>> getAll() {
         List<Map<String, String>> result = this.workspaceManager
             .getWorkspaces()
-            .values()
             .stream()
             .map(workspace -> {
                 Map<String, String> res = new LinkedHashMap<>();
@@ -39,14 +38,12 @@ public class NutsWorkspaceService {
     @GetMapping(value = "add", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> add(@RequestParam("name") String name) {
         this.workspaceManager.addWorkspace(name);
-        this.workspaceManager.save();
         return getAll();
     }
 
     @GetMapping(value = "delete", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> delete(@RequestParam("name") String name) {
-        this.workspaceManager.deleteWorkspace(name);
-        this.workspaceManager.save();
+        this.workspaceManager.removeWorkspace(name);
         return getAll();
     }
 
@@ -54,7 +51,6 @@ public class NutsWorkspaceService {
     public ResponseEntity<List<Map<String, String>>> onOff(@RequestParam("name") String name,
                                                            @RequestParam("value") Boolean value) {
         this.workspaceManager.onOffWorkspace(name, value);
-        this.workspaceManager.save();
         return getAll();
     }
 }

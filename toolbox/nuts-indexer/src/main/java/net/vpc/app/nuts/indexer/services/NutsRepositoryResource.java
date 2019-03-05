@@ -22,16 +22,18 @@ public class NutsRepositoryResource {
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> getAll(@RequestParam("workspace") String workspace) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
-        List<Map<String, Object>> result = this.dataService.
+        List<Map<String, String>> rows = this.dataService.
                 getAllData(NutsIndexerUtils.getCacheDir(ws, "repositories"));
-
-        for (Map<String, Object> res : result) {
-            Map[] smirrors = ws.getIOManager().readJson(new StringReader(res.get("mirrors").toString()), Map[].class);
+        List<Map<String, Object>> resData = new ArrayList<>();
+        for (Map<String, String> row : rows) {
+            Map<String, Object> d = new HashMap<>(row);
+            Map[] smirrors = ws.getIOManager().readJson(new StringReader(row.get("mirrors")), Map[].class);
             List<Map<String, String>> mirrors = new ArrayList(Arrays.asList(smirrors));
-            res.put("mirrors", mirrors);
-            res.put("parents", ws.getIOManager().readJson(new StringReader(res.get("parents").toString()), Map.class));
+            d.put("mirrors", mirrors);
+            d.put("parents", ws.getIOManager().readJson(new StringReader(row.get("parents")), Map.class));
+            resData.add(d);
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(resData);
     }
 
 }

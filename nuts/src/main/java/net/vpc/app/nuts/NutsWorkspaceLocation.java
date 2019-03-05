@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Class for managing a Workspace list
+ *
  * @author Nasreddine Bac Ali
  * @date 2019-03-02
  */
@@ -11,6 +12,7 @@ public class NutsWorkspaceLocation implements Serializable {
 
     private static final long serialVersionUID = 1;
 
+    private String uuid;
     private String name;
     private String location;
     private boolean enabled = true;
@@ -19,12 +21,14 @@ public class NutsWorkspaceLocation implements Serializable {
     }
 
     public NutsWorkspaceLocation(NutsWorkspaceLocation other) {
+        this.name = other.uuid;
         this.name = other.getName();
         this.location = other.getLocation();
         this.enabled = other.isEnabled();
     }
 
-    public NutsWorkspaceLocation(String name, String location) {
+    public NutsWorkspaceLocation(String uuid, String name, String location) {
+        this.uuid = uuid;
         this.name = name;
         this.location = location;
     }
@@ -56,6 +60,15 @@ public class NutsWorkspaceLocation implements Serializable {
         return this;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public NutsWorkspaceLocation setUuid(String uuid) {
+        this.uuid = uuid;
+        return this;
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -79,7 +92,12 @@ public class NutsWorkspaceLocation implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsWorkspaceLocation{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + '}';
+        return "NutsWorkspaceLocation{" +
+                "uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                ", location='" + location + '\'' +
+                ", enabled=" + enabled +
+                '}';
     }
 
     public NutsWorkspaceLocation copy() {
