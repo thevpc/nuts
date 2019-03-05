@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.core.executors;
 
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
@@ -44,10 +41,11 @@ import java.util.logging.Logger;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
     private static final Logger log = Logger.getLogger(ProcessNutsExecutorComponent.class.getName());
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("exec");
+    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-native");
 
     @Override
     public NutsId getId() {

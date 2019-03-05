@@ -41,10 +41,11 @@ import java.util.logging.Logger;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
     public static final Logger log = Logger.getLogger(JavaNutsExecutorComponent.class.getName());
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("java");
+    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-java");
 
     @Override
     public NutsId getId() {

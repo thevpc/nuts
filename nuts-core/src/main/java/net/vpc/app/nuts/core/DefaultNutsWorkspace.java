@@ -1719,7 +1719,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
         for (NutsExecutorComponent nutsExecutorComponent : getExtensionManager().createAll(NutsExecutorComponent.class)) {
-            if (nutsExecutorComponent.getId().equalsSimpleName(nutsId)) {
+            if (
+                      nutsExecutorComponent.getId().equalsSimpleName(nutsId)
+                    ||nutsExecutorComponent.getId().getName().equals(nutsId.toString())
+                    ||nutsExecutorComponent.getId().toString().equals("net.vpc.app.nuts.exec:exec-"+nutsId.toString())
+            ) {
                 return nutsExecutorComponent;
             }
         }

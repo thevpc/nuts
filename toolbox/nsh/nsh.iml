@@ -12,6 +12,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-xfile:1.0.0" level="project" />
     <orderEntry type="module" module-name="java-shell" />
     <orderEntry type="module" module-name="nuts-cmd-app" />
     <orderEntry type="module" module-name="nuts" />
@@ -19,7 +20,7 @@
     <orderEntry type="module" module-name="vpc-common-strings" />
     <orderEntry type="module" module-name="vpc-common-utils" />
     <orderEntry type="module" module-name="vpc-common-mvn" />
-    <orderEntry type="library" name="Maven: net.vpc.common:vpc-common-xfile:1.0.0" level="project" />
+    <orderEntry type="module" module-name="vpc-common-xfile" />
     <orderEntry type="module" module-name="vpc-common-io-compress" />
     <orderEntry type="module" module-name="vpc-common-io" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.16.1" level="project" />

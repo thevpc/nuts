@@ -29,10 +29,7 @@
  */
 package net.vpc.app.nuts.core.executors;
 
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsExecutionContext;
-import net.vpc.app.nuts.NutsExecutorComponent;
-import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
 
@@ -47,10 +44,11 @@ import static net.vpc.app.nuts.NutsConstants.NUTS_SHELL;
 /**
  * Created by vpc on 1/7/17.
  */
+@NutsSingleton
 public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
     public static final Logger log = Logger.getLogger(NutsShellNutsExecutorComponent.class.getName());
-    public static final NutsId ID = CoreNutsUtils.parseNutsId("nuts");
+    public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-nsh");
 
     @Override
     public NutsId getId() {
