@@ -163,7 +163,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     protected NutsDescriptor parsePomDescriptor(File pathname, NutsSession session) throws IOException {
         NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
         if (nutsDescriptor.getId().getName() == null) {
-            //why?
+            //why name is null ? should checkout!
             if (log.isLoggable(Level.FINE)) {
                 log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
             }

@@ -200,7 +200,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     public void checkAllowedFetch(NutsId id, NutsSession session) {
         super.checkAllowedFetch(id, session);
         if (session.getFetchMode() == NutsFetchMode.OFFLINE) {
-            throw new NutsNotFoundException(id.toString());
+            throw new NutsNotFoundException(id);
         }
     }
 

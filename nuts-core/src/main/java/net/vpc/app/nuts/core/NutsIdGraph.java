@@ -109,7 +109,7 @@ public class NutsIdGraph {
         if (!toaddOk.isEmpty()) {
             maxComplexity--;
             if(maxComplexity<0){
-                System.out.println("Why");
+                //System.out.println("Why");
             }
             push0(toaddOk);
         }

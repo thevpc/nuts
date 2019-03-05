@@ -1030,7 +1030,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (storeLocation == null) {
             return null;
         }
-        return CoreNutsUtils.resolveNutsDefaultPath(id, new File(storeLocation)).getPath();
+        return CoreNutsUtils.resolveNutsDefaultPath(id, new File(storeLocation,"components")).getPath();
     }
 
     @Override

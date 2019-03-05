@@ -85,7 +85,7 @@ public class MavenUtils {
                 d.getGroupId(),
                 d.getArtifactId(),
                 d.getClassifier(),
-                DefaultNutsVersion.valueOf(d.getVersion()),
+                DefaultNutsVersion.valueOf(toNutsVersion((d.getVersion()))),
                 d.getScope(),
                 d.getOptional(),
                 toNutsId(d.getExclusions())
@@ -152,6 +152,8 @@ public class MavenUtils {
 
 
     public static String toNutsVersion(String version) {
+        /// maven : [cc] [co) (oc] (oo)
+        /// nuts  : [cc] [co[ ]oc] ]oo[
         return version==null?null:version.replace("(", "]").replace(")", "[");
     }
 

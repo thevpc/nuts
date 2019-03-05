@@ -697,10 +697,31 @@ public class DefaultNutsQuery implements NutsQuery {
 
     @Override
     public Iterator<NutsId> findIterator() {
-        if (includeDependencies) {
-            return find().iterator();
-        } else {
-            return ws.findIterator(build());
+        final Iterator<NutsId> base=(includeDependencies)?find().iterator():ws.findIterator(build());
+        if(ignoreNotFound){
+            return new Iterator<NutsId>() {
+                NutsId n;
+                @Override
+                public boolean hasNext() {
+                    while(base.hasNext()) {
+                        try {
+                            n = base.next();
+                            if(n!=null) {
+                                break;
+                            }
+                        }catch (NutsNotFoundException ex){
+                            //
+                        }
+                    }
+                    return n!=null;                }
+
+                @Override
+                public NutsId next() {
+                    return n;
+                }
+            };
+        }else{
+            return base;
         }
     }
 
@@ -709,15 +730,26 @@ public class DefaultNutsQuery implements NutsQuery {
         Iterator<NutsId> base = findIterator();
         NutsSession s = ws.createSession();
         return new Iterator<NutsDefinition>() {
+            private NutsDefinition n=null;
             @Override
             public boolean hasNext() {
-                return base.hasNext();
+                while(base.hasNext()) {
+                    try {
+                        NutsId p = base.next();
+                        n = ws.fetchDefinition(p, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), s);
+                        break;
+                    }catch (NutsNotFoundException ex){
+                        if(!ignoreNotFound){
+                            throw ex;
+                        }
+                    }
+                }
+                return n!=null;
             }
 
             @Override
             public NutsDefinition next() {
-                NutsId p = base.next();
-                return ws.fetchDefinition(p, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), s);
+                return n;
             }
         };
     }

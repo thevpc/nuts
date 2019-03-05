@@ -63,6 +63,10 @@ public class CoreNutsUtils {
     public static final NutsDependencyFilter SCOPE_RUN = And(new ScopeNutsDependencyFilter("compile,system,runtime"), NON_OPTIONAL);
     public static final NutsDependencyFilter SCOPE_TEST = And(new ScopeNutsDependencyFilter("compile,system,runtime,test"), NON_OPTIONAL);
 
+    public static void main(String[] args) {
+        NutsId t = parseNutsId("commons-digester:commons-digester#[1.7,)?arch=amd64&os=linux#4.20.10-1-default&osdist=opensuse-tumbleweed#20190226");
+        System.out.println(t);
+    }
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
         @Override
         public int compare(NutsId o1, NutsId o2) {

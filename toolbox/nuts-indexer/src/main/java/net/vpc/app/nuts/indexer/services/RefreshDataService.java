@@ -48,7 +48,7 @@ public class RefreshDataService {
                 .getAllData(NutsIndexerUtils.getCacheDir(ws, "components"))
                 .stream()
                 .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
-        Iterator<NutsDefinition> definitions = ws.createQuery().setIgnoreNotFound(true).setIncludeInstallInformation(false).setIncludeFile(false).fetchIterator();
+        Iterator<NutsDefinition> definitions = ws.createQuery().setIgnoreNotFound(true).setIncludeInstallInformation(false).setIncludeFile(false).setIncludeEffectiveDesc(true).fetchIterator();
         List<Map<String, String>> dataToIndex = new ArrayList<>();
         Map<String, Boolean> visited = new HashMap<>();
         while (definitions.hasNext()) {
@@ -65,7 +65,7 @@ public class RefreshDataService {
             }
             visited.put(id.get("stringId"), true);
 
-            NutsDependency[] directDependencies = definition.getDescriptor().getDependencies();
+            NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
             id.put("dependencies", ws.getIOManager().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()), true));
             dataToIndex.add(id);
         }
