@@ -30,3 +30,5 @@ net.vpc.app.nuts.core.bridges.maven.MavenNutsRepositoryFactoryComponent
 net.vpc.app.nuts.core.DefaultNutsWorkspaceFactory
 
 net.vpc.app.nuts.core.DefaultNutsAuthenticationAgent
+
+net.vpc.app.nuts.core.DefaultNutsIndexStoreClientFactory

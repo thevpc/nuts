@@ -1,5 +1,7 @@
 package net.vpc.app.nuts.indexer.services;
 
+import net.vpc.app.nuts.NutsDefinition;
+import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.indexer.NutsIndexerUtils;

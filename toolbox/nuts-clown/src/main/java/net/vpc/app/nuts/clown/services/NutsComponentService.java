@@ -1,9 +1,7 @@
 package net.vpc.app.nuts.clown.services;
 
-import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsFetch;
-import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.*;
+import net.vpc.app.nuts.clown.NutsClownUtils;
 import net.vpc.common.io.FileUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -23,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("ws/components")
@@ -46,10 +45,25 @@ public class NutsComponentService {
 
     @SuppressWarnings("unchecked")
     @GetMapping(value = "", produces = "application/json")
-    public ResponseEntity<List<Map<String, Object>>> getAll(@RequestParam("workspace") String workspace) {
-        String URL = "http://localhost:7070/indexer/components?workspace=" + workspace;
-        RestTemplate template = new RestTemplate();
-        return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
+    public ResponseEntity<List<Map<String, String>>> getAll(@RequestParam("workspaceLocation") String workspaceLocation,
+                                                            @RequestParam("repositoryUuid") String repositoryUuid) {
+        NutsWorkspace workspace = Nuts.openWorkspace(workspaceLocation);
+        List<NutsId> ids = workspace.createQuery()
+            .setRepositoryFilter(new NutsRepositoryFilter() {
+                @Override
+                public boolean accept(NutsRepository repository) {
+                    return repository.getUuid().equals(repositoryUuid);
+                }
+            })
+            .setIgnoreNotFound(true)
+            .setIncludeInstallInformation(false)
+            .setIncludeFile(false)
+            .setIncludeEffectiveDesc(true)
+            .find();
+        List<Map<String, String>> result = ids.stream()
+            .map(NutsClownUtils::nutsIdToMap)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @SuppressWarnings("unchecked")
@@ -64,12 +78,13 @@ public class NutsComponentService {
                                                                      @RequestParam("arch") String arch,
                                                                      @RequestParam("face") String face,
                                                                      @RequestParam("scope") String scope,
-                                                                     @RequestParam("alternative") String alternative) {
+                                                                     @RequestParam("alternative") String alternative,
+                                                                     @RequestParam("all") String all) {
 
         String URL = String.format("http://localhost:7070/indexer/components/dependencies" +
                 "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&" +
-                "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=%s",
-            workspace, name, namespace, group, version, face, os, osdist, scope, alternative, arch);
+                "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=%s&all=%s",
+            workspace, name, namespace, group, version, face, os, osdist, scope, alternative, arch, all);
         RestTemplate template = new RestTemplate();
         return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
     }

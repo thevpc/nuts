@@ -17,20 +17,12 @@ export class NutsComponentService {
   componentFormModel: NutsComponent = new NutsComponent();
 
   selectedComponent: NutsComponent = null;
-  selectedComponentDependencies: any;
-  selectedComponentDependenciesSubject: Subject<any>;
-  selectedComponentDependenciesObservable: Observable<any>;
-
-  directDependenciesToggle: boolean = true;
 
   constructor(private http: HttpClient,
               private workspaceService: NutsWorkspaceService) {
     this.componentsSubject = new Subject();
     this.componentsObservable = this.componentsSubject.asObservable();
     this.getAll();
-
-    this.selectedComponentDependenciesSubject = new Subject();
-    this.selectedComponentDependenciesObservable = this.selectedComponentDependenciesSubject.asObservable();
   }
 
   refreshData(components) {
@@ -45,14 +37,13 @@ export class NutsComponentService {
       });
   }
 
-  getDependencies(data: NutsComponent) {
-    this.http.get<any>(`/ws/components/dependencies?workspace=${this.workspaceService.currentWorkspace}`
+  getAllDependencies(data: NutsComponent, callback) {
+    return this.http.get<NutsComponent[]>(`/ws/components/dependencies?workspace=${this.workspaceService.currentWorkspace}`
       + `&name=${data.name}&namespace=${data.namespace}&group=${data.group}&version=${data.version}&face=${data.face}`
-      + `&os=${data.os}&osdist=${data.osdist}&scope=${data.scope}&alternative=${data.alternative}&arch=${data.arch}`)
+      + `&os=${data.os}&osdist=${data.osdist}&scope=${data.scope}&alternative=${data.alternative}&arch=${data.arch}&all=true`)
       .subscribe(dependencies => {
-        this.selectedComponentDependencies = [...dependencies];
-        this.selectedComponentDependenciesSubject.next(dependencies);
-      }, () => {
+        this.selectedComponent.allDependencies = [...dependencies];
+        callback();
       });
   }
 
@@ -99,5 +90,22 @@ export class NutsComponentService {
         callback();
       }, () => {
       });
+  }
+
+  static cleanComponent(component: NutsComponent): NutsComponent {
+    component.stringId = component.stringId || '';
+    component.name = component.name || '';
+    component.namespace = component.namespace || '';
+    component.group = component.group || '';
+    component.version = component.version || '';
+    component.scope = component.scope || '';
+    component.arch = component.arch || '';
+    component.os = component.os || '';
+    component.osdist = component.osdist || '';
+    component.face = component.face || '';
+    component.alternative = component.alternative || '';
+    component.dependencies = component.dependencies || [];
+    component.allDependencies = component.allDependencies || [];
+    return component;
   }
 }

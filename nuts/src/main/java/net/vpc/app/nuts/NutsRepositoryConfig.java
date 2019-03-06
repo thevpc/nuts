@@ -245,4 +245,5 @@ public class NutsRepositoryConfig implements Serializable {
     public String toString() {
         return "NutsRepositoryConfig{" + "mirrors=" + mirrors + ", users=" + users + ", name=" + name + ", uuid=" + uuid + ", type=" + type + ", location=" + location + ", groups=" + groups + ", env=" + env + '}';
     }
+
 }

@@ -103,13 +103,13 @@
           <div class="col-md-4">
             <div class="row float-right" style="margin-right: 10px">
               <div style="margin-right: 10px"
-                   [style.color]="componentService.directDependenciesToggle?'#73a1ff':'black'">
+                   [style.color]="directDependenciesToggle?'#73a1ff':'black'">
                 <a (click)="directDependencies()">
                   <i class="fas fa-align-justify"></i>
                   Direct
                 </a>
               </div>
-              <div [style.color]="componentService.directDependenciesToggle?'black':'#73a1ff'">
+              <div [style.color]="directDependenciesToggle?'black':'#73a1ff'">
                 <a (click)="allDependencies()">
                   <i class="fas fa-align-left"></i>
                   All

@@ -16,4 +16,10 @@ public interface NutsIndexStoreClient {
     void invalidate(NutsId id);
 
     void revalidate(NutsId id);
+
+    boolean subscribe();
+
+    void unsubscribe();
+
+    boolean isSubscribed(NutsRepository repository);
 }

@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.indexer;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.indexer.services.NutsRepositoryResource;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.springframework.util.StringUtils;
@@ -19,10 +18,10 @@ public class NutsIndexerUtils {
         String m = (String) ws.getUserProperties().get(k);
         if (m == null) {
             m = ws.getConfigManager()
-                    .getStoreLocation(ws.resolveIdForClass(NutsRepositoryResource.class)
+                    .getStoreLocation(ws.resolveIdForClass(NutsIndexerUtils.class)
                                     .getSimpleNameId()
                                     .setVersion("LATEST"),
-                            NutsStoreFolder.CACHE) + File.separator + new File(ws.getConfigManager().getWorkspaceLocation()).getName() + "-" + ws.getUuid() + "/" + entity;
+                            NutsStoreFolder.CACHE) + File.separator + entity;
             ws.getUserProperties().put(k, m);
         }
         return new File(m).toPath();

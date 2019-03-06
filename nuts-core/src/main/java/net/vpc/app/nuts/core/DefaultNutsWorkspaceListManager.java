@@ -30,7 +30,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         if (file.exists()) {
             this.config = this.defaultWorkspace.getIOManager().readJson(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
-                this.workspaces.put(var.getName(), var);
+                this.workspaces.put(var.getUuid(), var);
             }
         } else {
             this.config = new NutsWorkspaceListConfig()
@@ -62,6 +62,11 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         return new ArrayList<>(workspaces.values());
     }
 
+    @Override
+    public NutsWorkspaceLocation getWorkspaceLocation(String uuid) {
+        return this.workspaces.get(uuid);
+    }
+
     public DefaultNutsWorkspaceListManager setWorkspaces(Map<String, NutsWorkspaceLocation> workspaces) {
         this.workspaces = workspaces;
         return this;
@@ -76,20 +81,20 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         return this;
     }
 
-    public NutsWorkspace addWorkspace(String name) {
-        NutsWorkspace workspace = this.createWorkspace(name);
-        NutsWorkspaceLocation location = new NutsWorkspaceLocation()
+    public NutsWorkspace addWorkspace(String path) {
+        NutsWorkspace workspace = this.createWorkspace(path);
+        NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
                 .setUuid(workspace.getUuid())
-                .setName(name)
+                .setName(new File(workspace.getConfigManager().getWorkspaceLocation()).getName())
                 .setLocation(workspace.getConfigManager().getWorkspaceLocation());
-        workspaces.put(workspace.getUuid(), location);
+        workspaces.put(workspace.getUuid(), workspaceLocation);
         this.save();
         return workspace;
     }
 
-    private NutsWorkspace createWorkspace(String name) {
+    private NutsWorkspace createWorkspace(String path) {
         return Nuts.openWorkspace(new NutsWorkspaceOptions()
-                .setWorkspace(name)
+                .setWorkspace(path)
                 .setOpenMode(NutsWorkspaceOpenMode.DEFAULT)
                 .setSkipPostCreateInstallCompanionTools(true)
         );

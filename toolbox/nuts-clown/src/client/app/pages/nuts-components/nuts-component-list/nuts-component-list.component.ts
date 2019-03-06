@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import {Location} from '@angular/common';
 import {NutsComponentService} from '../nuts-component.service';
 import {LocalDataSource} from 'ng2-smart-table';
 import {Ng2SmartTableComponent} from 'ng2-smart-table/ng2-smart-table.component';
@@ -55,8 +54,7 @@ export class NutsComponentListComponent implements OnInit, OnDestroy {
   };
 
   constructor(public componentService: NutsComponentService,
-              private router: Router,
-              private location: Location) {
+              private router: Router) {
     this.source.load(componentService.searchData);
   }
 
@@ -74,7 +72,7 @@ export class NutsComponentListComponent implements OnInit, OnDestroy {
   }
 
   onUserRowSelect(event) {
-    this.componentService.setSelectedComponent(event.data);
+    this.componentService.setSelectedComponent(NutsComponentService.cleanComponent(event.data));
     this.router.navigateByUrl('pages/component');
   }
 

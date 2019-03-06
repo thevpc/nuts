@@ -217,11 +217,6 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
             NutsRepository r = factory_.create(location, ws, null, root);
             if (r != null) {
                 r.open(autoCreate);
-                if(r.getConfigManager().isIndexEnabled()) {
-                    getIndexStoreClientFactory().subscribe(r);
-                }else{
-                    getIndexStoreClientFactory().unsubscribe(r);
-                }
                 wireRepository(r);
                 return r;
             }
@@ -294,6 +289,21 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
         public void revalidate(NutsId id) {
 
         }
+
+        @Override
+        public boolean subscribe() {
+            return false;
+        }
+
+        @Override
+        public void unsubscribe() {
+
+        }
+
+        @Override
+        public boolean isSubscribed(NutsRepository repository) {
+            return false;
+        }
     }
 
     private static class DummyNutsIndexStoreClientFactory implements NutsIndexStoreClientFactory {
@@ -302,15 +312,6 @@ class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryMa
             return 0;
         }
 
-        @Override
-        public boolean subscribe(NutsRepository repository) {
-            return true;
-        }
-
-        @Override
-        public void unsubscribe(NutsRepository repository) {
-
-        }
         @Override
         public NutsIndexStoreClient createNutsIndexStoreClient(NutsRepository repository) {
             return new DummyNutsIndexStoreClient();

@@ -1,4 +1,4 @@
-package net.vpc.app.nuts.indexer.services;
+package net.vpc.app.nuts.indexer;
 
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsWorkspace;

@@ -39,8 +39,6 @@ import net.vpc.common.strings.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -597,8 +595,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                             }
                         }
                     }
+                    return d;
                 }
-                return d;
             }
             List<NutsId> d = findVersionsImpl(id, idFilter, session);
             if (d.isEmpty()) {
@@ -845,5 +843,20 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public String getStoreLocation(NutsStoreFolder folderType) {
         return getConfigManager().getStoreLocation(folderType);
+    }
+
+    @Override
+    public boolean isIndexSubscribed() {
+        return this.nutsIndexStoreClient.isSubscribed(this);
+    }
+
+    @Override
+    public boolean subscribeIndex() {
+        return this.nutsIndexStoreClient.subscribe();
+    }
+
+    @Override
+    public void unsubscribeIndex() {
+        this.nutsIndexStoreClient.unsubscribe();
     }
 }

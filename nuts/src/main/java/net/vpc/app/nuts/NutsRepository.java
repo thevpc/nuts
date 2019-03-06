@@ -150,4 +150,10 @@ public interface NutsRepository {
     int getSpeed();
 
     String getStoreLocation();
+
+    boolean isIndexSubscribed();
+
+    boolean subscribeIndex();
+
+    void unsubscribeIndex();
 }

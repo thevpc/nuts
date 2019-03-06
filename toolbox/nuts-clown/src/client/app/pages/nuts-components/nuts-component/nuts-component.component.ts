@@ -22,8 +22,9 @@ export class NutsComponentComponent implements OnInit, OnDestroy {
   component: NutsComponent;
   dependencies: any;
 
-  subscription: Subscription = new Subscription();
   source: LocalDataSource = new LocalDataSource();
+
+  directDependenciesToggle: boolean = true;
 
   settings = {
     hideSubHeader: true,
@@ -56,7 +57,7 @@ export class NutsComponentComponent implements OnInit, OnDestroy {
     },
   };
 
-  constructor(public componentService: NutsComponentService,
+  constructor(private componentService: NutsComponentService,
               private router: Router,
               private location: Location) {
     if (componentService.selectedComponent === null) {
@@ -64,20 +65,13 @@ export class NutsComponentComponent implements OnInit, OnDestroy {
       return;
     }
     this.component = componentService.selectedComponent;
-    this.componentService.getDependencies(this.component);
+    this.source.load(this.component.dependencies);
   }
 
   ngOnInit() {
-    this.subscription = this.componentService.selectedComponentDependenciesObservable.subscribe(dependencies => {
-      this.dependencies = dependencies;
-      this.source.load(dependencies);
-    });
   }
 
   ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 
   returnBack() {
@@ -86,16 +80,20 @@ export class NutsComponentComponent implements OnInit, OnDestroy {
   }
 
   allDependencies() {
-    if (this.componentService.directDependenciesToggle) {
-      this.componentService.directDependenciesToggle = false;
-      this.source.load(this.dependencies);
+    if (this.directDependenciesToggle) {
+      this.source.load([]);
+      this.componentService.getAllDependencies(this.component, () => {
+        this.component = this.componentService.selectedComponent;
+        this.source.load(this.component.allDependencies);
+      });
+      this.directDependenciesToggle = false;
     }
   }
 
   directDependencies() {
-    if (!this.componentService.directDependenciesToggle) {
-      this.componentService.directDependenciesToggle = true;
-      this.source.load(this.dependencies);
+    if (!this.directDependenciesToggle) {
+      this.source.load(this.component.dependencies);
+      this.directDependenciesToggle = true;
     }
   }
 

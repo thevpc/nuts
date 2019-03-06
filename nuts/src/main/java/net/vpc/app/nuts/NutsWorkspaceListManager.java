@@ -14,11 +14,13 @@ public interface NutsWorkspaceListManager {
 
     List<NutsWorkspaceLocation> getWorkspaces();
 
+    NutsWorkspaceLocation getWorkspaceLocation(String uuid);
+
     NutsWorkspaceListConfig getConfig();
 
     NutsWorkspaceListManager setConfig(NutsWorkspaceListConfig config);
 
-    NutsWorkspace addWorkspace(String name);
+    NutsWorkspace addWorkspace(String path);
 
     boolean removeWorkspace(String name);
 

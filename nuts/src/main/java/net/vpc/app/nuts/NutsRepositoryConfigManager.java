@@ -75,4 +75,5 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
     void setIndexEnabled(boolean enabled);
 
     boolean isIndexEnabled();
+
 }

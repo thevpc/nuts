@@ -6,23 +6,14 @@ import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspace;
 
 public class DefaultNutsIndexStoreClientFactory implements NutsIndexStoreClientFactory {
-    @Override
-    public boolean subscribe(NutsRepository repository) {
-        return false;
-    }
-
-    @Override
-    public void unsubscribe(NutsRepository repository) {
-
-    }
 
     @Override
     public NutsIndexStoreClient createNutsIndexStoreClient(NutsRepository repository) {
-        return null;
+        return new DefaultNutsIndexStoreClient(repository);
     }
 
     @Override
     public int getSupportLevel(NutsWorkspace criteria) {
-        return 1;
+        return 10;
     }
 }

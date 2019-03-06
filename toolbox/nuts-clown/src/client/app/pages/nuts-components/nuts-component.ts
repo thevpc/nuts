@@ -1,4 +1,5 @@
 export class NutsComponent {
+  stringId: string;
   name: string;
   namespace: string;
   group: string;
@@ -10,8 +11,10 @@ export class NutsComponent {
   face: string;
   alternative: string;
   dependencies: NutsComponent[];
+  allDependencies: NutsComponent[];
 
   constructor() {
+    this.stringId = '';
     this.name = '';
     this.namespace = '';
     this.group = '';
@@ -24,4 +27,5 @@ export class NutsComponent {
     this.alternative = '';
     this.dependencies = [];
   }
+
 }
