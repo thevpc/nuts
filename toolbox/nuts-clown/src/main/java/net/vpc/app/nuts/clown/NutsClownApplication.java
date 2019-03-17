@@ -10,11 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class NutsClownApplication {
 
     public static void main(String[] args) {
-        Nuts.openWorkspace(new NutsWorkspaceOptions()
-            .setOpenMode(NutsWorkspaceOpenMode.DEFAULT)
-//            .setReadOnly(false)
-            .setSkipPostCreateInstallCompanionTools(true)
-        );
+//        Nuts.openWorkspace(new NutsWorkspaceOptions()
+//            .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
+////            .setReadOnly(false)
+//            .setSkipPostCreateInstallCompanionTools(true)
+//        );
 
         SpringApplication.run(NutsClownApplication.class, args);
     }

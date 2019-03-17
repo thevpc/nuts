@@ -36,8 +36,6 @@ import net.vpc.app.nuts.app.options.RepositoryNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.DefaultNonOption;
 
-import java.io.PrintStream;
-
 /**
  * Created by vpc on 1/7/17.
  */
@@ -50,7 +48,7 @@ public class PushCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         String repo = null;
-        NutsConfirmAction force = NutsConfirmAction.IGNORE;
+        net.vpc.app.nuts.NutsPushOptions options = new net.vpc.app.nuts.NutsPushOptions();
         Argument a;
         do {
             if (context.configure(cmdLine)) {
@@ -58,11 +56,11 @@ public class PushCommand extends AbstractNutsCommand {
             }else  if (cmdLine.readAllOnce("--repo", "-r")) {
                 repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getStringExpression();
             } else if (cmdLine.readAllOnce("--force", "-f")) {
-                force = NutsConfirmAction.FORCE;
+                options.setForce(true);
             } else {
                 String id = cmdLine.readRequiredNonOption(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().push(id, repo, force, context.getSession());
+                    context.getWorkspace().push(id, repo, options, context.getSession());
                     context.out().printf("%s pushed successfully\n", id);
                 }
             }

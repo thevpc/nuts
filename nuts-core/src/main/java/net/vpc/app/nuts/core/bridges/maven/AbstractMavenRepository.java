@@ -31,13 +31,11 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreSecurityUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,12 +105,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession context) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions foundAction, NutsSession context) {
         throw new NutsUnsupportedOperationException();
     }
 

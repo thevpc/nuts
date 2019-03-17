@@ -10,8 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class NdiMain extends NutsApplication {
+
     public static void main(String[] args) {
-        new NdiMain().launch(args);
+        new NdiMain().run(args);
     }
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
@@ -23,7 +24,7 @@ public class NdiMain extends NutsApplication {
     }
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
+    public void run(NutsApplicationContext appContext) {
         CommandLine cmd = new CommandLine(appContext);
         Argument a;
         while (cmd.hasNext()) {
@@ -92,7 +93,7 @@ public class NdiMain extends NutsApplication {
                 }
                 if (!run) {
                     appContext.err().print("Missing arguments\n");
-                    return 1;
+                    throw new NutsExecutionException("Missing arguments", 1);
                 }
                 try {
                     ndi.configurePath(force, silent);
@@ -103,11 +104,10 @@ public class NdiMain extends NutsApplication {
                 cmd.unexpectedArgument("ndi");
             }
         }
-        return 0;
     }
 
     @Override
-    protected int onInstallApplication(NutsApplicationContext applicationContext) {
+    protected void onInstallApplication(NutsApplicationContext applicationContext) {
         CommandLine cmd = new CommandLine(applicationContext);
         Argument a;
         boolean force = false;
@@ -127,7 +127,7 @@ public class NdiMain extends NutsApplication {
                 ndi.configurePath(force, silent);
             } catch (IOException e) {
                 applicationContext.out().println("ndi: install failed : " + e.toString());
-                return 1;
+                throw new NutsExecutionException("ndi: install failed : " + e.toString(), 1);
             }
             for (String s : new String[]{"nuts", "ndi", "nsh", "nadmin", "nfind"}) {
                 try {
@@ -141,23 +141,19 @@ public class NdiMain extends NutsApplication {
                                     .setExecutorOptions(new ArrayList<>()));
                 } catch (IOException e) {
                     applicationContext.out().println("ndi: " + s + "install failed : " + e.toString());
-                    return 1;
+                    throw new NutsExecutionException("ndi: " + s + "install failed : " + e.toString(), 1);
                 }
             }
         }
-        return 0;
     }
 
     @Override
-    protected int onUpdateApplication(NutsApplicationContext applicationContext) {
+    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
-        return 0;
     }
 
     @Override
-    protected int onUninstallApplication(NutsApplicationContext applicationContext) {
-
-        return 0;
+    protected void onUninstallApplication(NutsApplicationContext applicationContext) {
     }
 }

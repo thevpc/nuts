@@ -216,7 +216,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     trySave(context, ws, editedRepo, autoSave, null);
                 } else if (cmdLine.readAll("list repos", "lr")) {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
-                    NutsRepository[] linkRepositories = editedRepo.getMirrors();
+                    NutsRepository[] linkRepositories = editedRepo.isSupportedMirroring()?editedRepo.getMirrors():new NutsRepository[0];
                     out.printf("%s sub repositories.\n", linkRepositories.length);
                     TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                             .setColumnsConfig("id","enabled","type","location")

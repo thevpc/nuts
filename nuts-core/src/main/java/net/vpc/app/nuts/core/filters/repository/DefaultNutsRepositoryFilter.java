@@ -17,7 +17,10 @@ public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simpli
 
     @Override
     public boolean accept(NutsRepository repository) {
-        return repos.isEmpty() || repos.contains(repository.getName());
+        return repos.isEmpty()
+                || repos.contains(repository.getUuid())
+                || repos.contains(repository.getName())
+                ;
     }
 
     @Override

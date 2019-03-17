@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -52,48 +52,60 @@ public final class NutsArgumentsParser {
             if (cmdArg.isOption()) {
                 switch (cmdArg.getKey()) {
                     //dash  should be the very last argument
-                    case "-v":
+                    case "-V":
                     case "--boot-version":
                     case "--boot-api-version": {
                         o.setRequiredBootVersion(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
-                    case "-!v":
+                    case "-!V":
                     case "--!boot-version":
                     case "--!boot-api-version": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
-                    case "--embedded": {
+                    case "--embedded": 
+                    case "-b": 
+                    {
 
                         o.setExecutionType(NutsExecutionType.EMBEDDED);
                         //ignore
                         break;
                     }
-                    case "--!embedded": {
+                    case "--!embedded": 
+                    case "-!b": 
+                    {
 
                         //ignore
                         break;
                     }
-                    case "--external": {
+                    case "--external": 
+                    case "-x": 
+                    {
 
                         o.setExecutionType(NutsExecutionType.EXTERNAL);
                         //ignore
                         break;
                     }
-                    case "--!external": {
+                    case "--!external": 
+                    case "-!x": 
+                    {
 
                         //ignore
                         break;
                     }
-                    case "--native": {
+                    case "--native": 
+                    case "-n": 
+                    {
 
                         o.setExecutionType(NutsExecutionType.NATIVE);
                         //ignore
                         break;
                     }
-                    case "--!native": {
+                    case "--!native": 
+                    case "-!n": 
+                    {
 
                         //ignore
                         break;
@@ -118,20 +130,28 @@ public final class NutsArgumentsParser {
                         //ignore
                         break;
                     }
-                    case "--archetype": {
+                    case "--archetype": 
+                    case "-p": 
+                    {
                         o.setArchetype(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
-                    case "--!archetype": {
+                    case "--!archetype": 
+                    case "-!p": 
+                    {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
-                    case "--login": {
+                    case "--login": 
+                    case "-U": 
+                    {
                         o.setLogin(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
-                    case "--!login": {
+                    case "--!login": 
+                    case "-!U": 
+                    {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
@@ -161,92 +181,115 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--java":
-                    case "--boot-java": {
+                    case "--boot-java": 
+                    case "-j": 
+                    {
                         o.setBootJavaCommand(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
                     case "--!java":
-                    case "--!boot-java": {
+                    case "--!boot-java": 
+                    case "-!j": 
+                    {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
                     case "--java-home":
-                    case "--boot-java-home": {
+                    case "--boot-java-home": 
+                    case "--J": 
+                    {
                         o.setBootJavaCommand(NutsUtils.resolveJavaCommand(cmdArgList.getValueFor(cmdArg)));
                         break;
                     }
                     case "--!java-home":
-                    case "--!boot-java-home": {
+                    case "--!boot-java-home": 
+                    case "--!J": 
+                    {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
                     case "--java-options":
-                    case "--boot-java-options": {
+                    case "--boot-java-options": 
+                    case "-O": 
+                    {
                         o.setBootJavaOptions(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
                     case "--!java-options":
-                    case "--!boot-java-options": {
+                    case "--!boot-java-options": 
+                    case "-!O": 
+                    {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
-                    case "--color":
-                        {
+                    case "--color": 
+                    case "-C": 
+                    {
 
                         o.setTerminalMode(NutsTerminalMode.FORMATTED);
                         break;
                     }
                     case "--!color":
-                    case "--no-color":
-                        {
+                    case "--no-color": 
+                    case "-!C": 
+                    {
 
                         o.setTerminalMode(NutsTerminalMode.FILTERED);
                         break;
                     }
-                    case "--term-system": {
+                    case "--term-system":
+                    case "-S": {
 
                         o.setTerminalMode(null);
                         break;
                     }
-                    case "--!term-system": {
+                    case "--!term-system":
+                    case "-!S": {
 
                         //ignore
                         break;
                     }
-                    case "--term-filtered": {
+                    case "--term-filtered":
+                    case "-L": {
 
                         o.setTerminalMode(NutsTerminalMode.FILTERED);
                         break;
                     }
-                    case "--!term-filtered": {
+                    case "--!term-filtered":
+                    case "-!L": {
 
                         //ignore
                         break;
                     }
-                    case "--term-formatted": {
+                    case "--term-formatted":
+                    case "-F": {
 
                         o.setTerminalMode(NutsTerminalMode.FORMATTED);
                         break;
                     }
-                    case "--!term-formatted": {
+                    case "--!term-formatted":
+                    case "-!F": {
 
                         //ignore
                         break;
                     }
-                    case "--term-inherited": {
+                    case "--term-inherited":
+                    case "-H": {
 
                         o.setTerminalMode(NutsTerminalMode.INHERITED);
                         break;
                     }
-                    case "--!term-inherited": {
+                    case "--!term-inherited":
+                    case "-!H": {
 
                         //ignore
                         break;
                     }
-                    case "--term": {
+                    case "--term":
+                    case "-t": {
                         String v = cmdArgList.getValueFor(cmdArg);
                         if (v.isEmpty()) {
                             o.setTerminalMode(null);
@@ -255,18 +298,19 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--!term": {
+                    case "--!term":
+                    case "-!t": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
-                    case "-r":
+                    case "-R":
                     case "--read-only": {
 
                         o.setReadOnly(true);
                         break;
                     }
-                    case "-!r":
+                    case "-!R":
                     case "--!read-only": {
 
                         o.setReadOnly(false);
@@ -293,111 +337,132 @@ public final class NutsArgumentsParser {
                     case "-!g":
                     case "--!global": {
 
-                        o.setRecover(false);
+                        o.setGlobal(false);
                         break;
                     }
-                    case "--skip-install-companions": {
+                    case "--skip-install-companions":
+                    case "-k": {
 
                         o.setSkipPostCreateInstallCompanionTools(true);
                         break;
                     }
-                    case "--!skip-install-companions": {
+                    case "--!skip-install-companions":
+                    case "-!k": {
 
                         o.setRecover(false);
                         break;
                     }
                     case "-version":
+                    case "-v":
                     case "--version": {
                         o.setBootCommand(NutsBootCommand.VERSION);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
                     case "-!version":
-                    case "--!version": {
+                    case "--!version":
+                    case "-!v": {
 
                         //ignore
                         break;
                     }
-                    case "--info": {
+                    case "--info":
+                    case "-f": {
                         o.setBootCommand(NutsBootCommand.INFO);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!info": {
+                    case "--!info":
+                    case "-!f": {
 
                         //ignore
                         break;
                     }
-                    case "--update": {
+                    case "--update":
+                    case "-d": {
                         o.setBootCommand(NutsBootCommand.UPDATE);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!update": {
+                    case "--!update":
+                    case "-!d": {
 
                         //ignore
                         break;
                     }
-                    case "--clean": {
+                    case "--clean":
+                    case "-c": {
                         o.setBootCommand(NutsBootCommand.CLEAN);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!clean": {
+                    case "--!clean":
+                    case "-!c": {
 
                         //ignore
                         break;
                     }
-                    case "--reset": {
+                    case "--reset":
+                    case "-r": {
                         o.setBootCommand(NutsBootCommand.RESET);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!reset": {
+                    case "--!reset":
+                    case "-!r": {
 
                         //ignore
                         break;
                     }
-                    case "--install-companions": {
+                    case "--install-companions":
+                    case "-X": {
                         o.setBootCommand(NutsBootCommand.INSTALL_COMPANION_TOOLS);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!install-companions": {
+                    case "--!install-companions":
+                    case "-!X": {
 
                         //ignore
                         break;
                     }
-                    case "--check-updates": {
+                    case "--check-updates":
+                    case "-D": {
                         o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!check-updates": {
+                    case "--!check-updates":
+                    case "-!D": {
 
                         //ignore
                         break;
                     }
-                    case "--install": {
+                    case "--install":
+                    case "-i": {
                         o.setBootCommand(NutsBootCommand.INSTALL);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!install": {
+                    case "--!install":
+                    case "-!i": {
 
                         //ignore
                         break;
                     }
-                    case "--uninstall": {
+                    case "--uninstall":
+                    case "-u": {
                         o.setBootCommand(NutsBootCommand.UNINSTALL);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
                     }
-                    case "--!uninstall": {
+                    case "--!uninstall":
+                    case "-!u": {
 
                         //ignore
                         break;
                     }
+                    case "--e":
                     case "--exec": {
                         o.setBootCommand(NutsBootCommand.EXEC);
                         while ((cmdArg = cmdArgList.next()) != null) {
@@ -410,13 +475,15 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--!exec": {
+                    case "--!exec":
+                    case "--!e": {
 
                         //ignore
                         break;
                     }
                     case "-?":
-                    case "--help": {
+                    case "--help":
+                    case "-h": {
                         o.setBootCommand(NutsBootCommand.HELP);
                         applicationArguments.addAll(cmdArgList.removeAll());
                         break;
@@ -530,7 +597,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--open": {
-                        o.setOpenMode(NutsWorkspaceOpenMode.OPEN);
+                        o.setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING);
                         break;
                     }
                     case "--!open": {
@@ -538,7 +605,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--create": {
-                        o.setOpenMode(NutsWorkspaceOpenMode.CREATE);
+                        o.setOpenMode(NutsWorkspaceOpenMode.CREATE_NEW);
                         break;
                     }
                     case "--!create": {

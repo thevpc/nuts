@@ -20,12 +20,13 @@ import java.io.PrintStream;
 import java.util.*;
 
 public class NFindMain extends NutsApplication {
+
     public static void main(String[] args) {
-        new NFindMain().launchAndExit(args);
+        new NFindMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext context) {
+    public void run(NutsApplicationContext context) {
         CommandLine cmdLine = new CommandLine(context);
         int currentFindWhat = 0;
         List<FindWhat> findWhats = new ArrayList<>();
@@ -43,22 +44,22 @@ public class NFindMain extends NutsApplication {
                 }
                 if (findWhats.get(currentFindWhat).nonjs.size() > 0) {
                     if (!cmdLine.isExecMode()) {
-                        return 0;
+                        return;
                     }
-                    throw new NutsIllegalArgumentException("find: Unsupported mixed and non js find expressions");
+                    throw new NutsExecutionException("find: Unsupported mixed and non js find expressions", 1);
                 }
                 findContext.jsflag = true;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-x", "--expression")) {
                 findContext.jsflag = false;
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-l", "--long")) {
                 findContext.longflag = true;
-            } else if (currentFindWhat == 0 && (a=cmdLine.readBooleanOption("--omit-group"))!=null) {
+            } else if (currentFindWhat == 0 && (a = cmdLine.readBooleanOption("--omit-group")) != null) {
                 findContext.omitGroup = a.getBooleanValue();
-            } else if (currentFindWhat == 0 && (a=cmdLine.readBooleanOption("--omit-imported"))!=null) {
+            } else if (currentFindWhat == 0 && (a = cmdLine.readBooleanOption("--omit-imported")) != null) {
                 findContext.omitImportedGroup = a.getBooleanValue();
-            } else if (currentFindWhat == 0 && (a=cmdLine.readBooleanOption("--highlight-imported"))!=null) {
+            } else if (currentFindWhat == 0 && (a = cmdLine.readBooleanOption("--highlight-imported")) != null) {
                 findContext.highlightImportedGroup = a.getBooleanValue();
-            } else if (currentFindWhat == 0 && (a=cmdLine.readBooleanOption("--omit-namespace"))!=null) {
+            } else if (currentFindWhat == 0 && (a = cmdLine.readBooleanOption("--omit-namespace")) != null) {
                 findContext.omitNamespace = a.getBooleanValue();
             } else if (currentFindWhat == 0 && cmdLine.readAllOnce("-f", "--file")) {
                 findContext.showFile = true;
@@ -170,14 +171,14 @@ public class NFindMain extends NutsApplication {
                         if (findWhats.get(currentFindWhat).jsCode == null) {
                             findWhats.get(currentFindWhat).jsCode = val.getStringExpression();
                         } else {
-                            throw new NutsIllegalArgumentException("find: Unsupported mixed and non js find expressions");
+                            throw new NutsExecutionException("find: Unsupported mixed and non js find expressions", 1);
                         }
                     } else {
                         String arg = val.getStringExpression();
                         if (findWhats.get(currentFindWhat).jsCode == null) {
                             findWhats.get(currentFindWhat).nonjs.add(arg);
                         } else {
-                            throw new NutsIllegalArgumentException("find: Unsupported mixed and non js find expressions");
+                            throw new NutsExecutionException("find: Unsupported mixed and non js find expressions", 1);
                         }
                     }
                 }
@@ -185,7 +186,7 @@ public class NFindMain extends NutsApplication {
             }
         }
         if (!cmdLine.isExecMode()) {
-            return -1;
+            return;
         }
 
         if (findContext.installedDependencies == null) {
@@ -245,7 +246,6 @@ public class NFindMain extends NutsApplication {
                 display(it, findContext);
             }
         }
-        return 0;
     }
 
     private List<NutsIdExt> toext(List<NutsId> list) {
@@ -256,7 +256,7 @@ public class NFindMain extends NutsApplication {
         return e;
     }
 
-    private List<NutsIdExt> find(FindWhat findWhat, final FindContext findContext)  {
+    private List<NutsIdExt> find(FindWhat findWhat, final FindContext findContext) {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
@@ -488,7 +488,7 @@ public class NFindMain extends NutsApplication {
                                     : "r") + (info.isUpdatable() ? "u" : ".");
                             findContext.out.print(status);
                             findContext.out.print(" ");
-                            findContext.out.print(d == null ? "?" : (d.getPackaging()==null?"":d.getPackaging()));
+                            findContext.out.print(d == null ? "?" : (d.getPackaging() == null ? "" : d.getPackaging()));
                             findContext.out.print(" ");
                             findContext.out.print(Collections.singletonList(d == null ? "?" : d.getArch()));
                             findContext.out.print(" ");
@@ -587,12 +587,11 @@ public class NFindMain extends NutsApplication {
                 : info.isFetched() ? "."
                 : "r")
                 + (info.isUpdatable() ? "u" : ".")
-                + (descriptor == null ? "?" :
-                (descriptor.isNutsApplication() ? "X" : descriptor.isExecutable() ? "x" : ".")
-        );
+                + (descriptor == null ? "?"
+                        : (descriptor.isNutsApplication() ? "X" : descriptor.isExecutable() ? "x" : "."));
         findContext.out.print("**" + status + "**");
         findContext.out.print(" ");
-        findContext.out.print(descriptor == null ? "?  " : (StringUtils.isEmpty(descriptor.getPackaging())?"":descriptor.getPackaging()));
+        findContext.out.print(descriptor == null ? "?  " : (StringUtils.isEmpty(descriptor.getPackaging()) ? "" : descriptor.getPackaging()));
         findContext.out.print(" ");
         findContext.out.print(Arrays.asList(descriptor == null ? new String[0] : descriptor.getArch()));
         findContext.out.print(" ");
@@ -613,7 +612,7 @@ public class NFindMain extends NutsApplication {
         NutsSession session = findContext.context.getSession();
         List<NutsDependency> all = new ArrayList<>();
         NutsId nid = ws.getParseManager().parseId(id);
-        if(!nid.getVersion().isSingleValue()){
+        if (!nid.getVersion().isSingleValue()) {
             return new ArrayList<>();
         }
         for (NutsDependency dependency : ws.fetch(id).setSession(session.setProperty("monitor-allowed", false)).setIncludeEffective(true).fetchDescriptor()
@@ -713,7 +712,7 @@ public class NFindMain extends NutsApplication {
         int packagingSize = 3;
         int archSizeSize = 2;
         for (NutsDefinition dd : depsFiles) {
-            packagingSize = Math.max(packagingSize, dd.getDescriptor().getPackaging()==null?0:dd.getDescriptor().getPackaging().length());
+            packagingSize = Math.max(packagingSize, dd.getDescriptor().getPackaging() == null ? 0 : dd.getDescriptor().getPackaging().length());
             archSizeSize = Math.max(archSizeSize, Arrays.asList(dd.getDescriptor().getArch()).toString().length());
         }
         Collections.sort(depsFiles, new Comparator<NutsDefinition>() {
@@ -728,22 +727,22 @@ public class NFindMain extends NutsApplication {
             NutsInfo dinfo = new NutsInfo(new NutsIdExt(dd.getId(), null), findContext.context);
             dinfo.descriptor = dd.getDescriptor();
             String format = "";
-            if(findContext.filePathOnly){
+            if (findContext.filePathOnly) {
                 if (dinfo.getFile() == null) {
-                    format+=("@@FILE NOT FOUND@@ ");
-                    format+=(format(findContext, dinfo.nuts, dinfo.desc, ws));
+                    format += ("@@FILE NOT FOUND@@ ");
+                    format += (format(findContext, dinfo.nuts, dinfo.desc, ws));
                 } else {
-                    format+=(dinfo.getFile().getPath());
+                    format += (dinfo.getFile().getPath());
                 }
-            }else if(findContext.fileNameOnly){
+            } else if (findContext.fileNameOnly) {
                 if (dinfo.getFile() == null) {
-                    format+=("@@FILE NOT FOUND@@ ");
-                    format+=(format(findContext, dinfo.nuts, dinfo.desc, ws));
+                    format += ("@@FILE NOT FOUND@@ ");
+                    format += (format(findContext, dinfo.nuts, dinfo.desc, ws));
                 } else {
-                    format+=(dinfo.getFile().getName());
+                    format += (dinfo.getFile().getName());
                 }
-            }else {
-                format+=format(findContext, dinfo.nuts, dinfo.desc, ws);
+            } else {
+                format += format(findContext, dinfo.nuts, dinfo.desc, ws);
             }
             if (findContext.longflag) {
                 String status = buildDependencyStatus(findContext, immediateSelfDependencies, immediateInheritedDependencies, dd, dinfo);
@@ -819,7 +818,7 @@ public class NFindMain extends NutsApplication {
 
     private void printShortId(FindContext findContext, NutsInfo info, PrintStream out) {
         NutsWorkspace ws = findContext.context.getWorkspace();
-        if(findContext.filePathOnly){
+        if (findContext.filePathOnly) {
             if (info.getFile() == null) {
                 out.print("@@FILE NOT FOUND@@ ");
                 out.print(format(findContext, info.nuts, info.desc, ws));
@@ -828,7 +827,7 @@ public class NFindMain extends NutsApplication {
             }
             return;
         }
-        if(findContext.fileNameOnly){
+        if (findContext.fileNameOnly) {
             if (info.getFile() == null) {
                 out.print("@@FILE NOT FOUND@@ ");
                 out.print(format(findContext, info.nuts, info.desc, ws));
@@ -968,8 +967,8 @@ public class NFindMain extends NutsApplication {
 
         public boolean isInstalled(boolean checkDependencies) {
             if (this.is_installed == null) {
-                this.is_installed = isFetched() &&
-                        ws.fetch(nuts).setSession(session).setAcceptOptional(false).includeDependencies(checkDependencies).fetchDefinition().getInstallation().isInstalled();
+                this.is_installed = isFetched()
+                        && ws.fetch(nuts).setSession(session).setAcceptOptional(false).includeDependencies(checkDependencies).fetchDefinition().getInstallation().isInstalled();
             }
             return this.is_installed;
         }
@@ -1002,7 +1001,7 @@ public class NFindMain extends NutsApplication {
                     //
                 }
             }
-            if (_fetchedFile==null || _fetchedFile.getContent().getFile() == null) {
+            if (_fetchedFile == null || _fetchedFile.getContent().getFile() == null) {
                 return null;
             }
             return new File(_fetchedFile.getContent().getFile());
@@ -1016,10 +1015,10 @@ public class NFindMain extends NutsApplication {
 //                    }
                 try {
                     descriptor = ws.fetch(nuts).setSession(session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE)).setIncludeEffective(true)
-                    .fetchDescriptor();
+                            .fetchDescriptor();
                 } catch (Exception ex) {
                     descriptor = ws.fetch(nuts).setSession(session.copy().setTransitive(true).setFetchMode(NutsFetchMode.ONLINE)).setIncludeEffective(false)
-                    .fetchDescriptor();
+                            .fetchDescriptor();
                 }
             }
             return descriptor;
@@ -1051,6 +1050,7 @@ public class NFindMain extends NutsApplication {
     }
 
     static class FindContext {
+
         HashSet<String> arch = new HashSet<String>();
         HashSet<String> pack = new HashSet<String>();
         HashSet<String> repos = new HashSet<String>();
@@ -1103,10 +1103,10 @@ public class NFindMain extends NutsApplication {
             }
         };
 
-
     }
 
-    public static class NutsIdExt implements Comparable<NutsIdExt>{
+    public static class NutsIdExt implements Comparable<NutsIdExt> {
+
         public NutsId id;
         public String extra;
 
@@ -1117,8 +1117,12 @@ public class NFindMain extends NutsApplication {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             NutsIdExt nutsIdExt = (NutsIdExt) o;
             return Objects.equals(id, nutsIdExt.id);
         }
@@ -1132,10 +1136,10 @@ public class NFindMain extends NutsApplication {
         @Override
         public int compareTo(NutsIdExt o) {
             int x = this.id.getSimpleName().compareTo(o.id.getSimpleName());
-            if(x!=0){
+            if (x != 0) {
                 return x;
             }
-            x = - this.id.getVersion().compareTo(o.id.getVersion());
+            x = -this.id.getVersion().compareTo(o.id.getVersion());
             return x;
         }
     }

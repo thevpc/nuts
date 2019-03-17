@@ -16,14 +16,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class LocalTomcat {
-    private NutsApplicationContext context;
 
+    private NutsApplicationContext context;
 
     public LocalTomcat(NutsApplicationContext ws) {
         this.setContext(ws);
     }
 
-    public int runArgs() {
+    public void runArgs() {
         CommandLine cmd = new CommandLine(context.getArgs());
         Argument a;
         while (cmd.hasNext()) {
@@ -37,52 +37,69 @@ public class LocalTomcat {
                 a = cmd.readNonOption();
                 switch (a.getExpression()) {
                     case "list":
-                        return list(cmd);
+                        list(cmd);
+                        return;
                     case "show":
                     case "describe":
-                        return show(cmd);
+                        show(cmd);
+                        return;
                     case "show-property":
-                        return showProperty(cmd);
+                        showProperty(cmd);
+                        return;
                     case "add":
                     case "set":
-                        return add(cmd);
+                        add(cmd);
+                        return;
                     case "remove":
-                        return remove(cmd);
+                        remove(cmd);
+                        return;
                     case "start":
-                        return restart(cmd, false);
+                        restart(cmd, false);
+                        return;
                     case "stop":
-                        return stop(cmd);
+                        stop(cmd);
+                        return;
                     case "status":
-                        return status(cmd);
+                        status(cmd);
+                        return;
                     case "restart":
-                        return restart(cmd, true);
+                        restart(cmd, true);
+                        return;
                     case "install":
-                        return install(cmd);
+                        install(cmd);
+                        return;
                     case "reset":
-                        return reset();
+                        reset();
+                        return;
                     case "deploy":
-                        return deployApp(cmd);
+                        deployApp(cmd);
+                        return;
                     case "deploy-file":
-                        return deployFile(cmd);
+                        deployFile(cmd);
+                        return;
                     case "delete-log":
-                        return deleteLog(cmd);
+                        deleteLog(cmd);
+                        return;
                     case "delete-temp":
-                        return deleteTemp(cmd);
+                        deleteTemp(cmd);
+                        return;
                     case "delete-work":
-                        return deleteWork(cmd);
+                        deleteWork(cmd);
+                        return;
                     case "show-log":
-                        return showLog(cmd);
+                        showLog(cmd);
+                        return;
                     default:
-                        throw new RuntimeException("Unsupported action " + a.getExpression());
+                        throw new NutsExecutionException("Unsupported action " + a.getExpression(), 1);
                 }
             }
         }
-        return 0;
     }
 
-    public int list(CommandLine args) {
+    public void list(CommandLine args) {
         Argument a;
         class Helper {
+
             boolean apps = false;
             boolean domains = false;
             boolean processed = false;
@@ -144,14 +161,13 @@ public class LocalTomcat {
                 getContext().out().println(tomcatConfig.getName());
             }
         }
-        return 0;
     }
 
-
-    public int show(CommandLine args) {
+    public void show(CommandLine args) {
         Argument a;
         LocalTomcatServiceBase s;
         class Helper {
+
             boolean json = false;
 
             public void show(LocalTomcatServiceBase aa) {
@@ -178,12 +194,12 @@ public class LocalTomcat {
                 args.unexpectedArgument("tomcat --local show");
             }
         }
-        return 0;
     }
 
-    public int showProperty(CommandLine args) {
+    public void showProperty(CommandLine args) {
         Argument a;
         class Item {
+
             String name;
 
             public Item(String name) {
@@ -191,6 +207,7 @@ public class LocalTomcat {
             }
         }
         class PropsHelper {
+
             LocalTomcatServiceBase s = null;
             List<String> props = new ArrayList<>();
             LinkedHashMap<Item, Object> m = new LinkedHashMap<>();
@@ -226,20 +243,19 @@ public class LocalTomcat {
         }
         x.build();
         if (x.m.isEmpty()) {
-            throw new NutsExecutionException("No properties to show",2);
+            throw new NutsExecutionException("No properties to show", 2);
         }
         if (x.m.size() == 1) {
             for (Object value : x.m.values()) {
-                context.out().printf("%s\n",String.valueOf(value));
+                context.out().printf("%s\n", String.valueOf(value));
                 break;
             }
         } else {
             new PropertiesFormatter().format(x.m, context.out());
         }
-        return 0;
     }
 
-    public int add(CommandLine args) {
+    public void add(CommandLine args) {
         LocalTomcatConfigService c = null;
         String appName = null;
         String domainName = null;
@@ -254,7 +270,7 @@ public class LocalTomcat {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(instance);
                 } else {
-                    throw new NutsExecutionException("Instance name already defined",1);
+                    throw new NutsExecutionException("Instance name already defined", 1);
                 }
             } else if ((a = args.readStringOption("--catalina-version")) != null) {
                 if (c == null) {
@@ -301,7 +317,7 @@ public class LocalTomcat {
                 }
                 LocalTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 if (tomcatAppConfig == null) {
-                    throw new NutsExecutionException("Missing --app.source",2);
+                    throw new NutsExecutionException("Missing --app.source", 2);
                 }
                 tomcatAppConfig.getConfig().setSourceFilePath(value);
             } else if ((a = args.readStringOption("--app.deploy")) != null) {
@@ -340,10 +356,9 @@ public class LocalTomcat {
             //just check it is installed!!
             c.getCatalinaBase();
         }
-        return 0;
     }
 
-    public int remove(CommandLine args) {
+    public void remove(CommandLine args) {
         LocalTomcatServiceBase s = null;
         Argument a;
         boolean processed = false;
@@ -363,28 +378,35 @@ public class LocalTomcat {
             }
         }
         if (!processed) {
-            throw new NutsExecutionException("tomcat --local remove: Invalid parameters",2);
+            throw new NutsExecutionException("tomcat --local remove: Invalid parameters", 2);
         }
-        return lastExitCode;
+        if (lastExitCode != 0) {
+            throw new NutsExecutionException(lastExitCode);
+        }
     }
 
-    public int stop(CommandLine args) {
+    public void stop(CommandLine args) {
         LocalTomcatConfigService s = null;
         Argument a;
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
             } else if ((s = readTomcatServiceArg(args)) != null) {
-                return s.stop() ? 0 : 1;
+                if (!s.stop()) {
+                    throw new NutsExecutionException("Unable to stop", 1);
+                }
+                return;
             } else {
                 args.unexpectedArgument("tomcat --local stop");
             }
         }
         LocalTomcatConfigService c = loadTomcatConfig("");
-        return c.stop() ? 0 : 1;
+        if (!c.stop()) {
+            throw new NutsExecutionException("Unable to stop", 1);
+        }
     }
 
-    public int status(CommandLine args) {
+    public void status(CommandLine args) {
         LocalTomcatConfigService s = null;
         Argument a;
         while (args.hasNext()) {
@@ -392,17 +414,16 @@ public class LocalTomcat {
                 //
             } else if ((s = readTomcatServiceArg(args)) != null) {
                 s.printStatus();
-                return 0;
+                return;
             } else {
                 args.unexpectedArgument("tomcat --local status");
             }
         }
         LocalTomcatConfigService c = loadTomcatConfig("");
         c.printStatus();
-        return 0;
     }
 
-    public int install(CommandLine args) {
+    public void install(CommandLine args) {
         LocalTomcatAppConfigService app = null;
         String version = null;
         String file = null;
@@ -431,10 +452,9 @@ public class LocalTomcat {
             throw new NutsExecutionException("tomcat install: Missing File", 2);
         }
         app.install(version, file, true);
-        return 0;
     }
 
-    public int deleteLog(CommandLine args) {
+    public void deleteLog(CommandLine args) {
         LocalTomcatServiceBase s = null;
         boolean all = false;
         Argument a;
@@ -464,10 +484,9 @@ public class LocalTomcat {
                 c.deleteOutLog();
             }
         }
-        return 0;
     }
 
-    public int deleteTemp(CommandLine args) {
+    public void deleteTemp(CommandLine args) {
         LocalTomcatServiceBase s = null;
         Argument a;
         boolean processed = false;
@@ -486,10 +505,9 @@ public class LocalTomcat {
             LocalTomcatConfigService c = loadTomcatConfig("");
             c.deleteTemp();
         }
-        return 0;
     }
 
-    public int deleteWork(CommandLine args) {
+    public void deleteWork(CommandLine args) {
         LocalTomcatServiceBase s = null;
         Argument a;
         boolean processed = false;
@@ -508,10 +526,9 @@ public class LocalTomcat {
             LocalTomcatConfigService c = loadTomcatConfig("");
             c.deleteWork();
         }
-        return 0;
     }
 
-    public int showLog(CommandLine args) {
+    public void showLog(CommandLine args) {
         LocalTomcatServiceBase s = null;
         boolean processed = false;
         String instance = null;
@@ -547,10 +564,9 @@ public class LocalTomcat {
                 c.showOutLog(count);
             }
         }
-        return 0;
     }
 
-    public int deployFile(CommandLine args) {
+    public void deployFile(CommandLine args) {
         String instance = null;
         String version = null;
         String file = null;
@@ -580,10 +596,9 @@ public class LocalTomcat {
         }
         LocalTomcatConfigService c = loadTomcatConfig(instance);
         c.deployFile(new File(file), contextName, domain);
-        return 0;
     }
 
-    public int deployApp(CommandLine args) {
+    public void deployApp(CommandLine args) {
         String version = null;
         String app = null;
         Argument a;
@@ -601,10 +616,9 @@ public class LocalTomcat {
             }
         }
         loadApp(app).deploy(version);
-        return 0;
     }
 
-    public int restart(CommandLine args, boolean shutdown) {
+    public void restart(CommandLine args, boolean shutdown) {
         boolean deleteLog = false;
         String instance = null;
         List<String> apps = new ArrayList<>();
@@ -630,16 +644,13 @@ public class LocalTomcat {
         } else {
             c.start(apps.toArray(new String[0]), deleteLog);
         }
-        return 0;
     }
 
-    public int reset() {
+    public void reset() {
         for (LocalTomcatConfigService tomcatConfig : listConfig()) {
             tomcatConfig.remove();
         }
-        return 0;
     }
-
 
     public LocalTomcatConfigService[] listConfig() {
         List<LocalTomcatConfigService> all = new ArrayList<>();
@@ -661,7 +672,6 @@ public class LocalTomcat {
         }
         return all.toArray(new LocalTomcatConfigService[0]);
     }
-
 
     public LocalTomcatConfigService loadTomcatConfig(String name) {
         LocalTomcatConfigService t = new LocalTomcatConfigService(name, this);

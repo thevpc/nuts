@@ -12,15 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TomcatMain extends NutsApplication {
+
     public static void main(String[] args) {
-        new TomcatMain().launchAndExit(args);
+        new TomcatMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
+    public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         if (args.length == 0) {
-            throw new NutsExecutionException("Expected --local or --remote",2);
+            throw new NutsExecutionException("Expected --local or --remote", 2);
         }
         List<String> argsList = new ArrayList<>();
         CommandLine cmd = new CommandLine(args);
@@ -28,9 +29,9 @@ public class TomcatMain extends NutsApplication {
         while (cmd.hasNext()) {
             Argument a = cmd.read();
             if (local == null) {
-                if(appContext.configure(cmd)){
+                if (appContext.configure(cmd)) {
                     //
-                }else if (a.getExpression().equals("--remote") || a.getExpression().equals("-r")) {
+                } else if (a.getExpression().equals("--remote") || a.getExpression().equals("-r")) {
                     local = false;
                 } else if (a.getExpression().equals("--local") || a.getExpression().equals("-l")) {
                     local = true;
@@ -51,12 +52,11 @@ public class TomcatMain extends NutsApplication {
         appContext.setArgs(argsList.toArray(new String[0]));
         if (local) {
             LocalTomcat m = new LocalTomcat(appContext);
-            return m.runArgs();
+            m.runArgs();
         } else {
             RemoteTomcat m = new RemoteTomcat(appContext);
-            return m.runArgs();
+            m.runArgs();
         }
     }
-
 
 }

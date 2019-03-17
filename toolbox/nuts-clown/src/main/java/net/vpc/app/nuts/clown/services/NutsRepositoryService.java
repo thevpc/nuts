@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.clown.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepositoryLocation;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -36,7 +35,7 @@ public class NutsRepositoryService {
     @GetMapping(value = "delete", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> deleteRepository(@RequestParam("name") String name,
                                                                       @RequestParam("workspace") String workspace) {
-        NutsWorkspace ws = Nuts.openWorkspace(workspace);
+        NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
         ws.getRepositoryManager().removeRepository(name);
         ws.getConfigManager().save();
         logger.info(String.format("Repository with name %s was deleted", name));
@@ -47,7 +46,7 @@ public class NutsRepositoryService {
     @GetMapping(value = "add", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> addRepository(@RequestParam("workspace") String workspace,
                                                                    @RequestParam("data") String data) {
-        NutsWorkspace ws = Nuts.openWorkspace(workspace);
+        NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
         try {
             HashMap<String, String> dataMap = new ObjectMapper().readValue(data, HashMap.class);
             NutsRepositoryLocation location = new NutsRepositoryLocation()

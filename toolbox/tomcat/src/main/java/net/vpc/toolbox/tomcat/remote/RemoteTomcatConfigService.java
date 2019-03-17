@@ -71,7 +71,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         );
     }
 
-    public int start(String[] redeploy,boolean deleteOutLog) throws RuntimeIOException {
+    public void start(String[] redeploy,boolean deleteOutLog) throws RuntimeIOException {
         List<String> arg=new ArrayList<>();
         arg.add("net.vpc.app.nuts.toolbox:tomcat");
         arg.add("--start");
@@ -91,11 +91,11 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         if(deleteOutLog) {
             arg.add("--deleteOutLog");
         }
-        return execRemoteNuts(arg.toArray(new String[0]));
+        execRemoteNuts(arg.toArray(new String[0]));
     }
 
-    public int shutdown() {
-        return execRemoteNuts(
+    public void shutdown() {
+        execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:tomcat",
                 "--stop",
                 "--instance",
@@ -108,7 +108,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         return StringUtils.isEmpty(n)?"default":n;
     }
 
-    public int restart(String[] redeploy,boolean deleteOutLog) {
+    public void restart(String[] redeploy,boolean deleteOutLog) {
         List<String> arg=new ArrayList<>();
         arg.add("net.vpc.app.nuts.toolbox:tomcat");
         arg.add("restart");
@@ -128,7 +128,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         if(deleteOutLog) {
             arg.add("--deleteOutLog");
         }
-        return execRemoteNuts(arg.toArray(new String[0]));
+        execRemoteNuts(arg.toArray(new String[0]));
     }
 
 
@@ -216,7 +216,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         return a;
     }
 
-    public int execRemoteNuts(String... cmd) {
+    public void execRemoteNuts(String... cmd) {
         RemoteTomcatConfig cconfig = getConfig();
         List<String> cmdList = new ArrayList<>(Arrays.asList(
                 "nsh",
@@ -226,10 +226,11 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase{
         cmdList.add("--verbose");
         cmdList.add(this.config.getServer());
         cmdList.addAll(Arrays.asList(cmd));
-        return context.getWorkspace().createExecBuilder()
+        context.getWorkspace().createExecBuilder()
                 .setSession(context.getSession())
                 .setCommand(cmdList)
-                .exec().getResult();
+                .setFailFast()
+                .exec();
 
     }
 }

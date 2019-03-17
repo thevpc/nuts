@@ -17,34 +17,37 @@ public class Nsh extends NutsApplication {
     ));
 
     public static void main(String[] args) {
-        new Nsh().launchAndExit(args);
+        new Nsh().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext applicationContext) {
+    public void run(NutsApplicationContext applicationContext) {
         String[] args = applicationContext.getArgs();
         NutsSystemTerminal st = applicationContext.getWorkspace().getSystemTerminal();
-        if(st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal){
+        if (st instanceof NutsJLineTerminal || st.getParent() instanceof NutsJLineTerminal) {
             //that's ok
-        }else{
+        } else {
             applicationContext.getWorkspace().setSystemTerminal(new NutsJLineTerminal());
         }
         NutsJavaShell c = new NutsJavaShell(applicationContext);
-        return c.run(args);
+        int r = c.run(args);
+        if (r != 0) {
+            throw new NutsExecutionException(r);
+        }
     }
 
     @Override
-    protected int onInstallApplication(NutsApplicationContext applicationContext) {
-        CommandLine cmd=new CommandLine(applicationContext);
+    protected void onInstallApplication(NutsApplicationContext applicationContext) {
+        CommandLine cmd = new CommandLine(applicationContext);
         Argument a;
-        boolean force=false;
-        boolean silent=false;
-        while(cmd.hasNext()){
-            if((a=cmd.readBooleanOption("-f","--force"))!=null) {
+        boolean force = false;
+        boolean silent = false;
+        while (cmd.hasNext()) {
+            if ((a = cmd.readBooleanOption("-f", "--force")) != null) {
                 force = a.getBooleanValue();
-            }else if((a=cmd.readBooleanOption("-s","--silent"))!=null){
-                silent=a.getBooleanValue();
-            }else{
+            } else if ((a = cmd.readBooleanOption("-s", "--silent")) != null) {
+                silent = a.getBooleanValue();
+            } else {
                 cmd.unexpectedArgument("nsh on-install");
             }
         }
@@ -63,9 +66,9 @@ public class Nsh extends NutsApplication {
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         NutsCommand[] commands = c.getCommands();
-        int count=0;
+        int count = 0;
         for (NutsCommand command : commands) {
-            if(!INTERNAL_COMMANDS.contains(command.getName())) {
+            if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (cfg.installCommand(
                         new NutsWorkspaceCommandConfig()
@@ -73,37 +76,42 @@ public class Nsh extends NutsApplication {
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId()),
-                        force ? NutsConfirmAction.FORCE : NutsConfirmAction.IGNORE
+                        new net.vpc.app.nuts.NutsInstallOptions().setForce(force), null
                 )) {
                     count++;
                 }
             }
         }
-        if(!silent){
+        if (!silent) {
             applicationContext.out().printf("Installed ==%s== nsh commands.\n", count);
         }
         cfg.save(false);
-        return 0;
     }
 
     @Override
-    protected int onUpdateApplication(NutsApplicationContext applicationContext) {
+    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
-        return 0;
     }
 
     @Override
-    protected int onUninstallApplication(NutsApplicationContext applicationContext) {
+    protected void onUninstallApplication(NutsApplicationContext applicationContext) {
         try {
             NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
-            cfg.uninstallCommandFactory("nsh",NutsConfirmAction.IGNORE);
+            try {
+                cfg.uninstallCommandFactory("nsh", null);
+            } catch (Exception notFound) {
+                //ignore!
+            }
             for (NutsWorkspaceCommand command : cfg.findCommands(applicationContext.getAppId())) {
-                cfg.uninstallCommand(command.getName(),NutsConfirmAction.IGNORE);
+                try {
+                    cfg.uninstallCommand(command.getName(), new net.vpc.app.nuts.NutsUninstallOptions(), null);
+                } catch (Exception ex) {
+                    applicationContext.out().printf("Unable to uninstall ==%s== .\n", command.getName());
+                }
             }
         } catch (Exception ex) {
             //ignore
         }
-        return 0;
     }
 }

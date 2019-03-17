@@ -26,7 +26,9 @@ public class ExprNutsRepositoryFilter implements NutsRepositoryFilter, Simplifia
 
     @Override
     public boolean accept(NutsRepository repository) {
-        return repos.isEmpty() || reposPattern.matcher(StringUtils.trim(repository.getName())).matches();
+        return repos.isEmpty()
+                || reposPattern.matcher(StringUtils.trim(repository.getName())).matches()
+                || reposPattern.matcher(StringUtils.trim(repository.getUuid())).matches();
     }
 
     @Override

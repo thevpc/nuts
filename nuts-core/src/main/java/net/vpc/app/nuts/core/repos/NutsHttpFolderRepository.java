@@ -64,7 +64,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -74,7 +74,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsSession session) {
         throw new NutsUnsupportedOperationException();
     }
 

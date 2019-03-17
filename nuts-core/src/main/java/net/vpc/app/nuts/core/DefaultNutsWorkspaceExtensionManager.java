@@ -26,7 +26,7 @@ import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 /**
  * @author vpc
  */
-class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
+public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
 
     private Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<Class>(
             Arrays.asList(

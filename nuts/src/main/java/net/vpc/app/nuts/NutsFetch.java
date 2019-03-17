@@ -36,7 +36,11 @@ public interface NutsFetch {
 
     NutsContent fetchContent();
 
+    NutsContent fetchContentOrNull();
+
     NutsId fetchId();
+
+    NutsId fetchIdOrNull();
 
     String fetchContentHash();
 
@@ -44,9 +48,23 @@ public interface NutsFetch {
 
     NutsDefinition fetchDefinition();
 
+    NutsDefinition fetchDefinitionOrNull();
+
     NutsDescriptor fetchDescriptor();
+
+    NutsDescriptor fetchDescriptorOrNull();
 
     String fetchFile();
 
+    String fetchFileOrNull();
+
     NutsFetch setDefaultLocation();
+
+    boolean isPreferInstalled();
+
+    boolean isInstalledOnly();
+
+    NutsFetch setInstalledOnly(boolean preferInstalled);
+
+    NutsFetch setPreferInstalled(boolean preferInstalled);
 }

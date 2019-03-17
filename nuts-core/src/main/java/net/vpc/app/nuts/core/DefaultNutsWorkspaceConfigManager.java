@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
@@ -47,6 +47,7 @@ import java.util.logging.Logger;
  * @author vpc
  */
 class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
+
     public static final Logger log = Logger.getLogger(DefaultNutsWorkspaceConfigManager.class.getName());
 
     private final DefaultNutsWorkspace ws;
@@ -152,8 +153,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 .setRuntimeId(config.getBootRuntime())
                 .setRepositories(config.getBootRepositories())
                 .setJavaCommand(config.getBootJavaCommand())
-                .setJavaOptions(config.getBootJavaOptions())
-                ;
+                .setJavaOptions(config.getBootJavaOptions());
     }
 
     @Override
@@ -249,12 +249,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public boolean isRepositoryEnabled(String repoName) {
-        NutsRepositoryLocation r = getRepository(repoName);
-        return r != null && r.isEnabled();
-    }
-
-    @Override
     public void setRepositoryEnabled(String repoName, boolean enabled) {
         NutsRepositoryLocation e = getRepository(repoName);
         if (e != null && e.isEnabled() != enabled) {
@@ -345,7 +339,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (location != null) {
             List<NutsSdkLocation> list = getSdk().get(name);
             if (list != null) {
-                for (Iterator<NutsSdkLocation> iterator = list.iterator(); iterator.hasNext(); ) {
+                for (Iterator<NutsSdkLocation> iterator = list.iterator(); iterator.hasNext();) {
                     NutsSdkLocation location2 = iterator.next();
                     if (location2.equals(location)) {
                         iterator.remove();
@@ -378,7 +372,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         Set<String> s = getSdk().keySet();
         return s.toArray(new String[0]);
     }
-
 
     @Override
     public void setBootConfig(NutsBootConfig other) {
@@ -591,11 +584,11 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (m != null) {
             File f = new File(System.getProperty("user.home") + "/.m2/repository/" + m.getGroupId().replace('.', '/') + "/" + m.getArtifactId() + "/" + m.getVersion() + "/"
                     + ws.getConfigManager().getDefaultIdFilename(
-                    ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
-                            .setFaceComponent()
-                            .setPackaging("jar")
-                            .build()
-            ));
+                            ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
+                                    .setFaceComponent()
+                                    .setPackaging("jar")
+                                    .build()
+                    ));
             if (f.exists()) {
                 return f.getPath();
             }
@@ -671,7 +664,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         fireConfigurationChanged();
     }
 
-
     public void removeRepository(String repositoryName) {
         if (repositoryName == null) {
             throw new NutsIllegalArgumentException("Invalid Null Repository");
@@ -715,7 +707,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return false;
     }
 
-
     public void setEnv(String property, String value) {
         Properties env = config.getEnv();
         if (StringUtils.isEmpty(value)) {
@@ -735,7 +726,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             }
         }
     }
-
 
     public String getEnv(String property, String defaultValue) {
         Properties env = config.getEnv();
@@ -849,47 +839,53 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public boolean installCommand(NutsWorkspaceCommandConfig command, NutsConfirmAction confirmAction) {
+    public boolean installCommand(NutsWorkspaceCommandConfig command, NutsInstallOptions options, NutsSession session) {
         if (command == null
                 || StringUtils.isEmpty(command.getName())
                 || command.getName().contains(" ") || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getOwner() == null
                 || command.getOwner().getName().isEmpty()
                 || command.getOwner().getGroup().isEmpty()
-                || command.getCommand() == null
-        ) {
+                || command.getCommand() == null) {
             throw new NutsIllegalArgumentException("Invalid command " + (command == null ? "<NULL>" : command.getName()));
         }
+        boolean forced = false;
+        if (options == null) {
+            options = new NutsInstallOptions();
+        }
         if (defaultCommandFactory.findCommand(command.getName(), ws) != null) {
-            if (confirmAction == null) {
-                confirmAction = NutsConfirmAction.ERROR;
-            }
-            switch (confirmAction) {
-                case ERROR:
-                    throw new NutsIllegalArgumentException("Command already exists " + command.getName());
-                case IGNORE:
-                    return false;
+            if (options.isForce()) {
+                forced = true;
+                uninstallCommand(command.getName(), new NutsUninstallOptions().setTrace(options.isTrace()), session);
+            } else {
+                throw new NutsIllegalArgumentException("Command already exists " + command.getName());
             }
         }
         defaultCommandFactory.installCommand(command);
-        return true;
+        if (options.isTrace()) {
+            PrintStream out = CoreNutsUtils.resolveOut(ws, session);
+            out.printf("[[install]] command ==%s==\n", command.getName());
+        }
+        return forced;
     }
 
     @Override
-    public boolean uninstallCommand(String name, NutsConfirmAction confirmAction) {
+    public boolean uninstallCommand(String name, NutsUninstallOptions options, NutsSession session) {
         if (StringUtils.isEmpty(name)) {
             throw new NutsIllegalArgumentException("Invalid command " + (name == null ? "<NULL>" : name));
         }
+        if (options == null) {
+            options = new NutsUninstallOptions();
+        }
         NutsWorkspaceCommandConfig command = defaultCommandFactory.findCommand(name, ws);
         if (command == null) {
-            switch (confirmAction) {
-                case ERROR:
-                    throw new NutsIllegalArgumentException("Command does not exists " + name);
-                case IGNORE:
-                    return false;
-            }
+            throw new NutsIllegalArgumentException("Command does not exists " + name);
         }
         defaultCommandFactory.uninstallCommand(name);
+        if (options.isTrace()) {
+            PrintStream out = CoreNutsUtils.resolveOut(ws, session);
+            out.printf("[[uninstall]] command ==%s==\n", name);
+        }
         return true;
     }
 
@@ -910,7 +906,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactoryConfig) {
+    public void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactoryConfig, NutsSession session) {
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
             throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + commandFactoryConfig);
         }
@@ -956,13 +952,13 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public boolean uninstallCommandFactory(String factoryId, NutsConfirmAction confirmAction) {
+    public boolean uninstallCommandFactory(String factoryId, NutsSession session) {
         if (factoryId == null || factoryId.isEmpty()) {
             throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
         }
         NutsWorkspaceCommandFactory removeMe = null;
         NutsWorkspaceCommandFactoryConfig removeMeConfig = null;
-        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext();) {
             NutsWorkspaceCommandFactory factory = iterator.next();
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
@@ -973,7 +969,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         }
         List<NutsWorkspaceCommandFactoryConfig> commandFactories = config.getCommandFactories();
         if (commandFactories != null) {
-            for (Iterator<NutsWorkspaceCommandFactoryConfig> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+            for (Iterator<NutsWorkspaceCommandFactoryConfig> iterator = commandFactories.iterator(); iterator.hasNext();) {
                 NutsWorkspaceCommandFactoryConfig commandFactory = iterator.next();
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
@@ -984,12 +980,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             }
         }
         if (removeMe == null && removeMeConfig == null) {
-            switch (confirmAction) {
-                case ERROR:
-                    throw new NutsIllegalArgumentException("Command Factory does not exists " + factoryId);
-                case IGNORE:
-                    return false;
-            }
+            throw new NutsIllegalArgumentException("Command Factory does not exists " + factoryId);
         }
         return true;
     }
@@ -1030,7 +1021,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (storeLocation == null) {
             return null;
         }
-        return CoreNutsUtils.resolveNutsDefaultPath(id, new File(storeLocation,"components")).getPath();
+        return CoreNutsUtils.resolveNutsDefaultPath(id, new File(storeLocation, "components")).getPath();
     }
 
     @Override
@@ -1191,7 +1182,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return id.getName() + "-" + id.getVersion().getValue() + classifier + ext;
     }
 
-
     @Override
     public String getDefaultIdComponentExtension(String packaging) {
         if (StringUtils.isEmpty(packaging)) {
@@ -1327,6 +1317,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public NutsWorkspaceListManager createWorkspaceListManager(String name) {
-        return new DefaultNutsWorkspaceListManager(ws,name);
+        return new DefaultNutsWorkspaceListManager(ws, name);
     }
 }

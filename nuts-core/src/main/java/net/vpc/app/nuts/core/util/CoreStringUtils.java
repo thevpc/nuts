@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsObjectConverter;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;

@@ -265,7 +265,16 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         return configMirrors.get(name);
     }
 
+    @Override
+    public void setMirrorEnabled(String repoName, boolean enabled) {
+        NutsRepositoryLocation e = getMirror(repoName);
+        if (e != null && e.isEnabled() != enabled) {
+            e.setEnabled(enabled);
+            fireConfigurationChanged();
+        }
+    }
 
+    @Override
     public NutsRepositoryLocation[] getMirrors() {
         return configMirrors.values().toArray(new NutsRepositoryLocation[0]);
     }
@@ -283,7 +292,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     @Override
     public void save() {
         CoreNutsUtils.checkReadOnly(repository.getWorkspace());
-        repository.getSecurityManager().checkAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY, "save-repository");
+        repository.getSecurityManager().checkAllowed(NutsConstants.RIGHT_SAVE_REPOSITORY);
         File file = CoreIOUtils.createFile(getStoreLocation(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
         boolean created = false;
         if (!file.exists()) {

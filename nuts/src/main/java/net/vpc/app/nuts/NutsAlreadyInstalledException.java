@@ -30,22 +30,23 @@
 package net.vpc.app.nuts;
 
 /**
+ * Thrown to indicate that the component is already installed and should not be reinstalled
  * Created by vpc on 1/15/17.
  */
-public class NutsAlreadtInstalledException extends NutsElementNotFoundException {
+public class NutsAlreadyInstalledException extends NutsElementNotFoundException {
 
     private final String id;
 
-    public NutsAlreadtInstalledException(NutsId id) {
+    public NutsAlreadyInstalledException(NutsId id) {
         this(id == null ? null : id.toString());
     }
 
-    public NutsAlreadtInstalledException(String id) {
+    public NutsAlreadyInstalledException(String id) {
         super("Already Installed nuts " + (id == null ? "<null>" : id));
         this.id = id;
     }
 
-    public NutsAlreadtInstalledException(String nuts, String msg, Exception ex) {
+    public NutsAlreadyInstalledException(String nuts, String msg, Exception ex) {
         super(NutsUtils.isEmpty(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,ex);
         this.id = nuts;
     }

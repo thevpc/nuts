@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.repos;
@@ -48,7 +48,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     public static final Logger log = Logger.getLogger(NutsFolderRepository.class.getName());
 
-    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository,String repositoryRoot) {
+    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
         super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
                 repositoryRoot,
                 SPEED_FAST);
@@ -126,7 +126,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 }
             }
         }
-        if (session.isTransitive()) {
+        if (session.isTransitive() && isSupportedMirroring()) {
             for (NutsRepository remote : getMirrors()) {
                 NutsDescriptor nutsDescriptor = null;
                 try {
@@ -150,11 +150,10 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return null;
     }
 
-
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
-        if (foundAction == null) {
-            foundAction = NutsConfirmAction.ERROR;
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsSession session) {
+        if (options == null) {
+            options = new NutsDeployOptions();
         }
         String alt = StringUtils.trim(descriptor.getAlternative());
         NutsId idContent = getWorkspace().getConfigManager().createComponentFaceId(id, descriptor).setAlternative(alt);
@@ -162,29 +161,26 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         File pckFile = getIdLocalFile(idContent, false);
 
         boolean deployed = false;
-        if (foundAction == NutsConfirmAction.ERROR && descFile.exists()) {
+        if (descFile.exists() && !options.isForce()) {
             throw new NutsAlreadyDeployedException(id.toString());
-        } else if (foundAction == NutsConfirmAction.IGNORE && descFile.exists()) {
-            //do nothing
-        } else {
-            if (descFile.exists()) {
-                log.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile.getPath());
-            }
-            getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor, descFile);
-            CoreNutsUtils.copy(getWorkspace().getIOManager().getSHA1(descriptor), CoreIOUtils.createFile(descFile.getParent(), descFile.getName() + ".sha1"), true);
         }
-        if (foundAction == NutsConfirmAction.ERROR && pckFile.exists()) {
+        if (pckFile.exists() && !options.isForce()) {
             throw new NutsAlreadyDeployedException(id.toString());
-        } else if (foundAction == NutsConfirmAction.IGNORE && pckFile.exists()) {
-            //do nothing
-        } else {
-            if (pckFile.exists()) {
-                log.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile.getPath());
-            }
-            CoreNutsUtils.copy(file, pckFile, true);
-            CoreNutsUtils.copy(CoreSecurityUtils.evalSHA1(pckFile), CoreIOUtils.createFile(pckFile.getParent(), pckFile.getName() + ".sha1"), true);
-            fireOnDeploy(new NutsContentEvent(id, descriptor, pckFile.getPath(), getWorkspace(), this));
         }
+        if (descFile.exists()) {
+            log.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile.getPath());
+        }
+        if (pckFile.exists()) {
+            log.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile.getPath());
+        }
+
+        getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor, descFile);
+        CoreNutsUtils.copy(getWorkspace().getIOManager().getSHA1(descriptor), CoreIOUtils.createFile(descFile.getParent(), descFile.getName() + ".sha1"), true);
+
+        CoreNutsUtils.copy(file, pckFile, true);
+        CoreNutsUtils.copy(CoreSecurityUtils.evalSHA1(pckFile), CoreIOUtils.createFile(pckFile.getParent(), pckFile.getName() + ".sha1"), true);
+        fireOnDeploy(new NutsContentEvent(id, descriptor, pckFile.getPath(), getWorkspace(), this));
+
         return idContent;
     }
 
@@ -194,12 +190,15 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
+    protected void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
         NutsSession nonTransitiveSession = session.copy().setTransitive(false);
         NutsDescriptor desc = fetchDescriptor(id, nonTransitiveSession);
         NutsContent local = fetchContent(id, null, nonTransitiveSession);
         if (local == null) {
             throw new NutsNotFoundException(id);
+        }
+        if (!isSupportedMirroring()) {
+            throw new NutsRepositoryNotFoundException("Not Repo for pushing " + id);
         }
         if (repoId == null) {
             List<NutsRepository> all = new ArrayList<>();
@@ -209,15 +208,18 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     all.add(remote);
                 }
             }
-            if (all.size() == 0) {
+            if (all.isEmpty()) {
                 throw new NutsRepositoryNotFoundException("Not Repo for pushing " + id);
             } else if (all.size() > 1) {
                 throw new NutsRepositoryAmbiguousException("Unable to perform push. Two Repositories provides the same nuts " + id);
             }
-            all.get(0).deploy(id, desc, local.getFile(), foundAction, session);
+            all.get(0).deploy(id, desc, local.getFile(),
+                    CoreNutsUtils.createNutsDeployOptions(options),
+                    session);
         } else {
             NutsRepository repo = getMirror(repoId);
-            repo.deploy(id, desc, local.getFile(), foundAction, session);
+            repo.deploy(id, desc, local.getFile(), CoreNutsUtils.createNutsDeployOptions(options),
+                    session);
         }
         fireOnPush(new NutsContentEvent(id, desc, local.getFile(), getWorkspace(), this));
     }
@@ -238,7 +240,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 iterator.addNonEmpty(findInFolder(new File(getStoreLocation(false)), filter, session));
                 iterator.addNonEmpty(findInFolder(new File(getStoreLocation(true)), filter, session));
             }
-            if (session.isTransitive()) {
+            if (session.isTransitive() && isSupportedMirroring()) {
                 for (NutsRepository remote : getMirrors()) {
                     Iterator<NutsId> child = null;
                     try {
@@ -268,7 +270,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 return new NutsContent(cacheContent.getPath(), true, false);
             }
         }
-        if (session.isTransitive()) {
+        if (session.isTransitive() && isSupportedMirroring()) {
             for (NutsRepository mirror : getMirrors()) {
                 try {
                     NutsContent c = mirror.fetchContent(id, cacheContent == null ? null : cacheContent.getPath(), session);
@@ -325,8 +327,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //                    new File(getLocalVersionFolder(id), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME)
 //                    : new File(getLocalVersionFolder(id) + File.separator + alt, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
 //        } else {
-        return (alt.isEmpty() || alt.equals(NutsConstants.ALTERNATIVE_DEFAULT_VALUE)) ?
-                new File(getLocalVersionFolder(id, cache), getIdFilename(id))
+        return (alt.isEmpty() || alt.equals(NutsConstants.ALTERNATIVE_DEFAULT_VALUE))
+                ? new File(getLocalVersionFolder(id, cache), getIdFilename(id))
                 : new File(getLocalVersionFolder(id, cache) + File.separator + alt, getIdFilename(id));
 //        }
     }
@@ -396,23 +398,25 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (namedNutIdIterator != null) {
             list.addAll(namedNutIdIterator);
         }
-        for (NutsRepository repo : getMirrors()) {
-            int sup = 0;
-            try {
-                sup = repo.getSupportLevel(id, session);
-            } catch (Exception ex) {
-//                errors.append(ex.toString()).append("\n");
-            }
-
-            if (sup > 0) {
-                List<NutsId> vers = null;
+        if (isSupportedMirroring()) {
+            for (NutsRepository repo : getMirrors()) {
+                int sup = 0;
                 try {
-                    vers = repo.findVersions(id, idFilter, session);
-                } catch (NutsNotFoundException ex) {
-//                    errors.append(ex).append(" \n");
+                    sup = repo.getSupportLevel(id, session);
+                } catch (Exception ex) {
+//                errors.append(ex.toString()).append("\n");
                 }
-                if (vers != null) {
-                    list.addAll(vers);
+
+                if (sup > 0) {
+                    List<NutsId> vers = null;
+                    try {
+                        vers = repo.findVersions(id, idFilter, session);
+                    } catch (NutsNotFoundException ex) {
+//                    errors.append(ex).append(" \n");
+                    }
+                    if (vers != null) {
+                        list.addAll(vers);
+                    }
                 }
             }
         }
@@ -439,7 +443,6 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
         });
     }
-
 
     public String getStoreLocation(boolean cache) {
         if (cache) {
@@ -475,7 +478,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     }
                 }
             }
-            if (session.isTransitive()) {
+            if (session.isTransitive() && isSupportedMirroring()) {
                 for (NutsRepository remote : getMirrors()) {
                     NutsDescriptor nutsDescriptor = null;
                     try {
@@ -520,14 +523,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 }
             }
         }
-        try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
+        try ( PrintStream p = new PrintStream(new File(folder, ".files"))) {
             for (String file : files) {
                 p.println(file);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
+        try ( PrintStream p = new PrintStream(new File(folder, ".folders"))) {
             for (String file : folders) {
                 p.println(file);
             }

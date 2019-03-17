@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("indexer/components")
@@ -22,8 +23,22 @@ public class NutsComponentController {
 
     @Autowired
     private DataService dataService;
-    private NutsIndexSubscriberListManager subscriberManager = NutsIndexSubscriberListManagerPool.openSubscriberListManager("default");
     private static final Logger logger = LoggerFactory.getLogger(NutsComponentController.class);
+
+        @Autowired
+    private NutsWorkspaceListManagerPool listManagerPool;
+    @Autowired
+    private NutsIndexSubscriberListManagerPool indexSubscriberListManagerPool;
+    @Autowired
+    private NutsWorkspacePool workspacePool;
+    private NutsWorkspaceListManager workspaceManager;
+    private NutsIndexSubscriberListManager subscriberManager;
+
+    @PostConstruct
+    private void init() {
+        workspaceManager = listManagerPool.openListManager("default");
+        subscriberManager = indexSubscriberListManagerPool.openSubscriberListManager("default");
+    }
 
 
     @GetMapping(value = "", produces = "application/json")

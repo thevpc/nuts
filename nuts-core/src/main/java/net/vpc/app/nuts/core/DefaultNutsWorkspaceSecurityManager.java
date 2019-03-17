@@ -48,7 +48,7 @@ import java.util.logging.Level;
  *
  * @author vpc
  */
-class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManager {
+public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManager {
 
     private ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNutsWorkspace ws;

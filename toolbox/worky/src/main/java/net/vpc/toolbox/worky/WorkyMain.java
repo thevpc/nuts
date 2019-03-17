@@ -4,21 +4,18 @@ import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.commandline.FolderNonOption;
-
-import java.io.File;
 
 public class WorkyMain extends NutsApplication {
 
     private WorkspaceService service;
 
     public static void main(String[] args) {
-        new WorkyMain().launchAndExit(args);
+        new WorkyMain().runAndExit(args);
     }
 
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
+    public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         this.service = new WorkspaceService(appContext);
         CommandLine cmdLine = new CommandLine(args, appContext.getAutoComplete());
@@ -27,22 +24,27 @@ public class WorkyMain extends NutsApplication {
             if (appContext.configure(cmdLine)) {
                 //
             } else if ((a = cmdLine.readNonOption("scan")) != null) {
-                return service.scan(cmdLine, appContext);
+                service.scan(cmdLine, appContext);
+                return ;
             } else if ((a = cmdLine.readNonOption("check")) != null) {
-                return service.check(cmdLine, appContext);
+                service.check(cmdLine, appContext);
+                return ;
             } else if (cmdLine.readAll("enable scan")) {
-                return service.enableScan(cmdLine, appContext, true);
+                service.enableScan(cmdLine, appContext, true);
+                return ;
             } else if (cmdLine.readAll("disable scan")) {
-                return service.enableScan(cmdLine, appContext, false);
+                service.enableScan(cmdLine, appContext, false);
+                return ;
             } else if ((a = cmdLine.readNonOption("list")) != null) {
-                return service.list(cmdLine, appContext);
+                service.list(cmdLine, appContext);
+                return ;
             } else if ((a = cmdLine.readNonOption("set")) != null) {
-                return service.setWorkspaceConfigParam(cmdLine, appContext);
+                service.setWorkspaceConfigParam(cmdLine, appContext);
+                return ;
             } else {
                 cmdLine.unexpectedArgument("worky");
             }
         } while (cmdLine.hasNext());
-        return 0;
     }
 
 

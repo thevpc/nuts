@@ -2,6 +2,7 @@ package net.vpc.app.nuts;
 
 public class NutsInstallInfo {
     private boolean installed;
+    private boolean justInstalled;
     private String installFolder;
 
     public NutsInstallInfo(boolean installed, String installFolder) {
@@ -16,4 +17,13 @@ public class NutsInstallInfo {
     public String getInstallFolder() {
         return installFolder;
     }
+
+    public boolean isJustInstalled() {
+        return justInstalled;
+    }
+
+    public void setJustInstalled(boolean justInstalled) {
+        this.justInstalled = justInstalled;
+    }
+    
 }

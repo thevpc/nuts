@@ -27,28 +27,58 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.toolbox.nsh;
+package net.vpc.app.nuts;
 
-import net.vpc.app.nuts.NutsIllegalArgumentException;
+public class NutsUpdateOptions {
+    private boolean trace=true;
+    private boolean enableMajorUpdates=false;
+    private boolean applyUpdates;
+    private boolean force;
+    private boolean enableInstall;
 
-public class NutsCommandSyntaxError extends NutsIllegalArgumentException {
-
-    public NutsCommandSyntaxError() {
+    public boolean isTrace() {
+        return trace;
     }
 
-    public NutsCommandSyntaxError(String message) {
-        super(message);
+    public NutsUpdateOptions setTrace(boolean trace) {
+        this.trace = trace;
+        return this;
     }
 
-    public NutsCommandSyntaxError(String message, Throwable cause) {
-        super(message, cause);
+    public boolean isEnableMajorUpdates() {
+        return enableMajorUpdates;
     }
 
-    public NutsCommandSyntaxError(Throwable cause) {
-        super(cause);
+    public NutsUpdateOptions setEnableMajorUpdates(boolean enableMajorUpdates) {
+        this.enableMajorUpdates = enableMajorUpdates;
+        return this;
     }
 
-    public NutsCommandSyntaxError(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public boolean isApplyUpdates() {
+        return applyUpdates;
     }
+
+    public NutsUpdateOptions setApplyUpdates(boolean applyUpdates) {
+        this.applyUpdates = applyUpdates;
+        return this;
+    }
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public NutsUpdateOptions setForce(boolean force) {
+        this.force = force;
+        return this;
+    }
+
+    public boolean isEnableInstall() {
+        return enableInstall;
+    }
+
+    public NutsUpdateOptions setEnableInstall(boolean enableInstall) {
+        this.enableInstall = enableInstall;
+        return this;
+    }
+    
 }

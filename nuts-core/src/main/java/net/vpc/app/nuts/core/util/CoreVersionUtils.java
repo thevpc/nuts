@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.Convert;
-import net.vpc.common.util.IntegerParserConfig;
 
 import java.util.ArrayList;
 import java.util.List;

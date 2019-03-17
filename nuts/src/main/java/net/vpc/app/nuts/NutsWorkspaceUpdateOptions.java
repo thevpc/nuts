@@ -30,18 +30,19 @@
 package net.vpc.app.nuts;
 
 public class NutsWorkspaceUpdateOptions {
-    private boolean logUpdates=true;
-    private boolean enableMajorUpdates=false;
-    private boolean updateExtensions=true;
+
+    private boolean trace = true;
+    private boolean enableMajorUpdates = false;
+    private boolean updateExtensions = true;
     private boolean applyUpdates;
     private String forceBootAPIVersion;
 
-    public boolean isLogUpdates() {
-        return logUpdates;
+    public boolean isTrace() {
+        return trace;
     }
 
-    public NutsWorkspaceUpdateOptions setLogUpdates(boolean logUpdates) {
-        this.logUpdates = logUpdates;
+    public NutsWorkspaceUpdateOptions setTrace(boolean trace) {
+        this.trace = trace;
         return this;
     }
 

@@ -119,7 +119,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("nuts-store-layout", String.valueOf(configManager.getStoreLocationLayout()));
             props.put("nuts-store-strategy", String.valueOf(configManager.getStoreLocationStrategy()));
             props.put("nuts-repo-store-strategy", String.valueOf(configManager.getRepositoryStoreLocationStrategy()));
-            props.put("nuts-option-open-mode", String.valueOf(configManager.getOptions().getOpenMode()==null?NutsWorkspaceOpenMode.DEFAULT:configManager.getOptions().getOpenMode()));
+            props.put("nuts-option-open-mode", String.valueOf(configManager.getOptions().getOpenMode()==null?NutsWorkspaceOpenMode.OPEN_OR_CREATE:configManager.getOptions().getOpenMode()));
             props.put("nuts-option-perf", String.valueOf(configManager.getOptions().isPerf()));
             props.put("nuts-option-recover", String.valueOf(configManager.getOptions().isRecover()));
             props.put("nuts-option-read-only", String.valueOf(configManager.getOptions().isReadOnly()));

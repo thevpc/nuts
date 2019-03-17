@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.indexer;
 
-import net.vpc.app.nuts.NutsRepositoryLocation;
 import net.vpc.app.nuts.NutsWorkspaceLocation;
 
 import java.io.Serializable;

@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import sun.tools.jar.resources.jar;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -192,7 +190,7 @@ public class NutsBootWorkspace {
     }
 
     public int startNewProcess() {
-        log.fine("Running version " + actualVersion + ". Requested version " + requiredBootVersion);
+        log.log(Level.FINE, "Running version {0}. Requested version {1}", new Object[]{actualVersion, requiredBootVersion});
         StringBuilder errors = new StringBuilder();
         if ("LATEST".equalsIgnoreCase(requiredBootVersion) || "RELEASE".equalsIgnoreCase(requiredBootVersion)) {
             String releaseVersion = null;
@@ -286,10 +284,8 @@ public class NutsBootWorkspace {
         LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
         info.bootConfig0 = runningBootConfig.copy();
         if (recover) {
-            if (
-                    !NutsUtils.isEmpty(info.bootConfig0.getRuntimeId())
-                            && !NutsUtils.isEmpty(info.bootConfig0.getRuntimeDependencies())
-            ) {
+            if (!NutsUtils.isEmpty(info.bootConfig0.getRuntimeId())
+                    && !NutsUtils.isEmpty(info.bootConfig0.getRuntimeDependencies())) {
                 log.log(Level.CONFIG, "[RECOV. ] Invalidating old  runtime.");
             }
             info.bootConfig0.setRuntimeId(null);
@@ -378,7 +374,7 @@ public class NutsBootWorkspace {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
-                if (!Boolean.getBoolean("nut.boot.workspace-clean")) {
+                if (!Boolean.getBoolean("nuts.boot.workspace-clean")) {
                     return actionReset(null);
                 }
                 return actionClean(null);
@@ -387,7 +383,7 @@ public class NutsBootWorkspace {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
-                if (!Boolean.getBoolean("nut.boot.workspace-reset")) {
+                if (!Boolean.getBoolean("nuts.boot.workspace-reset")) {
                     return actionReset(null);
                 }
                 break;
@@ -465,7 +461,7 @@ public class NutsBootWorkspace {
             log.log(Level.CONFIG, "\t nuts-store-cache               : {0}", NutsUtils.formatLogValue(options.getCacheStoreLocation(), runningBootConfig.getCacheStoreLocation()));
             log.log(Level.CONFIG, "\t option-recover                 : {0}", options.isRecover());
             log.log(Level.CONFIG, "\t option-read-only               : {0}", options.isReadOnly());
-            log.log(Level.CONFIG, "\t option-open-mode               : {0}", options.getOpenMode()==null?NutsWorkspaceOpenMode.DEFAULT:options.getOpenMode());
+            log.log(Level.CONFIG, "\t option-open-mode               : {0}", options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode());
             log.log(Level.CONFIG, "\t java-home                      : {0}", System.getProperty("java.home"));
             log.log(Level.CONFIG, "\t java-classpath                 : {0}", System.getProperty("java.class.path"));
             log.log(Level.CONFIG, "\t java-library-path              : {0}", System.getProperty("java.library.path"));
@@ -479,7 +475,7 @@ public class NutsBootWorkspace {
         OpenWorkspaceData info = new OpenWorkspaceData();
         try {
 
-            if (options.getOpenMode()==NutsWorkspaceOpenMode.OPEN) {
+            if (options.getOpenMode() == NutsWorkspaceOpenMode.OPEN_EXISTING) {
                 //add fail fast test!!
                 if (!new File(runningBootConfig.getWorkspace(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME).isFile()) {
                     throw new NutsWorkspaceNotFoundException(runningBootConfig.getWorkspace());
@@ -558,7 +554,6 @@ public class NutsBootWorkspace {
 //        initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT);
 //        return NutsUtils.splitAndRemoveDuplicates(initial.toArray(new String[0]));
 //    }
-
     private String[] resolveBootClassPathRepositories(String... possibilities) {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
@@ -600,7 +595,7 @@ public class NutsBootWorkspace {
                             runtimeId = wruntimeId;
                             repositories = wrepositories;
                             if (log.isLoggable(Level.CONFIG)) {
-                                log.log(Level.CONFIG, "Boot " + runtimeId + " with repositories " + repositories);
+                                log.log(Level.CONFIG, "Boot {0} with repositories {1}", new Object[]{runtimeId, repositories});
                             }
                             break;
                             //no need to log, already done in NutsUtils. loadURLProperties
@@ -608,7 +603,7 @@ public class NutsBootWorkspace {
                     }
                 } else {
                     if (log.isLoggable(Level.CONFIG)) {
-                        log.log(Level.CONFIG, "[ERROR  ] Loading props file from " + urlString);
+                        log.log(Level.CONFIG, "[ERROR  ] Loading props file from {0}", urlString);
                     }
                 }
             }
@@ -1132,22 +1127,18 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 Map<String, List<String>> ids = new LinkedHashMap<>();
-                NutsConfirmAction confirm = NutsConfirmAction.ERROR;
+                NutsInstallOptions options = new NutsInstallOptions().setTrace(true);
                 String[] applicationArguments = o.getApplicationArguments();
                 for (int i = 0; i < applicationArguments.length; i++) {
                     String c = applicationArguments[i];
                     switch (c) {
                         case "-f":
                         case "--force":
-                            confirm = NutsConfirmAction.FORCE;
+                            options.setForce(true);
                             break;
                         case "-i":
                         case "--ignore":
-                            confirm = NutsConfirmAction.IGNORE;
-                            break;
-                        case "-e":
-                        case "--error":
-                            confirm = NutsConfirmAction.ERROR;
+                            options.setForce(false);
                             break;
                         default: {
                             ArrayList<String> args = new ArrayList<>();
@@ -1167,7 +1158,7 @@ public class NutsBootWorkspace {
                     throw new NutsExecutionException("Missing nuts to install", 1);
                 }
                 for (Map.Entry<String, List<String>> id : ids.entrySet()) {
-                    workspace.install(id.getKey(), id.getValue().toArray(new String[0]), confirm, null);
+                    workspace.install(id.getKey(), id.getValue().toArray(new String[0]), options, null);
                 }
                 return 0;
             }
@@ -1177,27 +1168,14 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 Map<String, List<String>> ids = new LinkedHashMap<>();
-                NutsConfirmAction confirm = NutsConfirmAction.ERROR;
-                boolean deleteData = false;
+                NutsUninstallOptions options = new NutsUninstallOptions().setTrace(true);
                 String[] applicationArguments = o.getApplicationArguments();
                 for (int i = 0; i < applicationArguments.length; i++) {
                     String c = applicationArguments[i];
                     switch (c) {
-                        case "-f":
-                        case "--force":
-                            confirm = NutsConfirmAction.FORCE;
-                            break;
-                        case "-i":
-                        case "--ignore":
-                            confirm = NutsConfirmAction.IGNORE;
-                            break;
-                        case "-e":
-                        case "--error":
-                            confirm = NutsConfirmAction.ERROR;
-                            break;
                         case "-r":
                         case "--erase":
-                            deleteData = true;
+                            options.setErase(true);
                             break;
                         default:
                             ArrayList<String> args = new ArrayList<>();
@@ -1216,7 +1194,7 @@ public class NutsBootWorkspace {
                     throw new NutsExecutionException("Missing nuts to uninstall", 1);
                 }
                 for (Map.Entry<String, List<String>> id : ids.entrySet()) {
-                    workspace.uninstall(id.getKey(), id.getValue().toArray(new String[0]), confirm, deleteData, null);
+                    workspace.uninstall(id.getKey(), id.getValue().toArray(new String[0]), options, null);
                 }
                 return 0;
             }
@@ -1234,7 +1212,7 @@ public class NutsBootWorkspace {
                         silent = true;
                     }
                 }
-                workspace.installCompanionTools(!force, force, silent, null);
+                workspace.installCompanionTools(new NutsInstallCompanionOptions().setAsk(!force).setForce(force).setTrace(!silent), null);
                 return 0;
             }
             case UPDATE: {
@@ -1242,11 +1220,28 @@ public class NutsBootWorkspace {
                     fallbackInstallActionUnavailable(message);
                     return 1;
                 }
-                if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
-                                .setApplyUpdates(true)
-                                .setEnableMajorUpdates(true),
-                        null).length > 0) {
-                    return 0;
+                if (o.getApplicationArguments().length == 0) {
+                    if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                            .setApplyUpdates(true)
+                            .setEnableMajorUpdates(true),
+                            null).length > 0) {
+                        return 0;
+                    }
+                } else {
+                    final NutsSession session = workspace.createSession();
+                    NutsUpdateResult[] defs = workspace.update(o.getApplicationArguments(), null, new NutsUpdateOptions()
+                            .setApplyUpdates(false)
+                            .setTrace(true),
+                            session);
+                    boolean someUpdatable = false;
+                    for (NutsUpdateResult d : defs) {
+                        if (d.isUpdateAvailable()) {
+                            someUpdatable = true;
+                        }
+                    }
+                    if (someUpdatable) {
+                        return 0;
+                    }
                 }
                 return 1;
             }
@@ -1255,12 +1250,29 @@ public class NutsBootWorkspace {
                     fallbackInstallActionUnavailable(message);
                     return 1;
                 }
-                if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
-                                .setApplyUpdates(false)
-                                .setEnableMajorUpdates(true)
-                                .setEnableMajorUpdates(true),
-                        null).length > 0) {
-                    return 0;
+                if (o.getApplicationArguments().length == 0) {
+                    if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
+                            .setApplyUpdates(false)
+                            .setEnableMajorUpdates(true)
+                            .setEnableMajorUpdates(true),
+                            null).length > 0) {
+                        return 0;
+                    }
+                } else {
+                    final NutsSession session = workspace.createSession();
+                    NutsUpdateResult[] defs = workspace.update(o.getApplicationArguments(), null, new NutsUpdateOptions()
+                            .setApplyUpdates(false)
+                            .setTrace(true),
+                            session);
+                    boolean someUpdatable = false;
+                    for (NutsUpdateResult d : defs) {
+                        if (d.isUpdateAvailable()) {
+                            someUpdatable = true;
+                        }
+                    }
+                    if (someUpdatable) {
+                        return 0;
+                    }
                 }
                 return 1;
             }
@@ -1336,9 +1348,6 @@ public class NutsBootWorkspace {
             log.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
         }
         NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.getConfigManager();
-        if (workspace != null) {
-            conf = workspace.getConfigManager();
-        }
 
 //        String message = ;
 //        if (log.isLoggable(Level.SEVERE)) {
@@ -1351,7 +1360,7 @@ public class NutsBootWorkspace {
             }
         }
         List<File> folders = new ArrayList<>();
-        if (workspace != null) {
+        if (conf != null) {
             folders.add(new File(conf.getStoreLocation(NutsStoreFolder.LIB)));
             folders.add(new File(conf.getStoreLocation(NutsStoreFolder.CACHE)));
             folders.add(new File(conf.getStoreLocation(NutsStoreFolder.LOGS)));
@@ -1403,7 +1412,7 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-app-args                    : %s\n", Arrays.toString(options.getApplicationArguments()));
         System.err.printf("  option-recover                   : %s\n", options.isRecover());
         System.err.printf("  option-read-only                 : %s\n", options.isReadOnly());
-        System.err.printf("  option-open-mode                 : %s\n", options.getOpenMode()==null?NutsWorkspaceOpenMode.DEFAULT:options.getOpenMode());
+        System.err.printf("  option-open-mode                 : %s\n", options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode());
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
             System.err.printf("  nuts-runtime-classpath           : %s\n", "<none>");
         } else {
@@ -1438,7 +1447,8 @@ public class NutsBootWorkspace {
     /**
      * resolves and expands paths of a given workspace
      *
-     * @param config boot config. Should contain home,workspace, and all StoreLocation information
+     * @param config boot config. Should contain home,workspace, and all
+     * StoreLocation information
      * @return resolved config
      */
     private NutsBootConfig expandAllPaths(NutsBootConfig config) {

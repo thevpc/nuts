@@ -37,7 +37,7 @@ public interface NutsRepositorySecurityManager {
 
     boolean isAllowed(String right);
 
-    void checkAllowed(String right,String operationName) throws SecurityException;
+    void checkAllowed(String right) throws SecurityException;
 
     void addUser(String user, String password, String... rights);
 

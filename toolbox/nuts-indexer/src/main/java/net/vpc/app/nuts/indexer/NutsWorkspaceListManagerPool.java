@@ -1,19 +1,23 @@
 package net.vpc.app.nuts.indexer;
 
-import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsWorkspaceListManager;
-import net.vpc.app.nuts.NutsWorkspaceOptions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NutsWorkspaceListManagerPool {
-    private static Map<String, NutsWorkspaceListManager> pool = new LinkedHashMap<>();
 
-    public static synchronized NutsWorkspaceListManager openListManager(String name) {
+    @Autowired
+    private NutsIndexerApplication.Config app;
+    private final Map<String, NutsWorkspaceListManager> pool = new LinkedHashMap<>();
+
+    public synchronized NutsWorkspaceListManager openListManager(String name) {
         NutsWorkspaceListManager o = pool.get(name);
         if (o == null) {
-            o = NutsWorkspacePool.openWorkspace("default-workspace").getConfigManager().createWorkspaceListManager(name);
+            o = app.getApplicationContext().getWorkspace().getConfigManager().createWorkspaceListManager(name);
             pool.put(name, o);
         }
         return o;

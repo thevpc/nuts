@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.NutsConfirmAction;
+import net.vpc.app.nuts.NutsDeployOptions;
 import net.vpc.app.nuts.NutsDeployment;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.TypedObject;
@@ -41,15 +41,15 @@ public class DefaultNutsDeployment implements NutsDeployment {
     private String sha1;
     private String descSHA1;
     private String repositoryName;
-    private NutsConfirmAction foundAction;
+    private NutsDeployOptions options;
     private NutsWorkspace ws;
 
     public DefaultNutsDeployment(NutsWorkspace ws) {
         this.ws = ws;
     }
 
-    public DefaultNutsDeployment setFoundAction(NutsConfirmAction force) {
-        this.foundAction = force;
+    public DefaultNutsDeployment setOptions(NutsDeployOptions options) {
+        this.options = options;
         return this;
     }
 
@@ -69,8 +69,8 @@ public class DefaultNutsDeployment implements NutsDeployment {
         return this;
     }
 
-    public NutsConfirmAction getFoundAction() {
-        return foundAction;
+    public NutsDeployOptions getOptions() {
+        return options;
     }
 
     public String getSha1() {

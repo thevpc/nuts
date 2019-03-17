@@ -5,13 +5,13 @@ public enum NutsWorkspaceOpenMode {
      * Open or Create. Default Mode.
      * If the workspace is found, it will be created otherwise it will be opened
      */
-    DEFAULT,
+    OPEN_OR_CREATE,
     /**
      * Create Workspace (if not found) or throw Error (if found)
      */
-    CREATE,
+    CREATE_NEW,
     /**
      * Open Workspace (if found) or throw Error (if not found)
      */
-    OPEN
+    OPEN_EXISTING
 }

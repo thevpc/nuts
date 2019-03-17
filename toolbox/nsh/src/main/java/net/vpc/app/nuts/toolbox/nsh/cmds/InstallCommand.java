@@ -51,7 +51,7 @@ public class InstallCommand extends AbstractNutsCommand {
 
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        NutsConfirmAction foundAction = NutsConfirmAction.IGNORE;
+        NutsInstallOptions options = new NutsInstallOptions().setTrace(true);
         boolean deployOnly = false;
         boolean bundleOnly = false;
         String repositoryId = null;
@@ -61,11 +61,9 @@ public class InstallCommand extends AbstractNutsCommand {
             if (context.configure(cmdLine)) {
                 //
             }else if (cmdLine.readAllOnce("-f", "--force")) {
-                foundAction = NutsConfirmAction.FORCE;
+                options.setForce(true);
             }else if (cmdLine.readAllOnce("-i", "--ignore")) {
-                foundAction = NutsConfirmAction.IGNORE;
-            }else if (cmdLine.readAllOnce("-e", "--error")) {
-                foundAction = NutsConfirmAction.ERROR;
+                options.setForce(false);
             } else {
                 NutsWorkspace ws = context.getWorkspace();
                 if (cmdLine.readAllOnce("-r", "--repository")) {
@@ -123,7 +121,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                     context.out().printf("File %s deployed successfully as "+ws.getFormatManager().createIdFormat().format(deployedId)+"\n", s);
                                     s = deployedId.toString();
                                 }
-                                logInstallStatus(s, context, foundAction);
+                                logInstallStatus(s, context, options);
                             }
                         }
                     }
@@ -134,35 +132,19 @@ public class InstallCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private NutsDefinition logInstallStatus(String s, NutsCommandContext context, NutsConfirmAction foundAction) {
+    private NutsDefinition logInstallStatus(String s, NutsCommandContext context, NutsInstallOptions options) {
         NutsDefinition file = null;
         NutsWorkspace ws = context.getWorkspace();
         try {
-            file = ws.install(s, new String[0], foundAction, context.getSession());
-        } catch (NutsAlreadtInstalledException ex) {
+            file = ws.install(s, new String[0], options, context.getSession());
+        } catch (NutsAlreadyInstalledException ex) {
             context.out().printf("%s already installed\n", s);
             return null;
         } catch (NutsNotInstallableException ex) {
             context.out().printf("%s requires no installation. It should be usable as is.\n", s);
             return null;
         }
-        if (!file.getInstallation().isInstalled()) {
-            if (!file.getContent().isCached()) {
-                if (file.getContent().isTemporary()) {
-                    context.out().printf(ws.getFormatManager().createIdFormat().format(file.getId())+" installed successfully from temporarily file %s\n",  file.getContent().getFile());
-                } else {
-                    context.out().printf(ws.getFormatManager().createIdFormat().format(file.getId())+" installed successfully from remote repository\n");
-                }
-            } else {
-                if (file.getContent().isTemporary()) {
-                    context.out().printf(ws.getFormatManager().createIdFormat().format(file.getId())+" installed from local temporarily file %s \n", file.getContent().getFile());
-                } else {
-                    context.out().printf(ws.getFormatManager().createIdFormat().format(file.getId())+" installed from local repository\n");
-                }
-            }
-        } else {
-            context.out().printf(ws.getFormatManager().createIdFormat().format(file.getId())+" installed successfully\n");
-        }
+        
         return file;
     }
 }

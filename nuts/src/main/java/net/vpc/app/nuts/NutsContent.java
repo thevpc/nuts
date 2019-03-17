@@ -1,9 +1,9 @@
 package net.vpc.app.nuts;
 
 public class NutsContent {
-    private String file;
-    private boolean cached;
-    private boolean temporary;
+    private final String file;
+    private final boolean cached;
+    private final boolean temporary;
 
     public NutsContent(String file, boolean cached, boolean temporary) {
         this.file = file;

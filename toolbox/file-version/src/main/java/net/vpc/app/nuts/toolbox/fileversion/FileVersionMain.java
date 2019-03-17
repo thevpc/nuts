@@ -32,11 +32,11 @@ import java.util.jar.Manifest;
 
 public class FileVersionMain extends NutsApplication {
     public static void main(String[] args) {
-        new FileVersionMain().launchAndExit(args);
+        new FileVersionMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext context) {
+    public void run(NutsApplicationContext context) {
         NutsWorkspace ws = context.getWorkspace();
         Set<String> unsupportedFileTypes = new HashSet<>();
         Map<String, Set<VersionDescriptor>> results = new HashMap<>();
@@ -202,7 +202,6 @@ public class FileVersionMain extends NutsApplication {
                 throw new NutsExecutionException("file-version: Unsupported File types " + unsupportedFileTypes, 3);
             }
         }
-        return 0;
     }
 
 

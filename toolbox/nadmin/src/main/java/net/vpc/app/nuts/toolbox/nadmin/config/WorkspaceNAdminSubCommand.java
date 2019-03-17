@@ -38,7 +38,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                 if(context.getWorkspace().checkWorkspaceUpdates(
                         new NutsWorkspaceUpdateOptions()
                                 .setEnableMajorUpdates(true)
-                                .setLogUpdates(true)
+                                .setTrace(true)
                                 .setUpdateExtensions(true)
                                 .setApplyUpdates(false)
                         , context.getSession()).length==0){
@@ -56,7 +56,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                         new NutsWorkspaceUpdateOptions()
                                 .setEnableMajorUpdates(force)
                                 .setForceBootAPIVersion(version)
-                                .setLogUpdates(true)
+                                .setTrace(true)
                                 .setUpdateExtensions(true)
                                 .setApplyUpdates(true)
                         , context.getSession()).length==0){
@@ -90,7 +90,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                 new NutsWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
-                                        .setOpenMode(ignoreIdFound?NutsWorkspaceOpenMode.DEFAULT:NutsWorkspaceOpenMode.CREATE)
+                                        .setOpenMode(ignoreIdFound?NutsWorkspaceOpenMode.OPEN_OR_CREATE:NutsWorkspaceOpenMode.CREATE_NEW)
                                         .setReadOnly(!save)
                         );
                         if (!StringUtils.isEmpty(login)) {
@@ -163,7 +163,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setReadOnly(!save)
-                                        .setOpenMode(createIfNotFound?NutsWorkspaceOpenMode.DEFAULT : NutsWorkspaceOpenMode.OPEN)
+                                        .setOpenMode(createIfNotFound?NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)
                         );
                         if (!StringUtils.isEmpty(login)) {
                             workspace.getSecurityManager().login(login, password);

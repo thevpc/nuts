@@ -28,13 +28,9 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     }
 
     @Override
-    public void checkAllowed(String right,String operationName) {
-        if(!isAllowed(right)){
-            if(StringUtils.isEmpty(operationName)){
-                throw new NutsSecurityException(right+" not allowed!");
-            }else{
-                throw new NutsSecurityException(operationName+": "+right+" not allowed!");
-            }
+    public void checkAllowed(String right) {
+        if (!isAllowed(right)) {
+            throw new NutsSecurityException(right + " not allowed!");
         }
     }
 
@@ -188,9 +184,9 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
             repo.getWorkspace().getConfigManager().createAuthenticationAgent(u.getAuthenticationAgent())
                     .checkCredentials(
-                    u.getCredentials(),u.getAuthenticationAgent(), oldPassword,
+                            u.getCredentials(), u.getAuthenticationAgent(), oldPassword,
                             repo.getConfigManager()
-            );
+                    );
 //            if (StringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
 //            }
@@ -202,14 +198,14 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (StringUtils.isEmpty(password)) {
             throw new NutsIllegalArgumentException("Missing password");
         }
-        if(log.isLoggable(Level.FINEST)) {
+        if (log.isLoggable(Level.FINEST)) {
             log.log(Level.FINEST, StringUtils.alignLeft(repo.getName(), 20) + " Update user credentials " + username);
         }
 
         u.setCredentials(
                 repo.getWorkspace().getConfigManager().createAuthenticationAgent(u.getAuthenticationAgent())
-                .setCredentials(password,u.getAuthenticationAgent(),
-                        repo.getConfigManager())
+                        .setCredentials(password, u.getAuthenticationAgent(),
+                                repo.getConfigManager())
         );
         repo.getConfigManager().setUser(u);
     }

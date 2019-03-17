@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.app;
 
-import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.format.TableFormatter;
 
 public class ColoredCellFormatter implements TableFormatter.CellFormatter {

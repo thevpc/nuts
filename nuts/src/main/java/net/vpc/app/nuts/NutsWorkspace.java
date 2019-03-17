@@ -40,8 +40,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     String getUuid();
 
     /**
-     * Open a new workspace with the provided options.
-     * When options is null, it i considered as a new empty instance of the options class.
+     * Open a new workspace with the provided options. When options is null, it
+     * i considered as a new empty instance of the options class.
      *
      * @param options creation options
      * @return a new instance of workspace
@@ -56,7 +56,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     boolean isFetched(String id, NutsSession session);
 
-
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession session);
@@ -65,34 +64,36 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsUpdate[] checkWorkspaceUpdates(NutsWorkspaceUpdateOptions options, NutsSession session);
 
-    NutsDefinition update(String id, NutsConfirmAction uptoDateAction, NutsSession session);
+    NutsUpdateResult update(String id, NutsUpdateOptions options, NutsSession session);
 
-    NutsDefinition[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsConfirmAction foundAction, NutsSession session);
+    NutsUpdateResult[] update(String[] toUpdateIds, String[] toRetainDependencies, NutsUpdateOptions options, NutsSession session);
 
-    NutsDefinition install(String id, String[] args, NutsConfirmAction foundAction, NutsSession session);
+    NutsUpdateResult update(NutsId id, NutsUpdateOptions options, NutsSession session);
+
+    NutsDefinition install(String id, String[] args, NutsInstallOptions options, NutsSession session);
+
+    NutsDefinition install(NutsId id, String[] args, NutsInstallOptions options, NutsSession session);
+
+    boolean uninstall(String id, String[] args, NutsUninstallOptions options, NutsSession session);
+
+    boolean uninstall(NutsId id, String[] args, NutsUninstallOptions options, NutsSession session);
 
     NutsDefinition checkout(String id, String folder, NutsSession session);
 
-    NutsDefinition install(NutsId id, String[] args, NutsConfirmAction foundAction, NutsSession session);
-
     NutsId commit(String folder, NutsSession session);
 
-    NutsDefinition update(NutsId id, NutsConfirmAction uptoDateAction, NutsSession session);
+    void push(String id, String repositoryId, NutsPushOptions options, NutsSession session);
 
-    boolean uninstall(String id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session);
-
-    void push(String id, String repositoryId, NutsConfirmAction foundAction, NutsSession session);
-
-    void push(NutsId id, String repositoryId, NutsConfirmAction foundAction, NutsSession session);
+    void push(NutsId id, String repositoryId, NutsPushOptions options, NutsSession session);
 
     /**
      * creates a zip file based on the folder. The folder should contain a
      * descriptor file at its root
      *
      * @param contentFolder folder to bundle
-     * @param destFile      created bundle file or null to create a file with the
-     *                      very same name as the folder
-     * @param session       current session
+     * @param destFile created bundle file or null to create a file with the
+     * very same name as the folder
+     * @param session current session
      * @return bundled nuts file, the nuts is neither deployed nor installed!
      */
     NutsDefinition createBundle(String contentFolder, String destFile, NutsSession session);
@@ -103,7 +104,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsWorkspace setSystemTerminal(NutsSystemTerminalBase term);
 
-    void installCompanionTools(boolean ask, boolean force, boolean silent, NutsSession session);
+    void installCompanionTools(NutsInstallCompanionOptions options, NutsSession session);
 
     NutsDefinition fetchApiDefinition(NutsSession session);
 
@@ -153,8 +154,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsQuery createQuery();
 
-    boolean uninstall(NutsId id, String[] args, NutsConfirmAction notFoundAction, boolean deleteData, NutsSession session);
-
     String getFileName(NutsId id, String ext);
 
     String createRegex(String pattern, boolean contains);
@@ -183,4 +182,3 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     void save();
 }
-

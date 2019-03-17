@@ -49,6 +49,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         return setFailFast(true);
     }
 
+    @Override
     public NutsCommandExecBuilder setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
@@ -515,10 +516,10 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             }
         } else if (cmdName.contains(":")) {
             NutsDefinition nutToRun = null;
-            nutToRun = ws.fetch(cmdName).setSession(session).setAcceptOptional(false).includeDependencies().fetchDefinition();
+            nutToRun = ws.fetch(cmdName).setSession(session).setAcceptOptional(false).includeDependencies().setPreferInstalled(true).fetchDefinition();
             if (!nutToRun.getInstallation().isInstalled()) {
                 ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
-                ws.install(nutToRun.getId().toString(), args, NutsConfirmAction.FORCE, session);
+                ws.install(nutToRun.getId().toString(), args, new NutsInstallOptions().setForce(true), session);
             }
             result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failFast, session,embedded);
         } else {
@@ -529,10 +530,10 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
                 log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
                 if (!nutToRun.getInstallation().isInstalled()) {
                     ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
-                    ws.install(nutToRun.getId(), args, NutsConfirmAction.FORCE, session);
+                    ws.install(nutToRun.getId(), args, new NutsInstallOptions().setForce(true), session);
                 }
             } else {
-                nutToRun = ws.fetch(command.getCommand()[0]).setSession(session).fetchDefinition();
+                nutToRun = ws.fetch(command.getCommand()[0]).setSession(session).setPreferInstalled(true).fetchDefinition();
                 List<String> r = new ArrayList<>(Arrays.asList(command.getCommand()));
                 //remove first element
                 r.remove(0);

@@ -10,13 +10,15 @@ import java.io.PrintStream;
 import java.util.*;
 
 public class NAdminMain extends NutsApplication {
+
     private List<NAdminSubCommand> subCommands;
+
     public static void main(String[] args) {
-        new NAdminMain().launchAndExit(args);
+        new NAdminMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext context) {
+    public void run(NutsApplicationContext context) {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
                     context.getWorkspace().getExtensionManager().createAllSupported(NAdminSubCommand.class, this)
@@ -29,7 +31,7 @@ public class NAdminMain extends NutsApplication {
         do {
             if (context.configure(cmdLine)) {
                 //
-            }else {
+            } else {
                 NAdminSubCommand selectedSubCommand = null;
                 for (NAdminSubCommand subCommand : subCommands) {
                     if (subCommand.exec(cmdLine, this, autoSave, context)) {
@@ -43,13 +45,13 @@ public class NAdminMain extends NutsApplication {
                 }
 
                 if (!cmdLine.isExecMode()) {
-                    return 0;
+                    return;
                 }
                 if (cmdLine.hasNext()) {
                     PrintStream out = context.err();
                     out.printf("Unexpected %s\n", cmdLine.get());
                     out.printf("type for more help : config -h\n");
-                    return 1;
+                    throw new NutsExecutionException("Unexpected " + cmdLine.get(),1);
                 }
                 break;
             }
@@ -58,9 +60,8 @@ public class NAdminMain extends NutsApplication {
             PrintStream out = context.err();
             out.printf("Missing config command\n");
             out.printf("type for more help : config -h\n");
-            return 1;
+            throw new NutsExecutionException("Missing config command", 1);
         }
-        return 0;
     }
 
     public void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
@@ -73,7 +74,7 @@ public class NAdminMain extends NutsApplication {
         } else {
             out.print("@@" + repository.getName() + disabledString + "@@");
         }
-        out.print(" : " + repository.getRepositoryType() +" "+repository.getConfigManager().getLocation());
+        out.print(" : " + repository.getRepositoryType() + " " + repository.getConfigManager().getLocation());
         out.println();
 
     }
@@ -81,10 +82,11 @@ public class NAdminMain extends NutsApplication {
     public void showRepoTree(NutsApplicationContext context, NutsRepository repository, String prefix) {
         showRepo(context, repository, prefix);
         String prefix1 = prefix + "  ";
-        for (NutsRepository c : repository.getMirrors()) {
-            showRepoTree(context, c, prefix1);
+        if (repository.isSupportedMirroring()) {
+            for (NutsRepository c : repository.getMirrors()) {
+                showRepoTree(context, c, prefix1);
+            }
         }
     }
-
 
 }

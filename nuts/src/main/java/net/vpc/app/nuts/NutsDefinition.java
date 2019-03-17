@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Created by vpc on 1/6/17.

@@ -3,7 +3,6 @@ package net.vpc.app.nuts.toolbox.nutsserver;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplication;
 import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.app.nuts.toolbox.nsh.NutsCommandSyntaxError;
 import net.vpc.app.nuts.app.options.ArchitectureNonOption;
 import net.vpc.app.nuts.app.options.ServerNonOption;
 import net.vpc.common.commandline.CommandLine;
@@ -23,12 +22,12 @@ import java.util.Map;
 public class NutsServerMain extends NutsApplication {
 
     public static void main(String[] args) {
-        new NutsServerMain().launch(args);
+        new NutsServerMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
-        String[] args=appContext.getArgs();
+    public void run(NutsApplicationContext appContext) {
+        String[] args = appContext.getArgs();
         try {
             boolean autoSave = false;
             NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(appContext.getWorkspace());
@@ -128,7 +127,7 @@ public class NutsServerMain extends NutsApplication {
                 if (cmdLine.isExecMode()) {
                     if (servers.isEmpty()) {
                         appContext.getTerminal().getFormattedErr().printf("No Server config found.\n");
-                        return 1;
+                        throw new NutsExecutionException("No Server config found", 1);
                     }
                     Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();
                     for (SrvInfo server : servers) {
@@ -146,7 +145,7 @@ public class NutsServerMain extends NutsApplication {
                                     nutsWorkspace = appContext.getWorkspace().openWorkspace(
                                             new NutsWorkspaceOptions()
                                                     .setWorkspace(entry.getValue())
-                                                    .setOpenMode(autocreate?NutsWorkspaceOpenMode.DEFAULT : NutsWorkspaceOpenMode.OPEN)
+                                                    .setOpenMode(autocreate ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)
                                                     .setReadOnly(readOnly)
                                                     .setArchetype(archetype)
                                     );
@@ -225,10 +224,9 @@ public class NutsServerMain extends NutsApplication {
                     }
                 }
             } else {
-                throw new NutsCommandSyntaxError("nuts-server: Invalid syntax for command server");
+                throw new NutsExecutionException("nuts-server: Invalid syntax for command server", 1);
             }
             cmdLine.unexpectedArgument("nuts-server");
-            return 0;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.util.*;
 
 public class LocalTomcatConfigService extends LocalTomcatServiceBase {
+
     public static final String LOCAL_CONFIG_EXT = ".local-config";
     private String name;
     private LocalTomcat app;
@@ -54,7 +55,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return config;
     }
 
-
     public LocalTomcatConfigService save() {
         String v = getConfig().getCatalinaVersion();
         String h = getConfig().getCatalinaHome();
@@ -62,7 +62,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (TomcatUtils.isEmpty(v)) {
                 File file = new File(h, "RELEASE-NOTES");
                 if (file.exists()) {
-                    try (BufferedReader r = new BufferedReader(new FileReader(file))) {
+                    try ( BufferedReader r = new BufferedReader(new FileReader(file))) {
                         String line = null;
                         while ((line = r.readLine()) != null) {
                             line = line.trim();
@@ -82,7 +82,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         File f = new File(context.getConfigFolder(), getName() + LOCAL_CONFIG_EXT);
         f.getParentFile().mkdirs();
-        try (FileWriter r = new FileWriter(f)) {
+        try ( FileWriter r = new FileWriter(f)) {
             jsonSerializer.writeJson(config, r, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -109,8 +109,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String catalinaBase = c.getCatalinaBase();
         String catalinaHome = getCatalinaHome();
         if (TomcatUtils.isEmpty(getConfig().getCatalinaHome())
-            && TomcatUtils.isEmpty(catalinaBase)
-        ) {
+                && TomcatUtils.isEmpty(catalinaBase)) {
             catalinaBase = getName();
         }
         if (TomcatUtils.isEmpty(catalinaBase)) {
@@ -143,7 +142,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return h;
         }
     }
-
 
     public void printStatus() {
         switch (getStatus()) {
@@ -268,7 +266,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            catalinaNutsDefinition = context.getWorkspace().install("org.apache.catalina:tomcat#" + catalinaVersion + "*", new String[0], NutsConfirmAction.IGNORE, context.getSession().copy().addListeners(new NutsInstallListener() {
+            catalinaNutsDefinition = context.getWorkspace().install("org.apache.catalina:tomcat#" + catalinaVersion + "*", new String[0], new NutsInstallOptions().setTrace(true), context.getSession().copy().addListeners(new NutsInstallListener() {
                 @Override
                 public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
                     context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
@@ -277,7 +275,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         return catalinaNutsDefinition;
     }
-
 
     public void deployFile(File file, String contextName, String domain) {
         if (file.getName().endsWith(".war")) {
@@ -309,10 +306,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         JpsResult[] ps = PosApis.get().findJavaProcessList(null, true, true,
                 (p) -> {
                     return p.getClassName().equals("org.apache.catalina.startup.Bootstrap")
-                            && (catalinaBase == null ||
-                            p.getArgsLine().contains("-Dcatalina.base=" + catalinaBase)
-                    )
-                            ;
+                    && (catalinaBase == null
+                    || p.getArgsLine().contains("-Dcatalina.base=" + catalinaBase));
                 }
         );
         if (ps.length > 0) {
@@ -320,7 +315,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         return null;
     }
-
 
     private boolean checkExec(String pathname) {
         File file = new File(FileUtils.getNativePath(pathname));
@@ -341,12 +335,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLogs) {
         stop();
         if (getJpsResult() != null) {
-            throw new NutsExecutionException("Server " + getName() + " is running. It cannot be stopped!",2);
+            throw new NutsExecutionException("Server " + getName() + " is running. It cannot be stopped!", 2);
         }
         start(deployApps, deleteLogs);
         return true;
     }
-
 
     public AppStatus waitForRunningStatus(String domain, String app, int timeout) {
 
@@ -361,7 +354,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.out().printf("==[%s]== Tomcat started.\n", getName());
                 return AppStatus.RUNNING;
             }
-            throw new NutsExecutionException("Unable to start tomcat",2);
+            throw new NutsExecutionException("Unable to start tomcat", 2);
         }
         for (int i = 0; i < timeout; i++) {
             try {
@@ -379,7 +372,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             context.out().printf("==[%s]== Tomcat out of memory.\n", getName());
             return y;
         }
-        throw new NutsExecutionException("Unable to start tomcat",2);
+        throw new NutsExecutionException("Unable to start tomcat", 2);
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
@@ -422,7 +415,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         context.out().printf("==Tomcat stopped==\n");
         return true;
     }
-
 
     public AppStatus getStatus() {
         return getStatus(null, null);
@@ -491,7 +483,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         File f = new File(context.getConfigFolder(), name + LOCAL_CONFIG_EXT);
         if (f.exists()) {
             NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
-            try (FileReader r = new FileReader(f)) {
+            try ( FileReader r = new FileReader(f)) {
                 config = jsonSerializer.readJson(r, LocalTomcatConfig.class);
                 return this;
             } catch (IOException e) {
@@ -522,7 +514,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return this;
     }
 
-
     public LocalTomcatAppConfigService getApp(String appName) {
         return getAppOrError(appName);
     }
@@ -539,7 +530,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatAppConfigService getAppOrError(String appName) {
         LocalTomcatAppConfigService a = getAppOrNull(appName);
         if (a == null) {
-            throw new NutsExecutionException("App not found :" + appName,2);
+            throw new NutsExecutionException("App not found :" + appName, 2);
         }
         return a;
     }
@@ -563,7 +554,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         domainName = TomcatUtils.toValidFileName(domainName, "default");
         LocalTomcatDomainConfigService d = getDomainOrNull(domainName);
         if (d == null) {
-            throw new NutsExecutionException("Domain not found :" + domainName,2);
+            throw new NutsExecutionException("Domain not found :" + domainName, 2);
         }
         return d;
     }
@@ -650,11 +641,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             for (File file : files) {
                 if (file.isFile()) {
                     String n = file.getName();
-                    if (
-                            n.endsWith(".out")
-                                    || n.endsWith(".txt")
-                                    || n.endsWith(".log")
-                    ) {
+                    if (n.endsWith(".out")
+                            || n.endsWith(".txt")
+                            || n.endsWith(".log")) {
                         //this is a log file, will delete it
                     }
                     {

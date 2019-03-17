@@ -40,7 +40,7 @@ import java.util.*;
 /**
  * @author vpc
  */
-class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryManager {
+public class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepositoryManager {
 
     private Map<String, NutsRepository> repositories = new LinkedHashMap<>();
     private final DefaultNutsWorkspace ws;

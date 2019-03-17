@@ -2,9 +2,6 @@ package net.vpc.app.nuts.app;
 
 import net.vpc.app.nuts.*;
 
-import java.io.PrintStream;
-import java.util.Arrays;
-
 /**
  * <pre>
  *   public class MyApplication extends NutsApplication{
@@ -18,7 +15,7 @@ import java.util.Arrays;
  *         Argument a;
  *         while(cmd.hasNext()){
  *             if(appContext.configure(cmd)){
- *                 //fo nothing
+ *                 //do nothing
  *             }else if((a=cmd.readBooleanOption("-o","--option"))!=null){
  *                 myBooleanOption=a.getBooleanValue();
  *             }else{
@@ -32,106 +29,68 @@ import java.util.Arrays;
  *         }
  *     }
  *   }
- *  </pre>
+ * </pre>
  */
 public abstract class NutsApplication {
 
-    public void launchAndExit(String[] args) {
+    public void runAndExit(String[] args) {
         try {
-            System.exit(launch((NutsWorkspace) null,args));
+            run((NutsWorkspace) null, args);
         } catch (Exception ex) {
-            int errorCode = 204;
-            boolean showTrace = false;
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].startsWith("-")) {
-                    if (args[i].equals("--verbose")) {
-                        showTrace = true;
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            }
-            if (ex instanceof NutsExecutionException) {
-                NutsExecutionException ex2 = (NutsExecutionException) ex;
-                if (ex2.getExitCode() == 0) {
-                    System.exit(0);
-                    return;
-                } else {
-                    errorCode = ex2.getExitCode();
-                }
-            }
-            String m = ex.getMessage();
-            if (m == null || m.length() < 5) {
-                m = ex.toString();
-            }
-            System.err.println(m);
-            if (showTrace) {
-                ex.printStackTrace();
-            }
-            System.exit(errorCode);
+            System.exit(NutsApplications.processThrowable(ex, args, System.err));
         }
     }
 
-    public int launch(String[] args) {
-        return launch(null,args);
+    public void run(String[] args) {
+        run(null, args);
     }
 
-    public int launch(NutsWorkspace ws, String[] args) {
-        long startTimeMillis = System.currentTimeMillis();
-        if (ws == null) {
-            ws = Nuts.openInheritedWorkspace(args);
-        }
-        NutsApplicationContext applicationContext = null;
-        try {
-            applicationContext = createApplicationContext(ws, args);
-            applicationContext.setStartTimeMillis(startTimeMillis);
-            switch (applicationContext.getMode()) {
-                case "launch":
-                case "auto-complete": {
-//                    if(!applicationContext.getWorkspace().isInstalled(applicationContext.getAppId(),false,applicationContext.getSession())){
-//                        int i = onInstallApplication(applicationContext);
-//                        if(i!=0){
-//                            throw new NutsExecutionException("Unable to install "+applicationContext.getAppId(),i);
-//                        }
-//                        return i;
-//                    }
-                    return launch(applicationContext);
-                }
-                case "on-install": {
-                    return onInstallApplication(applicationContext);
-                }
-                case "on-update": {
-                    return onUpdateApplication(applicationContext);
-                }
-                case "on-uninstall": {
-                    return onUninstallApplication(applicationContext);
-                }
+    public void run(NutsWorkspace ws, String[] args) {
+        NutsApplications.runApplication(args, ws, new NutsApplicationListener() {
+            @Override
+            public void onRunApplication(NutsApplicationContext applicationContext) {
+                NutsApplication.this.run(applicationContext);
             }
-            throw new NutsExecutionException("Unsupported execution mode " + applicationContext.getMode(), 204);
-        } catch (NutsExecutionException ex) {
-            if (ex.getExitCode() == 0) {
-                return 0;
+
+            @Override
+            public void onInstallApplication(NutsApplicationContext applicationContext) {
+                NutsApplication.this.onInstallApplication(applicationContext);
             }
-            throw ex;
-        }
+
+            @Override
+            public void onUpdateApplication(NutsApplicationContext applicationContext) {
+                NutsApplication.this.onUpdateApplication(applicationContext);
+            }
+
+            @Override
+            public void onUninstallApplication(NutsApplicationContext applicationContext) {
+                NutsApplication.this.onUninstallApplication(applicationContext);
+            }
+
+            @Override
+            public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args) {
+                NutsApplicationContext c = NutsApplication.this.createApplicationContext(ws, args);
+                if (c == null) {
+                    c = new NutsApplicationContext(ws, args, NutsApplication.this.getClass(), null);
+                }
+                return c;
+            }
+        });
     }
 
-    protected int onInstallApplication(NutsApplicationContext applicationContext) {
-        return 0;
+    protected void onInstallApplication(NutsApplicationContext applicationContext) {
     }
 
-    protected int onUpdateApplication(NutsApplicationContext applicationContext) {
-        return 0;
+    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
     }
 
-    protected int onUninstallApplication(NutsApplicationContext applicationContext) {
-        return 0;
+    protected void onUninstallApplication(NutsApplicationContext applicationContext) {
     }
 
     protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args) {
         return new NutsApplicationContext(ws, args, getClass(), null);
     }
 
-    public abstract int launch(NutsApplicationContext applicationContext);
+    public abstract void run(NutsApplicationContext applicationContext);
+
 }

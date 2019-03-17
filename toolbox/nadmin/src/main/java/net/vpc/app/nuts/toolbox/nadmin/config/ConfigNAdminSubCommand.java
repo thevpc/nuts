@@ -112,8 +112,10 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
         }
-        for (NutsRepository mirror : repository.getMirrors()) {
-            deleteRepoCache(mirror,context,force);
+        if(repository.isSupportedMirroring()) {
+            for (NutsRepository mirror : repository.getMirrors()) {
+                deleteRepoCache(mirror, context, force);
+            }
         }
     }
     private boolean readForce(CommandLine cmdLine,String name){

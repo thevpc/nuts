@@ -48,7 +48,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     private boolean perf = false;
     private String workspace = null;
     private boolean skipPostCreateInstallCompanionTools;
-    private NutsWorkspaceOpenMode openMode=NutsWorkspaceOpenMode.DEFAULT;
+    private NutsWorkspaceOpenMode openMode=NutsWorkspaceOpenMode.OPEN_OR_CREATE;
     /**
      * if true, all means are deployed to recover from corrupted workspace.
      * This flag may alter current used version of nuts to update to latest.

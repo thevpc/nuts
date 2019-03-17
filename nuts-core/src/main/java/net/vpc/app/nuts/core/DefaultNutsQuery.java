@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
@@ -82,6 +82,8 @@ public class DefaultNutsQuery implements NutsQuery {
     private boolean includeInstallInfo = true;
     private boolean includeEffectiveDesc = false;
     private boolean ignoreCache = false;
+    private boolean preferInstalled = false;
+    private boolean installedOnly = false;
     private Boolean acceptOptional = null;
 
     public DefaultNutsQuery(DefaultNutsWorkspace ws) {
@@ -215,7 +217,6 @@ public class DefaultNutsQuery implements NutsQuery {
         setAll(other);
     }
 
-
 //    @Override
 //    public NutsQuery setAll(NutsSearch other) {
 //        if (other != null) {
@@ -231,7 +232,6 @@ public class DefaultNutsQuery implements NutsQuery {
 //        }
 //        return this;
 //    }
-
     @Override
     public NutsQuery setAll(NutsQuery other) {
         if (other != null) {
@@ -528,7 +528,6 @@ public class DefaultNutsQuery implements NutsQuery {
     //@Override
     private DefaultNutsSearch build() {
 
-
         HashSet<String> someIds = new HashSet<>(Arrays.asList(this.getIds()));
         HashSet<String> goodIds = new HashSet<>();
         HashSet<String> wildcardIds = new HashSet<>();
@@ -556,7 +555,6 @@ public class DefaultNutsQuery implements NutsQuery {
             goodIds.add(f.getId().toString());
             idFilter0 = null;
         }
-
 
         NutsDescriptorFilter descriptorFilter = null;
         NutsIdFilter idFilter = null;
@@ -587,7 +585,6 @@ public class DefaultNutsQuery implements NutsQuery {
         if (this.getRepos().length > 0) {
             rfilter = new DefaultNutsRepositoryFilter(new HashSet<>(Arrays.asList(this.getRepos())));
         }
-
 
         NutsRepositoryFilter repositoryFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(rfilter, this.getRepositoryFilter()));
         NutsVersionFilter versionFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(null, this.getVersionFilter()));
@@ -680,7 +677,7 @@ public class DefaultNutsQuery implements NutsQuery {
         for (NutsId nutsId : mi) {
             NutsDefinition r = null;
             try {
-                r = ws.fetchDefinition(nutsId, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), s);
+                r = ws.fetchDefinition(nutsId, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), isPreferInstalled(), isInstalledOnly(), s);
             } catch (NutsNotFoundException ex) {
                 if (!isIgnoreNotFound()) {
                     if (!nutsId.isOptional()) {
@@ -737,7 +734,7 @@ public class DefaultNutsQuery implements NutsQuery {
                 while (base.hasNext()) {
                     try {
                         NutsId p = base.next();
-                        n = ws.fetchDefinition(p, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), s);
+                        n = ws.fetchDefinition(p, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), isPreferInstalled(), isInstalledOnly(), s);
                         return n != null;
                     } catch (NutsNotFoundException ex) {
                         if (!ignoreNotFound) {
@@ -766,7 +763,6 @@ public class DefaultNutsQuery implements NutsQuery {
         graph.push(ids, dependencyFilter);
         return graph.collect(ids, ids);
     }
-
 
     @Override
     public NutsQuery dependenciesOnly() {
@@ -833,48 +829,76 @@ public class DefaultNutsQuery implements NutsQuery {
         return sb.toString();
     }
 
+    @Override
     public boolean isIgnoreNotFound() {
         return ignoreNotFound;
     }
 
+    @Override
     public DefaultNutsQuery setIgnoreNotFound(boolean ignoreNotFound) {
         this.ignoreNotFound = ignoreNotFound;
         return this;
     }
 
+    @Override
     public boolean isIncludeFile() {
         return includeContent;
     }
 
+    @Override
     public NutsQuery setIncludeFile(boolean includeContent) {
         this.includeContent = includeContent;
         return this;
     }
 
+    @Override
     public boolean isIncludeInstallInformation() {
         return includeInstallInfo;
     }
 
+    @Override
     public NutsQuery setIncludeInstallInformation(boolean includeInstallInfo) {
         this.includeInstallInfo = includeInstallInfo;
         return this;
     }
 
+    @Override
     public boolean isIncludeEffectiveDesc() {
         return includeEffectiveDesc;
     }
 
+    @Override
     public NutsQuery setIncludeEffectiveDesc(boolean includeEffectiveDesc) {
         this.includeEffectiveDesc = includeEffectiveDesc;
         return this;
     }
 
+    @Override
     public boolean isIgnoreCache() {
         return ignoreCache;
     }
 
+    @Override
     public NutsQuery setIgnoreCache(boolean ignoreCache) {
         this.ignoreCache = ignoreCache;
         return this;
     }
+
+    public boolean isPreferInstalled() {
+        return preferInstalled;
+    }
+
+    public NutsQuery setPreferInstalled(boolean preferInstalled) {
+        this.preferInstalled = preferInstalled;
+        return this;
+    }
+
+    public boolean isInstalledOnly() {
+        return installedOnly;
+    }
+
+    public void setInstalledOnly(boolean installedOnly) {
+        this.installedOnly = installedOnly;
+    }
+
 }

@@ -86,7 +86,7 @@ public class WorkspaceService {
     }
 
 
-    public int enableScan(CommandLine cmd, NutsApplicationContext appContext, boolean enable) {
+    public void enableScan(CommandLine cmd, NutsApplicationContext appContext, boolean enable) {
         int count = 0;
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
@@ -103,10 +103,9 @@ public class WorkspaceService {
         if (count == 0) {
             throw new NutsExecutionException("Missing projects", 1);
         }
-        return count > 0 ? 0 : 1;
     }
 
-    public int list(CommandLine cmd, NutsApplicationContext appContext) {
+    public void list(CommandLine cmd, NutsApplicationContext appContext) {
         Argument a;
         TableFormatter tf = new TableFormatter(appContext.getTableCellFormatter()).addHeaderCells("==Id==", "==Path==", "==Technos==");
         List<String> filters=new ArrayList<>();
@@ -137,10 +136,9 @@ public class WorkspaceService {
 
             appContext.out().printf(tf.toString());
         }
-        return 0;
     }
 
-    public int scan(CommandLine cmd, NutsApplicationContext appContext) {
+    public void scan(CommandLine cmd, NutsApplicationContext appContext) {
         boolean interactive = false;
         Argument a;
         boolean run = false;
@@ -160,10 +158,9 @@ public class WorkspaceService {
         if (!run) {
             throw new NutsExecutionException("Missing folders", 1);
         }
-        return 0;
     }
 
-    public int check(CommandLine cmd, NutsApplicationContext appContext) {
+    public void check(CommandLine cmd, NutsApplicationContext appContext) {
         boolean progress = true;
         Boolean commitable = null;
         Boolean newP = null;
@@ -325,7 +322,6 @@ public class WorkspaceService {
             tf.addRow(d.id, d.loc, d.rem, d.status);
         }
         appContext.out().print(tf.toString());
-        return 0;
     }
 
     private boolean matches(String id, List<String> filters) {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 
 @Service
 public class RefreshDataService {
@@ -19,7 +20,16 @@ public class RefreshDataService {
 
     private static final Logger logger = LoggerFactory.getLogger(RefreshDataService.class);
 
-    private NutsIndexSubscriberListManager subscriberManager = NutsIndexSubscriberListManagerPool.openSubscriberListManager("default");
+    @Autowired
+    private NutsIndexSubscriberListManagerPool indexSubscriberListManagerPool;
+    @Autowired
+    private NutsWorkspacePool workspacePool;
+    private NutsIndexSubscriberListManager subscriberManager;
+
+    @PostConstruct
+    private void init() {
+        subscriberManager = indexSubscriberListManagerPool.openSubscriberListManager("default");
+    }
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void refreshData() {
@@ -39,7 +49,7 @@ public class RefreshDataService {
         Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
         if (iterator.hasNext()) {
             NutsWorkspaceLocation workspaceLocation = iterator.next();
-            NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspaceLocation.getLocation());
+            NutsWorkspace ws = workspacePool.openWorkspace(workspaceLocation.getLocation());
             Map<String, NutsId> oldData = this.dataService
                     .getAllData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()))
                     .stream()

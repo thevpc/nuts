@@ -94,8 +94,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setRepositoryEnabled(String repoId, boolean enabled);
 
-    boolean isRepositoryEnabled(String repoId);
-
     boolean addExtension(NutsId extensionId);
 
     boolean removeExtension(NutsId extensionId);
@@ -169,13 +167,13 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     byte[] encryptString(byte[] input);
 
-    void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory);
+    void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory,NutsSession session);
 
-    boolean uninstallCommandFactory(String name, NutsConfirmAction confirmAction);
+    boolean uninstallCommandFactory(String name,NutsSession session);
 
-    boolean installCommand(NutsWorkspaceCommandConfig command, NutsConfirmAction confirmAction);
+    boolean installCommand(NutsWorkspaceCommandConfig command, NutsInstallOptions options,NutsSession session);
 
-    boolean uninstallCommand(String name, NutsConfirmAction confirmAction);
+    boolean uninstallCommand(String name, NutsUninstallOptions options,NutsSession session);
 
     NutsWorkspaceCommand findCommand(String name);
 

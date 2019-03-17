@@ -18,70 +18,70 @@ public class NdedMain extends NutsApplication {
     private boolean interactive = false;
 
     public static void main(String[] args) {
-        new NdedMain().launch(args);
+        new NdedMain().run(args);
     }
 
     public void fillArgs(NutsDescriptorBuilder builder0) {
-        CommandLine commandLine=new CommandLine(appContext.getArgs(),appContext.getAutoComplete());
+        CommandLine commandLine = new CommandLine(appContext.getArgs(), appContext.getAutoComplete());
         Argument a;
-        while (commandLine.hasNext()){
-            if(appContext.configure(commandLine)){
+        while (commandLine.hasNext()) {
+            if (appContext.configure(commandLine)) {
 
-            }else if((a=commandLine.readStringOption("--home"))!=null){
+            } else if ((a = commandLine.readStringOption("--home")) != null) {
                 home = a.getStringValue();
-            }else if((a=commandLine.readStringOption("--id"))!=null){
+            } else if ((a = commandLine.readStringOption("--id")) != null) {
                 String v = a.getStringValue();
                 builder0.setId(v);
-            }else if((a=commandLine.readStringOption("--alternative"))!=null){
+            } else if ((a = commandLine.readStringOption("--alternative")) != null) {
                 String v = a.getStringValue();
                 builder0.setAlternative(v);
-            }else if((a=commandLine.readStringOption("--name"))!=null){
+            } else if ((a = commandLine.readStringOption("--name")) != null) {
                 String v = a.getStringValue();
                 builder0.setName(v);
-            }else if((a=commandLine.readStringOption("--packaging"))!=null){
+            } else if ((a = commandLine.readStringOption("--packaging")) != null) {
                 String v = a.getStringValue();
                 builder0.setPackaging(v);
-            }else if((a=commandLine.readStringOption("--platform"))!=null){
+            } else if ((a = commandLine.readStringOption("--platform")) != null) {
                 String v = a.getStringValue();
                 for (String s : v.split(" ,;")) {
-                    if(s.length()>0){
+                    if (s.length() > 0) {
                         builder0.addPlatform(s);
                     }
                 }
-            }else if((a=commandLine.readStringOption("--os"))!=null){
+            } else if ((a = commandLine.readStringOption("--os")) != null) {
                 String v = a.getStringValue();
                 for (String s : v.split(" ,;")) {
-                    if(s.length()>0){
+                    if (s.length() > 0) {
                         builder0.addOs(s);
                     }
                 }
-            }else if((a=commandLine.readStringOption("--osdist"))!=null){
+            } else if ((a = commandLine.readStringOption("--osdist")) != null) {
                 String v = a.getStringValue();
                 for (String s : v.split(" ,;")) {
-                    if(s.length()>0){
+                    if (s.length() > 0) {
                         builder0.addOsdist(s);
                     }
                 }
-            }else if((a=commandLine.readStringOption("--arch"))!=null){
+            } else if ((a = commandLine.readStringOption("--arch")) != null) {
                 String v = a.getStringValue();
                 for (String s : v.split(" ,;")) {
-                    if(s.length()>0){
+                    if (s.length() > 0) {
                         builder0.addArch(s);
                     }
                 }
-            }else if((a=commandLine.readStringOption("--location"))!=null){
+            } else if ((a = commandLine.readStringOption("--location")) != null) {
                 String v = a.getStringValue();
                 builder0.addLocation(v);
-            }else if((a=commandLine.readBooleanOption("-i","--interactive"))!=null){
+            } else if ((a = commandLine.readBooleanOption("-i", "--interactive")) != null) {
                 interactive = a.getBooleanValue();
-            }else{
+            } else {
                 commandLine.unexpectedArgument("nded");
             }
         }
     }
 
     public String checkParam(String name, String lastValue) {
-        return appContext.getTerminal().readLine("Enter %s%s : ",name,(lastValue == null ? "" : (" " + lastValue)));
+        return appContext.getTerminal().readLine("Enter %s%s : ", name, (lastValue == null ? "" : (" " + lastValue)));
     }
 
     public void fillInteractive(NutsDescriptorBuilder b, boolean nullOnly) {
@@ -99,7 +99,7 @@ public class NdedMain extends NutsApplication {
             if (!isEmpty(s)) {
                 try {
                     b.setId(s);
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     appContext.err().println(ex.getMessage());
                 }
             }
@@ -167,7 +167,7 @@ public class NdedMain extends NutsApplication {
             error = true;
             appContext.err().print("Missing packaging\n");
         }
-        if(isEmpty(home)){
+        if (isEmpty(home)) {
             error = true;
             appContext.err().print("Missing nuts-bootstrap\n");
         }
@@ -181,28 +181,24 @@ public class NdedMain extends NutsApplication {
                 o = "";
             }
             o = o.trim();
-            if (
-                    "yes".equalsIgnoreCase(o)
-                            || "y".equalsIgnoreCase(o)
-                            || "o".equalsIgnoreCase(o)
-                            || "oui".equalsIgnoreCase(o)
-                    ) {
+            if ("yes".equalsIgnoreCase(o)
+                    || "y".equalsIgnoreCase(o)
+                    || "o".equalsIgnoreCase(o)
+                    || "oui".equalsIgnoreCase(o)) {
                 //exit
                 return true;
-            } else if (
-                    "no".equalsIgnoreCase(o)
-                            || "n".equalsIgnoreCase(o)
-                            || "non".equalsIgnoreCase(o)
-                    ) {
+            } else if ("no".equalsIgnoreCase(o)
+                    || "n".equalsIgnoreCase(o)
+                    || "non".equalsIgnoreCase(o)) {
                 return false;
             }
 
         }
     }
 
-    public int launch(NutsApplicationContext appContext) {
+    public void run(NutsApplicationContext appContext) {
         this.appContext = appContext;
-        String[] args=appContext.getArgs();
+        String[] args = appContext.getArgs();
 //        f = this.appContext.getWorkspace().getExtensionManager();
         NutsDescriptorBuilder b = this.appContext.getWorkspace().createDescriptorBuilder();
         fillArgs(b);
@@ -218,19 +214,19 @@ public class NdedMain extends NutsApplication {
                 //
             }
             if (confirm("Abort?")) {
-                return 1;
+                throw new NutsExecutionException("Cancelled", 1);
             }
         }
         String path = b.getId().getGroup().replace('.', '/')
                 + '/' + b.getId().getName()
                 + '/' + b.getId().getVersion()
                 + '/' + b.getId().getName() + "-" + b.getId().getVersion() + ".json";
-        File file = new File(home,path);
+        File file = new File(home, path);
         file.getParentFile().mkdirs();
         NutsDescriptor desc = b.build();
-        this.appContext.out().printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)),("/"+path).replace('/',File.separatorChar));
+        this.appContext.out().printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)), ("/" + path).replace('/', File.separatorChar));
         this.appContext.out().printf("id         : ==%s==\n", desc.getId());
-        this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging()==null?"":desc.getPackaging());
+        this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging() == null ? "" : desc.getPackaging());
         if (desc.getLocations().length > 0) {
             this.appContext.out().print("locations  : \n");
             for (String s : b.getLocations()) {
@@ -238,24 +234,24 @@ public class NdedMain extends NutsApplication {
             }
         }
         if (!confirm("Confirm ?")) {
-            return 1;
+            throw new NutsExecutionException("Cancelled", 1);
         }
         NutsDescriptorFormat nutsDescriptorFormat = appContext.getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true);
-        nutsDescriptorFormat.format(desc,file);
-        nutsDescriptorFormat.format(desc,this.appContext.out());
-        return 0;
+        nutsDescriptorFormat.format(desc, file);
+        nutsDescriptorFormat.format(desc, this.appContext.out());
     }
 
-    private static String getFilePath(File s){
+    private static String getFilePath(File s) {
         String p = null;
         try {
             p = s.getCanonicalPath();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             p = s.getAbsolutePath();
         }
         return p;
     }
-    private static boolean isEmpty(String s){
-        return s==null|| s.trim().isEmpty();
+
+    private static boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
     }
 }

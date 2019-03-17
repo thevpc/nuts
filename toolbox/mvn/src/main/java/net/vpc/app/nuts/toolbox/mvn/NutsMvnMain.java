@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsExecutionException;
 
 public class NutsMvnMain extends NutsApplication {
 //    public static void main(String[] args) {
@@ -23,23 +24,26 @@ public class NutsMvnMain extends NutsApplication {
 //                "--json", "--get", "net.vpc.common:vpc-common-classpath:1.3", "vpc-public-maven"
 //        });
 //    }
-    public static class Options{
+
+    public static class Options {
+
         boolean json = false;
 
     }
+
     public static void main(String[] args) {
-        new NutsMvnMain().launchAndExit(args);
+        new NutsMvnMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
+    public void run(NutsApplicationContext appContext) {
         String command = null;
         List<String> args2 = new ArrayList<>();
-        Options o=new Options();
-        CommandLine cmd=new CommandLine(appContext);
+        Options o = new Options();
+        CommandLine cmd = new CommandLine(appContext);
         Argument a;
-        while(cmd.hasNext()){
-            if(command == null) {
+        while (cmd.hasNext()) {
+            if (command == null) {
                 if (appContext.configure(cmd)) {
                     //fo nothing
                 } else if ((a = cmd.readBooleanOption("-j", "--json")) != null) {
@@ -52,19 +56,18 @@ public class NutsMvnMain extends NutsApplication {
                     command = "default";
                     args2.add(cmd.read().getStringExpression());
                 }
-            }else{
+            } else {
                 args2.add(cmd.read().getStringExpression());
             }
         }
         if (command == null) {
             command = "build";
         }
-        if(cmd.isExecMode()) {
+        if (cmd.isExecMode()) {
             String[] args2Arr = args2.toArray(new String[0]);
             switch (command) {
                 case "build":
-                case "default":
-                    {
+                case "default": {
                     List<String> defaultArgs = new ArrayList<>();
                     for (String ar : args2Arr) {
                         if (ar.startsWith("-D")) {
@@ -74,8 +77,12 @@ public class NutsMvnMain extends NutsApplication {
                             defaultArgs.add(ar);
                         }
                     }
-                    boolean r = callMvn(o, ".", defaultArgs.toArray(new String[0]));
-                    return(r ? 0 : 1);
+                    int r = callMvn(o, ".", defaultArgs.toArray(new String[0]));
+                    if (r == 0) {
+                        return;
+                    } else {
+                        throw new NutsExecutionException("Maven Call exited with code " + r, r);
+                    }
                 }
                 case "get": {
                     System.setProperty("artifact", args2Arr[0].replaceFirst("#", ":"));
@@ -93,81 +100,88 @@ public class NutsMvnMain extends NutsApplication {
                         System.setProperty("repoUrl", repo);
                     }
                     File dir = createTempPom(appContext.getWorkspace());
-                    boolean r = callMvn(o, dir.getPath(), "dependency:get");
+                    int r = callMvn(o, dir.getPath(), "dependency:get");
                     try {
                         delete(dir);
                     } catch (IOException ex) {
                         throw new IllegalArgumentException(ex);
                     }
-                    return(r ? 0 : 1);
+                    if (r == 0) {
+                        return;
+                    } else {
+                        throw new NutsExecutionException("Maven Call exited with code " + r, r);
+                    }
                 }
             }
         }
-        return 0;
     }
 
-    private static boolean callMvn(Options options,String path,String ... args) {
+    private static int callMvn(Options options, String path, String... args) {
         MavenCli cli = new MavenCli();
         if (options.json) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PrintStream out = new PrintStream(bos);
             try {
-                cli.doMain(args, path, out, out);
+                int r = cli.doMain(args, path, out, out);
                 String s = new String(bos.toByteArray());
                 if (s.contains("BUILD SUCCESS")) {
                     System.out.println("{'result':'success'}");
-                    return true;
+                    return 0;
                 } else {
+                    if (r == 0) {
+                        r = 1;
+                    }
                     System.out.println("{'result':'error'}");
                 }
+                return r;
             } catch (Exception ex) {
                 System.out.println("{'result':'error'}");
+                return 1;
             }
-            return false;
         } else {
-            return cli.doMain(args, path, System.out, System.err)==0;
+            return cli.doMain(args, path, System.out, System.err);
         }
     }
 
     private static File createTempPom(NutsWorkspace ws) {
         File d = ws.getIOManager().createTempFolder(null);
-        try (PrintWriter out = new PrintWriter(new File(d,"filename.txt"))) {
-            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                    "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
-                    "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
-                    "    <modelVersion>4.0.0</modelVersion>\n" +
-                    "    <groupId>temp</groupId>\n" +
-                    "    <artifactId>temp-nuts</artifactId>\n" +
-                    "    <version>1.0.0</version>\n" +
-                    "    <packaging>jar</packaging>\n" +
-                    "    <properties>\n" +
-                    "        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n" +
-                    "        <maven.compiler.source>1.8</maven.compiler.source>\n" +
-                    "        <maven.compiler.target>1.8</maven.compiler.target>\n" +
-                    "    </properties>\n" +
-                    "    <dependencies>\n" +
-                    "    </dependencies>\n" +
-                    "    <repositories>\n" +
-                    "        <repository>\n" +
-                    "            <id>vpc-public-maven</id>\n" +
-                    "            <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>\n" +
-                    "            <snapshots>\n" +
-                    "                <enabled>true</enabled>\n" +
-                    "                <updatePolicy>always</updatePolicy>\n" +
-                    "            </snapshots>\n" +
-                    "        </repository>\n" +
-                    "    </repositories>\n" +
-                    "    <pluginRepositories>\n" +
-                    "        <pluginRepository>\n" +
-                    "            <id>vpc-public-maven</id>\n" +
-                    "            <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>\n" +
-                    "            <snapshots>\n" +
-                    "                <enabled>true</enabled>\n" +
-                    "                <updatePolicy>always</updatePolicy>\n" +
-                    "            </snapshots>\n" +
-                    "        </pluginRepository>\n" +
-                    "    </pluginRepositories>\n" +
-                    "</project>\n");
+        try (PrintWriter out = new PrintWriter(new File(d, "filename.txt"))) {
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                    + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
+                    + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
+                    + "    <modelVersion>4.0.0</modelVersion>\n"
+                    + "    <groupId>temp</groupId>\n"
+                    + "    <artifactId>temp-nuts</artifactId>\n"
+                    + "    <version>1.0.0</version>\n"
+                    + "    <packaging>jar</packaging>\n"
+                    + "    <properties>\n"
+                    + "        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
+                    + "        <maven.compiler.source>1.8</maven.compiler.source>\n"
+                    + "        <maven.compiler.target>1.8</maven.compiler.target>\n"
+                    + "    </properties>\n"
+                    + "    <dependencies>\n"
+                    + "    </dependencies>\n"
+                    + "    <repositories>\n"
+                    + "        <repository>\n"
+                    + "            <id>vpc-public-maven</id>\n"
+                    + "            <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>\n"
+                    + "            <snapshots>\n"
+                    + "                <enabled>true</enabled>\n"
+                    + "                <updatePolicy>always</updatePolicy>\n"
+                    + "            </snapshots>\n"
+                    + "        </repository>\n"
+                    + "    </repositories>\n"
+                    + "    <pluginRepositories>\n"
+                    + "        <pluginRepository>\n"
+                    + "            <id>vpc-public-maven</id>\n"
+                    + "            <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>\n"
+                    + "            <snapshots>\n"
+                    + "                <enabled>true</enabled>\n"
+                    + "                <updatePolicy>always</updatePolicy>\n"
+                    + "            </snapshots>\n"
+                    + "        </pluginRepository>\n"
+                    + "    </pluginRepositories>\n"
+                    + "</project>\n");
         } catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
         }

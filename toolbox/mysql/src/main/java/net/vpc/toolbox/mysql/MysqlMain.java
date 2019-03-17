@@ -9,26 +9,26 @@ import net.vpc.toolbox.mysql.local.LocalMysql;
 import java.util.Arrays;
 
 public class MysqlMain extends NutsApplication {
+
     public static void main(String[] args) {
-        new MysqlMain().launchAndExit(args);
+        new MysqlMain().runAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
-        String[] args=appContext.getArgs();
+    public void run(NutsApplicationContext appContext) {
+        String[] args = appContext.getArgs();
         if (args.length == 0) {
-            throw new NutsExecutionException("Expected --remote or --local",2);
+            throw new NutsExecutionException("Expected --remote or --local", 2);
         }
         if (args[0].equals("--remote") || args[0].equals("-c")) {
             RemoteMysql m = new RemoteMysql(appContext);
-            return m.runArgs(Arrays.copyOfRange(args, 1, args.length));
-        }
-        if (args[0].equals("--local") || args[0].equals("-s")) {
+            m.runArgs(Arrays.copyOfRange(args, 1, args.length));
+        } else if (args[0].equals("--local") || args[0].equals("-s")) {
             LocalMysql m = new LocalMysql(appContext);
-            return m.runArgs(Arrays.copyOfRange(args, 1, args.length));
+            m.runArgs(Arrays.copyOfRange(args, 1, args.length));
         } else {
             LocalMysql m = new LocalMysql(appContext);
-            return m.runArgs(args);
+            m.runArgs(args);
         }
     }
 }

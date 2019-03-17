@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.util;
@@ -140,18 +140,16 @@ public class CoreNutsUtils {
         }
     };
 
-
 //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
-
-    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR =
-            new DefaultNutsDescriptorBuilder()
+    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
+            = new DefaultNutsDescriptorBuilder()
                     .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
                     .setAlternative("suse")
                     .setName("Application Full Name")
                     .setDescription("Application Description")
                     .setExecutable(true)
                     .setPackaging("jar")
-//                    .setExt("exe")
+                    //                    .setExt("exe")
                     .setArch(new String[]{"64bit"})
                     .setOs(new String[]{"linux#4.6"})
                     .setOsdist(new String[]{"opensuse#42"})
@@ -165,14 +163,14 @@ public class CoreNutsUtils {
                             new String[]{"-jar"}
                     ))
                     .setLocations(new String[]{
-                            "http://server/somelink"
-                    })
+                "http://server/somelink"
+            })
                     .setDependencies(
                             new NutsDependency[]{
-                                    new DefaultNutsDependency(
-                                            "namespace", "group", "name", null, DefaultNutsVersion.valueOf("version"), "compile",
-                                            "false", new NutsId[0]
-                                    )
+                                new DefaultNutsDependency(
+                                        "namespace", "group", "name", null, DefaultNutsVersion.valueOf("version"), "compile",
+                                        "false", new NutsId[0]
+                                )
                             }
                     )
                     .build();
@@ -186,7 +184,6 @@ public class CoreNutsUtils {
         _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_OSDIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.QUERY_PLATFORM, null);
     }
-
 
     public static NutsId finNutsIdBySimpleName(NutsId id, Collection<NutsId> all) {
         if (all != null) {
@@ -238,7 +235,6 @@ public class CoreNutsUtils {
 //        }
 //        return new File(versionFolder, face);
 //    }
-
 //    public static String[] splitNameAndValue(String arg) {
 //        int i = arg.indexOf('=');
 //        if (i >= 0) {
@@ -252,7 +248,6 @@ public class CoreNutsUtils {
 //    public static NutsDescriptor createNutsDescriptor() {
 //        return new DefaultNutsDescriptorBuilder().setId(parseNutsId("my-group:my-id#1.0")).build();
 //    }
-
     /**
      * examples : script://groupId:artifactId/version?query
      * script://groupId:artifactId/version script://groupId:artifactId
@@ -310,7 +305,6 @@ public class CoreNutsUtils {
 //        }
 //        return null;
 //    }
-
     public static boolean isEffectiveValue(String value) {
         return (!StringUtils.isEmpty(value) && !CoreStringUtils.containsVars(value));
     }
@@ -401,7 +395,6 @@ public class CoreNutsUtils {
 //
 //        return id.getName() + "-" + id.getVersion() + classifierNamePart + ext;
 //    }
-
     public static String[] applyStringProperties(String[] child, NutsObjectConverter<String, String> properties) {
         return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
     }
@@ -468,7 +461,6 @@ public class CoreNutsUtils {
 //        }
 //        return id;
 //    }
-
     public static NutsDependency parseNutsDependency(String nutFormat) {
         if (nutFormat == null) {
             return null;
@@ -537,7 +529,6 @@ public class CoreNutsUtils {
 //        }
 //        throw new NutsIllegalArgumentException("createNutsVersionFilter Not yet supported from type " + object.getType().getName());
 //    }
-
     public static NutsDescriptorFilter And(NutsDescriptorFilter... all) {
         return new NutsDescriptorFilterAnd(all);
     }
@@ -900,7 +891,6 @@ public class CoreNutsUtils {
 //            }
 //        }
 //    }
-
     public static int getScopesPriority(String s1) {
         switch (normalizeScope(s1)) {
             case "compile":
@@ -1038,13 +1028,13 @@ public class CoreNutsUtils {
                     .setTrueStringRegexp("true|enable|yes|always|y")
                     .setFalseStringRegexp("false|disable|no|never|n")
                     .setNullValue(defaultValue)
-                    .setInvalidValue(defaultValue)
-            ;
+                    .setInvalidValue(defaultValue);
         }
         return Convert.toBoolean(System.getProperty(property), p);
     }
 
     private static class StringConverterAdapter implements StringConverter {
+
         private final NutsObjectConverter<String, String> properties;
 
         public StringConverterAdapter(NutsObjectConverter<String, String> properties) {
@@ -1055,5 +1045,17 @@ public class CoreNutsUtils {
         public String convert(String str) {
             return properties.convert(str);
         }
+    }
+
+    public static NutsDeployOptions createNutsDeployOptions(NutsPushOptions options) {
+        if (options == null) {
+            options = new NutsPushOptions();
+        }
+        return new NutsDeployOptions().setForce(options.isForce()).setTrace(options.isTrace());
+    }
+
+    public static PrintStream resolveOut(NutsWorkspace ws, NutsSession session) {
+        session = CoreNutsUtils.validateSession(session, ws);
+        return (session == null || session.getTerminal() == null) ? ws.getIOManager().createNullPrintStream() : session.getTerminal().getOut();
     }
 }

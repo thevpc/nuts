@@ -65,7 +65,7 @@ public class RepositoryNonOption extends DefaultNonOption {
                 all.add(new DefaultArgumentCandidate(repository.getName()));
             }
         }
-        if (repository != null) {
+        if (repository != null && repository.isSupportedMirroring()) {
             for (NutsRepository repository : repository.getMirrors()) {
                 all.add(new DefaultArgumentCandidate(repository.getName()));
             }

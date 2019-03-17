@@ -20,6 +20,8 @@ public class DefaultNutsFetch implements NutsFetch {
     private boolean includeFile = true;
     private boolean includeInstallInformation = true;
     private boolean ignoreCache = false;
+    private boolean preferInstalled = false;
+    private boolean installedOnly = false;
     private Boolean acceptOptional = null;
 
     public DefaultNutsFetch(DefaultNutsWorkspace ws) {
@@ -147,21 +149,66 @@ public class DefaultNutsFetch implements NutsFetch {
 
     @Override
     public NutsDefinition fetchDefinition() {
-        NutsDefinition def = ws.fetchDefinition(id, location,includeFile || includeInstallInformation, includeEffective, includeInstallInformation, ignoreCache, session);
+        NutsDefinition def = ws.fetchDefinition(id, location, includeFile || includeInstallInformation, includeEffective, includeInstallInformation, ignoreCache, preferInstalled,installedOnly, session);
         loadDeps(def.getId());
         return def;
     }
 
     @Override
+    public NutsDefinition fetchDefinitionOrNull() {
+        try {
+            return fetchDefinition();
+        } catch (NutsNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public NutsContent fetchContentOrNull() {
+        try {
+            return fetchContent();
+        } catch (NutsNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public NutsId fetchIdOrNull() {
+        try {
+            return fetchId();
+        } catch (NutsNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public String fetchFileOrNull() {
+        try {
+            return fetchFile();
+        } catch (NutsNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public NutsDescriptor fetchDescriptorOrNull() {
+        try {
+            return fetchDescriptor();
+        } catch (NutsNotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Override
     public NutsContent fetchContent() {
-        NutsDefinition def = ws.fetchDefinition(id, location,true, false, false, ignoreCache, session);
+        NutsDefinition def = ws.fetchDefinition(id, location, true, false, false, ignoreCache, preferInstalled,installedOnly, session);
         loadDeps(def.getId());
         return def.getContent();
     }
 
     @Override
     public NutsId fetchId() {
-        NutsDefinition def = ws.fetchDefinition(id, location,includeFile || includeInstallInformation, includeEffective, includeInstallInformation, ignoreCache, session);
+        NutsDefinition def = ws.fetchDefinition(id, location, includeFile || includeInstallInformation, includeEffective, includeInstallInformation, ignoreCache, preferInstalled,installedOnly, session);
         loadDeps(def.getId());
         if (includeEffective) {
             return ws.resolveEffectiveId(def.getEffectiveDescriptor(), session);
@@ -196,7 +243,7 @@ public class DefaultNutsFetch implements NutsFetch {
 
     @Override
     public NutsDescriptor fetchDescriptor() {
-        NutsDefinition def = ws.fetchDefinition(id, location,false, includeEffective, false, ignoreCache, session);
+        NutsDefinition def = ws.fetchDefinition(id, location, false, includeEffective, false, ignoreCache, preferInstalled,installedOnly, session);
         loadDeps(def.getId());
         if (includeEffective) {
             return def.getEffectiveDescriptor();
@@ -206,14 +253,14 @@ public class DefaultNutsFetch implements NutsFetch {
 
     @Override
     public String fetchFile() {
-        NutsDefinition def = ws.fetchDefinition(id, location,true, false, false, ignoreCache, session);
+        NutsDefinition def = ws.fetchDefinition(id, location, true, false, false, ignoreCache, preferInstalled,installedOnly, session);
         return def.getContent().getFile();
     }
 
     private void loadDeps(NutsId id) {
         if (includeDependencies) {
-            NutsDependencyScope[] s = (scopes == null || scopes.size() == 0) ?
-                    new NutsDependencyScope[]{NutsDependencyScope.PROFILE_RUN}
+            NutsDependencyScope[] s = (scopes == null || scopes.isEmpty())
+                    ? new NutsDependencyScope[]{NutsDependencyScope.PROFILE_RUN}
                     : scopes.toArray(new NutsDependencyScope[0]);
             ws.createQuery().addId(id).setSession(session)
                     .addScope(s)
@@ -238,4 +285,23 @@ public class DefaultNutsFetch implements NutsFetch {
         this.location = null;
         return this;
     }
+
+    public boolean isPreferInstalled() {
+        return preferInstalled;
+    }
+
+    public NutsFetch setPreferInstalled(boolean preferInstalled) {
+        this.preferInstalled = preferInstalled;
+        return this;
+    }
+
+    public boolean isInstalledOnly() {
+        return installedOnly;
+    }
+
+    public NutsFetch setInstalledOnly(boolean installedOnly) {
+        this.installedOnly = installedOnly;
+        return this;
+    }
+
 }

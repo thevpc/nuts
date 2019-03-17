@@ -36,7 +36,7 @@ import java.net.URL;
 public interface NutsDeploymentBuilder {
 
 
-    NutsDeploymentBuilder setFoundAction(NutsConfirmAction force);
+    NutsDeploymentBuilder setOptions(NutsDeployOptions options);
 
     NutsDeploymentBuilder setContent(InputStream stream);
 

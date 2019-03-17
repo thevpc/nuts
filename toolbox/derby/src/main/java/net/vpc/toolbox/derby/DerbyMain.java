@@ -40,12 +40,12 @@ public class DerbyMain extends NutsApplication {
     }
 
     public static void main(String[] args) {
-        System.out.println(getAbsoluteFile("../~","/home/vpc/data-vpc/mm"));
+        System.out.println(getAbsoluteFile("../~", "/home/vpc/data-vpc/mm"));
         //new DerbyMain().launchAndExit(args);
     }
 
     @Override
-    public int launch(NutsApplicationContext appContext) {
+    public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         this.appContext = appContext;
         CommandLine cmdLine = new CommandLine(args);
@@ -56,7 +56,7 @@ public class DerbyMain extends NutsApplication {
             } else if ((a = cmdLine.readStringOption("--derby-version")) != null) {
                 derbyVersion = a.getStringValue();
             } else if ((a = cmdLine.readStringOption("--db")) != null) {
-                derbyDataHome = getAbsoluteFile(a.getStringValue(),appContext.getVarFolder());
+                derbyDataHome = getAbsoluteFile(a.getStringValue(), appContext.getVarFolder());
             } else if ((a = cmdLine.readStringOption("--netbeans")) != null) {
                 derbyDataHome = System.getProperty("user.home") + "/.netbeans-derby";
             } else if ((a = cmdLine.readStringOption("-h", "--host")) != null) {
@@ -94,10 +94,6 @@ public class DerbyMain extends NutsApplication {
                 cmdLine.unexpectedArgument("derby");
             }
         }
-        return main();
-    }
-
-    public int main() {
         NutsWorkspace ws = appContext.getWorkspace();
         List<String> command = new ArrayList<>();
         List<String> executorOptions = new ArrayList<>();
@@ -109,7 +105,7 @@ public class DerbyMain extends NutsApplication {
             v = best.getVersion().toString();
         }
         if (h == null) {
-            h = new File(appContext.getVarFolder(),"derby-db").getPath();
+            h = new File(appContext.getVarFolder(), "derby-db").getPath();
         }
         File derby = download("org.apache.derby:derby#" + v);
         File derbynet = download("org.apache.derby:derbynet#" + v);
@@ -143,10 +139,12 @@ public class DerbyMain extends NutsApplication {
         if (extraArg != null) {
             command.add(extraArg);
         }
-        return ws
+
+        ws
                 .createExecBuilder()
                 .setExecutorOptions(executorOptions)
                 .setCommand(command)
+                .setFailFast(true)
                 .exec().getResult();
     }
 
@@ -171,9 +169,9 @@ public class DerbyMain extends NutsApplication {
         return appContext.getAppId();
     }
 
-
     /**
      * should promote this to FileUtils !!
+     *
      * @param path
      * @param cwd
      * @return
@@ -185,44 +183,45 @@ public class DerbyMain extends NutsApplication {
         if (cwd == null) {
             cwd = System.getProperty("user.dir");
         }
-        switch (path){
-            case "~" : return System.getProperty("user.home");
-            case "." : {
+        switch (path) {
+            case "~":
+                return System.getProperty("user.home");
+            case ".": {
                 File file = new File(cwd);
                 try {
                     return file.getCanonicalPath();
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     return file.getAbsolutePath();
                 }
             }
-            case ".." : {
+            case "..": {
                 File file = new File(cwd, "..");
                 try {
                     return file.getCanonicalPath();
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     return file.getAbsolutePath();
                 }
             }
         }
-        int j=-1;
+        int j = -1;
         char[] chars = path.toCharArray();
         for (int i = 0; i < chars.length; i++) {
-            if(chars[i]=='/' || chars[i]=='\\'){
-                j=i;
+            if (chars[i] == '/' || chars[i] == '\\') {
+                j = i;
                 break;
             }
         }
-        if(j>0) {
-            switch (path.substring(0,j)) {
+        if (j > 0) {
+            switch (path.substring(0, j)) {
                 case "~":
                     String e = path.substring(j + 1);
-                    if(e.isEmpty()){
+                    if (e.isEmpty()) {
                         return System.getProperty("user.home");
                     }
                     File file = new File(System.getProperty("user.home"), e);
                     try {
                         return file.getCanonicalPath();
-                    }catch (IOException ex){
+                    } catch (IOException ex) {
                         return file.getAbsolutePath();
                     }
             }
@@ -230,7 +229,7 @@ public class DerbyMain extends NutsApplication {
         File file = new File(cwd, path);
         try {
             return file.getCanonicalPath();
-        }catch (IOException ex){
+        } catch (IOException ex) {
             return file.getAbsolutePath();
         }
     }

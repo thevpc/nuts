@@ -53,12 +53,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     private static final Logger log = Logger.getLogger(AbstractNutsRepository.class.getName());
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
-    protected Map<String, String> extensions = new HashMap<String, String>();
+    protected Map<String, String> extensions = new HashMap<>();
     private String repositoryName;
     private NutsRepository parentRepository;
     private NutsWorkspace workspace;
-    private Map<String, NutsRepository> mirrors = new HashMap<>();
-    private NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
+    private final Map<String, NutsRepository> mirrors = new HashMap<>();
+    private final NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
     private DefaultNutsRepositoryConfigManager configManager;
     private boolean transientRepository;
     private NutsIndexStoreClient nutsIndexStoreClient;
@@ -86,14 +86,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         this.nutsIndexStoreClient = workspace.getRepositoryManager().getIndexStoreClientFactory().createNutsIndexStoreClient(this);
     }
 
+    @Override
     public NutsRepository getParentRepository() {
         return parentRepository;
     }
 
+    @Override
     public NutsRepositoryConfigManager getConfigManager() {
         return configManager;
     }
 
+    @Override
     public NutsRepositorySecurityManager getSecurityManager() {
         return securityManager;
     }
@@ -107,12 +110,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             try {
                 newConfig = workspace.getIOManager().readJson(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                log.log(Level.SEVERE, "Erroneous config file. Unable to load file " + file + " : " + ex.toString());
+                log.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
                 if (!getWorkspace().getConfigManager().isReadOnly()) {
                     File newfile = CoreIOUtils.createFile(getConfigManager().getStoreLocation(), "nuts-repository-" +
                             new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date())
                             + ".json");
-                    log.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to " + newfile.getPath());
+                    log.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile.getPath());
                     try {
                         CoreIOUtils.move(file, newfile);
                         autoCreate = true;
@@ -274,7 +277,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsRepositoryNotFoundException(repositoryId);
         }
         if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, StringUtils.alignLeft(getName(), 20) + " remove repo " + repositoryId);
+            log.log(Level.FINEST, "{0} remove repo {1}", new Object[]{StringUtils.alignLeft(getName(), 20), repositoryId});
         }
         getConfigManager().removeMirror(repositoryId);
         if (repo != null) {
@@ -288,6 +291,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return mirrors.containsKey(repositoryIdPath);
     }
 
+    @Override
     public NutsRepository getMirror(String repositoryIdPath) {
         NutsRepository r = mirrors.get(repositoryIdPath);
         if (r != null) {
@@ -357,7 +361,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public NutsDescriptor fetchDescriptor(NutsId id, NutsSession session) {
         checkSession(session);
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC, "fetch-descriptor");
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC);
         Map<String, String> queryMap = id.getQueryMap();
         queryMap.remove(NutsConstants.QUERY_OPTIONAL);
         queryMap.remove(NutsConstants.QUERY_SCOPE);
@@ -453,12 +457,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 break;
             }
         }
-        log.log(Level.FINEST, tracePhaseString + fetchString + StringUtils.alignLeft(title, 18) + " " + StringUtils.alignLeft(getName(), 20) + " " + (id == null ? "" : id.toString()) + timeMessage);
+        log.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, StringUtils.alignLeft(title, 18), StringUtils.alignLeft(getName(), 20), id == null ? "" : id.toString(), timeMessage});
     }
 
     @Override
-    public NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session) {
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_DEPLOY, "deploy");
+    public NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsSession session) {
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_DEPLOY);
         if (StringUtils.isEmpty(id.getGroup())) {
             throw new NutsIllegalArgumentException("Empty group");
         }
@@ -481,57 +485,58 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         try {
             id = id.unsetQuery();
             id = id.setAlternative(descriptor.getAlternative());
-            NutsId d = deployImpl(id, descriptor, file, foundAction, session);
+            NutsId d = deployImpl(id, descriptor, file, options, session);
             if (session.isIndexEnabled() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
                 try {
                     nutsIndexStoreClient.revalidate(id);
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error revalidating Indexer for " + getName() + " : " + ex);
+                    log.log(Level.FINEST, "[ERROR  ] Error revalidating Indexer for {0} : {1}", new Object[]{getName(), ex});
                 }
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getName(), 20) + " Deploy " + id);
+                log.log(Level.FINEST, "[SUCCESS] {0} Deploy {1}", new Object[]{StringUtils.alignLeft(getName(), 20), id});
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getName(), 20) + " Deploy " + id);
+                log.log(Level.FINEST, "[ERROR  ] {0} Deploy {1}", new Object[]{StringUtils.alignLeft(getName(), 20), id});
             }
             throw ex;
         }
     }
 
     @Override
-    public void push(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session) {
+    public void push(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
         checkSession(session);
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_PUSH, "push");
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_PUSH);
         try {
-            pushImpl(id, repoId, foundAction, session);
+            pushImpl(id, repoId, options, session);
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getName(), 20) + " Push " + id);
+                log.log(Level.FINEST, "[SUCCESS] {0} Push {1}", new Object[]{StringUtils.alignLeft(getName(), 20), id});
             }
         } catch (RuntimeException ex) {
 
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getName(), 20) + " Push " + id);
+                log.log(Level.FINEST, "[ERROR  ] {0} Push {1}", new Object[]{StringUtils.alignLeft(getName(), 20), id});
             }
         }
     }
 
+    @Override
     public Iterator<NutsId> find(final NutsIdFilter filter, NutsSession session) {
         checkSession(session);
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC, "find");
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC);
         checkAllowedFetch(null, session);
         try {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getName(), 20) + " Find components");
+                log.log(Level.FINEST, "[SUCCESS] {0} Find components", StringUtils.alignLeft(getName(), 20));
             }
             if (session.isIndexEnabled() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = nutsIndexStoreClient.find(filter, session);
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for " + getName() + " : " + ex);
+                    log.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for {0} : {1}", new Object[]{getName(), ex});
                 }
 
                 if (o != null) {
@@ -542,7 +547,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             return findImpl(filter, session);
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getName(), 20) + " Find components");
+                log.log(Level.FINEST, "[ERROR  ] {0} Find components", StringUtils.alignLeft(getName(), 20));
             }
             throw ex;
         }
@@ -552,7 +557,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     public NutsContent fetchContent(NutsId id, String localPath, NutsSession session) {
         checkSession(session);
         id = id.setFaceComponent();
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_CONTENT, "fetch");
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_CONTENT);
         checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
@@ -572,9 +577,10 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
+    @Override
     public List<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         id = id.setFaceComponent();
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC, "find-versions");
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_FETCH_DESC);
         checkSession(session);
         checkNutsId(id);
         checkAllowedFetch(id, session);
@@ -584,7 +590,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 try {
                     d = nutsIndexStoreClient.findVersions(id, session);
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for " + getName() + " : " + ex);
+                    log.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{getName(), ex});
                 }
                 if (d != null && !d.isEmpty()) {
                     if (idFilter != null) {
@@ -601,17 +607,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             List<NutsId> d = findVersionsImpl(id, idFilter, session);
             if (d.isEmpty()) {
                 if (log.isLoggable(Level.FINEST)) {
-                    log.log(Level.FINEST, "[ERROR  ] [" + StringUtils.alignLeft(session.getFetchMode().toString(), 7) + "] " + StringUtils.alignLeft(getName(), 20) + " " + StringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+                    log.log(Level.FINEST, "[ERROR  ] [{0}] {1} {2} {3}", new Object[]{StringUtils.alignLeft(session.getFetchMode().toString(), 7), StringUtils.alignLeft(getName(), 20), StringUtils.alignLeft("Fetch versions for", 24), id});
                 }
             } else {
                 if (log.isLoggable(Level.FINEST)) {
-                    log.log(Level.FINEST, "[SUCCESS] [" + StringUtils.alignLeft(session.getFetchMode().toString(), 7) + "] " + StringUtils.alignLeft(getName(), 20) + " " + StringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+                    log.log(Level.FINEST, "[SUCCESS] [{0}] {1} {2} {3}", new Object[]{StringUtils.alignLeft(session.getFetchMode().toString(), 7), StringUtils.alignLeft(getName(), 20), StringUtils.alignLeft("Fetch versions for", 24), id});
                 }
             }
             return d;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] [" + StringUtils.alignLeft(session.getFetchMode().toString(), 7) + "] " + StringUtils.alignLeft(getName(), 20) + " " + StringUtils.alignLeft("Fetch versions for", 24) + " " + id);
+                log.log(Level.FINEST, "[ERROR  ] [{0}] {1} {2} {3}", new Object[]{StringUtils.alignLeft(session.getFetchMode().toString(), 7), StringUtils.alignLeft(getName(), 20), StringUtils.alignLeft("Fetch versions for", 24), id});
             }
             throw ex;
         }
@@ -619,22 +625,22 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     public void undeploy(NutsId id, NutsSession session) {
         checkSession(session);
-        getSecurityManager().checkAllowed(NutsConstants.RIGHT_UNDEPLOY, "undeploy");
+        getSecurityManager().checkAllowed(NutsConstants.RIGHT_UNDEPLOY);
         try {
             undeployImpl(id, session);
             if (session.isIndexEnabled() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
                 try {
                     nutsIndexStoreClient.invalidate(id);
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error invalidating Indexer for " + getName() + " : " + ex);
+                    log.log(Level.FINEST, "[ERROR  ] Error invalidating Indexer for {0} : {1}", new Object[]{getName(), ex});
                 }
             }
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] " + StringUtils.alignLeft(getName(), 20) + " Undeploy " + id);
+                log.log(Level.FINEST, "[SUCCESS] {0} Undeploy {1}", new Object[]{StringUtils.alignLeft(getName(), 20), id});
             }
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] " + StringUtils.alignLeft(getName(), 20) + " Undeploy " + id);
+                log.log(Level.FINEST, "[ERROR  ] {0} Undeploy {1}", new Object[]{StringUtils.alignLeft(getName(), 20), id});
             }
         }
     }
@@ -698,7 +704,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (pr != null) {
             return pr.getConfigManager().getMirror(getName()).isEnabled();
         } else {
-            return getWorkspace().getConfigManager().isRepositoryEnabled(getName());
+            return getWorkspace().getConfigManager().getRepository(getName()).isEnabled();
         }
     }
 
@@ -782,6 +788,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return s;
     }
 
+    @Override
     public boolean isTransientRepository() {
         return transientRepository;
     }
@@ -799,9 +806,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session);
 
-    protected abstract void pushImpl(NutsId id, String repoId, NutsConfirmAction foundAction, NutsSession session);
+    protected abstract void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session);
 
-    protected abstract NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsConfirmAction foundAction, NutsSession session);
+    protected abstract NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsSession session);
 
     protected abstract NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session);
 

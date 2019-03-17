@@ -76,4 +76,6 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     boolean isIndexEnabled();
 
+    void setMirrorEnabled(String repoName, boolean enabled);
+
 }
