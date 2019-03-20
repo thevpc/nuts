@@ -41,9 +41,9 @@ import java.lang.reflect.Modifier;
 
 class DefaultPlatformBeanProperty extends AbstractPlatformBeanProperty {
 
-    private Method getter;
-    private Method setter;
-    private Field javaField;
+    private final Method getter;
+    private final Method setter;
+    private final Field javaField;
     private boolean transientProperty;
     private boolean deprecatedProperty;
 

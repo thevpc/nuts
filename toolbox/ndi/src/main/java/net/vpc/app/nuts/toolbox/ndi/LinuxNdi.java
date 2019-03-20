@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LinuxNdi implements SystemNdi {
+
     private NutsApplicationContext appContext;
 
     public LinuxNdi(NutsApplicationContext appContext) {
@@ -18,7 +19,7 @@ public class LinuxNdi implements SystemNdi {
     }
 
     @Override
-    public void createNutsScript(NdiScriptOptions options ) throws IOException {
+    public void createNutsScript(NdiScriptOptions options) throws IOException {
         if ("nuts".equals(options.getId())) {
             createBootScript(options.isForceBoot() || options.isForce(), false);
         } else {
@@ -45,8 +46,8 @@ public class LinuxNdi implements SystemNdi {
                 }
             } else {
                 String idContent = "RUN : " + nutsId;
-                StringBuilder command=new StringBuilder("nuts ");
-                if(options.getExecType()!=null){
+                StringBuilder command = new StringBuilder("nuts ");
+                if (options.getExecType() != null) {
                     command.append("--").append(options.getExecType().toString());
                 }
                 command.append(" \"").append(nutsId).append("\"");
@@ -121,23 +122,29 @@ public class LinuxNdi implements SystemNdi {
             if (!silent) {
                 appContext.out().printf("Updating ==%s== file to point to workspace ==%s==\n", "~/.bashrc", appContext.getWorkspace().getConfigManager().getWorkspaceLocation());
                 appContext.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.\n", ". ~/.bashrc");
-                while(true) {
+                while (true) {
+                    if (appContext.getWorkspace().getConfigManager().getOptions().isYes()) {
+                        break;
+                    }
+                    if (appContext.getWorkspace().getConfigManager().getOptions().isNo()) {
+                        return;
+                    }
                     String r = appContext.getTerminal().ask(
                             NutsQuestion.forString("Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.")
                     );
-                    if("ok".equalsIgnoreCase(r)){
+                    if ("ok".equalsIgnoreCase(r)) {
                         break;
                     }
-                    if("why".equalsIgnoreCase(r)) {
+                    if ("why".equalsIgnoreCase(r)) {
                         appContext.out().printf("\\\"==%s==\\\" is a special file in your home that is invoked upon each interactive terminal launch.\n", ".bashrc");
                         appContext.out().print("It helps configuring environment variables. ==Nuts== make usage of such facility to update your **PATH** env variable\n");
                         appContext.out().print("to point to current ==Nuts== workspace, so that when you call a ==Nuts== command it will be resolved correctly...\n");
                         appContext.out().printf("However updating \\\"==%s==\\\" does not affect the running process/terminal. So you have basicly two choices :\n", ".bashrc");
                         appContext.out().print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)\n");
                         appContext.out().printf(" - Or to run by your self the \\\"==%s==\\\" script (dont forget the leading dot)\n", ". ~/.bashrc");
-                    }else if("cancel".equalsIgnoreCase(r)){
+                    } else if ("cancel".equalsIgnoreCase(r)) {
                         return;
-                    }else{
+                    } else {
                         appContext.out().print(" @@Sorry...@@ but you need to type 'ok', 'why' or 'cancel' !\n");
                     }
                 }

@@ -58,6 +58,16 @@ java -jar nuts-0.5.3.jar
 
 
 ## Change Log
+### nuts 0.5.4.0
+    1- Several Fixes
+        * Fixed Problem with Layout
+        * All System properties now start with "nuts."
+        * System properties starting with "nuts.export." are exported to children processes
+        * Added wtach dog agains infinite child process creation
+    2- Layout changes
+        * from now on configuration will be version specific. some migration should be done to import previous configs
+        * system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json
+
 ### nuts 0.5.3.0
     1- (WINDOWS) First support to Windows platform
         * Support for Console coloring on windows

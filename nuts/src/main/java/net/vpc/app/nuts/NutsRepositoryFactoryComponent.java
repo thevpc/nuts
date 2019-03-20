@@ -33,10 +33,10 @@ package net.vpc.app.nuts;
  * Created by vpc on 1/15/17.
  */
 @NutsSingleton
-public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepositoryLocation> {
+public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepositoryConfig> {
 
     NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace);
 
-    NutsRepository create(NutsRepositoryLocation location, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot);
+    NutsRepository create(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository);
 
 }

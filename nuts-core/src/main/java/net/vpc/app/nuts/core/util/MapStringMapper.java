@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class MapStringMapper implements NutsObjectConverter<String,String> {
 
-    private Map<String, String> map;
+    private final Map<String, String> map;
 
     public MapStringMapper(Map<String, String> map) {
         this.map = map;

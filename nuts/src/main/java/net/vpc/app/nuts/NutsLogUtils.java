@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts;
@@ -45,7 +45,8 @@ import java.util.logging.Formatter;
  * @creationdate 9/16/12 10:00 PM
  */
 public final class NutsLogUtils {
-    private static boolean verboseLog=Boolean.getBoolean("nuts.boot.log.verbose");
+
+    private static boolean verboseLog = NutsUtils.getSystemBoolean("nuts.export.log.verbose", false);
     public static final LogFormatter LOG_FORMATTER = new LogFormatter();
     public static final Filter NUTS_LOG_FILTER = new Filter() {
         @Override
@@ -89,7 +90,7 @@ public final class NutsLogUtils {
         }
         int MEGA = 1024 * 1024;
         if (name == null || NutsUtils.isEmpty(name)) {
-            name = new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSS").format(new Date())+  "-nuts-%g.log";
+            name = new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSS").format(new Date()) + "-nuts-%g.log";
         }
         if (folder == null || NutsUtils.isEmpty(folder)) {
             folder = defaultLogFolder;
@@ -221,6 +222,7 @@ public final class NutsLogUtils {
     }
 
     private static final class NutsLogFileHandler extends FileHandler {
+
         String pattern;
         int limit;
         int count;
@@ -300,7 +302,7 @@ public final class NutsLogUtils {
             StringBuilder sb = new StringBuilder();
 
             sb.append(new SimpleDateFormat("yyyy-MM-dd HH:MM:ss").format(new Date(record.getMillis())));
-            if(verboseLog) {
+            if (verboseLog) {
                 sb.append(" ");
                 int len = sb.length() + 4;
                 if (lastMillis > 0) {

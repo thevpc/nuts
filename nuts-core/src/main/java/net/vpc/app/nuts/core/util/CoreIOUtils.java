@@ -112,7 +112,7 @@ public class CoreIOUtils {
                     }
                     return resolveJavaCommand(javaVer, workspace);
                 } else if (skey.equals("nuts")) {
-                    NutsDefinition nutsDefinition = null;
+                    NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API).setSession(session).fetchDefinition();
                     if (nutsDefinition.getContent().getFile() != null) {
                         return ("<::expand::> " + convert("java") + " -jar " + nutsDefinition.getContent().getFile());
@@ -146,11 +146,11 @@ public class CoreIOUtils {
         if (file.exists() && !file.canExecute()) {
             if (!file.setExecutable(true)) {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "Unable to set file executable " + file);
+                    log.log(Level.WARNING, "Unable to set file executable {0}", file);
                 }
             } else {
                 if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "Success to set file executable " + file);
+                    log.log(Level.WARNING, "Success to set file executable {0}", file);
                 }
             }
         }
@@ -183,18 +183,18 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = CoreVersionUtils.createNutsVersionFilter(requestedJavaVersion);
+            NutsVersionFilter requestedJavaVersionFilter = workspace.getParseManager().parseVersionFilter(requestedJavaVersion);
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()))) {
                 bestJava = current;
             }
             if (bestJava == null) {
                 if (!StringUtils.isEmpty(requestedJavaVersion)) {
                     if (log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "No valid JRE found. recommended " + requestedJavaVersion + " . Using default java.home at " + System.getProperty("java.home"));
+                        log.log(Level.FINE, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
                     }
                 } else {
                     if (log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "No valid JRE found. Using default java.home at " + System.getProperty("java.home"));
+                        log.log(Level.FINE, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
                     }
                 }
                 bestJava = current;
@@ -229,7 +229,7 @@ public class CoreIOUtils {
         }
 
         if (log.isLoggable(Level.FINE)) {
-            log.log(Level.FINE, "[exec] " + pb.getCommandString());
+            log.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
         if (showCommand) {
             if (terminal.getOut() instanceof NutsFormattedPrintStream) {
@@ -403,7 +403,7 @@ public class CoreIOUtils {
         if (StringUtils.isEmpty(url)) {
             return null;
         }
-        URL u = null;
+        URL u;
         try {
             u = new URL(url);
             return toFile(u);

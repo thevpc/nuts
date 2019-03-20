@@ -30,23 +30,46 @@
 package net.vpc.app.nuts;
 
 public class NutsRepositoryDefinition {
-    public static final int ORDER_USER_LOCAL=1000;
-    public static final int ORDER_SYSTEM_LOCAL=2000;
-    public static final int ORDER_USER_REMOTE=10000;
+
+    public static final int ORDER_USER_LOCAL = 1000;
+    public static final int ORDER_SYSTEM_LOCAL = 2000;
+    public static final int ORDER_USER_REMOTE = 10000;
     private String name;
     private String location;
     private String type;
-    private boolean proxied;
+    private boolean proxy;
+    private boolean reference;
+    private boolean failSafe;
+    private boolean create;
     private int order;
 
-    public NutsRepositoryDefinition(String name, String location, String type, boolean proxied, int order) {
+    public NutsRepositoryDefinition() {
+
+    }
+
+    public NutsRepositoryDefinition(NutsRepositoryDefinition o) {
+        this.name = o.name;
+        this.location = o.location;
+        this.type = o.type;
+        this.proxy = o.proxy;
+        this.reference = o.reference;
+        this.failSafe = o.failSafe;
+        this.create = o.create;
+        this.order = o.order;
+    }
+
+    public NutsRepositoryDefinition(String name, String location, String type, boolean proxy, boolean reference, boolean failSafe, boolean create, int order) {
         this.name = name;
         this.location = location;
         this.type = type;
-        this.proxied = proxied;
+        this.proxy = proxy;
+        this.reference = reference;
+        this.failSafe = failSafe;
+        this.create = create;
         this.order = order;
     }
 
+    
     public int getOrder() {
         return order;
     }
@@ -63,7 +86,64 @@ public class NutsRepositoryDefinition {
         return type;
     }
 
-    public boolean isProxied() {
-        return proxied;
+    public boolean isProxy() {
+        return proxy;
     }
+
+    public boolean isReference() {
+        return reference;
+    }
+
+    public NutsRepositoryDefinition setReference(boolean reference) {
+        this.reference = reference;
+        return this;
+    }
+
+    public NutsRepositoryDefinition setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public NutsRepositoryDefinition setLocation(String location) {
+        this.location = location;
+        return this;
+    }
+
+    public NutsRepositoryDefinition setType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public NutsRepositoryDefinition setProxy(boolean proxy) {
+        this.proxy = proxy;
+        return this;
+    }
+
+    public NutsRepositoryDefinition setOrder(int order) {
+        this.order = order;
+        return this;
+    }
+
+    public boolean isFailSafe() {
+        return failSafe;
+    }
+
+    public NutsRepositoryDefinition setFailSafe(boolean failSafe) {
+        this.failSafe = failSafe;
+        return this;
+    }
+
+    public boolean isCreate() {
+        return create;
+    }
+
+    public NutsRepositoryDefinition setCreate(boolean create) {
+        this.create = create;
+        return this;
+    }
+
+    public NutsRepositoryDefinition copy() {
+        return new NutsRepositoryDefinition(this);
+    }
+
 }

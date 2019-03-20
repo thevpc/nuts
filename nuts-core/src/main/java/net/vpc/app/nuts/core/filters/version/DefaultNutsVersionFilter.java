@@ -52,8 +52,9 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     private static final long serialVersionUID= 1L;
 
     public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]])(?<LV1>[^\\[\\],]*),(?<RV1>[^\\[\\],]*)(?<R1>[\\[\\]]))|(?<VAL2>(?<L2>[\\[\\]])(?<V2>[^\\[\\],]*)(?<R2>[\\[\\]]))|(?<VAL3>(?<V3>[^\\[\\], ]+)))(\\s|,|\n)*)");
-    private List<NutsVersionInterval> intervals = new ArrayList<>();
+    private final List<NutsVersionInterval> intervals = new ArrayList<>();
 
+    @Override
     public boolean accept(NutsVersion version) {
         if (intervals.isEmpty()) {
             return true;
@@ -71,9 +72,10 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     }
 
     public static DefaultNutsVersionFilter parse(String version) {
-        if (StringUtils.isEmpty(version)) {
+        if (version == null || StringUtils.isEmpty(version) || version.equals("LAST") || version.equals("LATEST") || version.equals("RELEASE")) {
             return new DefaultNutsVersionFilter();
         }
+
         DefaultNutsVersionFilter d = new DefaultNutsVersionFilter();
 
         Matcher y = NUTS_VERSION_PATTERN.matcher(version);

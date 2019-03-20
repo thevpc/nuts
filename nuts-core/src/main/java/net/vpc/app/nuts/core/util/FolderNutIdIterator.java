@@ -43,13 +43,13 @@ import java.util.Stack;
  */
 public class FolderNutIdIterator implements Iterator<NutsId> {
 
-    private NutsRepository repository;
+    private final NutsRepository repository;
     private NutsId last;
-    private Stack<File> stack = new Stack<File>();
-    private NutsIdFilter filter;
-    private NutsSession session;
-    private NutsWorkspace workspace;
-    private FolderNutIdIteratorModel model;
+    private final Stack<File> stack = new Stack<>();
+    private final NutsIdFilter filter;
+    private final NutsSession session;
+    private final NutsWorkspace workspace;
+    private final FolderNutIdIteratorModel model;
     private long visitedFoldersCount;
     private long visitedFilesCount;
 
@@ -65,6 +65,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         stack.push(folder);
     }
 
+    @Override
     public boolean hasNext() {
         last = null;
         while (!stack.isEmpty()) {
@@ -72,6 +73,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
             if (file.isDirectory()) {
                 visitedFoldersCount++;
                 File[] listFiles = file.listFiles(new FileFilter() {
+                    @Override
                     public boolean accept(File pathname) {
                         try {
                             return pathname.isDirectory() || model.isDescFile(pathname);

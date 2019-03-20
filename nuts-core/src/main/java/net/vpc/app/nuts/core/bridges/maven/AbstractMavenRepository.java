@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.bridges.maven;
@@ -47,8 +47,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     private static final Logger log = Logger.getLogger(AbstractMavenRepository.class.getName());
 
-    public AbstractMavenRepository(NutsRepositoryConfig config, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot, int slowness) {
-        super(config, workspace, parentRepository, repositoryRoot, slowness);
+    public AbstractMavenRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, int speed) {
+        super(options, workspace, parentRepository, speed);
         extensions.put("src", "-src.zip");
         extensions.put("pom", ".pom");
     }
@@ -144,7 +144,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
     }
 
-
+    @Override
     protected String getIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();
         String f = StringUtils.trim(q.get(NutsConstants.QUERY_FACE));

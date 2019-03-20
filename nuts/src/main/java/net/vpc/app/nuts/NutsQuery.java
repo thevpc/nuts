@@ -6,6 +6,72 @@ import java.util.List;
 import java.util.Set;
 
 public interface NutsQuery {
+
+    ////////////////////////////////////////////////////////
+    // Setters
+    ////////////////////////////////////////////////////////
+    NutsQuery setId(String id);
+
+    NutsQuery setId(NutsId value);
+
+    NutsQuery mainAndDependencies();
+
+    NutsQuery includeDependencies();
+
+    NutsQuery includeDependencies(boolean include);
+
+    NutsQuery setSession(NutsSession session);
+
+    NutsQuery setScope(NutsDependencyScope scope);
+
+    NutsQuery setScope(NutsDependencyScope... scope);
+
+    NutsQuery setScope(Collection<NutsDependencyScope> scope);
+
+    NutsQuery addScope(NutsDependencyScope scope);
+
+    NutsQuery addScope(Collection<NutsDependencyScope> scope);
+
+    NutsQuery addScope(NutsDependencyScope... scope);
+
+    NutsQuery removeScope(Collection<NutsDependencyScope> scope);
+
+    NutsQuery removeScope(NutsDependencyScope scope);
+
+    NutsQuery setAcceptOptional(Boolean acceptOptional);
+
+    NutsQuery setIncludeOptional(boolean includeOptional);
+
+    NutsQuery setIgnoreCache(boolean ignoreCache);
+
+    NutsQuery ignoreCache();
+
+    NutsQuery setIncludeDependencies(boolean includeDependencies);
+
+    NutsQuery setIncludeEffective(boolean includeEffectiveDescriptor);
+
+    NutsQuery setIncludeFile(boolean includeFile);
+
+    NutsQuery setIncludeInstallInformation(boolean includeInstallInformation);
+
+    NutsQuery setInstalledOnly(boolean preferInstalled);
+
+    NutsQuery setPreferInstalled(boolean preferInstalled);
+
+    NutsQuery setVersionFilter(NutsVersionFilter filter);
+
+    NutsQuery setVersionFilter(String filter);
+
+    NutsQuery addIds(String... ids);
+
+    NutsQuery addIds(NutsId... ids);
+
+    NutsQuery setIds(String... ids);
+
+    NutsQuery addId(String id);
+
+    NutsQuery addId(NutsId id);
+
     NutsQuery addJs(Collection<String> value);
 
     NutsQuery addJs(String... value);
@@ -15,10 +81,6 @@ public interface NutsQuery {
     NutsQuery addId(String... value);
 
     NutsQuery addId(NutsId... value);
-
-    NutsQuery setId(String value);
-
-    NutsQuery setId(NutsId value);
 
     NutsQuery addArch(Collection<String> value);
 
@@ -32,84 +94,56 @@ public interface NutsQuery {
 
     NutsQuery addRepository(String... value);
 
-    NutsQuery copy();
-
-    void copyFrom(NutsQuery other);
-
-    //    NutsQuery setAll(NutsSearch other);
-    NutsQuery setAll(NutsQuery other);
-
-    boolean isSort();
-
     NutsQuery setSort(boolean sort);
-
-    boolean isLatestVersions();
 
     NutsQuery setLatestVersions(boolean latestVersions);
 
-    NutsQuery addIds(String... ids);
-
-    NutsQuery addIds(NutsId... ids);
-
-    NutsQuery setIds(String... ids);
-
-    NutsQuery addId(String id);
-
-    NutsQuery addId(NutsId id);
-
-    String[] getIds();
-
-    Set<NutsDependencyScope> getScope();
-
-    NutsQuery setScope(NutsDependencyScope scope);
-
-    NutsQuery setScope(Set<NutsDependencyScope> scope);
-
-    NutsQuery addScope(Collection<NutsDependencyScope> scope);
-
-    NutsQuery addScope(NutsDependencyScope scope);
-
-    NutsQuery addScope(NutsDependencyScope... scope);
-
-    NutsQuery removeScope(Collection<NutsDependencyScope> scope);
-
-    NutsQuery removeScope(NutsDependencyScope scope);
-
     NutsQuery setDependencyFilter(NutsDependencyFilter filter);
-
-    NutsDependencyFilter getDependencyFilter();
 
     NutsQuery setDependencyFilter(String filter);
 
     NutsQuery setRepositoryFilter(NutsRepositoryFilter filter);
 
-    NutsRepositoryFilter getRepositoryFilter();
-
     NutsQuery setRepositoryFilter(String filter);
 
-    NutsQuery setVersionFilter(NutsVersionFilter filter);
-
-    NutsVersionFilter getVersionFilter();
-
-    NutsQuery setVersionFilter(String filter);
-
     NutsQuery setDescriptorFilter(NutsDescriptorFilter filter);
-
-    NutsDescriptorFilter getDescriptorFilter();
 
     NutsQuery setDescriptorFilter(String filter);
 
     NutsQuery setIdFilter(NutsIdFilter filter);
 
-    NutsIdFilter getIdFilter();
-
     NutsQuery setIdFilter(String filter);
 
     NutsQuery setIds(Collection<String> ids);
 
+    NutsQuery setAll(NutsQuery other);
+
+    NutsQuery copyFrom(NutsQuery other);
+
+    NutsQuery copy();
+
+    ////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////
     NutsSession getSession();
 
-    NutsQuery setSession(NutsSession session);
+    String[] getIds();
+
+    boolean isSort();
+
+    boolean isLatestVersions();
+
+    Set<NutsDependencyScope> getScope();
+
+    NutsDependencyFilter getDependencyFilter();
+
+    NutsRepositoryFilter getRepositoryFilter();
+
+    NutsVersionFilter getVersionFilter();
+
+    NutsDescriptorFilter getDescriptorFilter();
+
+    NutsIdFilter getIdFilter();
 
     String[] getJs();
 
@@ -119,6 +153,27 @@ public interface NutsQuery {
 
     String[] getRepos();
 
+    NutsQuery dependenciesOnly();
+
+    NutsQuery mainOnly();
+
+    Boolean getAcceptOptional();
+
+    boolean isIgnoreNotFound();
+
+    NutsQuery setIgnoreNotFound(boolean ignoreNotFound);
+
+    boolean isIncludeFile();
+
+    boolean isIncludeInstallInformation();
+
+    boolean isIncludeEffective();
+
+    boolean isIgnoreCache();
+
+    ////////////////////////////////////////////////////////
+    // Result
+    ////////////////////////////////////////////////////////
     NutsId findOne();
 
     NutsId findFirst();
@@ -138,38 +193,5 @@ public interface NutsQuery {
     List<NutsDefinition> fetch();
 
     Iterator<NutsDefinition> fetchIterator();
-
-    NutsQuery dependenciesOnly();
-
-    NutsQuery includeDependencies();
-
-    NutsQuery mainOnly();
-
-    Boolean getAcceptOptional();
-
-    NutsQuery setAcceptOptional(Boolean acceptOptional);
-
-    NutsQuery setIncludeOptional(boolean includeOptional);
-
-    boolean isIgnoreNotFound();
-
-    NutsQuery setIgnoreNotFound(boolean ignoreNotFound);
-
-    boolean isIncludeFile();
-
-    NutsQuery setIncludeFile(boolean includeContent);
-
-    boolean isIncludeInstallInformation() ;
-
-    NutsQuery setIncludeInstallInformation(boolean includeInstallInfo) ;
-
-    boolean isIncludeEffectiveDesc() ;
-
-    NutsQuery setIncludeEffectiveDesc(boolean includeEffectiveDesc) ;
-
-
-    boolean isIgnoreCache() ;
-
-    NutsQuery setIgnoreCache(boolean ignoreCache) ;
 
 }

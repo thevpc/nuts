@@ -47,8 +47,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
-    public MavenFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN), workspace, parentRepository,root,SPEED_FAST);
+    public MavenFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(options,workspace,parentRepository,SPEED_FAST);
     }
 
     @Override

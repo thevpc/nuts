@@ -60,7 +60,7 @@ import static net.vpc.app.nuts.core.util.CoreNutsUtils.simplify;
  */
 public class DefaultNutsQuery implements NutsQuery {
 
-    private List<String> ids = new ArrayList<>();
+    private final List<String> ids = new ArrayList<>();
     private NutsIdFilter idFilter;
     private NutsDependencyFilter dependencyFilter;
     private NutsRepositoryFilter repositoryFilter;
@@ -74,7 +74,7 @@ public class DefaultNutsQuery implements NutsQuery {
     private final List<String> arch = new ArrayList<>();
     private final List<String> packaging = new ArrayList<>();
     private final List<String> repos = new ArrayList<>();
-    private DefaultNutsWorkspace ws;
+    private final DefaultNutsWorkspace ws;
     private boolean includeMain = true;
     private boolean ignoreNotFound = false;
     private boolean includeDependencies = false;
@@ -213,8 +213,9 @@ public class DefaultNutsQuery implements NutsQuery {
     }
 
     @Override
-    public void copyFrom(NutsQuery other) {
+    public NutsQuery copyFrom(NutsQuery other) {
         setAll(other);
+        return this;
     }
 
 //    @Override
@@ -330,7 +331,12 @@ public class DefaultNutsQuery implements NutsQuery {
     }
 
     @Override
-    public NutsQuery setScope(Set<NutsDependencyScope> scope) {
+    public NutsQuery setScope(NutsDependencyScope... scope) {
+        return setScope(scope == null ? null : EnumSet.<NutsDependencyScope>copyOf(Arrays.asList(scope)));
+    }
+
+    @Override
+    public NutsQuery setScope(Collection<NutsDependencyScope> scope) {
         this.scope = scope == null ? EnumSet.noneOf(NutsDependencyScope.class) : EnumSet.<NutsDependencyScope>copyOf(scope);
         return this;
     }
@@ -556,18 +562,18 @@ public class DefaultNutsQuery implements NutsQuery {
             idFilter0 = null;
         }
 
-        NutsDescriptorFilter descriptorFilter = null;
-        NutsIdFilter idFilter = null;
+        NutsDescriptorFilter _descriptorFilter = null;
+        NutsIdFilter _idFilter = null;
         NutsDependencyFilter depFilter = null;
         DefaultNutsRepositoryFilter rfilter = null;
         for (String j : this.getJs()) {
             if (!StringUtils.isEmpty(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    descriptorFilter = simplify(And(descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
+                    _descriptorFilter = simplify(And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
                     depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j)));
                 } else {
-                    idFilter = simplify(And(idFilter, NutsJavascriptIdFilter.valueOf(j)));
+                    _idFilter = simplify(And(_idFilter, NutsJavascriptIdFilter.valueOf(j)));
                 }
             }
         }
@@ -580,23 +586,23 @@ public class DefaultNutsQuery implements NutsQuery {
             archs = CoreNutsUtils.simplify(CoreNutsUtils.Or(archs, new NutsDescriptorFilterArch(v)));
         }
 
-        descriptorFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(descriptorFilter, packs, archs));
+        _descriptorFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_descriptorFilter, packs, archs));
 
         if (this.getRepos().length > 0) {
             rfilter = new DefaultNutsRepositoryFilter(new HashSet<>(Arrays.asList(this.getRepos())));
         }
 
-        NutsRepositoryFilter repositoryFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(rfilter, this.getRepositoryFilter()));
-        NutsVersionFilter versionFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(null, this.getVersionFilter()));
-        descriptorFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(descriptorFilter, this.getDescriptorFilter()));
-        idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(idFilter, idFilter0));
+        NutsRepositoryFilter _repositoryFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(rfilter, this.getRepositoryFilter()));
+        NutsVersionFilter _versionFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(null, this.getVersionFilter()));
+        _descriptorFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_descriptorFilter, this.getDescriptorFilter()));
+        _idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_idFilter, idFilter0));
 
         if (!wildcardIds.isEmpty()) {
             NutsPatternIdFilter ff = new NutsPatternIdFilter(wildcardIds.toArray(new String[0]));
-            idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(idFilter, ff));
+            _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, ff));
         }
 
-        return new DefaultNutsSearch(goodIds.toArray(new String[0]), repositoryFilter, versionFilter, sort, idFilter, latestVersions, descriptorFilter, ws, session);
+        return new DefaultNutsSearch(goodIds.toArray(new String[0]), _repositoryFilter, _versionFilter, sort, _idFilter, latestVersions, _descriptorFilter, preferInstalled, installedOnly, ws, session);
     }
 
     @Override
@@ -677,7 +683,7 @@ public class DefaultNutsQuery implements NutsQuery {
         for (NutsId nutsId : mi) {
             NutsDefinition r = null;
             try {
-                r = ws.fetchDefinition(nutsId, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), isPreferInstalled(), isInstalledOnly(), s);
+                r = ws.fetchDefinition(nutsId, creationFetchOptions(), s);
             } catch (NutsNotFoundException ex) {
                 if (!isIgnoreNotFound()) {
                     if (!nutsId.isOptional()) {
@@ -690,6 +696,16 @@ public class DefaultNutsQuery implements NutsQuery {
             }
         }
         return li;
+    }
+
+    private DefaultFetchOptions creationFetchOptions() {
+        return new DefaultFetchOptions()
+                .setContent(isIncludeFile())
+                .setEffectiveDesc(isIncludeEffective())
+                .setInstallInfo(isIncludeInstallInformation())
+                .setIgnoreCache(isIgnoreCache())
+                .setPreferInstalled(isPreferInstalled())
+                .setInstalledOnly(isInstalledOnly());
     }
 
     @Override
@@ -734,7 +750,7 @@ public class DefaultNutsQuery implements NutsQuery {
                 while (base.hasNext()) {
                     try {
                         NutsId p = base.next();
-                        n = ws.fetchDefinition(p, null, isIncludeFile(), isIncludeEffectiveDesc(), isIncludeInstallInformation(), isIgnoreCache(), isPreferInstalled(), isInstalledOnly(), s);
+                        n = ws.fetchDefinition(p, creationFetchOptions(), s);
                         return n != null;
                     } catch (NutsNotFoundException ex) {
                         if (!ignoreNotFound) {
@@ -753,14 +769,14 @@ public class DefaultNutsQuery implements NutsQuery {
     }
 
     private NutsId[] findDependencies(List<NutsId> ids) {
-        NutsSession session = this.session == null ? ws.createSession() : this.session;
-        NutsDependencyFilter dependencyFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(
+        NutsSession _session = this.session == null ? ws.createSession() : this.session;
+        NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(
                 new NutsDependencyScopeFilter(getScope()),
                 getAcceptOptional() == null ? null : NutsDependencyOptionFilter.valueOf(getAcceptOptional()),
                 getDependencyFilter()
         ));
-        NutsIdGraph graph = new NutsIdGraph(ws, session, ignoreNotFound);
-        graph.push(ids, dependencyFilter);
+        NutsIdGraph graph = new NutsIdGraph(ws, _session, ignoreNotFound);
+        graph.push(ids, _dependencyFilter);
         return graph.collect(ids, ids);
     }
 
@@ -772,9 +788,25 @@ public class DefaultNutsQuery implements NutsQuery {
     }
 
     @Override
-    public NutsQuery includeDependencies() {
+    public NutsQuery mainAndDependencies() {
         includeMain = true;
         includeDependencies = true;
+        return this;
+    }
+
+    @Override
+    public NutsQuery includeDependencies() {
+        return setIncludeDependencies(true);
+    }
+
+    @Override
+    public NutsQuery includeDependencies(boolean include) {
+        return setIncludeDependencies(include);
+    }
+
+    @Override
+    public NutsQuery setIncludeDependencies(boolean include) {
+        includeDependencies = include;
         return this;
     }
 
@@ -863,12 +895,12 @@ public class DefaultNutsQuery implements NutsQuery {
     }
 
     @Override
-    public boolean isIncludeEffectiveDesc() {
+    public boolean isIncludeEffective() {
         return includeEffectiveDesc;
     }
 
     @Override
-    public NutsQuery setIncludeEffectiveDesc(boolean includeEffectiveDesc) {
+    public NutsQuery setIncludeEffective(boolean includeEffectiveDesc) {
         this.includeEffectiveDesc = includeEffectiveDesc;
         return this;
     }
@@ -884,10 +916,16 @@ public class DefaultNutsQuery implements NutsQuery {
         return this;
     }
 
+    @Override
+    public NutsQuery ignoreCache() {
+        return setIgnoreCache(true);
+    }
+
     public boolean isPreferInstalled() {
         return preferInstalled;
     }
 
+    @Override
     public NutsQuery setPreferInstalled(boolean preferInstalled) {
         this.preferInstalled = preferInstalled;
         return this;
@@ -897,8 +935,10 @@ public class DefaultNutsQuery implements NutsQuery {
         return installedOnly;
     }
 
-    public void setInstalledOnly(boolean installedOnly) {
+    @Override
+    public NutsQuery setInstalledOnly(boolean installedOnly) {
         this.installedOnly = installedOnly;
+        return this;
     }
 
 }

@@ -44,7 +44,7 @@ import java.util.Base64;
  */
 public class CoreSecurityUtils {
 
-    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private final static char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
     public static byte[] httpDecrypt(byte[] data, String passphrase) {
         try {
@@ -64,8 +64,8 @@ public class CoreSecurityUtils {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+            hexChars[j * 2] = HEX_ARR[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARR[v & 0x0F];
         }
         return new String(hexChars);
     }
@@ -109,7 +109,7 @@ public class CoreSecurityUtils {
     public static byte[] evalMD5(byte[] bytesOfMessage) {
         try {
 
-            MessageDigest md = null;
+            MessageDigest md;
 
             md = MessageDigest.getInstance("MD5");
             return md.digest(bytesOfMessage);
@@ -156,6 +156,6 @@ public class CoreSecurityUtils {
     }
 
     private static char toHex(int nibble) {
-        return hexArray[nibble & 0xF];
+        return HEX_ARR[nibble & 0xF];
     }
 }

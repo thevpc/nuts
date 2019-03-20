@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.repos;
@@ -49,8 +49,8 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
     private static final Logger log = Logger.getLogger(NutsHttpFolderRepository.class.getName());
 
-    public NutsHttpFolderRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
-        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,repositoryRoot, SPEED_SLOW);
+    public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(options, workspace, parentRepository, SPEED_SLOW);
     }
 
     @Override
@@ -61,7 +61,6 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         }
         return super.getSupportLevelCurrent(id, session);
     }
-
 
     @Override
     public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
@@ -92,7 +91,6 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     protected String getPath(NutsId id) {
         return getIdRemotePath(id);
     }
-
 
     protected String getDescPath(NutsId id) {
         String groupId = id.getGroup();
@@ -140,12 +138,12 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
-            String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId)+"/.folders").split("\n");
-            List<NutsId> n=new ArrayList<>();
+            String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId) + "/.folders").split("\n");
+            List<NutsId> n = new ArrayList<>();
             for (String s : all) {
-                if(!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)){
+                if (!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)) {
                     NutsId id2 = id.builder().setVersion(s).build();
-                    if(idFilter==null|| idFilter.accept(id2)) {
+                    if (idFilter == null || idFilter.accept(id2)) {
                         n.add(id2);
                     }
                 }
@@ -162,23 +160,22 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl(NutsId id, String localFile,NutsSession session) {
+    public NutsContent fetchContentImpl(NutsId id, String localFile, NutsSession session) {
         try {
-            if(localFile==null){
+            if (localFile == null) {
                 String path = getPath(id);
                 File tempFile = getWorkspace().getIOManager().createTempFile(new File(path).getName(), this);
                 helperHttpDownloadToFile(path, tempFile, true);
-                return new NutsContent(tempFile.getPath(),false,true);
-            }else {
+                return new NutsContent(tempFile.getPath(), false, true);
+            } else {
                 helperHttpDownloadToFile(getPath(id), new File(localFile), true);
-                return new NutsContent(localFile,false,false);
+                return new NutsContent(localFile, false, false);
             }
         } catch (IOException e) {
             throw new NutsIOException(e);
         }
 
     }
-
 
     private String httpGetString(String url) {
         try {

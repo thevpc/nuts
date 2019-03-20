@@ -223,7 +223,7 @@ public class NutsComponentController {
                             .setIgnoreNotFound(true)
                             .setIncludeInstallInformation(false)
                             .setIncludeFile(false)
-                            .setIncludeEffectiveDesc(true)
+                            .setIncludeEffective(true)
                             .fetchIterator();
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();

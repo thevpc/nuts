@@ -45,7 +45,10 @@ import net.vpc.common.util.*;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +57,7 @@ import java.util.regex.Pattern;
  */
 public class CoreNutsUtils {
 
+    private static final Logger log = Logger.getLogger(CoreNutsUtils.class.getName());
     public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
@@ -63,10 +67,10 @@ public class CoreNutsUtils {
     public static final NutsDependencyFilter SCOPE_RUN = And(new ScopeNutsDependencyFilter("compile,system,runtime"), NON_OPTIONAL);
     public static final NutsDependencyFilter SCOPE_TEST = And(new ScopeNutsDependencyFilter("compile,system,runtime,test"), NON_OPTIONAL);
 
-    public static void main(String[] args) {
-        NutsId t = parseNutsId("commons-digester:commons-digester#[1.7,)?arch=amd64&os=linux#4.20.10-1-default&osdist=opensuse-tumbleweed#20190226");
-        System.out.println(t);
-    }
+//    public static void main(String[] args) {
+//        NutsId t = parseNutsId("commons-digester:commons-digester#[1.7,)?arch=amd64&os=linux#4.20.10-1-default&osdist=opensuse-tumbleweed#20190226");
+//        System.out.println(t);
+//    }
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
         @Override
         public int compare(NutsId o1, NutsId o2) {
@@ -1057,5 +1061,79 @@ public class CoreNutsUtils {
     public static PrintStream resolveOut(NutsWorkspace ws, NutsSession session) {
         session = CoreNutsUtils.validateSession(session, ws);
         return (session == null || session.getTerminal() == null) ? ws.getIOManager().createNullPrintStream() : session.getTerminal().getOut();
+    }
+
+    public static String resolveRepositoryPath(NutsCreateRepositoryOptions options, String rootFolder, NutsWorkspace ws) {
+        String loc = options.getLocation();
+        if (StringUtils.isEmpty(loc)) {
+            loc = options.getName();
+        }
+        if (options.getConfig() != null) {
+            if (StringUtils.isEmpty(loc)) {
+                loc = options.getConfig().getName();
+            }
+        }
+        return ws.getIOManager().expandPath(loc, rootFolder);
+    }
+
+    public static NutsRepositoryConfig loadNutsRepositoryConfig(File file, NutsWorkspace ws) {
+        NutsRepositoryConfig conf = null;
+        if (file.isFile()) {
+            try {
+                conf = ws.getIOManager().readJson(file, NutsRepositoryConfig.class);
+            } catch (RuntimeException ex) {
+                log.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+                if (!ws.getConfigManager().isReadOnly()) {
+                    File newfile = CoreIOUtils.createFile(file.getParentFile(), "nuts-repository-"
+                            + new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date())
+                            + ".json");
+                    log.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile.getPath());
+                    try {
+                        CoreIOUtils.move(file, newfile);
+                    } catch (IOException e) {
+                        throw new NutsIOException("Unable to load and re-create config file " + file.getPath() + " : " + e.toString(), ex);
+                    }
+                } else {
+                    throw new NutsIOException("Unable to load config file " + file.getPath(), ex);
+                }
+            }
+        }
+        return conf;
+    }
+
+    public static NutsRepositoryRef optionsToRef(NutsCreateRepositoryOptions options) {
+        return new NutsRepositoryRef()
+                .setEnabled(options.isEnabled())
+                .setFailSafe(options.isFailSafe())
+                .setName(options.getName())
+                .setLocation(options.getLocation());
+    }
+
+    public static NutsCreateRepositoryOptions refToOptions(NutsRepositoryRef ref) {
+        return new NutsCreateRepositoryOptions()
+                .setEnabled(ref.isEnabled())
+                .setFailSafe(ref.isFailSafe())
+                .setName(ref.getName())
+                .setLocation(ref.getLocation());
+    }
+
+    public static NutsCreateRepositoryOptions defToOptions(NutsRepositoryDefinition def) {
+        NutsCreateRepositoryOptions o = new NutsCreateRepositoryOptions();
+        o.setName(def.getName());
+        o.setCreate(def.isCreate());
+        o.setFailSafe(def.isFailSafe());
+        o.setProxy(def.isProxy());
+        o.setTemporay(false);
+        if (def.isReference()) {
+            o.setLocation(def.getLocation());
+        } else {
+            o.setLocation(def.getName());
+            o.setConfig(new NutsRepositoryConfig()
+                    .setName(def.getName())
+                    .setType(def.getType())
+                    .setLocation(def.getLocation())
+            );
+        }
+        return o;
     }
 }

@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  */
 public class CoreStringUtils {
 
-    private static Pattern pattern = Pattern.compile("\\$\\{(?<key>[^}]*)}");
+    private static Pattern DOLLAR_PATTERN = Pattern.compile("\\$\\{(?<key>[^}]*)}");
 
     public static int getStartingInt(String v1) {
         StringBuilder sb = new StringBuilder();
@@ -69,6 +69,7 @@ public class CoreStringUtils {
      * **
      *
      * @param pattern
+     * @param contains
      * @return
      */
     public static String simpexpToRegexp(String pattern, boolean contains) {
@@ -127,7 +128,7 @@ public class CoreStringUtils {
             return null;
         }
         StringBuffer sb = new StringBuffer();
-        Matcher m = pattern.matcher(format);
+        Matcher m = DOLLAR_PATTERN.matcher(format);
         while (m.find()) {
             String key = m.group("key");
             if (visited.contains(key)) {

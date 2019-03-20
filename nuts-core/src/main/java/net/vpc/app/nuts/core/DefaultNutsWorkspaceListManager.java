@@ -52,8 +52,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .resolveIdForClass(DefaultNutsWorkspaceListManager.class)
-                                .getSimpleNameId()
-                                .setVersion("LATEST"),
+                                .getSimpleNameId(),
                         NutsStoreFolder.CONFIG),
                 name + "-nuts-workspace-list.json");
     }

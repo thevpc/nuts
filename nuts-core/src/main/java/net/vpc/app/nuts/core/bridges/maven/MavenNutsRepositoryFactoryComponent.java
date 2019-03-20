@@ -3,38 +3,35 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
-
-import java.io.File;
 
 /**
  * Created by vpc on 1/15/17.
@@ -42,18 +39,18 @@ import java.io.File;
 public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     private static final NutsRepositoryDefinition[] DEFAULTS = {
-            new NutsRepositoryDefinition("maven-local", System.getProperty("maven-local", "~/.m2/repository"), NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, CoreNutsUtils.getSystemBoolean("nuts.cache.cache-local-files",false),NutsRepositoryDefinition.ORDER_USER_LOCAL),
-            new NutsRepositoryDefinition("maven-central", "http://repo.maven.apache.org/maven2/", NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, true,NutsRepositoryDefinition.ORDER_USER_REMOTE),
-            new NutsRepositoryDefinition("vpc-public-maven", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN, true,NutsRepositoryDefinition.ORDER_USER_REMOTE),
-            new NutsRepositoryDefinition("vpc-public-nuts", "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master", NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER, true,NutsRepositoryDefinition.ORDER_USER_REMOTE)
+        new NutsRepositoryDefinition().setName("maven-local").setLocation(System.getProperty("maven-local", "~/.m2/repository")).setType(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN).setProxy(CoreNutsUtils.getSystemBoolean("nuts.cache.cache-local-files", false)).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL),
+        new NutsRepositoryDefinition().setName("maven-central").setLocation("http://repo.maven.apache.org/maven2/").setType(NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
+        new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master").setType(NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
     };
 
+    @Override
     public NutsRepositoryDefinition[] getDefaultRepositories(NutsWorkspace workspace) {
         return DEFAULTS;
     }
 
     @Override
-    public int getSupportLevel(NutsRepositoryLocation criteria) {
+    public int getSupportLevel(NutsRepositoryConfig criteria) {
         if (criteria == null) {
             return NO_SUPPORT;
         }
@@ -75,13 +72,14 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     }
 
     @Override
-    public NutsRepository create(NutsRepositoryLocation loc, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
-        if (NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN.equals(loc.getType())) {
-            if (loc.getLocation().startsWith("http://") || loc.getLocation().startsWith("https://")) {
-                return (new MavenRemoteRepository(loc.getName(), loc.getLocation(), workspace, parentRepository, repositoryRoot));
+    public NutsRepository create(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        final NutsRepositoryConfig config = options.getConfig();
+        if (NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN.equals(config.getType())) {
+            if (config.getLocation().startsWith("http://") || config.getLocation().startsWith("https://")) {
+                return (new MavenRemoteRepository(options, workspace, parentRepository));
             }
-            if (!loc.getLocation().contains("://")) {
-                return new MavenFolderRepository(loc.getName(), loc.getLocation(), workspace, parentRepository, repositoryRoot);
+            if (!config.getLocation().contains("://")) {
+                return new MavenFolderRepository(options, workspace, parentRepository);
             }
         }
         return null;

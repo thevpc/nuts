@@ -65,47 +65,41 @@ public final class NutsArgumentsParser {
                         //ignore
                         break;
                     }
-                    case "--embedded": 
-                    case "-b": 
-                    {
+                    case "--embedded":
+                    case "-b": {
 
                         o.setExecutionType(NutsExecutionType.EMBEDDED);
                         //ignore
                         break;
                     }
-                    case "--!embedded": 
-                    case "-!b": 
-                    {
+                    case "--!embedded":
+                    case "-!b": {
 
                         //ignore
                         break;
                     }
-                    case "--external": 
-                    case "-x": 
-                    {
+                    case "--external":
+                    case "-x": {
 
                         o.setExecutionType(NutsExecutionType.EXTERNAL);
                         //ignore
                         break;
                     }
-                    case "--!external": 
-                    case "-!x": 
-                    {
+                    case "--!external":
+                    case "-!x": {
 
                         //ignore
                         break;
                     }
-                    case "--native": 
-                    case "-n": 
-                    {
+                    case "--native":
+                    case "-n": {
 
                         o.setExecutionType(NutsExecutionType.NATIVE);
                         //ignore
                         break;
                     }
-                    case "--!native": 
-                    case "-!n": 
-                    {
+                    case "--!native":
+                    case "-!n": {
 
                         //ignore
                         break;
@@ -130,28 +124,24 @@ public final class NutsArgumentsParser {
                         //ignore
                         break;
                     }
-                    case "--archetype": 
-                    case "-p": 
-                    {
+                    case "--archetype":
+                    case "-p": {
                         o.setArchetype(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
-                    case "--!archetype": 
-                    case "-!p": 
-                    {
+                    case "--!archetype":
+                    case "-!p": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
-                    case "--login": 
-                    case "-U": 
-                    {
+                    case "--login":
+                    case "-U": {
                         o.setLogin(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
-                    case "--!login": 
-                    case "-!U": 
-                    {
+                    case "--!login":
+                    case "-!U": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
@@ -181,61 +171,53 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--java":
-                    case "--boot-java": 
-                    case "-j": 
-                    {
+                    case "--boot-java":
+                    case "-j": {
                         o.setBootJavaCommand(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
                     case "--!java":
-                    case "--!boot-java": 
-                    case "-!j": 
-                    {
+                    case "--!boot-java":
+                    case "-!j": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
                     case "--java-home":
-                    case "--boot-java-home": 
-                    case "--J": 
-                    {
+                    case "--boot-java-home":
+                    case "--J": {
                         o.setBootJavaCommand(NutsUtils.resolveJavaCommand(cmdArgList.getValueFor(cmdArg)));
                         break;
                     }
                     case "--!java-home":
-                    case "--!boot-java-home": 
-                    case "--!J": 
-                    {
+                    case "--!boot-java-home":
+                    case "--!J": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
                     case "--java-options":
-                    case "--boot-java-options": 
-                    case "-O": 
-                    {
+                    case "--boot-java-options":
+                    case "-O": {
                         o.setBootJavaOptions(cmdArgList.getValueFor(cmdArg));
                         break;
                     }
                     case "--!java-options":
-                    case "--!boot-java-options": 
-                    case "-!O": 
-                    {
+                    case "--!boot-java-options":
+                    case "-!O": {
                         cmdArgList.getValueFor(cmdArg);
                         //ignore
                         break;
                     }
-                    case "--color": 
-                    case "-C": 
-                    {
+                    case "--color":
+                    case "-C": {
 
                         o.setTerminalMode(NutsTerminalMode.FORMATTED);
                         break;
                     }
                     case "--!color":
-                    case "--no-color": 
-                    case "-!C": 
-                    {
+                    case "--no-color":
+                    case "-!C": {
 
                         o.setTerminalMode(NutsTerminalMode.FILTERED);
                         break;
@@ -762,7 +744,20 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--!standalone-repositories": {
-
+                        break;
+                    }
+                    case "--yes": {
+                        o.setDefaultResponse(Boolean.TRUE);
+                        break;
+                    }
+                    case "--!yes": {
+                        break;
+                    }
+                    case "--no": {
+                        o.setDefaultResponse(Boolean.FALSE);
+                        break;
+                    }
+                    case "--!no": {
                         break;
                     }
                     default: {

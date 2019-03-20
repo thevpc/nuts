@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.util;
@@ -48,6 +48,8 @@ import java.util.concurrent.Callable;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -60,7 +62,7 @@ public class CorePlatformUtils {
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86", "ia64", "amd64", "ppc", "sparc"));
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "mac", "sunos", "freebsd"));
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
-    private static WeakHashMap<String, PlatformBeanProperty> cachedPlatformBeanProperties = new WeakHashMap<>();
+    private static final WeakHashMap<String, PlatformBeanProperty> cachedPlatformBeanProperties = new WeakHashMap<>();
 
     static {
         SUPPORTED_ARCH_ALIASES.put("i386", "x86");
@@ -125,11 +127,7 @@ public class CorePlatformUtils {
         File dir = FileUtils.getAbsoluteFile(null, "/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
-            File[] a = dir.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String filename) {
-                    return filename.endsWith("-release");
-                }
-            });
+            File[] a = dir.listFiles((File dir1, String filename) -> filename.endsWith("-release"));
             if (a != null) {
                 fileList.addAll(Arrays.asList(a));
             }
@@ -178,52 +176,52 @@ public class CorePlatformUtils {
 //prints all the version-related files
         for (File f : fileList) {
             try {
-                BufferedReader myReader = new BufferedReader(new FileReader(f));
-                String strLine = null;
-                while ((strLine = myReader.readLine()) != null) {
-                    strLine = strLine.trim();
-                    if (!strLine.startsWith("#") && strLine.contains("=")) {
-                        int i = strLine.indexOf('=');
-                        String n = strLine.substring(0, i);
-                        String v = strLine.substring(i + 1);
-                        switch (n) {
-                            case "ID":
-                                if (v.startsWith("\"")) {
-                                    v = v.substring(1, v.length() - 1);
-                                }
-                                disId = v;
+                try (BufferedReader myReader = new BufferedReader(new FileReader(f))) {
+                    String strLine = null;
+                    while ((strLine = myReader.readLine()) != null) {
+                        strLine = strLine.trim();
+                        if (!strLine.startsWith("#") && strLine.contains("=")) {
+                            int i = strLine.indexOf('=');
+                            String n = strLine.substring(0, i);
+                            String v = strLine.substring(i + 1);
+                            switch (n) {
+                                case "ID":
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disId = v;
+                                    break;
+                                case "VERSION_ID":
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disVersion = v;
+                                    break;
+                                case "PRETTY_NAME":
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disName = v;
+                                    break;
+                                case "DISTRIB_ID":
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disName = v;
+                                    break;
+                                case "DISTRIB_RELEASE":
+                                    if (v.startsWith("\"")) {
+                                        v = v.substring(1, v.length() - 1);
+                                    }
+                                    disVersion = v;
+                                    break;
+                            }
+                            if (!StringUtils.isEmpty(disVersion) && !StringUtils.isEmpty(disName) && !StringUtils.isEmpty(disId)) {
                                 break;
-                            case "VERSION_ID":
-                                if (v.startsWith("\"")) {
-                                    v = v.substring(1, v.length() - 1);
-                                }
-                                disVersion = v;
-                                break;
-                            case "PRETTY_NAME":
-                                if (v.startsWith("\"")) {
-                                    v = v.substring(1, v.length() - 1);
-                                }
-                                disName = v;
-                                break;
-                            case "DISTRIB_ID":
-                                if (v.startsWith("\"")) {
-                                    v = v.substring(1, v.length() - 1);
-                                }
-                                disName = v;
-                                break;
-                            case "DISTRIB_RELEASE":
-                                if (v.startsWith("\"")) {
-                                    v = v.substring(1, v.length() - 1);
-                                }
-                                disVersion = v;
-                                break;
-                        }
-                        if (!StringUtils.isEmpty(disVersion) && !StringUtils.isEmpty(disName) && !StringUtils.isEmpty(disId)) {
-                            break;
+                            }
                         }
                     }
                 }
-                myReader.close();
             } catch (Exception e) {
                 System.err.printf("Error: %s\n", e.getMessage());
             }
@@ -472,7 +470,7 @@ public class CorePlatformUtils {
             Method getter = null;
             Method setter = null;
             Class propertyType = null;
-            LinkedHashMap<Class, Method> setters = new LinkedHashMap<Class, Method>();
+            LinkedHashMap<Class, Method> setters = new LinkedHashMap<>();
             while (x != null) {
                 for (Method m : x.getDeclaredMethods()) {
                     if (!Modifier.isStatic(m.getModifiers())) {
@@ -482,7 +480,7 @@ public class CorePlatformUtils {
                                 if (m.getParameterTypes().length == 0 && !Void.TYPE.equals(m.getReturnType())) {
                                     getter = m;
                                     Class<?> ftype = getter.getReturnType();
-                                    for (Class key : new HashSet<Class>(setters.keySet())) {
+                                    for (Class key : new HashSet<>(setters.keySet())) {
                                         if (!key.equals(ftype)) {
                                             setters.remove(key);
                                         }
@@ -631,7 +629,7 @@ public class CorePlatformUtils {
             in = u.openStream();
             r = new BufferedReader(new InputStreamReader(in, "utf-8"));
             int lc = 1;
-            String line = null;
+            String line;
             while ((line = r.readLine()) != null) {
                 line = line.trim();
                 if (!line.isEmpty() && line.charAt(0) != '#') {
@@ -712,18 +710,15 @@ public class CorePlatformUtils {
 
     public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader) {
         Ref<T> ref = new Ref<>();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ref.set(callable.call());
-                } catch (NutsException ex) {
-                    throw ex;
-                } catch (RuntimeException ex) {
-                    throw ex;
-                } catch (Exception ex) {
-                    throw new NutsException(ex);
-                }
+        Thread thread = new Thread(() -> {
+            try {
+                ref.set(callable.call());
+            } catch (NutsException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                throw new NutsException(ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -755,8 +750,6 @@ public class CorePlatformUtils {
         }
     }
 
-
-
     public static NutsExecutionEntry[] parseMainClasses(InputStream jarStream) {
 
         final List<NutsExecutionEntry> classes = new ArrayList<>();
@@ -764,30 +757,28 @@ public class CorePlatformUtils {
         ZipUtils.visitZipStream(jarStream, new PathFilter() {
             @Override
             public boolean accept(String path) {
-                return
-                        path.endsWith(".class")
-                        ||path.equals("META-INF/MANIFEST.MF")
-                        ;
+                return path.endsWith(".class")
+                        || path.equals("META-INF/MANIFEST.MF");
             }
         }, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) throws IOException {
                 if (path.endsWith(".class")) {
                     int mainClass = getMainClassType(inputStream);
-                    if (mainClass==1 || mainClass==3) {
+                    if (mainClass == 1 || mainClass == 3) {
                         classes.add(new NutsExecutionEntry(
                                 path.replace('/', '.').substring(0, path.length() - ".class".length()),
                                 false,
-                                mainClass==3
+                                mainClass == 3
                         ));
                     }
-                }else {
-                    try(BufferedReader b=new BufferedReader(new InputStreamReader(inputStream))){
-                        String line=null;
-                        while((line=b.readLine())!=null){
+                } else {
+                    try (BufferedReader b = new BufferedReader(new InputStreamReader(inputStream))) {
+                        String line = null;
+                        while ((line = b.readLine()) != null) {
                             if (line.startsWith("Main-Class:")) {
                                 String c = line.substring("Main-Class:".length()).trim();
-                                if(c.length()>0){
+                                if (c.length() > 0) {
                                     manifiestClass.add(c);
                                     break;
                                 }
@@ -798,15 +789,15 @@ public class CorePlatformUtils {
                 return true;
             }
         });
-        List<NutsExecutionEntry> entries=new ArrayList<>();
-        String defaultEntry=null;
-        if(manifiestClass.size()>0){
+        List<NutsExecutionEntry> entries = new ArrayList<>();
+        String defaultEntry = null;
+        if (manifiestClass.size() > 0) {
             defaultEntry = manifiestClass.get(0);
         }
         for (NutsExecutionEntry entry : classes) {
-            if(defaultEntry!=null && defaultEntry.equals(entry.getName())){
-                entries.add(new NutsExecutionEntry(entry.getName(),true,entry.isApp()));
-            }else{
+            if (defaultEntry != null && defaultEntry.equals(entry.getName())) {
+                entries.add(new NutsExecutionEntry(entry.getName(), true, entry.isApp()));
+            } else {
                 entries.add(entry);
             }
         }
@@ -814,19 +805,22 @@ public class CorePlatformUtils {
     }
 
     /**
+     * @param stream
+     * @return
      * @throws IOException
      */
     public static int getMainClassType(InputStream stream) throws IOException {
         final List<Boolean> mainClass = new ArrayList<>(1);
         final List<Boolean> nutsApp = new ArrayList<>(1);
         ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
-            String lastClass=null;
+            String lastClass = null;
+
             /**
              * When a method is encountered
              */
             @Override
             public MethodVisitor visitMethod(int access, String name,
-                                             String desc, String signature, String[] exceptions) {
+                    String desc, String signature, String[] exceptions) {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {
@@ -837,7 +831,7 @@ public class CorePlatformUtils {
 
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-                if(superName!=null && superName.equals("net/vpc/app/nuts/app/NutsApplication")){
+                if (superName != null && superName.equals("net/vpc/app/nuts/app/NutsApplication")) {
                     nutsApp.add(true);
                 }
                 super.visit(version, access, name, signature, superName, interfaces);
@@ -845,7 +839,140 @@ public class CorePlatformUtils {
         };
         ClassReader classReader = new ClassReader(stream);
         classReader.accept(cl, 0);
-        return ((mainClass.isEmpty())?0:1)+(nutsApp.isEmpty()?0:2);
+        return ((mainClass.isEmpty()) ? 0 : 1) + (nutsApp.isEmpty() ? 0 : 2);
+    }
+
+    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
+        String[] conf = {};
+        switch (ws.getConfigManager().getPlatformOs().getName()) {
+            case "linux": {
+                conf = new String[]{
+                    "/usr/java",
+                    "/usr/lib64/jvm",
+                    "/usr/lib/jvm"
+                };
+                break;
+            }
+            case "windows": {
+                conf = new String[]{
+                    StringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java",
+                    StringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"
+                };
+                break;
+            }
+            case "mac": {
+                conf = new String[]{
+                    "/Library/Java/JavaVirtualMachines",
+                    "/System/Library/Frameworks/JavaVM.framework"
+                };
+                break;
+            }
+        }
+        List<NutsSdkLocation> all = new ArrayList<>();
+        for (String s : conf) {
+            all.addAll(Arrays.asList(searchJdkLocations(ws, s, out)));
+        }
+        return all.toArray(new NutsSdkLocation[0]);
+    }
+
+    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, String s, PrintStream out) {
+        List<NutsSdkLocation> all = new ArrayList<>();
+        File p = new File(s);
+        if (p.isDirectory()) {
+            for (File d : p.listFiles()) {
+                NutsSdkLocation r = resolveJdkLocation(d.getPath(), ws);
+                if (r != null) {
+                    all.add(r);
+                    if (out != null) {
+                        out.printf("Detected SDK [[%s]] at ==%s==\n", r.getVersion(), r.getPath());
+                    }
+                }
+            }
+        }
+        return all.toArray(new NutsSdkLocation[0]);
+    }
+
+    public static NutsSdkLocation resolveJdkLocation(String path, NutsWorkspace ws) {
+        if (path == null) {
+            return null;
+        }
+        File f = new File(path);
+        if (!f.isDirectory()) {
+            return null;
+        }
+        File javaExePath = new File(f, FileUtils.getNativePath("bin/java"));
+        if (!javaExePath.exists()) {
+            return null;
+        }
+        String type = null;
+        String jdkVersion = null;
+        try {
+            NutsCommandExecBuilder b = ws.createExecBuilder()
+                    .setExecutionType(NutsExecutionType.NATIVE)
+                    .setCommand(javaExePath.getPath(), "-version")
+                    .setRedirectErrorStream()
+                    .grabOutputString()
+                    .exec();
+            if (b.getResult() == 0) {
+                String s = b.getOutputString();
+                if (s.length() > 0) {
+                    String prefix = "java version \"";
+                    int i = s.indexOf(prefix);
+                    if (i >= 0) {
+                        i = i + prefix.length();
+                        int j = s.indexOf("\"", i);
+                        if (i >= 0) {
+                            jdkVersion = s.substring(i, j);
+                            type = "JDK";
+                        }
+                    }
+                    if (jdkVersion == null) {
+
+                        prefix = "openjdk version \"";
+                        i = s.indexOf(prefix);
+                        if (i >= 0) {
+                            i = i + prefix.length();
+                            int j = s.indexOf("\"", i);
+                            if (i > 0) {
+                                jdkVersion = s.substring(i, j);
+                                type = "OpenJDK";
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(CorePlatformUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (jdkVersion == null) {
+            return null;
+        }
+        NutsSdkLocation loc = new NutsSdkLocation();
+        loc.setType("java");
+        loc.setName(type + " " + jdkVersion);
+        loc.setVersion(jdkVersion);
+        loc.setPath(path);
+        return loc;
+    }
+
+    public static String getPlatformOsFamily() {
+        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        if (property.startsWith("linux")) {
+            return "linux";
+        }
+        if (property.startsWith("win")) {
+            return "windows";
+        }
+        if (property.startsWith("mac")) {
+            return "mac";
+        }
+        if (property.startsWith("sunos")) {
+            return "unix";
+        }
+        if (property.startsWith("freebsd")) {
+            return "unix";
+        }
+        return "unknown";
     }
 
 }

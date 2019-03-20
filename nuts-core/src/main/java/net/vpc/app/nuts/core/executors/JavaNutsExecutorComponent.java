@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.executors;
@@ -37,6 +37,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.logging.Logger;
+import net.vpc.common.util.Convert;
+import net.vpc.common.util.IntegerParserConfig;
 
 /**
  * Created by vpc on 1/7/17.
@@ -83,14 +85,37 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         HashMap<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getBootArgumentsString();
+        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getExportedBootArgumentsString();
         if (!StringUtils.isEmpty(bootArgumentsString)) {
             osEnv.put("nuts_boot_args", bootArgumentsString);
             joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
         }
+        //nuts.export properties should be propagated!!
+        Properties sysProperties = System.getProperties();
+        for (Object k : sysProperties.keySet()) {
+            String sk = (String) k;
+            if (sk.startsWith("nuts.export.")) {
+                joptions.getJvmArgs().add("-D" + sk + "=" + sysProperties.getProperty(sk));
+            }
+        }
+        // fix infinite recusion
+        int maxDepth = Math.abs(Convert.toInt(sysProperties.get("nuts.watchdog.depth"), IntegerParserConfig.LENIENT.setNullValue(5).setInvalidValue(5)));
+        if (maxDepth > 1000) {
+            maxDepth = 1000;
+        }
+        int currentDepth = Convert.toInt(sysProperties.get("nuts.watchdog.depth"), IntegerParserConfig.LENIENT);
+        currentDepth++;
+        if (currentDepth > maxDepth) {
+            System.err.println("############# Process Stack Overflow Error");
+            System.err.println("It is very likely that you executed an infinite process creation recusion in your program.");
+            System.err.println("At least "+currentDepth+" (>="+maxDepth+") prcosses were created.");
+            System.err.println("Are ou aware of such misconception ?");
+            System.err.println("Sorry but nee to end all of this disgracely...");
+            System.exit(233);
+        }
 
-        List<String> xargs = new ArrayList<String>();
-        List<String> args = new ArrayList<String>();
+        List<String> xargs = new ArrayList<>();
+        List<String> args = new ArrayList<>();
 
         xargs.add(joptions.getJavaHome());
         xargs.addAll(joptions.getJvmArgs());
@@ -98,10 +123,8 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         args.add(joptions.getJavaHome());
         args.addAll(joptions.getJvmArgs());
 
-        String Dnuts_boot_args_value = executionContext.getWorkspace().getConfigManager().getOptions().getBootArguments() == null ? null :
-                NutsMinimalCommandLine.escapeArguments(executionContext.getWorkspace().getConfigManager().getOptions().getBootArguments());
-        if (!StringUtils.isEmpty(Dnuts_boot_args_value)) {
-            String Dnuts_boot_args = "-Dnuts-boot-args=" + Dnuts_boot_args_value;
+        if (!StringUtils.isEmpty(bootArgumentsString)) {
+            String Dnuts_boot_args = "-Dnuts-boot-args=" + bootArgumentsString;
             xargs.add(Dnuts_boot_args);
             args.add(Dnuts_boot_args);
         }
@@ -141,11 +164,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         File directory = StringUtils.isEmpty(joptions.getDir()) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(joptions.getDir()));
         return CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
-                osEnv, directory
-                , executionContext.getTerminal(), joptions.isShowCommand(), executionContext.isFailFast()
+                osEnv, directory,
+                executionContext.getTerminal(), joptions.isShowCommand(), executionContext.isFailFast()
         );
 
     }
-
 
 }

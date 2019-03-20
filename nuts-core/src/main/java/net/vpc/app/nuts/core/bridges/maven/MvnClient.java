@@ -29,7 +29,7 @@ public class MvnClient {
                     ws.fetch(NET_VPC_APP_NUTS_MVN).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE))
                             .setAcceptOptional(false)
                             .includeDependencies().fetchDefinition();
-                    for (NutsId nutsId : ws.createQuery().includeDependencies().find()) {
+                    for (NutsId nutsId : ws.createQuery().mainAndDependencies().find()) {
                         ws.fetch(nutsId).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE))
                                 .setAcceptOptional(false)
                                 .includeDependencies().fetchDefinition();

@@ -14,18 +14,21 @@ import java.util.logging.Logger;
 class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
     private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
-    private AbstractNutsRepository repository;
-    private int speed;
-    private String storeLocation;
+    private final AbstractNutsRepository repository;
+    private final int speed;
+    private final String storeLocation;
     private NutsRepositoryConfig config;
-    private Map<String, NutsRepositoryLocation> configMirrors = new LinkedHashMap<>();
-    private Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
+    private final Map<String, NutsRepositoryRef> configMirrors = new LinkedHashMap<>();
+    private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     private boolean configurationChanged = false;
 
     public DefaultNutsRepositoryConfigManager(AbstractNutsRepository repository, String storeLocation, NutsRepositoryConfig config, int speed) {
         this.repository = repository;
         this.storeLocation = storeLocation;
         this.speed = speed;
+        if(storeLocation.contains("system-ref/system-ref")){
+            System.out.print("==================================================");
+        }
         setConfig(config);
     }
 
@@ -110,6 +113,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         return s;
     }
 
+    @Override
     public String getStoreLocation() {
         return storeLocation;
     }
@@ -186,7 +190,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         }
         configMirrors.clear();
         if (config.getMirrors() != null) {
-            for (NutsRepositoryLocation repo : config.getMirrors()) {
+            for (NutsRepositoryRef repo : config.getMirrors()) {
                 configMirrors.put(repo.getName(), repo);
             }
         }
@@ -238,13 +242,15 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         return configUsers.values().toArray(new NutsUserConfig[0]);
     }
 
+    @Override
     public void removeMirror(String repositoryId) {
         if (configMirrors.remove(repositoryId) != null) {
             fireConfigurationChanged();
         }
     }
 
-    public void addMirror(NutsRepositoryLocation c) {
+    @Override
+    public void addMirror(NutsRepositoryRef c) {
         String mirrorName = c.getName();
         if (!CoreNutsUtils.isValidIdentifier(mirrorName)) {
             throw new NutsInvalidRepositoryException(mirrorName, "Invalid repository name : " + mirrorName);
@@ -261,13 +267,14 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     }
 
 
-    public NutsRepositoryLocation getMirror(String name) {
+    @Override
+    public NutsRepositoryRef getMirror(String name) {
         return configMirrors.get(name);
     }
 
     @Override
     public void setMirrorEnabled(String repoName, boolean enabled) {
-        NutsRepositoryLocation e = getMirror(repoName);
+        NutsRepositoryRef e = getMirror(repoName);
         if (e != null && e.isEnabled() != enabled) {
             e.setEnabled(enabled);
             fireConfigurationChanged();
@@ -275,8 +282,8 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     }
 
     @Override
-    public NutsRepositoryLocation[] getMirrors() {
-        return configMirrors.values().toArray(new NutsRepositoryLocation[0]);
+    public NutsRepositoryRef[] getMirrors() {
+        return configMirrors.values().toArray(new NutsRepositoryRef[0]);
     }
 
 

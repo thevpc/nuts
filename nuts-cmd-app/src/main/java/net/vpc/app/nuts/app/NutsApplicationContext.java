@@ -104,7 +104,7 @@ public class NutsApplicationContext implements CommandLineContext {
         this.setArgs(args);
         this.setAppId(appId);
         this.appClass = appClass;
-        this.setStoreId(storeId == null ? getAppId().setVersion("LATEST").toString() : storeId);
+        this.setStoreId(storeId == null ? getAppId().toString() : storeId);
         setSession(workspace.createSession());
         terminal = getSession().getTerminal();
         setOut0(getTerminal().getFormattedOut());

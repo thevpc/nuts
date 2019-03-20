@@ -111,6 +111,10 @@ public final class NutsBootConfig implements Cloneable {
     public String getApiVersion() {
         return apiVersion;
     }
+    
+    public String getApiId() {
+        return NutsConstants.NUTS_ID_BOOT_API+"#"+apiVersion;
+    }
 
     public NutsBootConfig setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;

@@ -7,6 +7,11 @@ import net.vpc.app.nuts.core.util.Simplifiable;
 
 public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
 
+    public static final AllNutsVersionFilter INSTANCE = new AllNutsVersionFilter();
+
+    public AllNutsVersionFilter() {
+    }
+
     @Override
     public boolean accept(NutsVersion version) {
         return true;

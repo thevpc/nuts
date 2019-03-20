@@ -52,6 +52,8 @@ public interface NutsParseManager {
     NutsDependency parseDependency(String dependency);
 
     NutsVersion parseVersion(String version);
+    
+    NutsVersionFilter parseVersionFilter(String versionFilter);
 
     NutsId parseRequiredId(String nutFormat);
 

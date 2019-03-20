@@ -278,6 +278,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         return expandPath(path, workspace.getConfigManager().getWorkspaceLocation());
     }
 
+    @Override
     public String expandPath(String path, String baseFolder) {
         if (path != null && path.length() > 0) {
             path = StringUtils.replaceDollarPlaceHolders(path, pathExpansionConverter);

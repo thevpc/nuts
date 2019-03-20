@@ -8,8 +8,10 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.net.URL;
+import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 
 public class DefaultNutsParseManager implements NutsParseManager {
+
     private NutsWorkspace ws;
 
     public DefaultNutsParseManager(NutsWorkspace ws) {
@@ -79,12 +81,10 @@ public class DefaultNutsParseManager implements NutsParseManager {
 //    public NutsDescriptor parseDescriptor(File file) {
 //        return CoreNutsUtils.parseNutsDescriptor(file);
 //    }
-
     @Override
     public NutsDescriptor parseDescriptor(InputStream stream) {
         return parseDescriptor(stream, false);
     }
-
 
     @Override
     public NutsDependency parseDependency(String dependency) {
@@ -98,6 +98,11 @@ public class DefaultNutsParseManager implements NutsParseManager {
             throw new NutsParseException("Invalid Id format : " + nutFormat);
         }
         return id;
+    }
+
+    @Override
+    public NutsVersionFilter parseVersionFilter(String versionFilter) {
+        return DefaultNutsVersionFilter.parse(versionFilter);
     }
 
     @Override

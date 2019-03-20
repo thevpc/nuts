@@ -72,7 +72,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         String[] appArgs = executionContext.getArgs();
 
         String dir = null;
-        boolean showCommand = false;
+        boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

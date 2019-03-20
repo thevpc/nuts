@@ -59,7 +59,7 @@ public class RefreshDataService {
                     .setIgnoreNotFound(true)
                     .setIncludeInstallInformation(false)
                     .setIncludeFile(false)
-                    .setIncludeEffectiveDesc(true)
+                    .setIncludeEffective(true)
                     .fetchIterator();
             List<Map<String, String>> dataToIndex = new ArrayList<>();
             Map<String, Boolean> visited = new HashMap<>();

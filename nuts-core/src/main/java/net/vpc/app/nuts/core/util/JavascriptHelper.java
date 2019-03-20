@@ -40,6 +40,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.*;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
 
 /**
  *
@@ -96,7 +97,7 @@ public class JavascriptHelper {
         }
 
         public int compareVersions(String v1, String v2) {
-            return CoreVersionUtils.compareVersions(v1, v2);
+            return DefaultNutsVersion.compareVersions(v1, v2);
         }
 
     }

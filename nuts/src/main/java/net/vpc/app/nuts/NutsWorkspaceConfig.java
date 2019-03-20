@@ -54,7 +54,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private NutsStoreLocationLayout storeLocationLayout = null;
 
-    private List<NutsRepositoryLocation> repositories;
+    private List<NutsRepositoryRef> repositories;
     private List<NutsId> extensions;
     private List<NutsWorkspaceCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
@@ -107,11 +107,11 @@ public final class NutsWorkspaceConfig implements Serializable {
     }
 
 
-    public List<NutsRepositoryLocation> getRepositories() {
+    public List<NutsRepositoryRef> getRepositories() {
         return repositories;
     }
 
-    public void setRepositories(List<NutsRepositoryLocation> repositories) {
+    public void setRepositories(List<NutsRepositoryRef> repositories) {
         this.repositories = repositories;
     }
 

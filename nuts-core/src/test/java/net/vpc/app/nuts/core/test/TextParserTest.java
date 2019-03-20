@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.test;
 
 import org.junit.After;
 import org.junit.AfterClass;

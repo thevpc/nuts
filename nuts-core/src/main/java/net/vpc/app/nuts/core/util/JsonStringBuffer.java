@@ -31,8 +31,8 @@ package net.vpc.app.nuts.core.util;
 
 public class JsonStringBuffer {
 
-    private StringBuilder sb = new StringBuilder();
-    private JsonStatus status = new JsonStatus();
+    private final StringBuilder sb = new StringBuilder();
+    private final JsonStatus status = new JsonStatus();
 
     public boolean append(String line) {
         CoreJsonUtils.readJsonPartialString(line, status);

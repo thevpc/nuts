@@ -28,7 +28,7 @@ import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
  */
 public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
 
-    private Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<Class>(
+    private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(
                     //order is important!!because autowiring should follow this very order
                     NutsDefaultFormattedPrintStream.class,
@@ -48,8 +48,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             )
     );
     private NutsURLClassLoader workspaceExtensionsClassLoader;
-    private ListMap<String, String> defaultWiredComponents = new ListMap<>();
-    private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<NutsId, NutsWorkspaceExtension>();
+    private final ListMap<String, String> defaultWiredComponents = new ListMap<>();
+    private Map<NutsId, NutsWorkspaceExtension> extensions = new HashMap<>();
     private final NutsWorkspace ws;
     private final NutsWorkspaceFactory objectFactory;
 
@@ -172,7 +172,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         List<NutsDefinition> nutsDefinitions = ws.createQuery().addId(id).setSession(session)
                 .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
                 .setIncludeOptional(false)
-                .includeDependencies().fetch();
+                .mainAndDependencies().fetch();
         NutsId toWire = null;
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (nutsDefinition.getId().equalsSimpleName(id)) {

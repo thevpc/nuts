@@ -35,7 +35,6 @@ import net.vpc.app.nuts.core.DefaultNutsDependency;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreVersionUtils;
 import net.vpc.app.nuts.core.util.MapStringMapper;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.mvn.*;
@@ -292,7 +291,7 @@ public class MavenUtils {
         }
         for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
             String version = iterator.next();
-            if (s.getLatest().length() > 0 && CoreVersionUtils.compareVersions(version, s.getLatest()) > 0) {
+            if (s.getLatest().length() > 0 && DefaultNutsVersion.compareVersions(version, s.getLatest()) > 0) {
                 iterator.remove();
             }
         }

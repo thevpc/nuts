@@ -87,7 +87,7 @@ public class DefaultNutsClassLoaderBuilder implements NutsClassLoaderBuilder {
 
     @Override
     public ClassLoader build() {
-        List<NutsDefinition> nutsDefinitions = query.includeDependencies().fetch();
+        List<NutsDefinition> nutsDefinitions = query.mainAndDependencies().fetch();
         URL[] all = new URL[nutsDefinitions.size()];
         for (int i = 0; i < all.length; i++) {
             all[i] = URLUtils.toURL(new File(nutsDefinitions.get(i).getContent().getFile()));

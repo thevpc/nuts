@@ -37,27 +37,35 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 
         } else if (cmdLine.readAll("create repo", "cr")) {
             String repositoryName = null;
-            String location=null;
-            String repoType=null;
-            while(cmdLine.hasNext()){
-                if(cmdLine.readAll("-t","--type")) {
+            String location = null;
+            String repoType = null;
+            while (cmdLine.hasNext()) {
+                if (cmdLine.readAll("-t", "--type")) {
                     repoType = cmdLine.readRequiredNonOption(new DefaultNonOption("RepositoryType")).getStringExpression();
-                }else if(cmdLine.readAll("-l","--location")){
+                } else if (cmdLine.readAll("-l", "--location")) {
                     location = cmdLine.readNonOption(new DefaultNonOption("RepositoryLocation")).getStringExpression();
-                }else if(cmdLine.readAll("-id","--id")){
+                } else if (cmdLine.readAll("-id", "--id")) {
                     repositoryName = cmdLine.readRequiredNonOption(new DefaultNonOption("NewRepositoryName")).getStringExpression();
-                }else if(!cmdLine.isOption()){
+                } else if (!cmdLine.isOption()) {
                     location = cmdLine.readNonOption(new DefaultNonOption("RepositoryLocation")).getStringExpression();
-                }else{
+                } else {
                     cmdLine.unexpectedArgument("config create repo");
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsRepository repository = ws.getRepositoryManager().addRepository(new NutsRepositoryLocation()
-                        .setName(repositoryName)
-                        .setLocation(location)
-                        .setType(repoType)
-                        , true);
+                NutsRepository repository = ws.getRepositoryManager().addRepository(
+                        new NutsCreateRepositoryOptions()
+                                .setName(repositoryName)
+                                .setLocation(repositoryName)
+                                .setConfig(
+                                        new NutsRepositoryConfig()
+                                                .setName(repositoryName)
+                                                .setLocation(location)
+                                                .setType(repoType))
+                );
+                if (repository == null) {
+                    throw new IllegalArgumentException("Unable to configure repository : " + repositoryName);
+                }
                 trySave(context, ws, repository, autoSave, null);
             }
             return true;
@@ -104,19 +112,17 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                         }
                         if (cmdLine.isExecMode()) {
                             NutsRepository repo = null;
-                            if (proxy) {
-                                repo = ws.getRepositoryManager().addProxiedRepository(new NutsRepositoryLocation()
-                                        .setName(repositoryName)
-                                        .setLocation(location)
-                                        .setType(repoType)
-                                        , true);
-                            } else {
-                                repo = ws.getRepositoryManager().addRepository(new NutsRepositoryLocation()
-                                        .setName(repositoryName)
-                                        .setLocation(location)
-                                        .setType(repoType)
-                                        , true);
-                            }
+                            NutsCreateRepositoryOptions o = new NutsCreateRepositoryOptions()
+                                    .setName(repositoryName)
+                                    .setLocation(repositoryName)
+                                    .setProxy(proxy)
+                                    .setConfig(
+                                            new NutsRepositoryConfig()
+                                                    .setName(repositoryName)
+                                                    .setLocation(location)
+                                                    .setType(repoType));
+
+                            repo = ws.getRepositoryManager().addRepository(o);
                             out.printf("Repository added successfully\n");
                             trySave(context, ws, repo, autoSave, null);
                             trySave(context, ws, null, autoSave, null);
@@ -137,18 +143,17 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             } else if (cmdLine.readAll("list repos", "lr")) {
                 if (cmdLine.isExecMode()) {
                     TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
-                            .setColumnsConfig("id","enabled","type","location")
-                            .addHeaderCells("==Id==","==Enabled==","==Type==","==Location==")
-                            ;
+                            .setColumnsConfig("id", "enabled", "type", "location")
+                            .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
                     while (cmdLine.hasNext()) {
-                        if(!t.configure(cmdLine)){
+                        if (!t.configure(cmdLine)) {
                             cmdLine.unexpectedArgument("config list repos");
                         }
                     }
                     for (NutsRepository repository : ws.getRepositoryManager().getRepositories()) {
                         t.addRow(
                                 "==" + repository.getName() + "==",
-                                repository.isEnabled()?"ENABLED":"@@<DISABLED>@@",
+                                repository.isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
                                 repository.getRepositoryType(),
                                 repository.getConfigManager().getLocation()
                         );
@@ -191,11 +196,13 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     String repoType = cmdLine.readNonOption(new RepositoryTypeNonOption("RepositoryType", context.getWorkspace())).getStringExpression();
 
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
-                    NutsRepository repo = editedRepo.addMirror(new NutsRepositoryLocation()
-                            .setName(repositoryName)
-                            .setLocation(location)
-                            .setType(repoType)
-                            , true);
+                    NutsRepository repo = editedRepo.addMirror(
+                            new NutsCreateRepositoryOptions().setName(repositoryName).setLocation(repositoryName)
+                                    .setConfig(
+                                            new NutsRepositoryConfig()
+                                                    .setName(repositoryName)
+                                                    .setLocation(location)
+                                                    .setType(repoType)));
                     trySave(context, ws, editedRepo, autoSave, null);
                     trySave(context, ws, repo, autoSave, null);
 
@@ -216,21 +223,20 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     trySave(context, ws, editedRepo, autoSave, null);
                 } else if (cmdLine.readAll("list repos", "lr")) {
                     NutsRepository editedRepo = ws.getRepositoryManager().findRepository(repoId);
-                    NutsRepository[] linkRepositories = editedRepo.isSupportedMirroring()?editedRepo.getMirrors():new NutsRepository[0];
+                    NutsRepository[] linkRepositories = editedRepo.isSupportedMirroring() ? editedRepo.getMirrors() : new NutsRepository[0];
                     out.printf("%s sub repositories.\n", linkRepositories.length);
                     TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
-                            .setColumnsConfig("id","enabled","type","location")
-                            .addHeaderCells("==Id==","==Enabled==","==Type==","==Location==")
-                            ;
+                            .setColumnsConfig("id", "enabled", "type", "location")
+                            .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
                     while (cmdLine.hasNext()) {
-                        if(!t.configure(cmdLine)){
+                        if (!t.configure(cmdLine)) {
                             cmdLine.unexpectedArgument("config edit repo");
                         }
                     }
                     for (NutsRepository repository : linkRepositories) {
                         t.addRow(
                                 "==" + repository.getName() + "==",
-                                repository.isEnabled()?"ENABLED":"@@<DISABLED>@@",
+                                repository.isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
                                 repository.getRepositoryType(),
                                 repository.getConfigManager().getLocation()
                         );

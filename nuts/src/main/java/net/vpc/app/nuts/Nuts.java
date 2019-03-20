@@ -32,19 +32,33 @@ package net.vpc.app.nuts;
 import java.util.Arrays;
 
 /**
- * Nuts Boot Class
- * Created by vpc on 1/5/17.
+ * Nuts Boot Class Created by vpc on 1/5/17.
  */
 public class Nuts {
 
+    public static String version;
+
+    static {
+        try {
+            version = NutsUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"), null, false).getProperty("project.version", "0.0.0");
+        } catch (Exception ex) {
+            version = "0.0.0";
+            //
+        }
+    }
+
+    public static String getVersion() {
+        return version;
+    }
+
     /**
-     * main method
-     * This Main will call System.exit() at completion
+     * main method This Main will call System.exit() at completion
+     *
      * @param args main arguments
      */
     public static void main(String[] args) {
         try {
-            System.exit(uncheckedMain(args));
+            System.exit(runWorkspace(args));
         } catch (Exception ex) {
             int errorCode = 204;
             boolean showTrace = false;
@@ -79,8 +93,10 @@ public class Nuts {
     }
 
     /**
-     * opens a workspace using "--nuts-boot-args" configuration argument.
-     * This method is to be called by child processes of nuts to inherit workspace configuration.
+     * opens a workspace using "--nuts-boot-args" configuration argument. This
+     * method is to be called by child processes of nuts to inherit workspace
+     * configuration.
+     *
      * @param args arguments
      * @return NutsWorkspace instance
      */
@@ -110,6 +126,7 @@ public class Nuts {
 
     /**
      * creates a workspace. Nuts Boot arguments are passed in <code>args</code>
+     *
      * @param args nuts boot arguments
      * @return new NutsWorkspace instance
      */
@@ -127,6 +144,7 @@ public class Nuts {
 
     /**
      * creates a default workspace (no boot options)
+     *
      * @return new NutsWorkspace instance
      */
     public static NutsWorkspace openWorkspace() {
@@ -135,6 +153,7 @@ public class Nuts {
 
     /**
      * creates a workspace at location <code>workspace</code>
+     *
      * @param workspace workspace location
      * @return new NutsWorkspace instance
      */
@@ -144,6 +163,7 @@ public class Nuts {
 
     /**
      * opens a workspace using the given options
+     *
      * @param options boot options
      * @return new NutsWorkspace instance
      */
@@ -158,21 +178,23 @@ public class Nuts {
     }
 
     /**
-     * unchecked (may throw exception) main of Nuts application.
-     * This Main will never call System.exit()
+     * runs Nuts application with the provided arguments This Main will never
+     * call System.exit()
+     *
      * @param args boot arguments
      * @return return code
-     * @throws Exception error exception
      */
-    public static int uncheckedMain(String[] args) throws Exception {
+    public static int runWorkspace(String[] args) {
         //long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
         return boot.run();
     }
 
     /**
-     * resolves nuts home folder. Home folder is the root for nuts folders. It depends on folder type and store layout.
-     * For instance log folder type is stored for windows and linux in distinct folders.
+     * resolves nuts home folder. Home folder is the root for nuts folders. It
+     * depends on folder type and store layout. For instance log folder depends
+     * on on the underlying operating system (linux,windows,...).
+     *
      * @param folderType folder type to resolve home for
      * @param storeLocationLayout location layout to resolve home for
      * @return home folder path
@@ -181,14 +203,18 @@ public class Nuts {
         if (folderType == null) {
             folderType = NutsStoreFolder.CONFIG;
         }
-        boolean wasSystem=false;
+        boolean wasSystem = false;
         if (storeLocationLayout == null || storeLocationLayout == NutsStoreLocationLayout.SYSTEM) {
-            wasSystem=true;
+            wasSystem = true;
             if ("windows".equals(NutsUtils.getPlatformOsFamily())) {
                 storeLocationLayout = NutsStoreLocationLayout.WINDOWS;
             } else {
                 storeLocationLayout = NutsStoreLocationLayout.LINUX;
             }
+        }
+        final String s = System.getProperty("nuts.export.home." + folderType.name().toLowerCase() + "." + storeLocationLayout.name().toLowerCase());
+        if (s != null && s.trim().length() > 0) {
+            return s.trim();
         }
         switch (folderType) {
             case LOGS:
@@ -197,8 +223,9 @@ public class Nuts {
             case PROGRAMS:
             case LIB: {
                 switch (storeLocationLayout) {
-                    case WINDOWS:
+                    case WINDOWS: {
                         return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts");
+                    }
                     case LINUX:
                         return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
                 }
@@ -216,17 +243,17 @@ public class Nuts {
             case TEMP: {
                 switch (storeLocationLayout) {
                     case WINDOWS:
-                        if(NutsUtils.getPlatformOsFamily().equals("windows")) {
+                        if (NutsUtils.getPlatformOsFamily().equals("windows")) {
                             //on windows temp folder is user defined
                             return System.getProperty("java.io.tmpdir") + NutsUtils.syspath("/nuts");
-                        }else{
+                        } else {
                             return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
                         }
                     case LINUX:
-                        if(!NutsUtils.getPlatformOsFamily().equals("windows")) {
+                        if (NutsUtils.getPlatformOsFamily().equals("linux")) {
                             //on linux temp folder is shared. will add user folder as discriminator
                             return System.getProperty("java.io.tmpdir") + NutsUtils.syspath(("/" + System.getProperty("user.name") + "/nuts"));
-                        }else{
+                        } else {
                             return System.getProperty("user.home") + NutsUtils.syspath("/tmp/nuts");
                         }
                 }
@@ -234,7 +261,5 @@ public class Nuts {
         }
         throw new NutsIllegalArgumentException("Unsupported " + storeLocationLayout);
     }
-
-
 
 }

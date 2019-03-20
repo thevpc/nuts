@@ -115,7 +115,6 @@ final class NutsUtils {
         return sb.toString();
     }
 
-
     public static String[] splitAndRemoveDuplicates(String... possibilities) {
         LinkedHashSet<String> allValid = new LinkedHashSet<>();
         for (String v : possibilities) {
@@ -149,7 +148,6 @@ final class NutsUtils {
     public static String readStringFromFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
     }
-
 
     public static boolean isAbsolutePath(String location) {
         return new File(location).isAbsolute();
@@ -641,7 +639,6 @@ final class NutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-
     public static String[] parseDependenciesFromMaven(URL url, File cacheFile, boolean useCache, boolean cacheRemoteOnly) {
 
         long startTime = System.currentTimeMillis();
@@ -784,11 +781,11 @@ final class NutsUtils {
         return null;
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force) throws IOException {
+    public static int deleteAndConfirmAll(File[] folders, boolean force) {
         return deleteAndConfirmAll(folders, force, new boolean[1]);
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll) throws IOException {
+    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll) {
         int count = 0;
         if (folders != null) {
             for (File child : folders) {
@@ -801,7 +798,7 @@ final class NutsUtils {
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll) throws IOException {
+    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll) {
         if (directory.exists()) {
             if (!force && !refForceAll[0]) {
                 Scanner s = new Scanner(System.in);
@@ -817,20 +814,24 @@ final class NutsUtils {
                 }
             }
             Path directoryPath = Paths.get(directory.getPath());
-            Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
+            try {
+                Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                        throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                            throws IOException {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException ex) {
+                throw new NutsIOException(ex);
+            }
         }
         return false;
     }
@@ -996,5 +997,28 @@ final class NutsUtils {
             return f.getPath();
         }
         return url.toString();
+    }
+
+    public static String getSystemString(String property, String defaultValue) {
+        String v = System.getProperty(property);
+        if (v == null || v.trim().isEmpty()) {
+            return defaultValue;
+        }
+        return v;
+    }
+    
+    public static boolean getSystemBoolean(String property, boolean defaultValue) {
+        String v = System.getProperty(property);
+        if (v == null || v.trim().isEmpty()) {
+            return defaultValue;
+        }
+        v = v.trim().toLowerCase();
+        if (v.matches("true|enable|yes|always|y")) {
+            return true;
+        }
+        if (v.matches("false|disable|no|never|n")) {
+            return false;
+        }
+        return defaultValue;
     }
 }

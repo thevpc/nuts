@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
-    private DefaultNutsWorkspaceConfigManager defaultNutsWorkspaceConfigManager;
+    private DefaultNutsWorkspaceConfigManager configManager;
 
     public ConfigNutsWorkspaceCommandFactory(DefaultNutsWorkspaceConfigManager defaultNutsWorkspaceConfigManager) {
-        this.defaultNutsWorkspaceConfigManager = defaultNutsWorkspaceConfigManager;
+        this.configManager = defaultNutsWorkspaceConfigManager;
     }
 
     @Override
@@ -24,7 +24,9 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public File getStoreLocation() {
-        String storeLocation = defaultNutsWorkspaceConfigManager.getStoreLocation(NutsStoreFolder.PROGRAMS);
+        String storeLocation = 
+                configManager.getStoreLocation(configManager.getBootConfig().getApiId(), NutsStoreFolder.PROGRAMS)
+                ;
         if (storeLocation == null) {
             return null;
         }
@@ -47,14 +49,14 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public void installCommand(NutsWorkspaceCommandConfig command) {
         File file = new File(getStoreLocation(), command.getName() + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-        defaultNutsWorkspaceConfigManager.getWorkspace().getIOManager().writeJson(command, file, true);
+        configManager.getWorkspace().getIOManager().writeJson(command, file, true);
     }
 
     @Override
     public NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace) {
         File file = new File(getStoreLocation(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
-            NutsWorkspaceCommandConfig c = defaultNutsWorkspaceConfigManager.getWorkspace().getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
+            NutsWorkspaceCommandConfig c = configManager.getWorkspace().getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -89,7 +91,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
                 if (file.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsWorkspaceCommandConfig c = null;
                     try {
-                        c = defaultNutsWorkspaceConfigManager.getWorkspace().getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
+                        c = configManager.getWorkspace().getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
                     } catch (Exception ex) {
                         //
                     }

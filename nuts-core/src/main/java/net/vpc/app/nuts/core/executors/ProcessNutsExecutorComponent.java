@@ -57,14 +57,12 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         return DEFAULT_SUPPORT;
     }
 
+    @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
         String storeFolder = nutMainFile.getInstallation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorOptions();
         String[] appArgs = executionContext.getArgs();
-//        String[][] envAndApp0 = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getExecutorOptions());
-//        String[][] envAndApp = CoreNutsUtils.splitEnvAndAppArgs(executionContext.getArgs());
-
 
         List<String> app = new ArrayList<>(Arrays.asList(appArgs));
         if (app.isEmpty()) {
@@ -76,10 +74,10 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         Map<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getBootArgumentsString();
+        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getExportedBootArgumentsString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
-        boolean showCommand = false;
+        boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

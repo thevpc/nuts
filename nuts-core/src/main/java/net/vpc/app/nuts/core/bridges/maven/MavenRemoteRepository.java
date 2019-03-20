@@ -55,8 +55,8 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     private static final Logger log = Logger.getLogger(MavenRemoteRepository.class.getName());
     private MvnClient wrapper;
 
-    public MavenRemoteRepository(String repositoryId, String url, NutsWorkspace workspace, NutsRepository parentRepository, String root) {
-        super(new NutsRepositoryConfig(repositoryId, url, NutsConstants.REPOSITORY_TYPE_NUTS_MAVEN), workspace, parentRepository,root,SPEED_SLOW);
+    public MavenRemoteRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(options,workspace,parentRepository,SPEED_SLOW);
     }
 
     @Override

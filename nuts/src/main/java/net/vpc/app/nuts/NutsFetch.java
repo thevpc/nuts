@@ -1,6 +1,12 @@
 package net.vpc.app.nuts;
 
+import java.util.Collection;
+
 public interface NutsFetch {
+
+    ////////////////////////////////////////////////////////
+    // Setters
+    ////////////////////////////////////////////////////////
 
     NutsFetch setId(String id);
 
@@ -12,13 +18,29 @@ public interface NutsFetch {
 
     NutsFetch setSession(NutsSession session);
 
-    NutsFetch addScope(NutsDependencyScope[] scopes);
+    NutsFetch setScope(NutsDependencyScope scope);
+
+    NutsFetch setScope(NutsDependencyScope... scope);
+
+    NutsFetch setScope(Collection<NutsDependencyScope> scope);
+
+    NutsFetch addScope(NutsDependencyScope scope);
+
+    NutsFetch addScope(Collection<NutsDependencyScope> scope);
+
+    NutsFetch addScope(NutsDependencyScope... scope);
+
+    NutsFetch removeScope(Collection<NutsDependencyScope> scope);
+
+    NutsFetch removeScope(NutsDependencyScope scope);
 
     NutsFetch setAcceptOptional(Boolean acceptOptional);
 
     NutsFetch setIncludeOptional(boolean includeOptional);
 
     NutsFetch setIgnoreCache(boolean ignoreCache);
+
+    NutsFetch ignoreCache();
 
     NutsFetch setIncludeDependencies(boolean includeDependencies);
 
@@ -28,12 +50,30 @@ public interface NutsFetch {
 
     NutsFetch setIncludeInstallInformation(boolean includeInstallInformation);
 
-    NutsFetch setIgnoreCache();
+    NutsFetch setInstalledOnly(boolean preferInstalled);
+
+    NutsFetch setPreferInstalled(boolean preferInstalled);
 
     NutsFetch setLocation(String fileOrFolder);
 
+    NutsFetch setDefaultLocation();
+
+    ////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////
+    /**
+     *
+     * @return
+     */
     boolean isIncludeDependencies();
 
+    boolean isPreferInstalled();
+
+    boolean isInstalledOnly();
+
+    ////////////////////////////////////////////////////////
+    // Result
+    ////////////////////////////////////////////////////////
     NutsContent fetchContent();
 
     NutsContent fetchContentOrNull();
@@ -57,14 +97,4 @@ public interface NutsFetch {
     String fetchFile();
 
     String fetchFileOrNull();
-
-    NutsFetch setDefaultLocation();
-
-    boolean isPreferInstalled();
-
-    boolean isInstalledOnly();
-
-    NutsFetch setInstalledOnly(boolean preferInstalled);
-
-    NutsFetch setPreferInstalled(boolean preferInstalled);
 }

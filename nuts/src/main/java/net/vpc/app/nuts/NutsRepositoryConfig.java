@@ -49,7 +49,7 @@ public class NutsRepositoryConfig implements Serializable {
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
     private Properties env;
-    private List<NutsRepositoryLocation> mirrors;
+    private List<NutsRepositoryRef> mirrors;
     private List<NutsUserConfig> users;
     private boolean indexEnabled;
 
@@ -215,11 +215,11 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
-    public List<NutsRepositoryLocation> getMirrors() {
+    public List<NutsRepositoryRef> getMirrors() {
         return mirrors;
     }
 
-    public NutsRepositoryConfig setMirrors(List<NutsRepositoryLocation> mirrors) {
+    public NutsRepositoryConfig setMirrors(List<NutsRepositoryRef> mirrors) {
         this.mirrors = mirrors;
         return this;
     }

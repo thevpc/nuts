@@ -139,7 +139,7 @@ public class NutsBootWorkspace {
         if (options.getCreationTime() == 0) {
             options.setCreationTime(creationTime);
         }
-        actualVersion = getActualVersion();
+        actualVersion = Nuts.getVersion();
         this.options = options;
         this.bootId = NutsBootId.parse(NutsConstants.NUTS_ID_BOOT_API + "#" + actualVersion);
         newInstance = true;
@@ -155,9 +155,9 @@ public class NutsBootWorkspace {
         }
         runningBootConfig = new NutsBootConfig(options);
         NutsLogUtils.bootstrap(options.getLogConfig());
-        log.log(Level.CONFIG, "Open Nuts Workspace : app=" + Arrays.toString(options.getApplicationArguments()) + " ; boot=" + Arrays.toString(options.getBootArguments()));
+        log.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.getBootArgumentsString(true, true, true));
         loadedBootConfig = expandAllPaths(runningBootConfig);
-        NutsLogUtils.prepare(options.getLogConfig(), NutsUtils.syspath(runningBootConfig.getLogsStoreLocation() + "/bootstrap/net/vpc/app/nuts/nuts/LATEST"));
+        NutsLogUtils.prepare(options.getLogConfig(), NutsUtils.syspath(runningBootConfig.getLogsStoreLocation() + "/bootstrap/net/vpc/app/nuts/nuts/"+actualVersion));
 
         requiredBootVersion = options.getRequiredBootVersion();
         if (requiredBootVersion == null) {
@@ -208,7 +208,7 @@ public class NutsBootWorkspace {
         String defaultWorkspaceLibFolder = runningBootConfig.getLibStoreLocation();
         List<String> repos = new ArrayList<>();
         repos.add(defaultWorkspaceLibFolder);
-        if (!Boolean.getBoolean("nuts.boot.no-m2")) {
+        if (!NutsUtils.getSystemBoolean("nuts.export.no-m2", false)) {
             repos.add(System.getProperty("user.home") + NutsUtils.syspath("/.m2/repository"));
         }
         repos.addAll(Arrays.asList(
@@ -256,7 +256,7 @@ public class NutsBootWorkspace {
         cmd.add("-jar");
         cmd.add(file.getPath());
         //cmd.add("--verbose");
-        cmd.addAll(Arrays.asList(options.getBootArguments()));
+        cmd.addAll(Arrays.asList(options.getExportedBootArguments()));
         if (showCommand) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < cmd.size(); i++) {
@@ -368,13 +368,13 @@ public class NutsBootWorkspace {
         }
     }
 
-    public int run() throws IOException {
+    public int run() {
         switch (this.getOptions().getBootCommand()) {
             case CLEAN: {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
-                if (!Boolean.getBoolean("nuts.boot.workspace-clean")) {
+                if (!NutsUtils.getSystemBoolean("nuts.boot.workspace-clean", false)) {
                     return actionReset(null);
                 }
                 return actionClean(null);
@@ -383,7 +383,7 @@ public class NutsBootWorkspace {
                 if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
                     return 0;
                 }
-                if (!Boolean.getBoolean("nuts.boot.workspace-reset")) {
+                if (!NutsUtils.getSystemBoolean("nuts.boot.workspace-reset", false)) {
                     return actionReset(null);
                 }
                 break;
@@ -399,6 +399,7 @@ public class NutsBootWorkspace {
         try {
             workspace = this.openWorkspace();
         } catch (NutsException ex) {
+            log.log(Level.SEVERE, "Open Workspace Failed", ex);
             switch (this.getOptions().getBootCommand()) {
                 case VERSION:
                 case INFO:
@@ -558,7 +559,7 @@ public class NutsBootWorkspace {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
 //        initial.add(home + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
-        if (!Boolean.getBoolean("nuts.boot.no-m2")) {
+        if (!NutsUtils.getSystemBoolean("nuts.export.no-m2", false)) {
             initial.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
         }
         if (possibilities != null) {
@@ -665,7 +666,7 @@ public class NutsBootWorkspace {
             }
             log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
             LinkedHashSet<String> jarRepositories = new LinkedHashSet();
-            if (!Boolean.getBoolean("nuts.boot.no-m2")) {
+            if (!NutsUtils.getSystemBoolean("nuts.boot.no-m2", false)) {
                 jarRepositories.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
             }
             jarRepositories.addAll(Arrays.asList(
@@ -1055,7 +1056,7 @@ public class NutsBootWorkspace {
         return currentContextClassLoaderProvider.getContextClassLoader();
     }
 
-    private int runWorkspaceCommand(NutsWorkspace workspace, String message) throws IOException {
+    private int runWorkspaceCommand(NutsWorkspace workspace, String message) {
         NutsWorkspaceOptions o = this.getOptions();
         if (log.isLoggable(Level.CONFIG)) {
             log.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
@@ -1306,7 +1307,7 @@ public class NutsBootWorkspace {
                 .getResult();
     }
 
-    private int actionReset(NutsWorkspace workspace) throws IOException {
+    private int actionReset(NutsWorkspace workspace) {
         NutsWorkspaceOptions o = getOptions();
         NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.getConfigManager();
         boolean force = false;
@@ -1342,7 +1343,7 @@ public class NutsBootWorkspace {
         return 0;
     }
 
-    private int actionClean(NutsWorkspace workspace) throws IOException {
+    private int actionClean(NutsWorkspace workspace) {
         NutsWorkspaceOptions o = this.getOptions();
         if (log.isLoggable(Level.CONFIG)) {
             log.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
@@ -1386,10 +1387,6 @@ public class NutsBootWorkspace {
         }
     }
 
-    public static String getActualVersion() {
-        return NutsUtils.loadURLProperties(Nuts.class.getResource("/META-INF/nuts/net.vpc.app.nuts/nuts/nuts.properties"), null, false).getProperty("project.version", "0.0.0");
-    }
-
     public void showError(NutsBootConfig actualBootConfig, NutsBootConfig workspaceConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage) {
         System.err.printf("Unable to locate nuts-core component. It is essential for Nuts to work.\n");
         System.err.printf("This component needs Internet connexion to initialize Nuts configuration.\n");
@@ -1408,7 +1405,7 @@ public class NutsBootWorkspace {
         System.err.printf("  nuts-store-config                : %s\n", workspaceConfig.getCacheStoreLocation());
         System.err.printf("  nuts-store-logs                  : %s\n", workspaceConfig.getLogsStoreLocation());
         System.err.printf("  workspace-location               : %s\n", (workspace == null ? "<default-location>" : workspace));
-        System.err.printf("  nuts-boot-args                   : %s\n", Arrays.toString(options.getBootArguments()));
+        System.err.printf("  nuts-boot-args                   : %s\n", options.getBootArgumentsString(true, true, true));
         System.err.printf("  nuts-app-args                    : %s\n", Arrays.toString(options.getApplicationArguments()));
         System.err.printf("  option-recover                   : %s\n", options.isRecover());
         System.err.printf("  option-read-only                 : %s\n", options.isReadOnly());
@@ -1485,7 +1482,8 @@ public class NutsBootWorkspace {
             config.setTempStoreLocation(lastConfigLoaded.getTempStoreLocation());
             config.setConfigStoreLocation(lastConfigLoaded.getConfigStoreLocation());
         }
-        if (config.getStoreLocationLayout() == null) {
+        final NutsStoreLocationLayout storeLocationLayout = config.getStoreLocationLayout();
+        if (storeLocationLayout == null) {
             config.setStoreLocationLayout(NutsStoreLocationLayout.values()[0]);
         }
         if (config.getStoreLocationStrategy() == null) {
@@ -1493,9 +1491,13 @@ public class NutsBootWorkspace {
         }
         {
             String workspace = config.getWorkspace();
-            String homeConf = Nuts.resolveHomeFolder(NutsStoreFolder.CONFIG, config.getStoreLocationLayout());
-            String homeCache = Nuts.resolveHomeFolder(NutsStoreFolder.CACHE, config.getStoreLocationLayout());
-            String homeTemp = Nuts.resolveHomeFolder(NutsStoreFolder.TEMP, config.getStoreLocationLayout());
+            String homeConf = Nuts.resolveHomeFolder(NutsStoreFolder.CONFIG, storeLocationLayout);
+            String homeCache = Nuts.resolveHomeFolder(NutsStoreFolder.CACHE, storeLocationLayout);
+            String homeTemp = Nuts.resolveHomeFolder(NutsStoreFolder.TEMP, storeLocationLayout);
+            String homeLib = Nuts.resolveHomeFolder(NutsStoreFolder.LIB, storeLocationLayout);
+            String homePrograms = Nuts.resolveHomeFolder(NutsStoreFolder.PROGRAMS, storeLocationLayout);
+            String homeVar = Nuts.resolveHomeFolder(NutsStoreFolder.VAR, storeLocationLayout);
+            String homeLogs = Nuts.resolveHomeFolder(NutsStoreFolder.LOGS, storeLocationLayout);
 
             NutsStoreLocationStrategy storeLocationStrategy = config.getStoreLocationStrategy();
             if (storeLocationStrategy == null) {
@@ -1519,30 +1521,102 @@ public class NutsBootWorkspace {
                 workspace = homeConf + File.separator + workspace;
             }
             config.setWorkspace(workspace);
-            if (NutsUtils.isEmpty(config.getLogsStoreLocation())) {
-                config.setLogsStoreLocation(workspace + File.separator + NutsStoreFolder.LOGS.name().toLowerCase());
-            } else if (!NutsUtils.isAbsolutePath(config.getLogsStoreLocation())) {
-                config.setLogsStoreLocation(workspace + File.separator + NutsUtils.syspath(config.getLogsStoreLocation()));
-            }
-            if (NutsUtils.isEmpty(config.getVarStoreLocation())) {
-                config.setVarStoreLocation(workspace + File.separator + NutsStoreFolder.VAR.name().toLowerCase());
-            } else if (!NutsUtils.isAbsolutePath(config.getVarStoreLocation())) {
-                config.setVarStoreLocation(workspace + File.separator + NutsUtils.syspath(config.getVarStoreLocation()));
-            }
             if (NutsUtils.isEmpty(config.getConfigStoreLocation())) {
                 config.setConfigStoreLocation(workspace + File.separator + NutsStoreFolder.CONFIG.name().toLowerCase());
             } else if (!NutsUtils.isAbsolutePath(config.getConfigStoreLocation())) {
                 config.setConfigStoreLocation(workspace + File.separator + NutsUtils.syspath(config.getConfigStoreLocation()));
             }
+            if (NutsUtils.isEmpty(config.getLogsStoreLocation())) {
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setLogsStoreLocation((workspace + File.separator + NutsStoreFolder.LOGS.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setLogsStoreLocation(homeLogs + NutsUtils.syspath("/" + workspaceName + "/" + NutsStoreFolder.LOGS.name().toLowerCase()));
+                        break;
+                    }
+                }
+            } else if (!NutsUtils.isAbsolutePath(config.getLogsStoreLocation())) {
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setLogsStoreLocation((workspace + File.separator + NutsStoreFolder.LOGS.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setLogsStoreLocation(homeLogs + NutsUtils.syspath("/" + workspaceName + "/" + config.getLogsStoreLocation()));
+                        break;
+                    }
+                }
+            }
             if (NutsUtils.isEmpty(config.getProgramsStoreLocation())) {
-                config.setProgramsStoreLocation(workspace + File.separator + NutsStoreFolder.PROGRAMS.name().toLowerCase());
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setProgramsStoreLocation((workspace + File.separator + NutsStoreFolder.PROGRAMS.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setProgramsStoreLocation(homePrograms + NutsUtils.syspath("/" + workspaceName + "/" + NutsStoreFolder.PROGRAMS.name().toLowerCase()));
+                        break;
+                    }
+                }
             } else if (!NutsUtils.isAbsolutePath(config.getProgramsStoreLocation())) {
-                config.setProgramsStoreLocation(workspace + File.separator + NutsUtils.syspath(config.getProgramsStoreLocation()));
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setProgramsStoreLocation((workspace + File.separator + NutsStoreFolder.PROGRAMS.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setProgramsStoreLocation(homePrograms + NutsUtils.syspath("/" + workspaceName + "/" + config.getProgramsStoreLocation()));
+                        break;
+                    }
+                }
+            }
+            if (NutsUtils.isEmpty(config.getVarStoreLocation())) {
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setVarStoreLocation((workspace + File.separator + NutsStoreFolder.VAR.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setVarStoreLocation(homeVar + NutsUtils.syspath("/" + workspaceName + "/" + NutsStoreFolder.VAR.name().toLowerCase()));
+                        break;
+                    }
+                }
+            } else if (!NutsUtils.isAbsolutePath(config.getVarStoreLocation())) {
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setVarStoreLocation((workspace + File.separator + NutsStoreFolder.VAR.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setVarStoreLocation(homeVar + NutsUtils.syspath("/" + workspaceName + "/" + config.getVarStoreLocation()));
+                        break;
+                    }
+                }
             }
             if (NutsUtils.isEmpty(config.getLibStoreLocation())) {
-                config.setLibStoreLocation(workspace + File.separator + NutsStoreFolder.LIB.name().toLowerCase());
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setLibStoreLocation((workspace + File.separator + NutsStoreFolder.LIB.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setLibStoreLocation(homeLib + NutsUtils.syspath("/" + workspaceName + "/" + NutsStoreFolder.LIB.name().toLowerCase()));
+                        break;
+                    }
+                }
             } else if (!NutsUtils.isAbsolutePath(config.getLibStoreLocation())) {
-                config.setLibStoreLocation(workspace + File.separator + NutsUtils.syspath(config.getLibStoreLocation()));
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        config.setLibStoreLocation((workspace + File.separator + NutsStoreFolder.LIB.name().toLowerCase()));
+                        break;
+                    }
+                    case EXPLODED: {
+                        config.setLibStoreLocation(homeLib + NutsUtils.syspath("/" + workspaceName + "/" + config.getLibStoreLocation()));
+                        break;
+                    }
+                }
             }
             if (NutsUtils.isEmpty(config.getTempStoreLocation())) {
                 switch (storeLocationStrategy) {

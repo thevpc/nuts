@@ -48,10 +48,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 
     public static final Logger log = Logger.getLogger(NutsFolderRepository.class.getName());
 
-    public NutsFolderRepository(String repositoryId, String repositoryLocation, NutsWorkspace workspace, NutsRepository parentRepository, String repositoryRoot) {
-        super(new NutsRepositoryConfig(repositoryId, repositoryLocation, NutsConstants.REPOSITORY_TYPE_NUTS), workspace, parentRepository,
-                repositoryRoot,
-                SPEED_FAST);
+    public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
+        super(options, workspace, parentRepository, SPEED_FAST);
         extensions.put("src", "-src.zip");
     }
 
@@ -224,6 +222,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         fireOnPush(new NutsContentEvent(id, desc, local.getFile(), getWorkspace(), this));
     }
 
+    @Override
     protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
         if (!session.isTransitive()) {
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
@@ -363,6 +362,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
+    @Override
     protected List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
         List<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
@@ -433,6 +433,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 NutsFolderRepository.this.undeploy(id, session);
             }
 
+            @Override
             public boolean isDescFile(File pathname) {
                 return pathname.getName().endsWith(".nuts");
             }
@@ -452,10 +453,12 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         }
     }
 
+    @Override
     public String getStoreLocation() {
         return getStoreLocation(false);
     }
 
+    @Override
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
         if (id.getVersion().isEmpty() && filter == null) {
             NutsId bestId = null;
@@ -523,14 +526,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 }
             }
         }
-        try ( PrintStream p = new PrintStream(new File(folder, ".files"))) {
+        try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
             for (String file : files) {
                 p.println(file);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        try ( PrintStream p = new PrintStream(new File(folder, ".folders"))) {
+        try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
             for (String file : folders) {
                 p.println(file);
             }

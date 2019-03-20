@@ -57,12 +57,12 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
     void removeMirror(String repositoryId);
 
 
-    void addMirror(NutsRepositoryLocation c);
+    void addMirror(NutsRepositoryRef c);
 
-    NutsRepositoryLocation getMirror(String id);
+    NutsRepositoryRef getMirror(String id);
 
 
-    NutsRepositoryLocation[] getMirrors();
+    NutsRepositoryRef[] getMirrors();
 
     boolean save(boolean force);
 

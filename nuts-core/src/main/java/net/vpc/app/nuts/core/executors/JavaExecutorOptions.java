@@ -20,7 +20,7 @@ public class JavaExecutorOptions {
     private String dir = null;
     private boolean mainClassApp = false;
     private boolean excludeBase = false;
-    private boolean showCommand = false;
+    private boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
     private boolean jar = false;
     private List<String> classPath = new ArrayList<>();
     private List<String> nutsPath = new ArrayList<>();
@@ -116,7 +116,7 @@ public class JavaExecutorOptions {
                         .setSession(session.copy().setTransitive(true))
                         .addScope(NutsDependencyScope.PROFILE_RUN)
                         .setIncludeOptional(false)
-                        .includeDependencies()
+                        .mainAndDependencies()
                         .fetch()
 
         );

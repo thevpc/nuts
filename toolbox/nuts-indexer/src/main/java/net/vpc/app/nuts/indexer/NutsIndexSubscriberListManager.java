@@ -41,8 +41,7 @@ public class NutsIndexSubscriberListManager {
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .resolveIdForClass(NutsIndexSubscriberListManager.class)
-                                .getSimpleNameId()
-                                .setVersion("LATEST"),
+                                .getSimpleNameId(),
                         NutsStoreFolder.CONFIG),
                 name + "-nuts-subscriber-list.json");
     }

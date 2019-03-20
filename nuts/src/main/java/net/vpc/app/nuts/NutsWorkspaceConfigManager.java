@@ -104,6 +104,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
      * save config file if force is activated or non read only and some changes was detected in config file
      *
      * @param force when true, save will always be performed
+     * @return 
      */
     boolean save(boolean force);
 
@@ -121,11 +122,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setSecure(boolean secure);
 
-    void addRepository(NutsRepositoryLocation repository);
+    void addRepository(NutsRepositoryRef repository);
 
     void removeRepository(String repositoryName);
 
-    NutsRepositoryLocation getRepository(String repositoryName);
+    NutsRepositoryRef getRepository(String repositoryName);
 
     boolean containsExtension(NutsId extensionId);
 
@@ -229,7 +230,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
 
-    NutsRepositoryLocation[] getRepositories();
+    NutsRepositoryRef[] getRepositories();
 
     String getDefaultIdComponentExtension(String packaging);
 
