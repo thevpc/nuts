@@ -31,9 +31,6 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Created by vpc on 1/6/17.
@@ -73,6 +70,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.id = id;
     }
 
+    @Override
     public NutsId getId() {
         return id;
     }

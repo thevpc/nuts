@@ -75,7 +75,6 @@ java -jar nuts-0.5.3.jar
         * Added watch dog agains infinite child process creation
     1- TODO
         * Add maven-github repository type support (web API)
-        * FIX : find some times returns duplicated names (nuts-tomcat-classloader, hadruwaves-scala#3.1.33)
         * FIX : executable and appExecutable are not well supported in nfind!
 
 ### nuts 0.5.3.0

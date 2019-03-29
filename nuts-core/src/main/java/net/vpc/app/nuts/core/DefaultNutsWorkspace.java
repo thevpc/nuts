@@ -1482,15 +1482,36 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     break;
                 }
             }
-            NutsId bestId = new DefaultNutsId(null, g, thisId.getName(), v, "");
-            String bestResult = bestId.toString();
             if (StringUtils.isEmpty(g) || StringUtils.isEmpty(v)) {
-                throw new NutsNotFoundException(bestResult, "Unable to fetchEffective for " + thisId + ". Best Result is " + bestResult, null);
+                throw new NutsNotFoundException(thisId, "Unable to fetchEffective for " + thisId + ". Best Result is " + thisId.toString(), null);
             }
-            return bestId.setAlternative(descriptor.getAlternative());
-        } else {
-            return thisId.setAlternative(descriptor.getAlternative());
         }
+        if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v)) {
+            Map<String, String> p = descriptor.getProperties();
+            NutsId bestId = new DefaultNutsId(null, g, thisId.getName(), v, "");
+            bestId = bestId.apply(new MapStringMapper(p));
+            if (CoreNutsUtils.isEffectiveId(bestId)) {
+                return bestId.setAlternative(descriptor.getAlternative());
+            }
+            Stack<NutsId> all = new Stack<>();
+            NutsId[] parents = descriptor.getParents();
+            all.addAll(Arrays.asList(parents));
+            while (!all.isEmpty()) {
+                NutsId parent = all.pop();
+                NutsDescriptor dd = fetch(parent).copyFrom(options).setIncludeEffective(true).setSession(session).fetchDescriptor();
+                bestId.apply(new MapStringMapper(dd.getProperties()));
+                if (CoreNutsUtils.isEffectiveId(bestId)) {
+                    return bestId.setAlternative(descriptor.getAlternative());
+                }
+                all.addAll(Arrays.asList(dd.getParents()));
+            }
+            throw new NutsNotFoundException(bestId.toString(), "Unable to fetchEffective for " + thisId + ". Best Result is " + bestId.toString(), null);
+        }
+        NutsId bestId = new DefaultNutsId(null, g, thisId.getName(), v, "");
+        if (!CoreNutsUtils.isEffectiveId(bestId)) {
+            throw new NutsNotFoundException(bestId.toString(), "Unable to fetchEffective for " + thisId + ". Best Result is " + bestId.toString(), null);
+        }
+        return bestId.setAlternative(descriptor.getAlternative());
     }
 
     @Override
@@ -2611,7 +2632,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isFile()) {
             File f = new File(getConfigManager().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE),
                     getConfigManager().getDefaultIdFilename(nutsDescriptor.getId().setFace("cache-info"))
-                    );
+            );
             Map<String, String> map = null;
             try {
                 if (f.isFile()) {

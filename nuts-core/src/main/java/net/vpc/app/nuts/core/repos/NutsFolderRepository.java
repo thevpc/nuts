@@ -389,8 +389,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     return null;
                 }
                 List<Iterator<NutsId>> all = new ArrayList<>();
-                all.add(findInFolder(getLocalGroupAndArtifactFile(id, false), idFilter, false, session));
-                all.add(findInFolder(getLocalGroupAndArtifactFile(id, true), idFilter, false, session));
+                all.add(findInFolder(getLocalGroupAndArtifactFile(id, false), idFilter, true, session));
+                all.add(findInFolder(getLocalGroupAndArtifactFile(id, true), idFilter, true, session));
                 namedNutIdIterator = IteratorUtils.concat(all);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");

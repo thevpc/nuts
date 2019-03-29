@@ -31,17 +31,17 @@ import net.vpc.app.nuts.core.filters.id.NutsSimpleIdFilter;
  */
 public class CommonRootsHelper {
 
-    public static void main(String[] args) {
-        NutsIdFilter b = new NutsIdFilterStackBuilder()
-                .id("a.b.c:r#tt")
-                .id("a.bb:r#tt")
-                .or()
-                .id("a.bb.l:r#tt")
-                .and()
-                .build();
-        System.out.println(b);
-        System.out.println(resolveRootIds(b));
-    }
+//    public static void main(String[] args) {
+//        NutsIdFilter b = new NutsIdFilterStackBuilder()
+//                .id("a.b.c:r#tt")
+//                .id("a.bb:r#tt")
+//                .or()
+//                .id("a.bb.l:r#tt")
+//                .and()
+//                .build();
+//        System.out.println(b);
+//        System.out.println(resolveRootIds(b));
+//    }
 
     private static Set<PathBase> resolveRootIdAnd(Set<PathBase> a, Set<PathBase> b) {
         Set<PathBase> e = new HashSet<>();

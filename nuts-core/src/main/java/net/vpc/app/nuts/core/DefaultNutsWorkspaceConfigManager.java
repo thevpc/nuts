@@ -1365,6 +1365,9 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 return ".nuts";
             case "rar":
                 return ".rar";
+            case "zip":
+            case "nbm-application":
+                return ".zip";
         }
         return "." + packaging;
     }

@@ -151,7 +151,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 return null;
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, false, session);
+                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, true, session);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }

@@ -30,6 +30,7 @@ class NutsInfo {
     NutsSession session;
     NutsDescriptor descriptor;
     NutsDefinition _fetchedFile;
+    NutsDefinition def;
     List<NutsInfo> children;
     boolean continued;
     boolean error;
@@ -44,14 +45,26 @@ class NutsInfo {
 
     public boolean isFetched() {
         if (this.fetched == null) {
-            this.fetched = ws.isFetched(nuts.toString(), session);
+            this.fetched = getNutsDefinition(true)!=null;
         }
         return this.fetched;
     }
 
+    public NutsDefinition getNutsDefinition(boolean checkDependencies) {
+        if (this.def == null) {
+            def = ws.fetch(nuts).setSession(session).offline()
+                    .setIncludeInstallInformation(true)
+                    .setIncludeFile(true)
+                    .setAcceptOptional(false)
+                    .includeDependencies(checkDependencies)
+                    .fetchDefinition();
+        }
+        return def;
+    }
+    
     public boolean isInstalled(boolean checkDependencies) {
         if (this.is_installed == null) {
-            this.is_installed = isFetched() && ws.fetch(nuts).setSession(session).setAcceptOptional(false).includeDependencies(checkDependencies).fetchDefinition().getInstallation().isInstalled();
+            this.is_installed = getNutsDefinition(checkDependencies).getInstallation().isInstalled();
         }
         return this.is_installed;
     }
@@ -77,7 +90,7 @@ class NutsInfo {
     public File getFile() {
         if (_fetchedFile == null) {
             try {
-                _fetchedFile = ws.fetch(nuts).setSession(session).setTransitive(true).offline().fetchDefinition();
+                _fetchedFile = getNutsDefinition(true);
             } catch (Exception ex) {
                 //
             }
