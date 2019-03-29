@@ -121,10 +121,10 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("nuts-repo-store-strategy", String.valueOf(configManager.getRepositoryStoreLocationStrategy()));
             props.put("nuts-option-open-mode", String.valueOf(configManager.getOptions().getOpenMode()==null?NutsWorkspaceOpenMode.OPEN_OR_CREATE:configManager.getOptions().getOpenMode()));
             props.put("nuts-option-perf", String.valueOf(configManager.getOptions().isPerf()));
-            props.put("nuts-option-recover", String.valueOf(configManager.getOptions().isRecover()));
+            props.put("nuts-option-recover", configManager.getOptions().getInitMode()==null?"":configManager.getOptions().getInitMode().name().toLowerCase());
             props.put("nuts-option-read-only", String.valueOf(configManager.getOptions().isReadOnly()));
-            props.put("nuts-option-skip-companions", String.valueOf(configManager.getOptions().isSkipPostCreateInstallCompanionTools()));
-            for (NutsStoreFolder folderType : NutsStoreFolder.values()) {
+            props.put("nuts-option-skip-companions", String.valueOf(configManager.getOptions().isSkipInstallCompanions()));
+            for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
                 props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType));
             }
             props.put("java-version", System.getProperty("java.version"));
@@ -132,6 +132,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("java-classpath", System.getProperty("java.class.path"));
             props.put("java-library-path", System.getProperty("java.library.path"));
             props.put("os-name", ws.getConfigManager().getPlatformOs().toString());
+            props.put("os-family", ws.getConfigManager().getPlatformOsFamily().name().toLowerCase());
             if(ws.getConfigManager().getPlatformOsDist()!=null) {
                 props.put("os-dist", ws.getConfigManager().getPlatformOsDist().toString());
             }

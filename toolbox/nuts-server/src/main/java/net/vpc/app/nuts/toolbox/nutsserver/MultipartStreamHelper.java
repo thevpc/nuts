@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.toolbox.nutsserver;
 
 import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
 
@@ -38,6 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Iterator;
 
 /**
@@ -93,7 +93,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 try {
                     return newInputStreamSplitted();
                 } catch (IOException e) {
-                    throw new NutsIOException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
 

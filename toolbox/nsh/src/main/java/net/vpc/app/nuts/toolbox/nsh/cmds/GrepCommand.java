@@ -106,7 +106,7 @@ public class GrepCommand extends AbstractNutsCommand {
         if (expression == null) {
             throw new NutsExecutionException("Missing Expression",2);
         }
-        String baseExpr = options.regexp ? context.getWorkspace().createRegex(expression, false) : expression;
+        String baseExpr = options.regexp ? ("^"+context.getWorkspace().createRegex(expression)+"$") : expression;
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
         }

@@ -58,6 +58,8 @@ public interface NutsId extends Serializable {
 
     NutsId setNamespace(String newNamespace);
 
+    NutsId setVersion(NutsVersion newVersion);
+    
     NutsId setVersion(String newVersion);
 
     NutsId setName(String newName);

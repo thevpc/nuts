@@ -13,6 +13,8 @@ public class NutsDeployOptions {
 
     private boolean trace = true;
     private boolean force = false;
+    private boolean offline = false;
+    private boolean transitive = true;
 
     public boolean isTrace() {
         return trace;
@@ -30,6 +32,23 @@ public class NutsDeployOptions {
     public NutsDeployOptions setForce(boolean forceInstall) {
         this.force = forceInstall;
         return this;
+    }
+
+    public boolean isOffline() {
+        return offline;
+    }
+
+    public NutsDeployOptions setOffline(boolean offline) {
+        this.offline = offline;
+        return this;
+    }
+
+    public boolean isTransitive() {
+        return transitive;
+    }
+
+    public void setTransitive(boolean transitive) {
+        this.transitive = transitive;
     }
 
 }

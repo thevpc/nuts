@@ -71,7 +71,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    throw new NutsIOException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
         }
@@ -124,7 +124,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
                     }
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(ex);
+                throw new UncheckedIOException(ex);
             }
         } else {
             return new NutsExecutionEntry[0];

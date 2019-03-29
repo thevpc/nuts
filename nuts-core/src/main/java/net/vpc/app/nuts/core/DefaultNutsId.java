@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
@@ -65,12 +65,25 @@ public class DefaultNutsId implements NutsId {
     public static String formatQuery(Map<String, String> query) {
         StringBuilder sb = new StringBuilder();
         if (query != null) {
-            Set<String> sortedKeys=new TreeSet<>(query.keySet());
+            Set<String> sortedKeys = new TreeSet<>(query.keySet());
             for (String k : sortedKeys) {
-                if (sb.length() > 0) {
-                    sb.append("&");
+                String v = query.get(k);
+                switch (k) {
+                    case "face": 
+                    case "alternative": 
+                    {
+                        if ("default".equals(v)) {
+                            v = null;
+                        }
+                        break;
+                    }
                 }
-                sb.append(k).append("=").append(query.get(k));
+                if (v != null && v.length() > 0) {
+                    if (sb.length() > 0) {
+                        sb.append("&");
+                    }
+                    sb.append(k).append("=").append(v);
+                }
             }
         }
         return StringUtils.trimToNull(sb.toString());
@@ -224,6 +237,23 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
+    public NutsId setVersion(NutsVersion newVersion) {
+        if(newVersion==null){
+            newVersion=DefaultNutsVersion.EMPTY;
+        }
+        if (newVersion.equals(version)) {
+            return this;
+        }
+        return new DefaultNutsId(
+                namespace,
+                group,
+                name,
+                newVersion,
+                query
+        );
+    }
+
+    @Override
     public NutsId setVersion(String newVersion) {
         NutsVersion nv = DefaultNutsVersion.valueOf(newVersion);
         if (nv.equals(version)) {
@@ -278,6 +308,9 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setFace(String value) {
+        if (NutsConstants.QUERY_FACE_DEFAULT_VALUE.equals(value)) {
+            value = null;
+        }
         return setQueryProperty(NutsConstants.QUERY_FACE, StringUtils.trimToNull(value))
                 .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
@@ -295,14 +328,17 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsId setAlternative(String alt) {
-        return setQueryProperty(NutsConstants.QUERY_ALTERNATIVE, StringUtils.trimToNull(alt))
+    public NutsId setAlternative(String value) {
+        if (NutsConstants.QUERY_ALTERNATIVE_DEFAULT_VALUE.equals(value)) {
+            value = null;
+        }
+        return setQueryProperty(NutsConstants.QUERY_ALTERNATIVE, StringUtils.trimToNull(value))
                 .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
     @Override
-    public NutsId setArch(String alt) {
-        return setQueryProperty(NutsConstants.QUERY_ARCH, StringUtils.trimToNull(alt))
+    public NutsId setArch(String value) {
+        return setQueryProperty(NutsConstants.QUERY_ARCH, StringUtils.trimToNull(value))
                 .setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
     }
 
@@ -325,7 +361,6 @@ public class DefaultNutsId implements NutsId {
     public NutsId setOs(String value) {
         return setQueryProperty(NutsConstants.QUERY_OS, StringUtils.trimToNull(value));
     }
-
 
     @Override
     public String getOs() {
@@ -459,7 +494,6 @@ public class DefaultNutsId implements NutsId {
         return group;
     }
 
-
     @Override
     public NutsId getSimpleNameId() {
         return new DefaultNutsId(null, group, name, (NutsVersion) null, "");
@@ -469,7 +503,6 @@ public class DefaultNutsId implements NutsId {
     public NutsId getLongNameId() {
         return new DefaultNutsId(null, group, name, version, "");
     }
-
 
     @Override
     public String getSimpleName() {
@@ -533,7 +566,6 @@ public class DefaultNutsId implements NutsId {
         String s = getQueryMap().get(NutsConstants.QUERY_OPTIONAL);
         return StringUtils.trimToNull(s);
     }
-
 
     @Override
     public boolean equals(Object o) {

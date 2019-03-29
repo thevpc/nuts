@@ -72,7 +72,7 @@ public class NutsApplications {
             ws = Nuts.openInheritedWorkspace(args);
         }
         NutsApplicationContext applicationContext = null;
-        applicationContext = listener.createApplicationContext(ws, args);
+        applicationContext = listener.createApplicationContext(ws, ws.getConfigManager().getOptions().getApplicationArguments());
         applicationContext.setStartTimeMillis(startTimeMillis);
         switch (applicationContext.getMode()) {
             case "launch":

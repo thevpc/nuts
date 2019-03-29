@@ -59,14 +59,24 @@ java -jar nuts-0.5.3.jar
 
 ## Change Log
 ### nuts 0.5.4.0
+    1- Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
+    2- Layout changes
+        * from now on configuration will be version specific. some migration should be done to import previous configs
+        * system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json
+    1- introduced "findStream" in NutsQuery to manipulate streams
+    1- introduced delayed search results while getting asap items (using iterators anywhere this makes sense)
+    1- introduced NutsSearchIdFilter to speedup search time
+    1- introduced maven-github repository type to help use github api for search and navigate remote folders
+    1- Added JUnit test battery
     1- Several Fixes
         * Fixed Problem with Layout
         * All System properties now start with "nuts."
         * System properties starting with "nuts.export." are exported to children processes
-        * Added wtach dog agains infinite child process creation
-    2- Layout changes
-        * from now on configuration will be version specific. some migration should be done to import previous configs
-        * system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json
+        * Added watch dog agains infinite child process creation
+    1- TODO
+        * add maven-github repository type suypport (web API)
+        * FIX : find some times return duplicated names (nuts-tomcat-classloader, hadruwaves-scala#3.1.33)
+        * FIX : executable and appExecutable are not well supported in nfind!
 
 ### nuts 0.5.3.0
     1- (WINDOWS) First support to Windows platform

@@ -88,7 +88,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         } catch (Throwable ex) {
             //unable to create system terminal
             //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(new IOException(ex));
         }
         reader = LineReaderBuilder.builder()
                 .completer(new NutsJLineCompleter(workspace))
@@ -114,6 +114,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     }
 
+    @Override
     public void uninstall(){
         try {
             reader.getTerminal().close();
@@ -129,6 +130,12 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     @Override
     public String readLine(PrintStream out, String prompt, Object... params) {
+        if(out==null){
+            out=getOut();
+        }
+        if(out==null){
+            out=System.out;
+        }
         String readLine = null;
         try {
             out.printf(prompt, params);
@@ -139,13 +146,19 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         try {
             reader.getHistory().save();
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
         return readLine;
     }
 
     @Override
     public String readPassword(PrintStream out, String prompt, Object... params) {
+        if(out==null){
+            out=getOut();
+        }
+        if(out==null){
+            out=System.out;
+        }
         out.printf(prompt, params);
         return reader.readLine("", '*');
     }

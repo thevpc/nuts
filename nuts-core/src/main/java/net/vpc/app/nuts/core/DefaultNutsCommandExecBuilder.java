@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
@@ -13,9 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
-import net.vpc.common.util.ArrayUtils;
 
 public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
+
     public static final Logger log = Logger.getLogger(DefaultNutsCommandExecBuilder.class.getName());
     private static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
@@ -93,7 +94,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         return this;
     }
 
-
     @Override
     public NutsCommandExecBuilder addExecutorOptions(String... executorOptions) {
         if (this.executorOptions == null) {
@@ -126,7 +126,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
 
     @Override
     public NutsCommandExecBuilder setExecutorOptions(String... options) {
-        setExecutorOptions(options==null?null : Arrays.asList(options));
+        setExecutorOptions(options == null ? null : Arrays.asList(options));
         return this;
     }
 
@@ -153,7 +153,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         }
         return this;
     }
-
 
     @Override
     public NutsCommandExecBuilder setEnv(String k, String val) {
@@ -221,7 +220,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         return this;
     }
 
-
     @Override
     public String getOutputString() {
         PrintStream o = getOut();
@@ -245,17 +243,13 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
 
     @Override
     public NutsCommandExecBuilder setOut(PrintStream out) {
-        this.out = (
-                out == null ? null : ws.getIOManager().createPrintStream(out, NutsTerminalMode.FORMATTED)
-        );
+        this.out = (out == null ? null : ws.getIOManager().createPrintStream(out, NutsTerminalMode.FORMATTED));
         return this;
     }
 
     @Override
     public NutsCommandExecBuilder setErr(PrintStream err) {
-        this.err = (
-                err == null ? null : ws.getIOManager().createPrintStream(err, NutsTerminalMode.FORMATTED)
-        );
+        this.err = (err == null ? null : ws.getIOManager().createPrintStream(err, NutsTerminalMode.FORMATTED));
         return this;
     }
 
@@ -263,7 +257,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     public PrintStream getErr() {
         return err;
     }
-
 
     @Override
     public NutsCommandExecBuilder exec() {
@@ -309,7 +302,6 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         return redirectErrorStream;
     }
 
-
     @Override
     public NutsCommandExecBuilder setRedirectErrorStream() {
         return setRedirectErrorStream(true);
@@ -330,7 +322,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         if (executionType == null) {
             executionType = NutsExecutionType.EXTERNAL;
         }
-        this.executionType=executionType;
+        this.executionType = executionType;
         return this;
     }
 
@@ -343,6 +335,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     }
 
     private static class SPrintStream2 extends NutsDefaultFormattedPrintStream {
+
         private SPrintStream out;
 
         public SPrintStream2() {
@@ -356,6 +349,7 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
     }
 
     private static class SPrintStream extends PrintStream {
+
         private ByteArrayOutputStream out;
 
         public SPrintStream() {
@@ -498,7 +492,10 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
         ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_EXEC, cmdName);
         int result = 0;
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(cmdName, "path", cmdName, new File(".")), session)) {
+            NutsQueryOptions p = ws.createQueryOptions();
+            p.setTransitive(true);
+
+            try (CharacterizedFile c = CoreNutsUtils.characterize(ws, IOUtils.toInputStreamSource(cmdName, "path", cmdName, new File(".")), p, session)) {
                 if (c.descriptor == null) {
                     //this is a native file?
                     c.descriptor = TEMP_DESC;
@@ -516,33 +513,38 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             }
         } else if (cmdName.contains(":")) {
             NutsDefinition nutToRun = null;
-            nutToRun = ws.fetch(cmdName).setSession(session).setAcceptOptional(false).includeDependencies().setPreferInstalled(true).fetchDefinition();
+            nutToRun = ws.fetch(cmdName).setSession(session).setAcceptOptional(false).includeDependencies().installed().fetchDefinition();
             if (!nutToRun.getInstallation().isInstalled()) {
                 ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
                 ws.install(nutToRun.getId().toString(), args, new NutsInstallOptions().setForce(true), session);
             }
-            result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failFast, session,embedded);
+            result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failFast, session, embedded);
         } else {
-            NutsWorkspaceCommand command = ws.getConfigManager().findCommand(cmdName);
-            NutsDefinition nutToRun = null;
-            if (command == null) {
-                nutToRun = ws.fetch(cmdName).setSession(session).fetchDefinition();
-                log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
-                if (!nutToRun.getInstallation().isInstalled()) {
-                    ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
-                    ws.install(nutToRun.getId(), args, new NutsInstallOptions().setForce(true), session);
+            NutsWorkspaceCommand command = null;
+            if (embedded) {
+                command = ws.getConfigManager().findEmbeddedCommand(cmdName);
+                if (command == null) {
+                    command = ws.getConfigManager().findCommand(cmdName);
                 }
             } else {
-                nutToRun = ws.fetch(command.getCommand()[0]).setSession(session).setPreferInstalled(true).fetchDefinition();
-                List<String> r = new ArrayList<>(Arrays.asList(command.getCommand()));
-                //remove first element
-                r.remove(0);
-                r.addAll(Arrays.asList(args));
-                args = r.toArray(new String[0]);
-                executorOptions = ArrayUtils.concatArrays(command.getExecutorOptions(), executorOptions);
+                command = ws.getConfigManager().findCommand(cmdName);
+                if (command == null) {
+                    command = ws.getConfigManager().findEmbeddedCommand(cmdName);
+                }
             }
-            //load all needed dependencies!
-            result = ws.exec(nutToRun, cmdName, args, executorOptions, env, dir, failFast, session,embedded);
+            NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(dir).setFailFast(failFast).setEmbedded(embedded).setEnv(env);
+            if (command != null) {
+                result = command.exec(args, o, session);
+            } else {
+                NutsDefinition def = null;
+                def = ws.fetch(cmdName).setSession(session).fetchDefinition();
+                log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
+                if (!def.getInstallation().isInstalled()) {
+                    ws.getSecurityManager().checkAllowed(NutsConstants.RIGHT_AUTO_INSTALL, cmdName);
+                    ws.install(def.getId(), args, new NutsInstallOptions().setForce(true), session);
+                }
+                result = ws.exec(def, cmdName, args, executorOptions, env, dir, failFast, session, embedded);
+            }
         }
 
         checkFailFast(result);
@@ -568,6 +570,5 @@ public class DefaultNutsCommandExecBuilder implements NutsCommandExecBuilder {
             }
         }
     }
-
 
 }

@@ -25,7 +25,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public File getStoreLocation() {
         String storeLocation = 
-                configManager.getStoreLocation(configManager.getBootConfig().getApiId(), NutsStoreFolder.PROGRAMS)
+                configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.PROGRAMS)
                 ;
         if (storeLocation == null) {
             return null;

@@ -8,12 +8,13 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 public abstract class AbstractSystemTerminalAdapter implements NutsSystemTerminal {
+
     @Override
     public void install(NutsWorkspace workspace) {
         getParent().install(workspace);
     }
 
-    public abstract NutsSystemTerminalBase getParent() ;
+    public abstract NutsSystemTerminalBase getParent();
 
     @Override
     public void uninstall() {
@@ -22,8 +23,13 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
 
     @Override
     public void setMode(NutsTerminalMode mode) {
-        getParent().setOutMode(mode);
-        getParent().setErrorMode(mode);
+        NutsSystemTerminalBase p = getParent();
+        if (p instanceof NutsSystemTerminal) {
+            ((NutsSystemTerminal) p).setMode(mode);
+        } else {
+            p.setOutMode(mode);
+            p.setErrorMode(mode);
+        }
     }
 
     @Override
@@ -49,12 +55,22 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
 
     @Override
     public String readLine(String promptFormat, Object... params) {
-        return getParent().readLine(getOut(),promptFormat,params);
+        NutsSystemTerminalBase p = getParent();
+        if (p instanceof NutsTerminal) {
+            return ((NutsTerminal) p).readLine(promptFormat, params);
+        } else {
+            return getParent().readLine(getOut(), promptFormat, params);
+        }
     }
 
     @Override
-    public String readPassword(String prompt,Object ... params) {
-        return getParent().readLine(getOut(),prompt,params);
+    public String readPassword(String prompt, Object... params) {
+        NutsSystemTerminalBase p = getParent();
+        if (p instanceof NutsTerminal) {
+            return ((NutsTerminal) p).readLine(prompt, params);
+        } else {
+            return p.readLine(getOut(), prompt, params);
+        }
     }
 
     @Override
@@ -74,10 +90,14 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
 
     @Override
     public <T> T ask(NutsQuestion<T> question) {
-        return new DefaultNutsQuestionExecutor<T>(question,this,getOut())
-                .execute();
+        NutsSystemTerminalBase p = getParent();
+        if (p instanceof NutsTerminal) {
+            return ((NutsTerminal) p).ask(question);
+        } else {
+            return new DefaultNutsQuestionExecutor<T>(question, this, getOut())
+                    .execute();
+        }
     }
-
 
     @Override
     public int getSupportLevel(Object criteria) {
@@ -128,11 +148,12 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
 
     @Override
     public String readLine(PrintStream out, String prompt, Object... params) {
-        return getParent().readLine(out,prompt,params);
+        return getParent().readLine(out, prompt, params);
     }
 
     @Override
     public String readPassword(PrintStream out, String prompt, Object... params) {
-        return getParent().readPassword(out,prompt,params);
+        return getParent().readPassword(out, prompt, params);
     }
+
 }

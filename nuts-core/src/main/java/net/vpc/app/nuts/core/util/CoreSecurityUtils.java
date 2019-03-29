@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.core.util;
 
-import net.vpc.app.nuts.NutsIOException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -56,7 +55,7 @@ public class CoreSecurityUtils {
 
             return c.doFinal(decoded);
         } catch (GeneralSecurityException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 
@@ -81,7 +80,7 @@ public class CoreSecurityUtils {
             byte[] encryptedData = c.doFinal(data);
             return (Base64.getEncoder().encode(encryptedData));
         } catch (GeneralSecurityException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 
@@ -89,7 +88,7 @@ public class CoreSecurityUtils {
         try {
             return evalSHA1(new FileInputStream(file), true);
         } catch (FileNotFoundException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -102,7 +101,7 @@ public class CoreSecurityUtils {
             byte[] bytesOfMessage = input.getBytes("UTF-8");
             return evalMD5(bytesOfMessage);
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -114,7 +113,7 @@ public class CoreSecurityUtils {
             md = MessageDigest.getInstance("MD5");
             return md.digest(bytesOfMessage);
         } catch (NoSuchAlgorithmException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 
@@ -125,7 +124,7 @@ public class CoreSecurityUtils {
         try {
             sha1 = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(new IOException(ex));
         }
 
         byte[] buffer = new byte[8192];
@@ -138,7 +137,7 @@ public class CoreSecurityUtils {
                 len = input.read(buffer);
             }
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
 
         return toHexString(sha1.digest());

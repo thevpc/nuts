@@ -167,7 +167,7 @@ public class ProjectService {
                         List<NutsId> found = ws2.createQuery()
                                         .setIds(g.getGroupId() + ":" + g.getArtifactId())
                                         .setRepositoryFilter(nutsRepository)
-                                        .setLatestVersions(true).setSession(s).find()
+                                        .latestVersions().setSession(s).find()
                                 ;
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();

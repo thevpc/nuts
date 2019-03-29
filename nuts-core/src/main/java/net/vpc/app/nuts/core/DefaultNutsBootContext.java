@@ -1,9 +1,11 @@
 package net.vpc.app.nuts.core;
 
+import java.util.Arrays;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 public final class DefaultNutsBootContext implements NutsBootContext {
+
     private final String workspace;
     private final NutsId bootAPI;
     private final NutsId bootRuntime;
@@ -15,10 +17,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final NutsStoreLocationStrategy repositoryStoreLocationStrategy;
     private final NutsStoreLocationLayout storeLocationLayout;
     private final String[] storeLocations;
+    private final String[] homeLocations;
+    private final boolean global;
 
     public DefaultNutsBootContext(String workspace, NutsId bootAPI, NutsId bootRuntime,
-                                  String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
-                                  String[] locations, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy
+            String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
+            String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
+            NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
+            boolean global
     ) {
         this.workspace = workspace;
         this.bootAPI = bootAPI;
@@ -30,18 +36,29 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.storeLocationStrategy = storeLocationStrategy;
         this.storeLocationLayout = storeLocationLayout;
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        storeLocations = new String[NutsStoreFolder.values().length];
-        for (int i = 0; i < storeLocations.length; i++) {
-            storeLocations[i] = locations[i];
+        if (locations.length != NutsStoreLocation.values().length) {
+            throw new IllegalArgumentException("Invalid locations count");
         }
+        storeLocations = new String[NutsStoreLocation.values().length];
+        for (int i = 0; i < storeLocations.length; i++) {
+            this.storeLocations[i] = locations[i];
+        }
+        if (homeLocations.length != NutsStoreLocation.values().length * 2) {
+            throw new IllegalArgumentException("Invalid home locations count");
+        }
+        this.homeLocations = new String[NutsStoreLocation.values().length * 2];
+        for (int i = 0; i < homeLocations.length; i++) {
+            this.homeLocations[i] = homeLocations[i];
+        }
+        this.global = global;
     }
 
     public DefaultNutsBootContext(NutsBootConfig c) {
         this.workspace = c.getWorkspace();
         this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_API + "#" + c.getApiVersion());
-        this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#") ?
-                CoreNutsUtils.parseNutsId(c.getRuntimeId()) :
-                CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + c.getRuntimeId());
+        this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#")
+                ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
+                : CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + c.getRuntimeId());
         this.bootRuntimeDependencies = c.getRuntimeDependencies();
         this.bootRepositories = c.getRepositories();
         this.bootJavaCommand = c.getJavaCommand();
@@ -49,42 +66,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.storeLocationStrategy = c.getStoreLocationStrategy();
         this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
         this.storeLocationLayout = c.getStoreLocationLayout();
-        storeLocations = new String[NutsStoreFolder.values().length];
-        for (int i = 0; i < storeLocations.length; i++) {
-            switch (NutsStoreFolder.values()[i]) {
-                case PROGRAMS: {
-                    storeLocations[i] = c.getProgramsStoreLocation();
-                    break;
-                }
-                case LIB: {
-                    storeLocations[i] = c.getLibStoreLocation();
-                    break;
-                }
-                case CACHE: {
-                    storeLocations[i] = c.getCacheStoreLocation();
-                    break;
-                }
-                case CONFIG: {
-                    storeLocations[i] = c.getConfigStoreLocation();
-                    break;
-                }
-                case LOGS: {
-                    storeLocations[i] = c.getLogsStoreLocation();
-                    break;
-                }
-                case TEMP: {
-                    storeLocations[i] = c.getTempStoreLocation();
-                    break;
-                }
-                case VAR: {
-                    storeLocations[i] = c.getVarStoreLocation();
-                    break;
-                }
-                default: {
-                    throw new NutsIllegalArgumentException("Unsupported " + NutsStoreFolder.values()[i]);
-                }
-            }
-        }
+        this.storeLocations = c.getStoreLocations();
+        this.homeLocations = c.getHomeLocations();
+        this.global = c.isGlobal();
+    }
+
+    @Override
+    public boolean isGlobal() {
+        return this.global;
     }
 
     @Override
@@ -133,8 +122,23 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     }
 
     @Override
-    public String getStoreLocation(NutsStoreFolder folderType) {
+    public String getStoreLocation(NutsStoreLocation folderType) {
         return storeLocations[folderType.ordinal()];
+    }
+
+    @Override
+    public String[] getStoreLocations() {
+        return Arrays.copyOf(storeLocations, storeLocations.length);
+    }
+
+    @Override
+    public String[] getHomeLocations() {
+        return Arrays.copyOf(homeLocations, homeLocations.length);
+    }
+
+    @Override
+    public String getHomeLocation(NutsStoreLocationLayout layout, NutsStoreLocation folderType) {
+        return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folderType.ordinal()];
     }
 
     @Override

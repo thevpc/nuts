@@ -77,7 +77,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDefinition fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchDefinition();
+                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchDefinition();
                 } catch (Exception exc) {
                     //
                 }
@@ -96,7 +96,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDescriptor fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchDescriptor();
+                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchDescriptor();
                 } catch (Exception exc) {
                     //
                 }
@@ -115,7 +115,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchContentHash();
+                    hash = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchContentHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -134,7 +134,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchDescriptorHash();
+                    hash = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchDescriptorHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -154,7 +154,7 @@ public class NutsHttpServletFacade {
                 List<NutsId> fetch = null;
                 try {
                     NutsWorkspace ws = context.getWorkspace();
-                    fetch = ws.createQuery().setSession(context.getSession().copy().setTransitive(transitive)).addId(id).find();
+                    fetch = ws.createQuery().setSession(context.getSession()).setTransitive(transitive).addId(id).find();
                 } catch (Exception exc) {
                     //
                 }
@@ -173,7 +173,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsId fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy().setTransitive(transitive)).fetchId();
+                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy()).setTransitive(transitive).fetchId();
                 } catch (Exception exc) {
                     //
                 }
@@ -216,7 +216,8 @@ public class NutsHttpServletFacade {
                     }
                 }
                 Iterator<NutsId> it = context.getWorkspace().createQuery()
-                                .setSession(context.getSession().copy().setTransitive(transitive))
+                                .setSession(context.getSession())
+                                .setTransitive(transitive)
                                 .addJs(js).addId(pattern).findIterator()
                         ;
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());

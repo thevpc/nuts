@@ -7,7 +7,7 @@ package net.vpc.app.nuts.toolbox.nadmin.config;
 
 import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsStoreFolder;
+import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.commandline.Argument;
@@ -57,22 +57,22 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        deleteFolder(context,force,NutsStoreFolder.LOGS);
+        deleteFolder(context,force,NutsStoreLocation.LOGS);
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force,NutsStoreFolder.VAR);
+        deleteFolder(context, force,NutsStoreLocation.VAR);
     }
 
     private void deletePrograms(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force,NutsStoreFolder.PROGRAMS);
+        deleteFolder(context, force,NutsStoreLocation.PROGRAMS);
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force,NutsStoreFolder.CONFIG);
+        deleteFolder(context, force,NutsStoreLocation.CONFIG);
     }
 
-    private void deleteFolder(NutsApplicationContext context, boolean force,NutsStoreFolder folder) {
+    private void deleteFolder(NutsApplicationContext context, boolean force,NutsStoreLocation folder) {
         deleteFolder(context,context.getWorkspace().getConfigManager().getStoreLocation(folder),folder.name().toLowerCase(),force);
     }
 
@@ -91,7 +91,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreFolder.CACHE);
+        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreLocation.CACHE);
         if(storeLocation!=null) {
             File cache = new File(storeLocation);
             if (cache.exists()) {
@@ -104,7 +104,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private static void deleteRepoCache(NutsRepository repository, NutsApplicationContext context, boolean force){
-        String s = repository.getStoreLocation(NutsStoreFolder.CACHE);
+        String s = repository.getStoreLocation(NutsStoreLocation.CACHE);
         if(s!=null){
             File file = new File(s);
             if(file.exists()) {

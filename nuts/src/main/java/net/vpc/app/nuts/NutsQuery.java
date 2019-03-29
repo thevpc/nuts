@@ -1,62 +1,24 @@
 package net.vpc.app.nuts;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 
-public interface NutsQuery {
+public interface NutsQuery extends NutsQueryBaseOptions<NutsQuery> {
 
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
+    
     NutsQuery setId(String id);
 
     NutsQuery setId(NutsId value);
 
     NutsQuery mainAndDependencies();
 
-    NutsQuery includeDependencies();
-
-    NutsQuery includeDependencies(boolean include);
-
-    NutsQuery setSession(NutsSession session);
-
-    NutsQuery setScope(NutsDependencyScope scope);
-
-    NutsQuery setScope(NutsDependencyScope... scope);
-
-    NutsQuery setScope(Collection<NutsDependencyScope> scope);
-
-    NutsQuery addScope(NutsDependencyScope scope);
-
-    NutsQuery addScope(Collection<NutsDependencyScope> scope);
-
-    NutsQuery addScope(NutsDependencyScope... scope);
-
-    NutsQuery removeScope(Collection<NutsDependencyScope> scope);
-
-    NutsQuery removeScope(NutsDependencyScope scope);
-
-    NutsQuery setAcceptOptional(Boolean acceptOptional);
-
-    NutsQuery setIncludeOptional(boolean includeOptional);
-
-    NutsQuery setIgnoreCache(boolean ignoreCache);
-
-    NutsQuery ignoreCache();
-
-    NutsQuery setIncludeDependencies(boolean includeDependencies);
-
-    NutsQuery setIncludeEffective(boolean includeEffectiveDescriptor);
-
-    NutsQuery setIncludeFile(boolean includeFile);
-
-    NutsQuery setIncludeInstallInformation(boolean includeInstallInformation);
-
-    NutsQuery setInstalledOnly(boolean preferInstalled);
-
-    NutsQuery setPreferInstalled(boolean preferInstalled);
+    NutsQuery mainOnly();
 
     NutsQuery setVersionFilter(NutsVersionFilter filter);
 
@@ -94,9 +56,30 @@ public interface NutsQuery {
 
     NutsQuery addRepository(String... value);
 
+    /**
+     * setSort(true)
+     *
+     * @return
+     */
+    NutsQuery sort();
+
     NutsQuery setSort(boolean sort);
 
-    NutsQuery setLatestVersions(boolean latestVersions);
+    /**
+     * setIncludeAllVersions(false)
+     *
+     * @return
+     */
+    NutsQuery allVersions();
+
+    /**
+     * setIncludeAllVersions(true)
+     *
+     * @return
+     */
+    NutsQuery latestVersions();
+
+    NutsQuery setIncludeAllVersions(boolean allVersions);
 
     NutsQuery setDependencyFilter(NutsDependencyFilter filter);
 
@@ -116,7 +99,13 @@ public interface NutsQuery {
 
     NutsQuery setIds(Collection<String> ids);
 
-    NutsQuery setAll(NutsQuery other);
+    NutsQuery dependenciesOnly();
+
+    NutsQuery setIgnoreNotFound(boolean ignoreNotFound);
+
+    NutsQuery sort(Comparator<NutsId> comparator);
+
+    NutsQuery setIncludeDuplicateVersions(boolean includeDuplicateVersions);
 
     NutsQuery copyFrom(NutsQuery other);
 
@@ -125,15 +114,10 @@ public interface NutsQuery {
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
-    NutsSession getSession();
-
+    
     String[] getIds();
 
     boolean isSort();
-
-    boolean isLatestVersions();
-
-    Set<NutsDependencyScope> getScope();
 
     NutsDependencyFilter getDependencyFilter();
 
@@ -153,27 +137,12 @@ public interface NutsQuery {
 
     String[] getRepos();
 
-    NutsQuery dependenciesOnly();
-
-    NutsQuery mainOnly();
-
-    Boolean getAcceptOptional();
-
     boolean isIgnoreNotFound();
-
-    NutsQuery setIgnoreNotFound(boolean ignoreNotFound);
-
-    boolean isIncludeFile();
-
-    boolean isIncludeInstallInformation();
-
-    boolean isIncludeEffective();
-
-    boolean isIgnoreCache();
 
     ////////////////////////////////////////////////////////
     // Result
     ////////////////////////////////////////////////////////
+    
     NutsId findOne();
 
     NutsId findFirst();
@@ -181,6 +150,8 @@ public interface NutsQuery {
     List<NutsId> find();
 
     Iterator<NutsId> findIterator();
+
+    Iterable<NutsId> findIterable();
 
     NutsDefinition fetchOne();
 
@@ -194,4 +165,18 @@ public interface NutsQuery {
 
     Iterator<NutsDefinition> fetchIterator();
 
+    Stream<NutsId> findStream();
+
+    Stream<NutsDefinition> fetchStream();
+
+    Comparator<NutsId> getSortIdComparator();
+
+    boolean isIncludeDuplicatedVersions();
+
+    boolean isIncludeMain();
+
+    boolean isIncludeAllVersions();
+
+    NutsQueryOptions toOptions();
+    
 }

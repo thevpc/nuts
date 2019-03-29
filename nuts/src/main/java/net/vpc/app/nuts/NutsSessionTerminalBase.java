@@ -29,17 +29,18 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.PrintStream;
-
 /**
  * Created by vpc on 2/20/17.
  */
 @NutsPrototype
 public interface NutsSessionTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
 
-    String readLine(PrintStream out, String prompt, Object... params);
-
-    String readPassword(PrintStream out, String prompt, Object... params);
-
-    void install(NutsWorkspace workspace);
+//    @Override
+//    String readLine(PrintStream out, String prompt, Object... params);
+//
+//    @Override
+//    String readPassword(PrintStream out, String prompt, Object... params);
+//
+//    @Override
+//    void install(NutsWorkspace workspace);
 }

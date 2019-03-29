@@ -58,7 +58,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session);
 
-    NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession session);
+    NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsQueryOptions options, NutsSession session);
 
     NutsDefinition checkout(NutsId id, String folder, NutsSession session);
 
@@ -96,7 +96,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
      * @param session current session
      * @return bundled nuts file, the nuts is neither deployed nor installed!
      */
-    NutsDefinition createBundle(String contentFolder, String destFile, NutsSession session);
+    NutsDefinition createBundle(String contentFolder, String destFile, NutsQueryOptions queryOptions, NutsSession session);
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
 
@@ -152,11 +152,9 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsId[] resolveIdsForClass(Class clazz);
 
-    NutsQuery createQuery();
-
     String getFileName(NutsId id, String ext);
 
-    String createRegex(String pattern, boolean contains);
+    NutsQuery createQuery();
 
     void updateRepositoryIndex(String path);
 
@@ -172,13 +170,19 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsDescriptorBuilder createDescriptorBuilder();
 
+    String createRegex(String pattern);
+
     NutsIdBuilder createIdBuilder();
 
     NutsCommandExecBuilder createExecBuilder();
 
     NutsDeploymentBuilder createDeploymentBuilder();
 
+    NutsQueryOptions createQueryOptions();
+
     void save(boolean force);
 
     void save();
+
+    boolean isGlobal();
 }

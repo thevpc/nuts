@@ -74,6 +74,11 @@
             <artifactId>vpc-common-strings</artifactId>
             <version>1.2.16</version>
         </dependency>
+        <dependency>
+            <groupId>net.vpc.common</groupId>
+            <artifactId>vpc-common-utils</artifactId>
+            <version>1.22.5</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

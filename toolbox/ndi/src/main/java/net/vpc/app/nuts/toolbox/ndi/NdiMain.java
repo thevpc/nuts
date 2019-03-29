@@ -17,7 +17,8 @@ public class NdiMain extends NutsApplication {
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
         SystemNdi ndi = null;
-        if (appContext.getWorkspace().getConfigManager().getPlatformOs().getName().equals("linux")) {
+        NutsOsFamily fam = appContext.getWorkspace().getConfigManager().getPlatformOsFamily();
+        if (fam==NutsOsFamily.LINUX || fam==NutsOsFamily.UNIX) {
             ndi = new LinuxNdi(appContext);
         }
         return ndi;

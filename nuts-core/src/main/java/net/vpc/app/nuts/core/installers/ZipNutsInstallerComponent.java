@@ -54,7 +54,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
     @Override
     public void install(NutsExecutionContext executionContext) {
         DefaultNutsDefinition nutsDefinition = (DefaultNutsDefinition)executionContext.getNutsDefinition();
-        File installFolder = new File(executionContext.getWorkspace().getConfigManager().getStoreLocation(nutsDefinition.getId(), NutsStoreFolder.PROGRAMS));
+        File installFolder = new File(executionContext.getWorkspace().getConfigManager().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.PROGRAMS));
 
         String skipRoot = (String) executionContext.getExecutorProperties().remove("unzip-skip-root");
         ZipUtils.unzip((nutsDefinition.getContent().getFile()),

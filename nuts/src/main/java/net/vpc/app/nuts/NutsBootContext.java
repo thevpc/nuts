@@ -39,7 +39,43 @@ public interface NutsBootContext {
 
     NutsStoreLocationLayout getStoreLocationLayout();
 
-    String getStoreLocation(NutsStoreFolder folderType);
+    /**
+     * all store locations ordered according NutsStoreFolder constant
+     * definitions example of order is :
+     * <pre>
+     *  PROGRAMS
+     *  CONFIG
+     *  ....
+     * </pre>
+     *
+     * @return array of available locations
+     */
+    String[] getStoreLocations();
+    
+    /**
+     * all store locations ordered according NutsStoreFolder and then
+     * NutsStoreLocationLayout constant definitions. Note that
+     * NutsStoreLocationLayout. 
+     * example of order is :
+     * <pre>
+     *  SYSTEM  PROGRAMS 
+     *  SYSTEM  CONFIG  
+     *  ....
+     *  WINDOWS PROGRAMS 
+     *  WINDOWS CONFIG  
+     *  ....
+     *  LINUX   PROGRAMS
+     *  LINUX   CONFIG
+     *  ....
+     * </pre>
+     *
+     * @return array of available home locations
+     */
+    String[] getHomeLocations();
+
+    String getStoreLocation(NutsStoreLocation folderType);
+
+    String getHomeLocation(NutsStoreLocationLayout layout,NutsStoreLocation folderType);
 
     NutsId getApiId();
 
@@ -52,4 +88,6 @@ public interface NutsBootContext {
     String getJavaCommand();
 
     String getJavaOptions();
+    
+    boolean isGlobal();
 }

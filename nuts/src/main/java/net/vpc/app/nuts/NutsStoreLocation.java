@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-public enum NutsStoreFolder {
+public enum NutsStoreLocation {
     PROGRAMS,
     CONFIG,
     VAR,

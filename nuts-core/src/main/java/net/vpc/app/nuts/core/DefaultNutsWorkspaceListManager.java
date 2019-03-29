@@ -53,7 +53,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                         this.defaultWorkspace
                                 .resolveIdForClass(DefaultNutsWorkspaceListManager.class)
                                 .getSimpleNameId(),
-                        NutsStoreFolder.CONFIG),
+                        NutsStoreLocation.CONFIG),
                 name + "-nuts-workspace-list.json");
     }
 
@@ -95,7 +95,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         return Nuts.openWorkspace(new NutsWorkspaceOptions()
                 .setWorkspace(path)
                 .setOpenMode(NutsWorkspaceOpenMode.OPEN_OR_CREATE)
-                .setSkipPostCreateInstallCompanionTools(true)
+                .setSkipInstallCompanions(true)
         );
     }
 

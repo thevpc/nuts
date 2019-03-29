@@ -4,11 +4,11 @@ import java.io.*;
 
 public interface NutsIOManager extends NutsComponent<Object> {
 
-    InputStream monitorInputStream(String path, String name, NutsSession session);
+    InputStream monitorInputStream(String path, String name, NutsTerminalProvider session);
 
-    InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session);
+    InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session);
 
-    InputStream monitorInputStream(String path, Object source, NutsSession session);
+    InputStream monitorInputStream(String path, Object source, NutsTerminalProvider session);
 
     String toJsonString(Object obj, boolean pretty);
 
@@ -42,7 +42,7 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     NutsSessionTerminal createTerminal(NutsTerminalBase parent);
 
-    void downloadPath(String from, File to, Object source, NutsSession session);
+    void downloadPath(String from, File to, Object source, NutsTerminalProvider session);
 
     File createTempFile(String name);
 

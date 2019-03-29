@@ -30,12 +30,12 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.NutsHttpConnectionFacade;
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsTransportComponent;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -53,7 +53,7 @@ public class CoreHttpUtils {
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

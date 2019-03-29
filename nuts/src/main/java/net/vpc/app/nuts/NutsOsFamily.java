@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.vpc.app.nuts.core.test;
+package net.vpc.app.nuts;
 
 /**
  *
  * @author vpc
  */
-public class TestFind {
-    
+public enum NutsOsFamily {
+    WINDOWS,
+    LINUX,
+    MACOS,
+    UNIX,
+    UNKNOWN
 }

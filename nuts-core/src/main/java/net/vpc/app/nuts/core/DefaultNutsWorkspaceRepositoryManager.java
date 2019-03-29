@@ -271,12 +271,12 @@ public class DefaultNutsWorkspaceRepositoryManager implements NutsWorkspaceRepos
     private static class DummyNutsIndexStoreClient implements NutsIndexStoreClient {
 
         @Override
-        public List<NutsId> findVersions(NutsId id, NutsSession session) {
+        public List<NutsId> findVersions(NutsId id, NutsRepositorySession session) {
             return null;
         }
 
         @Override
-        public Iterator<NutsId> find(NutsIdFilter filter, NutsSession session) {
+        public Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session) {
             return null;
         }
 

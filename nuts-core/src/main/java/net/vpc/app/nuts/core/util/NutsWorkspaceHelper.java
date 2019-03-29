@@ -27,14 +27,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.common.strings.StringUtils;
-
-import java.io.File;
 import java.util.*;
+import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
 
 /**
  *
@@ -42,16 +39,13 @@ import java.util.*;
  */
 public class NutsWorkspaceHelper {
 
-    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session) {
-        return filterRepositories(repos, id, repositoryFilter, session, false, null);
+    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsQueryOptions options) {
+        return filterRepositories(repos, id, repositoryFilter, session, false, null, mode, options);
     }
 
     public static List<NutsRepository> filterRepositories(
-            List<NutsRepository> repos,
-            NutsId id,
-            NutsRepositoryFilter repositoryFilter, NutsSession session,
-            boolean sortByLevelDesc,
-            final Comparator<NutsRepository> postComp) {
+            List<NutsRepository> repos, NutsId id, NutsRepositoryFilter repositoryFilter,
+            NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsQueryOptions options) {
         class RepoAndLevel {
 
             NutsRepository r;
@@ -65,10 +59,11 @@ public class NutsWorkspaceHelper {
         List<RepoAndLevel> repos2 = new ArrayList<>();
 //        List<Integer> reposLevels = new ArrayList<>();
         for (NutsRepository repository : repos) {
-            if(repositoryFilter==null || repositoryFilter.accept(repository)) {
+            if (repositoryFilter == null || repositoryFilter.accept(repository)) {
+
                 int t = 0;
                 try {
-                    t = repository.getSupportLevel(id, session);
+                    t = repository.getSupportLevel(id, mode, options.isTransitive());
                 } catch (Exception e) {
                     //ignore...
                 }
@@ -105,7 +100,7 @@ public class NutsWorkspaceHelper {
         if (qm.get(NutsConstants.QUERY_FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
             qm.put("arch", ws.getConfigManager().getPlatformArch().toString());
             qm.put("os", ws.getConfigManager().getPlatformOs().toString());
-            if(ws.getConfigManager().getPlatformOsDist()!=null) {
+            if (ws.getConfigManager().getPlatformOsDist() != null) {
                 qm.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
             }
             return id.setQuery(qm);
@@ -123,5 +118,20 @@ public class NutsWorkspaceHelper {
 //        }
 //        return workspace;
 //    }
+    public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsQueryOptions options) {
+        return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
+    }
+
+    public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsQueryOptions options) {
+        return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
+    }
+
+    public static NutsFetchMode[] resolveFetchModes(boolean offline) {
+        return offline ? new NutsFetchMode[]{NutsFetchMode.LOCAL} : new NutsFetchMode[]{NutsFetchMode.LOCAL, NutsFetchMode.REMOTE};
+    }
+
+    public static NutsFetchStrategy validate(NutsFetchStrategy mode) {
+        return mode == null ? NutsFetchStrategy.ONLINE : mode;
+    }
 
 }

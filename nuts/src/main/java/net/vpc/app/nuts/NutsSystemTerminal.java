@@ -35,16 +35,6 @@ import java.io.OutputStream;
 public interface NutsSystemTerminal extends NutsSystemTerminalBase,NutsTerminal {
     void setMode(NutsTerminalMode mode);
 
-    void setOutMode(NutsTerminalMode mode);
-
-    NutsTerminalMode getOutMode();
-
-    void setErrorMode(NutsTerminalMode mode);
-
-    NutsTerminalMode getErrorMode();
-
-    <T> T ask(NutsQuestion<T> question);
-
     boolean isStandardOutputStream(OutputStream out);
 
     boolean isStandardErrorStream(OutputStream out);

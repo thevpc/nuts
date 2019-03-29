@@ -5,19 +5,17 @@
  */
 package net.vpc.app.nuts.core.test;
 
+import net.vpc.app.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsStoreFolder;
-import net.vpc.app.nuts.NutsStoreLocationLayout;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.common.io.IOUtils;
 import org.junit.Assert;
-import static net.vpc.app.nuts.core.test.TestUtils.*;
+import static net.vpc.app.nuts.core.test.utils.TestUtils.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assume;
@@ -31,49 +29,45 @@ import org.junit.Test;
  */
 public class TestCreateLayoutLinux {
 
-    private static final String LINUX_CONFIG = new File(System.getProperty("user.home") + "/.nuts").getPath();
-    private static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
-    private static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
-    private static final String NUTS_VERSION = Nuts.getVersion();
-    private static final String NDI_VERSION = NUTS_VERSION + ".0";
-    private Map<String, String> clearUpExtraSystemProperties;
-
     @Test
     public void customLayout_use_export() throws Exception {
         String test_id = "customLayout_use_export";
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
-        for (NutsStoreFolder folder : NutsStoreFolder.values()) {
-            for (NutsStoreLocationLayout layout : NutsStoreLocationLayout.values()) {
-                extraProperties.put("nuts.export.home." + folder.name().toLowerCase() + "." + layout.name().toLowerCase(), new File(base, folder.name().toLowerCase() + "." + layout.name().toLowerCase()).getPath());
-            }
-        }
         TestUtils.setSystemProperties(extraProperties);
-        clearUpExtraSystemProperties = extraProperties;
 
         IOUtils.delete(base);
-        Nuts.runWorkspace(new String[]{"--verbose", "--yes", "--info"});
+        Nuts.runWorkspace(new String[]{
+            "--system-programs-home", new File(base, "system.programs").getPath(),
+            "--system-config-home", new File(base, "system.config").getPath(),
+            "--system-var-home", new File(base, "system.var").getPath(),
+            "--system-logs-home", new File(base, "system.logs").getPath(),
+            "--system-temp-home", new File(base, "system.temp").getPath(),
+            "--system-cache-home", new File(base, "system.cache").getPath(),
+            "--system-lib-home", new File(base, "system.lib").getPath(),
+            //            "--verbose", 
+            "--yes", "--info"});
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nfind", "nsh"),
-                listNamesSet(new File(base, "config.linux/default-workspace/config/components/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(base, "system.config/default-workspace/config/components/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 37,
-                listNamesSet(new File(base, "programs.linux/default-workspace/programs/components/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(base, "system.programs/default-workspace/programs/components/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 5,
-                listNamesSet(new File(base, "programs.linux/default-workspace/programs/components/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                listNamesSet(new File(base, "system.programs/default-workspace/programs/components/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
                 2,
-                listNamesSet(new File(base, "cache.linux/default-workspace/cache"), x -> x.isDirectory()).size()
+                listNamesSet(new File(base, "system.cache/default-workspace/cache"), x -> x.isDirectory()).size()
         );
-        Assert.assertFalse(new File(LINUX_CONFIG).exists());
-        Assert.assertFalse(new File(LINUX_CACHE).exists());
-        Assert.assertFalse(new File(LINUX_TEMP).exists());
+        for (String f : TestUtils.NUTS_STD_FOLDERS) {
+            Assert.assertFalse(new File(f).exists());
+        }
 //        Assert.assertEquals(
 //                false,
 //                new File(base, "repositories/system/repositories/system-ref/system-ref").exists()
@@ -103,9 +97,9 @@ public class TestCreateLayoutLinux {
                 3, //three because even maven-local will be proxied
                 listNamesSet(new File(base, "cache"), x -> x.isDirectory()).size()
         );
-        Assert.assertFalse(new File(LINUX_CONFIG).exists());
-        Assert.assertFalse(new File(LINUX_CACHE).exists());
-        Assert.assertFalse(new File(LINUX_TEMP).exists());
+        for (String f : TestUtils.NUTS_STD_FOLDERS) {
+            Assert.assertFalse(new File(f).exists());
+        }
 //        Assert.assertEquals(
 //                false,
 //                new File(base, "repositories/system/repositories/system-ref/system-ref").exists()
@@ -119,19 +113,19 @@ public class TestCreateLayoutLinux {
         Nuts.runWorkspace(new String[]{"--verbose", "--yes", "--info"});
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nfind", "nsh"),
-                listNamesSet(new File(LINUX_CONFIG, "default-workspace/config/components/net/vpc/app/nuts/toolbox"), File::isDirectory)
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/components/net/vpc/app/nuts/toolbox"), File::isDirectory)
         );
         Assert.assertEquals(
                 37,
-                listNamesSet(new File(LINUX_CONFIG, "default-workspace/programs/components/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/components/net/vpc/app/nuts/nuts/" + TestUtils.NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 5,
-                listNamesSet(new File(LINUX_CONFIG, "default-workspace/programs/components/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/components/net/vpc/app/nuts/toolbox/ndi/" + TestUtils.NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
                 2,
-                listNamesSet(new File(LINUX_CACHE, "default-workspace/cache"), x -> x.isDirectory()).size()
+                listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/cache"), x -> x.isDirectory()).size()
         );
 //        Assert.assertEquals(
 //                false,
@@ -141,9 +135,9 @@ public class TestCreateLayoutLinux {
 
     @BeforeClass
     public static void setUpClass() throws IOException {
-        TestUtils.STASH.saveIfExists(new File(LINUX_CONFIG));
-        TestUtils.STASH.saveIfExists(new File(LINUX_TEMP));
-        TestUtils.STASH.saveIfExists(new File(LINUX_CACHE));
+        for (String f : TestUtils.NUTS_STD_FOLDERS) {
+            TestUtils.STASH.saveIfExists(new File(f));
+        }
     }
 
     @AfterClass
@@ -156,27 +150,15 @@ public class TestCreateLayoutLinux {
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
         File stash = new File(System.getProperty("user.home"), "stash/nuts");
         stash.mkdirs();
-        IOUtils.delete(new File(LINUX_CONFIG));
-        IOUtils.delete(new File(LINUX_TEMP));
-        IOUtils.delete(new File(LINUX_CACHE));
-        cleanup0();
+        for (String f : TestUtils.NUTS_STD_FOLDERS) {
+            IOUtils.delete(new File(f));
+        }
+        TestUtils.unsetNutsSystemProperties();
     }
 
     @After
     public void cleanup() {
-        TestUtils.setSystemProperties(clearUpExtraSystemProperties);
-        clearUpExtraSystemProperties = null;
+        TestUtils.unsetNutsSystemProperties();
     }
 
-    public void cleanup0() {
-        final Properties props = System.getProperties();
-        for (Object k : props.keySet()) {
-            String ks=String.valueOf(k);
-            if (ks.startsWith("nuts.")) {
-                System.out.println("## removed "+ks+"="+props.getProperty(ks));
-                props.remove(ks);
-            }else if (ks.startsWith("nuts_")) {
-            }
-        }
-    }
 }

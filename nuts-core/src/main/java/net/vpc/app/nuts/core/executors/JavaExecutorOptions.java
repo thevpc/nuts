@@ -113,7 +113,8 @@ public class JavaExecutorOptions {
         nutsDefinitions.addAll(
                 ws
                         .createQuery().addId(descriptor.getId())
-                        .setSession(session.copy().setTransitive(true))
+                        .setSession(session)
+                        .setTransitive(true)
                         .addScope(NutsDependencyScope.PROFILE_RUN)
                         .setIncludeOptional(false)
                         .mainAndDependencies()
@@ -213,7 +214,7 @@ public class JavaExecutorOptions {
     }
 
     private void npToCp(List<String> classPath, String value) {
-        NutsQuery ns = getWs().createQuery().setLatestVersions(true)
+        NutsQuery ns = getWs().createQuery().latestVersions()
                 .setSession(this.session);
         for (String n : CoreStringUtils.split(value, ";, ")) {
             if (!StringUtils.isEmpty(n)) {

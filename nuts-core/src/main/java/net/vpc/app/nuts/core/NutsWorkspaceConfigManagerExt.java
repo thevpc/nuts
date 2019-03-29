@@ -28,4 +28,6 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
     void setBootRuntimeDependencies(String value);
 
     void setBootRepositories(String value);
+
+    public boolean isGlobal();
 }

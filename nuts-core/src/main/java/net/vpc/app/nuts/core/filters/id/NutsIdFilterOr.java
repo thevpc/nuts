@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
-    private NutsIdFilter[] all;
+    private final NutsIdFilter[] children;
 
     public NutsIdFilterOr(NutsIdFilter... all) {
         List<NutsIdFilter> valid = new ArrayList<>();
@@ -24,15 +24,19 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
                 }
             }
         }
-        this.all = valid.toArray(new NutsIdFilter[0]);
+        this.children = valid.toArray(new NutsIdFilter[0]);
+    }
+
+    public NutsIdFilter[] getChildren() {
+        return Arrays.copyOf(children, children.length);
     }
 
     @Override
     public boolean accept(NutsId id) {
-        if (all.length == 0) {
+        if (children.length == 0) {
             return true;
         }
-        for (NutsIdFilter filter : all) {
+        for (NutsIdFilter filter : children) {
             if (filter.accept(id)) {
                 return true;
             }
@@ -41,7 +45,10 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
     }
 
     public NutsIdFilter simplify() {
-        NutsIdFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsIdFilter.class, all);
+        if(children.length==0){
+            return null;
+        }
+        NutsIdFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsIdFilter.class, children);
         if (newValues != null) {
             if (newValues.length == 0) {
                 return null;
@@ -50,12 +57,12 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
                 return newValues[0];
             }
             return new NutsIdFilterOr(newValues);
-        }else{
-            if (all.length == 0) {
+        } else {
+            if (children.length == 0) {
                 return null;
             }
-            if (all.length == 1) {
-                return all[0];
+            if (children.length == 1) {
+                return children[0];
             }
             return this;
         }
@@ -64,13 +71,13 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
     @Override
     public String toJsNutsIdFilterExpr() {
         StringBuilder sb = new StringBuilder();
-        if (all.length == 0) {
+        if (children.length == 0) {
             return "true";
         }
-        if (all.length > 1) {
+        if (children.length > 1) {
             sb.append("(");
         }
-        for (NutsIdFilter id : all) {
+        for (NutsIdFilter id : children) {
             if (sb.length() > 0) {
                 sb.append(" || ");
             }
@@ -85,7 +92,7 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
                 return null;
             }
         }
-        if (all.length > 0) {
+        if (children.length > 0) {
             sb.append(")");
         }
         return sb.toString();
@@ -93,13 +100,13 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
 
     @Override
     public String toString() {
-        return StringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return StringUtils.join(" Or ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 17 * hash + Arrays.deepHashCode(this.all);
+        hash = 17 * hash + Arrays.deepHashCode(this.children);
         return hash;
     }
 
@@ -115,12 +122,10 @@ public class NutsIdFilterOr implements NutsIdFilter, Simplifiable<NutsIdFilter>,
             return false;
         }
         final NutsIdFilterOr other = (NutsIdFilterOr) obj;
-        if (!Arrays.deepEquals(this.all, other.all)) {
+        if (!Arrays.deepEquals(this.children, other.children)) {
             return false;
         }
         return true;
     }
-    
-    
 
 }

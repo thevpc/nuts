@@ -109,7 +109,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         try {
             server = httpConfig.isSsh() ? HttpsServer.create(inetSocketAddress, backlog) : HttpServer.create(inetSocketAddress, backlog);
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
         if (executor == null) {
             executor = new ThreadPoolExecutor(4, 100, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
@@ -131,7 +131,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                 try {
                     ks.load(new ByteArrayInputStream(httpConfig.getSslKeystoreCertificate()), password);
                 } catch (IOException e) {
-                    throw new NutsIOException(e);
+                    throw new UncheckedIOException(e);
                 }
 
                 // setup the key manager factory
@@ -291,7 +291,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         try {
             return URLDecoder.decode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

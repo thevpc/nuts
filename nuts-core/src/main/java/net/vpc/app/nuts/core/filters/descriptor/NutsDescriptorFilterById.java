@@ -36,6 +36,7 @@ import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.Simplifiable;
 
 import java.util.Objects;
+import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
 
 /**
  *

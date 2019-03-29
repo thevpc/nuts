@@ -6,6 +6,7 @@ import net.vpc.app.nuts.NutsWorkspaceOptions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import net.vpc.app.nuts.NutsBootInitMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ public class NutsWorkspacePool {
 
     @Autowired
     private NutsIndexerApplication.Config app;
-    private Map<String, NutsWorkspace> pool = new LinkedHashMap<>();
+    private final Map<String, NutsWorkspace> pool = new LinkedHashMap<>();
 
     public NutsWorkspace openWorkspace(String ws) {
         NutsWorkspace o = pool.get(ws);
@@ -22,7 +23,10 @@ public class NutsWorkspacePool {
             if (app.getApplicationContext().getWorkspace().getConfigManager().getWorkspaceLocation().equals(ws)) {
                 o = app.getApplicationContext().getWorkspace();
             } else {
-                o = Nuts.openWorkspace(new NutsWorkspaceOptions().setRecover(true).setSkipPostCreateInstallCompanionTools(true).setWorkspace(ws));
+                o = Nuts.openWorkspace(new NutsWorkspaceOptions()
+                        .setInitMode(NutsBootInitMode.RECOVER)
+                        .setSkipInstallCompanions(true)
+                        .setWorkspace(ws));
             }
             pool.put(ws, o);
             pool.put(o.getUuid(), o);

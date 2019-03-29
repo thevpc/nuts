@@ -26,11 +26,13 @@ public class MvnClient {
             case INIT:{
                 status=Status.DIRTY;
                 try {
-                    ws.fetch(NET_VPC_APP_NUTS_MVN).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE))
+                    ws.fetch(NET_VPC_APP_NUTS_MVN).setSession(session.copy())
+                            .wired()
                             .setAcceptOptional(false)
                             .includeDependencies().fetchDefinition();
                     for (NutsId nutsId : ws.createQuery().mainAndDependencies().find()) {
-                        ws.fetch(nutsId).setSession(session.copy().setFetchMode(NutsFetchMode.ONLINE))
+                        ws.fetch(nutsId).setSession(session)
+                                .wired()
                                 .setAcceptOptional(false)
                                 .includeDependencies().fetchDefinition();
                     }

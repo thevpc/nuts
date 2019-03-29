@@ -20,7 +20,7 @@ public class NutsIndexerUtils {
             m = ws.getConfigManager()
                     .getStoreLocation(ws.resolveIdForClass(NutsIndexerUtils.class)
                                     .getSimpleNameId(),
-                            NutsStoreFolder.CACHE) + File.separator + entity;
+                            NutsStoreLocation.CACHE) + File.separator + entity;
             ws.getUserProperties().put(k, m);
         }
         return new File(m).toPath();

@@ -32,11 +32,11 @@ package net.vpc.app.nuts.core.parsers;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorContentParserComponent;
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.common.io.ZipUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -66,7 +66,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
                 return parserContext.getWorkspace().getParseManager().parseDescriptor(buffer.toByteArray());
             }
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
         return null;
     }

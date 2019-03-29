@@ -50,442 +50,324 @@ public final class NutsArgumentsParser {
         NutsMinimalCommandLine cmdArgList = new NutsMinimalCommandLine(bootArguments);
         while ((cmdArg = cmdArgList.next()) != null) {
             if (cmdArg.isOption()) {
-                switch (cmdArg.getKey()) {
-                    //dash  should be the very last argument
-                    case "-V":
-                    case "--boot-version":
-                    case "--boot-api-version": {
-                        o.setRequiredBootVersion(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "-!V":
-                    case "--!boot-version":
-                    case "--!boot-api-version": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--embedded":
-                    case "-b": {
+                String k = cmdArg.getKey();
+                boolean enabled = true;
+                if (k.startsWith("--!")) {
+                    k = "--" + k.substring(3);
+                    enabled = false;
+                } else if (k.startsWith("-!")) {
+                    k = "-" + k.substring(2);
+                    enabled = false;
+                }
+                switch (k) {
+                    //**********************************
+                    //*
+                    //* Create Exported Options
+                    //*
+                    //**********************************
+                    //
+                    // [[create exported options]] are considered both when creating a new workspace 
+                    // and when running it. If they are specified in creation 
+                    // they will be persisted. If they are specified later they 
+                    // will override persisted values without persisting the changes
 
-                        o.setExecutionType(NutsExecutionType.EMBEDDED);
-                        //ignore
-                        break;
-                    }
-                    case "--!embedded":
-                    case "-!b": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--external":
-                    case "-x": {
-
-                        o.setExecutionType(NutsExecutionType.EXTERNAL);
-                        //ignore
-                        break;
-                    }
-                    case "--!external":
-                    case "-!x": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--native":
-                    case "-n": {
-
-                        o.setExecutionType(NutsExecutionType.NATIVE);
-                        //ignore
-                        break;
-                    }
-                    case "--!native":
-                    case "-!n": {
-
-                        //ignore
-                        break;
-                    }
-                    case "-": {
-                        if (cmdArg.getValue() != null) {
-                            throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
-                        }
-                        applicationArguments.add(NutsConstants.NUTS_SHELL);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
                     case "-w":
                     case "--workspace": {
                         String file = cmdArgList.getValueFor(cmdArg);
-                        o.setWorkspace(file);
-                        break;
-                    }
-                    case "-!w":
-                    case "--!workspace": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--archetype":
-                    case "-p": {
-                        o.setArchetype(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!archetype":
-                    case "-!p": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                        if (enabled) {
+                            o.setWorkspace(file);
+                        }
                         break;
                     }
                     case "--login":
-                    case "-U": {
-                        o.setLogin(cmdArgList.getValueFor(cmdArg));
+                    case "-o": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setLogin(v);
+                        }
                         break;
                     }
-                    case "--!login":
-                    case "-!U": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                    case "--password":
+                    case "-p": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setPassword(v);
+                        }
+                        break;
+                    }
+                    case "-V":
+                    case "--boot-version":
+                    case "--boot-api-version": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setRequiredBootVersion(v);
+                        }
                         break;
                     }
                     case "--boot-runtime": {
                         String br = cmdArgList.getValueFor(cmdArg);
-                        if (br.indexOf("#") > 0) {
-                            //this is a full id
-                        } else {
-                            br = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + br;
+                        if (enabled) {
+                            if (br.indexOf("#") > 0) {
+                                //this is a full id
+                            } else {
+                                br = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + br;
+                            }
+                            o.setBootRuntime(br);
                         }
-                        o.setBootRuntime(br);
-                        break;
-                    }
-                    case "--!boot-runtime": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
                         break;
                     }
                     case "--runtime-source-url": {
-                        o.setBootRuntimeSourceURL(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!runtime-source-url": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setBootRuntimeSourceURL(v);
+                        }
                         break;
                     }
                     case "--java":
                     case "--boot-java":
                     case "-j": {
-                        o.setBootJavaCommand(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!java":
-                    case "--!boot-java":
-                    case "-!j": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setBootJavaCommand(v);
+                        }
                         break;
                     }
                     case "--java-home":
                     case "--boot-java-home":
                     case "--J": {
-                        o.setBootJavaCommand(NutsUtils.resolveJavaCommand(cmdArgList.getValueFor(cmdArg)));
-                        break;
-                    }
-                    case "--!java-home":
-                    case "--!boot-java-home":
-                    case "--!J": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setBootJavaCommand(NutsUtils.resolveJavaCommand(v));
+                        }
                         break;
                     }
                     case "--java-options":
                     case "--boot-java-options":
                     case "-O": {
-                        o.setBootJavaOptions(cmdArgList.getValueFor(cmdArg));
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setBootJavaOptions(v);
+                        }
                         break;
                     }
-                    case "--!java-options":
-                    case "--!boot-java-options":
-                    case "-!O": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+
+                    //**********************************
+                    //*
+                    //* Create Options
+                    //*
+                    //**********************************
+                    // [[create options]] are considered solely when creating a new workspace. 
+                    // They will be persisted then (to the configuration file)
+                    // but They will be ignored elsewhere if the workspace already 
+                    // exists : configured parameters will be in use.
+                    case "--archetype":
+                    case "-A": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setArchetype(v);
+                        }
                         break;
                     }
+                    case "--store-strategy": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
+                        }
+                        break;
+                    }
+                    case "--standalone":
+                    case "--standalone-workspace": {
+                        if (enabled) {
+                            o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+                        }
+                        break;
+                    }
+                    case "--exploded":
+                    case "--exploded-workspace": {
+                        if (enabled) {
+                            o.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+                        }
+                        break;
+                    }
+
+                    case "--repo-store-strategy": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setRepositoryStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
+                        }
+                        break;
+                    }
+                    case "--exploded-repositories": {
+                        if (enabled) {
+                            o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+                        }
+                        break;
+                    }
+                    case "--standalone-repositories": {
+                        if (enabled) {
+                            o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+                        }
+                        break;
+                    }
+                    case "--store-layout": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setStoreLocationLayout(v.isEmpty() ? null : NutsStoreLocationLayout.valueOf(v.toUpperCase()));
+                        }
+                        break;
+                    }
+                    case "--system-layout": {
+                        if (enabled) {
+                            o.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
+                        }
+                        break;
+                    }
+                    case "--windows-layout": {
+                        if (enabled) {
+                            o.setStoreLocationLayout(NutsStoreLocationLayout.WINDOWS);
+                        }
+                        break;
+                    }
+                    case "--linux-layout": {
+                        if (enabled) {
+                            o.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
+                        }
+                        break;
+                    }
+                    case "--programs-location":
+                    case "--config-location":
+                    case "--var-location":
+                    case "--logs-location":
+                    case "--temp-location":
+                    case "--cache-location":
+                    case "--lib-location": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-')).toUpperCase());
+                            o.setStoreLocation(m, v);
+                        }
+                        break;
+                    }
+                    case "--system-programs-home":
+                    case "--system-config-home":
+                    case "--system-var-home":
+                    case "--system-logs-home":
+                    case "--system-temp-home":
+                    case "--system-cache-home":
+                    case "--system-lib-home":
+                    case "--windows-programs-home":
+                    case "--windows-config-home":
+                    case "--windows-var-home":
+                    case "--windows-logs-home":
+                    case "--windows-temp-home":
+                    case "--windows-cache-home":
+                    case "--windows-lib-home":
+                    case "--linux-programs-home":
+                    case "--linux-config-home":
+                    case "--linux-var-home":
+                    case "--linux-logs-home":
+                    case "--linux-temp-home":
+                    case "--linux-cache-home":
+                    case "--linux-lib-home": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        NutsStoreLocationLayout layout = NutsStoreLocationLayout.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
+                        NutsStoreLocation folder = NutsStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
+                        if (enabled) {
+                            o.setHomeLocation(layout, folder, v);
+                        }
+                        break;
+                    }
+                    case "--skip-install-companions":
+                    case "-k": {
+                        if (enabled) {
+                            o.setSkipInstallCompanions(true);
+                        }
+                        break;
+                    }
+
+                    //**********************************
+                    //*
+                    //* Open Exported Options
+                    //*
+                    //**********************************
+                    //
+                    //  [[open exported options]] are open (so transient, non 
+                    // persistent) options that will override any configured 
+                    // value (if any) having the ability to be exported 
+                    // to any java child process (as system property -D...) 
+                    case "-g":
+                    case "--global": {
+                        if (enabled) {
+                            o.setGlobal(true);
+                        }
+                        break;
+                    }
+
                     case "--color":
                     case "-C": {
-
-                        o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                        if (enabled) {
+                            o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                        } else {
+                            o.setTerminalMode(NutsTerminalMode.FILTERED);
+                        }
                         break;
                     }
-                    case "--!color":
-                    case "--no-color":
-                    case "-!C": {
-
-                        o.setTerminalMode(NutsTerminalMode.FILTERED);
+                    case "--no-color": {
+                        if (enabled) {
+                            o.setTerminalMode(NutsTerminalMode.FILTERED);
+                        } else {
+                            o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                        }
                         break;
                     }
                     case "--term-system":
                     case "-S": {
-
-                        o.setTerminalMode(null);
-                        break;
-                    }
-                    case "--!term-system":
-                    case "-!S": {
-
-                        //ignore
+                        if (enabled) {
+                            o.setTerminalMode(null);
+                        }
                         break;
                     }
                     case "--term-filtered":
                     case "-L": {
-
-                        o.setTerminalMode(NutsTerminalMode.FILTERED);
-                        break;
-                    }
-                    case "--!term-filtered":
-                    case "-!L": {
-
-                        //ignore
+                        if (enabled) {
+                            o.setTerminalMode(NutsTerminalMode.FILTERED);
+                        }
                         break;
                     }
                     case "--term-formatted":
                     case "-F": {
-
-                        o.setTerminalMode(NutsTerminalMode.FORMATTED);
-                        break;
-                    }
-                    case "--!term-formatted":
-                    case "-!F": {
-
-                        //ignore
+                        if (enabled) {
+                            o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                        }
                         break;
                     }
                     case "--term-inherited":
                     case "-H": {
-
-                        o.setTerminalMode(NutsTerminalMode.INHERITED);
-                        break;
-                    }
-                    case "--!term-inherited":
-                    case "-!H": {
-
-                        //ignore
+                        if (enabled) {
+                            o.setTerminalMode(NutsTerminalMode.INHERITED);
+                        }
                         break;
                     }
                     case "--term":
                     case "-t": {
                         String v = cmdArgList.getValueFor(cmdArg);
-                        if (v.isEmpty()) {
-                            o.setTerminalMode(null);
-                        } else {
-                            o.setTerminalMode(NutsTerminalMode.valueOf(v.trim().toUpperCase()));
-                        }
-                        break;
-                    }
-                    case "--!term":
-                    case "-!t": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "-R":
-                    case "--read-only": {
-
-                        o.setReadOnly(true);
-                        break;
-                    }
-                    case "-!R":
-                    case "--!read-only": {
-
-                        o.setReadOnly(false);
-                        break;
-                    }
-                    case "-0":
-                    case "--recover": {
-
-                        o.setRecover(true);
-                        break;
-                    }
-                    case "-!0":
-                    case "--!recover": {
-
-                        o.setRecover(false);
-                        break;
-                    }
-                    case "-g":
-                    case "--global": {
-
-                        o.setGlobal(true);
-                        break;
-                    }
-                    case "-!g":
-                    case "--!global": {
-
-                        o.setGlobal(false);
-                        break;
-                    }
-                    case "--skip-install-companions":
-                    case "-k": {
-
-                        o.setSkipPostCreateInstallCompanionTools(true);
-                        break;
-                    }
-                    case "--!skip-install-companions":
-                    case "-!k": {
-
-                        o.setRecover(false);
-                        break;
-                    }
-                    case "-version":
-                    case "-v":
-                    case "--version": {
-                        o.setBootCommand(NutsBootCommand.VERSION);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "-!version":
-                    case "--!version":
-                    case "-!v": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--info":
-                    case "-f": {
-                        o.setBootCommand(NutsBootCommand.INFO);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!info":
-                    case "-!f": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--update":
-                    case "-d": {
-                        o.setBootCommand(NutsBootCommand.UPDATE);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!update":
-                    case "-!d": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--clean":
-                    case "-c": {
-                        o.setBootCommand(NutsBootCommand.CLEAN);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!clean":
-                    case "-!c": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--reset":
-                    case "-r": {
-                        o.setBootCommand(NutsBootCommand.RESET);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!reset":
-                    case "-!r": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--install-companions":
-                    case "-X": {
-                        o.setBootCommand(NutsBootCommand.INSTALL_COMPANION_TOOLS);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!install-companions":
-                    case "-!X": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--check-updates":
-                    case "-D": {
-                        o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!check-updates":
-                    case "-!D": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--install":
-                    case "-i": {
-                        o.setBootCommand(NutsBootCommand.INSTALL);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!install":
-                    case "-!i": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--uninstall":
-                    case "-u": {
-                        o.setBootCommand(NutsBootCommand.UNINSTALL);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!uninstall":
-                    case "-!u": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--e":
-                    case "--exec": {
-                        o.setBootCommand(NutsBootCommand.EXEC);
-                        while ((cmdArg = cmdArgList.next()) != null) {
-                            if (cmdArg.isOption()) {
-                                executorOptions.add(cmdArg.getArg());
+                        if (enabled) {
+                            if (v.isEmpty()) {
+                                o.setTerminalMode(null);
                             } else {
-                                applicationArguments.add(cmdArg.getArg());
-                                applicationArguments.addAll(cmdArgList.removeAll());
+                                o.setTerminalMode(NutsTerminalMode.valueOf(v.trim().toUpperCase()));
                             }
                         }
                         break;
                     }
-                    case "--!exec":
-                    case "--!e": {
+                    case "-R":
+                    case "--read-only": {
+                        if (enabled) {
+                            o.setReadOnly(true);
+                        }
+                        break;
+                    }
 
-                        //ignore
-                        break;
-                    }
-                    case "-?":
-                    case "--help":
-                    case "-h": {
-                        o.setBootCommand(NutsBootCommand.HELP);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "-!?":
-                    case "--!help": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--license": {
-                        o.setBootCommand(NutsBootCommand.LICENSE);
-                        applicationArguments.addAll(cmdArgList.removeAll());
-                        break;
-                    }
-                    case "--!license": {
-
-                        //ignore
-                        break;
-                    }
                     case "--verbose":
                     case "--log-finest":
                     case "--log-finer":
@@ -500,266 +382,298 @@ public final class NutsArgumentsParser {
                     case "--log-folder":
                     case "--log-count":
                     case "--log-inherited": {
-                        logConfig = new NutsLogConfig();
-                        parseLogLevel(logConfig, cmdArg, cmdArgList);
+                        if (enabled) {
+                            logConfig = new NutsLogConfig();
+                        }
+                        parseLogLevel(logConfig, cmdArg, cmdArgList, enabled);
                         break;
-                    }
-                    case "--!verbose":
-                    case "--!log-finest":
-                    case "--!log-finer":
-                    case "--!log-fine":
-                    case "--!log-info":
-                    case "--!log-warning":
-                    case "--!log-severe":
-                    case "--!log-all":
-                    case "--!log-off":
-                    case "--!log-size":
-                    case "--!log-name":
-                    case "--!log-folder":
-                    case "--!log-count":
-                    case "--!log-inherited": {
-
-                        //ignore
                     }
                     case "--exclude-extension": {
-                        excludedExtensions.add(cmdArgList.getValueFor(cmdArg));
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            excludedExtensions.add(v);
+                        }
                         break;
                     }
-                    case "--!exclude-extension": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
+
                     case "--exclude-repository": {
-                        excludedRepositories.add(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!exclude-repository": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            excludedRepositories.add(v);
+                        }
                         break;
                     }
                     case "--repository": {
-                        tempRepositories.add(cmdArgList.getValueFor(cmdArg));
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            tempRepositories.add(v);
+                        }
                         break;
                     }
-                    case "--!repository": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+
+                    case "--yes": {
+                        if (enabled) {
+                            o.setDefaultResponse(Boolean.TRUE);
+                        }
+                        break;
+                    }
+                    case "--no": {
+                        if (enabled) {
+                            o.setDefaultResponse(Boolean.FALSE);
+                        }
+                        break;
+                    }
+
+                    //**********************************
+                    //*
+                    //* open Options
+                    //*
+                    //**********************************
+                    //
+                    // [[open options]] are transient (non persistent) options that will 
+                    // override any configured value (if any) and will be 
+                    // in use in the current process (and ignored elsewhere). 
+                    // Such options will be considered in creating worspaces 
+                    // as well but still they are not persistent.
+                    case "--recover": 
+                    case "-0":
+                    {
+                        if (enabled) {
+                            o.setInitMode(NutsBootInitMode.RECOVER);
+                        }
+                        break;
+                    }
+                    case "--init":
+                    case "-I": {
+                        String v = cmdArgList.getValueFor(cmdArg);
+                        if (enabled) {
+                            o.setInitMode(NutsBootInitMode.valueOf(v.toUpperCase()));
+                        }
                         break;
                     }
                     case "--perf": {
-
-                        o.setPerf(true);
+                        if (enabled) {
+                            o.setPerf(true);
+                        }
                         break;
                     }
-                    case "--!perf": {
-
+                    case "--embedded":
+                    case "-b": {
+                        if (enabled) {
+                            o.setExecutionType(NutsExecutionType.EMBEDDED);
+                        }
                         //ignore
                         break;
                     }
-                    case "--auto-config": {
-
-                        o.setAutoConfig(cmdArg.getKey() == null ? "" : cmdArg.getKey());
+                    case "--external":
+                    case "-x": {
+                        if (enabled) {
+                            o.setExecutionType(NutsExecutionType.EXTERNAL);
+                        }
                         break;
                     }
-                    case "--!auto-config": {
-
-                        //ignore
+                    case "--native":
+                    case "-n": {
+                        if (enabled) {
+                            o.setExecutionType(NutsExecutionType.NATIVE);
+                        }
                         break;
                     }
                     case "--open-mode": {
                         String v = cmdArgList.getValueFor(cmdArg);
-                        o.setOpenMode(v.isEmpty() ? null : NutsWorkspaceOpenMode.valueOf(v.toUpperCase()));
-                        break;
-                    }
-                    case "--!open-mode": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
+                        if (enabled) {
+                            v = v.toUpperCase().replace('-', '_').replace('/', '_');
+                            switch (v) {
+                                case "R":
+                                case "READ":
+                                case "O":
+                                case "OPEN": {
+                                    v = NutsWorkspaceOpenMode.OPEN_EXISTING.name();
+                                    break;
+                                }
+                                case "W":
+                                case "WRITE":
+                                case "N":
+                                case "NEW":
+                                case "C":
+                                case "CREATE": {
+                                    v = NutsWorkspaceOpenMode.CREATE_NEW.name();
+                                    break;
+                                }
+                                case "RW":
+                                case "READ_WRITE":
+                                case "ON":
+                                case "OPEN_NEW":
+                                case "OC":
+                                case "OPEN_CREATE": {
+                                    v = NutsWorkspaceOpenMode.OPEN_OR_CREATE.name();
+                                    break;
+                                }
+                            }
+                            o.setOpenMode(v.isEmpty() ? null : NutsWorkspaceOpenMode.valueOf(v));
+                        }
                         break;
                     }
                     case "--open": {
-                        o.setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING);
-                        break;
-                    }
-                    case "--!open": {
-                        //ignore
+                        if (enabled) {
+                            o.setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING);
+                        }
                         break;
                     }
                     case "--create": {
-                        o.setOpenMode(NutsWorkspaceOpenMode.CREATE_NEW);
+                        if (enabled) {
+                            o.setOpenMode(NutsWorkspaceOpenMode.CREATE_NEW);
+                        }
                         break;
                     }
-                    case "--!create": {
-                        //ignore
-                        break;
-                    }
-                    case "--store-layout": {
-                        String v = cmdArgList.getValueFor(cmdArg);
-                        o.setStoreLocationLayout(v.isEmpty() ? null : NutsStoreLocationLayout.valueOf(v.toUpperCase()));
-                        break;
-                    }
-                    case "--!store-layout": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--store-strategy": {
-                        String v = cmdArgList.getValueFor(cmdArg);
-                        o.setStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
-                        break;
-                    }
-                    case "--!store-strategy": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--repo-store-strategy": {
-                        String v = cmdArgList.getValueFor(cmdArg);
-                        o.setRepositoryStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
-                        break;
-                    }
-                    case "--!repo-store-strategy": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--config-location": {
-                        o.setConfigStoreLocation(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!config-location": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--programs-location": {
-                        o.setProgramsStoreLocation(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!programs-location": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--cache-location": {
-                        o.setCacheStoreLocation(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!cache-location": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--temp-location": {
-                        o.setTempStoreLocation(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!temp-location": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--var-location": {
-                        o.setVarStoreLocation(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!var-location": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--logs-location": {
-                        o.setLogsStoreLocation(cmdArgList.getValueFor(cmdArg));
-                        break;
-                    }
-                    case "--!logs-location": {
-                        cmdArgList.getValueFor(cmdArg);
-                        //ignore
-                        break;
-                    }
-                    case "--system-layout": {
 
-                        o.setStoreLocationLayout(NutsStoreLocationLayout.SYSTEM);
+                    //**********************************
+                    //*
+                    //* Commands
+                    //*
+                    //**********************************
+                    case "-": {
+                        if (enabled) {
+                            if (cmdArg.getValue() != null) {
+                                throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
+                            }
+                            applicationArguments.add(NutsConstants.NUTS_SHELL);
+                            applicationArguments.add("-c");
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        }
                         break;
                     }
-                    case "--!system-layout": {
 
-                        //ignore
+                    case "-version":
+                    case "-v":
+                    case "--version": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.VERSION);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
                         break;
                     }
-                    case "--windows-layout": {
+                    case "--info":
+                    case "-f": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.INFO);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--update":
+                    case "-u": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.UPDATE);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--cleanup":
+                    case "-c": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.CLEANUP);
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--reset":
+                    case "-r": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.RESET);
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--install-companions":
+                    case "-X": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.INSTALL_COMPANION_TOOLS);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--check-updates":
+                    case "-D": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--install":
+                    case "-i": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.INSTALL);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--uninstall":
+                    case "-U": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.UNINSTALL);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--e":
+                    case "--exec": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.EXEC);
+                            while ((cmdArg = cmdArgList.next()) != null) {
+                                if (cmdArg.isOption()) {
+                                    executorOptions.add(cmdArg.getArg());
+                                } else {
+                                    applicationArguments.add(cmdArg.getArg());
+                                    applicationArguments.addAll(cmdArgList.removeAll());
+                                }
+                            }
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "-?":
+                    case "--help":
+                    case "-h": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.HELP);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
+                    case "--license": {
+                        if (enabled) {
+                            o.setBootCommand(NutsBootCommand.LICENSE);
+                            applicationArguments.addAll(cmdArgList.removeAll());
+                        } else {
+                            cmdArgList.removeAll();
+                        }
+                        break;
+                    }
 
-                        o.setStoreLocationLayout(NutsStoreLocationLayout.WINDOWS);
-                        break;
-                    }
-                    case "--!windows-layout": {
-
-                        //ignore
-                        break;
-                    }
-                    case "--linux-layout": {
-
-                        o.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
-                        break;
-                    }
-                    case "--!linux-layout": {
-
-                        break;
-                    }
-                    case "--standalone":
-                    case "--standalone-workspace": {
-
-                        o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
-                        break;
-                    }
-                    case "--!standalone":
-                    case "--!standalone-workspace": {
-
-                        break;
-                    }
-                    case "--exploded":
-                    case "--exploded-workspace": {
-
-                        o.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
-                        break;
-                    }
-                    case "--!exploded":
-                    case "--!exploded-workspace": {
-
-                        break;
-                    }
-                    case "--exploded-repositories": {
-
-                        o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
-                        break;
-                    }
-                    case "--!exploded-repositories": {
-
-                        break;
-                    }
-                    case "--standalone-repositories": {
-
-                        o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
-                        break;
-                    }
-                    case "--!standalone-repositories": {
-                        break;
-                    }
-                    case "--yes": {
-                        o.setDefaultResponse(Boolean.TRUE);
-                        break;
-                    }
-                    case "--!yes": {
-                        break;
-                    }
-                    case "--no": {
-                        o.setDefaultResponse(Boolean.FALSE);
-                        break;
-                    }
-                    case "--!no": {
-                        break;
-                    }
+                    //ERRORS
                     default: {
 
                         showError.add("nuts: invalid option [[" + cmdArg.getArg() + "]]");
@@ -791,26 +705,44 @@ public final class NutsArgumentsParser {
         return o;
     }
 
-    private static void parseLogLevel(NutsLogConfig logConfig, NutsMinimalCommandLine.Arg cmdArg, NutsMinimalCommandLine cmdArgList) {
+    private static void parseLogLevel(NutsLogConfig logConfig, NutsMinimalCommandLine.Arg cmdArg, NutsMinimalCommandLine cmdArgList, boolean enabled) {
         switch (cmdArg.getKey()) {
             case "--log-size": {
-                logConfig.setLogSize(Integer.parseInt(cmdArgList.getValueFor(cmdArg)));
+                String v = cmdArgList.getValueFor(cmdArg);
+                if (enabled) {
+                    logConfig.setLogSize(Integer.parseInt(v));
+                }
                 break;
             }
+
             case "--log-count": {
-                logConfig.setLogCount(Integer.parseInt(cmdArgList.getValueFor(cmdArg)));
+                String v = cmdArgList.getValueFor(cmdArg);
+                if (enabled) {
+                    logConfig.setLogCount(Integer.parseInt(v));
+                }
                 break;
             }
+
             case "--log-name": {
-                logConfig.setLogName(cmdArgList.getValueFor(cmdArg));
+                String v = cmdArgList.getValueFor(cmdArg);
+                if (enabled) {
+                    logConfig.setLogName(v);
+                }
                 break;
             }
+
             case "--log-folder": {
-                logConfig.setLogFolder(cmdArgList.getValueFor(cmdArg));
+                String v = cmdArgList.getValueFor(cmdArg);
+                if (enabled) {
+                    logConfig.setLogFolder(v);
+                }
                 break;
             }
+
             case "--log-inherited": {
-                logConfig.setLogInherited(true);
+                if (enabled) {
+                    logConfig.setLogInherited(true);
+                }
                 break;
             }
             case "--verbose":
@@ -822,59 +754,61 @@ public final class NutsArgumentsParser {
             case "--log-severe":
             case "--log-all":
             case "--log-off": {
-                String id = cmdArg.getKey();
-                if (cmdArg.getKey().startsWith("--log-")) {
-                    id = id.substring("--log-".length());
-                } else if (cmdArg.getKey().equals("--log")) {
-                    id = cmdArg.getValue();
-                    if (id == null) {
-                        id = "";
+                if (enabled) {
+                    String id = cmdArg.getKey();
+                    if (cmdArg.getKey().startsWith("--log-")) {
+                        id = id.substring("--log-".length());
+                    } else if (cmdArg.getKey().equals("--log")) {
+                        id = cmdArg.getValue();
+                        if (id == null) {
+                            id = "";
+                        }
+                    } else if (id.startsWith("--")) {
+                        id = cmdArg.getKey().substring(2);
+                    } else {
+                        id = cmdArg.getKey();
                     }
-                } else if (id.startsWith("--")) {
-                    id = cmdArg.getKey().substring(2);
-                } else {
-                    id = cmdArg.getKey();
-                }
-                switch (id.toLowerCase()) {
-                    case "verbose": {
-                        logConfig.setLogLevel(Level.FINEST);
-                        break;
-                    }
-                    case "finest": {
-                        logConfig.setLogLevel(Level.FINEST);
-                        break;
-                    }
-                    case "finer": {
-                        logConfig.setLogLevel(Level.FINER);
-                        break;
-                    }
-                    case "fine": {
-                        logConfig.setLogLevel(Level.FINE);
-                        break;
-                    }
-                    case "info": {
-                        logConfig.setLogLevel(Level.INFO);
-                        break;
-                    }
-                    case "warning": {
-                        logConfig.setLogLevel(Level.WARNING);
-                        break;
-                    }
-                    case "config": {
-                        logConfig.setLogLevel(Level.CONFIG);
-                        break;
-                    }
-                    case "all": {
-                        logConfig.setLogLevel(Level.ALL);
-                        break;
-                    }
-                    case "off": {
-                        logConfig.setLogLevel(Level.OFF);
-                        break;
-                    }
-                    default: {
-                        logConfig.setLogLevel(Level.INFO);
-                        break;
+                    switch (id.toLowerCase()) {
+                        case "verbose": {
+                            logConfig.setLogLevel(Level.FINEST);
+                            break;
+                        }
+                        case "finest": {
+                            logConfig.setLogLevel(Level.FINEST);
+                            break;
+                        }
+                        case "finer": {
+                            logConfig.setLogLevel(Level.FINER);
+                            break;
+                        }
+                        case "fine": {
+                            logConfig.setLogLevel(Level.FINE);
+                            break;
+                        }
+                        case "info": {
+                            logConfig.setLogLevel(Level.INFO);
+                            break;
+                        }
+                        case "warning": {
+                            logConfig.setLogLevel(Level.WARNING);
+                            break;
+                        }
+                        case "config": {
+                            logConfig.setLogLevel(Level.CONFIG);
+                            break;
+                        }
+                        case "all": {
+                            logConfig.setLogLevel(Level.ALL);
+                            break;
+                        }
+                        case "off": {
+                            logConfig.setLogLevel(Level.OFF);
+                            break;
+                        }
+                        default: {
+                            logConfig.setLogLevel(Level.INFO);
+                            break;
+                        }
                     }
                 }
                 break;

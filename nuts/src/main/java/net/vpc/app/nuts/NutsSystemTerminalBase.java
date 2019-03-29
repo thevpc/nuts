@@ -29,15 +29,13 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.PrintStream;
-
 /**
  * Created by vpc on 2/20/17.
  */
 @NutsPrototype
 public interface NutsSystemTerminalBase extends NutsComponent<Object>,NutsTerminalBase {
 
-    void install(NutsWorkspace workspace);
+//    void install(NutsWorkspace workspace);
 
 
     void setOutMode(NutsTerminalMode mode);
@@ -48,7 +46,7 @@ public interface NutsSystemTerminalBase extends NutsComponent<Object>,NutsTermin
 
     NutsTerminalMode getErrorMode();
 
-    String readLine(PrintStream out, String prompt, Object... params);
-
-    String readPassword(PrintStream out, String prompt, Object... params);
+//    String readLine(PrintStream out, String prompt, Object... params);
+//
+//    String readPassword(PrintStream out, String prompt, Object... params);
 }

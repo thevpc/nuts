@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.IOUtils;
@@ -39,6 +38,8 @@ import net.vpc.common.io.InputStreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import net.vpc.app.nuts.NutsQueryOptions;
 
 /**
  * Created by vpc on 1/29/17.
@@ -52,14 +53,16 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private String fileType;
     private String mimeType;
     private byte[] bytes;
+    private NutsQueryOptions options;
 
-    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputStreamSource file, String fileExtension, String fileType, String mimeType) {
+    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputStreamSource file, String fileExtension, String fileType, String mimeType,NutsQueryOptions options) {
         this.file = file;
         this.workspace = workspace;
         this.session = session;
         this.fileExtension = fileExtension;
         this.fileType = fileType;
         this.mimeType = mimeType;
+        this.options = options;
     }
 
     public NutsWorkspace getWorkspace() {
@@ -76,7 +79,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
             try {
                 bytes = IOUtils.loadByteArray(file.open(), 1024 * 1024 * 10, true);
             } catch (IOException e) {
-                throw new NutsIOException(e);
+                throw new UncheckedIOException(e);
             }
         }
         return new ByteArrayInputStream(bytes);
@@ -102,4 +105,10 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     public String getName() {
         return file.getName();
     }
+
+    @Override
+    public NutsQueryOptions getQueryOptions() {
+        return options;
+    }
+    
 }

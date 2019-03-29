@@ -97,24 +97,24 @@ public class CorePlatformUtils {
         return new HashMap<>();
     }
 
-    public static String getPlatformOsLib() {
-        switch (CoreNutsUtils.parseNutsId(getPlatformOs()).getSimpleName()) {
-            case "linux":
-            case "mac":
-            case "sunos":
-            case "freebsd": {
-                return "/usr/share";
-            }
-            case "windows": {
-                String pf = System.getenv("ProgramFiles");
-                if (StringUtils.isEmpty(pf)) {
-                    pf = "C:\\Program Files";
-                }
-                return pf;
-            }
-        }
-        return "/usr/share";
-    }
+//    public static String getPlatformOsLib() {
+//        switch (CoreNutsUtils.parseNutsId(getPlatformOs()).getSimpleName()) {
+//            case "linux":
+//            case "mac":
+//            case "sunos":
+//            case "freebsd": {
+//                return "/usr/share";
+//            }
+//            case "windows": {
+//                String pf = System.getenv("ProgramFiles");
+//                if (StringUtils.isEmpty(pf)) {
+//                    pf = "C:\\Program Files";
+//                }
+//                return pf;
+//            }
+//        }
+//        return "/usr/share";
+//    }
 
     /**
      * this is inspired from
@@ -599,7 +599,7 @@ public class CorePlatformUtils {
                 configs = classLoader.getResources(fullName);
             }
         } catch (IOException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(ex);
         }
         while (configs.hasMoreElements()) {
             names.addAll(loadServiceClasses(service, configs.nextElement()));
@@ -637,7 +637,7 @@ public class CorePlatformUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(ex);
         } finally {
             try {
                 if (r != null) {
@@ -647,7 +647,7 @@ public class CorePlatformUtils {
                     in.close();
                 }
             } catch (IOException ex2) {
-                throw new NutsIOException(ex2);
+                throw new UncheckedIOException(ex2);
             }
         }
         return names;
@@ -844,8 +844,11 @@ public class CorePlatformUtils {
 
     public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
         String[] conf = {};
-        switch (ws.getConfigManager().getPlatformOs().getName()) {
-            case "linux": {
+        switch (ws.getConfigManager().getPlatformOsFamily()) {
+            case LINUX: 
+            case UNIX: 
+            case UNKNOWN: 
+            {
                 conf = new String[]{
                     "/usr/java",
                     "/usr/lib64/jvm",
@@ -853,14 +856,14 @@ public class CorePlatformUtils {
                 };
                 break;
             }
-            case "windows": {
+            case WINDOWS: {
                 conf = new String[]{
                     StringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java",
                     StringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"
                 };
                 break;
             }
-            case "mac": {
+            case MACOS: {
                 conf = new String[]{
                     "/Library/Java/JavaVirtualMachines",
                     "/System/Library/Frameworks/JavaVM.framework"

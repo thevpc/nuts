@@ -42,7 +42,7 @@ public class NutsIndexSubscriberListManager {
                         this.defaultWorkspace
                                 .resolveIdForClass(NutsIndexSubscriberListManager.class)
                                 .getSimpleNameId(),
-                        NutsStoreFolder.CONFIG),
+                        NutsStoreLocation.CONFIG),
                 name + "-nuts-subscriber-list.json");
     }
 

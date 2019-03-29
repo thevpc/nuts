@@ -119,7 +119,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     }
 
     @Override
-    public String getStoreLocation(NutsStoreFolder folderType) {
+    public String getStoreLocation(NutsStoreLocation folderType) {
         String n = "";
         switch (folderType) {
             case PROGRAMS: {

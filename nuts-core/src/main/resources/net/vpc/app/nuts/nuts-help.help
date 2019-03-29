@@ -48,17 +48,79 @@ Boot Runtime Version: ${nuts.workspace-runtime.version}
 Java         Version: ${java.version} (${java.vm.name})
 
 @@NUTS OPTIONS:@@
- [[-h]] {{\<workspaces-home-location\>}}
- [[--home]] {{\<workspaces-home-location\>}}
-      root location containing all workspaces.
-      this defaults to ~/.nuts where ~ refers to the users\'s home directory.
- [[-w]] {{\<workspace-location\>}}
+ Thre are three (3) types of options : 
+ * [[create   options]]
+ * [[create exported options]]
+ * [[open options]]
+ * [[open exported options]]
+
+ [[create exported options]] are considered both when creating a new workspace and when running it. If they are specified in creation 
+                    they will be persisted. If they are specified later they will override persisted values without persisting the changes
+
+ [[create options]] are considered solely when creating a new workspace. They will be persisted then (to the configuration file)
+                    but They will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
+
+ [[open exported options]] are open (so transient, non persistent) options that will override any configured value (if any) 
+                      having the ability to be exported to any java child process (as system property -D...) 
+
+ [[open options]] are transient (non persistent) options that will override any configured value (if any) and will be 
+                     in use in the current process (and ignored elsewhere). Such options will be considered in creating worspaces 
+                     as well but still they are not persistent.
+
+
+@@NUTS CREATE EXPORTED OPTIONS:@@
  [[--workspace]] {{\<workspace-location\>}}
-      workspace location to open.
+ [[-w]] {{\<workspace-location\>}}
+      workspace location to open (or create).
       this defaults to default-workspace. Typically this refers to ~/.nuts/default-workspace
-      (when [[--home]] is not specified). workspace location contains both config and component data (from
-      repositories).
+      (when [[--system-config-home]] is not specified). workspace location contains both config and component 
+      data (from repositories).
+
+ [[--login]]     {{\<login\>}}
+ [[-o]]     {{\<login\>}}
+      workspace login
+      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
+      specify user credentials (see --password)
+
+ [[--password]]  {{\<password\>}}
+ [[-p]]  {{\<password\>}}
+      workspace password
+      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
+      specify user credentials (see --login)
+
+ [[-V]] {{\<boot-api-version\>}}
+ [[--boot-version]] {{\<boot-api-version\>}}
+ [[--boot-api-version]] {{\<boot-api-version\>}}
+      run a new instance of ==nuts== with the specified version
+
+ [[--boot-runtime]] {{\<runtime-id-or-version\>}}
+      load runtime (nuts-core) version. either version may be expressed or full nuts implementation
+      (other than nuts-core) should be defined
+
+ [[--runtime-source-url]] {{\<runtime-source-url\>}}
+      url to runtime library(nuts-core). In that case, the runtime library should be self sufficient (no dependencies)
+
+ [[--java]]      {{\<java-command\>}}
+ [[--boot-java]] {{\<java-command\>}}
+ [[-j]] {{\<java-command\>}}
+      java command to run new instance of nuts
+
+ [[--java-home]]      {{\<java-home\>}}
+ [[--boot-java-home]] {{\<java-home\>}}
+ [[-J]] {{\<java-home\>}}
+      java home to run new instance of nuts
+
+ [[--verbose]] , [[--log-finest]]  , [[--log-info]] , [[--log-fine]] ,
+ 
+ [[--java-options]]      {{\<java-options\>}}
+ [[--boot-java-options]] {{\<java-options\>}}
+ [[-O]] {{\<java-options\>}}
+      java options to run new instance of nuts
+
+@@NUTS CREATE OPTIONS:@@
+
  [[--archetype]] {{\<archetype-name\>}}
+ [[-A]] {{\<archetype-name\>}}
       workspace archetype to create (if workspace not found).
       when opening a non existing workspace, ==nuts== will create it
       using the default archetype. Supported archetypes are :
@@ -71,95 +133,306 @@ Java         Version: ${java.version} (${java.vm.name})
           {{minimal}} : will create an almost empty workspace with a single ==nuts== local repository
           {{server}}  : will create an almost empty workspace with a couple of users __guest_ (read support) and __contributor_
                     (write support)
- [[--login]]     {{\<login\>}}
-      workspace login
-      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
-      specify user credentials (see --password)
- [[--password]]  {{\<password\>}}
-      workspace password
-      if not specified, all access to ==nuts== will be with anonymous credentials. so to promote user privileges, one may
-      specify user credentials (see --login)
- [[--recover]]  or [[-0]]
-      try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
- [[--save]]  or [[-s]]
-      saves workspace if newly created
- [[--no-save]] or [[--!save]]  or [[-!s]]
-      do not save workspace if newly created
- [[--no-colors]] or [[--!colors]]  or [[-!c]]
-      disable console coloring
+
+ [[--store-strategy]] {{\<store-strategy\>}}
+      Defines store strategy used for persisting config and data of the workspace.
+      Valid values of {{\<store-strategy\>}} are {{exploded}}, {{standalone}}.
+      {{exploded}}   : use distinct folders for temp, var, lib, config ... folders (this is the default) 
+      {{standalone}} : use a self contained folder for all types of data of the workspace. This is interesting for sharing 
+                   workspaces across multiple machines.
+
  [[--standalone]] or [[--standalone-strategy]]
        will boot with standalone strategy so that all file will be stored in the workspace folder
-       overriding workspace config.
+       overriding workspace config. same as  [[--store-strategy]] {{standalone}}
+ 
  [[--exploded]] or [[--exploded-strategy]]
        will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
-       particularly will be stored elsewhere depending on on configuration
+       particularly will be stored elsewhere depending on on configuration.
+       same as  [[--store-strategy]] {{exploded}}
+
+ [[--repo-store-strategy]] {{\<store-strategy\>}}
+      Defines store strategy used for persisting config and data of the repositories.
+      Valid values of {{\<store-strategy\>}} are {{exploded}}, {{standalone}}.
+      {{exploded}}   : use distinct folders for temp, var, lib, config ... folders (this is the default) 
+      {{standalone}} : use a self contained folder for all types of data of the repository (under repository's main folder). 
+                   This is interesting for sharing 
+                   workspaces across multiple machines.
+
+ [[--standalone-repositories]]
+       will boot with standalone strategy so that all file will be stored in the repository's folder
+       overriding workspace config. same as  [[--repo-store-strategy]] {{standalone}}
+ 
+ [[--exploded-repositories]] or [[--exploded-strategy]]
+       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
+       particularly will be stored elsewhere depending on on configuration.
+       same as  [[--repo-store-strategy]] {{exploded}}
+
+ [[--store-layout]] {{\<store-layout\>}}
+      Defines store layout relatively to the running operating system. This resolve root locations of data folders.
+      that to say that all 'programs' folders for instance will be located at the location defined by the layout.
+
+      Valid values of {{\<store-layout\>}} are {{system}}, {{windows}} and {{linux}}
+      {{system}}     : resolve the running operating system (windows, linux, ...) and select appropriate folder
+      {{windows}}    : always use windows layout (even if running on iOS)
+      {{linux}}      : always use linux/unix layout (even if running on windows)
+
+      Data folders of nuts are :
+        programs : executable binaries folder
+        lib      : non executable binaries (libraries) folder
+        config   : configuration/settings files folder
+        var      : data files folder
+        logs     : log/trace files folder
+        temp     : temporary files folder
+        cache    : cache folder
+      
+     In the Windows layout, default (home) locations resolve to ($HOME is the user's home folder)
+        programs : $HOME/AppData/Roaming/nuts
+        lib      : $HOME/AppData/Roaming/nuts
+        config   : $HOME/AppData/Roaming/nuts
+        var      : $HOME/AppData/Roaming/nuts
+        logs     : $HOME/AppData/Roaming/nuts
+        temp     : $java.io.tmpdir/nuts
+        cache    : $HOME/AppData/Local/nuts
+
+     In the Linux layout, default locations resolve to ($HOME is the user's home folder)
+        programs : $HOME/.nuts
+        lib      : $HOME/.nuts
+        config   : $HOME/.nuts
+        var      : $HOME/.nuts
+        logs     : $HOME/.nuts
+        temp     : $java.io.tmpdir/$username/nuts
+        cache    : $HOME/.cache/nuts
+     
+    These home locations are tuned individually using the following options
+            [[--system-programs-home]] {{\<path\>}}
+            [[--system-lib-home]] {{\<path\>}}
+            [[--system-config-home]] {{\<path\>}}
+            [[--system-var-home]] {{\<path\>}}
+            [[--system-logs-home]] {{\<path\>}}
+            [[--system-temp-home]] {{\<path\>}}
+            [[--system-cache-home]] {{\<path\>}}
+
+            [[--windows-programs-home]] {{\<path\>}}
+            [[--windows-lib-home]] {{\<path\>}}
+            [[--windows-config-home]] {{\<path\>}}
+            [[--windows-var-home]] {{\<path\>}}
+            [[--windows-logs-home]] {{\<path\>}}
+            [[--windows-temp-home]] {{\<path\>}}
+            [[--windows-cache-home]] {{\<path\>}}
+
+            [[--linux-programs-home]] {{\<path\>}}
+            [[--linux-lib-home]] {{\<path\>}}
+            [[--linux-config-home]] {{\<path\>}}
+            [[--linux-var-home]] {{\<path\>}}
+            [[--linux-logs-home]] {{\<path\>}}
+            [[--linux-temp-home]] {{\<path\>}}
+            [[--linux-cache-home]] {{\<path\>}}
+
  [[--system-layout]] or [[--system]]
        will use current system layout to resolve folder candidates for log,config,programs ...etc.
+       same as  [[--store-layout]] {{\<store-layout\>}} {{system}}
+ 
  [[--windows-layout]]
        will use windows layout to resolve folder candidates for log,config,programs ...etc.
+       same as  [[--store-layout]] {{\<store-layout\>}} {{windows}}
+
  [[--linux-layout]]
        will use linux/unix layout to resolve folder candidates for log,config,programs ...etc.
- [[--exclude-extensions]]     {{\<extension-id-list\>}}
-      exclude extensions from being loaded at runtime. list is separated with characters " ,;"
- [[--exclude-repositories]]   {{\<repository-list\>}}
-      exclude repositories from being loaded at runtime. list is separated with characters " ,;"
- [[--boot-runtime]] {{\<runtime-id-or-version\>}}
-      load runtime (nuts-core) version. either version may be expressed or full nuts implementation
-      (other than nuts-core) should be defined
- [[-v]] {{\<boot-api-version\>}}
- [[--boot-version]] {{\<boot-api-version\>}}
- [[--boot-api-version]] {{\<boot-api-version\>}}
-      run a new instance of ==nuts== with the specified version
- [[--java]]      {{\<java-command\>}}
- [[--boot-java]] {{\<java-command\>}}
-      java command to run new instance of nuts
- [[--boot-java]]      {{\<java-home\>}}
- [[--boot-java-home]] {{\<java-home\>}}
-      java home to run new instance of nuts
-[[--perf]]
-      show startup time in ms
+       same as  [[--store-layout]] {{\<store-layout\>}} {{linux}}
+
+ More tuning of these folders may be done by defining the folders location directly 
+ instead of the folder's home locations using the following options :
+            [[--programs-location]] {{\<path\>}}
+            [[--lib-location]] {{\<path\>}}
+            [[--config-location]] {{\<path\>}}
+            [[--var-location]] {{\<path\>}}
+            [[--logs-location]] {{\<path\>}}
+            [[--temp-location]] {{\<path\>}}
+            [[--cache-location]] {{\<path\>}}
+
+ [[--skip-install-companions]]
+       skip installing companion tools.
+ 
+@@NUTS OPEN EXPORTED OPTIONS:@@
+ [[--global]]  or [[-g]]
+      uses root/system wide workspace instead of user's own workspace. 
+      requires admin privileges as it uses.
+      Use shared workspace is located at :
+      Windows    : $ProgramFiles/nuts/system-workspace/repositories/local
+      Linux/Unix : /usr/share/nuts/system-workspace/repositories/local
+      More generally folder homes are defines as follows :
+      Windows Layout   :
+        programs : $ProgramFiles/nuts
+        lib      : $ProgramFiles/nuts
+        config   : $ProgramFiles/nuts
+        var      : $ProgramFiles/nuts
+        logs     : $ProgramFiles/nuts
+        temp     : $TMP/nuts
+        cache    : $ProgramFiles/nuts
+      Linux Layout    :
+        programs : /opt/nuts/programs
+        lib      : /opt/nuts/lib
+        config   : /etc/opt/nuts
+        var      : /var/opt/nuts
+        logs     : /var/log/nuts
+        temp     : /tmp/nuts/global
+        cache    : /var/cache/nuts
+
+ [[--color]] or [[-C]]
+      enables formatted (colorful) terminal ({{formatted}} terminal)
+
+ [[--no-color]] or [[--!color]]  or [[-!c]]
+      disable formatted (colorful) terminal ({{filtered}} terminal)
+
+ [[--term-system]] or [[-S]]
+      uses default (system's) terminal (may be or may be not {{formatted}} terminal)
+
+ [[--term-formatted]] or [[-L]]
+      uses formatted (colorful) terminal (as far as it is possible)
+
+ [[--term-filtered]] or [[-L]]
+      uses filtered terminal (no colors)
+
+ [[--term-inherited]] or [[-H]]
+      uses inherited (from parent workspace process) terminal
+
+ [[--term]] {{\<term-type\>}}
+ [[-t]] {{\<term-type\>}}
+      uses specified terminal type. terminal type is one of :
+      + {{formatted}}
+      + {{filtered}}
+      + {{inherited}}
+
+ [[--read-only]] or [[-R]] 
+      read only mode. All changes to the workspace - if ever - are not persisted.
 
  [[--verbose]] , [[--log-finest]]  , [[--log-info]] , [[--log-fine]] ,
  [[--log-finer]] , [[--log-severe]] , [[--log-warning]] ,
  [[--log-off]] , [[--log-off]]
       apply trace level
+
  [[--log-size]]       {{\<size\>}}
       define the maximum number of bytes to write to any one file. size is either expressed in bytes or suffixed with unit.
       supported units are :
         {{k}} or {{kb}} : for kilo-bytes (example 10k)
         {{m}} or {{mb}} : for mega-bytes (example 10m)
         {{g}} or {{gb}} : for giga-bytes (example 10g)
+
  [[--log-folder]]     {{\<log-folder-path\>}}
       define log file folder path
+
  [[--log-name]]       {{\<log-file-name-pattern\>}}
       define log file name pattern. this defaults to "nuts-%g.log"
+
  [[--log-count]]      {{\<number\>}}
       define the number of files to use (in rotating log)
 
-@@NUTS COMMAND:@@
- [[--help]] or [[-?]]
-      show this help and exit
- [[--license]]
-      show license and exit
- [[--install]] {{\<nuts-package\>}}...
-      install ==nuts== package {{\<nuts-package\>}}
- [[--uninstall]] {{\<nuts-package\>}}...
-      uninstall  ==nuts== package {{\<nuts-package\>}}
- [[--update]]
-       check if a newer version of ==nuts== is available in the current workspace and perform update
- [[--check-updates]]
-       check if a newer version of ==nuts== is available in the current workspace without performing updates
- [[--clean]]
-       clean (delete) ==nuts== cache folders
- [[--reset]]
+ [[--log-inherited]] 
+      calls rootLogger.setUseParentHandlers(true) to inherit log handlers.
+
+ [[--exclude-extension]]     {{\<extension-id-list\>}}
+      exclude extensions from being loaded at runtime. list is separated with characters " ,;"
+
+ [[--exclude-repository]]   {{\<repository-list\>}}
+      exclude repositories from being loaded at runtime. list is separated with characters " ,;"
+
+ [[--repository]]   {{\<repository-path\>}}
+      register a temporary repository at the given path
+
+ [[--yes]]
+      disables interactive mode and assumes 'yes' for all questions
+
+ [[--no]]
+      disables interactive mode and assumes 'no' for all questions
+
+@@NUTS OPEN OPTIONS:@@
+
+ [[--recover]]  or [[-0]]
+      try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
+ [[--reset]] or [[-r]]
        reset (delete) ==nuts== workspace folder
- [[--version]] or [[-version]]
-      show version, libraries and locations used for booting ==nuts==
+ [[--cleanup]] or [[-c]]
+       clean (delete) ==nuts== cache folders
+
+ [[--perf]]
+      show startup time in ms
+
+ [[--embedded]]  or [[-b]]
+      when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)
+
+ [[--external]]  or [[-x]]
+      when invoking a nuts component, it will alway be executed in a newly created process (this is the default)
+
+ [[--native]]  or [[-n]]
+      the command is considered as a native command (not a nuts) and will be passed to the os as is.
+
+ [[--open-mode]]  {{\<mode\>}}
+      defines open mode of the workspace. three values are accepted :
+      {{open-or-create}} or {{RW}} or {{ON}} or {{OC}} : this is the default, if 
+                    the workspace exists, it will be opened ; if it is not it will
+                    be created then opened.
+      {{open-existing}}  or {{R}}   or {{O}}  : will open existing workspace of fail
+      {{create-new}}   or {{W}} or {{C}} or {{N}} : will create non existing workspace of fail
+
+ [[--open]]
+      will open existing workspace of fail
+
+ [[--create]]
+      will create non existing workspace of fail
+
+@@NUTS COMMAND:@@
+
+ [[-]]
+   runs a nut's shell (nsh) command with the remaining arguments
+
+ [[--version]] or [[-version]] or [[-v]]
+      show version
+
+ [[--info]] or [[-f]]
+      show version detailed information (paths and libraries)
+
+ [[--update]] or [[-u]]
+       check if a newer version of ==nuts== is available in the current workspace and perform update
+
+ [[--check-updates]] or [[-D]]
+       check if a newer version of ==nuts== is available in the current workspace without performing updates
+
+ [[--dispose]] or [[-c]]
+       reset (delete) ==nuts== workspace folder and exit
+
+ [[--install-companions]] or [[-X]]
+      (re)install companions
+
+ [[--install]] {{\<nuts-package\>}}...
+ [[-i]] {{\<nuts-package\>}}...
+      install ==nuts== package {{\<nuts-package\>}}
+
+ [[--uninstall]] {{\<nuts-package\>}}...
+ [[-U]] {{\<nuts-package\>}}...
+      uninstall  ==nuts== package {{\<nuts-package\>}}
+
+ [[--exe]] ...
+ [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
+      runs command with the given options (it will be considered an option if it 
+      starts with '-')
+
+ [[--help]] or [[-?]] or [[-h]]
+      show this help and exit
+
+ [[--license]]
+      show license info
+
+ [[--!...]] or [[-!...]] 
+      option will be discarded (and its parameters)
+
 
 @@EXAMPLES:@@
        ==nuts== [[--help]]
             shows this help and exit
-       ==nuts== [[--update]] [[--workspace]] /home/me/some-folder [[--archetype]] minimal [[--save]]
+       ==nuts== [[--workspace]] /home/me/some-folder [[--archetype]] minimal
+            A minimal ('minimal' archetype) workspace will be created 
+            and saved if no workspace was resolved. The workspace handles local 
+            packages only (because of 'minimal' archetype)
+       ==nuts== [[--update]] [[--workspace]] /home/me/some-folder
             updates ==nuts== to the very latest version using workspace location
-            /home/me/some-folder. A minimal ('minimal' archetype) workspace will be created
-            and saved if no workspace was resolved. The workspace handles local packages only (because of 'minimal' archetype)
+            /home/me/some-folder.

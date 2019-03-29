@@ -52,4 +52,6 @@ public interface NutsDescriptorContentParserContext {
 
     NutsSession getSession();
 
+    NutsQueryOptions getQueryOptions();
+
 }

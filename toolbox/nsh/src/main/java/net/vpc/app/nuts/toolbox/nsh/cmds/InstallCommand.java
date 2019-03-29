@@ -52,6 +52,7 @@ public class InstallCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         NutsInstallOptions options = new NutsInstallOptions().setTrace(true);
+        NutsQueryOptions qoptions = context.getWorkspace().createQueryOptions();
         boolean deployOnly = false;
         boolean bundleOnly = false;
         String repositoryId = null;
@@ -100,6 +101,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                         FileUtils.getAbsolutePath(new File(context.getShell().getCwd()), s),
                                         descriptorFile == null ? null :
                                                 new File(context.getShell().getAbsolutePath(descriptorFile)).getPath(),
+                                        qoptions,
                                         context.getSession()
                                 );
                                 context.out().printf("File %s bundled successfully as "+ws.getFormatManager().createIdFormat().format(deployedFileId.getId())+" to %s\n", s, deployedFileId.getContent().getFile());

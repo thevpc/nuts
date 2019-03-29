@@ -55,17 +55,17 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected abstract String getIdPath(NutsId id);
 
-    protected InputStream getStream(NutsId id, NutsSession session) {
+    protected InputStream getStream(NutsId id, NutsRepositorySession session) {
         String url = getIdPath(id);
         return openStream(id, url, id, session);
     }
 
-    protected String getStreamAsString(NutsId id, NutsSession session) {
+    protected String getStreamAsString(NutsId id, NutsRepositorySession session) {
         String url = getIdPath(id);
         return IOUtils.loadString(openStream(id, url, id, session), true);
     }
 
-    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsSession session) throws IOException {
+    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
         switch (StringUtils.trim(id.getFace())) {
             case NutsConstants.FACE_COMPONENT_HASH:
             case NutsConstants.FACE_DESC_HASH: {
@@ -87,7 +87,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
     }
 
-    protected String getStreamSHA1(NutsId id, NutsSession session) {
+    protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
         String hash = getStreamAsString(id, session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
@@ -97,7 +97,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputStream openStream(NutsId id, String path, Object source, NutsSession session);
+    protected abstract InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session);
 
     @Override
     public boolean isSupportedMirroring() {
@@ -105,22 +105,22 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
+    public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions foundAction, NutsSession context) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions foundAction, NutsRepositorySession context) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected void undeployImpl(NutsId id, NutsSession session) {
+    protected void undeployImpl(NutsId id, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
+    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
         InputStream stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;
@@ -139,7 +139,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             return nutsDescriptor;
         } catch (IOException ex) {
             throw new NutsNotFoundException(id, null, ex);
-        } catch (NutsIOException ex) {
+        } catch (UncheckedIOException ex) {
             throw new NutsNotFoundException(id, null, ex);
         }
     }

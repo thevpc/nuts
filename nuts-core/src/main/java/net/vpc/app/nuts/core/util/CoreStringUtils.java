@@ -29,12 +29,12 @@
  */
 package net.vpc.app.nuts.core.util;
 
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsObjectConverter;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -283,7 +283,7 @@ public class CoreStringUtils {
                 last_ttype = tokenizer.ttype;
             }
         } catch (IOException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(ex);
         }
         return false;
     }

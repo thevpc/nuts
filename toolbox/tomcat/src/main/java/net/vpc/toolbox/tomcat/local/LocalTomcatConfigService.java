@@ -62,7 +62,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (TomcatUtils.isEmpty(v)) {
                 File file = new File(h, "RELEASE-NOTES");
                 if (file.exists()) {
-                    try ( BufferedReader r = new BufferedReader(new FileReader(file))) {
+                    try (BufferedReader r = new BufferedReader(new FileReader(file))) {
                         String line = null;
                         while ((line = r.readLine()) != null) {
                             line = line.trim();
@@ -82,7 +82,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
         File f = new File(context.getConfigFolder(), getName() + LOCAL_CONFIG_EXT);
         f.getParentFile().mkdirs();
-        try ( FileWriter r = new FileWriter(f)) {
+        try (FileWriter r = new FileWriter(f)) {
             jsonSerializer.writeJson(config, r, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -186,7 +186,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= new File(catalinaBase).mkdirs();
         ProcessBuilder2 b = new ProcessBuilder2();
-        String ext = context.getWorkspace().getConfigManager().getPlatformOs().getName().equals("windows") ? "bat" : "sh";
+        String ext = context.getWorkspace().getConfigManager().getPlatformOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
@@ -483,7 +483,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         File f = new File(context.getConfigFolder(), name + LOCAL_CONFIG_EXT);
         if (f.exists()) {
             NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
-            try ( FileReader r = new FileReader(f)) {
+            try (FileReader r = new FileReader(f)) {
                 config = jsonSerializer.readJson(r, LocalTomcatConfig.class);
                 return this;
             } catch (IOException e) {

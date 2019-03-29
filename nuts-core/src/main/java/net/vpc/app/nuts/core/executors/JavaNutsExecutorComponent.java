@@ -99,11 +99,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         // fix infinite recusion
-        int maxDepth = Math.abs(Convert.toInt(sysProperties.get("nuts.watchdog.depth"), IntegerParserConfig.LENIENT.setNullValue(5).setInvalidValue(5)));
-        if (maxDepth > 1000) {
-            maxDepth = 1000;
+        int maxDepth = Math.abs(Convert.toInt(sysProperties.get("nuts.export.watchdog.max-depth"), IntegerParserConfig.LENIENT.setNullValue(24).setInvalidValue(24)));
+        if (maxDepth > 512) {
+            maxDepth = 512;
         }
-        int currentDepth = Convert.toInt(sysProperties.get("nuts.watchdog.depth"), IntegerParserConfig.LENIENT);
+        int currentDepth = Convert.toInt(sysProperties.get("nuts.export.watchdog.depth"), IntegerParserConfig.LENIENT);
         currentDepth++;
         if (currentDepth > maxDepth) {
             System.err.println("############# Process Stack Overflow Error");
@@ -124,7 +124,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         args.addAll(joptions.getJvmArgs());
 
         if (!StringUtils.isEmpty(bootArgumentsString)) {
-            String Dnuts_boot_args = "-Dnuts-boot-args=" + bootArgumentsString;
+            String Dnuts_boot_args = "-Dnuts.export.boot.args=" + bootArgumentsString;
             xargs.add(Dnuts_boot_args);
             args.add(Dnuts_boot_args);
         }

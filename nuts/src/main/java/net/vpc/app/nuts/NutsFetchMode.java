@@ -33,7 +33,7 @@ package net.vpc.app.nuts;
  * Created by vpc on 3/19/17.
  */
 public enum NutsFetchMode {
-    OFFLINE,
-    ONLINE,
+    INSTALLED,
+    LOCAL,
     REMOTE,
 }

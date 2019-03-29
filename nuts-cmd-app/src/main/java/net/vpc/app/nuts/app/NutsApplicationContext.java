@@ -111,13 +111,13 @@ public class NutsApplicationContext implements CommandLineContext {
         setErr0(getTerminal().getFormattedErr());
         setOut(getOut0());
         setErr(getErr0());
-        setProgramsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.PROGRAMS));
-        setConfigFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.CONFIG));
-        setLogsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.LOGS));
-        setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.TEMP));
-        setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.VAR));
-        setLibFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.LIB));
-        setCacheFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreFolder.CACHE));
+        setProgramsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.PROGRAMS));
+        setConfigFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.CONFIG));
+        setLogsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.LOGS));
+        setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.TEMP));
+        setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.VAR));
+        setLibFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.LIB));
+        setCacheFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.CACHE));
         if ("auto-complete".equals(mode)) {
             setTerminalMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {

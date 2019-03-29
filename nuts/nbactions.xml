@@ -50,6 +50,7 @@
             <properties>
                 <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --check-updates netbeans-launcher</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.workingdir>update</exec.workingdir>
                 
             </properties>
         </action>
@@ -65,6 +66,7 @@
             <properties>
                 <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --check-updates netbeans-launcher</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.workingdir>update</exec.workingdir>
             </properties>
         </action>
         <action>
@@ -80,6 +82,7 @@
                 <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --check-updates netbeans-launcher</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
+                <exec.workingdir>update</exec.workingdir>
             </properties>
         </action>
         

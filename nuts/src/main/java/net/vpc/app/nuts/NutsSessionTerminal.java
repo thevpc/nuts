@@ -55,10 +55,9 @@ public interface NutsSessionTerminal extends NutsSessionTerminalBase,NutsTermina
 
     NutsSessionTerminal copy();
 
-    <T> T ask(NutsQuestion<T> question);
-    
     void setParent(NutsTerminalBase parent);
     
+    @Override
     NutsTerminalBase getParent();
 
 }

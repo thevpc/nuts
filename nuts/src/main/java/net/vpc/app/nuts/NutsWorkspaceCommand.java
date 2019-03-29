@@ -30,13 +30,12 @@
 package net.vpc.app.nuts;
 
 public interface NutsWorkspaceCommand {
+
     String getFactoryId();
 
     NutsId getOwner();
 
     String getName();
 
-    String[] getCommand();
-
-    String[] getExecutorOptions();
+    int exec(String[] args, NutsCommandExecOptions options, NutsSession session);
 }

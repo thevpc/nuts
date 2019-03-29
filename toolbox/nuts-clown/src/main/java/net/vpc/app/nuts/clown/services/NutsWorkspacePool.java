@@ -18,7 +18,7 @@ public class NutsWorkspacePool {
                     //should suppose the workspace is already created!
                     .setOpenMode(NutsWorkspaceOpenMode.OPEN_EXISTING)
 //                    .setRecover(true)
-                    .setSkipPostCreateInstallCompanionTools(true)
+                    .setSkipInstallCompanions(true)
                     .setWorkspace(ws)
             );
             pool.put(ws, o);

@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.bridges.maven;
@@ -52,19 +52,21 @@ import java.util.logging.Logger;
  * Created by vpc on 2/20/17.
  */
 public class MavenUtils {
+
     private static final Logger log = Logger.getLogger(MavenUtils.class.getName());
 
     public static NutsId[] toNutsId(PomId[] ids) {
-        NutsId[] a=new NutsId[ids.length];
+        NutsId[] a = new NutsId[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            a[i]=toNutsId(ids[i]);
+            a[i] = toNutsId(ids[i]);
         }
         return a;
     }
+
     public static NutsDependency[] toNutsDependencies(PomDependency[] deps) {
-        NutsDependency[] a=new NutsDependency[deps.length];
+        NutsDependency[] a = new NutsDependency[deps.length];
         for (int i = 0; i < deps.length; i++) {
-            a[i]=toNutsDependency(deps[i]);
+            a[i] = toNutsDependency(deps[i]);
         }
         return a;
     }
@@ -78,6 +80,7 @@ public class MavenUtils {
                 ""
         );
     }
+
     public static NutsDependency toNutsDependency(PomDependency d) {
         return new DefaultNutsDependency(
                 null,
@@ -101,17 +104,17 @@ public class MavenUtils {
             Pom pom = new PomXmlParser().parse(new ByteArrayInputStream(bytes));
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
-            if("true".equals(pom.getProperties().get("nuts.executable"))){
-                executable=true;
-            }else if(new String(bytes)
-                    .matches("^.*?((<mainClass>)|(<goal>exec-war-only</goal>)).*$")){
-                executable=true;
+            if ("true".equals(pom.getProperties().get("nuts.executable"))) {
+                executable = true;
+            } else if (new String(bytes)
+                    .matches("^.*?((<mainClass>)|(<goal>exec-war-only</goal>)).*$")) {
+                executable = true;
             }
-            if("true".equals(pom.getProperties().get("nuts.application"))){
-                application=true;
+            if ("true".equals(pom.getProperties().get("nuts.application"))) {
+                application = true;
             }
-            if(application){
-                executable=true;
+            if (application) {
+                executable = true;
             }
             if (pom.getPackaging().isEmpty()) {
                 pom.setPackaging("jar");
@@ -126,7 +129,7 @@ public class MavenUtils {
 
             return new DefaultNutsDescriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
-                    .setParents(pom.getParent()==null? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
+                    .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
                     .setExecutable(executable)
                     .setNutsApplication(application)
@@ -136,8 +139,7 @@ public class MavenUtils {
                     .setDependencies(toNutsDependencies(pom.getDependencies()))
                     .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement()))
                     .setProperties(pom.getProperties())
-                    .build()
-                    ;
+                    .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
@@ -149,24 +151,22 @@ public class MavenUtils {
         }
     }
 
-
     public static String toNutsVersion(String version) {
         /// maven : [cc] [co) (oc] (oo)
         /// nuts  : [cc] [co[ ]oc] ]oo[
-        return version==null?null:version.replace("(", "]").replace(")", "[");
+        return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsSession session, String urlDesc) throws IOException {
+    public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsRepositorySession session, String urlDesc) throws IOException {
         NutsDescriptor nutsDescriptor = null;
-        if (session == null) {
-            session = ws.createSession();
-        }
+//        if (session == null) {
+//            session = ws.createSession();
+//        }
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
-                nutsDescriptor = MavenUtils.parsePomXml(stream,urlDesc);
+                nutsDescriptor = MavenUtils.parsePomXml(stream, urlDesc);
                 HashMap<String, String> properties = new HashMap<>();
-                NutsSession transitiveSession = session.copy().setTransitive(true);
                 NutsId parentId = null;
                 for (NutsId nutsId : nutsDescriptor.getParents()) {
                     parentId = nutsId;
@@ -175,8 +175,13 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
-                            NutsSession session2=(transitiveSession.getFetchMode()==NutsFetchMode.REMOTE)?transitiveSession.copy().setFetchMode(NutsFetchMode.ONLINE):transitiveSession;
-                            parentDescriptor = ws.fetch(parentId).setIncludeEffective(true).setSession(session2).fetchDescriptor();
+                            parentDescriptor = ws.fetch(parentId).setIncludeEffective(true)
+                                    .setSession(session.getSession())
+                                    .setTransitive(true)
+                                    .setFetchStratery(
+                                            session.getFetchMode() == NutsFetchMode.REMOTE ? NutsFetchStrategy.ONLINE
+                                            : NutsFetchStrategy.OFFLINE
+                                    ).fetchDescriptor();
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
@@ -215,8 +220,7 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                NutsSession session2=(transitiveSession.getFetchMode()==NutsFetchMode.REMOTE)?transitiveSession.copy().setFetchMode(NutsFetchMode.ONLINE):transitiveSession;
-                                d = ws.fetch(pid).setIncludeEffective(true).setSession(session2).fetchDescriptor();
+                                d = ws.fetch(pid).setIncludeEffective(true).setSession(session.getSession()).fetchDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
@@ -263,14 +267,13 @@ public class MavenUtils {
         return nutsDescriptor;
     }
 
-
-    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream,NutsIdFilter filter,boolean autoClose) {
+    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose) {
         Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
             @Override
             public boolean accept(PomId id) {
                 return filter.accept(MavenUtils.toNutsId(id));
             }
-        },autoClose);
+        }, autoClose);
         return new Iterator<NutsId>() {
             @Override
             public boolean hasNext() {
@@ -286,10 +289,10 @@ public class MavenUtils {
 
     public static MavenMetadata parseMavenMetaData(InputStream metadataStream) {
         MavenMetadata s = MavenMetadataParser.parseMavenMetaData(metadataStream);
-        if(s==null){
+        if (s == null) {
             return s;
         }
-        for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
+        for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext();) {
             String version = iterator.next();
             if (s.getLatest().length() > 0 && DefaultNutsVersion.compareVersions(version, s.getLatest()) > 0) {
                 iterator.remove();

@@ -8,7 +8,7 @@ public enum NutsBootCommand {
     HELP,
     LICENSE,
     RESET,
-    CLEAN,
+    CLEANUP,
     UPDATE,
     INSTALL,
     UNINSTALL,

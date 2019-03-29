@@ -130,12 +130,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsId oldId = CoreNutsUtils.finNutsIdBySimpleName(id, extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
-            NutsId nutsId = ws.fetch(id).setSession(session).fetchId();
-            if (StringUtils.isEmpty(id.getGroup())) {
-                id = id.setGroup(nutsId.getGroup());
-            }
+            NutsWorkspaceExtension e = wireExtension(id, new DefaultNutsQueryOptions().setFetchStratery(NutsFetchStrategy.ONLINE), session);
             ws.getConfigManager().addExtension(id);
-            return wireExtension(id, session);
+            return e;
         } else {
             old = extensions.get(oldId);
             ws.getConfigManager().addExtension(id);
@@ -159,7 +156,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
 
-    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsSession session) {
+    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsQueryOptions options, NutsSession session) {
         session = CoreNutsUtils.validateSession(session, ws);
         if (id == null) {
             throw new NutsIllegalArgumentException("Extension Id could not be null");
@@ -169,7 +166,9 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             throw new NutsWorkspaceExtensionAlreadyRegisteredException(id.toString(), wired.toString());
         }
         DefaultNutsWorkspace.log.log(Level.FINE, "Installing extension {0}", id);
-        List<NutsDefinition> nutsDefinitions = ws.createQuery().addId(id).setSession(session)
+        List<NutsDefinition> nutsDefinitions = ws.createQuery()
+                .copyFrom(options)
+                .addId(id).setSession(session)
                 .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
                 .setIncludeOptional(false)
                 .mainAndDependencies().fetch();
@@ -345,7 +344,6 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
     }
 
-
     @Override
     public List<Class> discoverTypes(Class type, ClassLoader bootClassLoader) {
         return objectFactory.discoverTypes(type, bootClassLoader);
@@ -363,7 +361,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
-        return new DefaultNutsServiceLoader<T, B>(serviceType,criteriaType, classLoader);
+        return new DefaultNutsServiceLoader<T, B>(serviceType, criteriaType, classLoader);
     }
 
     @Override

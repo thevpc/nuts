@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 
 public interface NutsDescriptorFormat {
@@ -41,11 +42,11 @@ public interface NutsDescriptorFormat {
 
     String format(NutsDescriptor descriptor);
 
-    void format(NutsDescriptor descriptor, File file) throws NutsIOException;
+    void format(NutsDescriptor descriptor, File file) throws UncheckedIOException;
 
-    void format(NutsDescriptor descriptor, PrintStream out) throws NutsIOException;
+    void format(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException;
 
-    void format(NutsDescriptor descriptor, OutputStream out) throws NutsIOException;
+    void format(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
 
-    void format(NutsDescriptor descriptor, Writer out) throws NutsIOException;
+    void format(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
 }

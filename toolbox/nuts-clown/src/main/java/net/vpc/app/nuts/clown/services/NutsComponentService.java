@@ -58,7 +58,7 @@ public class NutsComponentService {
             .setIgnoreNotFound(true)
             .setIncludeInstallInformation(false)
             .setIncludeFile(false)
-            .setIncludeEffectiveDesc(true)
+            .setIncludeEffective(true)
             .find();
         List<Map<String, String>> result = ids.stream()
             .map(NutsClownUtils::nutsIdToMap)

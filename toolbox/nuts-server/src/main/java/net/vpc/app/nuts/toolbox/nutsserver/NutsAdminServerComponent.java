@@ -35,6 +35,7 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -142,7 +143,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                 try {
                     serverSocket.close();
                 } catch (IOException e) {
-                    throw new NutsIOException(e);
+                    throw new UncheckedIOException(e);
                 }
                 return true;
             }

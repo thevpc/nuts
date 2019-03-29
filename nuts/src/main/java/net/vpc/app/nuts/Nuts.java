@@ -64,7 +64,7 @@ public class Nuts {
             boolean showTrace = false;
             for (int i = 0; i < args.length; i++) {
                 if (args[i].startsWith("-")) {
-                    if (args[i].equals("--verbose")) {
+                    if (args[i].equals("--verbose") || args[i].equals("--debug")) {
                         showTrace = true;
                     }
                 } else {
@@ -102,16 +102,20 @@ public class Nuts {
      */
     public static NutsWorkspace openInheritedWorkspace(String[] args) {
         long startTime = System.currentTimeMillis();
+//        System.out.println("OPEN INHERITED : "+NutsMinimalCommandLine.escapeArguments(args));
         NutsBootWorkspace boot = null;
         if (args.length > 0 && args[0].startsWith("--nuts-boot-args=")) {
+//            System.out.println("OPEN INHERITED : GOT FROM ARGS : "+args[0]);
             boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(args[0].substring("--nuts-boot-args=".length())));
             boot.getOptions().setApplicationArguments(Arrays.copyOfRange(args, 1, args.length));
         } else {
-            String d = System.getProperty("nuts-boot-args");
+            String d = System.getProperty("nuts.export.boot.args");
             if (d != null) {
+//                System.out.println("OPEN INHERITED : GOT FROM PROPS : -Dnuts.export.boot.args="+d);
                 boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(d));
                 boot.getOptions().setApplicationArguments(args);
             } else {
+//                System.out.println("OPEN INHERITED : NO PARAMS");
                 NutsWorkspaceOptions t = new NutsWorkspaceOptions();
                 t.setApplicationArguments(args);
                 boot = new NutsBootWorkspace(t);
@@ -121,7 +125,7 @@ public class Nuts {
             throw new IllegalArgumentException("Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());
         }
         boot.getOptions().setCreationTime(startTime);
-        return openWorkspace(boot.getOptions());
+        return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
 
     /**
@@ -188,78 +192,6 @@ public class Nuts {
         //long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
         return boot.run();
-    }
-
-    /**
-     * resolves nuts home folder. Home folder is the root for nuts folders. It
-     * depends on folder type and store layout. For instance log folder depends
-     * on on the underlying operating system (linux,windows,...).
-     *
-     * @param folderType folder type to resolve home for
-     * @param storeLocationLayout location layout to resolve home for
-     * @return home folder path
-     */
-    public static String resolveHomeFolder(NutsStoreFolder folderType, NutsStoreLocationLayout storeLocationLayout) {
-        if (folderType == null) {
-            folderType = NutsStoreFolder.CONFIG;
-        }
-        boolean wasSystem = false;
-        if (storeLocationLayout == null || storeLocationLayout == NutsStoreLocationLayout.SYSTEM) {
-            wasSystem = true;
-            if ("windows".equals(NutsUtils.getPlatformOsFamily())) {
-                storeLocationLayout = NutsStoreLocationLayout.WINDOWS;
-            } else {
-                storeLocationLayout = NutsStoreLocationLayout.LINUX;
-            }
-        }
-        final String s = System.getProperty("nuts.export.home." + folderType.name().toLowerCase() + "." + storeLocationLayout.name().toLowerCase());
-        if (s != null && s.trim().length() > 0) {
-            return s.trim();
-        }
-        switch (folderType) {
-            case LOGS:
-            case VAR:
-            case CONFIG:
-            case PROGRAMS:
-            case LIB: {
-                switch (storeLocationLayout) {
-                    case WINDOWS: {
-                        return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts");
-                    }
-                    case LINUX:
-                        return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
-                }
-                break;
-            }
-            case CACHE: {
-                switch (storeLocationLayout) {
-                    case WINDOWS:
-                        return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
-                    case LINUX:
-                        return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts");
-                }
-                break;
-            }
-            case TEMP: {
-                switch (storeLocationLayout) {
-                    case WINDOWS:
-                        if (NutsUtils.getPlatformOsFamily().equals("windows")) {
-                            //on windows temp folder is user defined
-                            return System.getProperty("java.io.tmpdir") + NutsUtils.syspath("/nuts");
-                        } else {
-                            return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
-                        }
-                    case LINUX:
-                        if (NutsUtils.getPlatformOsFamily().equals("linux")) {
-                            //on linux temp folder is shared. will add user folder as discriminator
-                            return System.getProperty("java.io.tmpdir") + NutsUtils.syspath(("/" + System.getProperty("user.name") + "/nuts"));
-                        } else {
-                            return System.getProperty("user.home") + NutsUtils.syspath("/tmp/nuts");
-                        }
-                }
-            }
-        }
-        throw new NutsIllegalArgumentException("Unsupported " + storeLocationLayout);
     }
 
 }

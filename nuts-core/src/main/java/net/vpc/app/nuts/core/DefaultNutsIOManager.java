@@ -34,37 +34,37 @@ public class DefaultNutsIOManager implements NutsIOManager {
         public String convert(String from) {
             switch (from) {
                 case "home.config":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.CONFIG);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CONFIG);
                 case "home.programs":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.PROGRAMS);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.PROGRAMS);
                 case "home.lib":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.LIB);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.LIB);
                 case "home.temp":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.TEMP);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.TEMP);
                 case "home.var":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.VAR);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.VAR);
                 case "home.cache":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.CACHE);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CACHE);
                 case "home.logs":
-                    return workspace.getConfigManager().getHome(NutsStoreFolder.LOGS);
+                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.LOGS);
                 case "workspace":
                     return workspace.getConfigManager().getRunningContext().getWorkspace();
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.CONFIG);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.CONFIG);
                 case "lib":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.LIB);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.LIB);
                 case "programs":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.PROGRAMS);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.PROGRAMS);
                 case "cache":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.CACHE);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.CACHE);
                 case "temp":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.TEMP);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.TEMP);
                 case "logs":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.LOGS);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.LOGS);
                 case "var":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreFolder.VAR);
+                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.VAR);
             }
             return "${" + from + "}";
         }
@@ -80,7 +80,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public InputStream monitorInputStream(String path, String name, NutsSession session) {
+    public InputStream monitorInputStream(String path, String name, NutsTerminalProvider session) {
         InputStream stream = null;
         NutsURLHeader header = null;
         long size = -1;
@@ -107,13 +107,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 stream = new FileInputStream(path);
             }
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
         return monitorInputStream(stream, size, (name == null ? path : name), session);
     }
 
     @Override
-    public InputStream monitorInputStream(InputStream stream, long length, String name, NutsSession session) {
+    public InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session) {
         if (length > 0) {
             return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(workspace, session.getTerminal().getOut()));
         } else {
@@ -122,7 +122,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public InputStream monitorInputStream(String path, Object source, NutsSession session) {
+    public InputStream monitorInputStream(String path, Object source, NutsTerminalProvider session) {
         String sourceName = String.valueOf(path);
         boolean monitorable = true;
         Object o = session.getProperty("monitor-allowed");
@@ -173,7 +173,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             if (verboseMode && monitor != null) {
                 monitor.onComplete(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
             }
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
         if (stream != null) {
             if (path.toLowerCase().startsWith("file://")) {
@@ -246,7 +246,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         try (FileReader r = new FileReader(file)) {
             return readJson(r, cls);
         } catch (IOException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(ex);
         }
     }
 
@@ -258,7 +258,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         try (FileWriter w = new FileWriter(file)) {
             writeJson(obj, w, pretty);
         } catch (IOException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(ex);
         }
     }
 
@@ -269,7 +269,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(ex);
+            throw new UncheckedIOException(ex);
         }
     }
 
@@ -287,10 +287,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
             }
             if (path.startsWith("~")) {
                 if (path.equals("~~")) {
-                    String nutsHome = workspace.getConfigManager().getHome(NutsStoreFolder.CONFIG);
+                    String nutsHome = workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CONFIG);
                     return CoreIOUtils.getAbsolutePath(nutsHome);
                 } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    String nutsHome = workspace.getConfigManager().getHome(NutsStoreFolder.CONFIG);
+                    String nutsHome = workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CONFIG);
                     return CoreIOUtils.getAbsolutePath(nutsHome + File.separator + path.substring(3));
                 } else if (path.equals("~")) {
                     return (System.getProperty("user.home"));
@@ -452,7 +452,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public void downloadPath(String from, File to, Object source, NutsSession session) {
+    public void downloadPath(String from, File to, Object source, NutsTerminalProvider session) {
         CoreNutsUtils.copy(monitorInputStream(from, source, session), to, true, true);
     }
 
@@ -470,9 +470,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
     public File createTempFolder(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
-            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
         } else {
-            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
         }
         final File temp;
         if (StringUtils.isEmpty(name)) {
@@ -500,9 +500,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
     public File createTempFile(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
-            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
         } else {
-            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreFolder.TEMP));
+            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
         }
         String prefix = "temp-";
         String ext = null;
@@ -524,7 +524,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         try {
             return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), folder);
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
 
     }

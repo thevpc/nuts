@@ -42,7 +42,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     String getStoreLocation();
 
-    String getStoreLocation(NutsStoreFolder folderType);
+    String getStoreLocation(NutsStoreLocation folderType);
 
     void removeUser(String userId);
 

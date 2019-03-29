@@ -158,7 +158,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
         try {
             return getReader().readLine();
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

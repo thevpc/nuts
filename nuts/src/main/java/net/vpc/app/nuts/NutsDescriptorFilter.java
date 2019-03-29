@@ -32,7 +32,13 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 2/19/17.
  */
-public interface NutsDescriptorFilter {
+public interface NutsDescriptorFilter extends NutsObjectFilter<NutsDescriptor>, NutsSearchIdFilter {
 
+    @Override
     boolean accept(NutsDescriptor descriptor);
+
+    @Override
+    default boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws) {
+        return accept(sid.getDescriptor(ws));
+    }
 }

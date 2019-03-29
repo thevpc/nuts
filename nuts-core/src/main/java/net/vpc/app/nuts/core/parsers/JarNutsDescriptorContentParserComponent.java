@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 
 /**
  * Created by vpc on 1/15/17.
@@ -110,7 +111,8 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
                         break;
                     default:
                         try {
-                            maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), parserContext.getSession(), path));
+                            maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), NutsWorkspaceHelper.createNoRepositorySession(
+                                    parserContext.getSession(), NutsFetchMode.REMOTE,parserContext.getQueryOptions()), path));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by vpc on 1/5/17.
@@ -69,7 +68,7 @@ public interface NutsRepository {
 
     NutsRepositoryConfigManager getConfigManager();
 
-    String getStoreLocation(NutsStoreFolder folderType);
+    String getStoreLocation(NutsStoreLocation folderType);
 
     NutsRepositorySecurityManager getSecurityManager();
 
@@ -79,21 +78,22 @@ public interface NutsRepository {
      * @param descriptor
      * @param file
      * @param options
+     * @param session
      * @return
      */
-    NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsSession context);
+    NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsRepositorySession session);
 
-    void push(NutsId id, String repoId, NutsPushOptions options, NutsSession session);
+    void push(NutsId id, String repoId, NutsPushOptions options, NutsRepositorySession session);
 
-    NutsDescriptor fetchDescriptor(NutsId id, NutsSession session);
+    NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session);
 
-    NutsContent fetchContent(NutsId id, String localPath, NutsSession session);
+    NutsContent fetchContent(NutsId id, String localPath, NutsRepositorySession session);
 
-    Iterator<NutsId> find(NutsIdFilter filter, NutsSession session);
+    Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session);
 
-    List<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsSession session);
+    Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
 
-    int getSupportLevel(NutsId id, NutsSession session);
+    int getSupportLevel(NutsId id, NutsFetchMode mode, boolean transitive);
 
     boolean isSupportedMirroring();
 

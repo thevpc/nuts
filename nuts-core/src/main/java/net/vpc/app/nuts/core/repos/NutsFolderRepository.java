@@ -33,13 +33,14 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.CollectionUtils;
-import net.vpc.common.util.IteratorList;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsQueryOptions;
+import net.vpc.common.util.IteratorUtils;
+import net.vpc.common.util.LazyIterator;
 
 /**
  * Created by vpc on 1/5/17.
@@ -54,16 +55,16 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
-        switch (session.getFetchMode()) {
+    protected int getSupportLevelCurrent(NutsId id, NutsFetchMode mode) {
+        switch (mode) {
             case REMOTE:
                 return 0;
         }
-        return super.getSupportLevelCurrent(id, session);
+        return super.getSupportLevelCurrent(id, mode);
     }
 
     @Override
-    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
+    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
         String idFilename = getIdFilename(id);
         File compVersionFolder = getLocalVersionFolder(id, false);
         File cacheVersionFolder = getLocalVersionFolder(id, true);
@@ -149,7 +150,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsSession session) {
+    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsRepositorySession session) {
         if (options == null) {
             options = new NutsDeployOptions();
         }
@@ -188,8 +189,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsSession session) {
-        NutsSession nonTransitiveSession = session.copy().setTransitive(false);
+    protected void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsRepositorySession session) {
+        NutsRepositorySession nonTransitiveSession = session.copy().setTransitive(false);
         NutsDescriptor desc = fetchDescriptor(id, nonTransitiveSession);
         NutsContent local = fetchContent(id, null, nonTransitiveSession);
         if (local == null) {
@@ -201,7 +202,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (repoId == null) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : getMirrors()) {
-                int lvl = remote.getSupportLevel(id, nonTransitiveSession);
+                int lvl = remote.getSupportLevel(id, session.getFetchMode(), false);
                 if (lvl > 0) {
                     all.add(remote);
                 }
@@ -223,42 +224,47 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
+    protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+        List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
+        String storeLocation1 = getStoreLocation(false);
+        String storeLocation2 = getStoreLocation(true);
+
         if (!session.isTransitive()) {
             if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                IteratorList<NutsId> list = new IteratorList<>();
-                list.addNonEmpty(findInFolder(new File(getStoreLocation(false)), filter, session));
-                list.addNonEmpty(findInFolder(new File(getStoreLocation(true)), filter, session));
-                return list;
+                List<Iterator<NutsId>> list = new ArrayList<>();
+                for (CommonRootsHelper.PathBase pp : roots) {
+                    list.add(findInFolder(new File(storeLocation1, pp.getName()), filter, pp.isDeep(), session));
+                    list.add(findInFolder(new File(storeLocation2, pp.getName()), filter, pp.isDeep(), session));
+                }
+                return IteratorUtils.concat(list);
             } else {
-                return Collections.emptyIterator();
+//                return Collections.emptyIterator();
+                return null;
             }
         } else {
-            IteratorList<NutsId> iterator = new IteratorList<>();
-            if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-                iterator.addNonEmpty(findInFolder(new File(getStoreLocation(false)), filter, session));
-                iterator.addNonEmpty(findInFolder(new File(getStoreLocation(true)), filter, session));
+            List<Iterator<NutsId>> li = new ArrayList<>();
+            for (CommonRootsHelper.PathBase root : roots) {
+                li.add(findInFolder(new File(storeLocation1, root.getName()), filter, root.isDeep(), session));
+                li.add(findInFolder(new File(storeLocation2, root.getName()), filter, root.isDeep(), session));
             }
             if (session.isTransitive() && isSupportedMirroring()) {
                 for (NutsRepository remote : getMirrors()) {
-                    Iterator<NutsId> child = null;
-                    try {
-                        child = remote.find(filter, session);
-                    } catch (Exception ex) {
-//                    ex.printStackTrace();
-                        //
-                    }
-                    if (child != null) {
-                        iterator.addNonEmpty(child);
-                    }
+                    li.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {
+
+                        @Override
+                        public Iterator<NutsId> iterator() {
+                            return remote.find(filter, session);
+                        }
+
+                    }));
                 }
             }
-            return iterator;
+            return IteratorUtils.concat(li);
         }
     }
 
     @Override
-    protected NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
+    protected NutsContent fetchContentImpl(NutsId id, String localPath, NutsRepositorySession session) {
         File compContent = getIdLocalFile(id, false);
         File cacheContent = getIdLocalFile(id, true);
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
@@ -347,7 +353,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return true;
     }
 
-    protected void undeployImpl(NutsId id, NutsSession session) {
+    protected void undeployImpl(NutsId id, NutsRepositorySession session) {
         File localFolder = getIdLocalFile(id, false);
         if (localFolder != null && localFolder.exists()) {
             if (localFolder.isDirectory()) {
@@ -363,8 +369,9 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
-        List<NutsId> namedNutIdIterator = null;
+    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+
+        Iterator<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             try {
@@ -372,64 +379,63 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     NutsId id1 = id.setFaceDescriptor();
                     File localFile = getIdLocalFile(id1, false);
                     if (localFile != null && localFile.isFile()) {
-                        return new ArrayList<>(Collections.singletonList(id.setNamespace(getName())));
+                        return Collections.singletonList(id.setNamespace(getName())).iterator();
                     }
                     localFile = getIdLocalFile(id1, true);
                     if (localFile != null && localFile.isFile()) {
-                        return new ArrayList<>(Collections.singletonList(id.setNamespace(getName())));
+                        return Collections.singletonList(id.setNamespace(getName())).iterator();
                     }
-                    return Collections.emptyList();
+//                    return Collections.emptyIterator();
+                    return null;
                 }
-                IteratorList<NutsId> all = new IteratorList<>();
-                all.addNonEmpty(findInFolder(getLocalGroupAndArtifactFile(id, false), idFilter, session));
-                all.addNonEmpty(findInFolder(getLocalGroupAndArtifactFile(id, true), idFilter, session));
-                namedNutIdIterator = CollectionUtils.toList(all);
+                List<Iterator<NutsId>> all = new ArrayList<>();
+                all.add(findInFolder(getLocalGroupAndArtifactFile(id, false), idFilter, false, session));
+                all.add(findInFolder(getLocalGroupAndArtifactFile(id, true), idFilter, false, session));
+                namedNutIdIterator = IteratorUtils.concat(all);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
         }
         if (!session.isTransitive()) {
-            if (namedNutIdIterator == null) {
-                return Collections.emptyList();
-            }
+//            if (namedNutIdIterator == null) {
+//                return Collections.emptyIterator();
+//            }
             return namedNutIdIterator;
         }
-        List<NutsId> list = new ArrayList<>();
-        if (namedNutIdIterator != null) {
-            list.addAll(namedNutIdIterator);
-        }
+        List<Iterator<NutsId>> list = new ArrayList<>();
+        list.add(namedNutIdIterator);
         if (isSupportedMirroring()) {
             for (NutsRepository repo : getMirrors()) {
                 int sup = 0;
                 try {
-                    sup = repo.getSupportLevel(id, session);
+                    sup = repo.getSupportLevel(id, session.getFetchMode(), session.isTransitive());
                 } catch (Exception ex) {
 //                errors.append(ex.toString()).append("\n");
                 }
 
                 if (sup > 0) {
-                    List<NutsId> vers = null;
-                    try {
-                        vers = repo.findVersions(id, idFilter, session);
-                    } catch (NutsNotFoundException ex) {
-//                    errors.append(ex).append(" \n");
-                    }
-                    if (vers != null) {
-                        list.addAll(vers);
-                    }
+                    list.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {
+
+                        @Override
+                        public Iterator<NutsId> iterator() {
+                            return repo.findVersions(id, idFilter, session);
+                        }
+                    }));
                 }
             }
         }
-        return list;
+        return IteratorUtils.concat(list);
+
     }
 
-    protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, NutsSession session) {
+    protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
         if (folder == null || !folder.exists() || !folder.isDirectory()) {
-            return Collections.emptyIterator();
+//            return Collections.emptyIterator();
+            return null;
         }
         return new FolderNutIdIterator(getWorkspace(), this, folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
-            public void undeploy(NutsId id, NutsSession session) {
+            public void undeploy(NutsId id, NutsRepositorySession session) {
                 NutsFolderRepository.this.undeploy(id, session);
             }
 
@@ -439,17 +445,17 @@ public class NutsFolderRepository extends AbstractNutsRepository {
             }
 
             @Override
-            public NutsDescriptor parseDescriptor(File pathname, NutsSession session) throws IOException {
+            public NutsDescriptor parseDescriptor(File pathname, NutsRepositorySession session) throws IOException {
                 return getWorkspace().getParseManager().parseDescriptor(pathname);
             }
-        });
+        }, deep);
     }
 
     public String getStoreLocation(boolean cache) {
         if (cache) {
-            return getStoreLocation(NutsStoreFolder.CACHE);
+            return getStoreLocation(NutsStoreLocation.CACHE);
         } else {
-            return getStoreLocation(NutsStoreFolder.LIB);
+            return getStoreLocation(NutsStoreLocation.LIB);
         }
     }
 
@@ -459,7 +465,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
+    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isEmpty() && filter == null) {
             NutsId bestId = null;
             for (boolean cache : new boolean[]{false, true}) {
@@ -491,7 +497,13 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                     }
                     if (nutsDescriptor != null) {
 //                        NutsId id2 = CoreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
-                        NutsId id2 = getWorkspace().resolveEffectiveId(nutsDescriptor, session).setFaceDescriptor();
+                        NutsId id2 = getWorkspace().resolveEffectiveId(nutsDescriptor,
+                                new DefaultNutsQueryOptions()
+                                        .setTransitive(session.isTransitive())
+                                        .setCached(session.isCached())
+                                        .setIndexed(session.isIndexed()),
+                                 session.getSession()
+                        ).setFaceDescriptor();
                         File localNutFile = getIdLocalFile(id2, true);
                         getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(nutsDescriptor, localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
@@ -506,8 +518,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     public void reindexFolder() {
-        reindexFolder(new File(getStoreLocation(NutsStoreFolder.LIB)));
-        reindexFolder(new File(getStoreLocation(NutsStoreFolder.CACHE)));
+        reindexFolder(new File(getStoreLocation(NutsStoreLocation.LIB)));
+        reindexFolder(new File(getStoreLocation(NutsStoreLocation.CACHE)));
     }
 
     private void reindexFolder(File folder) {

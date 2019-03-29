@@ -2,7 +2,6 @@ package net.vpc.app.nuts.clown.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsRepositoryLocation;
 import net.vpc.app.nuts.NutsWorkspace;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
+import net.vpc.app.nuts.NutsRepositoryDefinition;
 
 @RestController
 @RequestMapping("ws/repositories")
@@ -34,7 +33,7 @@ public class NutsRepositoryService {
 
     @GetMapping(value = "delete", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> deleteRepository(@RequestParam("name") String name,
-                                                                      @RequestParam("workspace") String workspace) {
+            @RequestParam("workspace") String workspace) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
         ws.getRepositoryManager().removeRepository(name);
         ws.getConfigManager().save();
@@ -45,16 +44,15 @@ public class NutsRepositoryService {
     @SuppressWarnings("unchecked")
     @GetMapping(value = "add", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> addRepository(@RequestParam("workspace") String workspace,
-                                                                   @RequestParam("data") String data) {
+            @RequestParam("data") String data) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
         try {
             HashMap<String, String> dataMap = new ObjectMapper().readValue(data, HashMap.class);
-            NutsRepositoryLocation location = new NutsRepositoryLocation()
-                .setName(dataMap.get("name"))
-                .setLocation(dataMap.get("location"))
-                .setType(dataMap.get("type"))
-                .setEnabled(true);
-            ws.getRepositoryManager().addRepository(location, true);
+            NutsRepositoryDefinition location = new NutsRepositoryDefinition()
+                    .setName(dataMap.get("name"))
+                    .setLocation(dataMap.get("location"))
+                    .setType(dataMap.get("type"));
+            ws.getRepositoryManager().addRepository(location);
             ws.getConfigManager().save();
             logger.info(String.format("Repository with name %s was created", location.getName()));
         } catch (NutsIllegalArgumentException | IOException ex) {

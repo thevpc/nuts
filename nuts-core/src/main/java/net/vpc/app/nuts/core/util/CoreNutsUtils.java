@@ -59,7 +59,7 @@ public class CoreNutsUtils {
 
     private static final Logger log = Logger.getLogger(CoreNutsUtils.class.getName());
     public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
-    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = new OptionalNutsDependencyFilter(true);
@@ -666,7 +666,7 @@ public class CoreNutsUtils {
         };
     }
 
-    public static CharacterizedFile characterize(NutsWorkspace ws, InputStreamSource contentFile, NutsSession session) {
+    public static CharacterizedFile characterize(NutsWorkspace ws, InputStreamSource contentFile, NutsQueryOptions options, NutsSession session) {
         session = validateSession(session, ws);
         CharacterizedFile c = new CharacterizedFile();
         c.contentFile = contentFile;
@@ -677,7 +677,7 @@ public class CoreNutsUtils {
             CoreNutsUtils.copy(contentFile.open(), temp, true, true);
             c.contentFile = IOUtils.toInputStreamSource(temp, null, null, null);
             c.addTemp(temp);
-            return characterize(ws, IOUtils.toInputStreamSource(temp, null, null, null), session);
+            return characterize(ws, IOUtils.toInputStreamSource(temp, null, null, null), options, session);
         }
         File fileSource = (File) c.contentFile.getSource();
         if ((!fileSource.exists())) {
@@ -688,7 +688,7 @@ public class CoreNutsUtils {
             if (ext.exists()) {
                 c.descriptor = ws.getParseManager().parseDescriptor(ext);
             } else {
-                c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, session);
+                c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
             }
             if (c.descriptor != null) {
                 if ("zip".equals(c.descriptor.getPackaging())) {
@@ -705,7 +705,7 @@ public class CoreNutsUtils {
             if (ext.exists()) {
                 c.descriptor = ws.getParseManager().parseDescriptor(ext);
             } else {
-                c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, session);
+                c.descriptor = resolveNutsDescriptorFromFileContent(ws, c.contentFile, options, session);
             }
         } else {
             throw new NutsIllegalArgumentException("Path does not denote a valid file or folder " + c.contentFile);
@@ -721,13 +721,13 @@ public class CoreNutsUtils {
         return session;
     }
 
-    public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, InputStreamSource localPath, NutsSession session) {
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, InputStreamSource localPath, NutsQueryOptions queryOptions, NutsSession session) {
         session = validateSession(session, ws);
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = ws.getExtensionManager().createAllSupported(NutsDescriptorContentParserComponent.class, ws);
             if (allParsers.size() > 0) {
                 String fileExtension = FileUtils.getFileExtension(localPath.getName());
-                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(ws, session, localPath, fileExtension, null, null);
+                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(ws, session, localPath, fileExtension, null, null, queryOptions);
                 for (NutsDescriptorContentParserComponent parser : allParsers) {
                     NutsDescriptor desc = null;
                     try {
@@ -935,15 +935,15 @@ public class CoreNutsUtils {
         try {
             IOUtils.copy(from, to, mkdirs);
         } catch (RuntimeIOException ex) {
-            throw new NutsIOException(ex.getCause());
+            throw new UncheckedIOException((IOException)ex.getCause());
         }
     }
 
-    public static void copy(String from, File to, boolean mkdirs) throws NutsIOException {
+    public static void copy(String from, File to, boolean mkdirs) throws UncheckedIOException {
         try {
             IOUtils.copy(from, to, mkdirs);
         } catch (RuntimeIOException ex) {
-            throw new NutsIOException(ex.getCause());
+            throw new UncheckedIOException((IOException)ex.getCause());
         }
     }
 
@@ -951,7 +951,7 @@ public class CoreNutsUtils {
         try {
             IOUtils.copy(from, to, mkdirs, closeInput);
         } catch (RuntimeIOException ex) {
-            throw new NutsIOException(ex.getCause());
+            throw new UncheckedIOException((IOException)ex.getCause());
         }
     }
 
@@ -1091,10 +1091,10 @@ public class CoreNutsUtils {
                     try {
                         CoreIOUtils.move(file, newfile);
                     } catch (IOException e) {
-                        throw new NutsIOException("Unable to load and re-create config file " + file.getPath() + " : " + e.toString(), ex);
+                        throw new UncheckedIOException("Unable to load and re-create config file " + file.getPath() + " : " + e.toString(), new IOException(ex));
                     }
                 } else {
-                    throw new NutsIOException("Unable to load config file " + file.getPath(), ex);
+                    throw new UncheckedIOException("Unable to load config file " + file.getPath(), new IOException(ex));
                 }
             }
         }
@@ -1135,5 +1135,78 @@ public class CoreNutsUtils {
             );
         }
         return o;
+    }
+
+    public static void wconfigToBconfig(NutsWorkspaceConfig wconfig, NutsBootConfig bconfig) {
+        bconfig.setStoreLocation(NutsStoreLocation.PROGRAMS, wconfig.getProgramsStoreLocation());
+        bconfig.setStoreLocation(NutsStoreLocation.CONFIG, wconfig.getConfigStoreLocation());
+        bconfig.setStoreLocation(NutsStoreLocation.VAR, wconfig.getVarStoreLocation());
+        bconfig.setStoreLocation(NutsStoreLocation.LOGS, wconfig.getLogsStoreLocation());
+        bconfig.setStoreLocation(NutsStoreLocation.TEMP, wconfig.getTempStoreLocation());
+        bconfig.setStoreLocation(NutsStoreLocation.CACHE, wconfig.getCacheStoreLocation());
+        bconfig.setStoreLocation(NutsStoreLocation.LIB, wconfig.getLibStoreLocation());
+
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.PROGRAMS, wconfig.getProgramsSystemHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CONFIG, wconfig.getConfigSystemHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.VAR, wconfig.getVarSystemHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LOGS, wconfig.getLogsSystemHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.TEMP, wconfig.getTempSystemHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CACHE, wconfig.getCacheSystemHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LIB, wconfig.getLibSystemHome());
+
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsWindowsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CONFIG, wconfig.getConfigWindowsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.VAR, wconfig.getVarWindowsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LOGS, wconfig.getLogsWindowsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.TEMP, wconfig.getTempWindowsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CACHE, wconfig.getCacheWindowsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LIB, wconfig.getLibWindowsHome());
+
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.PROGRAMS, wconfig.getProgramsLinuxHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CONFIG, wconfig.getConfigLinuxHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.VAR, wconfig.getVarLinuxHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LOGS, wconfig.getLogsLinuxHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.TEMP, wconfig.getTempLinuxHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CACHE, wconfig.getCacheLinuxHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LIB, wconfig.getLibLinuxHome());
+    }
+
+    public static void optionsToWconfig(NutsWorkspaceOptions options, NutsWorkspaceConfig wconfig) {
+        wconfig.setProgramsStoreLocation(options.getStoreLocation(NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigStoreLocation(options.getStoreLocation(NutsStoreLocation.CONFIG));
+        wconfig.setVarStoreLocation(options.getStoreLocation(NutsStoreLocation.VAR));
+        wconfig.setLogsStoreLocation(options.getStoreLocation(NutsStoreLocation.LOGS));
+        wconfig.setTempStoreLocation(options.getStoreLocation(NutsStoreLocation.TEMP));
+        wconfig.setCacheStoreLocation(options.getStoreLocation(NutsStoreLocation.CACHE));
+        wconfig.setLibStoreLocation(options.getStoreLocation(NutsStoreLocation.LIB));
+
+        wconfig.setProgramsSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CONFIG));
+        wconfig.setVarSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.VAR));
+        wconfig.setLogsSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LOGS));
+        wconfig.setTempSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.TEMP));
+        wconfig.setCacheSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.CACHE));
+        wconfig.setLibSystemHome(options.getHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.LIB));
+
+        wconfig.setProgramsWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CONFIG));
+        wconfig.setVarWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.VAR));
+        wconfig.setLogsWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LOGS));
+        wconfig.setTempWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.TEMP));
+        wconfig.setCacheWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CACHE));
+        wconfig.setLibWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LIB));
+
+        wconfig.setProgramsLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CONFIG));
+        wconfig.setVarLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.VAR));
+        wconfig.setLogsLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LOGS));
+        wconfig.setTempLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.TEMP));
+        wconfig.setCacheLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CACHE));
+        wconfig.setLibLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.LIB));
+
+    }
+
+    public static NutsQueryOptions createQueryOptions() {
+        return new DefaultNutsQueryOptions();
     }
 }

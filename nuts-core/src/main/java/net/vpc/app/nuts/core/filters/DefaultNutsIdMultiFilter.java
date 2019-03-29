@@ -23,11 +23,11 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
 
     private final NutsDescriptorFilter descriptorFilter;
     private final NutsRepository repository;
-    private final NutsSession session;
+    private final NutsRepositorySession session;
 
     public DefaultNutsIdMultiFilter(Map<String, String> map, NutsIdFilter idFilter, NutsVersionFilter versionFilter, NutsDescriptorFilter descriptorFilter,
             NutsRepository repository,
-            NutsSession session
+            NutsRepositorySession session
     ) {
         this.idFilter = CoreNutsUtils.simplify(idFilter);
         this.versionFilter = CoreNutsUtils.simplify(versionFilter);
@@ -50,6 +50,48 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
     }
 
     @Override
+    public boolean acceptSearchId(NutsSearchId sid, NutsWorkspace ws) {
+        if (idFilter != null) {
+            if (!idFilter.acceptSearchId(sid, ws)) {
+                return false;
+            }
+        }
+        if (versionFilter != null) {
+            if (!versionFilter.acceptSearchId(sid, ws)) {
+                return false;
+            }
+        }
+        if (descriptorFilter != null) {
+//            NutsDescriptor descriptor = sid.getDescriptor(ws);
+//            try {
+//                if (descriptor == null) {
+//                    descriptor = repository.fetchDescriptor(sid.getId(ws), session);
+//                }
+//                if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
+//                    NutsDescriptor nutsDescriptor = null;
+//                    try {
+//                        nutsDescriptor = repository.getWorkspace().resolveEffectiveDescriptor(descriptor, session);
+//                    } catch (Exception e) {
+//                        //throw new NutsException(e);
+//                    }
+//                    descriptor = nutsDescriptor;
+//                }
+//            } catch (Exception ex) {
+//                //suppose we cannot retrieve descriptor
+//                if (log.isLoggable(Level.FINER)) {
+//                    log.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.getName() + " : " + ex.toString());
+//                }
+//                return false;
+//            }
+//            if (!descriptorFilter.accept(descriptor)) {
+            if (!descriptorFilter.acceptSearchId(sid, ws)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public boolean accept(NutsId id) {
         if (idFilter != null) {
             if (!idFilter.accept(id)) {
@@ -68,7 +110,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                     NutsDescriptor nutsDescriptor = null;
                     try {
-                        nutsDescriptor = repository.getWorkspace().resolveEffectiveDescriptor(descriptor, session);
+                        nutsDescriptor = repository.getWorkspace().resolveEffectiveDescriptor(descriptor, session.getSession());
                     } catch (Exception e) {
                         //throw new NutsException(e);
                     }
@@ -76,7 +118,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 }
             } catch (Exception ex) {
                 //suppose we cannot retrieve descriptor
-                if(log.isLoggable(Level.FINER)) {
+                if (log.isLoggable(Level.FINER)) {
                     log.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.getName() + " : " + ex.toString());
                 }
                 return false;

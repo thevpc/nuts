@@ -72,7 +72,8 @@ public final class NutsConstants {
     public static final String REPOSITORY_TYPE_NUTS = "nuts";
     public static final String REPOSITORY_TYPE_NUTS_FOLDER = "nuts-folder";
     public static final String REPOSITORY_TYPE_NUTS_SERVER = "nuts-server";
-    public static final String REPOSITORY_TYPE_NUTS_MAVEN = "maven";
+    public static final String REPOSITORY_TYPE_MAVEN = "maven";
+    public static final String REPOSITORY_TYPE_MAVEN_GITHUB = "maven-github";
 
     /**
      * workspace config file name
@@ -137,6 +138,7 @@ public final class NutsConstants {
     public static final String QUERY_OSDIST = "osdist";
     public static final String QUERY_PLATFORM = "platform";
     public static final String QUERY_FACE_DEFAULT_VALUE = "default";
+    public static final String QUERY_ALTERNATIVE_DEFAULT_VALUE = "default";
     public static final String ALTERNATIVE_DEFAULT_VALUE = "default";
     public static final String QUERY_PACKAGING = "packaging";
     public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";

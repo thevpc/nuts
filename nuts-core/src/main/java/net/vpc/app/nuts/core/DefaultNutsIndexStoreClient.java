@@ -2,13 +2,10 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreHttpUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -17,16 +14,36 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 
     private NutsRepository repository;
     private boolean enabled = true;
+    private Date inaccessibleDate = null;
 
     public DefaultNutsIndexStoreClient(NutsRepository repository) {
         this.repository = repository;
     }
 
+    private void setInaccessible() {
+        inaccessibleDate = new Date();
+    }
+
+    private boolean isInaccessible() {
+        if (inaccessibleDate == null) {
+            return false;
+        }
+        long elapsed = System.currentTimeMillis() - inaccessibleDate.getTime();
+        if (elapsed > 1000 * 60 * 5) {
+            inaccessibleDate = null;
+            return false;
+        }
+        return true;
+    }
+
     @Override
-    public List<NutsId> findVersions(NutsId id, NutsSession session) {
-        String URL = "http://localhost:7070/indexer/components/allVersions" +
-                String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s" +
-                                "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
+    public List<NutsId> findVersions(NutsId id, NutsRepositorySession session) {
+        if(isInaccessible()){
+            return null;
+        }
+        String URL = "http://localhost:7070/indexer/components/allVersions"
+                + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
+                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         StringUtils.trim(id.getName()), StringUtils.trim(id.getNamespace()), StringUtils.trim(id.getGroup()), StringUtils.trim(id.getScope()), StringUtils.trim(id.getOs()),
                         StringUtils.trim(id.getOsdist()), StringUtils.trim(id.getArch()), StringUtils.trim(id.getFace()), StringUtils.trim(id.getAlternative()));
         try {
@@ -37,12 +54,16 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                     .map(s -> repository.getWorkspace().getParseManager().parseId(s.get("stringId").toString()))
                     .collect(Collectors.toList());
         } catch (IOException e) {
+            setInaccessible();
             return null;
         }
     }
 
     @Override
-    public Iterator<NutsId> find(NutsIdFilter filter, NutsSession session) {
+    public Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session) {
+        if(isInaccessible()){
+            return null;
+        }
         String URL = "http://localhost:7070/indexer/components?repositoryUuid=" + repository.getUuid();
         try {
             NutsHttpConnectionFacade clientFacade = CoreHttpUtils.getHttpClientFacade(repository.getWorkspace(),
@@ -53,6 +74,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                     .filter(filter != null ? filter::accept : (Predicate<NutsId>) id -> true)
                     .iterator();
         } catch (IOException e) {
+            setInaccessible();
             return null;
         }
     }
@@ -69,9 +91,12 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 
     @Override
     public void invalidate(NutsId id) {
-        String URL = "http://localhost:7070/indexer/components/delete" +
-                String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s" +
-                                "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
+        if(isInaccessible()){
+            return;
+        }
+        String URL = "http://localhost:7070/indexer/components/delete"
+                + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
+                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         StringUtils.trim(id.getName()), StringUtils.trim(id.getNamespace()), StringUtils.trim(id.getGroup()), StringUtils.trim(id.getVersion().toString()),
                         StringUtils.trim(id.getScope()), StringUtils.trim(id.getOs()), StringUtils.trim(id.getOsdist()), StringUtils.trim(id.getArch()), StringUtils.trim(id.getFace()),
                         StringUtils.trim(id.getAlternative()));
@@ -80,15 +105,19 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                     URL);
             clientFacade.open();
         } catch (IOException e) {
+            setInaccessible();
             //
         }
     }
 
     @Override
     public void revalidate(NutsId id) {
-        String URL = "http://localhost:7070/indexer/components/addData" +
-                String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s" +
-                                "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
+        if(isInaccessible()){
+            return;
+        }
+        String URL = "http://localhost:7070/indexer/components/addData"
+                + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
+                        + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         StringUtils.trim(id.getName()), StringUtils.trim(id.getNamespace()), StringUtils.trim(id.getGroup()), StringUtils.trim(id.getVersion().toString()),
                         StringUtils.trim(id.getScope()), StringUtils.trim(id.getOs()), StringUtils.trim(id.getOsdist()), StringUtils.trim(id.getArch()), StringUtils.trim(id.getFace()),
                         StringUtils.trim(id.getAlternative()));
@@ -97,6 +126,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
                     URL);
             clientFacade.open();
         } catch (IOException e) {
+            setInaccessible();
             //
         }
     }

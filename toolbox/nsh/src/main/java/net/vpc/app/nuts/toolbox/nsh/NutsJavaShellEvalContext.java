@@ -246,14 +246,15 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
             NutsWorkspace ws = this.getWorkspace();
             List<NutsId> nutsIds = ws.createQuery()
                     .addId(commandName)
-                    .setLatestVersions(true)
+                    .latestVersions()
                     .addScope(NutsDependencyScope.PROFILE_RUN)
                     .setIncludeOptional(false)
-                    .setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE))
+                    .offline()
+                    .setSession(this.getSession())
                     .find();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = ws.fetch(selectedId).setIncludeEffective(true).setSession(this.getSession().copy().setFetchMode(NutsFetchMode.OFFLINE)).fetchDefinition();
+                NutsDefinition def = ws.fetch(selectedId).setIncludeEffective(true).setSession(this.getSession()).offline().fetchDefinition();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (

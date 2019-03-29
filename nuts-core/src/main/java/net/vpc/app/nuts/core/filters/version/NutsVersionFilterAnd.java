@@ -43,6 +43,9 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
 
     @Override
     public NutsVersionFilter simplify() {
+        if(all.length==0){
+            return null;
+        }
         NutsVersionFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsVersionFilter.class, all);
         if (newValues != null) {
             if (newValues.length == 0) {
@@ -52,6 +55,12 @@ public class NutsVersionFilterAnd implements NutsVersionFilter, Simplifiable<Nut
                 return newValues[0];
             }
             return new NutsVersionFilterAnd(newValues);
+        }
+        if (all.length == 0) {
+            return null;
+        }
+        if (all.length == 1) {
+            return all[0];
         }
         return this;
     }

@@ -13,6 +13,7 @@ public class NutsPushOptions {
 
     private boolean trace = true;
     private boolean force = false;
+    private boolean offline = false;
 
     public boolean isTrace() {
         return trace;
@@ -29,6 +30,15 @@ public class NutsPushOptions {
 
     public NutsPushOptions setForce(boolean force) {
         this.force = force;
+        return this;
+    }
+
+    public boolean isOffline() {
+        return offline;
+    }
+
+    public NutsPushOptions setOffline(boolean offline) {
+        this.offline = offline;
         return this;
     }
 

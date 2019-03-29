@@ -47,11 +47,7 @@ public class NutsPatternIdFilter implements NutsIdFilter, Simplifiable<NutsIdFil
     private boolean valid = false;
     private Pattern idPattern;
 
-    private String[] ids = new String[0];
-
-    public NutsPatternIdFilter() {
-
-    }
+    private final String[] ids;
 
     public NutsPatternIdFilter(String[] id) {
         List<String> all = new ArrayList<>();
@@ -97,14 +93,10 @@ public class NutsPatternIdFilter implements NutsIdFilter, Simplifiable<NutsIdFil
     }
 
     public String[] getIds() {
-        return ids;
+        return Arrays.copyOf(ids, ids.length);
     }
 
-    public void setIds(String[] ids) {
-        this.ids = ids;
-        valid = false;
-    }
-
+    @Override
     public boolean accept(NutsId id) {
         rebuild();
         if (idPattern != null) {

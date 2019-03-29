@@ -49,6 +49,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static net.vpc.app.nuts.NutsBootWorkspace.log;
 
 /**
  * Created by vpc on 1/15/17.
@@ -317,7 +318,7 @@ final class NutsUtils {
         try {
             str = NutsUtils.readStringFromURL(new URL(mvnUrl));
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
         if (str != null) {
             for (String line : str.split("\n")) {
@@ -327,7 +328,7 @@ final class NutsUtils {
                 }
             }
         }
-        throw new NutsIOException("Nuts not found " + nutsId);
+        throw new NutsNotFoundException(nutsId);
     }
 
     public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
@@ -450,46 +451,60 @@ final class NutsUtils {
                                     c.setWorkspace(val);
                                     break;
                                 }
-                                case "programsStoreLocation": {
+                                case "programsStoreLocation":
+                                case "configStoreLocation":
+                                case "varStoreLocation":
+                                case "logStoreLocation":
+                                case "tempStoreLocation":
+                                case "cacheStoreLocation":
+                                case "libStoreLocation": {
                                     if (log.isLoggable(Level.FINEST)) {
                                         log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
-                                    c.setProgramsStoreLocation(val);
+                                    String t = k.substring(k.length() - "StoreLocation".length()).toUpperCase();
+                                    c.setStoreLocation(NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
-                                case "configStoreLocation": {
+                                case "programsSystemHome":
+                                case "configSystemHome":
+                                case "varSystemHome":
+                                case "logsSystemHome":
+                                case "tempSystemHome":
+                                case "cacheSystemHome":
+                                case "libSystemHome": {
                                     if (log.isLoggable(Level.FINEST)) {
                                         log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
-                                    c.setConfigStoreLocation(val);
+                                    String t = k.substring(0, k.length() - "SystemHome".length()).toUpperCase();
+                                    c.setHomeLocation(NutsStoreLocationLayout.SYSTEM, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
-                                case "varStoreLocation": {
+                                case "programsWindowsHome":
+                                case "configWindowsHome":
+                                case "varWindowsHome":
+                                case "logsWindowsHome":
+                                case "tempWindowsHome":
+                                case "cacheWindowsHome":
+                                case "libWindowsHome": {
                                     if (log.isLoggable(Level.FINEST)) {
                                         log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
-                                    c.setVarStoreLocation(val);
+                                    String t = k.substring(0, k.length() - "WindowsHome".length()).toUpperCase();
+                                    c.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
-                                case "logsStoreLocation": {
+                                case "programsLinuxHome":
+                                case "configLinuxHome":
+                                case "varLinuxHome":
+                                case "logsLinuxHome":
+                                case "tempLinuxHome":
+                                case "cacheLinuxHome":
+                                case "libLinuxHome": {
                                     if (log.isLoggable(Level.FINEST)) {
                                         log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
                                     }
-                                    c.setLogsStoreLocation(val);
-                                    break;
-                                }
-                                case "tempStoreLocation": {
-                                    if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setTempStoreLocation(val);
-                                    break;
-                                }
-                                case "cacheStoreLocation": {
-                                    if (log.isLoggable(Level.FINEST)) {
-                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
-                                    }
-                                    c.setCacheStoreLocation(val);
+                                    String t = k.substring(0, k.length() - "LinuxHome".length()).toUpperCase();
+                                    c.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
                                 case "storeLocationStrategy": {
@@ -628,7 +643,7 @@ final class NutsUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
+        String exe = NutsPlatformUtils.getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (NutsUtils.isEmpty(javaHome) || "null".equals(javaHome)) {
@@ -781,16 +796,29 @@ final class NutsUtils {
         return null;
     }
 
-    public static int deleteAndConfirmAll(File[] folders, boolean force) {
-        return deleteAndConfirmAll(folders, force, new boolean[1]);
+    public static int deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term) {
+        return deleteAndConfirmAll(folders, force, new boolean[1], header, term);
     }
 
-    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll) {
+    private static int deleteAndConfirmAll(File[] folders, boolean force, boolean[] refForceAll, String header, NutsTerminal term) {
         int count = 0;
+        boolean headerWritten = false;
         if (folders != null) {
             for (File child : folders) {
                 if (child.exists()) {
-                    NutsUtils.deleteAndConfirm(child, force, refForceAll);
+                    if (!headerWritten) {
+                        headerWritten = true;
+                        if (!force && !refForceAll[0]) {
+                            if (header != null) {
+                                if (term != null) {
+                                    term.getOut().println(header);
+                                } else {
+                                    System.out.println(header);
+                                }
+                            }
+                        }
+                    }
+                    NutsUtils.deleteAndConfirm(child, force, refForceAll, term);
                     count++;
                 }
             }
@@ -798,13 +826,17 @@ final class NutsUtils {
         return count;
     }
 
-    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll) {
+    private static boolean deleteAndConfirm(File directory, boolean force, boolean[] refForceAll, NutsTerminal term) {
         if (directory.exists()) {
             if (!force && !refForceAll[0]) {
-                Scanner s = new Scanner(System.in);
-                System.out.println("Deleting folder " + directory);
-                System.out.print("\t Are you sure [y/n] ? : ");
-                String line = s.nextLine();
+                String line = null;
+                if (term != null) {
+                    line = term.ask(NutsQuestion.forString("Do you confirm deleting %s [y/n/a] ? : ", directory));
+                } else {
+                    Scanner s = new Scanner(System.in);
+                    System.out.printf("Do you confirm deleting %s [y/n/a] ? : ", directory);
+                    line = s.nextLine();
+                }
                 if ("y".equalsIgnoreCase(line) || "yes".equalsIgnoreCase(line)) {
                     //ok
                 } else if ("a".equalsIgnoreCase(line) && !"all".equalsIgnoreCase(line)) {
@@ -815,6 +847,9 @@ final class NutsUtils {
             }
             Path directoryPath = Paths.get(directory.getPath());
             try {
+                if (log.isLoggable(Level.CONFIG)) {
+                    log.log(Level.CONFIG, "Deleting folder : {0}", directory.getPath());
+                }
                 Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -830,30 +865,10 @@ final class NutsUtils {
                     }
                 });
             } catch (IOException ex) {
-                throw new NutsIOException(ex);
+                throw new UncheckedIOException(ex);
             }
         }
         return false;
-    }
-
-    public static String getPlatformOsFamily() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return "linux";
-        }
-        if (property.startsWith("win")) {
-            return "windows";
-        }
-        if (property.startsWith("mac")) {
-            return "mac";
-        }
-        if (property.startsWith("sunos")) {
-            return "unix";
-        }
-        if (property.startsWith("freebsd")) {
-            return "unix";
-        }
-        return "unknown";
     }
 
     public static boolean isActualJavaCommand(String cmd) {
@@ -1006,7 +1021,7 @@ final class NutsUtils {
         }
         return v;
     }
-    
+
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
         String v = System.getProperty(property);
         if (v == null || v.trim().isEmpty()) {
@@ -1021,4 +1036,11 @@ final class NutsUtils {
         }
         return defaultValue;
     }
+
+    public static String capiltalize(String value) {
+        char[] c = value.toCharArray();
+        c[0] = Character.toUpperCase(c[0]);
+        return new String(c);
+    }
+
 }

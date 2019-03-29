@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.bridges.maven;
@@ -33,12 +33,12 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.CollectionUtils;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.common.util.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -48,38 +48,38 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
     public MavenFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options,workspace,parentRepository,SPEED_FAST);
+        super(options, workspace, parentRepository, SPEED_FAST);
     }
 
     @Override
-    protected int getSupportLevelCurrent(NutsId id, NutsSession session) {
-        switch (session.getFetchMode()) {
+    protected int getSupportLevelCurrent(NutsId id, NutsFetchMode mode) {
+        switch (mode) {
             case REMOTE:
                 return 0;
         }
-        return super.getSupportLevelCurrent(id, session);
+        return super.getSupportLevelCurrent(id, mode);
     }
 
     @Override
-    protected InputStream openStream(NutsId id, String path, Object source, NutsSession session) {
+    protected InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
     @Override
-    protected String getStreamSHA1(NutsId id, NutsSession session) {
+    protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
         return CoreSecurityUtils.evalSHA1(getStream(id.setFace(NutsConstants.FACE_COMPONENT_HASH), session), true);
     }
 
     @Override
-    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsSession session) {
+    protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) {
         try {
             stream.close();
         } catch (IOException e) {
-            throw new NutsIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
+    protected NutsContent fetchContentImpl(NutsId id, String localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             File f = getIdFile(id);
             if (f != null && f.exists()) {
@@ -129,8 +129,9 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected List<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsSession session) {
-        List<NutsId> namedNutIdIterator = null;
+    protected Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
+
+        Iterator<NutsId> namedNutIdIterator = null;
 //        StringBuilder errors = new StringBuilder();
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             if (id.getVersion().isSingleValue()) {
@@ -143,24 +144,26 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                         //
                     }
                     if (d != null) {
-                        return new ArrayList<>(Collections.singletonList(id.setNamespace(getName())));
+                        return Collections.singletonList(id.setNamespace(getName())).iterator();
                     }
                 }
-                return Collections.emptyList();
+//                return Collections.emptyIterator();
+                return null;
             }
             try {
-                namedNutIdIterator = CollectionUtils.toList(findInFolder(getLocalGroupAndArtifactFile(id), idFilter, session));
+                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, false, session);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
         }
-        if (namedNutIdIterator == null) {
-            return Collections.emptyList();
-        }
+//        if (namedNutIdIterator == null) {
+//            return Collections.emptyIterator();
+//        }
         return namedNutIdIterator;
+
     }
 
-    protected NutsDescriptor parsePomDescriptor(File pathname, NutsSession session) throws IOException {
+    protected NutsDescriptor parsePomDescriptor(File pathname, NutsRepositorySession session) throws IOException {
         NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(new FileInputStream(pathname), getWorkspace(), session, pathname.getPath());
         if (nutsDescriptor.getId().getName() == null) {
             //why name is null ? should checkout!
@@ -172,7 +175,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         return nutsDescriptor;
     }
 
-    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
+    protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isEmpty() && filter == null) {
             File file = getLocalGroupAndArtifactFile(id);
             NutsId bestId = null;
@@ -200,13 +203,13 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         return super.findLatestVersion(id, filter, session);
     }
 
-    protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, NutsSession session) {
+    protected Iterator<NutsId> findInFolder(File folder, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
         if (folder == null || !folder.exists() || !folder.isDirectory()) {
-            return Collections.emptyIterator();
+            return null;//Collections.emptyIterator();
         }
         return new FolderNutIdIterator(getWorkspace(), this, folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
-            public void undeploy(NutsId id, NutsSession session) {
+            public void undeploy(NutsId id, NutsRepositorySession session) {
                 MavenFolderRepository.this.undeploy(id, session);
             }
 
@@ -216,22 +219,31 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             }
 
             @Override
-            public NutsDescriptor parseDescriptor(File pathname, NutsSession session) throws IOException {
+            public NutsDescriptor parseDescriptor(File pathname, NutsRepositorySession session) throws IOException {
                 return parsePomDescriptor(pathname, session);
             }
-        });
+        }, deep);
     }
 
     @Override
-    protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsSession session) {
+    protected Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session) {
+        List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
+
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             String locationFolder = getConfigManager().getLocation(true);
-            return findInFolder(new File(locationFolder), filter, session);
+            List<Iterator<NutsId>> list = new ArrayList<>();
+
+            for (CommonRootsHelper.PathBase root : roots) {
+                list.add(findInFolder(new File(locationFolder, root.getName()), filter,root.isDeep(), session));
+            }
+
+            return IteratorUtils.concat(list);
         }
-        return Collections.emptyIterator();
+//        return Collections.emptyIterator();
+        return null;
     }
 
-    public String getStoreLocation(NutsStoreFolder folderType) {
+    public String getStoreLocation(NutsStoreLocation folderType) {
         switch (folderType) {
             case LIB: {
                 return getStoreLocation();

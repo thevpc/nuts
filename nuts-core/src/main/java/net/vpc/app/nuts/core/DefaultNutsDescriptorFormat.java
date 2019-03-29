@@ -2,7 +2,6 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFormat;
-import net.vpc.app.nuts.NutsIOException;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.FileUtils;
 
@@ -33,7 +32,7 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, OutputStream os) throws NutsIOException {
+    public void format(NutsDescriptor descriptor, OutputStream os) throws UncheckedIOException {
         OutputStreamWriter o = new OutputStreamWriter(os);
         format(descriptor, o);
         try {
@@ -44,12 +43,12 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, Writer out) throws NutsIOException {
+    public void format(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
         ws.getIOManager().writeJson(descriptor,out,pretty);
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, PrintStream out) throws NutsIOException {
+    public void format(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException {
         PrintWriter out1 = new PrintWriter(out);
         format(descriptor, out1);
         out1.flush();
@@ -57,14 +56,14 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
 
     @Override
-    public void format(NutsDescriptor descriptor, File file) throws NutsIOException {
+    public void format(NutsDescriptor descriptor, File file) throws UncheckedIOException {
         FileUtils.createParents(file);
         FileWriter os = null;
         try {
             try {
                 os = new FileWriter(file);
             } catch (IOException e) {
-                throw new NutsIOException(e);
+                throw new UncheckedIOException(e);
             }
             format(descriptor, os);
         } finally {
@@ -72,7 +71,7 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    throw new NutsIOException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
         }

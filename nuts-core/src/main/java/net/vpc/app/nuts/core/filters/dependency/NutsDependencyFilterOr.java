@@ -32,7 +32,11 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
         return one ? false : true;
     }
 
+    @Override
     public NutsDependencyFilter simplify() {
+        if(all.length==0){
+            return null;
+        }
         NutsDependencyFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsDependencyFilter.class, all);
         if (newValues != null) {
             if (newValues.length == 0) {
@@ -42,6 +46,12 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
                 return newValues[0];
             }
             return new NutsDependencyFilterOr(newValues);
+        }
+        if (all.length == 0) {
+            return null;
+        }
+        if (all.length == 1) {
+            return all[0];
         }
         return this;
     }
