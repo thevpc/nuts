@@ -49,7 +49,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(
+        NutsRepository defaultRepo = workspace.repositories().addRepository(
                 new NutsCreateRepositoryOptions()
                         .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
                         .setLocation(NutsConstants.DEFAULT_REPOSITORY_NAME)
@@ -64,18 +64,18 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         if (defaultRepo == null) {
             throw new IllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
         }
-        defaultRepo.getConfigManager().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
-        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        defaultRepo.config().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
+        workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //has read rights
-        workspace.getSecurityManager().addUser("guest", "user",
+        workspace.security().addUser("guest", "user",
                 NutsConstants.RIGHT_FETCH_DESC,
                 NutsConstants.RIGHT_FETCH_CONTENT,
                 NutsConstants.RIGHT_DEPLOY
         );
 
         //has write rights
-        workspace.getSecurityManager().addUser("contributor", "user",
+        workspace.security().addUser("contributor", "user",
                 NutsConstants.RIGHT_FETCH_DESC,
                 NutsConstants.RIGHT_FETCH_CONTENT,
                 NutsConstants.RIGHT_DEPLOY,

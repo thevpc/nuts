@@ -15,6 +15,7 @@ import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.format.TableFormatter;
 
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
         }
         NutsWorkspace ws = context.getWorkspace();
         PrintStream out = context.getTerminal().getFormattedOut();
-        NutsWorkspaceConfigManager conf = ws.getConfigManager();
+        NutsWorkspaceConfigManager conf = ws.config();
         if (cmdLine.readAll("add java")) {
             if (cmdLine.readAll("--search")) {
                 List<String> extraLocations = new ArrayList<>();
@@ -45,7 +46,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : conf.searchJdkLocations(extraLocation, out)) {
+                        for (NutsSdkLocation loc : conf.searchJdkLocations(ws.io().path(extraLocation), out)) {
                             conf.addSdk("java", loc);
                         }
                     }
@@ -56,7 +57,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = conf.resolveJdkLocation(cmdLine.read().getExpression());
+                    NutsSdkLocation loc = conf.resolveJdkLocation(ws.io().path(cmdLine.read().getExpression()));
                     if (loc != null) {
                         conf.addSdk("java", loc);
                     }
@@ -71,7 +72,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 String name = cmdLine.read().getExpression();
                 NutsSdkLocation loc = conf.findSdkByName("java", name);
                 if (loc == null) {
-                    loc = conf.findSdkByPath("java", name);
+                    loc = conf.findSdkByPath("java", ws.io().path(name));
                     if (loc == null) {
                         loc = conf.findSdkByVersion("java", name);
                     }

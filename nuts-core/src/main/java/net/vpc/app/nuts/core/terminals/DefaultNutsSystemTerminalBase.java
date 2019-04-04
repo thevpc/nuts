@@ -22,13 +22,13 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void install(NutsWorkspace workspace) {
-        NutsTerminalMode terminalMode = workspace.getConfigManager().getOptions().getTerminalMode();
+        NutsTerminalMode terminalMode = workspace.config().getOptions().getTerminalMode();
         if (terminalMode == null) {
             terminalMode = NutsTerminalMode.FORMATTED;
         }
         setOutMode(terminalMode);
         setErrorMode(terminalMode);
-        NutsIOManager ioManager = workspace.getIOManager();
+        NutsIOManager ioManager = workspace.io();
         this.out = ioManager.createPrintStream(System.out, NutsTerminalMode.FORMATTED);
         this.err = ioManager.createPrintStream(System.err, NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
         this.in = System.in;

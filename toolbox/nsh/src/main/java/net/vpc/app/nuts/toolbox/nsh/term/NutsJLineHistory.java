@@ -21,7 +21,7 @@ import static org.jline.reader.LineReader.HISTORY_IGNORE;
 import static org.jline.reader.impl.ReaderUtils.*;
 
 class NutsJLineHistory implements History {
-    private NutsWorkspace workspace;
+    private NutsWorkspace ws;
     private ShellHistory shellHistory;
     public static final int DEFAULT_HISTORY_SIZE = 500;
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
@@ -37,7 +37,7 @@ class NutsJLineHistory implements History {
 
     public NutsJLineHistory(LineReader reader, NutsWorkspace workspace) {
         attach(reader);
-        this.workspace = workspace;
+        this.ws = workspace;
         workspace.addUserPropertyListener(new NutsMapListener<String, Object>() {
 
             @Override
@@ -78,7 +78,7 @@ class NutsJLineHistory implements History {
         } else if (obj instanceof File) {
             return ((File) obj).toPath();
         } else if (obj != null) {
-            return Paths.get(obj.toString());
+            return ws.io().path(obj.toString());
         } else {
             return null;
         }

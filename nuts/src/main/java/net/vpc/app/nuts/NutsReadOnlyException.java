@@ -39,6 +39,6 @@ public class NutsReadOnlyException extends NutsException {
     }
 
     public NutsReadOnlyException(NutsWorkspace ws) {
-        this(ws == null ? null : ws.getConfigManager().getWorkspaceLocation());
+        this(ws == null ? null : ws.config().getWorkspaceLocation().toString());
     }
 }

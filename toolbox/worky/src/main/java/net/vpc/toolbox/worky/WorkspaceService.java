@@ -15,19 +15,26 @@ import net.vpc.toolbox.worky.config.WorkspaceConfig;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorkspaceService {
+
     public static final String NOSCAN = "net.vpc.app.nuts.toolbox.worky.noscan";
     private WorkspaceConfig config;
     private NutsApplicationContext appContext;
 
     public WorkspaceService(NutsApplicationContext appContext) {
         this.appContext = appContext;
-        File c = getConfigFile();
-        if (c.isFile()) {
+        Path c = getConfigFile();
+        if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().getIOManager().readJson(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().io().readJson(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -39,8 +46,8 @@ public class WorkspaceService {
 
     public WorkspaceConfig getWorkspaceConfig() {
 
-        RepositoryAddress v=config.getDefaultRepositoryAddress();
-        if(v==null) {
+        RepositoryAddress v = config.getDefaultRepositoryAddress();
+        if (v == null) {
             v = new RepositoryAddress();
             config.setDefaultRepositoryAddress(v);
         }
@@ -53,9 +60,13 @@ public class WorkspaceService {
             c = new WorkspaceConfig();
         }
         config = c;
-        File configFile = getConfigFile();
-        FileUtils.createParents(configFile);
-        appContext.getWorkspace().getIOManager().writeJson(c, configFile, true);
+        Path configFile = getConfigFile();
+        try {
+            Files.createDirectories(configFile.getParent());
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        appContext.getWorkspace().io().writeJson(c, configFile, true);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -85,7 +96,6 @@ public class WorkspaceService {
         }
     }
 
-
     public void enableScan(CommandLine cmd, NutsApplicationContext appContext, boolean enable) {
         int count = 0;
         while (cmd.hasNext()) {
@@ -94,7 +104,7 @@ public class WorkspaceService {
             } else {
                 String expression = cmd.read().getExpression();
                 if (cmd.isExecMode()) {
-                    setNoScan(new File(expression), enable);
+                    setNoScan(appContext.getWorkspace().io().path(expression), enable);
                     count++;
                 }
             }
@@ -108,29 +118,28 @@ public class WorkspaceService {
     public void list(CommandLine cmd, NutsApplicationContext appContext) {
         Argument a;
         TableFormatter tf = new TableFormatter(appContext.getTableCellFormatter()).addHeaderCells("==Id==", "==Path==", "==Technos==");
-        List<String> filters=new ArrayList<>();
+        List<String> filters = new ArrayList<>();
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
                 //consumed
             } else if (tf.configure(cmd)) {
                 //consumed
-            } else if((a = cmd.readNonOption())!=null) {
+            } else if ((a = cmd.readNonOption()) != null) {
                 filters.add(a.getStringExpression());
-            }else{
+            } else {
                 cmd.unexpectedArgument("worky list");
             }
         }
         if (cmd.isExecMode()) {
             for (ProjectService projectService : findProjectServices()) {
-                if(matches(projectService.getConfig().getId(), filters)) {
+                if (matches(projectService.getConfig().getId(), filters)) {
                     ProjectConfig config = projectService.getConfig();
                     tf.newRow()
                             .addCells(
                                     config.getId(),
                                     config.getPath(),
                                     config.getTechnologies()
-                            )
-                    ;
+                            );
                 }
             }
 
@@ -168,7 +177,7 @@ public class WorkspaceService {
         Boolean old = null;
         Boolean invalid = null;
         TableFormatter tf = new TableFormatter(appContext.getTableCellFormatter()).addHeaderCells("==Id==", "==Local==", "==Remote==", "==Status==");
-        List<String> filters=new ArrayList<>();
+        List<String> filters = new ArrayList<>();
         Argument a;
         while (cmd.hasNext()) {
             if (appContext.configure(cmd)) {
@@ -199,7 +208,7 @@ public class WorkspaceService {
                 progress = true;
             } else if (cmd.readAll("-!p", "--!progress")) {
                 progress = false;
-            } else if((a = cmd.readNonOption())!=null) {
+            } else if ((a = cmd.readNonOption()) != null) {
                 filters.add(a.getStringExpression());
             } else {
                 cmd.unexpectedArgument("worky check");
@@ -215,6 +224,7 @@ public class WorkspaceService {
         invalid = b[4];
 
         class Data implements Comparable<Data> {
+
             String id;
             String loc;
             String rem;
@@ -235,10 +245,10 @@ public class WorkspaceService {
         }
         List<Data> ddd = new ArrayList<>();
 
-        List<ProjectService> all=findProjectServices();
-        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext(); ) {
+        List<ProjectService> all = findProjectServices();
+        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
             ProjectService projectService = iterator.next();
-            if(!matches(projectService.getConfig().getId(), filters)){
+            if (!matches(projectService.getConfig().getId(), filters)) {
                 iterator.remove();
             }
         }
@@ -265,7 +275,7 @@ public class WorkspaceService {
                 d.rem = "";
                 d.status = "new";
             } else {
-                int t = appContext.getWorkspace().getParseManager().parseVersion(d.loc).compareTo(d.rem);
+                int t = appContext.getWorkspace().parser().parseVersion(d.loc).compareTo(d.rem);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -278,7 +288,7 @@ public class WorkspaceService {
         }
 
         Collections.sort(ddd);
-        for (Iterator<Data> iterator = ddd.iterator(); iterator.hasNext(); ) {
+        for (Iterator<Data> iterator = ddd.iterator(); iterator.hasNext();) {
             Data d = iterator.next();
             switch (d.status) {
                 case "invalid": {
@@ -337,23 +347,27 @@ public class WorkspaceService {
         return accept;
     }
 
-    public File getConfigFile() {
-        return new File(appContext.getConfigFolder(), "workspace.projects");
+    public Path getConfigFile() {
+        return appContext.getConfigFolder().resolve("workspace.projects");
     }
 
     public List<ProjectService> findProjectServices() {
         List<ProjectService> all = new ArrayList<>();
-        File storeLocation = new File(appContext.getConfigFolder(), "projects");
-        File[] projects = storeLocation.listFiles();
-        if (projects != null) {
-            for (File file : projects) {
-                if (file.isFile() && file.getName().endsWith(".config")) {
-                    try {
-                        all.add(new ProjectService(appContext, config.getDefaultRepositoryAddress(), file));
-                    } catch (IOException e) {
-                        //ignore
+        Path storeLocation = appContext.getConfigFolder().resolve("projects");
+
+        if (Files.isDirectory(storeLocation)) {
+            try (DirectoryStream<Path> ds = Files.newDirectoryStream(storeLocation)) {
+                for (Path file : ds) {
+                    if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".config")) {
+                        try {
+                            all.add(new ProjectService(appContext, config.getDefaultRepositoryAddress(), file));
+                        } catch (IOException e) {
+                            //ignore
+                        }
                     }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
         return all;
@@ -424,11 +438,11 @@ public class WorkspaceService {
         }
     }
 
-    public void setNoScan(File folder, boolean enable) {
-        File ni = new File(folder, ".nuts-info");
+    public void setNoScan(Path folder, boolean enable) {
+        Path ni = folder.resolve(".nuts-info");
         Properties p = null;
         boolean noscan = false;
-        if (ni.isFile()) {
+        if (Files.isRegularFile(ni)) {
             try {
                 p = IOUtils.loadProperties(ni);
                 String v = p.getProperty("net.vpc.app.nuts.toolbox.worky.noscan");
@@ -445,7 +459,11 @@ public class WorkspaceService {
                 p = new Properties();
             }
             p.setProperty(NOSCAN, String.valueOf(enable));
-            IOUtils.saveProperties(p, "", ni);
+            try {
+                IOUtils.saveProperties(p, "", ni);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
     }
 
@@ -470,21 +488,20 @@ public class WorkspaceService {
     public int setWorkspaceConfigParam(CommandLine cmd, NutsApplicationContext appContext) {
         Argument a;
         while (cmd.hasNext()) {
-            if((a=cmd.readStringOption("-r","--repo"))!=null) {
+            if ((a = cmd.readStringOption("-r", "--repo")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsRepository(a.getStringValue());
                 setWorkspaceConfig(conf);
-            }else if((a=cmd.readStringOption("-w","--workspace"))!=null){
+            } else if ((a = cmd.readStringOption("-w", "--workspace")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue());
                 setWorkspaceConfig(conf);
-            }else{
+            } else {
                 cmd.unexpectedArgument("worky set");
             }
         }
         return 0;
     }
-
 
     public static String wildcardToRegex(String pattern) {
         if (pattern == null) {

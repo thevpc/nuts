@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -34,7 +35,7 @@ public class DefaultNutsQueryBaseOptions<T extends NutsQueryBaseOptions> impleme
     private boolean includeDependencies = false;
     private boolean includeEffectiveDesc = false;
     private boolean includeInstallInfo = true;
-    private String location = null;
+    private Path location = null;
 
     
 
@@ -321,11 +322,11 @@ public class DefaultNutsQueryBaseOptions<T extends NutsQueryBaseOptions> impleme
     }
 
     @Override
-    public String getLocation() {
+    public Path getLocation() {
         return location;
     }
     @Override
-    public T setLocation(String location) {
+    public T setLocation(Path location) {
         this.location = location;
         return (T)this;
     }

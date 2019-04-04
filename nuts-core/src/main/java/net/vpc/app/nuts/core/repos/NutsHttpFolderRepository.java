@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,16 +55,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected int getSupportLevelCurrent(NutsId id, NutsFetchMode mode) {
-        switch (mode) {
-            case REMOTE:
-                return super.getSupportLevelCurrent(id, mode);
-        }
-        return 0;
-    }
-
-    @Override
-    public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsRepositorySession session) {
+    public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -73,7 +65,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsRepositorySession session) {
+    protected void deployImpl(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -96,13 +88,13 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
+        return (URLUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + "nuts.json"
         ));
     }
 
     protected InputStream openStream(String path, Object source, NutsRepositorySession session) {
-        return getWorkspace().getIOManager().monitorInputStream(path, source, session);
+        return getWorkspace().io().monitorInputStream(path, source, session);
     }
 
     @Override
@@ -111,7 +103,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         InputStream stream = null;
         try {
             try {
-                NutsDescriptor descriptor = getWorkspace().getParseManager().parseDescriptor(stream = getDescStream(id, session), true);
+                NutsDescriptor descriptor = getWorkspace().parser().parseDescriptor(stream = getDescStream(id, session), true);
                 if (descriptor != null) {
                     //String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreHttpUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                     //if (hash.equals(descriptor.toString())) {
@@ -135,26 +127,26 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
     @Override
     public Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
-        
-                    String groupId = id.getGroup();
-                    String artifactId = id.getName();
-                    try {
-                        String[] all = httpGetString(URLUtils.buildUrl(getConfigManager().getLocation(true), groupId.replace('.', '/') + "/" + artifactId) + "/.folders").split("\n");
-                        List<NutsId> n = new ArrayList<>();
-                        for (String s : all) {
-                            if (!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)) {
-                                NutsId id2 = id.builder().setVersion(s).build();
-                                if (idFilter == null || idFilter.accept(id2)) {
-                                    n.add(id2);
-                                }
-                            }
-                        }
-                        return n.iterator();
-                    } catch (Exception ex) {
-//            return Collections.emptyIterator();
-                        return null;
+
+        String groupId = id.getGroup();
+        String artifactId = id.getName();
+        try {
+            String[] all = httpGetString(URLUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId) + "/.folders").split("\n");
+            List<NutsId> n = new ArrayList<>();
+            for (String s : all) {
+                if (!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)) {
+                    NutsId id2 = id.builder().setVersion(s).build();
+                    if (idFilter == null || idFilter.accept(id2)) {
+                        n.add(id2);
                     }
-                
+                }
+            }
+            return n.iterator();
+        } catch (Exception ex) {
+//            return Collections.emptyIterator();
+            return null;
+        }
+
     }
 
     @Override
@@ -164,15 +156,15 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public NutsContent fetchContentImpl(NutsId id, String localFile, NutsRepositorySession session) {
+    public NutsContent fetchContentImpl(NutsId id, Path localFile, NutsRepositorySession session) {
         try {
             if (localFile == null) {
                 String path = getPath(id);
-                File tempFile = getWorkspace().getIOManager().createTempFile(new File(path).getName(), this);
+                Path tempFile = getWorkspace().io().createTempFile(new File(path).getName(), this);
                 helperHttpDownloadToFile(path, tempFile, true);
-                return new NutsContent(tempFile.getPath(), false, true);
+                return new NutsContent(tempFile, false, true);
             } else {
-                helperHttpDownloadToFile(getPath(id), new File(localFile), true);
+                helperHttpDownloadToFile(getPath(id), localFile, true);
                 return new NutsContent(localFile, false, false);
             }
         } catch (IOException e) {
@@ -205,8 +197,8 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         }
     }
 
-    @Override
-    public String getStoreLocation() {
-        return null;
-    }
+//    @Override
+//    public Path getComponentsLocation() {
+//        return null;
+//    }
 }

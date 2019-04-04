@@ -5,6 +5,7 @@ import net.vpc.common.commandline.*;
 import net.vpc.common.commandline.format.TableFormatter;
 
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,13 +21,13 @@ public class NutsApplicationContext implements CommandLineContext {
     private PrintStream err;
     private PrintStream out0;
     private PrintStream err0;
-    private String programsFolder;
-    private String configFolder;
-    private String libFolder;
-    private String cacheFolder;
-    private String logsFolder;
-    private String tempFolder;
-    private String varFolder;
+    private Path programsFolder;
+    private Path configFolder;
+    private Path libFolder;
+    private Path cacheFolder;
+    private Path logsFolder;
+    private Path tempFolder;
+    private Path varFolder;
     private String storeId;
     private NutsId appId;
     private boolean verbose;
@@ -51,7 +52,7 @@ public class NutsApplicationContext implements CommandLineContext {
 
     public NutsApplicationContext(NutsWorkspace workspace, Class appClass, String storeId) {
         this(workspace,
-                workspace.getConfigManager().getOptions().getApplicationArguments(),
+                workspace.config().getOptions().getApplicationArguments(),
                 appClass,
                 storeId
         );
@@ -84,7 +85,7 @@ public class NutsApplicationContext implements CommandLineContext {
                     case "on-update": {
                         mode = "on-uninstall";
                         if (execModeCommand.length > 1) {
-                            appPreviousVersion = workspace.getParseManager().parseVersion(execModeCommand[1]);
+                            appPreviousVersion = workspace.parser().parseVersion(execModeCommand[1]);
                         }
                         modeArgs = Arrays.copyOfRange(execModeCommand, 1, execModeCommand.length);
                         break;
@@ -111,13 +112,13 @@ public class NutsApplicationContext implements CommandLineContext {
         setErr0(getTerminal().getFormattedErr());
         setOut(getOut0());
         setErr(getErr0());
-        setProgramsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.PROGRAMS));
-        setConfigFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.CONFIG));
-        setLogsFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.LOGS));
-        setTempFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.TEMP));
-        setVarFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.VAR));
-        setLibFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.LIB));
-        setCacheFolder(workspace.getConfigManager().getStoreLocation(getStoreId(), NutsStoreLocation.CACHE));
+        setProgramsFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.PROGRAMS));
+        setConfigFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.CONFIG));
+        setLogsFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.LOGS));
+        setTempFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.TEMP));
+        setVarFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.VAR));
+        setLibFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.LIB));
+        setCacheFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.CACHE));
         if ("auto-complete".equals(mode)) {
             setTerminalMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
@@ -322,47 +323,47 @@ public class NutsApplicationContext implements CommandLineContext {
         return this;
     }
 
-    public String getProgramsFolder() {
+    public Path getProgramsFolder() {
         return programsFolder;
     }
 
-    public NutsApplicationContext setProgramsFolder(String programsFolder) {
+    public NutsApplicationContext setProgramsFolder(Path programsFolder) {
         this.programsFolder = programsFolder;
         return this;
     }
 
-    public String getConfigFolder() {
+    public Path getConfigFolder() {
         return configFolder;
     }
 
-    public NutsApplicationContext setConfigFolder(String configFolder) {
+    public NutsApplicationContext setConfigFolder(Path configFolder) {
         this.configFolder = configFolder;
         return this;
     }
 
-    public String getLogsFolder() {
+    public Path getLogsFolder() {
         return logsFolder;
     }
 
-    public NutsApplicationContext setLogsFolder(String logsFolder) {
+    public NutsApplicationContext setLogsFolder(Path logsFolder) {
         this.logsFolder = logsFolder;
         return this;
     }
 
-    public String getTempFolder() {
+    public Path getTempFolder() {
         return tempFolder;
     }
 
-    public NutsApplicationContext setTempFolder(String tempFolder) {
+    public NutsApplicationContext setTempFolder(Path tempFolder) {
         this.tempFolder = tempFolder;
         return this;
     }
 
-    public String getVarFolder() {
+    public Path getVarFolder() {
         return varFolder;
     }
 
-    public NutsApplicationContext setVarFolder(String varFolder) {
+    public NutsApplicationContext setVarFolder(Path varFolder) {
         this.varFolder = varFolder;
         return this;
     }
@@ -485,20 +486,20 @@ public class NutsApplicationContext implements CommandLineContext {
         return this;
     }
 
-    public String getLibFolder() {
+    public Path getLibFolder() {
         return libFolder;
     }
 
-    public NutsApplicationContext setLibFolder(String libFolder) {
+    public NutsApplicationContext setLibFolder(Path libFolder) {
         this.libFolder = libFolder;
         return this;
     }
 
-    public String getCacheFolder() {
+    public Path getCacheFolder() {
         return cacheFolder;
     }
 
-    public NutsApplicationContext setCacheFolder(String cacheFolder) {
+    public NutsApplicationContext setCacheFolder(Path cacheFolder) {
         this.cacheFolder = cacheFolder;
         return this;
     }

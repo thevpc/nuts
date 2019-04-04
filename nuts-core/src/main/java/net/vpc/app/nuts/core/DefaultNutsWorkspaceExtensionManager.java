@@ -60,21 +60,21 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.getConfigManager().getRunningContext().getApiId().getVersion().toString(), session);
+        return findWorkspaceExtensions(ws.config().getRunningContext().getApiId().getVersion().toString(), session);
     }
 
     @Override
     public List<NutsExtensionInfo> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.getConfigManager().getRunningContext().getApiId().getVersion().toString();
+            version = ws.config().getRunningContext().getApiId().getVersion().toString();
         }
-        NutsId id = ws.getConfigManager().getRunningContext().getApiId().setVersion(version);
+        NutsId id = ws.config().getRunningContext().getApiId().setVersion(version);
         return findExtensions(id, "extensions", session);
     }
 
     @Override
     public List<NutsExtensionInfo> findExtensions(String id, String extensionType, NutsSession session) {
-        return findExtensions(ws.getParseManager().parseRequiredId(id), extensionType, session);
+        return findExtensions(ws.parser().parseRequiredId(id), extensionType, session);
     }
 
     @Override
@@ -90,8 +90,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             URL u = expandURL(url);
             if (u != null) {
                 NutsExtensionInfo[] s = new NutsExtensionInfo[0];
-                try {
-                    s = ws.getIOManager().readJson(new InputStreamReader(u.openStream()), NutsExtensionInfo[].class);
+                try (Reader rr = new InputStreamReader(u.openStream())) {
+                    s = ws.io().readJson(rr, NutsExtensionInfo[].class);
                 } catch (IOException e) {
                     //ignore!
                 }
@@ -121,7 +121,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         //versionProperties = IOUtils.loadProperties(DefaultNutsWorkspace.class.getResource("/META-INF/nuts-core-version.properties"));
-        this.workspaceExtensionsClassLoader = new NutsURLClassLoader(new URL[0], bootClassLoader);
+        this.workspaceExtensionsClassLoader = new NutsURLClassLoader(ws, new URL[0], bootClassLoader);
     }
 
     @Override
@@ -131,11 +131,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
             NutsWorkspaceExtension e = wireExtension(id, new DefaultNutsQueryOptions().setFetchStratery(NutsFetchStrategy.ONLINE), session);
-            ws.getConfigManager().addExtension(id);
+            ws.config().addExtension(id);
             return e;
         } else {
             old = extensions.get(oldId);
-            ws.getConfigManager().addExtension(id);
+            ws.config().addExtension(id);
             return old;
         }
     }
@@ -185,7 +185,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (!isLoadedClassPath(nutsDefinition, session)) {
-                this.workspaceExtensionsClassLoader.addFile(new File(nutsDefinition.getContent().getFile()));
+                this.workspaceExtensionsClassLoader.addPath(nutsDefinition.getContent().getPath());
             }
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, toWire, this.workspaceExtensionsClassLoader);
@@ -210,15 +210,15 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsSimpleName(ws.getParseManager().parseRequiredId(NutsConstants.NUTS_ID_BOOT_API))) {
+        if (file.getId().equalsSimpleName(ws.parser().parseRequiredId(NutsConstants.NUTS_ID_BOOT_API))) {
             return true;
         }
         try {
             //            NutsDefinition file = fetch(id.toString(), session);
-            if (file.getContent().getFile() != null) {
+            if (file.getContent().getPath() != null) {
                 ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(file.getContent().getFile());
+                    zipFile = new ZipFile(file.getContent().getPath().toFile());
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
@@ -320,7 +320,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should read this form config?
         //or should be read from and extension component?
-        String repos = ws.getConfigManager().getEnv("bootstrapRepositoryLocations", "") + ";"
+        String repos = ws.config().getEnv("bootstrapRepositoryLocations", "") + ";"
                 + NutsConstants.URL_BOOTSTRAP_LOCAL
                 + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT;
         List<String> urls = new ArrayList<>();
@@ -334,7 +334,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     protected URL expandURL(String url) {
         try {
-            url = ws.getIOManager().expandPath(url);
+            url = ws.io().expandPath(url);
             if (URLUtils.isRemoteURL(url)) {
                 return new URL(url);
             }

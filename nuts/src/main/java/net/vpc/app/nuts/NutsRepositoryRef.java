@@ -40,6 +40,7 @@ public class NutsRepositoryRef implements Serializable{
     private String location;
     private boolean enabled = true;
     private boolean failSafe = false;
+    private int deployOrder;
 
     public NutsRepositoryRef() {
     }
@@ -49,11 +50,13 @@ public class NutsRepositoryRef implements Serializable{
         this.location = other.getLocation();
         this.enabled = other.isEnabled();
         this.failSafe = other.isEnabled();
+        this.deployOrder = other.getDeployOrder();
     }
 
-    public NutsRepositoryRef(String name,String location, boolean enabled) {
+    public NutsRepositoryRef(String name,String location,int deployPriority, boolean enabled) {
         this.name = name;
         this.location = location;
+        this.deployOrder = deployPriority;
         this.enabled = enabled;
     }
 
@@ -98,11 +101,22 @@ public class NutsRepositoryRef implements Serializable{
         return new NutsRepositoryRef(this);
     }
 
+    public int getDeployOrder() {
+        return deployOrder;
+    }
+
+    public NutsRepositoryRef setDeployPriority(int deployPriority) {
+        this.deployOrder = deployPriority;
+        return this;
+    }
+
+    
     @Override
     public int hashCode() {
         int hash = 3;
         hash = 79 * hash + Objects.hashCode(this.name);
         hash = 79 * hash + Objects.hashCode(this.location);
+        hash = 79 * hash + this.deployOrder;
         hash = 79 * hash + (this.enabled ? 1 : 0);
         hash = 79 * hash + (this.failSafe ? 1 : 0);
         return hash;
@@ -126,6 +140,9 @@ public class NutsRepositoryRef implements Serializable{
         if (this.failSafe != other.failSafe) {
             return false;
         }
+        if (this.deployOrder != other.deployOrder) {
+            return false;
+        }
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -137,8 +154,10 @@ public class NutsRepositoryRef implements Serializable{
 
     @Override
     public String toString() {
-        return "NutsRepositoryRef{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + ", failSafe=" + failSafe + '}';
+        return "NutsRepositoryRef{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + ", failSafe=" + failSafe + ", deployPriority=" + deployOrder + '}';
     }
+
+   
 
    
     

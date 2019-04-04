@@ -96,15 +96,15 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                 //                .completer(completer)
                 //                .parser(parser)
                 .build();
-        reader.setVariable(LineReader.HISTORY_FILE, FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), "history"));
+        reader.setVariable(LineReader.HISTORY_FILE, workspace.config().getWorkspaceLocation().resolve("history").normalize().toFile());
         ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, workspace));
-        this.out = workspace.getIOManager().createPrintStream(
+        this.out = workspace.io().createPrintStream(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 )
                 , NutsTerminalMode.FORMATTED);
-        this.err = workspace.getIOManager().createPrintStream(
+        this.err = workspace.io().createPrintStream(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.err

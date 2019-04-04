@@ -36,6 +36,7 @@ import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,7 +63,11 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected String getStreamAsString(NutsId id, NutsRepositorySession session) {
         String url = getIdPath(id);
-        return IOUtils.loadString(openStream(id, url, id, session), true);
+        try {
+            return IOUtils.loadString(openStream(id, url, id, session), true);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
@@ -105,12 +110,12 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void pushImpl(NutsId id, String repoId, NutsPushOptions options, NutsRepositorySession session) {
+    public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
     @Override
-    protected NutsId deployImpl(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions foundAction, NutsRepositorySession context) {
+    protected void deployImpl(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession context) {
         throw new NutsUnsupportedOperationException();
     }
 

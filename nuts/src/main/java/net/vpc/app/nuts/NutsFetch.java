@@ -1,5 +1,7 @@
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
+
 public interface NutsFetch extends NutsQueryBaseOptions<NutsFetch> {
 
     ////////////////////////////////////////////////////////
@@ -39,9 +41,9 @@ public interface NutsFetch extends NutsQueryBaseOptions<NutsFetch> {
 
     NutsDescriptor fetchDescriptorOrNull();
 
-    String fetchFile();
+    Path fetchFile();
 
-    String fetchFileOrNull();
+    Path fetchFileOrNull();
     
     ///////////////////////
     // REDIFNIED

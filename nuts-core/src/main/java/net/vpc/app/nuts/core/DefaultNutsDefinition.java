@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.nio.file.Path;
 import net.vpc.app.nuts.*;
 
 
@@ -83,8 +84,8 @@ public class DefaultNutsDefinition implements NutsDefinition {
         return descriptor;
     }
 
-    public String getFile() {
-        return content == null ? null : content.getFile();
+    public Path getFile() {
+        return content == null ? null : content.getPath();
     }
 
     @Override

@@ -12,8 +12,12 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.*;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
@@ -25,9 +29,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
 
-    public LocalTomcatConfigService(File file, LocalTomcat app) {
+    public LocalTomcatConfigService(Path file, LocalTomcat app) {
         this(
-                file.getName().substring(0, file.getName().length() - LocalTomcatConfigService.LOCAL_CONFIG_EXT.length()),
+                file.getFileName().toString().substring(0, file.getFileName().toString().length() - LocalTomcatConfigService.LOCAL_CONFIG_EXT.length()),
                 app
         );
         loadConfig();
@@ -79,20 +83,18 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 }
             }
         }
-        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
-        File f = new File(context.getConfigFolder(), getName() + LOCAL_CONFIG_EXT);
-        f.getParentFile().mkdirs();
-        try (FileWriter r = new FileWriter(f)) {
-            jsonSerializer.writeJson(config, r, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        NutsIOManager io = context.getWorkspace().io();
+        Path f = getConfigPath();
+        io.writeJson(config, f, true);
         return this;
     }
 
+    public Path getConfigPath() {
+        return context.getConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT);
+    }
+
     public boolean existsConfig() {
-        File f = new File(context.getConfigFolder(), getName() + LOCAL_CONFIG_EXT);
-        return (f.exists());
+        return (Files.exists(getConfigPath()));
     }
 
     public String getEffectiveCatalinaVersion() {
@@ -104,25 +106,25 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return h.trim();
     }
 
-    public String getCatalinaBase() {
+    public Path getCatalinaBase() {
         LocalTomcatConfig c = getConfig();
-        String catalinaBase = c.getCatalinaBase();
-        String catalinaHome = getCatalinaHome();
+        Path catalinaBase = getContext().getWorkspace().io().path(c.getCatalinaBase());
+        Path catalinaHome = getCatalinaHome();
         if (TomcatUtils.isEmpty(getConfig().getCatalinaHome())
-                && TomcatUtils.isEmpty(catalinaBase)) {
-            catalinaBase = getName();
+                && catalinaBase == null) {
+            catalinaBase = getContext().getWorkspace().io().path(getName());
         }
-        if (TomcatUtils.isEmpty(catalinaBase)) {
+        if (catalinaBase == null) {
             catalinaBase = catalinaHome;
         } else {
-            if (!new File(catalinaBase).isAbsolute()) {
+            if (!catalinaBase.isAbsolute()) {
                 String v = getEffectiveCatalinaVersion();
                 int x1 = v.indexOf('.');
                 int x2 = x1 < 0 ? -1 : v.indexOf('.', x1 + 1);
                 if (x2 > 0) {
                     v = v.substring(0, x2);
                 }
-                catalinaBase = FileUtils.getAbsoluteFile(new File(context.getVarFolder(), "catalina-base-" + v), catalinaBase).getPath();
+                catalinaBase = context.getVarFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
             }
         }
         return catalinaBase;
@@ -133,13 +135,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return c.getCatalinaVersion();
     }
 
-    public String getCatalinaHome() {
+    public Path getCatalinaHome() {
         String h = getConfig().getCatalinaHome();
         if (TomcatUtils.isEmpty(h)) {
             NutsDefinition f = getCatalinaNutsDefinition();
             return f.getInstallation().getInstallFolder();
         } else {
-            return h;
+            return getContext().getWorkspace().io().path(h);
         }
     }
 
@@ -160,7 +162,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
     }
 
-    public String[] parseApps(String[] args) throws RuntimeIOException {
+    public String[] parseApps(String[] args) {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
@@ -176,17 +178,17 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return apps.toArray(new String[0]);
     }
 
-    public boolean start() throws RuntimeIOException {
+    public boolean start() {
         return start(null, false);
     }
 
-    public ProcessBuilder2 invokeCatalina(String catalinaCommand) throws RuntimeIOException {
-        String catalinaHome = getCatalinaHome();
-        String catalinaBase = getCatalinaBase();
+    public ProcessBuilder2 invokeCatalina(String catalinaCommand) {
+        Path catalinaHome = getCatalinaHome();
+        Path catalinaBase = getCatalinaBase();
         boolean catalinaBaseUpdated = false;
-        catalinaBaseUpdated |= new File(catalinaBase).mkdirs();
+        catalinaBaseUpdated |= mkdirs(catalinaBase);
         ProcessBuilder2 b = new ProcessBuilder2();
-        String ext = context.getWorkspace().getConfigManager().getPlatformOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = context.getWorkspace().config().getPlatformOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
@@ -194,7 +196,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 //            b.addCommand("-Dcatalina.home=" + catalinaHome);
 //        }
 //        b.addCommand("-Dcatalina.base=" + catalinaBase);
-        b.setDirectory(new File(catalinaBase));
+        b.setDirectory(catalinaBase.toFile());
         LocalTomcatConfig c = getConfig();
         String javaHome = c.getJavaHome();
         if (javaHome == null) {
@@ -209,22 +211,29 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         b.setEnv("JAVA_OPTS", javaOptions.toString());
 
-        b.setEnv("CATALINA_HOME", catalinaHome);
-        b.setEnv("CATALINA_BASE", catalinaBase);
+        b.setEnv("CATALINA_HOME", catalinaHome.toString());
+        b.setEnv("CATALINA_BASE", catalinaBase.toString());
         b.setEnv("CATALINA_OUT", FileUtils.getNativePath(catalinaBase + "/logs/catalina.out"));
         b.setEnv("CATALINA_TMPDIR", FileUtils.getNativePath(catalinaBase + "/temp"));
-        catalinaBaseUpdated |= new File(catalinaBase, "logs").mkdirs();
-        catalinaBaseUpdated |= new File(catalinaBase, "temp").mkdirs();
-        catalinaBaseUpdated |= new File(catalinaBase, "conf").mkdirs();
-        for (File conf : new File(catalinaHome, "conf").listFiles()) {
-            File confFile = new File(catalinaBase, "conf/" + conf.getName());
-            if (conf.isFile() && !confFile.exists()) {
-                catalinaBaseUpdated = true;
-                try {
-                    Files.copy(conf.toPath(), confFile.toPath());
-                } catch (IOException e) {
-                    throw new RuntimeIOException(e);
+        catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
+        catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
+        catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("temp"));
+        catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("conf"));
+        if (Files.isDirectory(catalinaHome.resolve("conf"))) {
+            try (DirectoryStream<Path> ss = Files.newDirectoryStream(catalinaHome.resolve("conf"))) {
+                for (Path conf : ss) {
+                    Path confFile = catalinaBase.resolve("conf/" + conf.getFileName());
+                    if (!Files.exists(confFile)) {
+                        catalinaBaseUpdated = true;
+                        try {
+                            Files.copy(conf, confFile);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
         if (catalinaBaseUpdated) {
@@ -235,7 +244,19 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return b;
     }
 
-    public boolean start(String[] deployApps, boolean deleteLogs) throws RuntimeIOException {
+    private boolean mkdirs(Path catalinaBase) {
+        if (Files.isDirectory(catalinaBase.resolve("logs"))) {
+            try {
+                Files.createDirectories(catalinaBase.resolve("logs"));
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean start(String[] deployApps, boolean deleteLogs) {
         LocalTomcatConfig c = getConfig();
         JpsResult jpsResult = getJpsResult();
         if (jpsResult != null) {
@@ -250,7 +271,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         ProcessBuilder2 b = invokeCatalina("start");
         context.out().printf("==[%s]== Starting Tomcat. CMD=%s.\n", getName(), b.getCommand());
-        b.waitFor();
+        try {
+            b.waitFor();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         waitForRunningStatus(null, null, c.getStartupWaitTime());
         return true;
     }
@@ -276,14 +301,18 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return catalinaNutsDefinition;
     }
 
-    public void deployFile(File file, String contextName, String domain) {
-        if (file.getName().endsWith(".war")) {
+    public void deployFile(Path file, String contextName, String domain) {
+        if (file.getFileName().toString().endsWith(".war")) {
             if (TomcatUtils.isEmpty(contextName)) {
-                contextName = file.getName().substring(0, file.getName().length() - ".war".length());
+                contextName = file.getFileName().toString().substring(0, file.getFileName().toString().length() - ".war".length());
             }
-            File c = new File(getDefaulDeployFolder(domain), contextName + ".war");
-            context.out().printf("==[%s]== Deploy file file [[%s]] to [[%s]].\n", getName(), file.getPath(), c);
-            IOUtils.copy(file, c);
+            Path c = getDefaulDeployFolder(domain).resolve(contextName + ".war");
+            context.out().printf("==[%s]== Deploy file file [[%s]] to [[%s]].\n", getName(), file, c);
+            try {
+                Files.copy(file, c);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         } else {
             throw new RuntimeException("Expected war file");
         }
@@ -297,19 +326,28 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         LocalTomcatConfig c = getConfig();
         ProcessBuilder2 b = invokeCatalina("stop");
         context.out().printf("==[%s]== Stopping Tomcat. CMD=%s.\n", getName(), b.getCommand());
-        b.waitFor();
+        try {
+            b.waitFor();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         return waitForStoppedStatus(c.getShutdownWaitTime(), c.isKill());
     }
 
-    public JpsResult getJpsResult() throws RuntimeIOException {
-        String catalinaBase = getCatalinaBase();
-        JpsResult[] ps = PosApis.get().findJavaProcessList(null, true, true,
-                (p) -> {
-                    return p.getClassName().equals("org.apache.catalina.startup.Bootstrap")
-                    && (catalinaBase == null
-                    || p.getArgsLine().contains("-Dcatalina.base=" + catalinaBase));
-                }
-        );
+    public JpsResult getJpsResult() {
+        Path catalinaBase = getCatalinaBase();
+        JpsResult[] ps;
+        try {
+            ps = PosApis.get().findJavaProcessList(null, true, true,
+                    (p) -> {
+                        return p.getClassName().equals("org.apache.catalina.startup.Bootstrap")
+                        && (catalinaBase == null
+                        || p.getArgsLine().contains("-Dcatalina.base=" + catalinaBase));
+                    }
+            );
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         if (ps.length > 0) {
             return ps[0];
         }
@@ -398,12 +436,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (kill && PosApis.get().isSupportedKillProcess()) {
             ps = getJpsResult();
             if (ps != null) {
-                if (PosApis.get().killProcess(ps.getPid())) {
-                    context.out().printf("==[%s]== Tomcat process killed (%s).\n", getName(), ps.getPid());
-                    return true;
-                } else {
-                    context.out().printf("==[%s]== Tomcat process could not be killed ( %s).\n", getName(), ps.getPid());
-                    return false;
+                try {
+                    if (PosApis.get().killProcess(ps.getPid())) {
+                        context.out().printf("==[%s]== Tomcat process killed (%s).\n", getName(), ps.getPid());
+                        return true;
+                    } else {
+                        context.out().printf("==[%s]== Tomcat process could not be killed ( %s).\n", getName(), ps.getPid());
+                        return false;
+                    }
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
                 }
             }
         }
@@ -422,7 +464,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public AppStatus getStatus(String domain, String app) {
         LocalTomcatConfig c = getConfig();
-        String catalinaBase = getCatalinaBase();
+        Path catalinaBase = getCatalinaBase();
         JpsResult ps = getJpsResult();
         if (ps != null) {
             String startupMessage = null;
@@ -457,13 +499,17 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 logFile = "logs/catalina.out";
             }
 
-            File log = FileUtils.getAbsoluteFile(new File(catalinaBase), logFile);
-            if (!log.exists()) {
+            Path log = catalinaBase.resolve(logFile);
+            if (!Files.exists(log)) {
                 return AppStatus.STOPPED;
             }
-            LineSource lineSource = TextFiles.create(log.getPath());
+            LineSource lineSource = TextFiles.create(log);
             LocalTomcatLogLineVisitor visitor = new LocalTomcatLogLineVisitor(startupMessage, shutdownMessage);
-            TextFiles.visit(lineSource, visitor);
+            try {
+                TextFiles.visit(lineSource, visitor);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
             if (visitor.outOfMemoryError) {
                 return AppStatus.OUT_OF_MEMORY;
             } else if (visitor.started == null) {
@@ -480,15 +526,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public LocalTomcatConfigService loadConfig() {
         String name = getName();
-        File f = new File(context.getConfigFolder(), name + LOCAL_CONFIG_EXT);
-        if (f.exists()) {
-            NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
-            try (FileReader r = new FileReader(f)) {
-                config = jsonSerializer.readJson(r, LocalTomcatConfig.class);
-                return this;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        Path f = context.getConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
+        if (Files.exists(f)) {
+            NutsIOManager jsonSerializer = context.getWorkspace().io();
+            config = jsonSerializer.readJson(f, LocalTomcatConfig.class);
+            return this;
         } else if ("default".equals(name)) {
             //auto create default config
             config = new LocalTomcatConfig();
@@ -499,9 +541,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public LocalTomcatConfigService remove() {
-        File f = new File(context.getConfigFolder(), getName() + LOCAL_CONFIG_EXT);
-        f.delete();
-        return this;
+        try {
+            Files.delete(context.getConfigFolder().resolve(getName() + LOCAL_CONFIG_EXT));
+            return this;
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public LocalTomcatConfigService write(PrintStream out) {
@@ -578,81 +623,104 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return new LocalTomcatDomainConfigService(domainName, a, this);
     }
 
-    public File getLogsFolder() {
-        return new File(getCatalinaBase(), "logs");
+    public Path getLogsFolder() {
+        return getCatalinaBase().resolve("logs");
     }
 
-    public File getTempFolder() {
-        return new File(getCatalinaBase(), "temp");
+    public Path getTempFolder() {
+        return getCatalinaBase().resolve("temp");
     }
 
-    public File getWorkFolder() {
-        return new File(getCatalinaBase(), "work");
+    public Path getWorkFolder() {
+        return getCatalinaBase().resolve("work");
     }
 
     public void deleteOutLog() {
         //get it from config?
-        File file = new File(getLogsFolder(), "catalina.out");
-        if (file.isFile()) {
-            context.out().printf("==[%s]== Delete log file %s.\n", getName(), file.getPath());
-            IOUtils.delete(file);
+        Path file = getLogsFolder().resolve("catalina.out");
+        if (Files.isRegularFile(file)) {
+            context.out().printf("==[%s]== Delete log file %s.\n", getName(), file);
+            try {
+                Files.delete(file);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
     }
 
     public void deleteTemp() {
-        File[] files = getTempFolder().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                context.out().printf("==[%s]== Delete temp file %s.\n", getName(), file.getPath());
-                IOUtils.delete(file);
+        Path tempFolder = getTempFolder();
+        if (Files.isDirectory(tempFolder)) {
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(tempFolder)) {
+                for (Path file : files) {
+                    context.out().printf("==[%s]== Delete temp file %s.\n", getName(), file);
+                    Files.delete(file);
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
     }
 
     public void deleteWork() {
-        File[] files = getWorkFolder().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                context.out().printf("==[%s]== Delete work file %s.\n", getName(), file.getPath());
-                IOUtils.delete(file);
+        Path workFolder = getWorkFolder();
+        if (Files.isDirectory(workFolder)) {
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(workFolder)) {
+                for (Path file : files) {
+                    context.out().printf("==[%s]== Delete work file %s.\n", getName(), file);
+                    Files.delete(file);
+
+                }
+
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
     }
 
-    public File getOutLogFile() {
-        return new File(getLogsFolder(), "catalina.out");
+    public Path getOutLogFile() {
+        return getLogsFolder().resolve("catalina.out");
     }
 
     public void showOutLog(int tail) {
         //get it from config?
-        File file = getOutLogFile();
-        if (tail <= 0) {
-            IOUtils.copy(file, context.out(), false);
-            return;
-        }
-        if (file.isFile()) {
-            TextFiles.tail(file.getPath(), tail, context.out());
+        try {
+            Path file = getOutLogFile();
+            if (tail <= 0) {
+                Files.copy(file, context.out());
+                return;
+            }
+            if (Files.isRegularFile(file)) {
+                TextFiles.tail(file.toString(), tail, context.out());
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
     }
 
     public void deleteAllLog() {
-        File[] files = getLogsFolder().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    String n = file.getName();
-                    if (n.endsWith(".out")
-                            || n.endsWith(".txt")
-                            || n.endsWith(".log")) {
-                        //this is a log file, will delete it
-                    }
-                    {
-                        context.out().printf("==[%s]== Delete log file %s.\n", getName(), file.getPath());
-                        IOUtils.delete(file);
+        Path logsFolder = getLogsFolder();
+        if (Files.isDirectory(logsFolder)) {
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(logsFolder)) {
+                for (Path file : files) {
+                    if (Files.isRegularFile(file)) {
+                        String n = file.getFileName().toString();
+                        if (n.endsWith(".out")
+                                || n.endsWith(".txt")
+                                || n.endsWith(".log")) {
+                            //this is a log file, will delete it
+                        }
+                        {
+                            context.out().printf("==[%s]== Delete log file %s.\n", getName(), file);
+                            Files.delete(file);
+                        }
                     }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
+
     }
 
     public List<LocalTomcatAppConfigService> getApps() {
@@ -671,7 +739,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return a;
     }
 
-    public String getDefaulDeployFolder(String domainName) {
+    public Path getDefaulDeployFolder(String domainName) {
         String p = "webapps";
         if (domainName == null) {
             domainName = "";
@@ -679,7 +747,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (!domainName.equals("")) {
             p += ("/" + domainName);
         }
-        return getCatalinaBase() + "/" + p;
+        return getCatalinaBase().resolve(p);
     }
 
     public LocalTomcat getTomcatServer() {

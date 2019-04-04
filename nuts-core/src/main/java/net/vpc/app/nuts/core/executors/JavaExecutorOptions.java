@@ -9,6 +9,7 @@ import net.vpc.common.util.Convert;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,7 @@ public class JavaExecutorOptions {
         this.dir = dir;
         this.execArgs = executorOptions;
         List<String> classPath0 = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = ws.getFormatManager().createIdFormat().setOmitNamespace(true);
+        NutsIdFormat nutsIdFormat = ws.formatter().createIdFormat().setOmitNamespace(true);
         //will accept all -- and - based options!
         for (int i = 0; i < getExecArgs().length; i++) {
             String arg = getExecArgs()[i];
@@ -133,12 +134,11 @@ public class JavaExecutorOptions {
                 throw new NutsIllegalArgumentException("Cannot exclude base with jar modifier");
             }
         }else{
-            String contentFile = nutsMainDef.getContent().getFile();
+            Path contentFile = nutsMainDef.getContent().getPath();
             if (mainClass == null) {
-                File file = CoreIOUtils.fileByPath(contentFile);
-                if (file != null) {
+                if (contentFile != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = ws.getParseManager().parseExecutionEntries(file);
+                    NutsExecutionEntry[] classes = ws.parser().parseExecutionEntries(contentFile);
                     if (classes.length > 0) {
                         mainClass = StringUtils.join(":", classes, NutsExecutionEntry::getName);
                     }
@@ -149,11 +149,11 @@ public class JavaExecutorOptions {
             }
             if(!isExcludeBase()) {
                 nutsPath.add(nutsIdFormat.format(nutsMainDef.getId()));
-                classPath.add(contentFile);
+                classPath.add(contentFile.toString());
             }
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
-                if (nutsDefinition.getContent().getFile() != null) {
-                    classPath.add(nutsDefinition.getContent().getFile());
+                if (nutsDefinition.getContent().getPath() != null) {
+                    classPath.add(nutsDefinition.getContent().getPath().toString());
                     nutsPath.add(nutsIdFormat.format(nutsDefinition.getId()));
                 }
             }
@@ -224,7 +224,7 @@ public class JavaExecutorOptions {
         for (NutsId nutsId : ns.find()) {
             NutsDefinition f = getWs()
                     .fetch(nutsId).setSession(this.session).setIncludeInstallInformation(true).fetchDefinition();
-            classPath.add(f.getContent().getFile());
+            classPath.add(f.getContent().getPath().toString());
         }
     }
 

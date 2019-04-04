@@ -39,6 +39,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsQueryOptions;
 
 /**
@@ -46,14 +48,14 @@ import net.vpc.app.nuts.NutsQueryOptions;
  */
 public class DefaultNutsDescriptorContentParserContext implements NutsDescriptorContentParserContext {
 
-    private NutsWorkspace workspace;
-    private NutsSession session;
-    private InputStreamSource file;
-    private String fileExtension;
-    private String fileType;
-    private String mimeType;
+    private final NutsWorkspace workspace;
+    private final NutsSession session;
+    private final InputStreamSource file;
+    private final String fileExtension;
+    private final String fileType;
+    private final String mimeType;
     private byte[] bytes;
-    private NutsQueryOptions options;
+    private final NutsQueryOptions options;
 
     public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputStreamSource file, String fileExtension, String fileType, String mimeType,NutsQueryOptions options) {
         this.file = file;
@@ -87,21 +89,29 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
 
     @Override
     public InputStream getFullStream() {
-        return file.open();
+        try {
+            return file.open();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
+    @Override
     public String getFileExtension() {
         return fileExtension;
     }
 
+    @Override
     public String getFileType() {
         return fileType;
     }
 
+    @Override
     public String getMimeType() {
         return mimeType;
     }
 
+    @Override
     public String getName() {
         return file.getName();
     }

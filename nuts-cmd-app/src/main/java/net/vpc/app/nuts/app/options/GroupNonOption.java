@@ -80,11 +80,11 @@ public class GroupNonOption extends DefaultNonOption {
                 all.add(new DefaultArgumentCandidate(n));
             }
         } else if (repository != null) {
-            for (NutsEffectiveUser nutsSecurityEntityConfig : repository.getSecurityManager().findUsers()) {
+            for (NutsEffectiveUser nutsSecurityEntityConfig : repository.security().findUsers()) {
                 all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else if (workspace != null) {
-            for (NutsEffectiveUser nutsSecurityEntityConfig : workspace.getSecurityManager().findUsers()) {
+            for (NutsEffectiveUser nutsSecurityEntityConfig : workspace.security().findUsers()) {
                 all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }

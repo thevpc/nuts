@@ -100,15 +100,15 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 return true;
             }
 
-            NutsUserConfig registeredUser = workspace.getConfigManager().getUser(name);
+            NutsUserConfig registeredUser = workspace.config().getUser(name);
             if (registeredUser != null) {
                 try {
-                    workspace.getConfigManager().createAuthenticationAgent(registeredUser.getAuthenticationAgent())
+                    workspace.config().createAuthenticationAgent(registeredUser.getAuthenticationAgent())
                             .checkCredentials(
                             registeredUser.getCredentials(),
                                     registeredUser.getAuthenticationAgent(),
                                     password,
-                                    workspace.getConfigManager()
+                                    workspace.config()
                     );
                     this.login = name;
                     return true;

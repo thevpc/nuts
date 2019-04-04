@@ -85,7 +85,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.setId(context.getWorkspace().getParseManager().parseId(value));
+                        desc.setId(context.getWorkspace().parser().parseId(value));
                     }
                 });
 
@@ -181,7 +181,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.addDependency(ws.getParseManager().parseDependency(value));
+                        desc.addDependency(ws.parser().parseDependency(value));
                     }
                 });
             } else if (cmdLine.readAll("-remove-dependency")) {
@@ -189,7 +189,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 all.add(new Runnable() {
                     @Override
                     public void run() {
-                        desc.removeDependency(ws.getParseManager().parseDependency(value));
+                        desc.removeDependency(ws.parser().parseDependency(value));
                     }
                 });
             } else if (cmdLine.readAll("-file")) {
@@ -207,7 +207,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                 desc.set(ws.createDescriptorBuilder().build());
             } else {
                 if (file != null) {
-                    desc.set(ws.getParseManager().parseDescriptor(new File(file)));
+                    desc.set(ws.parser().parseDescriptor(new File(file)));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");
@@ -220,14 +220,14 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (save) {
                 if (file != null) {
-                    ws.getFormatManager().createDescriptorFormat().setPretty(true).format(desc.build(), new File(file));
+                    ws.formatter().createDescriptorFormat().setPretty(true).format(desc.build(), new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");
                     }
                 }
             } else {
-                context.getTerminal().getFormattedOut().printf("%s\n", ws.getFormatManager().createDescriptorFormat().setPretty(true).format(desc.build()));
+                context.getTerminal().getFormattedOut().printf("%s\n", ws.formatter().createDescriptorFormat().setPretty(true).format(desc.build()));
             }
         }
         return true;

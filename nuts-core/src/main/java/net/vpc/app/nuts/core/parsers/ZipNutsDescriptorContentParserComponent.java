@@ -63,7 +63,7 @@ public class ZipNutsDescriptorContentParserComponent implements NutsDescriptorCo
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
-                return parserContext.getWorkspace().getParseManager().parseDescriptor(buffer.toByteArray());
+                return parserContext.getWorkspace().parser().parseDescriptor(buffer.toByteArray());
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);

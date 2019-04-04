@@ -5,25 +5,23 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Objects;
+import java.nio.file.Path;
 
 public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
+
     private Object content;
     private Object descriptor;
     private String sha1;
     private String descSHA1;
-    private String repositoryName;
-    private NutsDeployOptions options;
+    private String repository;
+    private boolean trace = true;
+    private boolean force = false;
+    private boolean offline = false;
+    private boolean transitive = true;
     private NutsWorkspace ws;
 
     public DefaultNutsDeploymentBuilder(NutsWorkspace ws) {
         this.ws = ws;
-    }
-
-    @Override
-    public NutsDeploymentBuilder setOptions(NutsDeployOptions options) {
-        this.options = options;
-        return this;
     }
 
     @Override
@@ -33,13 +31,19 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
     }
 
     @Override
-    public NutsDeploymentBuilder setContentPath(String path) {
+    public NutsDeploymentBuilder setContent(String path) {
         content = path;
         return this;
     }
 
     @Override
     public NutsDeploymentBuilder setContent(File file) {
+        content = file;
+        return this;
+    }
+
+    @Override
+    public NutsDeploymentBuilder setContent(Path file) {
         content = file;
         return this;
     }
@@ -66,10 +70,6 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
     public NutsDeploymentBuilder setDescriptor(URL url) {
         descriptor = url;
         return this;
-    }
-
-    public NutsDeployOptions getOptions() {
-        return options;
     }
 
     public String getSha1() {
@@ -112,77 +112,82 @@ public class DefaultNutsDeploymentBuilder implements NutsDeploymentBuilder {
         return this;
     }
 
-    public String getRepositoryName() {
-        return repositoryName;
+    @Override
+    public String getRepository() {
+        return repository;
     }
 
     @Override
-    public NutsDeploymentBuilder setRepositoryName(String repositoryId) {
-        this.repositoryName = repositoryId;
+    public NutsDeploymentBuilder setRepository(String repository) {
+        this.repository = repository;
         return this;
     }
 
     @Override
-    public NutsDeployment build(){
+    public boolean isTrace() {
+        return trace;
+    }
+
+    @Override
+    public NutsDeploymentBuilder setTrace(boolean trace) {
+        this.trace = trace;
+        return this;
+    }
+
+    @Override
+    public boolean isForce() {
+        return force;
+    }
+
+    @Override
+    public NutsDeploymentBuilder setForce(boolean force) {
+        this.force = force;
+        return this;
+    }
+
+    @Override
+    public boolean isOffline() {
+        return offline;
+    }
+
+    @Override
+    public NutsDeploymentBuilder setOffline(boolean offline) {
+        this.offline = offline;
+        return this;
+    }
+
+    @Override
+    public boolean isTransitive() {
+        return transitive;
+    }
+
+    @Override
+    public NutsDeploymentBuilder setTransitive(boolean transitive) {
+        this.transitive = transitive;
+        return this;
+    }
+
+    public NutsWorkspace getWs() {
+        return ws;
+    }
+
+    public void setWs(NutsWorkspace ws) {
+        this.ws = ws;
+    }
+
+    @Override
+    public NutsDeployment build() {
         DefaultNutsDeployment e = new DefaultNutsDeployment(ws);
         e.setContent(content);
         e.setDescriptor(descriptor);
         e.setDescSHA1(descSHA1);
-        e.setOptions(options);
-        e.setRepositoryName(repositoryName);
+        e.setRepository(repository);
         e.setSha1(sha1);
+        e.setTrace(trace);
+        e.setForce(force);
+        e.setOffline(offline);
+        e.setTransitive(transitive);
         return e;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 19 * hash + Objects.hashCode(this.content);
-        hash = 19 * hash + Objects.hashCode(this.descriptor);
-        hash = 19 * hash + Objects.hashCode(this.sha1);
-        hash = 19 * hash + Objects.hashCode(this.descSHA1);
-        hash = 19 * hash + Objects.hashCode(this.repositoryName);
-        hash = 19 * hash + Objects.hashCode(this.options);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DefaultNutsDeploymentBuilder other = (DefaultNutsDeploymentBuilder) obj;
-        if (this.options != other.options) {
-            return false;
-        }
-        if (!Objects.equals(this.sha1, other.sha1)) {
-            return false;
-        }
-        if (!Objects.equals(this.descSHA1, other.descSHA1)) {
-            return false;
-        }
-        if (!Objects.equals(this.repositoryName, other.repositoryName)) {
-            return false;
-        }
-        if (!Objects.equals(this.content, other.content)) {
-            return false;
-        }
-        if (!Objects.equals(this.descriptor, other.descriptor)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "NutsDeployment{" + "content=" + content + ", descriptor=" + descriptor + ", sha1=" + sha1 + ", descSHA1=" + descSHA1 + ", repositoryName=" + repositoryName + ", foundAction=" + options + '}';
-    }
-
 
 }

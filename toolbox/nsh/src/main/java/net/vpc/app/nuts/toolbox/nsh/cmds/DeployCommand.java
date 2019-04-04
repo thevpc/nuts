@@ -106,9 +106,9 @@ public class DeployCommand extends AbstractNutsCommand {
                 NutsId nid = null;
                 nid = ws.deploy(
                         ws.createDeploymentBuilder()
-                                .setContentPath(s)
+                                .setContent(s)
                                 .setDescriptorPath(descriptorFile)
-                                .setRepositoryName(to).build(),
+                                .setRepository(to).build(),
                         context.getSession()
                 );
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
@@ -119,12 +119,12 @@ public class DeployCommand extends AbstractNutsCommand {
             }
             for (NutsId nutsId : ws.createQuery().setSession(context.getSession()).addId(id).latestVersions().setRepositoryFilter(from).find()) {
                 NutsDefinition fetched = ws.fetch(nutsId).setSession(context.getSession()).fetchDefinition();
-                if (fetched.getContent().getFile() != null) {
+                if (fetched.getContent().getPath() != null) {
                     NutsId nid = ws.deploy(
                             ws.createDeploymentBuilder()
-                                    .setContent(new File(fetched.getContent().getFile()))
+                                    .setContent(fetched.getContent().getPath())
                                     .setDescriptor(fetched.getDescriptor())
-                                    .setRepositoryName(to).build(),
+                                    .setRepository(to).build(),
                             context.getSession()
                     );
                     out.printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);

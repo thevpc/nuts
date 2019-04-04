@@ -15,13 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.vpc.common.io.IOUtils;
 
 @RestController
 @RequestMapping("ws/components")
@@ -46,85 +50,84 @@ public class NutsComponentService {
     @SuppressWarnings("unchecked")
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> getAll(@RequestParam("workspaceLocation") String workspaceLocation,
-                                                            @RequestParam("repositoryUuid") String repositoryUuid) {
+            @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = Nuts.openWorkspace(workspaceLocation);
         List<NutsId> ids = workspace.createQuery()
-            .setRepositoryFilter(new NutsRepositoryFilter() {
-                @Override
-                public boolean accept(NutsRepository repository) {
-                    return repository.getUuid().equals(repositoryUuid);
-                }
-            })
-            .setIgnoreNotFound(true)
-            .setIncludeInstallInformation(false)
-            .setIncludeFile(false)
-            .setIncludeEffective(true)
-            .find();
+                .setRepositoryFilter(new NutsRepositoryFilter() {
+                    @Override
+                    public boolean accept(NutsRepository repository) {
+                        return repository.getUuid().equals(repositoryUuid);
+                    }
+                })
+                .setIgnoreNotFound(true)
+                .setIncludeInstallInformation(false)
+                .setIncludeFile(false)
+                .setIncludeEffective(true)
+                .find();
         List<Map<String, String>> result = ids.stream()
-            .map(NutsClownUtils::nutsIdToMap)
-            .collect(Collectors.toList());
+                .map(NutsClownUtils::nutsIdToMap)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
 
     @SuppressWarnings("unchecked")
     @GetMapping(value = "dependencies", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> getDependencies(@RequestParam("workspace") String workspace,
-                                                                     @RequestParam("name") String name,
-                                                                     @RequestParam("namespace") String namespace,
-                                                                     @RequestParam("group") String group,
-                                                                     @RequestParam("version") String version,
-                                                                     @RequestParam("os") String os,
-                                                                     @RequestParam("osdist") String osdist,
-                                                                     @RequestParam("arch") String arch,
-                                                                     @RequestParam("face") String face,
-                                                                     @RequestParam("scope") String scope,
-                                                                     @RequestParam("alternative") String alternative,
-                                                                     @RequestParam("all") String all) {
+            @RequestParam("name") String name,
+            @RequestParam("namespace") String namespace,
+            @RequestParam("group") String group,
+            @RequestParam("version") String version,
+            @RequestParam("os") String os,
+            @RequestParam("osdist") String osdist,
+            @RequestParam("arch") String arch,
+            @RequestParam("face") String face,
+            @RequestParam("scope") String scope,
+            @RequestParam("alternative") String alternative,
+            @RequestParam("all") String all) {
 
-        String URL = String.format("http://localhost:7070/indexer/components/dependencies" +
-                "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&" +
-                "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=%s&all=%s",
-            workspace, name, namespace, group, version, face, os, osdist, scope, alternative, arch, all);
+        String URL = String.format("http://localhost:7070/indexer/components/dependencies"
+                + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
+                + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=%s&all=%s",
+                workspace, name, namespace, group, version, face, os, osdist, scope, alternative, arch, all);
         RestTemplate template = new RestTemplate();
         return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
     }
 
     @GetMapping(value = "download", produces = "application/json")
     public ResponseEntity<Resource> downloadComponent(@RequestParam("workspace") String workspace,
-                                                      @RequestParam("name") String name,
-                                                      @RequestParam("namespace") String namespace,
-                                                      @RequestParam("group") String group,
-                                                      @RequestParam("version") String version,
-                                                      @RequestParam("os") String os,
-                                                      @RequestParam("osdist") String osdist,
-                                                      @RequestParam("face") String face,
-                                                      @RequestParam("scope") String scope,
-                                                      @RequestParam("alternative") String alternative) {
+            @RequestParam("name") String name,
+            @RequestParam("namespace") String namespace,
+            @RequestParam("group") String group,
+            @RequestParam("version") String version,
+            @RequestParam("os") String os,
+            @RequestParam("osdist") String osdist,
+            @RequestParam("face") String face,
+            @RequestParam("scope") String scope,
+            @RequestParam("alternative") String alternative) {
         NutsWorkspace ws = Nuts.openWorkspace(workspace);
         NutsId id = ws.createIdBuilder()
-            .setName(name)
-            .setNamespace(namespace)
-            .setGroup(group)
-            .setVersion(version)
-            .setOs(os)
-            .setOsdist(osdist)
-            .setFace(face)
-            .setScope(scope)
-            .setAlternative(alternative)
-            .build();
+                .setName(name)
+                .setNamespace(namespace)
+                .setGroup(group)
+                .setVersion(version)
+                .setOs(os)
+                .setOsdist(osdist)
+                .setFace(face)
+                .setScope(scope)
+                .setAlternative(alternative)
+                .build();
         NutsFetch fetch = ws.fetch(id);
-        String filePath = fetch.fetchFile();
+        Path filePath = fetch.fetchFile();
         System.out.println(filePath);
-        File file = new File(filePath);
         try {
             InputStreamResource resource = new InputStreamResource(
-                new FileInputStream(file)
+                    Files.newInputStream(filePath)
             );
             return ResponseEntity.ok()
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
-        } catch (FileNotFoundException e) {
+                    .contentLength(Files.size(filePath))
+                    .contentType(MediaType.parseMediaType("application/octet-stream"))
+                    .body(resource);
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -133,38 +136,40 @@ public class NutsComponentService {
     @SuppressWarnings("unchecked")
     @GetMapping(value = "delete", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> deleteComponent(@RequestParam("workspace") String workspace,
-                                                                     @RequestParam("name") String name,
-                                                                     @RequestParam("namespace") String namespace,
-                                                                     @RequestParam("group") String group,
-                                                                     @RequestParam("version") String version,
-                                                                     @RequestParam("os") String os,
-                                                                     @RequestParam("osdist") String osdist,
-                                                                     @RequestParam("face") String face,
-                                                                     @RequestParam("scope") String scope,
-                                                                     @RequestParam("alternative") String alternative) {
+            @RequestParam("name") String name,
+            @RequestParam("namespace") String namespace,
+            @RequestParam("group") String group,
+            @RequestParam("version") String version,
+            @RequestParam("os") String os,
+            @RequestParam("osdist") String osdist,
+            @RequestParam("face") String face,
+            @RequestParam("scope") String scope,
+            @RequestParam("alternative") String alternative) {
         NutsWorkspace ws = Nuts.openWorkspace(workspace);
         NutsId id = ws.createIdBuilder()
-            .setName(name)
-            .setNamespace(namespace)
-            .setGroup(group)
-            .setVersion(version)
-            .setOs(os)
-            .setOsdist(osdist)
-            .setFace(face)
-            .setScope(scope)
-            .setAlternative(alternative)
-            .build();
+                .setName(name)
+                .setNamespace(namespace)
+                .setGroup(group)
+                .setVersion(version)
+                .setOs(os)
+                .setOsdist(osdist)
+                .setFace(face)
+                .setScope(scope)
+                .setAlternative(alternative)
+                .build();
         NutsFetch fetch = ws.fetch(id);
-        String filePath = fetch.fetchFile();
-        File file = new File(filePath);
-        FileUtils.deleteFolderTree(file.getParentFile(), null);
-        String URL = String.format("http://localhost:7070/indexer/components/delete" +
-                "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&" +
-                "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=",
-            workspace, name, namespace, group, version, face, os, osdist, scope, alternative);
+        Path filePath = fetch.fetchFile();
+        try {
+            IOUtils.delete(filePath.getParent());
+        } catch (IOException ex) {
+            Logger.getLogger(NutsComponentService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String URL = String.format("http://localhost:7070/indexer/components/delete"
+                + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
+                + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=",
+                workspace, name, namespace, group, version, face, os, osdist, scope, alternative);
         RestTemplate template = new RestTemplate();
         return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
     }
-
 
 }

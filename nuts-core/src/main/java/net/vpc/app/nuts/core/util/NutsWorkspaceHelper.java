@@ -39,12 +39,17 @@ import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
  */
 public class NutsWorkspaceHelper {
 
-    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsQueryOptions options) {
-        return filterRepositories(repos, id, repositoryFilter, session, false, null, mode, options);
+    public enum FilterMode {
+        FIND,
+        DEPLOY
+    }
+
+    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsQueryOptions options) {
+        return filterRepositories(repos, fmode, id, repositoryFilter, session, true, null, mode, options);
     }
 
     public static List<NutsRepository> filterRepositories(
-            List<NutsRepository> repos, NutsId id, NutsRepositoryFilter repositoryFilter,
+            List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter,
             NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsQueryOptions options) {
         class RepoAndLevel {
 
@@ -63,7 +68,17 @@ public class NutsWorkspaceHelper {
 
                 int t = 0;
                 try {
-                    t = repository.getSupportLevel(id, mode, options.isTransitive());
+                    switch (fmode) {
+                        case FIND: {
+                            t = repository.getFindSupportLevel(id, mode, options.isTransitive());
+                            break;
+                        }
+                        case DEPLOY: {
+                            t = repository.getDeploymentSupportLevel(id, mode != NutsFetchMode.REMOTE, options.isTransitive());
+                            break;
+                        }
+                    }
+
                 } catch (Exception e) {
                     //ignore...
                 }
@@ -98,10 +113,10 @@ public class NutsWorkspaceHelper {
     public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
         Map<String, String> qm = id.getQueryMap();
         if (qm.get(NutsConstants.QUERY_FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.getConfigManager().getPlatformArch().toString());
-            qm.put("os", ws.getConfigManager().getPlatformOs().toString());
-            if (ws.getConfigManager().getPlatformOsDist() != null) {
-                qm.put("osdist", ws.getConfigManager().getPlatformOsDist().toString());
+            qm.put("arch", ws.config().getPlatformArch().toString());
+            qm.put("os", ws.config().getPlatformOs().toString());
+            if (ws.config().getPlatformOsDist() != null) {
+                qm.put("osdist", ws.config().getPlatformOsDist().toString());
             }
             return id.setQuery(qm);
         }

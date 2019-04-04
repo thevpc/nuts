@@ -33,14 +33,12 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 import net.vpc.app.nuts.core.NutsExecutionContextImpl;
 import net.vpc.app.nuts.core.util.*;
-import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ArrayUtils;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
-import java.io.PrintStream;
-import java.util.*;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
@@ -70,10 +68,10 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        String javaFile = nutMainFile.getContent().getFile();
+        Path javaFile = nutMainFile.getContent().getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        File folder = executionContext.getWorkspace().getIOManager().createTempFolder("jj");
-        int res = compiler.run(null, null, null, "-d", folder.getPath(),javaFile);
+        Path folder = executionContext.getWorkspace().io().createTempFolder("jj");
+        int res = compiler.run(null, null, null, "-d", folder.toString(),javaFile.toString());
         if(res!=0){
             return res;
         }
@@ -81,10 +79,11 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getNutsDefinition();
         d=new DefaultNutsDefinition(d);
         ((DefaultNutsDefinition) d).setContent(new NutsContent(
-                folder.getPath(),
+                folder,
                 false,
                 true
         ));
+        String fileName=javaFile.getFileName().toString();
         NutsExecutionContext executionContext2=new NutsExecutionContextImpl(
                 d,
                 executionContext.getArgs(),
@@ -92,9 +91,9 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
                         executionContext.getExecutorOptions(),
                         new String[]{
                                 "--main-class",
-                                new File(javaFile.substring(javaFile.length()-".java".length())).getName(),
+                                new File(fileName.substring(fileName.length()-".java".length())).getName(),
                                 "--class-path",
-                                folder.getName(),
+                                folder.toString(),
                         }
                 ),
                 executionContext.getEnv(),

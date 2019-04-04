@@ -17,7 +17,7 @@ public class NdiMain extends NutsApplication {
 
     public SystemNdi createNdi(NutsApplicationContext appContext) {
         SystemNdi ndi = null;
-        NutsOsFamily fam = appContext.getWorkspace().getConfigManager().getPlatformOsFamily();
+        NutsOsFamily fam = appContext.getWorkspace().config().getPlatformOsFamily();
         if (fam==NutsOsFamily.LINUX || fam==NutsOsFamily.UNIX) {
             ndi = new LinuxNdi(appContext);
         }
@@ -34,7 +34,7 @@ public class NdiMain extends NutsApplication {
             } else if ((a = cmd.readNonOption("in", "install")) != null) {
                 SystemNdi ndi = createNdi(appContext);
                 if (ndi == null) {
-                    throw new NutsExecutionException("Platform not supported : " + appContext.getWorkspace().getConfigManager().getPlatformOs(), 2);
+                    throw new NutsExecutionException("Platform not supported : " + appContext.getWorkspace().config().getPlatformOs(), 2);
                 }
                 boolean force = false;
                 boolean silent = false;

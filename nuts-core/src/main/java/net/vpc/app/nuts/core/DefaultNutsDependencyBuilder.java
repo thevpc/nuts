@@ -33,12 +33,9 @@ import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyBuilder;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by vpc on 1/5/17.
@@ -236,4 +233,6 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public NutsId[] getExclusions() {
         return exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
     }
+    
+    
 }

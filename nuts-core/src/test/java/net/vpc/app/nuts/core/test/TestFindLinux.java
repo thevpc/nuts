@@ -47,7 +47,7 @@ public class TestFindLinux {
         boolean found=false;
         for (NutsId nutsId : itr) {
             count++;
-            if(ws.getConfigManager().getApiId().getLongNameId().equals(nutsId.getLongNameId())){
+            if(ws.config().getApiId().getLongNameId().equals(nutsId.getLongNameId())){
                 found=true;
             }
             System.out.println(nutsId.toString());

@@ -132,7 +132,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         if (!omitGroup) {
             if (!StringUtils.isEmpty(id.getGroup())) {
                 boolean importedGroup = false;
-                for (String anImport : ws.getConfigManager().getImports()) {
+                for (String anImport : ws.config().getImports()) {
                     if (id.getGroup().equals(anImport)) {
                         importedGroup = true;
                         break;
@@ -141,21 +141,21 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                 if (!(importedGroup && omitImportedGroup)) {
                     if (importedGroup) {
                         sb.append("<<");
-                        sb.append(ws.getParseManager().escapeText(id.getGroup()));
+                        sb.append(ws.parser().escapeText(id.getGroup()));
                         sb.append(">>");
                     } else {
-                        sb.append(ws.getParseManager().escapeText(id.getGroup()));
+                        sb.append(ws.parser().escapeText(id.getGroup()));
                     }
                     sb.append(":");
                 }
             }
         }
         sb.append("[[");
-        sb.append(ws.getParseManager().escapeText(id.getName()));
+        sb.append(ws.parser().escapeText(id.getName()));
         sb.append("]]");
         if (!StringUtils.isEmpty(id.getVersion().getValue())) {
             sb.append("#");
-            sb.append(ws.getParseManager().escapeText(id.getVersion().toString()));
+            sb.append(ws.parser().escapeText(id.getVersion().toString()));
         }
         boolean firstQ = true;
 
@@ -169,7 +169,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             }
             sb.append("{{classifier}}=**");
             sb.append("**");
-            sb.append(ws.getParseManager().escapeText(classifier));
+            sb.append(ws.parser().escapeText(classifier));
             sb.append("**");
         }
 
@@ -183,7 +183,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             }
             sb.append("{{scope}}=**");
             sb.append("**");
-            sb.append(ws.getParseManager().escapeText(scope));
+            sb.append(ws.parser().escapeText(scope));
             sb.append("**");
         }
 //        }
@@ -196,7 +196,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                 sb.append("{{&}}");
             }
             sb.append("{{optional}}=**");
-            sb.append(ws.getParseManager().escapeText(optional));
+            sb.append(ws.parser().escapeText(optional));
             sb.append("**");
         }
 //        }
@@ -208,7 +208,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                 sb.append("{{&}}");
             }
             sb.append("{{exclusions}}=@@");
-            sb.append(ws.getParseManager().escapeText(exclusions));
+            sb.append(ws.parser().escapeText(exclusions));
             sb.append("@@");
         }
         if (!StringUtils.isEmpty(id.getQuery())) {
@@ -227,8 +227,8 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
                         } else {
                             sb.append("{{&}}");
                         }
-                        sb.append("<<" + ws.getParseManager().escapeText(ee.getKey()) + ">>=");
-                        sb.append(ws.getParseManager().escapeText(exclusions));
+                        sb.append("<<" + ws.parser().escapeText(ee.getKey()) + ">>=");
+                        sb.append(ws.parser().escapeText(exclusions));
 //                        sb.append("");
                     }
                 }

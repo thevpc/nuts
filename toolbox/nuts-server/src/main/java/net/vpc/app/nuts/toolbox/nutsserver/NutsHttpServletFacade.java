@@ -35,6 +35,8 @@ import net.vpc.common.strings.StringUtils;
 import net.vpc.common.util.ListMap;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,7 +66,7 @@ public class NutsHttpServletFacade {
                                 .setNamespace(context.getServerId())
                         .setGroup("net.vpc.app.nuts")
                         .setName("nuts-server")
-                        .setVersion(context.getWorkspace().getConfigManager().getRunningContext().getRuntimeId().getVersion().toString())
+                        .setVersion(context.getWorkspace().config().getRunningContext().getRuntimeId().getVersion().toString())
                         .build().toString()
                 );
             }
@@ -81,8 +83,8 @@ public class NutsHttpServletFacade {
                 } catch (Exception exc) {
                     //
                 }
-                if (fetch != null && fetch.getContent().getFile() != null && new File(fetch.getContent().getFile()).exists()) {
-                    context.sendResponseFile(200, new File(fetch.getContent().getFile()));
+                if (fetch != null && fetch.getContent().getPath() != null && Files.exists(fetch.getContent().getPath())) {
+                    context.sendResponseFile(200, fetch.getContent().getPath());
                 } else {
                     context.sendError(404, "File Note Found");
                 }
@@ -241,31 +243,34 @@ public class NutsHttpServletFacade {
                 NutsDescriptor descriptor = null;
                 String receivedContentHash = null;
                 InputStream content = null;
-                File contentFile = null;
+                Path contentFile = null;
                 for (ItemStreamInfo info : stream) {
                     String name = info.resolveVarInHeader("Content-Disposition", "name");
                     switch (name) {
                         case "descriptor":
                             try {
-                                descriptor = context.getWorkspace().getParseManager().parseDescriptor(info.getContent());
+                                descriptor = context.getWorkspace().parser().parseDescriptor(info.getContent());
                             }finally{
                                 info.getContent().close();
                             }
                             break;
                         case "content-hash":
                             try {
-                                receivedContentHash = context.getWorkspace().getIOManager().computeHash(info.getContent());
+                                receivedContentHash = context.getWorkspace().io().computeHash(info.getContent());
                             }finally {
                                 info.getContent().close();
                             }
                             break;
                         case "content":
-                            contentFile =context.getWorkspace().getIOManager().createTempFile(
-                                    context.getWorkspace().getConfigManager().getDefaultIdFilename(
+                            contentFile =context.getWorkspace().io().createTempFile(
+                                    context.getWorkspace().config().getDefaultIdFilename(
                                             descriptor.getId().setFaceDescriptor()
                                     )
                             );
-                            IOUtils.copy(info.getContent(), contentFile, true, true);
+                            context.getWorkspace().io().copy()
+                                    .setSource(info.getContent())
+                                    .setTarget(contentFile)
+                                    .run();
                             break;
                     }
                 }
@@ -319,7 +324,7 @@ public class NutsHttpServletFacade {
 
                 NutsSession session = ws.createSession();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                session.getTerminal().setOut(ws.getIOManager().createPrintStream(out,NutsTerminalMode.FILTERED));
+                session.getTerminal().setOut(ws.io().createPrintStream(out,NutsTerminalMode.FILTERED));
                 session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
                 int result=ws.

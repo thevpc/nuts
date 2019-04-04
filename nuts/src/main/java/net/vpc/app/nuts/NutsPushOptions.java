@@ -14,9 +14,20 @@ public class NutsPushOptions {
     private boolean trace = true;
     private boolean force = false;
     private boolean offline = false;
+    private String repository;
 
+    
     public boolean isTrace() {
         return trace;
+    }
+
+    public String getRepository() {
+        return repository;
+    }
+
+    public NutsPushOptions setRepository(String repository) {
+        this.repository = repository;
+        return this;
     }
 
     public NutsPushOptions setTrace(boolean trace) {

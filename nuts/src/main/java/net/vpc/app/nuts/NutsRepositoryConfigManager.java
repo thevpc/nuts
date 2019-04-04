@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -26,23 +27,18 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
 
     /**
-     * return repository location
+     * return repository configured location as string
      *
      * @param expand when true, location will be expanded (~ and $ params will be expanded)
      * @return repository location
      */
     String getLocation(boolean expand);
 
-    /**
-     * equivalent to {{@link #getLocation(boolean)}} with false value
-     *
-     * @return repository location
-     */
-    String getLocation();
+    Path getRepositoryLocation();
 
-    String getStoreLocation();
+    Path getStoreLocation();
 
-    String getStoreLocation(NutsStoreLocation folderType);
+    Path getStoreLocation(NutsStoreLocation folderType);
 
     void removeUser(String userId);
 
@@ -77,5 +73,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
     boolean isIndexEnabled();
 
     void setMirrorEnabled(String repoName, boolean enabled);
+
+    public int getDeployOrder();
 
 }

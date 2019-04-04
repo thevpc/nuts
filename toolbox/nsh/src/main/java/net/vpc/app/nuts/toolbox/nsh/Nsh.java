@@ -52,7 +52,7 @@ public class Nsh extends NutsApplication {
             }
         }
         String nshIdStr = applicationContext.getAppId().toString();
-        NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
+        NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("list", nshIdStr + " --no-color -c find-command");
 //        parameters.put("find", nshIdStr + " --no-color -c find-command %n");
@@ -97,7 +97,7 @@ public class Nsh extends NutsApplication {
     @Override
     protected void onUninstallApplication(NutsApplicationContext applicationContext) {
         try {
-            NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().getConfigManager();
+            NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
             try {
                 cfg.uninstallCommandFactory("nsh", null);
             } catch (Exception notFound) {

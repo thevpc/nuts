@@ -143,7 +143,7 @@ public class Nuts {
         if (boot.getOptions().getCreationTime() == 0) {
             boot.getOptions().setCreationTime(startTime);
         }
-        return openWorkspace(boot.getOptions());
+        return boot.openWorkspace();
     }
 
     /**

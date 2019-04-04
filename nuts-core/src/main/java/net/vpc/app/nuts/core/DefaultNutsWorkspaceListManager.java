@@ -1,10 +1,10 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -26,9 +26,9 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             name = "default";
         }
         this.name = name.trim();
-        File file = getConfigFile();
-        if (file.exists()) {
-            this.config = this.defaultWorkspace.getIOManager().readJson(file, NutsWorkspaceListConfig.class);
+        Path file = getConfigFile();
+        if (Files.exists(file)) {
+            this.config = this.defaultWorkspace.io().readJson(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
@@ -40,23 +40,23 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                     new NutsWorkspaceLocation()
                             .setUuid(ws.getUuid())
                             .setName("default-workspace")
-                            .setLocation(this.defaultWorkspace.getConfigManager().getWorkspaceLocation())
+                            .setLocation(this.defaultWorkspace.config().getWorkspaceLocation().toString())
             );
             this.save();
         }
     }
 
-    private File getConfigFile() {
-        return new File(this.defaultWorkspace
-                .getConfigManager()
+    private Path getConfigFile() {
+        return this.defaultWorkspace
+                .config()
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .resolveIdForClass(DefaultNutsWorkspaceListManager.class)
                                 .getSimpleNameId(),
-                        NutsStoreLocation.CONFIG),
-                name + "-nuts-workspace-list.json");
+                        NutsStoreLocation.CONFIG).resolve(name + "-nuts-workspace-list.json");
     }
 
+    @Override
     public List<NutsWorkspaceLocation> getWorkspaces() {
         return new ArrayList<>(workspaces.values());
     }
@@ -84,8 +84,8 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         NutsWorkspace workspace = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
                 .setUuid(workspace.getUuid())
-                .setName(new File(workspace.getConfigManager().getWorkspaceLocation()).getName())
-                .setLocation(workspace.getConfigManager().getWorkspaceLocation());
+                .setName(workspace.config().getWorkspaceLocation().getFileName().toString())
+                .setLocation(workspace.config().getWorkspaceLocation().toString());
         workspaces.put(workspace.getUuid(), workspaceLocation);
         this.save();
         return workspace;
@@ -103,8 +103,8 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         this.config.setWorkspaces(this.workspaces.isEmpty()
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
-        File file = getConfigFile();
-        this.defaultWorkspace.getIOManager().writeJson(this.config, file, true);
+        Path file = getConfigFile();
+        this.defaultWorkspace.io().writeJson(this.config, file, true);
     }
 
     public boolean removeWorkspace(String uuid) {

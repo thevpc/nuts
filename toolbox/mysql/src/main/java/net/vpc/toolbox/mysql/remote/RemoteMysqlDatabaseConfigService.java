@@ -46,7 +46,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().getIOManager().writeJson(getConfig(), out, true);
+        context.getWorkspace().io().writeJson(getConfig(), out, true);
     }
 
     public int pull() {

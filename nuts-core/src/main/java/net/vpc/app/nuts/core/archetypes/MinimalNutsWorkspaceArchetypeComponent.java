@@ -49,10 +49,11 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsRepository defaultRepo = workspace.getRepositoryManager().addRepository(
+        NutsRepository defaultRepo = workspace.repositories().addRepository(
                 new NutsCreateRepositoryOptions()
                         .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
                         .setLocation(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                        .setDeployOrder(10)
                         .setEnabled(true)
                         .setFailSafe(false)
                         .setCreate(true)
@@ -64,13 +65,13 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         if(defaultRepo==null){
             throw new IllegalArgumentException("Unable to configure repository : "+NutsConstants.DEFAULT_REPOSITORY_NAME);
         }
-        defaultRepo.getConfigManager().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
-        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        defaultRepo.config().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
+        workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //simple rights for minimal utilization
         for (String right : NutsConstants.RIGHTS) {
             if (!NutsConstants.RIGHT_ADMIN.equals(right)) {
-                workspace.getSecurityManager().addUserRights(NutsConstants.USER_ANONYMOUS, right);
+                workspace.security().addUserRights(NutsConstants.USER_ANONYMOUS, right);
             }
         }
     }

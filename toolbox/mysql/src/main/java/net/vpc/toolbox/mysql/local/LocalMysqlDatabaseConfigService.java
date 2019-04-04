@@ -7,11 +7,16 @@ import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlDatabaseConfig;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalMysqlDatabaseConfigService {
+
     private static ProcessBuilder2.CommandStringFormatterAdapter SECURE_COMMAND_FORMATTER = new ProcessBuilder2.CommandStringFormatterAdapter() {
         @Override
         public String replaceEnvValue(String envName, String envValue) {
@@ -56,11 +61,12 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        context.getWorkspace().getIOManager().writeJson(getConfig(), out, true);
+        context.getWorkspace().io().writeJson(getConfig(), out, true);
         return this;
     }
 
     public static class ArchiveResult {
+
         public String path;
         public int execResult;
         public boolean zip;
@@ -73,6 +79,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public static class RestoreResult {
+
         public String path;
         public int execResult;
         public boolean zip;
@@ -85,60 +92,66 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public ArchiveResult archive(String path) {
-        if (StringUtils.isEmpty(path)) {
-            String databaseName = getConfig().getDatabaseName();
-            if (StringUtils.isEmpty(databaseName)) {
-                databaseName = name;
-            }
-            path = databaseName + "-" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + ".sql.zip";
-        }
-        if (!path.endsWith(".sql.zip") && !path.endsWith(".zip") && !path.endsWith(".sql")) {
-            path = path + ".sql.zip";
-        }
-        if (path.endsWith(".sql")) {
-            context.out().printf("==[%s]== create archive %s\n", getDatabaseName(), path);
-            ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
-                    "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
-            )
-                    .setEnv("CMD_FILE", path)
-                    .setEnv("CMD_USER", getConfig().getUser())
-                    .setEnv("CMD_PWD", getConfig().getPassword())
-                    .setEnv("CMD_DB", getDatabaseName())
-                    .grabOutputString()
-                    .setRedirectErrorStream(true)
-                    .start().waitFor();
-            int result = p.getResult();
-            if(result==0) {
-                return new ArchiveResult(path, result, false);
-            }else{
-                if(new File(path).exists()){
-                    new File(path).delete();
+        try {
+            if (StringUtils.isEmpty(path)) {
+                String databaseName = getConfig().getDatabaseName();
+                if (StringUtils.isEmpty(databaseName)) {
+                    databaseName = name;
                 }
-                throw new NutsExecutionException(p.getOutputString(),2);
+                path = databaseName + "-" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + ".sql.zip";
             }
-        } else {
-            context.out().printf("==[%s]== create archive %s\n", getDatabaseName(), path);
-            ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
-                    "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
-            )
-                    .setEnv("CMD_FILE", path)
-                    .setEnv("CMD_USER", getConfig().getUser())
-                    .setEnv("CMD_PWD", getConfig().getPassword())
-                    .setEnv("CMD_DB", getDatabaseName())
-//                    .inheritIO()
-                    .grabOutputString()
-                    .setRedirectErrorStream(true)
-                    .start().waitFor();
-            context.out().printf("==[%s]==    [EXEC] %s\n", getDatabaseName(), p.getCommandString(SECURE_COMMAND_FORMATTER));
-            int result = p.getResult();
-            if(result==0) {
-                return new ArchiveResult(path, result, false);
-            }else{
-                if(new File(path).exists()){
-                    new File(path).delete();
+            if (!path.endsWith(".sql.zip") && !path.endsWith(".zip") && !path.endsWith(".sql")) {
+                path = path + ".sql.zip";
+            }
+            if (path.endsWith(".sql")) {
+                context.out().printf("==[%s]== create archive %s\n", getDatabaseName(), path);
+                ProcessBuilder2 p;
+                p = new ProcessBuilder2().setCommand("sh", "-c",
+                        "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
+                )
+                        .setEnv("CMD_FILE", path)
+                        .setEnv("CMD_USER", getConfig().getUser())
+                        .setEnv("CMD_PWD", getConfig().getPassword())
+                        .setEnv("CMD_DB", getDatabaseName())
+                        .grabOutputString()
+                        .setRedirectErrorStream(true)
+                        .start().waitFor();
+
+                int result = p.getResult();
+                if (result == 0) {
+                    return new ArchiveResult(path, result, false);
+                } else {
+                    if (new File(path).exists()) {
+                        new File(path).delete();
+                    }
+                    throw new NutsExecutionException(p.getOutputString(), 2);
                 }
-                throw new NutsExecutionException(p.getOutputString(),2);
+            } else {
+                context.out().printf("==[%s]== create archive %s\n", getDatabaseName(), path);
+                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
+                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
+                )
+                        .setEnv("CMD_FILE", path)
+                        .setEnv("CMD_USER", getConfig().getUser())
+                        .setEnv("CMD_PWD", getConfig().getPassword())
+                        .setEnv("CMD_DB", getDatabaseName())
+                        //                    .inheritIO()
+                        .grabOutputString()
+                        .setRedirectErrorStream(true)
+                        .start().waitFor();
+                context.out().printf("==[%s]==    [EXEC] %s\n", getDatabaseName(), p.getCommandString(SECURE_COMMAND_FORMATTER));
+                int result = p.getResult();
+                if (result == 0) {
+                    return new ArchiveResult(path, result, false);
+                } else {
+                    if (new File(path).exists()) {
+                        new File(path).delete();
+                    }
+                    throw new NutsExecutionException(p.getOutputString(), 2);
+                }
             }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
     }
 
@@ -146,33 +159,37 @@ public class LocalMysqlDatabaseConfigService {
 //        if(!path.endsWith(".sql") && !path.endsWith(".sql.zip") && !path.endsWith(".zip")){
 //            path=path+
 //        }
-        if (path.endsWith(".sql")) {
-            context.out().printf("==[%s]== restore archive %s\n", getDatabaseName(), path);
-            int result = new ProcessBuilder2().setCommand("sh", "-c",
-                    "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
-            )
-                    .setEnv("CMD_FILE", path)
-                    .setEnv("CMD_USER", getConfig().getUser())
-                    .setEnv("CMD_PWD", getConfig().getPassword())
-                    .setEnv("CMD_DB", getDatabaseName())
-                    .setEnv("CMD_HOST", "localhost")
-                    .inheritIO()
-                    .start().waitFor().getResult();
-            return new RestoreResult(path, result, false);
-        } else {
-            context.out().printf("==[%s]== restore archive %s\n", getDatabaseName(), path);
-            int result = new ProcessBuilder2().setCommand("sh", "-c",
-                    "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
-            )
-                    .setEnv("CMD_FILE", path)
-                    .setEnv("CMD_USER", getConfig().getUser())
-                    .setEnv("CMD_PWD", getConfig().getPassword())
-                    .setEnv("CMD_DB", getDatabaseName())
-                    .setEnv("CMD_HOST", "localhost")
-                    .start()
-                    .inheritIO()
-                    .waitFor().getResult();
-            return new RestoreResult(path, result, true);
+        try {
+            if (path.endsWith(".sql")) {
+                context.out().printf("==[%s]== restore archive %s\n", getDatabaseName(), path);
+                int result = new ProcessBuilder2().setCommand("sh", "-c",
+                        "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
+                )
+                        .setEnv("CMD_FILE", path)
+                        .setEnv("CMD_USER", getConfig().getUser())
+                        .setEnv("CMD_PWD", getConfig().getPassword())
+                        .setEnv("CMD_DB", getDatabaseName())
+                        .setEnv("CMD_HOST", "localhost")
+                        .inheritIO()
+                        .start().waitFor().getResult();
+                return new RestoreResult(path, result, false);
+            } else {
+                context.out().printf("==[%s]== restore archive %s\n", getDatabaseName(), path);
+                int result = new ProcessBuilder2().setCommand("sh", "-c",
+                        "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
+                )
+                        .setEnv("CMD_FILE", path)
+                        .setEnv("CMD_USER", getConfig().getUser())
+                        .setEnv("CMD_PWD", getConfig().getPassword())
+                        .setEnv("CMD_DB", getDatabaseName())
+                        .setEnv("CMD_HOST", "localhost")
+                        .start()
+                        .inheritIO()
+                        .waitFor().getResult();
+                return new RestoreResult(path, result, true);
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
     }
 

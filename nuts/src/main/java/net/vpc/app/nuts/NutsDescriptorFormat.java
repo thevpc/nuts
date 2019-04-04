@@ -34,13 +34,17 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.nio.file.Path;
 
 public interface NutsDescriptorFormat {
+
     boolean isPretty();
 
     NutsDescriptorFormat setPretty(boolean pretty);
 
     String format(NutsDescriptor descriptor);
+
+    void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
 
     void format(NutsDescriptor descriptor, File file) throws UncheckedIOException;
 

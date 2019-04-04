@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -55,6 +56,8 @@ public interface NutsHttpServletFacadeContext {
     void sendResponseText(int code, String text) throws IOException;
 
     void sendResponseFile(int code, File file) throws IOException;
+
+    void sendResponseFile(int code, Path file) throws IOException;
 
     Set<String> getRequestHeaderKeys(String header) throws IOException;
 

@@ -32,17 +32,17 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
 
 public interface NutsDeploymentBuilder {
 
-
-    NutsDeploymentBuilder setOptions(NutsDeployOptions options);
-
     NutsDeploymentBuilder setContent(InputStream stream);
 
-    NutsDeploymentBuilder setContentPath(String path);
+    NutsDeploymentBuilder setContent(String path);
 
     NutsDeploymentBuilder setContent(File file);
+
+    NutsDeploymentBuilder setContent(Path file);
 
     NutsDeploymentBuilder setDescriptor(InputStream stream);
 
@@ -60,7 +60,27 @@ public interface NutsDeploymentBuilder {
 
     NutsDeploymentBuilder setDescriptor(NutsDescriptor descriptor);
 
-    NutsDeploymentBuilder setRepositoryName(String repositoryId);
+    NutsDeploymentBuilder setRepository(String repository);
 
     NutsDeployment build();
+
+    String getRepository();
+
+    boolean isForce();
+
+    boolean isOffline();
+
+    boolean isTrace();
+
+    boolean isTransitive();
+
+    NutsDeploymentBuilder setForce(boolean force);
+
+    NutsDeploymentBuilder setOffline(boolean offline);
+
+    NutsDeploymentBuilder setTrace(boolean trace);
+
+    NutsDeploymentBuilder setTransitive(boolean transitive);
+
+    String getSha1();
 }

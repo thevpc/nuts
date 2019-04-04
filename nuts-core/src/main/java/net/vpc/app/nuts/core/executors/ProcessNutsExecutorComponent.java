@@ -34,7 +34,7 @@ import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -60,7 +60,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
-        String storeFolder = nutMainFile.getInstallation().getInstallFolder();
+        Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorOptions();
         String[] appArgs = executionContext.getArgs();
 
@@ -74,7 +74,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         Map<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getExportedBootArgumentsString();
+        String bootArgumentsString = executionContext.getWorkspace().config().getOptions().getExportedBootArgumentsString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
         boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
@@ -89,7 +89,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(dir));
+        String directory = StringUtils.isEmpty(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
         return CoreIOUtils.execAndWait(
                 nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),

@@ -12,9 +12,10 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.app.nuts.toolbox.nadmin.NAdminMain;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
-import net.vpc.common.io.IOUtils;
-
-import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  *
@@ -24,29 +25,29 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
 
     @Override
     public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
-        String name="nadmin config";
+        String name = "nadmin config";
         Argument a;
         if (cmdLine.readAll("delete log")) {
-            deleteLog(context,readForce(cmdLine,name));
+            deleteLog(context, readForce(cmdLine, name));
             return true;
         } else if (cmdLine.readAll("delete var")) {
-            deleteVar(context,readForce(cmdLine,name));
+            deleteVar(context, readForce(cmdLine, name));
             return true;
         } else if (cmdLine.readAll("delete programs")) {
-            deletePrograms(context,readForce(cmdLine,name));
+            deletePrograms(context, readForce(cmdLine, name));
             return true;
         } else if (cmdLine.readAll("delete config")) {
-            deleteConfig(context,readForce(cmdLine,name));
+            deleteConfig(context, readForce(cmdLine, name));
             return true;
         } else if (cmdLine.readAll("delete cache")) {
-            deleteCache(context,readForce(cmdLine,name));
+            deleteCache(context, readForce(cmdLine, name));
             return true;
         } else if (cmdLine.readAll("cleanup")) {
             boolean force = readForce(cmdLine, name);
             deleteCache(context, force);
-            deleteLog(context,force);
+            deleteLog(context, force);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -57,78 +58,89 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     }
 
     private void deleteLog(NutsApplicationContext context, boolean force) {
-        deleteFolder(context,force,NutsStoreLocation.LOGS);
+        deleteFolder(context, force, NutsStoreLocation.LOGS);
     }
 
     private void deleteVar(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force,NutsStoreLocation.VAR);
+        deleteFolder(context, force, NutsStoreLocation.VAR);
     }
 
     private void deletePrograms(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force,NutsStoreLocation.PROGRAMS);
+        deleteFolder(context, force, NutsStoreLocation.PROGRAMS);
     }
 
     private void deleteConfig(NutsApplicationContext context, boolean force) {
-        deleteFolder(context, force,NutsStoreLocation.CONFIG);
+        deleteFolder(context, force, NutsStoreLocation.CONFIG);
     }
 
-    private void deleteFolder(NutsApplicationContext context, boolean force,NutsStoreLocation folder) {
-        deleteFolder(context,context.getWorkspace().getConfigManager().getStoreLocation(folder),folder.name().toLowerCase(),force);
+    private void deleteFolder(NutsApplicationContext context, boolean force, NutsStoreLocation folder) {
+        deleteFolder(context, context.getWorkspace().config().getStoreLocation(folder), folder.name().toLowerCase(), force);
     }
 
-    private void deleteFolder(NutsApplicationContext context, String storeLocation, String name,boolean force) {
-        if(storeLocation!=null) {
-            File file = new File(storeLocation);
-            if (file.exists()) {
-                context.out().printf("@@Deleting@@ ##%s## folder %s ...\n", name,file.getPath());
-                if (force 
-                        ||context.getWorkspace().getConfigManager().getOptions().isYes() 
+    private void deleteFolder(NutsApplicationContext context, Path storeLocation, String name, boolean force) {
+        if (storeLocation != null) {
+            if (Files.exists(storeLocation)) {
+                context.out().printf("@@Deleting@@ ##%s## folder %s ...\n", name, storeLocation);
+                if (force
+                        || context.getWorkspace().config().getOptions().isYes()
                         || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                    IOUtils.delete(file);
+                    try {
+                        Files.delete(storeLocation);
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
                 }
             }
         }
     }
 
     private void deleteCache(NutsApplicationContext context, boolean force) {
-        String storeLocation = context.getWorkspace().getConfigManager().getStoreLocation(NutsStoreLocation.CACHE);
-        if(storeLocation!=null) {
-            File cache = new File(storeLocation);
-            if (cache.exists()) {
-                IOUtils.delete(cache);
+        Path storeLocation = context.getWorkspace().config().getStoreLocation(NutsStoreLocation.CACHE);
+        if (storeLocation != null) {
+//            File cache = new File(storeLocation);
+            if (Files.exists(storeLocation)) {
+                try {
+                    Files.delete(storeLocation);
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
             }
-            for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
+            for (NutsRepository repository : context.getWorkspace().repositories().getRepositories()) {
                 deleteRepoCache(repository, context, force);
             }
         }
     }
 
-    private static void deleteRepoCache(NutsRepository repository, NutsApplicationContext context, boolean force){
-        String s = repository.getStoreLocation(NutsStoreLocation.CACHE);
-        if(s!=null){
-            File file = new File(s);
-            if(file.exists()) {
+    private static void deleteRepoCache(NutsRepository repository, NutsApplicationContext context, boolean force) {
+        Path s = repository.config().getStoreLocation(NutsStoreLocation.CACHE);
+        if (s != null) {
+            if (Files.exists(s)) {
                 context.out().printf("@@Deleting@@ ##cache## folder %s ...\n", s);
-                if (force 
-                        ||context.getWorkspace().getConfigManager().getOptions().isYes() 
+                if (force
+                        || context.getWorkspace().config().getOptions().isYes()
                         || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
-                    IOUtils.delete(file);
+                    try {
+                        Files.delete(s);
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
                 }
             }
         }
-        if(repository.isSupportedMirroring()) {
+        if (repository.isSupportedMirroring()) {
             for (NutsRepository mirror : repository.getMirrors()) {
                 deleteRepoCache(mirror, context, force);
             }
         }
     }
-    private boolean readForce(CommandLine cmdLine,String name){
-        boolean force=false;
+
+    private boolean readForce(CommandLine cmdLine, String name) {
+        boolean force = false;
         Argument a;
-        while(cmdLine.hasNext()) {
-            if ((a = cmdLine.readBooleanOption("-f","--force")) != null) {
-                force=a.getBooleanValue();
-            }else{
+        while (cmdLine.hasNext()) {
+            if ((a = cmdLine.readBooleanOption("-f", "--force")) != null) {
+                force = a.getBooleanValue();
+            } else {
                 cmdLine.unexpectedArgument(name);
             }
         }

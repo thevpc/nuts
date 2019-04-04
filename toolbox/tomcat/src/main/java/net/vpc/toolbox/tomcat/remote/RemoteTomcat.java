@@ -14,9 +14,15 @@ import net.vpc.app.nuts.NutsUserCancelException;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import net.vpc.toolbox.tomcat.local.LocalTomcatConfigService;
 
 public class RemoteTomcat {
 
@@ -329,21 +335,18 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         List<RemoteTomcatConfigService> all = new ArrayList<>();
-        File[] configFiles = new File(context.getConfigFolder()).listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT);
-            }
-        });
-        if (configFiles != null) {
-            for (File file1 : configFiles) {
+        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getConfigFolder(),
+                (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
+            for (Path entry : pp) {
                 try {
-                    RemoteTomcatConfigService c = loadTomcatConfig(file1.getName().substring(0, file1.getName().length() - RemoteTomcatConfigService.REMOTE_CONFIG_EXT.length()));
+                    RemoteTomcatConfigService c = loadTomcatConfig(entry);
                     all.add(c);
                 } catch (Exception ex) {
                     //ignore
                 }
             }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return all.toArray(new RemoteTomcatConfigService[0]);
     }
@@ -441,6 +444,11 @@ public class RemoteTomcat {
     }
 
     public RemoteTomcatConfigService loadTomcatConfig(String name) {
+        RemoteTomcatConfigService t = new RemoteTomcatConfigService(name, this);
+        t.loadConfig();
+        return t;
+    }
+    public RemoteTomcatConfigService loadTomcatConfig(Path name) {
         RemoteTomcatConfigService t = new RemoteTomcatConfigService(name, this);
         t.loadConfig();
         return t;

@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsNotInstallableException;
@@ -70,13 +73,13 @@ public class DefaultNutsInstalledRepository {
     }
 
     public NutsId[] findAll(NutsIdFilter all) {
-        final Path path = new File(ws.getConfigManager().getStoreLocation(NutsStoreLocation.CONFIG)).toPath();
+        final Path path = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
         try {
             return Files.walk(path)
-                    .map(p -> new File(p.toFile(), ".nuts-install.log")).filter(p -> p.exists())
+                    .map(p -> p.resolve(".nuts-install.log")).filter(p -> Files.exists(p))
                     .map(p -> {
                         try {
-                            return ws.getIOManager().readJson(p, InstallInfo.class);
+                            return ws.io().readJson(p, InstallInfo.class);
 
                         } catch (Exception e) {
                             return null;
@@ -94,7 +97,7 @@ public class DefaultNutsInstalledRepository {
         return new LazyIterator<NutsId>() {
             @Override
             protected Iterator<NutsId> iterator() {
-                File installFolder = new File(ws.getConfigManager().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG)).getParentFile();
+                File installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).toFile().getParentFile();
                 if (installFolder.isDirectory()) {
                     final NutsVersionFilter filter0 = id.getVersion().toFilter();
                     return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
@@ -103,7 +106,7 @@ public class DefaultNutsInstalledRepository {
                                 public NutsId convert(File folder) {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-                                        NutsVersion vv = ws.getParseManager().parseVersion(folder.getName());
+                                        NutsVersion vv = ws.parser().parseVersion(folder.getName());
                                         if (filter0.accept(vv) && (filter == null || filter.accept(id.setVersion(vv)))) {
                                             return (id.setVersion(folder.getName()));
                                         }
@@ -124,17 +127,17 @@ public class DefaultNutsInstalledRepository {
         return new LazyIterator<NutsId>() {
             @Override
             protected Iterator<NutsId> iterator() {
-                File installFolder = new File(ws.getConfigManager().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG)).getParentFile();
+                File installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).toFile().getParentFile();
                 if (installFolder.isDirectory()) {
                     final NutsVersionFilter filter0 = id.getVersion().toFilter();
-                    
+
                     return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
                             .map(new Converter<File, NutsId>() {
                                 @Override
                                 public NutsId convert(File folder) {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-                                        NutsVersion vv = ws.getParseManager().parseVersion(folder.getName());
+                                        NutsVersion vv = ws.parser().parseVersion(folder.getName());
                                         if (filter0.accept(vv) && (filter == null || filter.accept(vv))) {
                                             return (id.setVersion(folder.getName()));
                                         }
@@ -143,7 +146,7 @@ public class DefaultNutsInstalledRepository {
                                 }
 
                             }).nonNull().iterator();
-                    
+
                 }
                 //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
                 return Collections.emptyIterator();
@@ -152,25 +155,29 @@ public class DefaultNutsInstalledRepository {
     }
 
     public NutsId[] findInstalledVersions(NutsId id) {
-        File installFolder = new File(ws.getConfigManager().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG)).getParentFile();
+        Path installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).getParent();
         List<NutsId> ok = new ArrayList<>();
         final NutsVersionFilter filter = id.getVersion().toFilter();
-        if (installFolder.isDirectory()) {
-            for (File folder : installFolder.listFiles()) {
-                if (folder.isDirectory() && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-                    if (filter.accept(ws.getParseManager().parseVersion(folder.getName()))) {
-                        ok.add(id.setVersion(folder.getName()));
+        if (Files.isDirectory(installFolder)) {
+            try (DirectoryStream<Path> ds = Files.newDirectoryStream(installFolder)) {
+                for (Path folder : ds) {
+                    if (Files.isDirectory(folder) && Files.isRegularFile(folder.resolve(NUTS_INSTALL_FILE))) {
+                        if (filter.accept(ws.parser().parseVersion(folder.getFileName().toString()))) {
+                            ok.add(id.setVersion(folder.getFileName().toString()));
+                        }
                     }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
         //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
         return ok.toArray(new NutsId[0]);
     }
 
-    public boolean uninstall(NutsId id) {
+    public void uninstall(NutsId id) {
         CoreNutsUtils.checkReadOnly(ws);
-        return remove(id, NUTS_INSTALL_FILE);
+        remove(id, NUTS_INSTALL_FILE);
     }
 
     public boolean install(NutsId id) {
@@ -191,28 +198,34 @@ public class DefaultNutsInstalledRepository {
     }
 
     public void addString(NutsId id, String name, String value) {
-        File installFolder = new File(ws.getConfigManager().getStoreLocation(id, NutsStoreLocation.CONFIG));
-        File log = new File(installFolder, name);
-        CoreNutsUtils.copy(new ByteArrayInputStream(String.valueOf(new Date()).getBytes()), log, true, true);
+        try {
+            Files.write(getPath(id, name), value.getBytes());
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz) {
-        File installFolder = new File(ws.getConfigManager().getStoreLocation(id, NutsStoreLocation.CONFIG));
-        File log = new File(installFolder, name);
-        return ws.getIOManager().readJson(log, clazz);
+        return ws.io().readJson(getPath(id, name), clazz);
     }
 
     public void addJson(NutsId id, String name, InstallInfo value) {
-        File installFolder = new File(ws.getConfigManager().getStoreLocation(id, NutsStoreLocation.CONFIG));
-        File log = new File(installFolder, name);
-        ws.getIOManager().writeJson(value, log, true);
+        ws.io().writeJson(value, getPath(id, name), true);
     }
 
-    public boolean remove(NutsId id, String name) {
-        return new File(ws.getConfigManager().getStoreLocation(id, NutsStoreLocation.CONFIG), name).delete();
+    public void remove(NutsId id, String name) {
+        try {
+            Files.delete(getPath(id, name));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public boolean contains(NutsId id, String name) {
-        return new File(ws.getConfigManager().getStoreLocation(id, NutsStoreLocation.CONFIG), name).isFile();
+        return Files.isRegularFile(getPath(id, name));
+    }
+
+    public Path getPath(NutsId id, String name) {
+        return ws.config().getStoreLocation(id, NutsStoreLocation.CONFIG).resolve(name);
     }
 }

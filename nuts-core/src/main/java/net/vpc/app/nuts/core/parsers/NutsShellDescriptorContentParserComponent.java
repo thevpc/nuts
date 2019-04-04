@@ -130,7 +130,7 @@ public class NutsShellDescriptorContentParserComponent implements NutsDescriptor
                         .build()
                         ;
             }
-            return ws.getParseManager().parseDescriptor(comment.getValidString());
+            return ws.parser().parseDescriptor(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

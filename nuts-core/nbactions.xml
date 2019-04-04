@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts update</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init=reset -y --check-updates</exec.args>
                 <exec.executable>java</exec.executable>
                 
                 
@@ -26,7 +26,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts update</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init=reset -y --check-updates</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -52,7 +52,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts update</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --init=reset -y --check-updates</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>

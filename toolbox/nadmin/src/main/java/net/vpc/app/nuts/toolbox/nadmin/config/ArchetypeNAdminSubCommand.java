@@ -22,7 +22,7 @@ public class ArchetypeNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.readAll("list archetypes", "la")) {
             PrintStream out = context.getTerminal().getFormattedOut();
             if (cmdLine.isExecMode()) {
-                for (String archetype : context.getWorkspace().getRepositoryManager().getAvailableArchetypes()) {
+                for (String archetype : context.getWorkspace().repositories().getAvailableArchetypes()) {
                     out.printf("%s\n", archetype);
                 }
             }

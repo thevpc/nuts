@@ -49,12 +49,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     public PrintStream getFormattedOut(boolean forceNoColors) {
         if (forceNoColors) {
             if (out_getFormatted_Force == null) {
-                out_getFormatted_Force = workspace.getIOManager().createPrintStream(getOut(), NutsTerminalMode.FILTERED);
+                out_getFormatted_Force = workspace.io().createPrintStream(getOut(), NutsTerminalMode.FILTERED);
             }
             return out_getFormatted_Force;
         } else {
             if (out_getFormatted_NoForce == null) {
-                out_getFormatted_NoForce = workspace.getIOManager().createPrintStream(getOut(), NutsTerminalMode.FORMATTED);
+                out_getFormatted_NoForce = workspace.io().createPrintStream(getOut(), NutsTerminalMode.FORMATTED);
             }
             return out_getFormatted_NoForce;
         }
@@ -64,12 +64,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     public PrintStream getFormattedErr(boolean forceNoColors) {
         if (forceNoColors) {
             if (err_getFormatted_Force == null) {
-                err_getFormatted_Force = workspace.getIOManager().createPrintStream(getErr(), NutsTerminalMode.FILTERED);
+                err_getFormatted_Force = workspace.io().createPrintStream(getErr(), NutsTerminalMode.FILTERED);
             }
             return err_getFormatted_Force;
         } else {
             if (err_getFormatted_NoForce == null) {
-                err_getFormatted_NoForce = workspace.getIOManager().createPrintStream(getErr(), NutsTerminalMode.FORMATTED);
+                err_getFormatted_NoForce = workspace.io().createPrintStream(getErr(), NutsTerminalMode.FORMATTED);
             }
             return err_getFormatted_NoForce;
         }

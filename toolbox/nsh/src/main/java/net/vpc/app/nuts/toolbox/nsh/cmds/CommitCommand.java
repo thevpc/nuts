@@ -57,7 +57,7 @@ public class CommitCommand extends AbstractNutsCommand {
                 if (cmdLine.isExecMode()) {
                     for (String s : context.consoleContext().getShell().expandPath(contentFile)) {
                         NutsId nf = context.getWorkspace().commit(
-                                s,
+                                context.getWorkspace().io().path(s),
                                 context.getSession()
                         );
                         context.out().printf("Folder ==%s== committed successfully as ==%s==\n", s, nf);

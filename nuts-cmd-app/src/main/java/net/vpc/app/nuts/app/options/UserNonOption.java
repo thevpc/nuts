@@ -62,13 +62,13 @@ public class UserNonOption extends DefaultNonOption {
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
-            for (NutsEffectiveUser nutsSecurityEntityConfig : workspace.getSecurityManager().findUsers()) {
+            for (NutsEffectiveUser nutsSecurityEntityConfig : workspace.security().findUsers()) {
                 all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
 
         if (repository != null) {
-            for (NutsEffectiveUser nutsSecurityEntityConfig : repository.getSecurityManager().findUsers()) {
+            for (NutsEffectiveUser nutsSecurityEntityConfig : repository.security().findUsers()) {
                 all.add(new DefaultArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }

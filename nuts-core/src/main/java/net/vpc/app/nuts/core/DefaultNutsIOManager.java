@@ -3,7 +3,6 @@ package net.vpc.app.nuts.core;
 import com.google.gson.*;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
-import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
 import net.vpc.app.nuts.core.util.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
 import net.vpc.common.io.*;
@@ -16,6 +15,9 @@ import net.vpc.common.util.MapBuilder;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -26,7 +28,7 @@ import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 public class DefaultNutsIOManager implements NutsIOManager {
 
     private static final Logger log = Logger.getLogger(DefaultNutsIOManager.class.getName());
-    private NutsWorkspace workspace;
+    private NutsWorkspace ws;
     private static Gson GSON;
     private static Gson GSON_PRETTY;
     private final StringConverter pathExpansionConverter = new StringConverter() {
@@ -34,44 +36,44 @@ public class DefaultNutsIOManager implements NutsIOManager {
         public String convert(String from) {
             switch (from) {
                 case "home.config":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CONFIG);
+                    return ws.config().getHomeLocation(NutsStoreLocation.CONFIG).toString();
                 case "home.programs":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.PROGRAMS);
+                    return ws.config().getHomeLocation(NutsStoreLocation.PROGRAMS).toString();
                 case "home.lib":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.LIB);
+                    return ws.config().getHomeLocation(NutsStoreLocation.LIB).toString();
                 case "home.temp":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.TEMP);
+                    return ws.config().getHomeLocation(NutsStoreLocation.TEMP).toString();
                 case "home.var":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.VAR);
+                    return ws.config().getHomeLocation(NutsStoreLocation.VAR).toString();
                 case "home.cache":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CACHE);
+                    return ws.config().getHomeLocation(NutsStoreLocation.CACHE).toString();
                 case "home.logs":
-                    return workspace.getConfigManager().getHomeLocation(NutsStoreLocation.LOGS);
+                    return ws.config().getHomeLocation(NutsStoreLocation.LOGS).toString();
                 case "workspace":
-                    return workspace.getConfigManager().getRunningContext().getWorkspace();
+                    return ws.config().getRunningContext().getWorkspace();
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.CONFIG);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.CONFIG);
                 case "lib":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.LIB);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.LIB);
                 case "programs":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.PROGRAMS);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.PROGRAMS);
                 case "cache":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.CACHE);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.CACHE);
                 case "temp":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.TEMP);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.TEMP);
                 case "logs":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.LOGS);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.LOGS);
                 case "var":
-                    return workspace.getConfigManager().getRunningContext().getStoreLocation(NutsStoreLocation.VAR);
+                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.VAR);
             }
             return "${" + from + "}";
         }
     };
 
     public DefaultNutsIOManager(NutsWorkspace workspace) {
-        this.workspace = workspace;
+        this.ws = workspace;
     }
 
     @Override
@@ -86,12 +88,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
         long size = -1;
         try {
             if (URLUtils.isURL(path)) {
-                if (URLUtils.isFileURL(new URL(path))) {
-                    path = URLUtils.toFile(new URL(path)).getPath();
-                    size = new File(path).length();
-                    stream = new FileInputStream(path);
+                if (URLUtils.isFileURL(path)) {
+//                    path = URLUtils.toFile(new URL(path)).getPath();
+                    Path p = URLUtils.toPath(new URL(path));
+                    size = Files.size(p);
+                    stream = Files.newInputStream(p);
                 } else {
-                    NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(workspace, path);
+                    NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(ws, path);
                     try {
 
                         header = f.getURLHeader();
@@ -102,9 +105,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     stream = f.open();
                 }
             } else {
+                Path p = ws.io().path(path);
                 //this is file!
-                size = new File(path).length();
-                stream = new FileInputStream(path);
+                size = Files.size(p);
+                stream = Files.newInputStream(p);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -115,7 +119,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session) {
         if (length > 0) {
-            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(workspace, session.getTerminal().getOut()));
+            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
         } else {
             return stream;
         }
@@ -147,12 +151,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         DefaultNutsInputStreamMonitor monitor = null;
         if (monitorable && log.isLoggable(Level.INFO)) {
-            monitor = new DefaultNutsInputStreamMonitor(workspace, session.getTerminal().getOut());
+            monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut());
         }
-        boolean verboseMode =
-                CoreNutsUtils.getSystemBoolean("nuts.monitor.start", false)
-                        ||
-                        workspace.getConfigManager().getOptions().getLogConfig() != null && workspace.getConfigManager().getOptions().getLogConfig().getLogLevel() == Level.FINEST;
+        boolean verboseMode
+                = CoreNutsUtils.getSystemBoolean("nuts.monitor.start", false)
+                || ws.config().getOptions().getLogConfig() != null && ws.config().getOptions().getLogConfig().getLogLevel() == Level.FINEST;
         InputStream stream = null;
         NutsURLHeader header = null;
         long size = -1;
@@ -160,7 +163,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             if (verboseMode && monitor != null) {
                 monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
             }
-            NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(workspace, path);
+            NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(ws, path);
             try {
 
                 header = f.getURLHeader();
@@ -221,8 +224,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public String toJsonString(Object obj, boolean pretty) {
-        StringWriter w=new StringWriter();
-        writeJson(obj,w,pretty);
+        StringWriter w = new StringWriter();
+        writeJson(obj, w, pretty);
         return w.toString();
     }
 
@@ -232,13 +235,23 @@ public class DefaultNutsIOManager implements NutsIOManager {
         try {
             out.flush();
         } catch (IOException e) {
-            throw new RuntimeIOException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
     @Override
     public <T> T readJson(Reader reader, Class<T> cls) {
         return getGson(true).fromJson(reader, cls);
+    }
+
+    @Override
+    public <T> T readJson(Path path, Class<T> cls) {
+        File file = path.toFile();
+        try (FileReader r = new FileReader(file)) {
+            return readJson(r, cls);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     @Override
@@ -263,6 +276,22 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public <T> void writeJson(Object obj, Path path, boolean pretty) {
+        if (path.getParent() != null) {
+            try {
+                Files.createDirectories(path.getParent());
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+        try (Writer w = Files.newBufferedWriter(path)) {
+            writeJson(obj, w, pretty);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
     public <T> void writeJson(Object obj, PrintStream printStream, boolean pretty) {
         Writer w = new PrintWriter(printStream);
         writeJson(obj, w, pretty);
@@ -274,42 +303,63 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public String expandPath(Path path) {
+        return expandPath(path.toString());
+    }
+
+    @Override
     public String expandPath(String path) {
-        return expandPath(path, workspace.getConfigManager().getWorkspaceLocation());
+        return expandPath(path, ws.config().getWorkspaceLocation().toString());
     }
 
     @Override
     public String expandPath(String path, String baseFolder) {
         if (path != null && path.length() > 0) {
             path = StringUtils.replaceDollarPlaceHolders(path, pathExpansionConverter);
-            if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
+            if (URLUtils.isURL(path)) {
                 return path;
             }
+            Path ppath = path(path);
+//            if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
+//                return path;
+//            }
             if (path.startsWith("~")) {
                 if (path.equals("~~")) {
-                    String nutsHome = workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CONFIG);
-                    return CoreIOUtils.getAbsolutePath(nutsHome);
+                    Path nutsHome = ws.config().getHomeLocation(NutsStoreLocation.CONFIG);
+                    return nutsHome.normalize().toString();
                 } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    String nutsHome = workspace.getConfigManager().getHomeLocation(NutsStoreLocation.CONFIG);
-                    return CoreIOUtils.getAbsolutePath(nutsHome + File.separator + path.substring(3));
+                    Path nutsHome = ws.config().getHomeLocation(NutsStoreLocation.CONFIG);
+                    return nutsHome.resolve(path.substring(3)).normalize().toString();
                 } else if (path.equals("~")) {
                     return (System.getProperty("user.home"));
                 } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
                     return System.getProperty("user.home") + File.separator + path.substring(2);
                 } else if (baseFolder != null) {
-                    return CoreIOUtils.getAbsolutePath(baseFolder + File.separator + path);
+                    if (URLUtils.isURL(baseFolder)) {
+                        return baseFolder + "/" + path;
+                    }
+                    return path(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
                 } else {
-                    return CoreIOUtils.getAbsolutePath(path);
+                    if (URLUtils.isURL(path)) {
+                        return path;
+                    }
+                    return ppath.toAbsolutePath().normalize().toString();
                 }
-            } else if (FileUtils.isAbsolutePath(path)) {
-                return CoreIOUtils.getAbsolutePath(path);
+            } else if (ppath.isAbsolute()) {
+                return ppath.normalize().toString();
             } else if (baseFolder != null) {
-                return CoreIOUtils.getAbsolutePath(baseFolder + File.separator + path);
+                if (URLUtils.isURL(baseFolder)) {
+                    return baseFolder + "/" + path;
+                }
+                return path(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
             } else {
-                return CoreIOUtils.getAbsolutePath(path);
+                return ppath.toAbsolutePath().normalize().toString();
             }
         }
-        return CoreIOUtils.getAbsolutePath(baseFolder);
+        if (URLUtils.isURL(baseFolder)) {
+            return baseFolder;
+        }
+        return path(baseFolder).toAbsolutePath().normalize().toString();
     }
 
     @Override
@@ -334,7 +384,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             help = defaultValue;//"no help found";
         }
         HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
-        props.putAll(workspace.getConfigManager().getRuntimeProperties());
+        props.putAll(ws.config().getRuntimeProperties());
         help = StringUtils.replaceDollarPlaceHolders(help, new StringConverterMap(props));
         return help;
     }
@@ -355,6 +405,18 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public PrintStream createPrintStream(Path out) {
+        if (out == null) {
+            return null;
+        }
+        try {
+            return new PrintStream(Files.newOutputStream(out));
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    @Override
     public PrintStream createPrintStream(File out) {
         if (out == null) {
             return null;
@@ -372,7 +434,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             mode = NutsTerminalMode.INHERITED;
         }
         if (mode == NutsTerminalMode.FORMATTED) {
-            if (workspace.getConfigManager().getOptions().getTerminalMode() == NutsTerminalMode.FILTERED) {
+            if (ws.config().getOptions().getTerminalMode() == NutsTerminalMode.FILTERED) {
                 //if nuts started with --no-color modifier, will disable FORMATTED terminal mode
                 mode = NutsTerminalMode.FILTERED;
             }
@@ -386,7 +448,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
-                return (PrintStream) workspace.getExtensionManager().createSupported(NutsFormattedPrintStream.class,
+                return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
                         MapBuilder.of("workspace", this, "out", out).build(),
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
@@ -398,7 +460,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
-                return (PrintStream) workspace.getExtensionManager().createSupported(NutsFormatFilteredPrintStream.class,
+                return (PrintStream) ws.extensions().createSupported(NutsFormatFilteredPrintStream.class,
                         MapBuilder.of("workspace", this, "out", out).build(),
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
@@ -420,14 +482,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsSessionTerminal createTerminal(NutsTerminalBase parent) {
         if (parent == null) {
-            parent = new AbstractSystemTerminalAdapter(){
+            parent = new AbstractSystemTerminalAdapter() {
                 @Override
                 public NutsSystemTerminalBase getParent() {
-                    return  workspace.getSystemTerminal();
+                    return ws.getSystemTerminal();
                 }
             };
         }
-        NutsSessionTerminalBase termb = workspace.getExtensionManager().createSupported(NutsSessionTerminalBase.class, null);
+        NutsSessionTerminalBase termb = ws.extensions().createSupported(NutsSessionTerminalBase.class, null);
         if (termb == null) {
             throw new NutsExtensionMissingException(NutsSessionTerminal.class, "Terminal");
         }
@@ -435,44 +497,39 @@ public class DefaultNutsIOManager implements NutsIOManager {
             NutsSessionTerminal term = null;
             if (termb instanceof NutsSessionTerminal) {
                 term = (NutsSessionTerminal) termb;
-                term.install(workspace);
+                term.install(ws);
                 term.setParent(parent);
             } else {
                 term = new DefaultNutsSessionTerminal();
-                term.install(workspace);
+                term.install(ws);
                 term.setParent(termb);
             }
             return term;
         } catch (Exception anyException) {
             final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
-            c.install(workspace);
+            c.install(ws);
             c.setParent(parent);
             return c;
         }
     }
 
     @Override
-    public void downloadPath(String from, File to, Object source, NutsTerminalProvider session) {
-        CoreNutsUtils.copy(monitorInputStream(from, source, session), to, true, true);
-    }
-
-    @Override
-    public File createTempFile(String name) {
+    public Path createTempFile(String name) {
         return createTempFile(name, null);
     }
 
     @Override
-    public File createTempFolder(String name) {
+    public Path createTempFolder(String name) {
         return createTempFolder(name, null);
     }
 
     @Override
-    public File createTempFolder(String name, NutsRepository repository) {
+    public Path createTempFolder(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
-            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
+            folder = ws.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         } else {
-            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
+            folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         }
         final File temp;
         if (StringUtils.isEmpty(name)) {
@@ -493,17 +550,18 @@ public class DefaultNutsIOManager implements NutsIOManager {
             throw new RuntimeException("Could not create temp directory: " + temp.getAbsolutePath());
         }
 
-        return (temp);
+        return (temp.toPath());
     }
 
     @Override
-    public File createTempFile(String name, NutsRepository repository) {
+    public Path createTempFile(String name, NutsRepository repository) {
         File folder = null;
         if (repository == null) {
-            folder = new File(workspace.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
+            folder = ws.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         } else {
-            folder = new File(repository.getConfigManager().getStoreLocation(NutsStoreLocation.TEMP));
+            folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         }
+        folder.mkdirs();
         String prefix = "temp-";
         String ext = null;
         if (!StringUtils.isEmpty(name)) {
@@ -522,7 +580,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             }
         }
         try {
-            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), folder);
+            return File.createTempFile(prefix, "-nuts" + (ext != null ? ("." + ext) : ""), folder).toPath();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -532,7 +590,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public String getSHA1(NutsDescriptor descriptor) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
-        workspace.getFormatManager().createDescriptorFormat().setPretty(false).format(descriptor, o);
+        ws.formatter().createDescriptorFormat().setPretty(false).format(descriptor, o);
         return CoreSecurityUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()), true);
     }
 
@@ -562,6 +620,10 @@ public class DefaultNutsIOManager implements NutsIOManager {
             }
             return GSON;
         }
+    }
+
+    public NutsWorkspace getWorkspace() {
+        return ws;
     }
 
     private static class NutsIdJsonAdapter implements
@@ -638,6 +700,19 @@ public class DefaultNutsIOManager implements NutsIOManager {
             }
             return context.serialize(src);
         }
+    }
+
+    @Override
+    public NutsIOCopyAction copy() {
+        return new DefaultNutsIOCopyAction(this);
+    }
+
+    @Override
+    public Path path(String first, String... more) {
+        if ((first == null || first.isEmpty()) && more.length == 0) {
+            return null;
+        }
+        return Paths.get(first, more);
     }
 
 }

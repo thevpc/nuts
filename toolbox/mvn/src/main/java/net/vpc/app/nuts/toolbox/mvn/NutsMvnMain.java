@@ -6,13 +6,13 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import org.apache.maven.cli.MavenCli;
-import org.codehaus.plexus.util.cli.Commandline;
 
 import java.io.*;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class NutsMvnMain extends NutsApplication {
                             defaultArgs.add(ar);
                         }
                     }
-                    int r = callMvn(o, ".", defaultArgs.toArray(new String[0]));
+                    int r = callMvn(o, Paths.get("."), defaultArgs.toArray(new String[0]));
                     if (r == 0) {
                         return;
                     } else {
@@ -99,8 +99,8 @@ public class NutsMvnMain extends NutsApplication {
                     if (repo != null) {
                         System.setProperty("repoUrl", repo);
                     }
-                    File dir = createTempPom(appContext.getWorkspace());
-                    int r = callMvn(o, dir.getPath(), "dependency:get");
+                    Path dir = createTempPom(appContext.getWorkspace());
+                    int r = callMvn(o, dir, "dependency:get");
                     try {
                         delete(dir);
                     } catch (IOException ex) {
@@ -116,13 +116,13 @@ public class NutsMvnMain extends NutsApplication {
         }
     }
 
-    private static int callMvn(Options options, String path, String... args) {
+    private static int callMvn(Options options, Path path, String... args) {
         MavenCli cli = new MavenCli();
         if (options.json) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             PrintStream out = new PrintStream(bos);
             try {
-                int r = cli.doMain(args, path, out, out);
+                int r = cli.doMain(args, path.toString(), out, out);
                 String s = new String(bos.toByteArray());
                 if (s.contains("BUILD SUCCESS")) {
                     System.out.println("{'result':'success'}");
@@ -139,14 +139,14 @@ public class NutsMvnMain extends NutsApplication {
                 return 1;
             }
         } else {
-            return cli.doMain(args, path, System.out, System.err);
+            return cli.doMain(args, path.toString(), System.out, System.err);
         }
     }
 
-    private static File createTempPom(NutsWorkspace ws) {
-        File d = ws.getIOManager().createTempFolder(null);
-        try (PrintWriter out = new PrintWriter(new File(d, "filename.txt"))) {
-            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    private static Path createTempPom(NutsWorkspace ws) {
+        Path d = ws.io().createTempFolder(null);
+        try (Writer out = Files.newBufferedWriter(d.resolve("filename.txt"))) {
+            out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
                     + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
                     + "    <modelVersion>4.0.0</modelVersion>\n"
@@ -182,15 +182,16 @@ public class NutsMvnMain extends NutsApplication {
                     + "        </pluginRepository>\n"
                     + "    </pluginRepositories>\n"
                     + "</project>\n");
-        } catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
+            out.write(System.getProperty("line.separator"));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return d;
     }
 
-    public static int[] delete(File file) throws IOException {
+    public static int[] delete(Path file) throws IOException {
         final int[] deleted = new int[]{0, 0};
-        Files.walkFileTree(file.toPath(), new FileVisitor<Path>() {
+        Files.walkFileTree(file, new FileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                 return FileVisitResult.CONTINUE;

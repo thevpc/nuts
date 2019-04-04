@@ -42,11 +42,14 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 
 /**
@@ -72,56 +75,59 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         final Ref<NutsDescriptor> maven = new Ref<>();
         final Ref<String> mainClass = new Ref<>();
 
-        ZipUtils.visitZipStream(parserContext.getFullStream(), new PathFilter() {
-            @Override
-            public boolean accept(String path) {
-                if ("META-INF/MANIFEST.MF".equals(path)) {
-                    return true;
+        try {
+            ZipUtils.visitZipStream(parserContext.getFullStream(), new PathFilter() {
+                @Override
+                public boolean accept(String path) {
+                    if ("META-INF/MANIFEST.MF".equals(path)) {
+                        return true;
+                    }
+                    if ("META-INF/nuts.json".equals(path)) {
+                        return true;
+                    }
+                    return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
                 }
-                if ("META-INF/nuts.json".equals(path)) {
-                    return true;
-                }
-                return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
-            }
-        }, new InputStreamVisitor() {
-            @Override
-            public boolean visit(String path, InputStream inputStream) throws IOException {
-                switch (path) {
-                    case "META-INF/MANIFEST.MF":
-                        Manifest manifest = new Manifest(inputStream);
-                        Attributes attrs = manifest.getMainAttributes();
-                        for (Object o : attrs.keySet()) {
-                            Attributes.Name attrName = (Attributes.Name) o;
-                            if ("Main-Class".equals(attrName.toString())) {
-                                mainClass.set(attrs.getValue(attrName));
+            }, new InputStreamVisitor() {
+                @Override
+                public boolean visit(String path, InputStream inputStream) throws IOException {
+                    switch (path) {
+                        case "META-INF/MANIFEST.MF":
+                            Manifest manifest = new Manifest(inputStream);
+                            Attributes attrs = manifest.getMainAttributes();
+                            for (Object o : attrs.keySet()) {
+                                Attributes.Name attrName = (Attributes.Name) o;
+                                if ("Main-Class".equals(attrName.toString())) {
+                                    mainClass.set(attrs.getValue(attrName));
+                                }
                             }
-                        }
-                        NutsDescriptor d =new DefaultNutsDescriptorBuilder()
-                                .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
-                                .setExecutable(mainClass.isSet())
-                                .setPackaging("jar")
-                                .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
-                                .build();
+                            NutsDescriptor d = new DefaultNutsDescriptorBuilder()
+                                    .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
+                                    .setExecutable(mainClass.isSet())
+                                    .setPackaging("jar")
+                                    .setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{"-jar"}))
+                                    .build();
 
-
-                        metainf.set(d);
-                        break;
-                    case "META-INF/nuts.json":
-                        nutsjson.set(parserContext.getWorkspace().getParseManager().parseDescriptor(inputStream, true));
-                        break;
-                    default:
-                        try {
-                            maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), NutsWorkspaceHelper.createNoRepositorySession(
-                                    parserContext.getSession(), NutsFetchMode.REMOTE,parserContext.getQueryOptions()), path));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                            metainf.set(d);
+                            break;
+                        case "META-INF/nuts.json":
+                            nutsjson.set(parserContext.getWorkspace().parser().parseDescriptor(inputStream, true));
+                            break;
+                        default:
+                            try {
+                                maven.set(MavenUtils.parsePomXml(inputStream, parserContext.getWorkspace(), NutsWorkspaceHelper.createNoRepositorySession(
+                                        parserContext.getSession(), NutsFetchMode.REMOTE, parserContext.getQueryOptions()), path));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
+                    //continue
+                    return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
                 }
-                //continue
-                return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
-            }
-        });
+            });
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
 
         if (nutsjson.isSet()) {
             return nutsjson.get();
@@ -137,18 +143,18 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             baseNutsDescriptor = metainf.get();
         }
         if (baseNutsDescriptor == null) {
-            baseNutsDescriptor =new DefaultNutsDescriptorBuilder()
+            baseNutsDescriptor = new DefaultNutsDescriptorBuilder()
                     .setId(CoreNutsUtils.parseNutsId("temp:jar#1.0"))
                     .setExecutable(true)
                     .setPackaging("jar")
                     .build();
         }
-        NutsExecutionEntry[] classes = parserContext.getWorkspace().getParseManager().parseExecutionEntries(parserContext.getFullStream(),"java");
-        if (classes.length==0) {
+        NutsExecutionEntry[] classes = parserContext.getWorkspace().parser().parseExecutionEntries(parserContext.getFullStream(), "java");
+        if (classes.length == 0) {
             return null;
         } else {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                "--main-class=" + StringUtils.join(":", classes,x->x.getName())}, null)).setExecutable(true);
+                "--main-class=" + StringUtils.join(":", classes, x -> x.getName())}, null)).setExecutable(true);
         }
     }
 }

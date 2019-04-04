@@ -67,7 +67,7 @@ public class VersionCommand extends AbstractNutsCommand {
 
         }
         
-        ws.getFormatManager().createWorkspaceVersionFormat()
+        ws.formatter().createWorkspaceVersionFormat()
                         .addOption(((fancy ? "fancy" : "") + "," + (min ? "min" : "")))
                         .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .format(context.out());

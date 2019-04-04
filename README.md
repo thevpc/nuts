@@ -76,6 +76,7 @@ java -jar nuts-0.5.3.jar
     1- TODO
         * Add maven-github repository type support (web API)
         * FIX : executable and appExecutable are not well supported in nfind!
+        * FIX : Migrating from File to New I/O Path
 
 ### nuts 0.5.3.0
     1- (WINDOWS) First support to Windows platform

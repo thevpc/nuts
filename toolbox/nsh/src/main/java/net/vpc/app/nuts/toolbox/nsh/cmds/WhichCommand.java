@@ -145,13 +145,13 @@ public class WhichCommand extends AbstractNutsCommand {
             if (core == null) {
                 cp_nutsCoreFile = "not found, will be downloaded on need";
             } else {
-                cp_nutsCoreFile = core.getContent().getFile();
+                cp_nutsCoreFile = core.getContent().getPath().toString();
             }
         }
-        map.put("nuts.workspace.version", workspace.getConfigManager().getRunningContext().getApiId().getVersion().getValue());
+        map.put("nuts.workspace.version", workspace.config().getRunningContext().getApiId().getVersion().getValue());
         map.put("nuts.workspace.api-component", cp_nutsFile);
         map.put("nuts.workspace.core-component", cp_nutsCoreFile);
-        map.put("nuts.workspace.location", workspace.getConfigManager().getWorkspaceLocation());
+        map.put("nuts.workspace.location", workspace.config().getWorkspaceLocation().toString());
         return map;
     }
 }

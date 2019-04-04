@@ -31,9 +31,10 @@ package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Stack;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
@@ -43,9 +44,9 @@ import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
  */
 public class FolderNutIdIterator implements Iterator<NutsId> {
 
-    private final NutsRepository repository;
+    private final String repository;
     private NutsId last;
-    private final Stack<File> stack = new Stack<>();
+    private final Stack<Path> stack = new Stack<>();
     private final NutsIdFilter filter;
     private final NutsRepositorySession session;
     private final NutsWorkspace workspace;
@@ -54,7 +55,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     private long visitedFilesCount;
     private boolean deep;
 
-    public FolderNutIdIterator(NutsWorkspace workspace, NutsRepository repository, File folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model,boolean deep) {
+    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model, boolean deep) {
         this.repository = repository;
         this.session = session;
         this.filter = filter;
@@ -71,24 +72,25 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
     public boolean hasNext() {
         last = null;
         while (!stack.isEmpty()) {
-            File file = stack.pop();
-            if (file.isDirectory()) {
+            Path file = stack.pop();
+            if (Files.isDirectory(file)) {
                 visitedFoldersCount++;
-                File[] listFiles = file.listFiles(new FileFilter() {
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file, new DirectoryStream.Filter<Path>() {
                     @Override
-                    public boolean accept(File pathname) {
+                    public boolean accept(Path pathname) throws IOException {
                         try {
-                            return (deep && pathname.isDirectory()) || model.isDescFile(pathname);
+                            return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                         } catch (Exception e) {
                             //ignore
                             return false;
                         }
                     }
-                });
-                if (listFiles != null) {
-                    for (File f : listFiles) {
-                        stack.push(f);
+                })) {
+                    for (Path item : stream) {
+                        stack.push(item);
                     }
+                }catch(IOException ex){
+                    //
                 }
             } else {
                 visitedFilesCount++;
@@ -108,8 +110,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                         }
                         t = nutsDescriptor;
                     }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), repository.getWorkspace()))) {
-                        NutsId nutsId = t.getId().setNamespace(repository.getName());
+                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), workspace))) {
+                        NutsId nutsId = t.getId().setNamespace(repository);
                         nutsId = nutsId.setAlternative(t.getAlternative());
                         last = nutsId;
                         break;
@@ -147,8 +149,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
 
         void undeploy(NutsId id, NutsRepositorySession session) throws NutsExecutionException;
 
-        boolean isDescFile(File pathname);
+        boolean isDescFile(Path pathname);
 
-        NutsDescriptor parseDescriptor(File pathname, NutsRepositorySession session) throws IOException;
+        NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException;
     }
 }

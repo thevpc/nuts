@@ -31,6 +31,9 @@ package net.vpc.app.nuts;
 
 import java.io.*;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Created by vpc on 2/19/17.
@@ -124,6 +127,8 @@ public interface NutsDescriptor extends Serializable {
     NutsDescriptor setId(NutsId id);
 
     NutsDescriptor removeDependency(NutsDependency dependency);
+    
+    NutsDescriptor removeDependency(Predicate<NutsDependency> dependency);
 
     NutsDescriptor addDependency(NutsDependency dependency);
 
@@ -151,4 +156,8 @@ public interface NutsDescriptor extends Serializable {
     NutsDescriptorBuilder builder();
 
     NutsDescriptor setAlternative(String alternative);
+
+    NutsDescriptor replaceDependency(Predicate<NutsDependency> filter, UnaryOperator<NutsDependency> converter);
+
+    NutsDescriptor replaceProperty(Predicate<Map.Entry<String,String>> filter, Function<Map.Entry<String,String>,String> converter);
 }

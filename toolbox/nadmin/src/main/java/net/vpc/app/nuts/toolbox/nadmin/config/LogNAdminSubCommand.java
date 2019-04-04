@@ -23,7 +23,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAll("set loglevel", "sll")) {
-            NutsWorkspaceConfigManager configManager = context.getWorkspace().getConfigManager();
+            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.readAll("verbose", "finest")) {
                 if (cmdLine.isExecMode()) {
                     configManager.setLogLevel(Level.FINEST);

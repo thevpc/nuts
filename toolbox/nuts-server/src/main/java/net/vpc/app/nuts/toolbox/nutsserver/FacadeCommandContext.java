@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -109,6 +110,11 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
 
     @Override
     public void sendResponseFile(int code, File file) throws IOException {
+        base.sendResponseFile(code, file);
+    }
+    
+    @Override
+    public void sendResponseFile(int code, Path file) throws IOException {
         base.sendResponseFile(code, file);
     }
 

@@ -64,4 +64,6 @@ public interface NutsVersion extends Serializable {
     NutsVersion inc();
 
     NutsVersion inc(int level);
+
+    NutsVersion inc(int level, int count);
 }

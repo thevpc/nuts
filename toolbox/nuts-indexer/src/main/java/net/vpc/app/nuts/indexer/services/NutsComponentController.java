@@ -228,7 +228,7 @@ public class NutsComponentController {
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", ws.getIOManager().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()), true));
+                        data.put("dependencies", ws.io().toJsonString(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()), true));
 
                         this.dataService.indexData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data);
                     } else {
@@ -247,18 +247,18 @@ public class NutsComponentController {
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = ws.getIOManager().readJson(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = ws.io().readJson(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parser().parseId(s)));
                 }
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = ws.getIOManager().readJson(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = ws.io().readJson(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.parser().parseId(s)));
                 }
                 d.put("allDependencies", allDependencies);
             }

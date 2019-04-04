@@ -388,7 +388,8 @@ public final class NutsArgumentsParser {
                         parseLogLevel(logConfig, cmdArg, cmdArgList, enabled);
                         break;
                     }
-                    case "--exclude-extension": {
+                    case "--exclude-extension":
+                    {
                         String v = cmdArgList.getValueFor(cmdArg);
                         if (enabled) {
                             excludedExtensions.add(v);
@@ -403,7 +404,9 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--repository": {
+                    case "--repository": 
+                    case "-P": 
+                    {
                         String v = cmdArgList.getValueFor(cmdArg);
                         if (enabled) {
                             tempRepositories.add(v);
@@ -411,13 +414,17 @@ public final class NutsArgumentsParser {
                         break;
                     }
 
-                    case "--yes": {
+                    case "--yes": 
+                    case "-y": 
+                    {
                         if (enabled) {
                             o.setDefaultResponse(Boolean.TRUE);
                         }
                         break;
                     }
-                    case "--no": {
+                    case "--no": 
+                    case "-N": 
+                    {
                         if (enabled) {
                             o.setDefaultResponse(Boolean.FALSE);
                         }

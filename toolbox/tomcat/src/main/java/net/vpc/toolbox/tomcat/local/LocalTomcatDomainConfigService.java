@@ -7,8 +7,10 @@ import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Path;
 
-public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase{
+public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
+
     private String name;
     private LocalTomcatDomainConfig config;
     private LocalTomcatConfigService tomcat;
@@ -33,16 +35,16 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase{
         return name;
     }
 
-    public String getDomainDeployPath() {
-        String b = tomcat.getCatalinaBase();
-        if(TomcatUtils.isEmpty(b)){
-            b=tomcat.getCatalinaHome();
+    public Path getDomainDeployPath() {
+        Path b = tomcat.getCatalinaBase();
+        if (b == null) {
+            b = tomcat.getCatalinaHome();
         }
-        String p = config.getDeployPath();
-        if(TomcatUtils.isEmpty(p)){
-            p=tomcat.getDefaulDeployFolder(name);
+        Path p = context.getWorkspace().io().path(config.getDeployPath());
+        if (p == null) {
+            p = tomcat.getDefaulDeployFolder(name);
         }
-        return FileUtils.getAbsolutePath(new File(b), p);
+        return b.resolve(b);
     }
 
     public LocalTomcatDomainConfigService remove() {
@@ -52,7 +54,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase{
                 aa.remove();
             }
         }
-        context.out().printf("==[%s]== domain removed.\n",name);
+        context.out().printf("==[%s]== domain removed.\n", name);
         return this;
     }
 

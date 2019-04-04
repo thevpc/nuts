@@ -85,7 +85,7 @@ public class FileVersionMain extends NutsApplication {
                         Set<VersionDescriptor> value = null;
                         try {
                             processed++;
-                            value = detectJarWarEarVersions(context.getWorkspace().getIOManager().expandPath(arg), context, ws);
+                            value = detectJarWarEarVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                         } catch (IOException e) {
                             throw new NutsExecutionException(e, 2);
                         }
@@ -98,7 +98,7 @@ public class FileVersionMain extends NutsApplication {
                         Set<VersionDescriptor> value = null;
                         try {
                             processed++;
-                            value = detectExeVersions(context.getWorkspace().getIOManager().expandPath(arg), context, ws);
+                            value = detectExeVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                         } catch (IOException e) {
                             throw new NutsExecutionException(e, 2);
                         }
@@ -142,7 +142,7 @@ public class FileVersionMain extends NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(context.getWorkspace().getIOManager().expandPath(t));
+                        File f = new File(context.getWorkspace().io().expandPath(t));
                         if (f.isFile()) {
                             pp.setProperty(t, "<<ERROR>> Unsupported File type");
                         } else if (f.isDirectory()) {
@@ -186,7 +186,7 @@ public class FileVersionMain extends NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = new File(context.getWorkspace().getIOManager().expandPath(t));
+                            File f = new File(context.getWorkspace().io().expandPath(t));
                             if (f.isFile()) {
                                 err.printf("%s : Unsupported File type\n", t);
                             } else if (f.isDirectory()) {
@@ -298,7 +298,7 @@ public class FileVersionMain extends NutsApplication {
 
     private Set<VersionDescriptor> detectJarWarEarVersions(String filePath, NutsApplicationContext context, NutsWorkspace ws) throws IOException {
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = XFile.of(context.getWorkspace().getIOManager().expandPath("filePath")).getInputStream()) {
+        try (InputStream is = XFile.of(context.getWorkspace().io().expandPath("filePath")).getInputStream()) {
             ZipUtils.visitZipStream(is, new PathFilter() {
                 @Override
                 public boolean accept(String path) {
@@ -356,7 +356,7 @@ public class FileVersionMain extends NutsApplication {
 
                     } else if ("META-INF/nuts.json".equals(path)) {
                         try {
-                            NutsDescriptor d = ws.getParseManager().parseDescriptor(inputStream);
+                            NutsDescriptor d = ws.parser().parseDescriptor(inputStream);
                             inputStream.close();
                             Properties properties = new Properties();
                             properties.setProperty("parents", StringUtils.join(",", d.getParents(), Object::toString));

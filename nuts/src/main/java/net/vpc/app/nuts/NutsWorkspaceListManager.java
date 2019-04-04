@@ -1,7 +1,5 @@
 package net.vpc.app.nuts;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.util.*;
 
 /**

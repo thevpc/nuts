@@ -6,21 +6,26 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlConfig;
-import net.vpc.toolbox.mysql.util.MysqlUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LocalMysql {
-    private NutsApplicationContext context;
 
+    private NutsApplicationContext context;
 
     public LocalMysql(NutsApplicationContext ws) {
         this.setContext(ws);
     }
-
 
     public int runArgs(String[] args) {
         CommandLine cmd = new CommandLine(args);
@@ -92,7 +97,7 @@ public class LocalMysql {
                 getContext().out().printf("%s\n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
             } else {
                 for (LocalMysqlDatabaseConfigService aa : c.getDatabases()) {
-                    getContext().out().printf("[%s] %s\n", aa.getName(),NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    getContext().out().printf("[%s] %s\n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
                 }
             }
         }
@@ -111,7 +116,7 @@ public class LocalMysql {
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(instance);
                 } else {
-                    throw new NutsExecutionException("Instance name already defined",2);
+                    throw new NutsExecutionException("Instance name already defined", 2);
                 }
             } else if ((a = args.readStringOption("--shutdownWaitTime")) != null) {
                 if (c == null) {
@@ -131,7 +136,7 @@ public class LocalMysql {
                 }
                 LocalMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 if (mysqlAppConfig == null) {
-                    throw new NutsExecutionException("Missing --app.user",2);
+                    throw new NutsExecutionException("Missing --app.user", 2);
                 }
                 mysqlAppConfig.getConfig().setUser(value);
             } else if ((a = args.readStringOption("--app.password")) != null) {
@@ -141,7 +146,7 @@ public class LocalMysql {
                 }
                 LocalMysqlDatabaseConfigService mysqlAppConfig = c.getDatabaseOrError(appName);
                 if (mysqlAppConfig == null) {
-                    throw new NutsExecutionException("Missing --app.password",2);
+                    throw new NutsExecutionException("Missing --app.password", 2);
                 }
                 mysqlAppConfig.getConfig().setPassword(value);
             } else {
@@ -188,17 +193,10 @@ public class LocalMysql {
         return 0;
     }
 
-
     public LocalMysqlConfigService[] listConfig() {
         List<LocalMysqlConfigService> all = new ArrayList<>();
-        File[] configFiles = new File(getContext().getConfigFolder()).listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT);
-            }
-        });
-        if (configFiles != null) {
-            for (File file1 : configFiles) {
+        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(getContext().getConfigFolder(), pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
+            for (Path file1 : configFiles) {
                 try {
                     LocalMysqlConfigService c = loadMysqlConfig(file1);
                     all.add(c);
@@ -206,10 +204,13 @@ public class LocalMysql {
                     //ignore
                 }
             }
+
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
+        ;
         return all.toArray(new LocalMysqlConfigService[0]);
     }
-
 
     public LocalMysqlConfigService loadMysqlConfig(String name) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, this);
@@ -217,7 +218,7 @@ public class LocalMysql {
         return t;
     }
 
-    public LocalMysqlConfigService loadMysqlConfig(File file) {
+    public LocalMysqlConfigService loadMysqlConfig(Path file) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(file, this);
         t.loadConfig();
         return t;
@@ -255,9 +256,9 @@ public class LocalMysql {
         while (args.hasNext()) {
             if ((a = args.readStringOption("--instance")) != null) {
                 instance = a.getStringValue();
-            }else if ((a = args.readStringOption("--db")) != null) {
+            } else if ((a = args.readStringOption("--db")) != null) {
                 db = a.getStringValue();
-            }else{
+            } else {
                 path = args.readNonOption().getStringExpression();
                 args.unexpectedArgument("mysql --local restore");
             }
@@ -274,9 +275,9 @@ public class LocalMysql {
         while (args.hasNext()) {
             if ((a = args.readStringOption("--instance")) != null) {
                 instance = a.getStringValue();
-            }else if ((a = args.readStringOption("--db")) != null) {
+            } else if ((a = args.readStringOption("--db")) != null) {
                 db = a.getStringValue();
-            }else{
+            } else {
                 path = args.readNonOption().getStringExpression();
                 args.unexpectedArgument("mysql --local archive");
             }

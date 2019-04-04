@@ -66,7 +66,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     
     @Override
     public void format(PrintStream out) {
-        NutsWorkspaceConfigManager configManager = ws.getConfigManager();
+        NutsWorkspaceConfigManager configManager = ws.config();
         if (options.contains("min")) {
             out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
         } else {
@@ -79,12 +79,12 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
             props.put("nuts-boot-api", configManager.getRunningContext().getApiId().toString());
             props.put("nuts-boot-runtime", configManager.getRunningContext().getRuntimeId().toString());
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", ws.getConfigManager().getPlatformOs().getVersion().toString());
+            props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
             for (String extraKey : extraKeys) {
                 props.put(extraKey, extraProperties.getProperty(extraKey));
             }
             for (String extraKey : props.keySet()) {
-                int x = ws.getParseManager().escapeText(extraKey).length();
+                int x = ws.parser().escapeText(extraKey).length();
                 if (x > len) {
                     len = x;
                 }
@@ -98,7 +98,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
                 }
                 String key = e.getKey();
                 String value = e.getValue();
-                out.printf(StringUtils.formatLeft(key, len - key.length() + ws.getParseManager().escapeText(key).length()) + " : [[%s]]", value);
+                out.printf(StringUtils.formatLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
             }
         }
     }

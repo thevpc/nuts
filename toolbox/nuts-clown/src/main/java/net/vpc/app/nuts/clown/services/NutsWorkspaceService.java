@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequestMapping("ws/workspaces")
 public class NutsWorkspaceService {
 
-    private NutsWorkspaceListManager workspaceManager= Nuts.openWorkspace().getConfigManager().createWorkspaceListManager("clown");
+    private NutsWorkspaceListManager workspaceManager= Nuts.openWorkspace().config().createWorkspaceListManager("clown");
 
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> getAll() {

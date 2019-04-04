@@ -17,7 +17,7 @@ public class NutsIndexerUtils {
         String k = "NutsIndexerUtils.CACHE." + entity;
         String m = (String) ws.getUserProperties().get(k);
         if (m == null) {
-            m = ws.getConfigManager()
+            m = ws.config()
                     .getStoreLocation(ws.resolveIdForClass(NutsIndexerUtils.class)
                                     .getSimpleNameId(),
                             NutsStoreLocation.CACHE) + File.separator + entity;
@@ -33,7 +33,7 @@ public class NutsIndexerUtils {
         Map<String, String> entity = new HashMap<>();
         entity.put("name", repository.getName());
         entity.put("type", repository.getRepositoryType());
-        entity.put("location", repository.getConfigManager().getLocation());
+        entity.put("location", repository.config().getLocation(false));
         entity.put("enabled", String.valueOf(repository.isEnabled()));
         entity.put("speed", String.valueOf(repository.getSpeed()));
         NutsWorkspace ws = repository.getWorkspace();
@@ -49,7 +49,7 @@ public class NutsIndexerUtils {
 
     public static String mapToJson(Map<String, String> map, NutsWorkspace ws) {
         StringWriter s = new StringWriter();
-        ws.getIOManager().writeJson(map, s, true);
+        ws.io().writeJson(map, s, true);
         return s.toString();
     }
 

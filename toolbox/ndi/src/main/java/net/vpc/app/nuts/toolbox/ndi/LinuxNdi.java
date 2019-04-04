@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.toolbox.ndi;
 
+import java.io.BufferedWriter;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.common.io.IOUtils;
@@ -7,6 +8,8 @@ import net.vpc.common.io.IOUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class LinuxNdi implements SystemNdi {
             createBootScript(options.isForceBoot() || options.isForce(), false);
         } else {
             createBootScript(false, true);
-            NutsId nutsId = appContext.getWorkspace().getParseManager().parseId(options.getId());
+            NutsId nutsId = appContext.getWorkspace().parser().parseId(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isEmpty()) {
                 fetched = appContext.getWorkspace().fetch(options.getId()).fetchDefinition();
@@ -38,11 +41,11 @@ public class LinuxNdi implements SystemNdi {
                 //appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
             }
             String n = nutsId.getName();
-            File ff = getScriptFile(n);
-            boolean exists = ff.exists();
+            Path ff = getScriptFile(n);
+            boolean exists = Files.exists(ff);
             if (!options.isForce() && exists) {
                 if (!options.isSilent()) {
-                    appContext.out().printf("Script already exists ==%s==\n", ff.getPath());
+                    appContext.out().printf("Script already exists ==%s==\n", ff);
                 }
             } else {
                 String idContent = "RUN : " + nutsId;
@@ -58,16 +61,16 @@ public class LinuxNdi implements SystemNdi {
     }
 
     public void createBootScript(boolean force, boolean silent) throws IOException {
-        NutsId b = appContext.getWorkspace().getConfigManager().getRunningContext().getApiId();
+        NutsId b = appContext.getWorkspace().config().getRunningContext().getApiId();
         NutsDefinition f = appContext.getWorkspace().fetch(b).setAcceptOptional(false).fetchDefinition();
-        File ff = getScriptFile("nuts");
-        if (!force && ff.exists()) {
+        Path ff = getScriptFile("nuts");
+        if (!force && Files.exists(ff)) {
             if (!silent) {
-                appContext.out().printf("Script already exists ==%s==\n", ff.getPath());
+                appContext.out().printf("Script already exists ==%s==\n", ff);
             }
         } else {
             String idContent = "BOOT : " + f.getId().toString();
-            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getContent().getFile() + "\" \"$@\"");
+            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getContent().getPath() + "\" \"$@\"");
         }
     }
 
@@ -77,7 +80,7 @@ public class LinuxNdi implements SystemNdi {
         boolean found = false;
         boolean ignore = false;
         List<String> lines = new ArrayList<>();
-        String programsFolder = appContext.getProgramsFolder();
+        Path programsFolder = appContext.getProgramsFolder();
         String goodLine = "PATH='" + programsFolder + "':$PATH";
         if (bashrc.isFile()) {
             String fileContent = IOUtils.loadString(bashrc);
@@ -120,13 +123,13 @@ public class LinuxNdi implements SystemNdi {
                 sb.append("\n");
             }
             if (!silent) {
-                appContext.out().printf("Updating ==%s== file to point to workspace ==%s==\n", "~/.bashrc", appContext.getWorkspace().getConfigManager().getWorkspaceLocation());
+                appContext.out().printf("Updating ==%s== file to point to workspace ==%s==\n", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
                 appContext.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.\n", ". ~/.bashrc");
                 while (true) {
-                    if (appContext.getWorkspace().getConfigManager().getOptions().isYes()) {
+                    if (appContext.getWorkspace().config().getOptions().isYes()) {
                         break;
                     }
-                    if (appContext.getWorkspace().getConfigManager().getOptions().isNo()) {
+                    if (appContext.getWorkspace().config().getOptions().isNo()) {
                         return;
                     }
                     String r = appContext.getTerminal().ask(
@@ -153,30 +156,30 @@ public class LinuxNdi implements SystemNdi {
         }
     }
 
-    public File getScriptFile(String name) {
-        File bin = new File(appContext.getProgramsFolder());//new File(System.getProperty("user.home"), "bin");
-        return new File(bin, name);
+    public Path getScriptFile(String name) {
+        Path bin = appContext.getProgramsFolder();
+        return bin.resolve(name);
     }
 
-    public File createScript(String name, boolean silent, String desc, String idContent, String content) throws IOException {
-        File script = getScriptFile(name);
-        if (script.getParentFile() != null) {
-            if (!script.getParentFile().exists()) {
+    public Path createScript(String name, boolean silent, String desc, String idContent, String content) throws IOException {
+        Path script = getScriptFile(name);
+        if (script.getParent() != null) {
+            if (!Files.exists(script.getParent())) {
                 if (!silent) {
-                    appContext.out().printf("Creating folder ==%s==\n", script.getParentFile().getPath());
+                    appContext.out().printf("Creating folder ==%s==\n", script.getParent());
                 }
-                script.getParentFile().mkdirs();
+                Files.createDirectories(script.getParent());
             }
         }
         if (!silent) {
-            if (script.exists()) {
-                appContext.out().printf("Install (with override) script ==%s== for ==%s== at ==%s==\n", script.getName(), desc, script.getPath());
+            if (Files.exists(script)) {
+                appContext.out().printf("Install (with override) script ==%s== for ==%s== at ==%s==\n", script.getFileName(), desc, script);
             } else {
-                appContext.out().printf("Install script ==%s== for ==%s== at ==%s==\n", script.getName(), desc, script.getPath());
+                appContext.out().printf("Install script ==%s== for ==%s== at ==%s==\n", script.getFileName(), desc, script);
             }
         }
 
-        try (FileWriter w = new FileWriter(script)) {
+        try (BufferedWriter w = Files.newBufferedWriter(script)) {
             w.write("#!/bin/sh\n");
             w.write("# THIS FILE IS GENERATED BY\n");
             w.write("#      net.vpc.app.nuts.toolbox.ndi\n");
@@ -198,7 +201,7 @@ public class LinuxNdi implements SystemNdi {
             w.write("# END-COMMAND\n");
             w.write("\n");
         }
-        script.setExecutable(true);
+        NdiUtils.setExecutable(script);
         return script;
     }
 }

@@ -55,7 +55,7 @@ public class LogoutCommand extends AbstractNutsCommand {
         if (!cmdLine.isExecMode()) {
             return -1;
         }
-        context.getWorkspace().getSecurityManager().logout();
+        context.getWorkspace().security().logout();
         return 0;
     }
 }

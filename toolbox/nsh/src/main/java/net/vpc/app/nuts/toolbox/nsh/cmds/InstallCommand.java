@@ -39,6 +39,7 @@ import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.io.FileUtils;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 /**
  * Created by vpc on 1/7/17.
@@ -86,25 +87,26 @@ public class InstallCommand extends AbstractNutsCommand {
                             for (String s : context.getShell().expandPath(id)) {
                                 NutsId deployedId = ws.deploy(
                                         ws.createDeploymentBuilder()
-                                                .setContentPath(s)
+                                                .setContent(s)
                                                 .setDescriptorPath(descriptorFile)
-                                                .setRepositoryName(repositoryId)
+                                                .setRepository(repositoryId)
                                         .build()
                                         ,
                                         context.getSession()
                                 );
-                                context.out().printf("File %s deployed successfully as "+ws.getFormatManager().createIdFormat().format(deployedId)+"\n", s, deployedId);
+                                context.out().printf("File %s deployed successfully as "+ws.formatter().createIdFormat().format(deployedId)+"\n", s, deployedId);
                             }
                         } else if (bundleOnly) {
                             for (String s : context.getShell().expandPath(id)) {
                                 NutsDefinition deployedFileId = ws.createBundle(
-                                        FileUtils.getAbsolutePath(new File(context.getShell().getCwd()), s),
+                                        ws.io().path(context.getShell().getCwd()).resolve(s).normalize(),
                                         descriptorFile == null ? null :
-                                                new File(context.getShell().getAbsolutePath(descriptorFile)).getPath(),
+                                                ws.io().path(context.getShell().getAbsolutePath(descriptorFile)),
                                         qoptions,
                                         context.getSession()
                                 );
-                                context.out().printf("File %s bundled successfully as "+ws.getFormatManager().createIdFormat().format(deployedFileId.getId())+" to %s\n", s, deployedFileId.getContent().getFile());
+                                context.out().printf("File %s bundled successfully as "+ws.formatter().createIdFormat()
+                                        .format(deployedFileId.getId())+" to %s\n", s, deployedFileId.getContent().getPath());
                             }
                         } else {
 
@@ -113,14 +115,14 @@ public class InstallCommand extends AbstractNutsCommand {
                                     //this is a file to deploy first
                                     NutsId deployedId = ws.deploy(
                                             ws.createDeploymentBuilder()
-                                                    .setContentPath(s)
+                                                    .setContent(s)
                                                     .setDescriptorPath(descriptorFile)
-                                                    .setRepositoryName(repositoryId)
+                                                    .setRepository(repositoryId)
                                             .build()
                                             ,
                                             context.getSession()
                                     );
-                                    context.out().printf("File %s deployed successfully as "+ws.getFormatManager().createIdFormat().format(deployedId)+"\n", s);
+                                    context.out().printf("File %s deployed successfully as "+ws.formatter().createIdFormat().format(deployedId)+"\n", s);
                                     s = deployedId.toString();
                                 }
                                 logInstallStatus(s, context, options);

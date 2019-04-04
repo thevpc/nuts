@@ -68,16 +68,16 @@ public class WhoCommand extends AbstractNutsCommand {
             return -1;
         }
         NutsWorkspace validWorkspace = context.getWorkspace();
-        String login = validWorkspace.getSecurityManager().getCurrentLogin();
+        String login = validWorkspace.security().getCurrentLogin();
 
         context.out().printf("%s\n", login);
 
         if (argAll) {
-            NutsEffectiveUser user = validWorkspace.getSecurityManager().findUser(login);
+            NutsEffectiveUser user = validWorkspace.security().findUser(login);
             Set<String> groups = new TreeSet<>(Arrays.asList(user.getGroups()));
             Set<String> rights = new TreeSet<>(Arrays.asList(user.getRights()));
             Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedRights()));
-            String[] currentLoginStack = validWorkspace.getSecurityManager().getCurrentLoginStack();
+            String[] currentLoginStack = validWorkspace.security().getCurrentLoginStack();
             if (currentLoginStack.length > 1) {
                 context.out().print("===stack===      :");
                 for (String log : currentLoginStack) {
@@ -101,8 +101,8 @@ public class WhoCommand extends AbstractNutsCommand {
             if (user.getMappedUser() != null) {
                 context.out().printf("===remote-id===  : %s\n", (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
             }
-            for (NutsRepository repository : context.getWorkspace().getRepositoryManager().getRepositories()) {
-                NutsEffectiveUser ruser = repository.getSecurityManager().getEffectiveUser(login);
+            for (NutsRepository repository : context.getWorkspace().repositories().getRepositories()) {
+                NutsEffectiveUser ruser = repository.security().getEffectiveUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !StringUtils.isEmpty(ruser.getMappedUser()))) {

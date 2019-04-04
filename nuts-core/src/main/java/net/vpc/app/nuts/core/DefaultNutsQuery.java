@@ -881,11 +881,11 @@ public class DefaultNutsQuery extends DefaultNutsQueryBaseOptions<NutsQuery> imp
     public String findClasspathString() {
         StringBuilder sb = new StringBuilder();
         for (NutsDefinition nutsDefinition : fetch()) {
-            if (nutsDefinition.getContent().getFile() != null) {
+            if (nutsDefinition.getContent().getPath() != null) {
                 if (sb.length() > 0) {
                     sb.append(File.pathSeparator);
                 }
-                sb.append(nutsDefinition.getContent().getFile());
+                sb.append(nutsDefinition.getContent().getPath());
             }
         }
         return sb.toString();

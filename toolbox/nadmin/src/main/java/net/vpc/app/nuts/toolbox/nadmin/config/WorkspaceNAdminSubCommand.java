@@ -28,7 +28,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
                 PrintStream out = session.getTerminal().getFormattedOut();
-                out.printf("%s\n", context.getWorkspace().getConfigManager().getWorkspaceLocation());
+                out.printf("%s\n", context.getWorkspace().config().getWorkspaceLocation());
             }
             return true;
         }
@@ -94,7 +94,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                         .setReadOnly(!save)
                         );
                         if (!StringUtils.isEmpty(login)) {
-                            workspace.getSecurityManager().login(login, password);
+                            workspace.security().login(login, password);
                         }
                         trySave(context, workspace, null, autoSave, cmdLine);
                     }
@@ -110,25 +110,25 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
         } else if (cmdLine.readAll("set workspace boot-version")) {
             String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
-            NutsBootConfig c = context.getWorkspace().getConfigManager().getBootConfig();
+            NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             c.setApiVersion(version);
-            context.getWorkspace().getConfigManager().setBootConfig(c);
+            context.getWorkspace().config().setBootConfig(c);
             cmdLine.unexpectedArgument("config set workspace version");
 
         } else if (cmdLine.readAll("set workspace runtime-version","set workspace runtime-id")) {
             String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
-            NutsBootConfig c = context.getWorkspace().getConfigManager().getBootConfig();
+            NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             if(version.contains("#")) {
                 c.setRuntimeId(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + version);
             }else{
                 c.setRuntimeId(version);
             }
-            context.getWorkspace().getConfigManager().setBootConfig(c);
+            context.getWorkspace().config().setBootConfig(c);
             cmdLine.unexpectedArgument("config set workspace version");
 
         } else if (cmdLine.readAll("get workspace version", "gwv")) {
             cmdLine.unexpectedArgument("config get workspace version");
-            NutsBootConfig c = context.getWorkspace().getConfigManager().getBootConfig();
+            NutsBootConfig c = context.getWorkspace().config().getBootConfig();
             context.out().printf("boot-version  : %s\n",StringUtils.trim(c.getApiVersion()));
             context.out().printf("runtime-id    : %s\n",StringUtils.trim(c.getRuntimeId()));
         } else if (cmdLine.readAll("set workspace", "sw")) {
@@ -166,7 +166,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                         .setOpenMode(createIfNotFound?NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)
                         );
                         if (!StringUtils.isEmpty(login)) {
-                            workspace.getSecurityManager().login(login, password);
+                            workspace.security().login(login, password);
                         }
                         //TODO Unsupported set workspace
                         context.out().print("Unsupported set workspace....");

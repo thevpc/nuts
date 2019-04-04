@@ -60,7 +60,7 @@ public class PushCommand extends AbstractNutsCommand {
             } else {
                 String id = cmdLine.readRequiredNonOption(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().push(id, repo, options, context.getSession());
+                    context.getWorkspace().push(id, options, context.getSession());
                     context.out().printf("%s pushed successfully\n", id);
                 }
             }

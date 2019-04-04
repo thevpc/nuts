@@ -5,7 +5,7 @@
  */
 package net.vpc.app.nuts.toolbox.nfind;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -87,7 +87,7 @@ class NutsInfo {
         return this.is_updatable;
     }
 
-    public File getFile() {
+    public Path getFile() {
         if (_fetchedFile == null) {
             try {
                 _fetchedFile = getNutsDefinition(true);
@@ -95,10 +95,10 @@ class NutsInfo {
                 //
             }
         }
-        if (_fetchedFile == null || _fetchedFile.getContent().getFile() == null) {
+        if (_fetchedFile == null || _fetchedFile.getContent().getPath() == null) {
             return null;
         }
-        return new File(_fetchedFile.getContent().getFile());
+        return _fetchedFile.getContent().getPath();
     }
 
     public NutsDescriptor getDescriptor() {

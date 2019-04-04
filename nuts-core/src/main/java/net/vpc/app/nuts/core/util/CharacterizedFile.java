@@ -32,8 +32,12 @@ package net.vpc.app.nuts.core.util;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.common.io.InputStreamSource;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,17 +47,26 @@ import java.util.List;
 public class CharacterizedFile implements AutoCloseable {
 
     public InputStreamSource contentFile;
-    public List<File> temps = new ArrayList<>();
+    public List<Path> temps = new ArrayList<>();
     public NutsDescriptor descriptor;
 
-    public void addTemp(File f) {
+    public Path getContentPath(){
+        return (Path)contentFile.getSource();
+    }
+    public void addTemp(Path f) {
         temps.add(f);
     }
 
     @Override
     public void close() {
-        for (File temp : temps) {
-            temp.delete();
+        for (Iterator<Path> it = temps.iterator(); it.hasNext();) {
+            Path temp = it.next();
+            try {
+                Files.delete(temp);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            it.remove();
         }
     }
 

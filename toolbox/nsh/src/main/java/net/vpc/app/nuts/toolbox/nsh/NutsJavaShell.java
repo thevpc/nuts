@@ -92,7 +92,7 @@ public class NutsJavaShell extends JavaShell {
         List<Command> allCommand=new ArrayList<>();
         allCommand.add(new ExitCmd());
 
-        for (NutsCommand command : workspace.getExtensionManager().
+        for (NutsCommand command : workspace.extensions().
                 createServiceLoader(NutsCommand.class,NutsJavaShell.class,NutsCommand.class.getClassLoader())
                 .loadAll(this)) {
             NutsCommand old = findCommand(command.getName());
@@ -106,8 +106,8 @@ public class NutsJavaShell extends JavaShell {
         javaShellContext = createContext(this.context, null, null, new Env(), new String[0]);
         context.getUserProperties().put(ConsoleContext.class.getName(), javaShellContext);
         try {
-            histFile=new File(workspace.getConfigManager().getStoreLocation(workspace.resolveIdForClass(NutsJavaShell.class)
-                    .getSimpleNameId(), NutsStoreLocation.VAR),"nsh.history");
+            histFile=workspace.config().getStoreLocation(workspace.resolveIdForClass(NutsJavaShell.class)
+                    .getSimpleNameId(), NutsStoreLocation.VAR).resolve("nsh.history").toFile();
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
                 getHistory().load(histFile);
@@ -246,7 +246,7 @@ public class NutsJavaShell extends JavaShell {
         final JavaShellNonBlockingInputStream in2;
         try {
             out = new PipedOutputStream();
-            nout = workspace.getIOManager().createPrintStream(out, NutsTerminalMode.FORMATTED);
+            nout = workspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
@@ -386,10 +386,10 @@ public class NutsJavaShell extends JavaShell {
 
             terminal = context.getTerminal();
             NutsWorkspace ws = context.getWorkspace();
-            String wss = ws == null ? "" : new File(context.getShell().getAbsolutePath(ws.getConfigManager().getWorkspaceLocation())).getName();
+            String wss = ws == null ? "" : new File(context.getShell().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
             String login = null;
             if (ws != null) {
-                login = ws.getSecurityManager().getCurrentLogin();
+                login = ws.security().getCurrentLogin();
             }
             String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
             if (!StringUtils.isEmpty(context.getServiceName())) {
@@ -425,7 +425,7 @@ public class NutsJavaShell extends JavaShell {
 
     protected PrintStream printHeader(PrintStream out) {
         return out.printf("##Nuts## shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
-                context.getWorkspace().getConfigManager().getRunningContext().getRuntimeId().getVersion().toString());
+                context.getWorkspace().config().getRunningContext().getRuntimeId().getVersion().toString());
     }
 
     //    @Override

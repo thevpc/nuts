@@ -22,9 +22,9 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
         if (save == null) {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 if (repository != null) {
-                    save = Boolean.parseBoolean(repository.getConfigManager().getEnv("autosave", "false", true));
+                    save = Boolean.parseBoolean(repository.config().getEnv("autosave", "false", true));
                 } else {
-                    save = Boolean.parseBoolean(context.getWorkspace().getConfigManager().getEnv("autosave", "false"));
+                    save = Boolean.parseBoolean(context.getWorkspace().config().getEnv("autosave", "false"));
                 }
             } else {
                 save = false;
@@ -47,7 +47,7 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
             if (cmdLine == null || cmdLine.isExecMode()) {
                 PrintStream out = context.out();
                 if (repository == null) {
-                    workspace.getConfigManager().save(false);
+                    workspace.config().save(false);
                     out.print("##workspace saved.##\n");
                 } else {
                     out.printf("##repository %s saved.##\n", repository.getName());

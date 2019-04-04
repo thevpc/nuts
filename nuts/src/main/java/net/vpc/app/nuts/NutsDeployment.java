@@ -31,13 +31,17 @@ package net.vpc.app.nuts;
 
 public interface NutsDeployment {
 
-    String getRepositoryName();
+    String getRepository();
 
-    NutsDeployOptions getOptions();
-
-    String getDescSHA1();
-
-    Object getDescriptor();
+    NutsDescriptor getDescriptor();
 
     Object getContent();
+
+    boolean isForce();
+
+    boolean isOffline();
+
+    boolean isTrace();
+
+    boolean isTransitive();
 }

@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.nio.file.Path;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsWorkspaceRepositoryManager;
 
@@ -12,10 +13,11 @@ import net.vpc.app.nuts.NutsWorkspaceRepositoryManager;
  *
  * @author vpc
  */
-public interface NutsWorkspaceRepositoryManagerExt extends NutsWorkspaceRepositoryManager{
+public interface NutsWorkspaceRepositoryManagerExt extends NutsWorkspaceRepositoryManager {
+
     public void removeAllRepositories();
 
     NutsRepository wireRepository(NutsRepository repository);
 
-    String getRepositoriesRoot();
+    Path getRepositoriesRoot();
 }

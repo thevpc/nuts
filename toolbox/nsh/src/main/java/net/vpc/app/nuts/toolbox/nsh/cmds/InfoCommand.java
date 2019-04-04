@@ -63,7 +63,7 @@ public class InfoCommand extends AbstractNutsCommand {
             }
 
         }
-        ws.getFormatManager().createWorkspaceInfoFormat()
+        ws.formatter().createWorkspaceInfoFormat()
                         .addOption(((fancy ? "fancy" : "") + "," + (min ? "min" : "")))
                         .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
         .format(context.out());

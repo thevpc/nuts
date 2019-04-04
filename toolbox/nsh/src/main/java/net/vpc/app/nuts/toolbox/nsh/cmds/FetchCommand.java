@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
@@ -38,7 +38,8 @@ import net.vpc.common.commandline.FileNonOption;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Created by vpc on 1/7/17.
@@ -58,7 +59,7 @@ public class FetchCommand extends AbstractNutsCommand {
         do {
             if (context.configure(cmdLine)) {
                 //
-            }else if (cmdLine.readAll("-t", "--to")) {
+            } else if (cmdLine.readAll("-t", "--to")) {
                 lastLocationFile = (cmdLine.readRequiredNonOption(new FileNonOption("FileOrFolder")).getStringExpression());
             } else if (cmdLine.readAll("-d", "--desc")) {
                 descMode = true;
@@ -73,23 +74,22 @@ public class FetchCommand extends AbstractNutsCommand {
                     if (descMode) {
                         NutsDefinition file = null;
                         if (lastLocationFile == null) {
-                            file=context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDefinition();
+                            file = context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDefinition();
                         } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getShell().getAbsolutePath(lastLocationFile)).isDirectory()) {
-                            File folder = new File(context.getShell().getAbsolutePath(lastLocationFile));
-                            folder.mkdirs();
+                            Path folder = ws.io().path(context.getShell().getAbsolutePath(lastLocationFile));
                             NutsDescriptor descriptor = context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDescriptor();
-                            File target = new File(folder, ws.getConfigManager().getDefaultIdFilename(
-                                    context.getWorkspace().getParseManager().parseId(id)
-                                    .setFaceDescriptor()
+                            Path target = folder.resolve(ws.config().getDefaultIdFilename(
+                                    context.getWorkspace().parser().parseId(id)
+                                            .setFaceDescriptor()
                             ));
-                            target=new File(target.getParentFile(),"effective-"+target.getName());
-                            context.getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor,target);
-                            file = new DefaultNutsDefinition(ws.getParseManager().parseRequiredId(id), descriptor, target.getPath(), false, true, null);
+                            target = target.resolveSibling("effective-" + target.getFileName().toString());
+                            context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(descriptor, target);
+                            file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), descriptor, target, false, true, null);
                         } else {
                             File target = new File(context.getShell().getAbsolutePath(lastLocationFile));
-                            file=context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDefinition();
+                            file = context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDefinition();
                             NutsDescriptor descriptor = file.getDescriptor();
-                            context.getWorkspace().getFormatManager().createDescriptorFormat().setPretty(true).format(descriptor,target);
+                            context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(descriptor, target);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);
@@ -98,21 +98,20 @@ public class FetchCommand extends AbstractNutsCommand {
                         if (lastLocationFile == null) {
                             file = context.getWorkspace().fetch(id).setSession(context.getSession()).fetchDefinition();
                         } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getShell().getAbsolutePath(lastLocationFile)).isDirectory()) {
-                            File folder = new File(context.getShell().getAbsolutePath(lastLocationFile));
-                            folder.mkdirs();
-                            String fetched = context.getWorkspace().copyTo(id, folder.getPath(), context.getSession());
-                            file = new DefaultNutsDefinition(ws.getParseManager().parseRequiredId(id), null, fetched, false, true, null);
+                            Path folder = ws.io().path(context.getShell().getAbsolutePath(lastLocationFile));
+                            Path fetched = context.getWorkspace().copyTo(id, folder, context.getSession());
+                            file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), null, fetched, false, true, null);
                         } else {
-                            File simpleFile = new File(context.getShell().getAbsolutePath(lastLocationFile));
-                            String fetched = context.getWorkspace().copyTo(id, simpleFile.getPath(), context.getSession());
-                            file = new DefaultNutsDefinition(ws.getParseManager().parseRequiredId(id), null, fetched, false, true, null);
+                            Path simpleFile = ws.io().path(context.getShell().getAbsolutePath(lastLocationFile));
+                            Path fetched = context.getWorkspace().copyTo(id, simpleFile, context.getSession());
+                            file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), null, fetched, false, true, null);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);
                     }
                 }
             }
-        }while (cmdLine.hasNext());
+        } while (cmdLine.hasNext());
         return 0;
     }
 
@@ -120,34 +119,33 @@ public class FetchCommand extends AbstractNutsCommand {
         PrintStream out = context.out();
         if (!file.getContent().isCached()) {
             if (file.getContent().isTemporary()) {
-                out.printf("%s fetched successfully temporarily to %s\n", file.getId(), file.getContent().getFile());
+                out.printf("%s fetched successfully temporarily to %s\n", file.getId(), file.getContent().getPath());
             } else {
                 out.printf("%s fetched successfully\n", file.getId());
             }
         } else {
             if (file.getContent().isTemporary()) {
-                out.printf("%s already fetched temporarily to %s\n", file.getId(), file.getContent().getFile());
+                out.printf("%s already fetched temporarily to %s\n", file.getId(), file.getContent().getPath());
             } else {
                 out.printf("%s already fetched\n", file.getId());
             }
         }
     }
 
-
-    public class DefaultNutsDefinition implements NutsDefinition{
+    public class DefaultNutsDefinition2 implements NutsDefinition {
 
         private NutsId id;
         private NutsDescriptor descriptor;
         private NutsContent content;
         private NutsDescriptor effectiveDescriptor;
 
-        public DefaultNutsDefinition(NutsId id, NutsDescriptor descriptor, String file, boolean cached, boolean temporary, String installFolder) {
+        public DefaultNutsDefinition2(NutsId id, NutsDescriptor descriptor, Path file, boolean cached, boolean temporary, String installFolder) {
             this.descriptor = descriptor;
-            this.content = new NutsContent(file,cached,temporary);
+            this.content = new NutsContent(file, cached, temporary);
             this.id = id;
         }
 
-        public DefaultNutsDefinition(DefaultNutsDefinition other) {
+        public DefaultNutsDefinition2(DefaultNutsDefinition2 other) {
             if (other != null) {
                 this.descriptor = other.descriptor;
                 this.id = other.id;
@@ -160,8 +158,6 @@ public class FetchCommand extends AbstractNutsCommand {
             return effectiveDescriptor;
         }
 
-
-
         public void setId(NutsId id) {
             this.id = id;
         }
@@ -169,7 +165,6 @@ public class FetchCommand extends AbstractNutsCommand {
         public NutsId getId() {
             return id;
         }
-
 
         public NutsDescriptor getDescriptor() {
             return descriptor;
@@ -185,22 +180,20 @@ public class FetchCommand extends AbstractNutsCommand {
             return null;
         }
 
-        public DefaultNutsDefinition copy() {
-            return new DefaultNutsDefinition(this);
+        public DefaultNutsDefinition2 copy() {
+            return new DefaultNutsDefinition2(this);
         }
-
-
 
         @Override
         public int compareTo(NutsDefinition n2) {
             if (n2 == null) {
                 return 1;
             }
-            if (!(n2 instanceof DefaultNutsDefinition)) {
+            if (!(n2 instanceof DefaultNutsDefinition2)) {
                 return -1;
             }
             NutsId o1 = getId();
-            NutsId o2 = ((DefaultNutsDefinition) n2).getId();
+            NutsId o2 = ((DefaultNutsDefinition2) n2).getId();
             if (o1 == null || o2 == null) {
                 if (o1 == o2) {
                     return 0;

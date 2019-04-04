@@ -2,7 +2,6 @@ package net.vpc.toolbox.worky;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.app.NutsApplicationContext;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.mvn.Pom;
 import net.vpc.common.mvn.PomXmlParser;
@@ -11,17 +10,20 @@ import net.vpc.toolbox.worky.config.ProjectConfig;
 import net.vpc.toolbox.worky.config.RepositoryAddress;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class ProjectService {
+
     private ProjectConfig config;
     private NutsApplicationContext appContext;
     private RepositoryAddress defaultRepositoryAddress;
 
-    public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, File file) throws IOException {
+    public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.appContext = appContext;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = appContext.getWorkspace().getIOManager().readJson(file, ProjectConfig.class);
+        config = appContext.getWorkspace().io().readJson(file, ProjectConfig.class);
     }
 
     public ProjectService(NutsApplicationContext appContext, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
@@ -43,21 +45,21 @@ public class ProjectService {
         return false;
     }
 
-    public File getConfigFile() {
-        File storeLocation = new File(appContext.getConfigFolder(), "projects");
-        return new File(storeLocation, config.getId() + ".config");
+    public Path getConfigFile() {
+        Path storeLocation = appContext.getConfigFolder().resolve("projects");
+        return storeLocation.resolve(config.getId() + ".config");
     }
 
     public void save() throws IOException {
-        File configFile = getConfigFile();
-        FileUtils.createParents(configFile);
-        appContext.getWorkspace().getIOManager().writeJson(config, configFile, true);
+        Path configFile = getConfigFile();
+        Files.createDirectories(configFile.getParent());
+        appContext.getWorkspace().io().writeJson(config, configFile, true);
     }
 
     public boolean load() {
-        File configFile = getConfigFile();
-        if (configFile.isFile()) {
-            ProjectConfig u = appContext.getWorkspace().getIOManager().readJson(configFile, ProjectConfig.class);
+        Path configFile = getConfigFile();
+        if (Files.isRegularFile(configFile)) {
+            ProjectConfig u = appContext.getWorkspace().io().readJson(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -76,14 +78,12 @@ public class ProjectService {
             if (new File(f, "pom.xml").isFile()) {
                 try {
                     Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
-                    if (
-                            g.getGroupId() != null
-                                    && g.getArtifactId() != null
-                                    && g.getVersion() != null
-                                    && !g.getGroupId().contains("$")
-                                    && !g.getArtifactId().contains("$")
-                                    && !g.getVersion().contains("$")
-                    ) {
+                    if (g.getGroupId() != null
+                            && g.getArtifactId() != null
+                            && g.getVersion() != null
+                            && !g.getGroupId().contains("$")
+                            && !g.getArtifactId().contains("$")
+                            && !g.getVersion().contains("$")) {
 
                         String s = IOUtils.loadString(new File(f, "pom.xml"));
                         //check if the s
@@ -153,7 +153,7 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (StringUtils.isEmpty(nutsRepository)) {
-                        throw new NutsExecutionException("Missing Repository",2);
+                        throw new NutsExecutionException("Missing Repository", 2);
                     }
                     try {
                         Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
@@ -165,10 +165,9 @@ public class ProjectService {
                         );
                         NutsSession s = ws2.createSession();
                         List<NutsId> found = ws2.createQuery()
-                                        .setIds(g.getGroupId() + ":" + g.getArtifactId())
-                                        .setRepositoryFilter(nutsRepository)
-                                        .latestVersions().setSession(s).find()
-                                ;
+                                .setIds(g.getGroupId() + ":" + g.getArtifactId())
+                                .setRepositoryFilter(nutsRepository)
+                                .latestVersions().setSession(s).find();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }
@@ -180,6 +179,5 @@ public class ProjectService {
         }
         return null;
     }
-
 
 }

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
 import java.util.Iterator;
 
 /**
@@ -36,11 +37,11 @@ import java.util.Iterator;
  */
 public interface NutsRepository {
 
-    int SPEED_FASTEST = 1;
-    int SPEED_FASTER = 100;
+    int SPEED_FASTEST = 100000;
+    int SPEED_FASTER = 10000;
     int SPEED_FAST = 1000;
-    int SPEED_SLOW = 10000;
-    int SPEED_SLOWEST = 100000;
+    int SPEED_SLOW = 100;
+    int SPEED_SLOWEST = 10;
 
     String getRepositoryType();
 
@@ -49,16 +50,17 @@ public interface NutsRepository {
     String getUuid();
 
     /**
-     * name is the name attributed by the containing workspace. It is
-     * defined in NutsRepositoryRef
+     * name is the name attributed by the containing workspace. It is defined in
+     * NutsRepositoryRef
      *
      * @return local name
      */
     String getName();
-    
+
     /**
      * global name is independent from workspace
-     * @return 
+     *
+     * @return
      */
     String getGlobalName();
 
@@ -66,34 +68,26 @@ public interface NutsRepository {
 
     NutsRepository getParentRepository();
 
-    NutsRepositoryConfigManager getConfigManager();
+    NutsRepositoryConfigManager config();
 
-    String getStoreLocation(NutsStoreLocation folderType);
+//    Path getStoreLocation(NutsStoreLocation folderType);
+    NutsRepositorySecurityManager security();
 
-    NutsRepositorySecurityManager getSecurityManager();
+    void deploy(NutsRepositoryDeploymentOptions options, NutsRepositorySession session);
 
-    /**
-     * @param id descriptor Id, mandatory as descriptor may not being effective
-     * (id is variable or inherited)
-     * @param descriptor
-     * @param file
-     * @param options
-     * @param session
-     * @return
-     */
-    NutsId deploy(NutsId id, NutsDescriptor descriptor, String file, NutsDeployOptions options, NutsRepositorySession session);
-
-    void push(NutsId id, String repoId, NutsPushOptions options, NutsRepositorySession session);
+    void push(NutsId id, NutsPushOptions options, NutsRepositorySession session);
 
     NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session);
 
-    NutsContent fetchContent(NutsId id, String localPath, NutsRepositorySession session);
+    NutsContent fetchContent(NutsId id, Path localPath, NutsRepositorySession session);
 
     Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session);
 
     Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
 
-    int getSupportLevel(NutsId id, NutsFetchMode mode, boolean transitive);
+    int getDeploymentSupportLevel(NutsId id, boolean offlineOnly, boolean transitive);
+
+    int getFindSupportLevel(NutsId id, NutsFetchMode fetchMode, boolean transitive);
 
     boolean isSupportedMirroring();
 
@@ -107,10 +101,12 @@ public interface NutsRepository {
      */
     NutsRepository getMirror(String repositoryIdPath);
 
+    NutsRepository findMirror(String repositoryIdPath);
+
     /**
-     * 
+     *
      * @param definition
-     * @return 
+     * @return
      */
     NutsRepository addMirror(NutsRepositoryDefinition definition);
 
@@ -119,7 +115,7 @@ public interface NutsRepository {
      * @return
      */
     NutsRepository addMirror(NutsCreateRepositoryOptions options);
-    
+
     /**
      * @param repositoryId
      */
@@ -160,8 +156,6 @@ public interface NutsRepository {
     boolean isEnabled();
 
     int getSpeed();
-
-    String getStoreLocation();
 
     boolean isIndexSubscribed();
 

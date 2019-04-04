@@ -3,41 +3,43 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.MapStringMapper;
 import net.vpc.app.nuts.core.util.NutsObjectConverterUtilAdapter;
 import net.vpc.common.strings.StringConverter;
 import net.vpc.common.strings.StringConverterMap;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Created by vpc on 2/19/17.
@@ -187,7 +189,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         }
     }
 
-
     @Override
     public NutsDescriptor applyProperties() {
         return applyProperties(getProperties());
@@ -266,7 +267,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setParents(n_parents)
                 .setPackaging(n_packaging)
                 .setExecutable(n_executable)
-//                .setExt(n_ext)
+                //                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
                 .setName(n_name)
@@ -278,8 +279,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setDependencies(n_deps.toArray(new NutsDependency[0]))
                 .setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]))
                 .setProperties(n_props)
-                .build()
-                ;
+                .build();
     }
 
     @Override
@@ -318,7 +318,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setParents(getParents())
                 .setPackaging(n_packaging)
                 .setExecutable(isExecutable())
-//                .setExt(n_ext)
+                //                .setExt(n_ext)
                 .setExecutor(n_executor)
                 .setInstaller(n_installer)
                 .setName(n_name)
@@ -330,8 +330,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .setDependencies(n_deps.toArray(new NutsDependency[0]))
                 .setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]))
                 .setProperties(n_props)
-                .build()
-                ;
+                .build();
     }
 
     private NutsId applyNutsIdProperties(NutsId child, StringConverter properties) {
@@ -361,15 +360,12 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         );
     }
 
-
     @Override
     public NutsDescriptor addDependency(NutsDependency dependency) {
         if (dependency == null) {
             return this;
         }
-        ArrayList<NutsDependency> dependencies = new ArrayList<>(Arrays.asList(getDependencies()));
-        dependencies.add(dependency);
-        return setDependencies(dependencies.toArray(new NutsDependency[0]));
+        return builder().addDependency(dependency).build();
     }
 
     @Override
@@ -377,17 +373,23 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         if (dependency == null) {
             return this;
         }
-        NutsDependency[] dependencies = getDependencies();
-        ArrayList<NutsDependency> dependenciesList = new ArrayList<>();
-        for (NutsDependency d : dependencies) {
-            if (d.getLongName().equals(dependency.getLongName())
-                    && Objects.equals(d.getScope(), dependency.getScope())) {
-                //do not add
-            } else {
-                dependenciesList.add(d);
-            }
+        return builder().removeDependency(dependency).build();
+    }
+
+    @Override
+    public NutsDescriptor replaceDependency(Predicate<NutsDependency> filter, UnaryOperator<NutsDependency> converter) {
+        if (converter == null) {
+            return this;
         }
-        return setDependencies(dependenciesList.toArray(new NutsDependency[0]));
+        return builder().replaceDependency(filter, converter).build();
+    }
+
+    @Override
+    public NutsDescriptor removeDependency(Predicate<NutsDependency> dependency) {
+        if (dependency == null) {
+            return this;
+        }
+        return builder().removeDependency(dependency).build();
     }
 
     @Override
@@ -405,12 +407,10 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         return builder().setDependencies(dependencies).build();
     }
 
-
     @Override
     public NutsDescriptor setLocations(String[] locations) {
         return builder().setLocations(locations).build();
     }
-
 
     @Override
     public NutsDescriptor addOs(String os) {
@@ -494,7 +494,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         return builder().setNutsApplication(nutsApp).build();
     }
 
-
     @Override
     public NutsDescriptor setExecutor(NutsExecutorDescriptor executor) {
         if (Objects.equals(executor, getExecutor())) {
@@ -529,6 +528,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
     @Override
     public NutsDescriptorBuilder builder() {
         return new DefaultNutsDescriptorBuilder(this);
+    }
+
+    @Override
+    public NutsDescriptor replaceProperty(Predicate<Map.Entry<String, String>> filter, Function<Map.Entry<String, String>, String> converter) {
+        return builder().replaceProperty(filter, converter).build();
     }
 
 }

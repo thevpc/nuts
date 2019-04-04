@@ -3,14 +3,16 @@ package net.vpc.app.nuts.core;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.vpc.app.nuts.*;
 
 public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> implements NutsFetch {
 
     private final DefaultNutsWorkspace ws;
     private NutsId id;
-    private String location;
 
     public DefaultNutsFetch(DefaultNutsWorkspace ws) {
         this.ws = ws;
@@ -18,7 +20,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
 
     @Override
     public NutsFetch setId(String id) {
-        this.id = ws.getParseManager().parseRequiredId(id);
+        this.id = ws.parser().parseRequiredId(id);
         return this;
     }
 
@@ -42,12 +44,12 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
         loadDeps(def.getId());
         return def;
     }
-    
+
     @Override
-    public NutsQueryOptions toOptions(){
+    public NutsQueryOptions toOptions() {
         return new DefaultNutsQueryOptions().copyFrom(this);
     }
-    
+
     @Override
     public NutsDefinition fetchDefinitionOrNull() {
         try {
@@ -76,7 +78,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
     }
 
     @Override
-    public String fetchFileOrNull() {
+    public Path fetchFileOrNull() {
         try {
             return fetchFile();
         } catch (NutsNotFoundException ex) {
@@ -113,15 +115,10 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
 
     @Override
     public String fetchContentHash() {
-        String f = fetchDefinition().getContent().getFile();
-        FileInputStream is = null;
+        Path f = fetchDefinition().getContent().getPath();
         try {
-            try {
-                return ws.getIOManager().computeHash((is = new FileInputStream(f)));
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
+            try (InputStream in = Files.newInputStream(f)) {
+                return ws.io().computeHash((in));
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -131,8 +128,8 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
     @Override
     public String fetchDescriptorHash() {
         NutsDescriptor d = fetchDescriptor();
-        return ws.getIOManager().computeHash(new ByteArrayInputStream(
-                ws.getFormatManager().createDescriptorFormat().format(d).getBytes()
+        return ws.io().computeHash(new ByteArrayInputStream(
+                ws.formatter().createDescriptorFormat().format(d).getBytes()
         ));
     }
 
@@ -148,10 +145,10 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
     }
 
     @Override
-    public String fetchFile() {
+    public Path fetchFile() {
 
         NutsDefinition def = ws.fetchDefinition(id, toOptions().setIncludeFile(true).setIncludeEffective(false).setIncludeInstallInformation(false), getSession());
-        return def.getContent().getFile();
+        return def.getContent().getPath();
     }
 
     private void loadDeps(NutsId id) {
@@ -166,7 +163,6 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
 
         }
     }
-
 
     @Override
     public NutsFetch copy() {

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 /**
@@ -43,7 +44,14 @@ public interface NutsWorkspaceRepositoryManager {
 
     NutsRepository addRepository(NutsCreateRepositoryOptions options);
 
+    /**
+     *
+     * @param repositoryIdPath
+     * @return null if not found
+     */
     NutsRepository findRepository(String repositoryIdPath);
+
+    NutsRepository getRepository(String repositoryIdPath) throws NutsRepositoryNotFoundException;
 
     void removeRepository(String locationOrRepositoryId);
 
@@ -59,9 +67,9 @@ public interface NutsWorkspaceRepositoryManager {
 
     NutsRepositoryListener[] getRepositoryListeners();
 
-    String resolveRepositoryPath(String repositoryLocation);
+    Path resolveRepositoryPath(String repositoryLocation);
 
     NutsIndexStoreClientFactory getIndexStoreClientFactory();
 
-    NutsRepository createRepository(NutsCreateRepositoryOptions options, String rootFolder, NutsRepository parentRepository);
+    NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
 }

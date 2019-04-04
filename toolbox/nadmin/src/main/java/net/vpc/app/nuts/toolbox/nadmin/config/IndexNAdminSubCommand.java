@@ -42,11 +42,11 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
 
     private void updateIndex(NutsApplicationContext context, String[] repos) {
         if (repos.length == 0) {
-            context.out().printf("[[%s]] Updating all indices\n", context.getWorkspace().getConfigManager().getWorkspaceLocation());
+            context.out().printf("[[%s]] Updating all indices\n", context.getWorkspace().config().getWorkspaceLocation());
             context.getWorkspace().updateAllRepositoryIndices();
         } else {
             for (String repo : repos) {
-                context.out().printf("[[%s]] Updating index %s\n", context.getWorkspace().getConfigManager().getWorkspaceLocation(), repo);
+                context.out().printf("[[%s]] Updating index %s\n", context.getWorkspace().config().getWorkspaceLocation(), repo);
                 context.getWorkspace().updateRepositoryIndex(repo);
             }
         }

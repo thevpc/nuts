@@ -49,15 +49,16 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsWorkspaceRepositoryManager rm = workspace.getRepositoryManager();
+        NutsWorkspaceRepositoryManager rm = workspace.repositories();
         NutsRepository defaultRepo = rm.addRepository(new NutsRepositoryDefinition()
+                .setDeployOrder(10)
                 .setCreate(true)
                 .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
                 .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
         );
-        defaultRepo.getConfigManager().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
+        defaultRepo.config().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
-        NutsStoreLocationStrategy s = workspace.getConfigManager().getStoreLocationStrategy();
+        NutsStoreLocationStrategy s = workspace.config().getStoreLocationStrategy();
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
             if (s == NutsStoreLocationStrategy.STANDALONE) {
                 d = d.copy().setProxy(true);
@@ -66,14 +67,14 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         }
 
 //        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
-        workspace.getConfigManager().addImports("net.vpc.app.nuts.toolbox");
-        workspace.getConfigManager().addImports("net.vpc.app");
-        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        workspace.config().addImports("net.vpc.app.nuts.toolbox");
+        workspace.config().addImports("net.vpc.app");
+        workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
-        workspace.getSecurityManager().setUserRights(NutsConstants.USER_ANONYMOUS, NutsConstants.RIGHT_FETCH_DESC, NutsConstants.RIGHT_FETCH_CONTENT);
+        workspace.security().setUserRights(NutsConstants.USER_ANONYMOUS, NutsConstants.RIGHT_FETCH_DESC, NutsConstants.RIGHT_FETCH_CONTENT);
 
         //has read rights
-        workspace.getSecurityManager().addUser("user", "user",
+        workspace.security().addUser("user", "user",
                 NutsConstants.RIGHT_FETCH_DESC,
                 NutsConstants.RIGHT_FETCH_CONTENT,
                 NutsConstants.RIGHT_DEPLOY,
@@ -82,6 +83,6 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 NutsConstants.RIGHT_SAVE_WORKSPACE,
                 NutsConstants.RIGHT_SAVE_REPOSITORY
         );
-        workspace.getSecurityManager().setUserRemoteIdentity("user", "contributor");
+        workspace.security().setUserRemoteIdentity("user", "contributor");
     }
 }

@@ -74,9 +74,9 @@ public class UnameCommand extends AbstractNutsCommand {
         }
         if (cmdLine.isExecMode()) {
             NutsWorkspace ws = context.getWorkspace();
-            NutsId osdist = ws.getConfigManager().getPlatformOsDist();
-            NutsId os = ws.getConfigManager().getPlatformOs();
-            NutsId arch = ws.getConfigManager().getPlatformArch();
+            NutsId osdist = ws.config().getPlatformOsDist();
+            NutsId os = ws.config().getPlatformOs();
+            NutsId arch = ws.config().getPlatformArch();
 
             List<String> sb = new ArrayList<>();
             if (!farch && !fos && !fdist) {

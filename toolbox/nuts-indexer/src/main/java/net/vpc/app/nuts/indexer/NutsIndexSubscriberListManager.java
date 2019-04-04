@@ -3,7 +3,8 @@ package net.vpc.app.nuts.indexer;
 import net.vpc.app.nuts.*;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class NutsIndexSubscriberListManager {
@@ -19,9 +20,9 @@ public class NutsIndexSubscriberListManager {
             name = "default";
         }
         this.name = name.trim();
-        File file = getConfigFile();
-        if (file.exists()) {
-            this.config = this.defaultWorkspace.getIOManager().readJson(file, NutsIndexSubscriberListConfig.class);
+        Path file = getConfigFile();
+        if (Files.exists(file)) {
+            this.config = this.defaultWorkspace.io().readJson(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NutsIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -35,15 +36,15 @@ public class NutsIndexSubscriberListManager {
         }
     }
 
-    private File getConfigFile() {
-        return new File(this.defaultWorkspace
-                .getConfigManager()
+    private Path getConfigFile() {
+        return this.defaultWorkspace
+                .config()
                 .getStoreLocation(
                         this.defaultWorkspace
                                 .resolveIdForClass(NutsIndexSubscriberListManager.class)
                                 .getSimpleNameId(),
-                        NutsStoreLocation.CONFIG),
-                name + "-nuts-subscriber-list.json");
+                        NutsStoreLocation.CONFIG).resolve(
+                        name + "-nuts-subscriber-list.json");
     }
 
     public List<NutsIndexSubscriber> getSubscribers() {
@@ -87,10 +88,10 @@ public class NutsIndexSubscriberListManager {
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        NutsRepository[] repositories = defaultWorkspace.getRepositoryManager().getRepositories();
+        NutsRepository[] repositories = defaultWorkspace.repositories().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
-                return repository.getConfigManager().getName();
+                return repository.config().getName();
             }
 
         }
@@ -101,8 +102,8 @@ public class NutsIndexSubscriberListManager {
         this.config.setSubscribers(this.subscribers.isEmpty()
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
-        File file = getConfigFile();
-        this.defaultWorkspace.getIOManager().writeJson(this.config, file, true);
+        Path file = getConfigFile();
+        this.defaultWorkspace.io().writeJson(this.config, file, true);
     }
 
     public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {

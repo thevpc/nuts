@@ -34,6 +34,8 @@ import net.vpc.common.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Created by vpc on 1/7/17.
@@ -54,4 +56,15 @@ public abstract class AbstractNutsHttpServletFacadeContext implements NutsHttpSe
             sendError(404, "File not found");
         }
     }
+
+    @Override
+    public void sendResponseFile(int code, Path file) throws IOException {
+        if (file != null && Files.isRegularFile(file)) {
+            sendResponseHeaders(code, Files.size(file));
+            Files.copy(file, getResponseBody());
+        } else {
+            sendError(404, "File not found");
+        }
+    }
+
 }

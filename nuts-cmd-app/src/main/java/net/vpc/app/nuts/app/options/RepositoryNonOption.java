@@ -61,7 +61,7 @@ public class RepositoryNonOption extends DefaultNonOption {
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
         if (workspace != null) {
-            for (NutsRepository repository : workspace.getRepositoryManager().getRepositories()) {
+            for (NutsRepository repository : workspace.repositories().getRepositories()) {
                 all.add(new DefaultArgumentCandidate(repository.getName()));
             }
         }

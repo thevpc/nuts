@@ -1,11 +1,13 @@
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
+
 public class NutsInstallInfo {
     private boolean installed;
     private boolean justInstalled;
-    private String installFolder;
+    private Path installFolder;
 
-    public NutsInstallInfo(boolean installed, String installFolder) {
+    public NutsInstallInfo(boolean installed, Path installFolder) {
         this.installed = installed;
         this.installFolder = installFolder;
     }
@@ -14,7 +16,7 @@ public class NutsInstallInfo {
         return installed;
     }
 
-    public String getInstallFolder() {
+    public Path getInstallFolder() {
         return installFolder;
     }
 

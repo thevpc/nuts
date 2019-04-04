@@ -72,11 +72,11 @@ public class HelpCommand extends AbstractNutsCommand {
         }
         if (cmdLine.isExecMode()) {
             if (showColors) {
-                String colorsText = context.getWorkspace().getIOManager().getResourceString("/net/vpc/app/nuts/toolbox/nuts-help-colors.help", HelpCommand.class, "no help found");
+                String colorsText = context.getWorkspace().io().getResourceString("/net/vpc/app/nuts/toolbox/nuts-help-colors.help", HelpCommand.class, "no help found");
                 context.out().println(colorsText);
             } else {
                 if (commandNames.isEmpty()) {
-                    String helpText = context.getWorkspace().getIOManager().getResourceString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class, "no help found");
+                    String helpText = context.getWorkspace().io().getResourceString("/net/vpc/app/nuts/toolbox/nsh.help", HelpCommand.class, "no help found");
                     context.out().println(helpText);
                     context.out().println("@@AVAILABLE COMMANDS ARE:@@");
                     NutsCommand[] commands = context.getShell().getCommands();

@@ -18,6 +18,7 @@ public class NutsCreateRepositoryOptions {
     private boolean failSafe;
     private boolean create;
     private boolean proxy;
+    private int deployOrder;
     private NutsRepositoryConfig config;
 
     public NutsCreateRepositoryOptions() {
@@ -33,6 +34,7 @@ public class NutsCreateRepositoryOptions {
         this.create = o.create;
         this.config = o.config;
         this.proxy = o.proxy;
+        this.deployOrder = o.deployOrder;
     }
 
     public String getName() {
@@ -110,5 +112,16 @@ public class NutsCreateRepositoryOptions {
         this.proxy = proxy;
         return this;
     }
+
+    public int getDeployOrder() {
+        return deployOrder;
+    }
+
+    public NutsCreateRepositoryOptions setDeployOrder(int deployPriority) {
+        this.deployOrder = deployPriority;
+        return this;
+    }
+    
+    
     
 }

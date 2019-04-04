@@ -11,7 +11,7 @@ public class ColoredCellFormatter implements TableFormatter.CellFormatter {
 
     @Override
     public int stringLength(String value) {
-        return appContext.getWorkspace().getParseManager().filterText(value).length();
+        return appContext.getWorkspace().parser().filterText(value).length();
     }
 
     @Override

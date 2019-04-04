@@ -10,7 +10,11 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -543,7 +547,7 @@ public class LocalTomcat {
             } else if ((s = readBaseServiceArg(args)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 if (path) {
-                    getContext().out().printf("%s\n", c.getOutLogFile().getPath());
+                    getContext().out().printf("%s\n", c.getOutLogFile());
                 } else {
                     c.showOutLog(count);
                 }
@@ -559,7 +563,7 @@ public class LocalTomcat {
         if (!processed) {
             LocalTomcatConfigService c = loadTomcatConfig("");
             if (path) {
-                getContext().out().printf("%s\n", c.getOutLogFile().getPath());
+                getContext().out().printf("%s\n", c.getOutLogFile());
             } else {
                 c.showOutLog(count);
             }
@@ -595,7 +599,7 @@ public class LocalTomcat {
             throw new NutsExecutionException("tomcat deploy: Missing File", 2);
         }
         LocalTomcatConfigService c = loadTomcatConfig(instance);
-        c.deployFile(new File(file), contextName, domain);
+        c.deployFile(getContext().getWorkspace().io().path(file), contextName, domain);
     }
 
     public void deployApp(CommandLine args) {
@@ -654,21 +658,18 @@ public class LocalTomcat {
 
     public LocalTomcatConfigService[] listConfig() {
         List<LocalTomcatConfigService> all = new ArrayList<>();
-        File[] configFiles = new File(getContext().getConfigFolder()).listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT);
-            }
-        });
-        if (configFiles != null) {
-            for (File file1 : configFiles) {
+        try (DirectoryStream<Path> pp = Files.newDirectoryStream(getContext().getConfigFolder(),
+                (Path entry) -> entry.getFileName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))) {
+            for (Path entry : pp) {
                 try {
-                    LocalTomcatConfigService c = loadTomcatConfig(file1);
+                    LocalTomcatConfigService c = loadTomcatConfig(entry);
                     all.add(c);
                 } catch (Exception ex) {
                     //ignore
                 }
             }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return all.toArray(new LocalTomcatConfigService[0]);
     }
@@ -679,7 +680,7 @@ public class LocalTomcat {
         return t;
     }
 
-    public LocalTomcatConfigService loadTomcatConfig(File file) {
+    public LocalTomcatConfigService loadTomcatConfig(Path file) {
         LocalTomcatConfigService t = new LocalTomcatConfigService(file, this);
         t.loadConfig();
         return t;

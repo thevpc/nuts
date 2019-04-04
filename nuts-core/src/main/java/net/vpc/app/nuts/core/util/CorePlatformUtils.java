@@ -43,6 +43,10 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.jar.Attributes;
@@ -115,7 +119,6 @@ public class CorePlatformUtils {
 //        }
 //        return "/usr/share";
 //    }
-
     /**
      * this is inspired from
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
@@ -354,6 +357,13 @@ public class CorePlatformUtils {
             return new File(url.toURI());
         } catch (URISyntaxException e) {
             return new File(url.getPath());
+        }
+    }
+    public static Path resolveLocalPathFromURL(URL url) {
+        try {
+            return new File(url.toURI()).toPath();
+        } catch (URISyntaxException e) {
+            return new File(url.getPath()).toPath();
         }
     }
 
@@ -754,41 +764,45 @@ public class CorePlatformUtils {
 
         final List<NutsExecutionEntry> classes = new ArrayList<>();
         final List<String> manifiestClass = new ArrayList<>();
-        ZipUtils.visitZipStream(jarStream, new PathFilter() {
-            @Override
-            public boolean accept(String path) {
-                return path.endsWith(".class")
-                        || path.equals("META-INF/MANIFEST.MF");
-            }
-        }, new InputStreamVisitor() {
-            @Override
-            public boolean visit(String path, InputStream inputStream) throws IOException {
-                if (path.endsWith(".class")) {
-                    int mainClass = getMainClassType(inputStream);
-                    if (mainClass == 1 || mainClass == 3) {
-                        classes.add(new NutsExecutionEntry(
-                                path.replace('/', '.').substring(0, path.length() - ".class".length()),
-                                false,
-                                mainClass == 3
-                        ));
-                    }
-                } else {
-                    try (BufferedReader b = new BufferedReader(new InputStreamReader(inputStream))) {
-                        String line = null;
-                        while ((line = b.readLine()) != null) {
-                            if (line.startsWith("Main-Class:")) {
-                                String c = line.substring("Main-Class:".length()).trim();
-                                if (c.length() > 0) {
-                                    manifiestClass.add(c);
-                                    break;
+        try {
+            ZipUtils.visitZipStream(jarStream, new PathFilter() {
+                @Override
+                public boolean accept(String path) {
+                    return path.endsWith(".class")
+                            || path.equals("META-INF/MANIFEST.MF");
+                }
+            }, new InputStreamVisitor() {
+                @Override
+                public boolean visit(String path, InputStream inputStream) throws IOException {
+                    if (path.endsWith(".class")) {
+                        int mainClass = getMainClassType(inputStream);
+                        if (mainClass == 1 || mainClass == 3) {
+                            classes.add(new NutsExecutionEntry(
+                                    path.replace('/', '.').substring(0, path.length() - ".class".length()),
+                                    false,
+                                    mainClass == 3
+                            ));
+                        }
+                    } else {
+                        try (BufferedReader b = new BufferedReader(new InputStreamReader(inputStream))) {
+                            String line = null;
+                            while ((line = b.readLine()) != null) {
+                                if (line.startsWith("Main-Class:")) {
+                                    String c = line.substring("Main-Class:".length()).trim();
+                                    if (c.length() > 0) {
+                                        manifiestClass.add(c);
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         List<NutsExecutionEntry> entries = new ArrayList<>();
         String defaultEntry = null;
         if (manifiestClass.size() > 0) {
@@ -844,11 +858,10 @@ public class CorePlatformUtils {
 
     public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
         String[] conf = {};
-        switch (ws.getConfigManager().getPlatformOsFamily()) {
-            case LINUX: 
-            case UNIX: 
-            case UNKNOWN: 
-            {
+        switch (ws.config().getPlatformOsFamily()) {
+            case LINUX:
+            case UNIX:
+            case UNKNOWN: {
                 conf = new String[]{
                     "/usr/java",
                     "/usr/lib64/jvm",
@@ -873,38 +886,41 @@ public class CorePlatformUtils {
         }
         List<NutsSdkLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(ws, s, out)));
+            all.addAll(Arrays.asList(searchJdkLocations(ws, ws.io().path(s), out)));
         }
         return all.toArray(new NutsSdkLocation[0]);
     }
 
-    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, String s, PrintStream out) {
+    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, Path s, PrintStream out) {
         List<NutsSdkLocation> all = new ArrayList<>();
-        File p = new File(s);
-        if (p.isDirectory()) {
-            for (File d : p.listFiles()) {
-                NutsSdkLocation r = resolveJdkLocation(d.getPath(), ws);
-                if (r != null) {
-                    all.add(r);
-                    if (out != null) {
-                        out.printf("Detected SDK [[%s]] at ==%s==\n", r.getVersion(), r.getPath());
+        if (Files.isDirectory(s)) {
+            try (DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
+                for (Path d : it) {
+                    NutsSdkLocation r = resolveJdkLocation(d, ws);
+                    if (r != null) {
+                        all.add(r);
+                        if (out != null) {
+                            out.printf("Detected SDK [[%s]] at ==%s==\n", r.getVersion(), r.getPath());
+                        }
                     }
                 }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
+
         }
         return all.toArray(new NutsSdkLocation[0]);
     }
 
-    public static NutsSdkLocation resolveJdkLocation(String path, NutsWorkspace ws) {
+    public static NutsSdkLocation resolveJdkLocation(Path path, NutsWorkspace ws) {
         if (path == null) {
             return null;
         }
-        File f = new File(path);
-        if (!f.isDirectory()) {
+        if (!Files.isDirectory(path)) {
             return null;
         }
-        File javaExePath = new File(f, FileUtils.getNativePath("bin/java"));
-        if (!javaExePath.exists()) {
+        Path javaExePath = path.resolve(FileUtils.getNativePath("bin/java"));
+        if (!Files.exists(javaExePath)) {
             return null;
         }
         String type = null;
@@ -912,7 +928,7 @@ public class CorePlatformUtils {
         try {
             NutsCommandExecBuilder b = ws.createExecBuilder()
                     .setExecutionType(NutsExecutionType.NATIVE)
-                    .setCommand(javaExePath.getPath(), "-version")
+                    .setCommand(javaExePath.toString(), "-version")
                     .setRedirectErrorStream()
                     .grabOutputString()
                     .exec();
@@ -954,7 +970,7 @@ public class CorePlatformUtils {
         loc.setType("java");
         loc.setName(type + " " + jdkVersion);
         loc.setVersion(jdkVersion);
-        loc.setPath(path);
+        loc.setPath(path.toString());
         return loc;
     }
 

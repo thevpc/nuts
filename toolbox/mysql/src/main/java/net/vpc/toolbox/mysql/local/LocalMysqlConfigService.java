@@ -8,9 +8,12 @@ import net.vpc.toolbox.mysql.local.config.LocalMysqlDatabaseConfig;
 import net.vpc.toolbox.mysql.local.config.LocalMysqlConfig;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class LocalMysqlConfigService {
+
     public static final String SERVER_CONFIG_EXT = ".local-config";
     private String name;
     private LocalMysql app;
@@ -19,9 +22,9 @@ public class LocalMysqlConfigService {
     private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
 
-    public LocalMysqlConfigService(File file, LocalMysql app) {
+    public LocalMysqlConfigService(Path file, LocalMysql app) {
         this(
-                file.getName().substring(0, file.getName().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
+                file.getFileName().toString().substring(0, file.getFileName().toString().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
                 app
         );
         loadConfig();
@@ -49,25 +52,23 @@ public class LocalMysqlConfigService {
         return config;
     }
 
-
     public LocalMysqlConfigService saveConfig() {
-        NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
-        File f = new File(context.getConfigFolder(), getName() + SERVER_CONFIG_EXT);
-        f.getParentFile().mkdirs();
-        try (FileWriter r = new FileWriter(f)) {
-            jsonSerializer.writeJson(config, r, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        NutsIOManager io = context.getWorkspace().io();
+        Path f = getServerConfigPath();
+        io.writeJson(config, f, true);
         return this;
     }
 
     public boolean existsConfig() {
-        File f = new File(context.getConfigFolder(), getName() + SERVER_CONFIG_EXT);
-        return (f.exists());
+        Path f = getServerConfigPath();
+        return Files.exists(f);
     }
 
-    public String[] parseApps(String[] args) throws RuntimeIOException {
+    private Path getServerConfigPath() {
+        return context.getConfigFolder().resolve(getName() + SERVER_CONFIG_EXT);
+    }
+
+    public String[] parseApps(String[] args) {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
@@ -85,15 +86,11 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService loadConfig() {
         String name = getName();
-        File f = new File(context.getConfigFolder(), name + SERVER_CONFIG_EXT);
-        if (f.exists()) {
-            NutsIOManager jsonSerializer = context.getWorkspace().getIOManager();
-            try (FileReader r = new FileReader(f)) {
-                config = jsonSerializer.readJson(r, LocalMysqlConfig.class);
-                return this;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        Path f = getServerConfigPath();
+        if (Files.exists(f)) {
+            NutsIOManager io = context.getWorkspace().io();
+            config = io.readJson(f, LocalMysqlConfig.class);
+            return this;
         } else if ("default".equals(name)) {
             //auto create default config
             config = new LocalMysqlConfig();
@@ -104,13 +101,16 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService removeConfig() {
-        File f = new File(context.getConfigFolder(), getName() + SERVER_CONFIG_EXT);
-        f.delete();
+        try {
+            Files.delete(getServerConfigPath());
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         return this;
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getWorkspace().getIOManager().writeJson(getConfig(), out,true);
+        context.getWorkspace().io().writeJson(getConfig(), out, true);
         return this;
     }
 
@@ -118,7 +118,6 @@ public class LocalMysqlConfigService {
         this.config = config;
         return this;
     }
-
 
     public LocalMysqlDatabaseConfigService getDatabase(String dbName) {
         return getDatabaseOrError(dbName);
@@ -136,7 +135,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlDatabaseConfigService getDatabaseOrError(String appName) {
         LocalMysqlDatabaseConfigService a = getDatabaseOrNull(appName);
         if (a == null) {
-            throw new NutsExecutionException("Database not found :" + appName,2);
+            throw new NutsExecutionException("Database not found :" + appName, 2);
         }
         return a;
     }
@@ -160,7 +159,6 @@ public class LocalMysqlConfigService {
         return a;
     }
 
-
     public LocalMysql getMysqlServer() {
         return app;
     }
@@ -168,7 +166,6 @@ public class LocalMysqlConfigService {
     public NutsApplicationContext getContext() {
         return context;
     }
-
 
     public String getMysqlCommand() {
         String s = getConfig().getMysqlCommand();

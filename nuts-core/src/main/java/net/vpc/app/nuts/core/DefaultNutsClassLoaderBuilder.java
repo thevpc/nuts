@@ -1,21 +1,22 @@
 package net.vpc.app.nuts.core;
 
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.URLUtils;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public class DefaultNutsClassLoaderBuilder implements NutsClassLoaderBuilder {
+
     private NutsQuery query;
-    private NutsWorkspace workspace;
+    private NutsWorkspace ws;
     private ClassLoader parentClassLoader;
 
     public DefaultNutsClassLoaderBuilder(NutsWorkspace workspace) {
-        this.workspace = workspace;
+        this.ws = workspace;
         query = workspace.createQuery();
     }
 
@@ -90,8 +91,12 @@ public class DefaultNutsClassLoaderBuilder implements NutsClassLoaderBuilder {
         List<NutsDefinition> nutsDefinitions = query.mainAndDependencies().fetch();
         URL[] all = new URL[nutsDefinitions.size()];
         for (int i = 0; i < all.length; i++) {
-            all[i] = URLUtils.toURL(new File(nutsDefinitions.get(i).getContent().getFile()));
+            try {
+                all[i] = nutsDefinitions.get(i).getContent().getPath().toUri().toURL();
+            } catch (MalformedURLException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
-        return new NutsURLClassLoader(all, parentClassLoader);
+        return new NutsURLClassLoader(ws,all, parentClassLoader);
     }
 }

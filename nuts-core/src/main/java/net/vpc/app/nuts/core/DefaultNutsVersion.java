@@ -135,7 +135,12 @@ public class DefaultNutsVersion implements NutsVersion {
 
     @Override
     public NutsVersion inc(int level) {
-        return new DefaultNutsVersion(incVersion(getValue(), level));
+        return inc(level, 1);
+    }
+
+    @Override
+    public NutsVersion inc(int level, int count) {
+        return new DefaultNutsVersion(incVersion(getValue(), level, count));
     }
 
     @Override
@@ -178,7 +183,7 @@ public class DefaultNutsVersion implements NutsVersion {
         return pattern.equals(version);
     }
 
-    public static String incVersion(String oldVersion, int level) {
+    public static String incVersion(String oldVersion, int level, int count) {
         VersionParts parts = splitVersionParts2(oldVersion);
         int digitCount = parts.getDigitCount();
         if (digitCount == 0) {
@@ -192,7 +197,7 @@ public class DefaultNutsVersion implements NutsVersion {
             parts.addDigit(0, ".");
         }
         VersionPart digit = parts.getDigit(level);
-        digit.string = String.valueOf(Long.parseLong(digit.string) + 1);
+        digit.string = String.valueOf(Long.parseLong(digit.string) + count);
         return parts.toString();
     }
 

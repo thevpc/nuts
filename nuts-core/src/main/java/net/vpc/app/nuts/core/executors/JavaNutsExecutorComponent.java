@@ -35,6 +35,7 @@ import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 import net.vpc.common.util.Convert;
@@ -67,7 +68,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        String contentFile = nutsMainDef.getContent().getFile();
+        Path contentFile = nutsMainDef.getContent().getPath();
         JavaExecutorOptions joptions = new JavaExecutorOptions(
                 nutsMainDef, executionContext.getArgs(),
                 executionContext.getExecutorOptions(),
@@ -85,7 +86,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         HashMap<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().getConfigManager().getOptions().getExportedBootArgumentsString();
+        String bootArgumentsString = executionContext.getWorkspace().config().getOptions().getExportedBootArgumentsString();
         if (!StringUtils.isEmpty(bootArgumentsString)) {
             osEnv.put("nuts_boot_args", bootArgumentsString);
             joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -108,7 +109,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         if (currentDepth > maxDepth) {
             System.err.println("############# Process Stack Overflow Error");
             System.err.println("It is very likely that you executed an infinite process creation recusion in your program.");
-            System.err.println("At least "+currentDepth+" (>="+maxDepth+") prcosses were created.");
+            System.err.println("At least " + currentDepth + " (>=" + maxDepth + ") prcosses were created.");
             System.err.println("Are ou aware of such misconception ?");
             System.err.println("Sorry but nee to end all of this disgracely...");
             System.exit(233);
@@ -130,10 +131,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         if (joptions.isJar()) {
             xargs.add("-jar");
-            xargs.add(executionContext.getWorkspace().getFormatManager().createIdFormat().format(nutsMainDef.getId()));
+            xargs.add(executionContext.getWorkspace().formatter().createIdFormat().format(nutsMainDef.getId()));
 
             args.add("-jar");
-            args.add(contentFile);
+            args.add(contentFile.toString());
         } else {
             xargs.add("--nuts-path");
             xargs.add(StringUtils.join(File.pathSeparator, joptions.getNutsPath()));
@@ -161,7 +162,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
 
-        File directory = StringUtils.isEmpty(joptions.getDir()) ? null : new File(executionContext.getWorkspace().getIOManager().expandPath(joptions.getDir()));
+        String directory = StringUtils.isEmpty(joptions.getDir()) ? null : executionContext.getWorkspace().io().expandPath(joptions.getDir());
         return CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory,

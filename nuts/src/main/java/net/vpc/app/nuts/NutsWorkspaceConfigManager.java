@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.PrintStream;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -70,7 +71,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     boolean isValidWorkspaceFolder();
 
-    String getWorkspaceLocation();
+    Path getWorkspaceLocation();
 
     boolean isReadOnly();
 
@@ -78,7 +79,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     Map<String, String> getRuntimeProperties();
 
-    String resolveNutsJarFile();
+    Path resolveNutsJarFile();
 
     void addImports(String... importExpression);
 
@@ -139,7 +140,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsSdkLocation findSdkByName(String name, String locationName);
 
-    NutsSdkLocation findSdkByPath(String name, String path);
+    NutsSdkLocation findSdkByPath(String name, Path path);
 
     NutsSdkLocation findSdkByVersion(String name, String version);
 
@@ -159,9 +160,9 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsSdkLocation[] searchJdkLocations(PrintStream out);
 
-    NutsSdkLocation[] searchJdkLocations(String path, PrintStream out);
+    NutsSdkLocation[] searchJdkLocations(Path path, PrintStream out);
 
-    NutsSdkLocation resolveJdkLocation(String path);
+    NutsSdkLocation resolveJdkLocation(Path path);
 
     NutsWorkspaceOptions getOptions();
 
@@ -185,9 +186,9 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     List<NutsWorkspaceCommand> findCommands(NutsId id);
 
-    String getHomeLocation(NutsStoreLocation folderType);
+    Path getHomeLocation(NutsStoreLocation folderType);
 
-    String getStoreLocation(NutsStoreLocation folderType);
+    Path getStoreLocation(NutsStoreLocation folderType);
 
     void setStoreLocation(NutsStoreLocation folderType, String location);
 
@@ -201,9 +202,9 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsStoreLocationLayout getStoreLocationLayout();
 
-    String getStoreLocation(String id, NutsStoreLocation folderType);
+    Path getStoreLocation(String id, NutsStoreLocation folderType);
 
-    String getStoreLocation(NutsId id, NutsStoreLocation folderType);
+    Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
 
     NutsOsFamily getPlatformOsFamily();
 

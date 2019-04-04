@@ -2,8 +2,8 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
@@ -17,7 +17,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     boolean isConfigurationChanged();
 
-    File getConfigFile();
+    Path getConfigFile();
 
     boolean load();
 

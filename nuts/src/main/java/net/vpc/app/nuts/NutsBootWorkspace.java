@@ -335,7 +335,7 @@ public class NutsBootWorkspace {
                 info.workspaceClassLoader, options.copy());
         if (recover) {
 //            info.nutsWorkspace.getConfigManager().setBootConfig(new NutsBootConfig());
-            if (!info.nutsWorkspace.getConfigManager().isReadOnly()) {
+            if (!info.nutsWorkspace.config().isReadOnly()) {
                 info.nutsWorkspace.save();
             }
         }
@@ -988,10 +988,6 @@ public class NutsBootWorkspace {
     }
 
     private String expandWorkspacePath(String workspace) {
-        String home = getHome(NutsStoreLocation.CONFIG);
-        if (home == null) {
-            throw new NutsIllegalArgumentException("Null Home");
-        }
         if (NutsUtils.isEmpty(workspace)) {
             workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
         }
@@ -1001,10 +997,18 @@ public class NutsBootWorkspace {
         } else if (workspace.equals("~~")) {
             throw new NutsIllegalArgumentException("Workspace can not span over hole nuts home");
         } else if (uws.indexOf('/') < 0) {
+            String home = getHome(NutsStoreLocation.CONFIG);
+            if (home == null) {
+                throw new NutsIllegalArgumentException("Null Home");
+            }
             return home + File.separator + workspace;
         } else if (uws.startsWith("~/")) {
             return System.getProperty("user.home") + File.separator + workspace.substring(2);
         } else if (uws.startsWith("~~/")) {
+            String home = getHome(NutsStoreLocation.CONFIG);
+            if (home == null) {
+                throw new NutsIllegalArgumentException("Null Home");
+            }
             return home + File.separator + workspace.substring(3);
         } else {
             return NutsUtils.getAbsolutePath(workspace);
@@ -1037,7 +1041,7 @@ public class NutsBootWorkspace {
                 }
                 PrintStream out = workspace.getTerminal().getFormattedOut();
 
-                workspace.getFormatManager().createWorkspaceVersionFormat()
+                workspace.formatter().createWorkspaceVersionFormat()
                         .addOptions(o.getApplicationArguments())
                         .format(out);
                 out.println();
@@ -1068,7 +1072,7 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 PrintStream out = workspace.getTerminal().getFormattedOut();
-                workspace.getFormatManager().createWorkspaceInfoFormat()
+                workspace.formatter().createWorkspaceInfoFormat()
                         .addOptions(o.getApplicationArguments())
                         .format(out);
                 out.println();
@@ -1281,7 +1285,7 @@ public class NutsBootWorkspace {
 //            return 0;
 //        }
         NutsWorkspaceOptions o = getOptions();
-        NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.getConfigManager();
+        NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.config();
         boolean force = false;
         if (readArguments) {
             for (String argument : o.getApplicationArguments()) {
@@ -1310,9 +1314,9 @@ public class NutsBootWorkspace {
             log.log(Level.CONFIG, "Deleting all folders for Workspace : {0}", runningBootConfig.getWorkspace());
         }
         if (conf != null) {
-            folders.add(new File(conf.getWorkspaceLocation()));
+            folders.add(conf.getWorkspaceLocation().toFile());
             for (NutsStoreLocation value : NutsStoreLocation.values()) {
-                folders.add(new File(conf.getStoreLocation(value)));
+                folders.add(conf.getStoreLocation(value).toFile());
             }
         } else {
             folders.add(new File(runningBootConfig.getWorkspace()));
@@ -1337,7 +1341,7 @@ public class NutsBootWorkspace {
         if (log.isLoggable(Level.CONFIG)) {
             log.log(Level.CONFIG, "Running workspace pre-command : cleanup");
         }
-        NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.getConfigManager();
+        NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.config();
         boolean force = false;
         boolean yes = Boolean.TRUE.equals(o.getDefaultResponse());
         boolean no = Boolean.FALSE.equals(o.getDefaultResponse());
@@ -1364,9 +1368,9 @@ public class NutsBootWorkspace {
         List<File> folders = new ArrayList<>();
         if (conf != null) {
 //            folders.add(new File(conf.getStoreLocation(NutsStoreLocation.LIB)));
-            folders.add(new File(conf.getStoreLocation(NutsStoreLocation.CACHE)));
-            folders.add(new File(conf.getStoreLocation(NutsStoreLocation.LOGS)));
-            folders.add(new File(conf.getStoreLocation(NutsStoreLocation.TEMP)));
+            folders.add(conf.getStoreLocation(NutsStoreLocation.CACHE).toFile());
+            folders.add(conf.getStoreLocation(NutsStoreLocation.LOGS).toFile());
+            folders.add(conf.getStoreLocation(NutsStoreLocation.TEMP).toFile());
         } else {
 //            folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.LIB)));
             folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)));

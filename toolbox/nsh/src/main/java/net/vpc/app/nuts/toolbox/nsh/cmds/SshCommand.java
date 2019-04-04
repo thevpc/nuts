@@ -40,6 +40,7 @@ import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,12 +144,12 @@ public class SshCommand extends AbstractNutsCommand {
                         }
                     }
                     if(goodJar==null){
-                        String from = context.getWorkspace().getConfigManager().resolveNutsJarFile();
+                        Path from = context.getWorkspace().config().resolveNutsJarFile();
                         if(from==null){
                             throw new NutsExecutionException("Unable to resolve Nuts Jar File",2);
                         }else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
-                            sshSession.setFailFast(true).copyLocalToRemote(from, workspace+"/cache/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
+                            sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace+"/cache/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar", true);
                             goodJar=workspace+"/cache/bootstrap/bootstrap/net/vpc/app/nuts/nuts/CURRENT/nuts.jar";
 //                            NutsDefinition[] deps = context.getWorkspace().fetchDependencies(new NutsDependencySearch(context.getWorkspace().getRuntimeId())
 //                                    .setIncludeMain(true),

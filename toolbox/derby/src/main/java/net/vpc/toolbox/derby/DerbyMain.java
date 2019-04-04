@@ -13,6 +13,9 @@ import net.vpc.common.commandline.CommandLine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +24,9 @@ import java.util.List;
  */
 public class DerbyMain extends NutsApplication {
 
-    private File derbyBinHome = new File(".");
+    private Path derbyBinHome = Paths.get(".");
     private String derbyVersion = null;
-    private String derbyDataHome = null;
+    private Path derbyDataHome = null;
     private Command cmd = Command.start;
     private String host = null;
     private int port = -1;
@@ -48,6 +51,7 @@ public class DerbyMain extends NutsApplication {
     public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
         this.appContext = appContext;
+        NutsWorkspace ws=appContext.getWorkspace();
         CommandLine cmdLine = new CommandLine(args);
         Argument a;
         while (cmdLine.hasNext()) {
@@ -56,9 +60,9 @@ public class DerbyMain extends NutsApplication {
             } else if ((a = cmdLine.readStringOption("--derby-version")) != null) {
                 derbyVersion = a.getStringValue();
             } else if ((a = cmdLine.readStringOption("--db")) != null) {
-                derbyDataHome = getAbsoluteFile(a.getStringValue(), appContext.getVarFolder());
+                derbyDataHome = ws.io().path(getAbsoluteFile(a.getStringValue(), appContext.getVarFolder().toString()));
             } else if ((a = cmdLine.readStringOption("--netbeans")) != null) {
-                derbyDataHome = System.getProperty("user.home") + "/.netbeans-derby";
+                derbyDataHome = ws.io().path(System.getProperty("user.home") + "/.netbeans-derby");
             } else if ((a = cmdLine.readStringOption("-h", "--host")) != null) {
                 host = a.getStringValue();
             } else if ((a = cmdLine.readStringOption("-p", "--port")) != null) {
@@ -94,28 +98,27 @@ public class DerbyMain extends NutsApplication {
                 cmdLine.unexpectedArgument("derby");
             }
         }
-        NutsWorkspace ws = appContext.getWorkspace();
         List<String> command = new ArrayList<>();
         List<String> executorOptions = new ArrayList<>();
-        derbyBinHome = new File(ws.getConfigManager().getStoreLocation(resolveNutsId(), NutsStoreLocation.PROGRAMS), "lib");
+        derbyBinHome = ws.config().getStoreLocation(resolveNutsId(), NutsStoreLocation.PROGRAMS).resolve("lib");
         String v = derbyVersion;
-        String h = derbyDataHome;
+        Path h = derbyDataHome;
         if (v == null) {
             NutsId best = ws.createQuery().addId("org.apache.derby:derbynet").latestVersions().findOne();
             v = best.getVersion().toString();
         }
         if (h == null) {
-            h = new File(appContext.getVarFolder(), "derby-db").getPath();
+            h = appContext.getVarFolder().resolve("derby-db");
         }
-        File derby = download("org.apache.derby:derby#" + v);
-        File derbynet = download("org.apache.derby:derbynet#" + v);
-        File derbyoptionaltools = download("org.apache.derby:derbyoptionaltools#" + v);
-        File derbyclient = download("org.apache.derby:derbyclient#" + v);
-        File derbytools = download("org.apache.derby:derbytools#" + v);
+        Path derby = download("org.apache.derby:derby#" + v);
+        Path derbynet = download("org.apache.derby:derbynet#" + v);
+        Path derbyoptionaltools = download("org.apache.derby:derbyoptionaltools#" + v);
+        Path derbyclient = download("org.apache.derby:derbyclient#" + v);
+        Path derbytools = download("org.apache.derby:derbytools#" + v);
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)
         command.add("org.apache.derby:derbytools#" + v);
         executorOptions.add(
-                "--classpath=" + derby.getPath() + ":" + derbynet.getPath() + ":" + derbyclient.getPath() + derbytools.getPath() + derbyoptionaltools.getPath()
+                "--classpath=" + derby + ":" + derbynet + ":" + derbyclient + ":" + derbytools + ":" + derbyoptionaltools
         );
         if (appContext.isVerbose()) {
             executorOptions.add("--show-command");
@@ -148,12 +151,12 @@ public class DerbyMain extends NutsApplication {
                 .exec().getResult();
     }
 
-    private File download(String id) {
-        final NutsId iid = appContext.getWorkspace().getParseManager().parseId(id);
-        File downloadBaseFolder = new File(derbyBinHome, iid.getVersion().getValue());
-        File targetFile = new File(downloadBaseFolder, iid.getName() + ".jar");
-        if (!targetFile.exists()) {
-            appContext.getWorkspace().copyTo(id, targetFile.getPath(), null);
+    private Path download(String id) {
+        final NutsId iid = appContext.getWorkspace().parser().parseId(id);
+        Path downloadBaseFolder = derbyBinHome.resolve(iid.getVersion().getValue());
+        Path targetFile = downloadBaseFolder.resolve(iid.getName() + ".jar");
+        if (!Files.exists(targetFile)) {
+            appContext.getWorkspace().copyTo(id, targetFile, null);
             if (appContext.isVerbose()) {
                 appContext.getSession().getTerminal().getOut().println("downloading " + id + " to " + targetFile);
             }

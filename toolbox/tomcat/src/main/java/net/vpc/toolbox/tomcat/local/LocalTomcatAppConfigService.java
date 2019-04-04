@@ -1,16 +1,23 @@
 package net.vpc.toolbox.tomcat.local;
 
 import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.RuntimeIOException;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class LocalTomcatAppConfigService extends LocalTomcatServiceBase{
+public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
+
     private String name;
     private LocalTomcatAppConfig config;
     private LocalTomcatConfigService tomcat;
@@ -23,6 +30,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase{
         this.context = tomcat.getTomcatServer().getContext();
     }
 
+    @Override
     public LocalTomcatAppConfig getConfig() {
         return config;
     }
@@ -31,59 +39,67 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase{
         return tomcat;
     }
 
-    public File getArchiveFile(String version) {
+    public Path getArchiveFile(String version) {
         String runningFolder = tomcat.getConfig().getArchiveFolder();
         if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = new File(context.getVarFolder(), "archive").getPath();
+            runningFolder = context.getVarFolder().resolve("archive").toString();
         }
         String packaging = "war";
-        return new File(runningFolder + "/" + name + "-" + version + "." + packaging);
+        return context.getWorkspace().io().path(runningFolder).resolve(name + "-" + version + "." + packaging);
     }
 
-    public File getRunningFile() {
+    public Path getRunningFile() {
         String s = getConfig().getSourceFilePath();
-        if(!TomcatUtils.isEmpty(s)){
-            return new File(s);
+        if (!TomcatUtils.isEmpty(s)) {
+            return context.getWorkspace().io().path(s);
         }
-        String runningFolder = tomcat.getConfig().getRunningFolder();
-        if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = new File(context.getVarFolder(), "running").getPath();
+        String _runningFolder = tomcat.getConfig().getRunningFolder();
+        Path runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : context.getWorkspace().io().path(_runningFolder);
+        if (runningFolder == null) {
+            runningFolder = context.getVarFolder().resolve("running");
         }
         String packaging = "war";
-        return new File(runningFolder + "/" + name + "." + packaging);
+        return runningFolder.resolve(name + "." + packaging);
     }
 
-    public File getVersionFile() {
-        return new File(new File(context.getConfigFolder()), name + ".version");
+    public Path getVersionFile() {
+        return context.getConfigFolder().resolve(name + ".version");
     }
 
     public String getCurrentVersion() {
-        if (getVersionFile().exists()) {
-            return IOUtils.loadString(getVersionFile());
+        Path f = getVersionFile();
+        if (Files.exists(f)) {
+            try {
+                return new String(Files.readAllBytes(f));
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
         return null;
     }
 
     public LocalTomcatAppConfigService setCurrentVersion(String version) {
-        if (version == null || version.trim().isEmpty()) {
-            context.out().printf("==[%s]== unset version.\n",getFullName());
-            if(getVersionFile().delete()){
-                context.out().printf("==[%s]== [LOG] delete version file [[%s]].\n",getFullName(),getVersionFile());
+        try {
+            if (version == null || version.trim().isEmpty()) {
+                context.out().printf("==[%s]== unset version.\n", getFullName());
+                Files.delete(getVersionFile());
+                context.out().printf("==[%s]== [LOG] delete version file [[%s]].\n", getFullName(), getVersionFile());
+                Files.delete(getRunningFile());
+                context.out().printf("==[%s]== [LOG] delete running file [[%s]].\n", getFullName(), getRunningFile());
+            } else {
+                context.out().printf("==[%s]== set version [[%s]].\n", getFullName(), version);
+                context.out().printf("==[%s]== [LOG] updating version file [[%s]] to [[%s]].\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), getVersionFile());
+                Files.write(getVersionFile(), version.getBytes());
+                context.out().printf("==[%s]== [LOG] updating archive file [[%s]] -> [[%s]].\n", getFullName(), getArchiveFile(version), getRunningFile());
+                Files.copy(getArchiveFile(version), getRunningFile());
             }
-            if(getRunningFile().delete()){
-                context.out().printf("==[%s]== [LOG] delete running file [[%s]].\n",getFullName(),getRunningFile());
-            }
-        } else {
-            context.out().printf("==[%s]== set version [[%s]].\n",getFullName(),version);
-            context.out().printf("==[%s]== [LOG] updating version file [[%s]] to [[%s]].\n",getFullName(),StringUtils.coalesce(version,"<DEFAULT>"),getVersionFile());
-            IOUtils.saveString(version, getVersionFile());
-            context.out().printf("==[%s]== [LOG] updating archive file [[%s]] -> [[%s]].\n",getFullName(),getArchiveFile(version), getRunningFile());
-            IOUtils.copy(getArchiveFile(version), getRunningFile());
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return this;
     }
 
-    public File getDeployFile() {
+    public Path getDeployFile() {
         LocalTomcatDomainConfigService d = tomcat.getDomainOrCreate(getConfig().getDomain());
         String deployName = getConfig().getDeployName();
         if (TomcatUtils.isEmpty(deployName)) {
@@ -92,52 +108,64 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase{
         if (!deployName.endsWith(".war")) {
             deployName += ".war";
         }
-        return new File(d.getDomainDeployPath(), deployName);
+        return d.getDomainDeployPath().resolve(deployName);
     }
 
-    public File getDeployFolder() {
-        File f = getDeployFile();
-        return new File(f.getParentFile(), f.getName().substring(0, f.getName().length() - ".war".length()));
+    public Path getDeployFolder() {
+        Path f = getDeployFile();
+        String fn = f.getFileName().toString();
+        return f.resolveSibling(fn.substring(0, fn.length() - ".war".length()));
     }
 
     public LocalTomcatAppConfigService resetDeployment() {
-        File deployFile = getDeployFile();
-        File deployFolder = getDeployFolder();
-        context.out().printf("==[%s]== reset deployment (delete [[%s]] ).\n",getFullName(),deployFile);
-        IOUtils.delete(deployFile);
-        IOUtils.delete(deployFolder);
+        Path deployFile = getDeployFile();
+        Path deployFolder = getDeployFolder();
+        context.out().printf("==[%s]== reset deployment (delete [[%s]] ).\n", getFullName(), deployFile);
+        try {
+            Files.delete(deployFile);
+            Files.delete(deployFolder);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         return this;
     }
 
     public LocalTomcatAppConfigService deploy(String version) {
-        if(TomcatUtils.isEmpty(version)){
-            version=getCurrentVersion();
+        if (TomcatUtils.isEmpty(version)) {
+            version = getCurrentVersion();
         }
-        File runningFile = getRunningFile();
-        File deployFile = getDeployFile();
-        context.out().printf("==[%s]== deploy [[%s]] as file [[%s]] to [[%s]].\n",getFullName(),StringUtils.coalesce(version,"<DEFAULT>"),runningFile,deployFile);
-        IOUtils.copy(runningFile, deployFile);
+        Path runningFile = getRunningFile();
+        Path deployFile = getDeployFile();
+        context.out().printf("==[%s]== deploy [[%s]] as file [[%s]] to [[%s]].\n", getFullName(), StringUtils.coalesce(version, "<DEFAULT>"), runningFile, deployFile);
+        try {
+            Files.copy(runningFile, deployFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         return this;
     }
 
     public LocalTomcatAppConfigService install(String version, String file, boolean setVersion) {
-        File f = new File(file);
-        if (!f.isFile()) {
-            throw new RuntimeIOException("File not found " + f.getPath());
+        try {
+            Path f = context.getWorkspace().io().path(file);
+            if (!Files.isRegularFile(f)) {
+                throw new UncheckedIOException(new IOException("File not found " + f));
+            }
+            if (StringUtils.isEmpty(version)) {
+                version = getCurrentVersion();
+            }
+            Path domainDeployPath = getArchiveFile(version);
+            Files.createDirectories(domainDeployPath.getParent());
+            context.out().printf("==[%s]== install version [[%s]] : [[%s]]->[[%s]].\n", getFullName(), version, f, domainDeployPath);
+            Files.copy(f, domainDeployPath);
+            if (setVersion) {
+                setCurrentVersion(version);
+            }
+            return this;
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
-        if(StringUtils.isEmpty(version)){
-            version=getCurrentVersion();
-        }
-        File domainDeployPath = getArchiveFile(version);
-        domainDeployPath.getParentFile().mkdirs();
-        context.out().printf("==[%s]== install version [[%s]] : [[%s]]->[[%s]].\n",getFullName(),version,f,domainDeployPath);
-        IOUtils.copy(f, domainDeployPath);
-        if (setVersion) {
-            setCurrentVersion(version);
-        }
-        return this;
     }
-
 
 //
 //    public void deploy(String configName, String appName, String version, String file) {
@@ -149,24 +177,26 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase{
 //            Files.copy(ws.getStoreLocation())
 //        }
 //    }
-
+    @Override
     public LocalTomcatAppConfigService remove() {
         tomcat.getConfig().getApps().remove(name);
-        context.out().printf("==[%s]== app removed.\n",getFullName());
+        context.out().printf("==[%s]== app removed.\n", getFullName());
         return this;
     }
-    public String getFullName(){
-        return tomcat.getName()+"/"+getName();
+
+    public String getFullName() {
+        return tomcat.getName() + "/" + getName();
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public LocalTomcatAppConfigService write(PrintStream out) {
         TomcatUtils.writeJson(out, getConfig(), context.getWorkspace());
         return this;
     }
-
 
 }

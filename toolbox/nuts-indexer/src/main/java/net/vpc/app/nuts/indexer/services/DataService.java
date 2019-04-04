@@ -146,13 +146,13 @@ public class DataService {
                     .setIncludeFile(false)
                     .find();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", ws.getIOManager().
+            row.put("allDependencies", ws.io().
                     toJsonString(allDependencies.stream().map(Object::toString).collect(Collectors.toList()), true));
             updateData(dirPath, oldRow, row);
         }
-        String[] array = ws.getIOManager().readJson(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = ws.io().readJson(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.parser().parseId(s)))
                 .collect(Collectors.toList());
         return allDependencies;
     }
@@ -163,9 +163,9 @@ public class DataService {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = ws.getIOManager().readJson(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = ws.io().readJson(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.getParseManager().parseId(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.parser().parseId(s)))
                 .collect(Collectors.toList());
         return dependencies;
     }

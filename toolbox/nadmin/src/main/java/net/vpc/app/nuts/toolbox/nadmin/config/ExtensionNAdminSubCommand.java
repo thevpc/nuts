@@ -29,12 +29,12 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.readAll("add extension", "ax")) {
             String extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context.getWorkspace())).getStringExpression();
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().getExtensionManager().addWorkspaceExtension(context.getWorkspace().getParseManager().parseId(extensionId), context.getSession());
+                context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
             }
             while (cmdLine.hasNext()) {
                 extensionId = cmdLine.readRequiredNonOption(new ExtensionNonOption("ExtensionNutsId", context.getWorkspace())).getStringExpression();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().getExtensionManager().addWorkspaceExtension(context.getWorkspace().getParseManager().parseId(extensionId), context.getSession());
+                    context.getWorkspace().extensions().addWorkspaceExtension(context.getWorkspace().parser().parseId(extensionId), context.getSession());
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -45,7 +45,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             PrintStream out = context.getTerminal().getFormattedOut();
             if (cmdLine.readAll("list extensions", "lx")) {
                 if (cmdLine.isExecMode()) {
-                    for (NutsWorkspaceExtension extension : context.getWorkspace().getExtensionManager().getWorkspaceExtensions()) {
+                    for (NutsWorkspaceExtension extension : context.getWorkspace().extensions().getWorkspaceExtensions()) {
                         NutsDescriptor desc = context.getWorkspace().fetch(extension.getWiredId().toString()).setSession(context.getSession()).fetchDescriptor();
                         String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
@@ -62,7 +62,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                 return true;
             } else if (cmdLine.readAll("find extensions", "fx")) {
                 if (cmdLine.isExecMode()) {
-                    for (NutsExtensionInfo extension : context.getWorkspace().getExtensionManager().findWorkspaceExtensions(context.getSession())) {
+                    for (NutsExtensionInfo extension : context.getWorkspace().extensions().findWorkspaceExtensions(context.getSession())) {
                         NutsDescriptor desc = context.getWorkspace().fetch(extension.getId().toString()).setSession(context.getSession()).fetchDescriptor();
                         String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
@@ -75,12 +75,12 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                 return true;
             } else if (cmdLine.readAll("list extension points", "lxp")) {
                 if (cmdLine.isExecMode()) {
-                    for (Class extension : context.getWorkspace().getExtensionManager().getExtensionPoints()) {
+                    for (Class extension : context.getWorkspace().extensions().getExtensionPoints()) {
                         out.printf("[[%s]]:\n", extension.getName());
-                        for (Class impl : context.getWorkspace().getExtensionManager().getExtensionTypes(extension)) {
+                        for (Class impl : context.getWorkspace().extensions().getExtensionTypes(extension)) {
                             out.printf("\t%s\n", impl.getName());
                         }
-                        for (Object impl : context.getWorkspace().getExtensionManager().getExtensionObjects(extension)) {
+                        for (Object impl : context.getWorkspace().extensions().getExtensionObjects(extension)) {
                             if (impl != null) {
                                 out.printf("\t%s :: %s\n", impl.getClass().getName(), impl);
                             } else {

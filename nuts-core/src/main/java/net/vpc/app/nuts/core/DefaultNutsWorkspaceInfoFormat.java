@@ -73,7 +73,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     @Override
     public void format(PrintStream out) {
 
-        NutsWorkspaceConfigManager configManager = ws.getConfigManager();
+        NutsWorkspaceConfigManager configManager = ws.config();
         if (options.contains("min")) {
             out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
         } else {
@@ -87,7 +87,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             }
             int len = 23;
             for (String extraKey : extraKeys) {
-                int x = ws.getParseManager().escapeText(extraKey).length();
+                int x = ws.parser().escapeText(extraKey).length();
                 if (x > len) {
                     len = x;
                 }
@@ -113,7 +113,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             }
 
             props.put("nuts-runtime-path", StringUtils.join(":", runtimeClassPath));
-            props.put("nuts-workspace", configManager.getWorkspaceLocation());
+            props.put("nuts-workspace", configManager.getWorkspaceLocation().toString());
             props.put("nuts-workspace-id", configManager.getUuid());
             props.put("nuts-secure", String.valueOf(configManager.isSecure()));
             props.put("nuts-store-layout", String.valueOf(configManager.getStoreLocationLayout()));
@@ -125,30 +125,30 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("nuts-option-read-only", String.valueOf(configManager.getOptions().isReadOnly()));
             props.put("nuts-option-skip-companions", String.valueOf(configManager.getOptions().isSkipInstallCompanions()));
             for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-                props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType));
+                props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType).toString());
             }
             props.put("java-version", System.getProperty("java.version"));
             props.put("java-executable", CoreNutsUtils.resolveJavaCommand(null));
             props.put("java-classpath", System.getProperty("java.class.path"));
             props.put("java-library-path", System.getProperty("java.library.path"));
-            props.put("os-name", ws.getConfigManager().getPlatformOs().toString());
-            props.put("os-family", ws.getConfigManager().getPlatformOsFamily().name().toLowerCase());
-            if(ws.getConfigManager().getPlatformOsDist()!=null) {
-                props.put("os-dist", ws.getConfigManager().getPlatformOsDist().toString());
+            props.put("os-name", ws.config().getPlatformOs().toString());
+            props.put("os-family", ws.config().getPlatformOsFamily().name().toLowerCase());
+            if(ws.config().getPlatformOsDist()!=null) {
+                props.put("os-dist", ws.config().getPlatformOsDist().toString());
             }
-            props.put("os-arch", ws.getConfigManager().getPlatformArch().toString());
+            props.put("os-arch", ws.config().getPlatformArch().toString());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             props.put("user-name", System.getProperty("user.name"));
             props.put("user-home", System.getProperty("user.home"));
             props.put("user-dir", System.getProperty("user.dir"));
-            props.put("creation-started", dateFormat.format(ws.getConfigManager().getCreationStartTimeMillis()));
-            props.put("creation-finished", dateFormat.format(ws.getConfigManager().getCreationFinishTimeMillis()));
-            props.put("creation-within", Chronometer.formatPeriodMilli(ws.getConfigManager().getCreationTimeMillis()).trim());
+            props.put("creation-started", dateFormat.format(ws.config().getCreationStartTimeMillis()));
+            props.put("creation-finished", dateFormat.format(ws.config().getCreationFinishTimeMillis()));
+            props.put("creation-within", Chronometer.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
             for (String extraKey : extraKeys) {
                 props.put(extraKey, extraProperties.getProperty(extraKey));
             }
             for (String extraKey : props.keySet()) {
-                int x = ws.getParseManager().escapeText(extraKey).length();
+                int x = ws.parser().escapeText(extraKey).length();
                 if (x > len) {
                     len = x;
                 }
@@ -190,7 +190,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             String space = StringUtils.formatLeft("", len + 3) + "[[%s]]";
             String[] split = value.split(fancySep);
             if (split.length == 0) {
-                out.print(StringUtils.formatLeft(key, len - key.length() + ws.getParseManager().escapeText(key).length()) + " : ");
+                out.print(StringUtils.formatLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : ");
             } else {
                 for (int i = 0; i < split.length; i++) {
                     String s = split[i];
@@ -203,7 +203,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
             }
         } else {
-            out.printf(StringUtils.formatLeft(key, len - key.length() + ws.getParseManager().escapeText(key).length()) + " : [[%s]]", value);
+            out.printf(StringUtils.formatLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
         }
     }
 }

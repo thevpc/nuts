@@ -8,15 +8,21 @@ import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.mysql.remote.config.RemoteMysqlConfig;
-import net.vpc.toolbox.mysql.util.MysqlUtils;
 import net.vpc.toolbox.mysql.util.UserCancelException;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RemoteMysql {
+
     public NutsApplicationContext context;
 
     public RemoteMysql(NutsApplicationContext context) {
@@ -109,7 +115,7 @@ public class RemoteMysql {
                     instanceName = a.getStringValue();
                     c = loadOrCreateMysqlConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException("instance already defined",2);
+                    throw new NutsExecutionException("instance already defined", 2);
                 }
             } else if ((a = args.readStringOption("--server")) != null) {
                 if (c == null) {
@@ -156,15 +162,15 @@ public class RemoteMysql {
                 RemoteMysqlDatabaseConfigService db = c.getDatabaseOrError(appName);
                 if (StringUtils.isEmpty(db.getConfig().getServer())) {
                     ok = false;
-                    db.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefautValue( "ssh://login@myserver")));
+                    db.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefautValue("ssh://login@myserver")));
                 }
                 if (StringUtils.isEmpty(db.getConfig().getRemoteInstance())) {
                     ok = false;
-                    db.getConfig().setRemoteInstance(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?",  c.getName(), "--remote-instance").setDefautValue("default")));
+                    db.getConfig().setRemoteInstance(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-instance").setDefautValue("default")));
                 }
                 if (StringUtils.isEmpty(db.getConfig().getRemoteTempPath())) {
                     ok = false;
-                    db.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?",  c.getName(), "--remote-temp-path").setDefautValue("/tmp")));
+                    db.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefautValue("/tmp")));
                 }
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
                     if (StringUtils.isEmpty(aa.getConfig().getPath())) {
@@ -179,7 +185,6 @@ public class RemoteMysql {
         c.saveConfig();
         return 0;
     }
-
 
     private int remove(CommandLine args) {
         String instance = null;
@@ -226,7 +231,6 @@ public class RemoteMysql {
         return 0;
     }
 
-
     private int push(CommandLine args) {
         String conf = null;
         String app = null;
@@ -245,28 +249,23 @@ public class RemoteMysql {
         return 0;
     }
 
-
     public RemoteMysqlConfigService[] listConfig() {
         List<RemoteMysqlConfigService> all = new ArrayList<>();
-        File[] configFiles = new File(context.getConfigFolder()).listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(".config");
-            }
-        });
-        if (configFiles != null) {
-            for (File file1 : configFiles) {
+        try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(context.getConfigFolder(), x -> x.getFileName().toString().endsWith(".config"))) {
+            for (Path file1 : configFiles) {
                 try {
-                    RemoteMysqlConfigService c = loadMysqlConfig(file1.getName().substring(0, file1.getName().length() - ".config".length()));
+                    String nn = file1.getFileName().toString();
+                    RemoteMysqlConfigService c = loadMysqlConfig(nn.substring(0, nn.length() - ".config".length()));
                     all.add(c);
                 } catch (Exception ex) {
                     //ignore
                 }
             }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return all.toArray(new RemoteMysqlConfigService[0]);
     }
-
 
     public RemoteMysqlConfigService loadMysqlConfig(String name) {
         RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, this);

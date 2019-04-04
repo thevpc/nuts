@@ -59,7 +59,7 @@ public class LoginCommand extends AbstractNutsCommand {
                     if (!NutsConstants.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {
                         password = context.getTerminal().readPassword("Password:");
                     }
-                    context.getWorkspace().getSecurityManager().login(login, password);
+                    context.getWorkspace().security().login(login, password);
                 }
             }
         }

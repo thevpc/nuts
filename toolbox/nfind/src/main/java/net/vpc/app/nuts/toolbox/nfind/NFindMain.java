@@ -15,8 +15,8 @@ import net.vpc.common.commandline.format.TreeNodeFormatter;
 import net.vpc.common.strings.StringUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.util.*;
 import net.vpc.common.util.Converter;
 import net.vpc.common.util.IteratorBuilder;
@@ -418,7 +418,7 @@ public class NFindMain extends NutsApplication {
             switch (findContext.display) {
                 case "id":
                 case "dependencies": {
-                    Set<String> imports = new HashSet<String>(Arrays.asList(ws.getConfigManager().getImports()));
+                    Set<String> imports = new HashSet<String>(Arrays.asList(ws.config().getImports()));
                     findContext.out.print(toStringId(findContext, info));
                     findContext.out.println();
                     if (findContext.desc) {
@@ -469,14 +469,14 @@ public class NFindMain extends NutsApplication {
                     break;
                 }
                 case "file": {
-                    File fullName = info.getFile();
+                    Path fullName = info.getFile();
                     if (fullName != null) {
-                        findContext.out.printf("%s\n", fullName.getPath());
+                        findContext.out.printf("%s\n", fullName.toString());
                     }
                     break;
                 }
                 case "class": {
-                    for (NutsExecutionEntry entry : ws.getParseManager().parseExecutionEntries(info.getFile())) {
+                    for (NutsExecutionEntry entry : ws.parser().parseExecutionEntries(info.getFile())) {
                         if (!visitedItems.contains(entry.getName())) {
                             visitedItems.add(entry.getName());
                             findContext.out.printf("%s\n", entry.getName());
@@ -584,7 +584,7 @@ public class NFindMain extends NutsApplication {
         NutsWorkspace ws = findContext.context.getWorkspace();
         NutsSession session = findContext.context.getSession();
         List<NutsDependency> all = new ArrayList<>();
-        NutsId nid = ws.getParseManager().parseId(id);
+        NutsId nid = ws.parser().parseId(id);
         if (!nid.getVersion().isSingleValue()) {
             return new ArrayList<>();
         }
@@ -706,14 +706,14 @@ public class NFindMain extends NutsApplication {
                     format += ("@@FILE NOT FOUND@@ ");
                     format += (format(findContext, dinfo.nuts, dinfo.desc, ws));
                 } else {
-                    format += (dinfo.getFile().getPath());
+                    format += (dinfo.getFile().toString());
                 }
             } else if (findContext.fileNameOnly) {
                 if (dinfo.getFile() == null) {
                     format += ("@@FILE NOT FOUND@@ ");
                     format += (format(findContext, dinfo.nuts, dinfo.desc, ws));
                 } else {
-                    format += (dinfo.getFile().getName());
+                    format += (dinfo.getFile().getFileName().toString());
                 }
             } else {
                 format += format(findContext, dinfo.nuts, dinfo.desc, ws);
@@ -797,7 +797,7 @@ public class NFindMain extends NutsApplication {
                 out.print("@@FILE NOT FOUND@@ ");
                 out.print(format(findContext, info.nuts, info.desc, ws));
             } else {
-                out.print(info.getFile().getPath());
+                out.print(info.getFile().toString());
             }
             return;
         }
@@ -806,7 +806,7 @@ public class NFindMain extends NutsApplication {
                 out.print("@@FILE NOT FOUND@@ ");
                 out.print(format(findContext, info.nuts, info.desc, ws));
             } else {
-                out.print(info.getFile().getName());
+                out.print(info.getFile().getFileName().toString());
             }
             return;
         }
@@ -816,7 +816,7 @@ public class NFindMain extends NutsApplication {
             if (info.getFile() == null) {
                 out.print("?");
             } else {
-                out.print(info.getFile().getPath());
+                out.print(info.getFile().toString());
             }
         }
         if (findContext.showClass) {
@@ -824,7 +824,7 @@ public class NFindMain extends NutsApplication {
             if (info.getFile() == null) {
                 out.print("?");
             } else {
-                NutsExecutionEntry[] cls = ws.getParseManager().parseExecutionEntries(info.getFile());
+                NutsExecutionEntry[] cls = ws.parser().parseExecutionEntries(info.getFile());
                 if (cls.length == 0) {
                     out.print("?");
                 } else if (cls.length == 1) {
@@ -879,7 +879,7 @@ public class NFindMain extends NutsApplication {
 
     private String format(FindContext findContext, NutsId id, String desc, NutsWorkspace ws) {
         StringBuilder sb = new StringBuilder();
-        sb.append(ws.getFormatManager().createIdFormat()
+        sb.append(ws.formatter().createIdFormat()
                 .setHighlightImportedGroup(true)
                 .setHighlightOptional(true)
                 .setHighlightImportedGroup(findContext.highlightImportedGroup)
@@ -893,7 +893,7 @@ public class NFindMain extends NutsApplication {
         );
         if (!StringUtils.isEmpty(desc)) {
             sb.append(" **");
-            sb.append(ws.getParseManager().escapeText(desc));
+            sb.append(ws.parser().escapeText(desc));
             sb.append("**");
         }
         return sb.toString();

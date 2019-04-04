@@ -63,7 +63,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (invokerWorkspace == null) {
             throw new NutsIllegalArgumentException("Missing Workspace");
         }
-        NutsSessionTerminal terminal = invokerWorkspace.getIOManager().createTerminal();
+        NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -98,7 +98,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
         PrintStream out = terminal.getFormattedOut();
         out.printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
-        out.printf("Serving workspace : %s\n", invokerWorkspace.getConfigManager().getWorkspaceLocation());
+        out.printf("Serving workspace : %s\n", invokerWorkspace.config().getWorkspaceLocation());
         MyNutsServer myNutsServer = new MyNutsServer(serverId, port, backlog, address, executor, invokerWorkspace, terminal);
 
         executor.execute(myNutsServer);
@@ -177,9 +177,9 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                 NutsJavaShell cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    PrintStream eout = invokerWorkspace.getIOManager().createPrintStream(out,NutsTerminalMode.FORMATTED);
+                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out,NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
-                                    NutsSessionTerminal terminal = invokerWorkspace.getIOManager().createTerminal();
+                                    NutsSessionTerminal terminal = invokerWorkspace.io().createTerminal();
                                     terminal.setIn(finalAccept.getInputStream());
                                     terminal.setOut(eout);
                                     terminal.setErr(eout);

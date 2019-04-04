@@ -111,7 +111,7 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
 //            }
 
             String ff = formattedLine.toString();
-            int length = ws.getParseManager().filterText(ff).length();
+            int length = ws.parser().filterText(ff).length();
             if(length<minLength){
                 while(length<minLength){
                     length++;

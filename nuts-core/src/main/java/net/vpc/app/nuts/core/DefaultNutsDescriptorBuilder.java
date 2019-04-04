@@ -9,8 +9,12 @@ import net.vpc.common.strings.StringConverterMap;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
+
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
@@ -43,11 +47,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     public DefaultNutsDescriptorBuilder(NutsId id, String alternative, NutsId[] parents, String packaging, boolean executable, boolean nutsApplication, String ext,
-                                        NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
-                                        String[] arch, String[] os, String[] osdist, String[] platform,
-                                        NutsDependency[] dependencies,
-                                        NutsDependency[] standardDependencies,
-                                        String[] locations, Map<String, String> properties) {
+            NutsExecutorDescriptor executor, NutsExecutorDescriptor installer, String name, String description,
+            String[] arch, String[] os, String[] osdist, String[] platform,
+            NutsDependency[] dependencies,
+            NutsDependency[] standardDependencies,
+            String[] locations, Map<String, String> properties) {
         setId(id);
         setAlternative(alternative);
         setPackaging(packaging);
@@ -76,7 +80,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public DefaultNutsDescriptorBuilder(NutsDescriptorBuilder other) {
         set(other);
     }
-
 
     @Override
     public NutsDescriptorBuilder set(NutsDescriptorBuilder other) {
@@ -189,7 +192,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //        this.ext = StringUtils.trim(ext);
 //        return this;
 //    }
-
     public NutsDescriptorBuilder addPlatform(String platform) {
         if (platform != null) {
             if (this.platform == null) {
@@ -326,7 +328,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //    public String getExt() {
 //        return ext;
 //    }
-
     @Override
     public String getPackaging() {
         return packaging;
@@ -349,8 +350,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public String[] getArch() {
-        return arch == null ? new String[0] :
-                arch.toArray(new String[0]);
+        return arch == null ? new String[0]
+                : arch.toArray(new String[0]);
     }
 
     public String[] getOs() {
@@ -393,9 +394,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptor build() {
         return new DefaultNutsDescriptor(
                 getId(), getAlternative(), getParents(), getPackaging(), isExecutable(), isNutsApplication(),
-//                getExt(),
-                getExecutor(), getInstaller()
-                , getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(),getStandardDependencies(),
+                //                getExt(),
+                getExecutor(), getInstaller(),
+                getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
                 getLocations(), getProperties()
         );
     }
@@ -483,6 +484,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         }
         return this;
     }
+
     @Override
     public NutsDescriptorBuilder removeStandardDependency(NutsDependency dependency) {
         if (this.standardDependencies != null) {
@@ -493,6 +495,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder addDependency(NutsDependency dependency) {
+        if (dependency == null) {
+            throw new NullPointerException();
+        }
         if (this.dependencies == null) {
             this.dependencies = new ArrayList<>();
         }
@@ -517,6 +522,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.dependencies.addAll(Arrays.asList(dependencies));
         return this;
     }
+
     @Override
     public NutsDescriptorBuilder addStandardDependencies(NutsDependency[] dependencies) {
         if (this.standardDependencies == null) {
@@ -529,6 +535,35 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder applyProperties() {
         return applyProperties(getProperties());
+    }
+
+    @Override
+    public NutsDescriptorBuilder replaceProperty(Predicate<Map.Entry<String, String>> filter, Function<Map.Entry<String, String>, String> converter) {
+        if (converter == null) {
+            return this;
+        }
+        Map<String, String> p = new LinkedHashMap<>();
+        boolean someUpdate = false;
+        for (Iterator<Map.Entry<String, String>> it = getProperties().entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, String> entry = it.next();
+            if (filter == null || filter.test(entry)) {
+                String v = converter.apply(entry);
+                if (v != null) {
+                    p.put(entry.getKey(), entry.getValue());
+                    if (!Objects.equals(v, entry.getValue())) {
+                        someUpdate = true;
+                    }
+                } else {
+                    it.remove();
+                }
+            }
+        }
+        if (someUpdate) {
+            for (Map.Entry<String, String> entry : p.entrySet()) {
+                getProperties().replace(entry.getKey(), entry.getValue());
+            }
+        }
+        return this;
     }
 
     @Override
@@ -693,5 +728,39 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         );
     }
 
+    @Override
+    public NutsDescriptorBuilder replaceDependency(Predicate<NutsDependency> filter, UnaryOperator<NutsDependency> converter) {
+        if (converter == null) {
+            return this;
+        }
+        ArrayList<NutsDependency> dependenciesList = new ArrayList<>();
+        for (NutsDependency d : getDependencies()) {
+            if (filter == null || filter.test(d)) {
+                d = converter.apply(d);
+                if (d != null) {
+                    dependenciesList.add(d);;
+                }
+            } else {
+                dependenciesList.add(d);
+            }
+        }
+        this.dependencies = dependenciesList;
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder removeDependency(Predicate<NutsDependency> dependency) {
+        if (dependency == null) {
+            return this;
+        }
+        for (Iterator<NutsDependency> it = dependencies.iterator(); it.hasNext();) {
+            NutsDependency d = it.next();
+            if (dependency.test(d)) {
+                //do not add
+                it.remove();
+            }
+        }
+        return this;
+    }
 
 }

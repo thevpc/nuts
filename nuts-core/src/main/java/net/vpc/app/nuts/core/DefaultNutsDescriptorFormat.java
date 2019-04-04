@@ -6,8 +6,10 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.common.io.FileUtils;
 
 import java.io.*;
+import java.nio.file.Path;
 
 public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
+
     private NutsWorkspace ws;
     private boolean pretty;
 
@@ -44,7 +46,7 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public void format(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.getIOManager().writeJson(descriptor,out,pretty);
+        ws.io().writeJson(descriptor, out, pretty);
     }
 
     @Override
@@ -54,6 +56,10 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
         out1.flush();
     }
 
+    @Override
+    public void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
+        format(descriptor, file.toFile());
+    }
 
     @Override
     public void format(NutsDescriptor descriptor, File file) throws UncheckedIOException {
@@ -80,7 +86,7 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     public String toString(NutsDescriptor descriptor) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         OutputStreamWriter w = new OutputStreamWriter(b);
-        format(descriptor,w);
+        format(descriptor, w);
         try {
             w.flush();
         } catch (IOException e) {

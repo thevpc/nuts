@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Created by vpc on 1/8/17.
@@ -38,9 +38,9 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
 
     private final String name;
     private final String fileName;
-    private final File value;
+    private final Path value;
 
-    public NutsTransportParamBinaryFilePart(String name, String fileName, File value) {
+    public NutsTransportParamBinaryFilePart(String name, String fileName, Path value) {
         this.name = name;
         this.fileName = fileName;
         this.value = value;
@@ -54,7 +54,7 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
         return name;
     }
 
-    public File getValue() {
+    public Path getValue() {
         return value;
     }
 }

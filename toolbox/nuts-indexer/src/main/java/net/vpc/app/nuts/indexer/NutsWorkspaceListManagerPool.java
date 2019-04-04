@@ -17,7 +17,7 @@ public class NutsWorkspaceListManagerPool {
     public synchronized NutsWorkspaceListManager openListManager(String name) {
         NutsWorkspaceListManager o = pool.get(name);
         if (o == null) {
-            o = app.getApplicationContext().getWorkspace().getConfigManager().createWorkspaceListManager(name);
+            o = app.getApplicationContext().getWorkspace().config().createWorkspaceListManager(name);
             pool.put(name, o);
         }
         return o;

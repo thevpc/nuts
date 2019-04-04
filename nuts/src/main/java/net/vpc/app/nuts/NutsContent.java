@@ -1,17 +1,19 @@
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
+
 public class NutsContent {
-    private final String file;
+    private final Path file;
     private final boolean cached;
     private final boolean temporary;
 
-    public NutsContent(String file, boolean cached, boolean temporary) {
+    public NutsContent(Path file, boolean cached, boolean temporary) {
         this.file = file;
         this.cached = cached;
         this.temporary = temporary;
     }
 
-    public String getFile() {
+    public Path getPath() {
         return file;
     }
 

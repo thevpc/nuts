@@ -21,7 +21,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.readAll("list imports", "li")) {
             cmdLine.unexpectedArgument("config list imports");
             if (cmdLine.isExecMode()) {
-                for (String imp : (context.getWorkspace().getConfigManager().getImports())) {
+                for (String imp : (context.getWorkspace().config().getImports())) {
                     context.getTerminal().getFormattedOut().printf("%s\n", imp);
                 }
             }
@@ -29,7 +29,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.readAll("clear imports", "ci")) {
             cmdLine.unexpectedArgument("config clear imports");
             if (cmdLine.isExecMode()) {
-                context.getWorkspace().getConfigManager().removeAllImports();
+                context.getWorkspace().config().removeAllImports();
                 trySave(context, context.getWorkspace(), null, autoSave, cmdLine);
             }
             return true;
@@ -37,7 +37,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             do {
                 String a = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getStringExpression();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().getConfigManager().addImports(a);
+                    context.getWorkspace().config().addImports(a);
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
@@ -48,7 +48,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.readRequiredNonOption(new DefaultNonOption("Import")).getStringExpression();
                 if (cmdLine.isExecMode()) {
-                    context.getWorkspace().getConfigManager().removeImports(ii);
+                    context.getWorkspace().config().removeImports(ii);
                 }
             }
             if (cmdLine.isExecMode()) {

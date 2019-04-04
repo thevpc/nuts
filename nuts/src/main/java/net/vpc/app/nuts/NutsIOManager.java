@@ -1,6 +1,7 @@
 package net.vpc.app.nuts;
 
 import java.io.*;
+import java.nio.file.Path;
 
 public interface NutsIOManager extends NutsComponent<Object> {
 
@@ -16,11 +17,17 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     <T> T readJson(Reader reader, Class<T> cls);
 
+    <T> T readJson(Path file, Class<T> cls);
+
     <T> T readJson(File file, Class<T> cls);
+
+    <T> void writeJson(Object obj, Path file, boolean pretty);
 
     <T> void writeJson(Object obj, File file, boolean pretty);
 
     <T> void writeJson(Object obj, PrintStream printStream, boolean pretty);
+
+    String expandPath(Path path);
 
     String expandPath(String path);
 
@@ -34,6 +41,8 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     PrintStream createNullPrintStream();
 
+    PrintStream createPrintStream(Path out);
+
     PrintStream createPrintStream(File out);
 
     PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode);
@@ -42,15 +51,17 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     NutsSessionTerminal createTerminal(NutsTerminalBase parent);
 
-    void downloadPath(String from, File to, Object source, NutsTerminalProvider session);
+    Path createTempFile(String name);
 
-    File createTempFile(String name);
+    Path createTempFolder(String name);
 
-    File createTempFolder(String name);
+    Path createTempFile(String name, NutsRepository repository);
 
-    File createTempFile(String name, NutsRepository repository);
-
-    File createTempFolder(String name, NutsRepository repository);
+    Path createTempFolder(String name, NutsRepository repository);
 
     String getSHA1(NutsDescriptor descriptor);
+
+    NutsIOCopyAction copy();
+    
+    Path path(String first, String... more);
 }

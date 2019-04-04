@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -48,7 +49,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
      */
     NutsWorkspace openWorkspace(NutsWorkspaceOptions options);
 
-    String copyTo(String id, String localPath, NutsSession session);
+    Path copyTo(String id, Path localPath, NutsSession session);
 
     NutsFetch fetch(NutsId id);
 
@@ -60,7 +61,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsQueryOptions options, NutsSession session);
 
-    NutsDefinition checkout(NutsId id, String folder, NutsSession session);
+    NutsDefinition checkout(NutsId id, Path folder, NutsSession session);
 
     NutsUpdate[] checkWorkspaceUpdates(NutsWorkspaceUpdateOptions options, NutsSession session);
 
@@ -78,25 +79,13 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     boolean uninstall(NutsId id, String[] args, NutsUninstallOptions options, NutsSession session);
 
-    NutsDefinition checkout(String id, String folder, NutsSession session);
+    NutsDefinition checkout(String id, Path folder, NutsSession session);
 
-    NutsId commit(String folder, NutsSession session);
+    NutsId commit(Path folder, NutsSession session);
 
-    void push(String id, String repositoryId, NutsPushOptions options, NutsSession session);
+    void push(String id, NutsPushOptions options, NutsSession session);
 
-    void push(NutsId id, String repositoryId, NutsPushOptions options, NutsSession session);
-
-    /**
-     * creates a zip file based on the folder. The folder should contain a
-     * descriptor file at its root
-     *
-     * @param contentFolder folder to bundle
-     * @param destFile created bundle file or null to create a file with the
-     * very same name as the folder
-     * @param session current session
-     * @return bundled nuts file, the nuts is neither deployed nor installed!
-     */
-    NutsDefinition createBundle(String contentFolder, String destFile, NutsQueryOptions queryOptions, NutsSession session);
+    void push(NutsId id, NutsPushOptions options, NutsSession session);
 
     NutsId deploy(NutsDeployment deployment, NutsSession session);
 
@@ -107,20 +96,22 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     void installCompanionTools(NutsInstallCompanionOptions options, NutsSession session);
 
     NutsDefinition fetchApiDefinition(NutsSession session);
+    
+    NutsDefinition fetchRuntimeDefinition(NutsSession session);
 
-    NutsWorkspaceRepositoryManager getRepositoryManager();
+    NutsWorkspaceRepositoryManager repositories();
 
-    NutsWorkspaceExtensionManager getExtensionManager();
+    NutsWorkspaceExtensionManager extensions();
 
-    NutsWorkspaceConfigManager getConfigManager();
+    NutsWorkspaceConfigManager config();
 
-    NutsWorkspaceSecurityManager getSecurityManager();
+    NutsWorkspaceSecurityManager security();
 
-    NutsIOManager getIOManager();
+    NutsIOManager io();
 
-    NutsParseManager getParseManager();
+    NutsParseManager parser();
 
-    NutsFormatManager getFormatManager();
+    NutsFormatManager formatter();
 
     Map<String, Object> getUserProperties();
 
@@ -130,9 +121,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     void setTerminal(NutsSessionTerminal newTerminal);
 
-    NutsSession createSession();
-
-    String copyTo(NutsId id, String localPath, NutsSession session);
+    Path copyTo(NutsId id, Path localPath, NutsSession session);
 
     void addUserPropertyListener(NutsMapListener<String, Object> listener);
 
@@ -154,9 +143,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     String getFileName(NutsId id, String ext);
 
-    NutsQuery createQuery();
 
-    void updateRepositoryIndex(String path);
+    void updateRepositoryIndex(Path path);
 
     void updateAllRepositoryIndices();
 
@@ -166,9 +154,27 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     String getLicenseText();
 
+    NutsSession createSession();
+
+    /**
+     * creates a zip file based on the folder. The folder should contain a
+     * descriptor file at its root
+     *
+     * @param contentFolder folder to bundle
+     * @param destFile created bundle file or null to create a file with the
+     * very same name as the folder
+     * @param session current session
+     * @return bundled nuts file, the nuts is neither deployed nor installed!
+     */
+    NutsDefinition createBundle(Path contentFolder, Path destFile, NutsQueryOptions queryOptions, NutsSession session);
+
+    NutsQuery createQuery();
+
     NutsClassLoaderBuilder createClassLoaderBuilder();
 
     NutsDescriptorBuilder createDescriptorBuilder();
+    
+    NutsDependencyBuilder createDependencyBuilder();
 
     String createRegex(String pattern);
 
@@ -185,4 +191,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     void save();
 
     boolean isGlobal();
+
+    void updateRepositoryIndex(String repository);
 }

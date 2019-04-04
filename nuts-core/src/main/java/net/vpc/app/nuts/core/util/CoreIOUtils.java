@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core.util;
@@ -41,9 +41,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,12 +57,22 @@ import java.util.logging.Logger;
 public class CoreIOUtils {
 
     private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
+    public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
+        @Override
+        public boolean accept(Path pathname) throws IOException {
+            try {
+                return Files.isDirectory(pathname);
+            } catch (Exception e) {
+                //ignore
+                return false;
+            }
+        }
+    };
 
-
-    public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, File directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
+    public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
-        File installerFile = nutMainFile.getContent().getFile() == null ? null : new File(nutMainFile.getContent().getFile());
-        File storeFolder = nutMainFile.getInstallation().getInstallFolder() == null ? null : new File(nutMainFile.getInstallation().getInstallFolder());
+        Path installerFile = nutMainFile.getContent().getPath();
+        Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -68,23 +81,23 @@ public class CoreIOUtils {
         for (Map.Entry<Object, Object> entry : execProperties.entrySet()) {
             map.put((String) entry.getKey(), (String) entry.getValue());
         }
-        String nutsJarFile = workspace.fetchApiDefinition(session).getContent().getFile();
+        Path nutsJarFile = workspace.fetchApiDefinition(session).getContent().getPath();
         if (nutsJarFile != null) {
-            map.put("nuts.jar", new File(nutsJarFile).getAbsolutePath());
+            map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
         map.put("nuts.id", id.toString());
         map.put("nuts.id.version", id.getVersion().getValue());
         map.put("nuts.id.name", id.getName());
         map.put("nuts.id.fullName", id.getSimpleName());
         map.put("nuts.id.group", id.getGroup());
-        map.put("nuts.file", nutMainFile.getContent().getFile());
+        map.put("nuts.file", nutMainFile.getContent().getPath().toString());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
 
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", workspace.getConfigManager().getWorkspaceLocation());
+        map.put("nuts.workspace", workspace.config().getWorkspaceLocation().toString());
         map.put("nuts.version", id.getVersion().getValue());
         map.put("nuts.name", id.getName());
         map.put("nuts.group", id.getGroup());
@@ -92,12 +105,12 @@ public class CoreIOUtils {
         map.put("nuts.namespace", id.getNamespace());
         map.put("nuts.id", id.toString());
         if (installerFile != null) {
-            map.put("nuts.installer", installerFile.getPath());
+            map.put("nuts.installer", installerFile.toString());
         }
         if (storeFolder == null && installerFile != null) {
-            map.put("nuts.store", installerFile.getParentFile().getPath());
+            map.put("nuts.store", installerFile.getParent().toString());
         } else if (storeFolder != null) {
-            map.put("nuts.store", storeFolder.getPath());
+            map.put("nuts.store", storeFolder.toString());
         }
         if (env != null) {
             map.putAll(env);
@@ -114,8 +127,8 @@ public class CoreIOUtils {
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch(NutsConstants.NUTS_ID_BOOT_API).setSession(session).fetchDefinition();
-                    if (nutsDefinition.getContent().getFile() != null) {
-                        return ("<::expand::> " + convert("java") + " -jar " + nutsDefinition.getContent().getFile());
+                    if (nutsDefinition.getContent().getPath() != null) {
+                        return ("<::expand::> " + convert("java") + " -jar " + nutsDefinition.getContent().getPath());
                     }
                     return null;
                 }
@@ -142,32 +155,25 @@ public class CoreIOUtils {
         }
         args = args2.toArray(new String[0]);
 
-        File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), args[0]);
-        if (file.exists() && !file.canExecute()) {
-            if (!file.setExecutable(true)) {
-                if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "Unable to set file executable {0}", file);
-                }
-            } else {
-                if (log.isLoggable(Level.WARNING)) {
-                    log.log(Level.WARNING, "Success to set file executable {0}", file);
-                }
-            }
+        Path path = workspace.config().getWorkspaceLocation().resolve(args[0]).normalize();
+        if (Files.exists(path)) {
+            setExecutable(path);
         }
-        if (directory == null) {
-            directory = new File(workspace.getConfigManager().getWorkspaceLocation());
+        Path pdirectory = null;
+        if (StringUtils.isEmpty(directory)) {
+            pdirectory = workspace.config().getWorkspaceLocation();
         } else {
-            directory = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), directory.getPath());
+            pdirectory = workspace.config().getWorkspaceLocation().resolve(directory);
         }
-        return execAndWait(workspace, args, envmap, directory, terminal, showCommand, failFast);
+        return execAndWait(workspace, args, envmap, pdirectory, terminal, showCommand, failFast);
     }
 
     public static String resolveJavaCommand(String requestedJavaVersion, NutsWorkspace workspace) {
         String bestJavaPath = resolveJdkLocation(requestedJavaVersion, workspace).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\")) {
-            File file = FileUtils.getAbsoluteFile(new File(workspace.getConfigManager().getWorkspaceLocation()), bestJavaPath);
-            if (file.isDirectory() && CoreIOUtils.createFile(file, "bin").isDirectory()) {
-                bestJavaPath = CoreIOUtils.createFile(bestJavaPath, "bin/java").getPath();
+            Path file = workspace.config().getWorkspaceLocation().resolve(bestJavaPath);
+            if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
+                bestJavaPath = file.resolve("bin" + File.separatorChar + "java").toString();
             }
         }
         return bestJavaPath;
@@ -175,7 +181,7 @@ public class CoreIOUtils {
 
     public static NutsSdkLocation resolveJdkLocation(String requestedJavaVersion, NutsWorkspace workspace) {
         requestedJavaVersion = StringUtils.trim(requestedJavaVersion);
-        NutsSdkLocation bestJava = workspace.getConfigManager().getSdk("java", requestedJavaVersion);
+        NutsSdkLocation bestJava = workspace.config().getSdk("java", requestedJavaVersion);
         if (bestJava == null) {
             NutsSdkLocation current = new NutsSdkLocation(
                     "java",
@@ -183,7 +189,7 @@ public class CoreIOUtils {
                     System.getProperty("java.home"),
                     System.getProperty("java.version")
             );
-            NutsVersionFilter requestedJavaVersionFilter = workspace.getParseManager().parseVersionFilter(requestedJavaVersion);
+            NutsVersionFilter requestedJavaVersionFilter = workspace.parser().parseVersionFilter(requestedJavaVersion);
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.accept(DefaultNutsVersion.valueOf(current.getVersion()))) {
                 bestJava = current;
             }
@@ -203,7 +209,7 @@ public class CoreIOUtils {
         return bestJava;
     }
 
-    public static int execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, File directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
+    public static int execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
         PrintStream out = terminal.getOut();
         PrintStream err = terminal.getErr();
         InputStream in = terminal.getIn();
@@ -222,7 +228,7 @@ public class CoreIOUtils {
                 .setIn(in)
                 .setOutput(out)
                 .setErr(err)
-                .setDirectory(directory)
+                .setDirectory(directory == null ? null : directory.toFile())
                 .setFailFast(failFast);
         if (out == null && err == null && in == null) {
             pb.inheritIO();
@@ -239,47 +245,26 @@ public class CoreIOUtils {
             }
             terminal.getOut().printf("%s\n", pb.getCommandString());
         }
-        return pb.start().waitFor().getResult();
-    }
-
-    public static File createFile(String path) {
-        return new File(FileUtils.getAbsolutePath(path));
-    }
-
-    public static File createFile(File parent, String path) {
-        return new File(parent, path);
-    }
-
-    public static File createFile(String parent, String path) {
-        return new File(FileUtils.getAbsolutePath(parent), path);
+        try {
+            return pb.start().waitFor().getResult();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public static NutsURLHeader getURLHeader(URL url) {
-        URLHeaderInfo ii = URLUtils.getURLHeader(url);
+        URLHeaderInfo ii;
+        try {
+            ii = URLUtils.getURLHeader(url);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         NutsURLHeader x = new NutsURLHeader(ii.getUrl());
         x.setContentEncoding(ii.getContentEncoding());
         x.setContentLength(ii.getContentLength());
         x.setContentType(ii.getContentType());
         x.setLastModified(ii.getLastModified());
         return x;
-    }
-
-
-    public static File fileByPath(String path) {
-        if (path == null) {
-            return null;
-        }
-        return new File(path);
-    }
-
-    @Deprecated
-    public static String getDefaultNutsHome() {
-        switch (getPlatformOsFamily()) {
-            case "windows":
-                return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts";
-            default:
-                return System.getProperty("user.home") + "/.nuts";
-        }
     }
 
     public static String getPlatformOsFamily() {
@@ -302,72 +287,28 @@ public class CoreIOUtils {
         return "unknown";
     }
 
-    public static String getAbsolutePath(String path) {
-        return new File(path).toPath().toAbsolutePath().normalize().toString();
-    }
-
-    public static void copy(InputStream ff, File to) throws IOException {
-        if (to.getParentFile() != null) {
-            to.getParentFile().mkdirs();
-        }
-        try {
-            Files.copy(ff, to.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
-            throw ex;
-        } finally {
-            if (ff != null) {
-                ff.close();
-            }
-        }
-    }
-
-    public static void copy(File ff, File to) throws IOException {
-        if (to.getParentFile() != null) {
-            to.getParentFile().mkdirs();
-        }
-        try {
-            Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
-            throw ex;
-        }
-    }
-
-    public static void move(File ff, File to) throws IOException {
-        if (to.getParentFile() != null) {
-            to.getParentFile().mkdirs();
-        }
-        try {
-            Files.move(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-        } catch (IOException ex) {
-            log.log(Level.CONFIG, "[ERROR  ] Error moving {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
-            throw ex;
-        }
-    }
-
-    public static void copy(URL url, File to) throws IOException {
-        try {
-            InputStream in = url.openStream();
-            if (in == null) {
-                throw new IOException("Empty Stream " + url);
-            }
-            if (to.getParentFile() != null) {
-                if (!to.getParentFile().isDirectory()) {
-                    boolean mkdirs = to.getParentFile().mkdirs();
-                    if (!mkdirs) {
-                        log.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
-                    }
-                }
-            }
-            ReadableByteChannel rbc = Channels.newChannel(in);
-            FileOutputStream fos = new FileOutputStream(to);
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (IOException ex) {
-            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
-            throw ex;
-        }
-    }
+//    public static void copy(URL url, File to) throws IOException {
+//        try {
+//            InputStream in = url.openStream();
+//            if (in == null) {
+//                throw new IOException("Empty Stream " + url);
+//            }
+//            if (to.getParentFile() != null) {
+//                if (!to.getParentFile().isDirectory()) {
+//                    boolean mkdirs = to.getParentFile().mkdirs();
+//                    if (!mkdirs) {
+//                        log.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
+//                    }
+//                }
+//            }
+//            ReadableByteChannel rbc = Channels.newChannel(in);
+//            FileOutputStream fos = new FileOutputStream(to);
+//            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+//        } catch (IOException ex) {
+//            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
+//            throw ex;
+//        }
+//    }
 
     public static URL[] toURL(String[] all) throws MalformedURLException {
         List<URL> urls = new ArrayList<>();
@@ -427,4 +368,56 @@ public class CoreIOUtils {
         return null;
     }
 
+    public static boolean setExecutable(Path path) {
+        if (Files.exists(path) && !Files.isExecutable(path)) {
+            PosixFileAttributeView p = Files.getFileAttributeView(path, PosixFileAttributeView.class);
+            if (p != null) {
+                try {
+                    Set<PosixFilePermission> old = new HashSet<>(p.readAttributes().permissions());
+                    old.add(PosixFilePermission.OWNER_EXECUTE);
+                    Files.setPosixFilePermissions(path, old);
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    public static Path pathOf(String... s) {
+//        return Paths.get(s[0], Arrays.copyOfRange(s, 1, s.length));
+//    }
+
+//    public static Path pathOf(String s) {
+//        if (StringUtils.isEmpty(s)) {
+//            return null;
+//        }
+//        return Paths.get(s);
+//    }
+
+    public static InputStreamSource toInputStreamSource(Object anyObject) {
+        try {
+            if (anyObject instanceof Path) {
+                // IOUtils.toInputStreamSource does not support Path
+                anyObject = ((Path) anyObject).toFile();
+            }
+            return IOUtils.toInputStreamSource(anyObject, null, null, null);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+
+    public static boolean mkdirs(Path p) {
+        if (p != null) {
+            try {
+                Files.createDirectories(p);
+                return true;
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+        return false;
+    }
 }

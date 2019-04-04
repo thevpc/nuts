@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 
@@ -123,7 +124,7 @@ public interface NutsQueryBaseOptions<T extends NutsQueryBaseOptions> {
 
     T copyFrom(NutsQueryBaseOptions other);
 
-    T setLocation(String fileOrFolder);
+    T setLocation(Path fileOrFolder);
 
     T setDefaultLocation();
 
@@ -131,7 +132,7 @@ public interface NutsQueryBaseOptions<T extends NutsQueryBaseOptions> {
     // Getters
     ////////////////////////////////////////////////////////
 
-    String getLocation();
+    Path getLocation();
 
     NutsFetchStrategy getFetchStrategy();
 

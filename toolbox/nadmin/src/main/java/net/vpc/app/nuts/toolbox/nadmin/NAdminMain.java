@@ -21,7 +21,7 @@ public class NAdminMain extends NutsApplication {
     public void run(NutsApplicationContext context) {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    context.getWorkspace().getExtensionManager().createAllSupported(NAdminSubCommand.class, this)
+                    context.getWorkspace().extensions().createAllSupported(NAdminSubCommand.class, this)
             );
         }
         Boolean autoSave = true;
@@ -74,7 +74,7 @@ public class NAdminMain extends NutsApplication {
         } else {
             out.print("@@" + repository.getName() + disabledString + "@@");
         }
-        out.print(" : " + repository.getRepositoryType() + " " + repository.getConfigManager().getLocation());
+        out.print(" : " + repository.getRepositoryType() + " " + repository.config().getLocation(false));
         out.println();
 
     }

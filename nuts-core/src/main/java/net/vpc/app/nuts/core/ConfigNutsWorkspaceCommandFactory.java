@@ -1,12 +1,17 @@
 package net.vpc.app.nuts.core;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import net.vpc.app.nuts.*;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
+
     private DefaultNutsWorkspaceConfigManager configManager;
 
     public ConfigNutsWorkspaceCommandFactory(DefaultNutsWorkspaceConfigManager defaultNutsWorkspaceConfigManager) {
@@ -23,14 +28,8 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
         return "default";
     }
 
-    public File getStoreLocation() {
-        String storeLocation = 
-                configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.PROGRAMS)
-                ;
-        if (storeLocation == null) {
-            return null;
-        }
-        return new File(storeLocation);
+    public Path getStoreLocation() {
+        return configManager.getStoreLocation(configManager.getApiId(), NutsStoreLocation.PROGRAMS);
     }
 
     @Override
@@ -39,24 +38,26 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public void uninstallCommand(String name) {
-        File file = new File(getStoreLocation(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-        if (file.isFile()) {
-            if (!file.delete()) {
-                throw new IllegalArgumentException("Unable to delete file " + file.getPath());
+        Path file = getStoreLocation().resolve(name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+        if (Files.exists(file)) {
+            try {
+                Files.delete(file);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
         }
     }
 
     public void installCommand(NutsWorkspaceCommandConfig command) {
-        File file = new File(getStoreLocation(), command.getName() + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-        configManager.getWorkspace().getIOManager().writeJson(command, file, true);
+        Path file = getStoreLocation().resolve(command.getName() + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+        configManager.getWorkspace().io().writeJson(command, file, true);
     }
 
     @Override
     public NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace) {
-        File file = new File(getStoreLocation(), name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
-        if (file.exists()) {
-            NutsWorkspaceCommandConfig c = configManager.getWorkspace().getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
+        Path file = getStoreLocation().resolve(name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+        if (Files.exists(file)) {
+            NutsWorkspaceCommandConfig c = configManager.getWorkspace().io().readJson(file, NutsWorkspaceCommandConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -85,24 +86,26 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     public List<NutsWorkspaceCommandConfig> findCommands(NutsObjectFilter<NutsWorkspaceCommandConfig> filter) {
         List<NutsWorkspaceCommandConfig> all = new ArrayList<>();
-        File[] files = getStoreLocation().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)) {
+        try {
+            Files.list(getStoreLocation()).forEach(file -> {
+                String fileName = file.getFileName().toString();
+                if (file.getFileName().toString().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsWorkspaceCommandConfig c = null;
                     try {
-                        c = configManager.getWorkspace().getIOManager().readJson(file, NutsWorkspaceCommandConfig.class);
+                        c = configManager.getWorkspace().io().readJson(file, NutsWorkspaceCommandConfig.class);
                     } catch (Exception ex) {
                         //
                     }
                     if (c != null) {
-                        c.setName(file.getName().substring(0, file.getName().length() - 4));
+                        c.setName(fileName.substring(0, fileName.length() - 4));
                         if (filter == null || filter.accept(c)) {
                             all.add(c);
                         }
                     }
                 }
-            }
+            });
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         return all;
     }

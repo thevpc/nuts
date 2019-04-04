@@ -49,9 +49,9 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         try {
             NutsHttpConnectionFacade clientFacade = CoreHttpUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().getIOManager().readJson(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().io().readJson(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
-                    .map(s -> repository.getWorkspace().getParseManager().parseId(s.get("stringId").toString()))
+                    .map(s -> repository.getWorkspace().parser().parseId(s.get("stringId").toString()))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             setInaccessible();
@@ -68,9 +68,9 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         try {
             NutsHttpConnectionFacade clientFacade = CoreHttpUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().getIOManager().readJson(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().io().readJson(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
-                    .map(s -> repository.getWorkspace().getParseManager().parseId(s.get("stringId").toString()))
+                    .map(s -> repository.getWorkspace().parser().parseId(s.get("stringId").toString()))
                     .filter(filter != null ? filter::accept : (Predicate<NutsId>) id -> true)
                     .iterator();
         } catch (IOException e) {
@@ -134,7 +134,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
     @Override
     public boolean subscribe() {
         String URL = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreHttpUtils.urlEncodeString(repository.getWorkspace().getConfigManager().getWorkspaceLocation())
+                + CoreHttpUtils.urlEncodeString(repository.getWorkspace().config().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreHttpUtils.urlEncodeString(repository.getUuid());
         try {
             NutsHttpConnectionFacade clientFacade = CoreHttpUtils.getHttpClientFacade(repository.getWorkspace(),
@@ -149,7 +149,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
     @Override
     public void unsubscribe() {
         String URL = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreHttpUtils.urlEncodeString(repository.getWorkspace().getConfigManager().getWorkspaceLocation())
+                + CoreHttpUtils.urlEncodeString(repository.getWorkspace().config().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreHttpUtils.urlEncodeString(repository.getUuid());
         try {
             NutsHttpConnectionFacade clientFacade = CoreHttpUtils.getHttpClientFacade(repository.getWorkspace(),
@@ -164,7 +164,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
     public boolean isSubscribed(NutsRepository repository) {
         boolean subscribed;
         String URL = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreHttpUtils.urlEncodeString(repository.getWorkspace().getConfigManager().getWorkspaceLocation())
+                + CoreHttpUtils.urlEncodeString(repository.getWorkspace().config().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreHttpUtils.urlEncodeString(repository.getUuid());
         try {
             NutsHttpConnectionFacade clientFacade = CoreHttpUtils.getHttpClientFacade(repository.getWorkspace(),
