@@ -336,7 +336,7 @@ public class NutsBootWorkspace {
         if (recover) {
 //            info.nutsWorkspace.getConfigManager().setBootConfig(new NutsBootConfig());
             if (!info.nutsWorkspace.config().isReadOnly()) {
-                info.nutsWorkspace.save();
+                info.nutsWorkspace.config().save();
             }
         }
     }

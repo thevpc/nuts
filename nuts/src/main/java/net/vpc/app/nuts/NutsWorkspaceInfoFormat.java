@@ -29,10 +29,14 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
 import java.io.PrintStream;
+import java.io.Writer;
+import java.nio.file.Path;
 import java.util.Properties;
 
 public interface NutsWorkspaceInfoFormat {
+
     NutsWorkspaceInfoFormat addProperty(String key, String value);
 
     NutsWorkspaceInfoFormat addProperties(Properties p);
@@ -41,6 +45,17 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat addOptions(String... o);
 
-    String format();
+//    String formatString();
+
+    void format(Path out);
+
+    void format(File out);
+
+    void format(Writer out);
+
     void format(PrintStream out);
+
+    void format();
+
+    void format(NutsTerminal terminal);
 }

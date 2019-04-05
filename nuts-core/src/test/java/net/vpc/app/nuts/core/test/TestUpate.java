@@ -10,19 +10,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsCreateRepositoryOptions;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryConfig;
+import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsStoreLocationStrategy;
+import net.vpc.app.nuts.NutsUpdate;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.NutsWorkspaceUpdateOptions;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.common.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -44,34 +47,33 @@ public class TestUpate {
         TestUtils.setSystemProperties(extraProperties);
 
         NutsWorkspace uws = Nuts.openWorkspace(new String[]{
-            "--workspace", workpacePath + "_update",
+            "--workspace", workpacePath + "-update",
             "--archetype", "minimal",
             "--standalone",
             "--yes",
             "--skip-install-companions"
         });
-        
-        String updateRepo = uws.repositories().getRepository("local").config().getStoreLocation().toString();
-        uws.formatter().createWorkspaceInfoFormat().format(System.out);
-        System.out.println("------------------------------------------");
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{
+        NutsRepository updateRepo1 = uws.config().getRepository("local");
+        String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
+        System.out.println(updateRepo1.config().getStoreLocationStrategy());
+        uws.getTerminal().getOut().println("Hello");
+        uws.formatter().createWorkspaceInfoFormat().format();
+        System.out.println("\n------------------------------------------");
+        NutsWorkspace nws = Nuts.openWorkspace(new String[]{
             "--workspace", workpacePath,
             "--standalone",
-//            "--verbose",
             "--yes",
             "--skip-install-companions"
         });
-        ws.repositories().addRepository(new NutsCreateRepositoryOptions().setTemporay(true).setName("temp").setLocation(updateRepo)
+        nws.config().addRepository(new NutsCreateRepositoryOptions().setTemporay(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
-        ws.formatter().createWorkspaceInfoFormat().format(System.out);
-        for (NutsRepository repository : ws.repositories().getRepositories()) {
-            System.out.println(repository.isEnabled() + ":" + repository.getName() + " : " + repository.config().getStoreLocation());
-            System.out.println("\t\t" + repository.config().getLocation(true));
-        }
-        NutsRepository r = ws.repositories().getRepository("temp");
-        NutsDefinition api = ws.fetchApiDefinition(null);
-        NutsDefinition rt = ws.fetchRuntimeDefinition(null);
+        nws.formatter().createWorkspaceInfoFormat().format();
+        System.out.println("\n------------------------------------------");
+
+        NutsRepository r = nws.config().getRepository("temp");
+        NutsDefinition api = nws.fetchApiDefinition(null);
+        NutsDefinition rt = nws.fetchRuntimeDefinition(null);
 
         NutsVersion apiv2 = api.getId().getVersion().inc(0, 10);
         NutsVersion rtv2 = rt.getId().getVersion().inc(0, 10);
@@ -94,14 +96,32 @@ public class TestUpate {
                                         )
                         )
                         .build(), null);
+
+        System.out.println("[LOCAL]");
+        System.out.println(uws.config().getRepository("local").config().getStoreLocationStrategy());
+        System.out.println(uws.config().getRepository("local").config().getStoreLocation());
+        System.out.println(uws.config().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB));
+
+        System.out.println("[TEMP]");
+        System.out.println(nws.config().getRepository("temp").config().getStoreLocationStrategy());
+        System.out.println(nws.config().getRepository("temp").config().getStoreLocation());
+        System.out.println(nws.config().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
+        Assert.assertEquals(
+                uws.config().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB),
+                nws.config().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
+
         System.out.println(uws.createQuery().addId(api.getId().getSimpleNameId()).find());
         System.out.println(uws.createQuery().addId(rt.getId().getSimpleNameId()).find());
-        org.junit.Assert.assertEquals(1, uws.createQuery().addId(api.getId().getSimpleNameId()).find().size()==1);
-        org.junit.Assert.assertEquals(1, uws.createQuery().addId(rt.getId().getSimpleNameId()).find().size()==1);
-        
-        System.out.println(ws.createQuery().addId(api.getId().getSimpleNameId()).setRepositoryFilter("temp").find());
-        System.out.println(ws.createQuery().addId(rt.getId().getSimpleNameId()).setRepositoryFilter("temp").find());
-        ws.checkWorkspaceUpdates(null, null);
+        Assert.assertEquals(1, uws.createQuery().addId(api.getId().getSimpleNameId()).find().size());
+        Assert.assertEquals(1, uws.createQuery().addId(rt.getId().getSimpleNameId()).find().size());
+        System.out.println("========================");
+        System.out.println(nws.createQuery().addId(api.getId().getSimpleNameId()).setRepositoryFilter("temp").find());
+        System.out.println(nws.createQuery().addId(rt.getId().getSimpleNameId()).setRepositoryFilter("temp").find());
+        System.out.println(nws.createQuery().addId(api.getId().getSimpleNameId()).find());
+        System.out.println(nws.createQuery().addId(rt.getId().getSimpleNameId()).find());
+        NutsUpdate[] foundUpdates = nws.checkWorkspaceUpdates(null, null);
+        Assert.assertEquals(2, foundUpdates.length);
+        nws.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions().setApplyUpdates(true), null);
     }
 
     @BeforeClass

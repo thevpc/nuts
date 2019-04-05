@@ -49,7 +49,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     private static final Logger log = Logger.getLogger(AbstractMavenRepository.class.getName());
 
     public AbstractMavenRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, int speed) {
-        super(options, workspace, parentRepository, speed);
+        super(options, workspace, parentRepository, speed, false);
         extensions.put("src", "-src.zip");
         extensions.put("pom", ".pom");
     }
@@ -103,11 +103,6 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     protected abstract InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session);
-
-    @Override
-    public boolean isSupportedMirroring() {
-        return false;
-    }
 
     @Override
     public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {

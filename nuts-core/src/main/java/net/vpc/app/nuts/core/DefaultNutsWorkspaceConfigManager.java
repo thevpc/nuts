@@ -43,7 +43,6 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +59,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     private NutsBootContext wsBootConfig;
     private ClassLoader bootClassLoader;
     private URL[] bootClassWorldURLs;
-    private NutsWorkspaceConfig config = new NutsWorkspaceConfig();
+    protected NutsWorkspaceConfig config = new NutsWorkspaceConfig();
     private final List<NutsWorkspaceCommandFactory> commandFactories = new ArrayList<>();
     private final ConfigNutsWorkspaceCommandFactory defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(this);
     private boolean configurationChanged = false;
@@ -76,8 +75,20 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     private final Map<String, NutsRepositoryRef> configReposByName = new LinkedHashMap<>();
 
+    private Map<String, NutsRepository> repositories = new LinkedHashMap<>();
+    private NutsIndexStoreClientFactory indexStoreClientFactory;
+    private boolean global;
+
     protected DefaultNutsWorkspaceConfigManager(final DefaultNutsWorkspace outer) {
         this.ws = outer;
+        try {
+            indexStoreClientFactory = ws.extensions().createSupported(NutsIndexStoreClientFactory.class, ws);
+        } catch (Exception ex) {
+            //
+        }
+        if (indexStoreClientFactory == null) {
+            indexStoreClientFactory = new DummyNutsIndexStoreClientFactory();
+        }
     }
 
     @Override
@@ -96,6 +107,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             config.setUuid(UUID.randomUUID().toString());
             fire = true;
         }
+        this.global = config.isGlobal();
         configSdks.clear();
         if (config.getSdk() != null) {
             for (NutsSdkLocation sdk : config.getSdk()) {
@@ -246,22 +258,14 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return p;
     }
 
-    @Override
-    public NutsId[] getExtensions() {
-        if (config.getExtensions() != null) {
-            return config.getExtensions().toArray(new NutsId[0]);
-        }
-        return new NutsId[0];
-    }
-
-    @Override
-    public NutsRepositoryRef getRepository(String repositoryName) {
+//    @Override
+    public NutsRepositoryRef getRepositoryRef(String repositoryName) {
         return configReposByName.get(repositoryName);
     }
 
-    @Override
+//    @Override
     public void setRepositoryEnabled(String repoName, boolean enabled) {
-        NutsRepositoryRef e = getRepository(repoName);
+        NutsRepositoryRef e = getRepositoryRef(repoName);
         if (e != null && e.isEnabled() != enabled) {
             e.setEnabled(enabled);
             fireConfigurationChanged();
@@ -434,58 +438,6 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public boolean addExtension(NutsId extensionId) {
-        if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
-        }
-        if (!containsExtension(extensionId)) {
-            if (config.getExtensions() == null) {
-                config.setExtensions(new ArrayList<>());
-            }
-            config.getExtensions().add(extensionId);
-            fireConfigurationChanged();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean removeExtension(NutsId extensionId) {
-        if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
-        }
-        for (NutsId extension : getExtensions()) {
-            if (extension.equalsSimpleName(extensionId)) {
-                if (config.getExtensions() != null) {
-                    config.getExtensions().remove(extension);
-                }
-                fireConfigurationChanged();
-                return true;
-
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateExtension(NutsId extensionId) {
-        if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
-        }
-        NutsId[] extensions = getExtensions();
-        for (int i = 0; i < extensions.length; i++) {
-            NutsId extension = extensions[i];
-            if (extension.equalsSimpleName(extensionId)) {
-                extensions[i] = extensionId;
-                config.setExtensions(new ArrayList<>(Arrays.asList(extensions)));
-                fireConfigurationChanged();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public boolean isValidWorkspaceFolder() {
         Path file = getWorkspaceLocation().resolve(NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
         return Files.isRegularFile(file);
@@ -503,27 +455,40 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public boolean save(boolean force) {
+        boolean ok = false;
         if (force || (!isReadOnly() && isConfigurationChanged())) {
-            save();
-            return true;
+            CoreNutsUtils.checkReadOnly(ws);
+            ws.security().checkAllowed(NutsConstants.RIGHT_SAVE_WORKSPACE, "save");
+            config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
+            config.setRepositories(configReposByName.isEmpty() ? null : new ArrayList<>(configReposByName.values()));
+            List<NutsSdkLocation> plainSdks = new ArrayList<>();
+            for (List<NutsSdkLocation> value : configSdks.values()) {
+                plainSdks.addAll(value);
+            }
+            config.setSdk(plainSdks);
+            Path file = getWorkspaceLocation().resolve(NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
+            ws.io().writeJson(config, file, true);
+            configurationChanged = false;
+            ok = true;
         }
+        NutsException error = null;
+        for (NutsRepository repo : getRepositories()) {
+            try {
+                ok |= repo.config().save(force);
+            } catch (NutsException ex) {
+                error = ex;
+            }
+        }
+        if (error != null) {
+            throw error;
+        }
+
         return false;
     }
 
     @Override
     public void save() {
-        CoreNutsUtils.checkReadOnly(ws);
-        ws.security().checkAllowed(NutsConstants.RIGHT_SAVE_WORKSPACE, "save");
-        config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-        config.setRepositories(configReposByName.isEmpty() ? null : new ArrayList<>(configReposByName.values()));
-        List<NutsSdkLocation> plainSdks = new ArrayList<>();
-        for (List<NutsSdkLocation> value : configSdks.values()) {
-            plainSdks.addAll(value);
-        }
-        config.setSdk(plainSdks);
-        Path file = getWorkspaceLocation().resolve(NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
-        ws.io().writeJson(config, file, true);
-        configurationChanged = false;
+        save(true);
     }
 
     @Override
@@ -667,27 +632,27 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         }
     }
 
-    @Override
-    public void addRepository(NutsRepositoryRef repository) {
+//    @Override
+    public void addRepositoryRef(NutsRepositoryRef repository) {
         if (repository == null) {
             throw new NutsIllegalArgumentException("Invalid Repository");
         }
         if (!CoreNutsUtils.isValidIdentifier(repository.getName())) {
             throw new NutsIllegalArgumentException("Invalid Repository Name : " + repository.getName());
         }
-        if (getRepository(repository.getName()) != null) {
+        if (getRepositoryRef(repository.getName()) != null) {
             throw new NutsIllegalArgumentException("Duplicate Repository Id " + repository.getName());
         }
         configReposByName.put(repository.getName(), repository);
         fireConfigurationChanged();
     }
 
-    @Override
-    public void removeRepository(String repositoryName) {
+//    @Override
+    public void removeRepositoryRef(String repositoryName) {
         if (repositoryName == null) {
             throw new NutsIllegalArgumentException("Invalid Null Repository");
         }
-        NutsRepositoryRef old = getRepository(repositoryName);
+        NutsRepositoryRef old = getRepositoryRef(repositoryName);
         if (old != null) {
             configReposByName.remove(old.getName());
             fireConfigurationChanged();
@@ -703,30 +668,17 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     }
 
     @Override
-    public NutsRepositoryRef[] getRepositories() {
+    public NutsRepositoryRef[] getRepositoryRefs() {
         return configReposByName.values().toArray(new NutsRepositoryRef[0]);
     }
 
     public void setRepositories(NutsRepositoryRef[] repositories) {
-        for (NutsRepositoryRef repositoryLocation : getRepositories()) {
-            removeRepository(repositoryLocation.getName());
+        for (NutsRepositoryRef repositoryLocation : getRepositoryRefs()) {
+            removeRepositoryRef(repositoryLocation.getName());
         }
         for (NutsRepositoryRef repository : repositories) {
-            addRepository(repository);
+            addRepositoryRef(repository);
         }
-    }
-
-    @Override
-    public boolean containsExtension(NutsId extensionId) {
-        if (extensionId == null) {
-            throw new NutsIllegalArgumentException("Invalid Extension");
-        }
-        for (NutsId extension : getExtensions()) {
-            if (extension.equalsSimpleName(extension)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -772,7 +724,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         }
     }
 
-    private void fireConfigurationChanged() {
+    protected void fireConfigurationChanged() {
         setConfigurationChanged(true);
     }
 
@@ -1050,6 +1002,14 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             return null;
         }
         return CoreNutsUtils.resolveNutsDefaultPath(id, storeLocation.resolve("components"));
+    }
+
+    @Override
+    public Path getStoreLocation(NutsId id, Path path) {
+        if (StringUtils.isEmpty(id.getGroup())) {
+            throw new NutsElementNotFoundException("Missing group for " + id);
+        }
+        return CoreNutsUtils.resolveNutsDefaultPath(id, path);
     }
 
     @Override
@@ -1409,7 +1369,10 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 return getDefaultIdComponentExtension(q.get(NutsConstants.QUERY_PACKAGING));
             }
             default: {
-                throw new IllegalArgumentException("Unsupported fact " + f);
+                if (StringUtils.isEmpty(f)) {
+                    throw new IllegalArgumentException("Missing face in " + id);
+                }
+                throw new IllegalArgumentException("Unsupported face " + f + " in " + id);
             }
         }
     }
@@ -1511,4 +1474,309 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         return ws.parser().parseId(getBootConfig().getRuntimeId());
     }
 
+    @Override
+    public NutsIndexStoreClientFactory getIndexStoreClientFactory() {
+        return indexStoreClientFactory;
+    }
+
+    @Override
+    public void removeRepository(String repositoryId) {
+        ws.security().checkAllowed(NutsConstants.RIGHT_REMOVE_REPOSITORY, "remove-repository");
+        NutsRepository removed = repositories.remove(repositoryId);
+        removeRepositoryRef(repositoryId);
+        if (removed != null) {
+            for (NutsWorkspaceListener nutsWorkspaceListener : ws.getWorkspaceListeners()) {
+                nutsWorkspaceListener.onRemoveRepository(ws, removed);
+            }
+        }
+    }
+
+//    @Override
+    public Path getRepositoriesRoot() {
+        return ws.config().getWorkspaceLocation().resolve(NutsConstants.FOLDER_NAME_REPOSITORIES);
+    }
+
+    @Override
+    public NutsRepository findRepository(String repositoryName) {
+        if (!StringUtils.isEmpty(repositoryName)) {
+            repositoryName = CoreNutsUtils.trimSlashes(repositoryName);
+            if (repositoryName.contains("/")) {
+                int s = repositoryName.indexOf("/");
+                NutsRepository r = repositories.get(repositoryName.substring(0, s));
+                if (r != null) {
+                    return r.config().findMirror(repositoryName.substring(s + 1));
+                }
+            } else {
+                NutsRepository r = repositories.get(repositoryName);
+                if (r != null) {
+                    return r;
+                }
+            }
+            for (NutsRepository r : repositories.values()) {
+                if (repositoryName.equals(r.config().getLocation(true))) {
+                    return r;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NutsRepository getRepository(String repositoryName) {
+        NutsRepository r = findRepository(repositoryName);
+        if (r != null) {
+            return r;
+        }
+        throw new NutsRepositoryNotFoundException(repositoryName);
+    }
+
+    @Override
+    public NutsRepository[] getRepositories() {
+        return repositories.values().toArray(new NutsRepository[0]);
+    }
+
+    @Override
+    public boolean isSupportedRepositoryType(String repositoryType) {
+        if (StringUtils.isEmpty(repositoryType)) {
+            repositoryType = NutsConstants.REPOSITORY_TYPE_NUTS;
+        }
+        return ws.extensions().createAllSupported(NutsRepositoryFactoryComponent.class, new NutsRepositoryLocation().setType(repositoryType)).size() > 0;
+    }
+
+    @Override
+    public NutsRepositoryDefinition[] getDefaultRepositories() {
+        List<NutsRepositoryDefinition> all = new ArrayList<>();
+        for (NutsRepositoryFactoryComponent provider : ws.extensions().createAll(NutsRepositoryFactoryComponent.class)) {
+            all.addAll(Arrays.asList(provider.getDefaultRepositories(ws)));
+        }
+        Collections.sort(all, new Comparator<NutsRepositoryDefinition>() {
+            @Override
+            public int compare(NutsRepositoryDefinition o1, NutsRepositoryDefinition o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+        return all.toArray(new NutsRepositoryDefinition[0]);
+    }
+
+//    @Override
+    public NutsRepository wireRepository(NutsRepository repository) {
+        if (repository == null) {
+            //mainly if the lcoation is inaccessible!
+            return null;
+        }
+        CoreNutsUtils.validateRepositoryName(repository.getName(), repositories.keySet());
+        repositories.put(repository.getName(), repository);
+        for (NutsWorkspaceListener nutsWorkspaceListener : ws.getWorkspaceListeners()) {
+            nutsWorkspaceListener.onAddRepository(ws, repository);
+        }
+        return repository;
+    }
+
+//    @Override
+    public void removeAllRepositories() {
+        repositories.clear();
+    }
+
+    @Override
+    public NutsRepository addRepository(NutsRepositoryDefinition definition) {
+        return addRepository(CoreNutsUtils.defToOptions(definition));
+    }
+
+    @Override
+    public NutsRepository addRepository(NutsCreateRepositoryOptions options) {
+        if (options.isProxy()) {
+            if (options.getConfig() == null) {
+                NutsRepository proxy = addRepository(
+                        new NutsCreateRepositoryOptions()
+                                .setName(options.getName())
+                                .setFailSafe(options.isFailSafe())
+                                .setLocation(options.getName())
+                                .setEnabled(options.isEnabled())
+                                .setCreate(options.isCreate())
+                                .setDeployOrder(options.getDeployOrder())
+                                .setConfig(
+                                        new NutsRepositoryConfig()
+                                                .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
+                                                .setName(options.getName())
+                                                .setLocation(null)
+                                )
+                );
+                if (proxy == null) {
+                    //mainly becausse path is not accessible
+                    return null;
+                }
+                //Dont need to add mirror if repository is already loadable from config!
+                final String m2 = options.getName() + "-ref";
+                if (!proxy.config().containsMirror(m2)) {
+                    proxy.config().addMirror(new NutsCreateRepositoryOptions()
+                            .setName(m2)
+                            .setFailSafe(options.isFailSafe())
+                            .setEnabled(options.isEnabled())
+                            .setLocation(options.getLocation())
+                            .setDeployOrder(options.getDeployOrder())
+                            .setCreate(options.isCreate())
+                    );
+                }
+                return proxy;
+            } else {
+                NutsRepository proxy = addRepository(
+                        new NutsCreateRepositoryOptions()
+                                .setName(options.getName())
+                                .setFailSafe(options.isFailSafe())
+                                .setEnabled(options.isEnabled())
+                                .setLocation(options.getLocation())
+                                .setCreate(options.isCreate())
+                                .setDeployOrder(options.getDeployOrder())
+                                .setConfig(
+                                        new NutsRepositoryConfig()
+                                                .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
+                                                .setName(options.getConfig().getName())
+                                                .setLocation(null)
+                                )
+                );
+                if (proxy == null) {
+                    return null;
+                }
+                //Dont need to add mirror if repository is already loadable from config!
+                final String m2 = options.getName() + "-ref";
+                if (!proxy.config().containsMirror(m2)) {
+                    proxy.config().addMirror(new NutsCreateRepositoryOptions()
+                            .setName(m2)
+                            .setFailSafe(options.isFailSafe())
+                            .setEnabled(options.isEnabled())
+                            .setLocation(m2)
+                            .setCreate(options.isCreate())
+                            .setDeployOrder(options.getDeployOrder())
+                            .setConfig(
+                                    new NutsRepositoryConfig()
+                                            .setName(m2)
+                                            .setType(StringUtils.coalesce(options.getConfig().getType(), NutsConstants.REPOSITORY_TYPE_NUTS))
+                                            .setLocation(options.getConfig().getLocation())
+                            ));
+                }
+                return proxy;
+            }
+        } else {
+            if (!options.isTemporay()) {
+                addRepositoryRef(CoreNutsUtils.optionsToRef(options));
+            }
+            return wireRepository(this.createRepository(options, getRepositoriesRoot(), null));
+        }
+    }
+
+    @Override
+    public Set<String> getAvailableArchetypes() {
+        Set<String> set = new HashSet<>();
+        set.add("default");
+        for (NutsWorkspaceArchetypeComponent extension : ws.extensions().createAllSupported(NutsWorkspaceArchetypeComponent.class, ws)) {
+            set.add(extension.getName());
+        }
+        return set;
+    }
+
+    @Override
+    public Path resolveRepositoryPath(String repositoryLocation) {
+        Path root = this.getRepositoriesRoot();
+        NutsWorkspaceConfigManager configManager = this.ws.config();
+        return ws.io().path(ws.io().expandPath(repositoryLocation,
+                root != null ? root.toString() : configManager.getWorkspaceLocation().resolve(NutsConstants.FOLDER_NAME_REPOSITORIES).toString()));
+    }
+
+    private static class DummyNutsIndexStoreClient implements NutsIndexStoreClient {
+
+        @Override
+        public List<NutsId> findVersions(NutsId id, NutsRepositorySession session) {
+            return null;
+        }
+
+        @Override
+        public Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session) {
+            return null;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+        }
+
+        @Override
+        public void invalidate(NutsId id) {
+
+        }
+
+        @Override
+        public void revalidate(NutsId id) {
+
+        }
+
+        @Override
+        public boolean subscribe() {
+            return false;
+        }
+
+        @Override
+        public void unsubscribe() {
+
+        }
+
+        @Override
+        public boolean isSubscribed(NutsRepository repository) {
+            return false;
+        }
+    }
+
+    private static class DummyNutsIndexStoreClientFactory implements NutsIndexStoreClientFactory {
+
+        @Override
+        public int getSupportLevel(NutsWorkspace criteria) {
+            return 0;
+        }
+
+        @Override
+        public NutsIndexStoreClient createNutsIndexStoreClient(NutsRepository repository) {
+            return new DummyNutsIndexStoreClient();
+        }
+    }
+
+    @Override
+    public NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository) {
+//        conf = CoreNutsUtils.loadNutsRepositoryConfig(new File(folder, NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME), ws);
+        options = options.copy();
+        try {
+            NutsRepositoryConfig conf = options.getConfig();
+            if (conf == null) {
+                options.setLocation(CoreNutsUtils.resolveRepositoryPath(options, rootFolder, ws));
+                conf = CoreNutsUtils.loadNutsRepositoryConfig(ws.io().path(options.getLocation(), NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME), ws);
+                if (conf == null) {
+                    throw new NutsInvalidRepositoryException(options.getLocation(), "Invalid location " + options.getLocation());
+                }
+                options.setConfig(conf);
+            } else {
+                options.setLocation(CoreNutsUtils.resolveRepositoryPath(options, rootFolder, ws));
+            }
+            if (StringUtils.isEmpty(conf.getType())) {
+                conf.setType(NutsConstants.REPOSITORY_TYPE_NUTS);
+            }
+            if (StringUtils.isEmpty(conf.getName())) {
+                conf.setName(options.getName());
+            }
+            NutsRepositoryFactoryComponent factory_ = ws.extensions().createSupported(NutsRepositoryFactoryComponent.class, conf);
+            if (factory_ != null) {
+                NutsRepository r = factory_.create(options, ws, parentRepository);
+                if (r != null) {
+                    return r;
+                }
+            }
+            throw new NutsInvalidRepositoryException(options.getName(), "Invalid type " + conf.getType());
+        } catch (RuntimeException ex) {
+            if (options.isFailSafe()) {
+                return null;
+            }
+            throw ex;
+        }
+    }
 }

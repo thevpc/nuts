@@ -1,12 +1,24 @@
 package net.vpc.app.nuts.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.vpc.common.io.ByteArrayPrintStream;
 
 public class DefaultNutsIdFormat implements NutsIdFormat {
+
     private NutsWorkspace ws;
     private boolean omitNamespace;
     private boolean omitGroup;
@@ -109,7 +121,8 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         return this;
     }
 
-    public String format(NutsId id) {
+    @Override
+    public String toString(NutsId id) {
         Map<String, String> m = id.getQueryMap();
         String scope = m.get("scope");
         String optional = m.get("optional");
@@ -158,7 +171,6 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             sb.append(ws.parser().escapeText(id.getVersion().toString()));
         }
         boolean firstQ = true;
-
 
         if (!StringUtils.isEmpty(classifier)) {
             if (firstQ) {
@@ -238,6 +250,46 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
 //            sb.append(ws.escapeText(id.getQuery()));
         }
         return sb.toString();
+    }
+
+    @Override
+    public void format(NutsId id, Writer out) {
+        try {
+            out.write(toString(id));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void format(NutsId id) {
+        format(id, ws.getTerminal());
+    }
+
+    @Override
+    public void format(NutsId id, NutsTerminal terminal) {
+        format(id, terminal.getOut());
+    }
+
+    @Override
+    public void format(NutsId id, File file) {
+        format(id, file.toPath());
+    }
+
+    @Override
+    public void format(NutsId id, Path path) {
+        try (Writer w = Files.newBufferedWriter(path)) {
+            format(id, w);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void format(NutsId id, PrintStream out) {
+        PrintWriter p = new PrintWriter(out);
+        format(id, p);
+        p.flush();
     }
 
 }

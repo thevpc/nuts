@@ -19,7 +19,7 @@ public class NutsIndexerUtils {
         if (m == null) {
             m = ws.config()
                     .getStoreLocation(ws.resolveIdForClass(NutsIndexerUtils.class)
-                                    .getSimpleNameId(),
+                            .getSimpleNameId(),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             ws.getUserProperties().put(k, m);
         }
@@ -34,12 +34,12 @@ public class NutsIndexerUtils {
         entity.put("name", repository.getName());
         entity.put("type", repository.getRepositoryType());
         entity.put("location", repository.config().getLocation(false));
-        entity.put("enabled", String.valueOf(repository.isEnabled()));
-        entity.put("speed", String.valueOf(repository.getSpeed()));
+        entity.put("enabled", String.valueOf(repository.config().isEnabled()));
+        entity.put("speed", String.valueOf(repository.config().getSpeed()));
         NutsWorkspace ws = repository.getWorkspace();
         if (level == 0) {
             entity.put("mirrors", Arrays.toString(
-                    Arrays.stream(repository.getMirrors())
+                    Arrays.stream(repository.config().getMirrors())
                             .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1), ws))
                             .toArray()));
             entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1), ws));
@@ -151,8 +151,8 @@ public class NutsIndexerUtils {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (!set.contains(entry.getKey())) {
                 builder.add(new PhraseQuery.Builder()
-                                .add(new Term(entry.getKey(),
-                                        trim(entry.getValue()))).build(),
+                        .add(new Term(entry.getKey(),
+                                trim(entry.getValue()))).build(),
                         BooleanClause.Occur.MUST);
             }
         }

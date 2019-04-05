@@ -124,10 +124,11 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     private NutsRepository getLocalMavenRepo() {
-        for (NutsRepository nutsRepository : getWorkspace().repositories().getRepositories()) {
+        for (NutsRepository nutsRepository : getWorkspace().config().getRepositories()) {
             if (nutsRepository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_MAVEN)
-                    && nutsRepository.config().getRepositoryLocation().normalize().equals(
-                            getWorkspace().io().path(getWorkspace().io().expandPath("~/.m2"))
+                    && nutsRepository.config().getLocation(true) != null
+                    && nutsRepository.config().getLocation(true).equals(
+                            getWorkspace().io().path(getWorkspace().io().expandPath("~/.m2")).toString()
                     )) {
                 return nutsRepository;
             }

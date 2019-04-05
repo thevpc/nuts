@@ -50,8 +50,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     private NutsRepositoryMirroringHelper mirroring;
 
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FAST);
-        setSupportedMirroring(true);
+        super(options, workspace, parentRepository, SPEED_FAST, true);
         extensions.put("src", "-src.zip");
         cache = new NutsRepositoryFolderHelper(this, config().getStoreLocation(NutsStoreLocation.CACHE));
         lib = new NutsRepositoryFolderHelper(this, config().getStoreLocation(NutsStoreLocation.LIB));
@@ -144,7 +143,6 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //    public Path getComponentsLocation() {
 //        return lib.getStoreLocation();
 //    }
-
     @Override
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
         if (id.getVersion().isEmpty() && filter == null) {

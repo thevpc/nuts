@@ -175,14 +175,27 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--standalone":
+                    case "--standalone": {
+                        if (enabled) {
+                            o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+                            o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
+                        }
+                        break;
+
+                    }
                     case "--standalone-workspace": {
                         if (enabled) {
                             o.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
                     }
-                    case "--exploded":
+                    case "--exploded": {
+                        if (enabled) {
+                            o.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+                            o.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+                        }
+                        break;
+                    }
                     case "--exploded-workspace": {
                         if (enabled) {
                             o.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
@@ -388,8 +401,7 @@ public final class NutsArgumentsParser {
                         parseLogLevel(logConfig, cmdArg, cmdArgList, enabled);
                         break;
                     }
-                    case "--exclude-extension":
-                    {
+                    case "--exclude-extension": {
                         String v = cmdArgList.getValueFor(cmdArg);
                         if (enabled) {
                             excludedExtensions.add(v);
@@ -404,9 +416,8 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--repository": 
-                    case "-P": 
-                    {
+                    case "--repository":
+                    case "-P": {
                         String v = cmdArgList.getValueFor(cmdArg);
                         if (enabled) {
                             tempRepositories.add(v);
@@ -414,17 +425,15 @@ public final class NutsArgumentsParser {
                         break;
                     }
 
-                    case "--yes": 
-                    case "-y": 
-                    {
+                    case "--yes":
+                    case "-y": {
                         if (enabled) {
                             o.setDefaultResponse(Boolean.TRUE);
                         }
                         break;
                     }
-                    case "--no": 
-                    case "-N": 
-                    {
+                    case "--no":
+                    case "-N": {
                         if (enabled) {
                             o.setDefaultResponse(Boolean.FALSE);
                         }
@@ -442,9 +451,8 @@ public final class NutsArgumentsParser {
                     // in use in the current process (and ignored elsewhere). 
                     // Such options will be considered in creating worspaces 
                     // as well but still they are not persistent.
-                    case "--recover": 
-                    case "-0":
-                    {
+                    case "--recover":
+                    case "-0": {
                         if (enabled) {
                             o.setInitMode(NutsBootInitMode.RECOVER);
                         }

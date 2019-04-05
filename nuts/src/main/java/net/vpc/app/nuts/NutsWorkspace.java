@@ -96,10 +96,8 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     void installCompanionTools(NutsInstallCompanionOptions options, NutsSession session);
 
     NutsDefinition fetchApiDefinition(NutsSession session);
-    
-    NutsDefinition fetchRuntimeDefinition(NutsSession session);
 
-    NutsWorkspaceRepositoryManager repositories();
+    NutsDefinition fetchRuntimeDefinition(NutsSession session);
 
     NutsWorkspaceExtensionManager extensions();
 
@@ -143,7 +141,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     String getFileName(NutsId id, String ext);
 
-
     void updateRepositoryIndex(Path path);
 
     void updateAllRepositoryIndices();
@@ -173,7 +170,7 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     NutsClassLoaderBuilder createClassLoaderBuilder();
 
     NutsDescriptorBuilder createDescriptorBuilder();
-    
+
     NutsDependencyBuilder createDependencyBuilder();
 
     String createRegex(String pattern);
@@ -186,11 +183,11 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsQueryOptions createQueryOptions();
 
-    void save(boolean force);
-
-    void save();
-
-    boolean isGlobal();
-
     void updateRepositoryIndex(String repository);
+
+    void removeRepositoryListener(NutsRepositoryListener listener);
+
+    void addRepositoryListener(NutsRepositoryListener listener);
+
+    NutsRepositoryListener[] getRepositoryListeners();
 }

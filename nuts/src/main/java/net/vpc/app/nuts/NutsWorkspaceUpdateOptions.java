@@ -32,7 +32,7 @@ package net.vpc.app.nuts;
 public class NutsWorkspaceUpdateOptions {
 
     private boolean trace = true;
-    private boolean enableMajorUpdates = false;
+    private boolean enableMajorUpdates = true;
     private boolean updateExtensions = true;
     private boolean applyUpdates;
     private String forceBootAPIVersion;

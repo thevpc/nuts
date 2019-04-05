@@ -42,7 +42,11 @@ public interface NutsDescriptorFormat {
 
     NutsDescriptorFormat setPretty(boolean pretty);
 
-    String format(NutsDescriptor descriptor);
+//    String formatString(NutsDescriptor descriptor);
+
+    void format(NutsDescriptor descriptor);
+
+    void format(NutsDescriptor descriptor,NutsTerminal terminal);
 
     void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
 
@@ -53,4 +57,6 @@ public interface NutsDescriptorFormat {
     void format(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
 
     void format(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
+
+    String toString(NutsDescriptor descriptor);
 }

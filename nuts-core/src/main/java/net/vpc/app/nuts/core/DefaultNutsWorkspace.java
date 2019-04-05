@@ -57,7 +57,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -76,7 +75,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     protected final DefaultNutsWorkspaceSecurityManager securityManager = new DefaultNutsWorkspaceSecurityManager(this);
     protected final NutsWorkspaceConfigManagerExt configManager = new DefaultNutsWorkspaceConfigManager(this);
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
-    protected NutsWorkspaceRepositoryManagerExt repositoryManager;
     private final ObservableMap<String, Object> userProperties = new ObservableMap<>();
 
     private NutsSessionTerminal terminal;
@@ -85,7 +83,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     private NutsParseManager parseManager;
     private NutsFormatManager formatManager;
     private DefaultNutsInstalledRepository installedRepository;
-    private boolean global;
+    private List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
     public DefaultNutsWorkspace() {
 
@@ -113,9 +111,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         return new DefaultNutsDescriptorBuilder();
     }
 
-    @Override
-    public NutsWorkspaceRepositoryManager repositories() {
-        return repositoryManager;
+    public DefaultNutsWorkspaceConfigManager config0() {
+        return (DefaultNutsWorkspaceConfigManager) configManager;
     }
 
     @Override
@@ -224,7 +221,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         parseManager = new DefaultNutsParseManager(this);
         formatManager = new DefaultNutsFormatManager(this);
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, factory);
-        repositoryManager = new DefaultNutsWorkspaceRepositoryManager(this);
         configManager.onInitializeWorkspace(options,
                 new DefaultNutsBootContext(runningBootConfig),
                 new DefaultNutsBootContext(wsBootConfig),
@@ -278,10 +274,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
                 CoreNutsUtils.optionsToWconfig(options, config);
                 configManager.setConfig(config);
-                this.global = config.isGlobal();
                 initializeWorkspace(options.getArchetype(), session);
                 if (!config().isReadOnly()) {
-                    save();
+                    config().save();
                 }
                 reconfigurePostInstall(new NutsInstallCompanionOptions().setAsk(true).setForce(false).setTrace(true), session);
                 for (NutsWorkspaceListener workspaceListener : workspaceListeners) {
@@ -299,13 +294,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     }
                 }
             }
-            if (configManager.getRepositories().length == 0) {
+            if (configManager.getRepositoryRefs().length == 0) {
                 initializeWorkspace(options.getArchetype(), session);
             }
             List<String> transientRepositoriesSet = options.getTransientRepositories() == null ? null : new ArrayList<>(Arrays.asList(options.getTransientRepositories()));
             for (String loc : transientRepositoriesSet) {
                 String uuid = "transient_" + UUID.randomUUID().toString().replace("-", "");
-                repositories()
+                config()
                         .addRepository(
                                 new NutsCreateRepositoryOptions()
                                         .setTemporay(true)
@@ -347,25 +342,25 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             options = new NutsInstallCompanionOptions();
         }
         session = CoreNutsUtils.validateSession(session, this);
-        PrintStream out = terminal.getFormattedOut();
-        if (options.isTrace()) {
-            StringBuilder version = new StringBuilder(config().getRunningContext().getRuntimeId().getVersion().toString());
-            while (version.length() < 25) {
-                version.append(' ');
-            }
-            out.println("{{/------------------------------------------------------------------------------\\\\}}");
-            out.println("{{|}}==``      _   __      __        ``==                                                  {{|}}");
-            out.println("{{|}}==``     / | / /_  __/ /______  ``== ==N==etwork ==U==pdatable ==T==hings ==S==ervices                {{|}}");
-            out.println("{{|}}==``    /  |/ / / / / __/ ___/  ``== <<The Open Source Package Manager for __Java__ (TM)>>    {{|}}");
-            out.println("{{|}}==``   / /|  / /_/ / /_(__  )   ``== <<and other __things__>> ... by ==vpc==                      {{|}}");
-            out.println("{{|}}==``  /_/ |_/\\\\____/\\\\__/____/``==     __http://github.com/thevpc/nuts__                    {{|}}");
-            out.println("{{|}}      version [[" + version + "]]                                       {{|}}");
-            out.println("{{|------------------------------------------------------------------------------|}}");
-            out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
-            out.println("{{\\\\------------------------------------------------------------------------------/}}");
-            out.println();
-        }
         if (!config().getOptions().isSkipInstallCompanions()) {
+            if (options.isTrace()) {
+                PrintStream out = terminal.getFormattedOut();
+                StringBuilder version = new StringBuilder(config().getRunningContext().getRuntimeId().getVersion().toString());
+                while (version.length() < 25) {
+                    version.append(' ');
+                }
+                out.println("{{/------------------------------------------------------------------------------\\\\}}");
+                out.println("{{|}}==``      _   __      __        ``==                                                  {{|}}");
+                out.println("{{|}}==``     / | / /_  __/ /______  ``== ==N==etwork ==U==pdatable ==T==hings ==S==ervices                {{|}}");
+                out.println("{{|}}==``    /  |/ / / / / __/ ___/  ``== <<The Open Source Package Manager for __Java__ (TM)>>    {{|}}");
+                out.println("{{|}}==``   / /|  / /_/ / /_(__  )   ``== <<and other __things__>> ... by ==vpc==                      {{|}}");
+                out.println("{{|}}==``  /_/ |_/\\\\____/\\\\__/____/``==     __http://github.com/thevpc/nuts__                    {{|}}");
+                out.println("{{|}}      version [[" + version + "]]                                       {{|}}");
+                out.println("{{|------------------------------------------------------------------------------|}}");
+                out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
+                out.println("{{\\\\------------------------------------------------------------------------------/}}");
+                out.println();
+            }
             installCompanionTools(options, session);
         }
     }
@@ -470,7 +465,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             if (def.getInstallation().isInstalled()) {
                 if (!options.isForce()) {
                     if (options.isTrace()) {
-                        out.printf(formatter().createIdFormat().format(def.getId()) + " already installed\n");
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " already installed\n");
                     }
                     return def;
                 }
@@ -712,7 +707,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
         }
         if (options.isUpdateExtensions()) {
-            for (NutsId ext : config().getExtensions()) {
+            for (NutsId ext : extensions().getExtensions()) {
                 NutsUpdate extUpdate = checkUpdates(ext, bootVersion, session);
                 if (extUpdate != null) {
                     allUpdates.put(extUpdate.getAvailableId().getSimpleName(), extUpdate);
@@ -743,12 +738,16 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
         }
         if (!allUpdates.isEmpty() && options.isApplyUpdates()) {
+            Path bootstrapFolder = config().getStoreLocation(NutsStoreLocation.CACHE).resolve("bootstrap");
             if (bootUpdate != null) {
                 if (bootUpdate.getAvailableId() != null) {
                     CoreNutsUtils.checkReadOnly(this);
                     NutsBootConfig bc = config().getBootConfig();
                     bc.setApiVersion(bootUpdate.getAvailableId().getVersion().toString());
                     config().setBootConfig(bc);
+                    io().copy().from(bootUpdate.getAvailableIdFile()).to(config().getStoreLocation(bootUpdate.getAvailableId(), bootstrapFolder)
+                            .resolve(config().getDefaultIdFilename(bootUpdate.getAvailableId().setFaceComponent().setPackaging("jar")))
+                    ).run();
                     if (runtimeUpdate == null) {
 
                     }
@@ -767,9 +766,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 bc.setRuntimeDependencies(sb.toString());
                 CoreNutsUtils.checkReadOnly(this);
                 config().setBootConfig(bc);
+                io().copy().from(runtimeUpdate.getAvailableIdFile()).to(config().getStoreLocation(runtimeUpdate.getAvailableId(), bootstrapFolder)
+                            .resolve(config().getDefaultIdFilename(runtimeUpdate.getAvailableId().setFaceComponent().setPackaging("jar")))
+                    ).run();
             }
             for (NutsUpdate extension : extUpdates.values()) {
-                config().updateExtension(extension.getAvailableId());
+                extensions().updateExtension(extension.getAvailableId());
             }
             if (configManager.isConfigurationChanged()) {
                 config().save(false);
@@ -793,12 +795,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
      */
     public boolean requiresCoreExtension() {
         boolean exclude = false;
-        if (config().getExtensions().length > 0) {
+        if (extensions().getExtensions().length > 0) {
             exclude = Boolean.parseBoolean(config().getEnv(NutsConstants.ENV_KEY_EXCLUDE_CORE_EXTENSION, "false"));
         }
         if (!exclude) {
             boolean coreFound = false;
-            for (NutsId ext : config().getExtensions()) {
+            for (NutsId ext : extensions().getExtensions()) {
                 if (ext.equalsSimpleName(config().getRunningContext().getRuntimeId())) {
                     coreFound = true;
                     break;
@@ -1007,11 +1009,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 throw new UncheckedIOException(ex);
             }
             if (options.isTrace()) {
-                out.printf(formatter().createIdFormat().format(id) + " uninstalled ##successfully##\n");
+                out.printf(formatter().createIdFormat().toString(id) + " uninstalled ##successfully##\n");
             }
         } else {
             if (options.isTrace()) {
-                out.printf(formatter().createIdFormat().format(id) + " @@could not@@ be uninstalled\n");
+                out.printf(formatter().createIdFormat().toString(id) + " @@could not@@ be uninstalled\n");
             }
         }
         return true;
@@ -1418,7 +1420,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     errors.add(StringUtils.exceptionToString(e));
                     //
                 }
-                if (descr != null && repo.isSupportedMirroring()) {
+                if (descr != null && repo.config().isSupportedMirroring()) {
                     NutsId id2 = config().createComponentFaceId(resolveEffectiveId(descr,
                             new DefaultNutsQueryOptions().setTransitive(true),
                             session
@@ -1434,7 +1436,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
             throw new NutsRepositoryNotFoundException(options.getRepository() + " : " + StringUtils.join("\n", errors));
         } else {
-            NutsRepository repo = repositories().getRepository(options.getRepository());
+            NutsRepository repo = config().getRepository(options.getRepository());
             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, options.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
                     fetchOptions
             );
@@ -1823,9 +1825,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
         if (parent instanceof NutsWorkspace) {
             List<NutsRepository> subrepos = new ArrayList<>();
             NutsWorkspace ws = (NutsWorkspace) parent;
-            for (NutsRepository repository : ws.repositories().getRepositories()) {
+            for (NutsRepository repository : ws.config().getRepositories()) {
                 boolean ok = false;
-                if (repository.isEnabled()) {
+                if (repository.config().isEnabled()) {
                     if (repositoryFilter == null || repositoryFilter.accept(repository)) {
                         repos.add(repository);
                         ok = true;
@@ -1840,11 +1842,11 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
         } else if (parent instanceof NutsRepository) {
             NutsRepository repo = (NutsRepository) parent;
-            if (repo.isSupportedMirroring()) {
+            if (repo.config().isSupportedMirroring()) {
                 List<NutsRepository> subrepos = new ArrayList<>();
                 boolean ok = false;
-                for (NutsRepository repository : repo.getMirrors()) {
-                    if (repository.isEnabled()) {
+                for (NutsRepository repository : repo.config().getMirrors()) {
+                    if (repository.config().isEnabled()) {
                         if (repositoryFilter == null || repositoryFilter.accept(repository)) {
                             repos.add(repository);
                             ok = true;
@@ -2177,9 +2179,9 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     protected NutsRepository getEnabledRepositoryOrError(String repoId) {
-        NutsRepository r = repositories().getRepository(repoId);
+        NutsRepository r = config().getRepository(repoId);
         if (r != null) {
-            if (!r.isEnabled()) {
+            if (!r.config().isEnabled()) {
                 throw new NutsRepositoryNotFoundException("Repository " + repoId + " is disabled.");
             }
         }
@@ -2187,7 +2189,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     protected void checkEnabled(String repoId) {
-        if (!repositories().getRepository(repoId).isEnabled()) {
+        if (!config().getRepository(repoId).config().isEnabled()) {
             throw new NutsIllegalArgumentException("Repository " + repoId + " is disabled");
         }
     }
@@ -2217,7 +2219,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                     throw ex;
                 } catch (Exception ex) {
                     if (trace) {
-                        out.printf(formatter().createIdFormat().format(def.getId()) + " @@Failed@@ to install : %s.\n", ex.toString());
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " @@Failed@@ to install : %s.\n", ex.toString());
                     }
                     installedRepository.uninstall(executionContext.getNutsDefinition().getId());
                     throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex, 1);
@@ -2234,19 +2236,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             if (!def.getInstallation().isInstalled()) {
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
-                        out.printf(formatter().createIdFormat().format(def.getId()) + " installed ##successfully## from temporarily file %s\n", def.getContent().getPath());
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed ##successfully## from temporarily file %s\n", def.getContent().getPath());
                     } else {
-                        out.printf(formatter().createIdFormat().format(def.getId()) + " installed ##successfully## from remote repository\n");
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed ##successfully## from remote repository\n");
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
-                        out.printf(formatter().createIdFormat().format(def.getId()) + " installed from local temporarily file %s \n", def.getContent().getPath());
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed from local temporarily file %s \n", def.getContent().getPath());
                     } else {
-                        out.printf(formatter().createIdFormat().format(def.getId()) + " installed from local repository\n");
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed from local repository\n");
                     }
                 }
             } else {
-                out.printf(formatter().createIdFormat().format(def.getId()) + " installed ##successfully##\n");
+                out.printf(formatter().createIdFormat().toString(def.getId()) + " installed ##successfully##\n");
             }
         }
     }
@@ -2342,11 +2344,10 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
             }
         }
         if (loadedConfig) {
-            this.global = configManager.isGlobal();
-            repositoryManager.removeAllRepositories();
+            config0().removeAllRepositories();
 
             //extensions already wired... this is needless!
-            for (NutsId extensionId : config().getExtensions()) {
+            for (NutsId extensionId : extensions().getExtensions()) {
                 if (excludedExtensionsSet != null && CoreNutsUtils.findNutsIdBySimpleNameInStrings(extensionId, excludedExtensionsSet) != null) {
                     continue;
                 }
@@ -2360,12 +2361,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 }
             }
 
-            for (NutsRepositoryRef ref : configManager.getRepositories()) {
+            for (NutsRepositoryRef ref : configManager.getRepositoryRefs()) {
                 if (excludedRepositoriesSet != null && excludedRepositoriesSet.contains(ref.getName())) {
                     continue;
                 }
-                repositoryManager.wireRepository(repositoryManager.createRepository(
-                        CoreNutsUtils.refToOptions(ref), repositoryManager.getRepositoriesRoot(), null)
+                config0().wireRepository(config().createRepository(
+                        CoreNutsUtils.refToOptions(ref), config0().getRepositoriesRoot(), null)
                 );
             }
 
@@ -2390,7 +2391,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
                 listener.onReloadWorkspace(this);
             }
             //if save is needed, will be applied
-            save(false);
+            config().save(false);
             return true;
         }
         return false;
@@ -2402,7 +2403,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     public void checkSupportedRepositoryType(String type) {
-        if (!repositories().isSupportedRepositoryType(type)) {
+        if (!config().isSupportedRepositoryType(type)) {
             throw new NutsIllegalArgumentException("Unsupported repository type " + type);
         }
     }
@@ -2552,7 +2553,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
 
     @Override
     public void updateRepositoryIndex(String repository) {
-        NutsRepository r = this.repositories().getRepository(repository);
+        NutsRepository r = this.config().getRepository(repository);
         if (r != null) {
             ((NutsFolderRepository) r).reindexFolder();
         }
@@ -2562,7 +2563,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     public void updateRepositoryIndex(Path path) {
         CoreNutsUtils.checkReadOnly(this);
         String nn = UUID.randomUUID().toString();
-        NutsRepository r = repositoryManager.createRepository(
+        NutsRepository r = config().createRepository(
                 new NutsCreateRepositoryOptions()
                         .setName(nn)
                         .setTemporay(true)
@@ -2582,7 +2583,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     @Override
     public void updateAllRepositoryIndices() {
         CoreNutsUtils.checkReadOnly(this);
-        for (NutsRepository nutsRepository : repositories().getRepositories()) {
+        for (NutsRepository nutsRepository : config().getRepositories()) {
             if (nutsRepository instanceof NutsFolderRepository) {
                 ((NutsFolderRepository) nutsRepository).reindexFolder();
             }
@@ -2778,40 +2779,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl {
     }
 
     @Override
-    public void save() {
-        config().save();
-        NutsException error = null;
-        for (NutsRepository repo : repositories().getRepositories()) {
-            try {
-                repo.save();
-            } catch (NutsException ex) {
-                error = ex;
-            }
-        }
-        if (error != null) {
-            throw error;
+    public void removeRepositoryListener(NutsRepositoryListener listener) {
+        repositoryListeners.add(listener);
+    }
+
+    @Override
+    public void addRepositoryListener(NutsRepositoryListener listener) {
+        if (listener != null) {
+            repositoryListeners.add(listener);
         }
     }
 
     @Override
-    public void save(boolean force) {
-        config().save(force);
-        NutsException error = null;
-        for (NutsRepository repo : repositories().getRepositories()) {
-            try {
-                repo.save(force);
-            } catch (NutsException ex) {
-                error = ex;
-            }
-        }
-        if (error != null) {
-            throw error;
-        }
+    public NutsRepositoryListener[] getRepositoryListeners() {
+        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
     }
-
-    @Override
-    public boolean isGlobal() {
-        return this.global;
-    }
-
 }

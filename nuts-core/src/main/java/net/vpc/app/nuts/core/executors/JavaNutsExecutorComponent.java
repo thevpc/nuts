@@ -131,7 +131,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
         if (joptions.isJar()) {
             xargs.add("-jar");
-            xargs.add(executionContext.getWorkspace().formatter().createIdFormat().format(nutsMainDef.getId()));
+            xargs.add(executionContext.getWorkspace().formatter().createIdFormat().toString(nutsMainDef.getId()));
 
             args.add("-jar");
             args.add(contentFile.toString());

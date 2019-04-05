@@ -17,48 +17,48 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     String getName();
 
+    /**
+     * global name is independent from workspace
+     *
+     * @return
+     */
+    String getGlobalName();
+
     String getType();
 
     String getGroups();
 
     int getSpeed();
 
+    int getSpeed(boolean transitive);
+
     void setEnv(String property, String value);
 
+    boolean isTemporary();
+
+    boolean isIndexSubscribed();
 
     /**
      * return repository configured location as string
      *
-     * @param expand when true, location will be expanded (~ and $ params will be expanded)
+     * @param expand when true, location will be expanded (~ and $ params will
+     * be expanded)
      * @return repository location
      */
     String getLocation(boolean expand);
-
-    Path getRepositoryLocation();
 
     Path getStoreLocation();
 
     Path getStoreLocation(NutsStoreLocation folderType);
 
-    void removeUser(String userId);
-
-    void setUser(NutsUserConfig user);
-
-    NutsUserConfig getUser(String userId);
-
-    NutsUserConfig[] getUsers();
-
-//    NutsRepositoryConfig getConfig();
-
-    void removeMirror(String repositoryId);
-
-
-    void addMirror(NutsRepositoryRef c);
-
-    NutsRepositoryRef getMirror(String id);
-
-
-    NutsRepositoryRef[] getMirrors();
+////    NutsRepositoryConfig getConfig();
+//    NutsRepositoryConfigManager removeMirrorRef(String repositoryId);
+//
+//    NutsRepositoryConfigManager addMirrorRef(NutsRepositoryRef c);
+//
+//    NutsRepositoryRef getMirrorRef(String id);
+//
+//    NutsRepositoryRef[] getMirrorRefs();
 
     boolean save(boolean force);
 
@@ -68,12 +68,68 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     String getEnv(String key, String defaultValue, boolean inherit);
 
-    void setIndexEnabled(boolean enabled);
+    NutsRepositoryConfigManager setIndexEnabled(boolean enabled);
 
     boolean isIndexEnabled();
 
-    void setMirrorEnabled(String repoName, boolean enabled);
+    NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled);
 
     public int getDeployOrder();
 
+    NutsRepositoryConfigManager setEnabled(boolean enabled);
+
+    NutsRepositoryConfigManager setTemporary(boolean enabled);
+
+    boolean isEnabled();
+
+    boolean subscribeIndex();
+
+    NutsRepositoryConfigManager unsubscribeIndex();
+
+    boolean isSupportedMirroring();
+
+    NutsRepository[] getMirrors();
+
+    boolean containsMirror(String repositoryIdPath);
+
+    /**
+     * @param repositoryIdPath
+     * @return
+     */
+    NutsRepository getMirror(String repositoryIdPath);
+
+    NutsRepository findMirror(String repositoryIdPath);
+
+    /**
+     *
+     * @param definition
+     * @return
+     */
+    NutsRepository addMirror(NutsRepositoryDefinition definition);
+
+    /**
+     * @param options
+     * @return
+     */
+    NutsRepository addMirror(NutsCreateRepositoryOptions options);
+
+    /**
+     * @param repositoryId
+     * @return
+     */
+    NutsRepositoryConfigManager removeMirror(String repositoryId);
+
+    int getDeploymentSupportLevel(NutsId id, boolean offlineOnly, boolean transitive);
+
+    int getFindSupportLevel(NutsId id, NutsFetchMode fetchMode, boolean transitive);
+
+    NutsRepositoryConfigManager removeUser(String userId);
+
+    NutsRepositoryConfigManager setUser(NutsUserConfig user);
+
+    NutsUserConfig getUser(String userId);
+
+    NutsUserConfig[] getUsers();
+
+    NutsStoreLocationStrategy getStoreLocationStrategy();
 }

@@ -65,7 +65,7 @@ public class NAdminMain extends NutsApplication {
     }
 
     public void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
-        boolean enabled = repository.isEnabled();
+        boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
         PrintStream out = context.out();
         out.print(prefix);
@@ -82,8 +82,8 @@ public class NAdminMain extends NutsApplication {
     public void showRepoTree(NutsApplicationContext context, NutsRepository repository, String prefix) {
         showRepo(context, repository, prefix);
         String prefix1 = prefix + "  ";
-        if (repository.isSupportedMirroring()) {
-            for (NutsRepository c : repository.getMirrors()) {
+        if (repository.config().isSupportedMirroring()) {
+            for (NutsRepository c : repository.config().getMirrors()) {
                 showRepoTree(context, c, prefix1);
             }
         }

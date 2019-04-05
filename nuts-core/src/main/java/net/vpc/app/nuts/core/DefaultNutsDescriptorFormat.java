@@ -3,10 +3,11 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.io.FileUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import net.vpc.app.nuts.NutsTerminal;
 
 public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
@@ -29,8 +30,16 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public String format(NutsDescriptor descriptor) {
-        return null;
+    public String toString(NutsDescriptor descriptor) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        OutputStreamWriter w = new OutputStreamWriter(b);
+        format(descriptor, w);
+        try {
+            w.flush();
+        } catch (IOException e) {
+            //
+        }
+        return new String(b.toByteArray());
     }
 
     @Override
@@ -57,42 +66,30 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
-        format(descriptor, file.toFile());
+    public void format(NutsDescriptor descriptor, File file) throws UncheckedIOException {
+        format(descriptor, file.toPath());
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, File file) throws UncheckedIOException {
-        FileUtils.createParents(file);
-        FileWriter os = null;
-        try {
-            try {
-                os = new FileWriter(file);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            format(descriptor, os);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-        }
+    public void format(NutsDescriptor descriptor) {
+        format(descriptor, ws.getTerminal());
     }
 
-    public String toString(NutsDescriptor descriptor) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        OutputStreamWriter w = new OutputStreamWriter(b);
-        format(descriptor, w);
+    @Override
+    public void format(NutsDescriptor descriptor, NutsTerminal terminal) {
+        format(descriptor, terminal.getOut());
+    }
+
+    @Override
+    public void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
         try {
-            w.flush();
+            Files.createDirectories(file.getParent());
+            try (Writer os = Files.newBufferedWriter(file)) {
+                format(descriptor, os);
+            }
         } catch (IOException e) {
-            //
+            throw new UncheckedIOException(e);
         }
-        return new String(b.toByteArray());
     }
 
 }

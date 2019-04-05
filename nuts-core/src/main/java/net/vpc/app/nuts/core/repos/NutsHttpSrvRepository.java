@@ -49,7 +49,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     private NutsId remoteId;
 
     public NutsHttpSrvRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW);
+        super(options, workspace, parentRepository, SPEED_SLOW,false);
         try {
             remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(options.getLocation() + "/version"));
         } catch (Exception ex) {
@@ -60,11 +60,6 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     @Override
     public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isSupportedMirroring() {
-        return false;
     }
 
     public String getUrl(String path) {

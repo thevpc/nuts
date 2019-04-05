@@ -56,7 +56,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     public List<ArgumentCandidate> getValues() {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
-        for (NutsRepositoryDefinition repo : workspace.repositories().getDefaultRepositories()) {
+        for (NutsRepositoryDefinition repo : workspace.config().getDefaultRepositories()) {
             allValid.add(repo.getType());
         }
         List<ArgumentCandidate> all = new ArrayList<>();

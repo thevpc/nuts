@@ -131,11 +131,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
             NutsWorkspaceExtension e = wireExtension(id, new DefaultNutsQueryOptions().setFetchStratery(NutsFetchStrategy.ONLINE), session);
-            ws.config().addExtension(id);
+            addExtension(id);
             return e;
         } else {
             old = extensions.get(oldId);
-            ws.config().addExtension(id);
+            addExtension(id);
             return old;
         }
     }
@@ -413,4 +413,90 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public boolean isRegisteredType(Class extensionPointType, Class extensionType) {
         return objectFactory.isRegisteredType(extensionPointType, extensionType);
     }
+
+    @Override
+    public NutsId[] getExtensions() {
+        if (workspaceConfig().getExtensions() != null) {
+            return workspaceConfig().getExtensions().toArray(new NutsId[0]);
+        }
+        return new NutsId[0];
+    }
+
+    @Override
+    public boolean addExtension(NutsId extensionId) {
+        if (extensionId == null) {
+            throw new NutsIllegalArgumentException("Invalid Extension");
+        }
+        if (!containsExtension(extensionId)) {
+            if (workspaceConfig().getExtensions() == null) {
+                workspaceConfig().setExtensions(new ArrayList<>());
+            }
+            workspaceConfig().getExtensions().add(extensionId);
+            fireConfigurationChanged();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeExtension(NutsId extensionId) {
+        if (extensionId == null) {
+            throw new NutsIllegalArgumentException("Invalid Extension");
+        }
+        for (NutsId extension : getExtensions()) {
+            if (extension.equalsSimpleName(extensionId)) {
+                if (workspaceConfig().getExtensions() != null) {
+                    workspaceConfig().getExtensions().remove(extension);
+                }
+                fireConfigurationChanged();
+                return true;
+
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateExtension(NutsId extensionId) {
+        if (extensionId == null) {
+            throw new NutsIllegalArgumentException("Invalid Extension");
+        }
+        NutsId[] extensions = getExtensions();
+        for (int i = 0; i < extensions.length; i++) {
+            NutsId extension = extensions[i];
+            if (extension.equalsSimpleName(extensionId)) {
+                extensions[i] = extensionId;
+                workspaceConfig().setExtensions(new ArrayList<>(Arrays.asList(extensions)));
+                fireConfigurationChanged();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsExtension(NutsId extensionId) {
+        if (extensionId == null) {
+            throw new NutsIllegalArgumentException("Invalid Extension");
+        }
+        for (NutsId extension : getExtensions()) {
+            if (extension.equalsSimpleName(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void fireConfigurationChanged() {
+        config0().fireConfigurationChanged();
+    }
+
+    private DefaultNutsWorkspaceConfigManager config0() {
+        return (DefaultNutsWorkspaceConfigManager) ws.config();
+    }
+
+    private NutsWorkspaceConfig workspaceConfig() {
+        return config0().config;
+    }
+
 }

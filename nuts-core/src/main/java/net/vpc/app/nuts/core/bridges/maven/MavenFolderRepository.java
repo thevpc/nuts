@@ -77,20 +77,23 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         }
     }
 
+    private Path getLocationAsPath() {
+        return getWorkspace().io().path(config().getLocation(true));
+    }
+
     @Override
     protected String getIdPath(NutsId id) {
-        return config().getRepositoryLocation().resolve(CoreNutsUtils.syspath(getIdRelativePath(id))).toString();
+        return getLocationAsPath().resolve(CoreNutsUtils.syspath(getIdRelativePath(id))).toString();
     }
 
 //    @Override
 //    public Path getComponentsLocation() {
 //        return null;
 //    }
-
     public Path getIdFile(NutsId id) {
         String p = getIdRelativePath(id);
         if (p != null) {
-            return config().getRepositoryLocation().resolve(p);
+            return getLocationAsPath().resolve(p);
         }
         return null;
     }
@@ -118,7 +121,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (StringUtils.isEmpty(id.getName())) {
             return null;
         }
-        Path groupFolder = config().getRepositoryLocation().resolve(id.getGroup().replace('.', File.separatorChar));
+        Path groupFolder = getLocationAsPath().resolve(id.getGroup().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getName());
     }
 
@@ -223,7 +226,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
 
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-            Path locationFolder = config().getRepositoryLocation();
+            Path locationFolder = getLocationAsPath();
             List<Iterator<NutsId>> list = new ArrayList<>();
 
             for (CommonRootsHelper.PathBase root : roots) {

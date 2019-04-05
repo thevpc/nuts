@@ -889,7 +889,7 @@ public class NFindMain extends NutsApplication {
                 .setOmitGroup(findContext.omitGroup)
                 .setOmitImportedGroup(findContext.omitImportedGroup)
                 .setOmitNamespace(findContext.omitNamespace)
-                .format(id)
+                .toString(id)
         );
         if (!StringUtils.isEmpty(desc)) {
             sb.append(" **");

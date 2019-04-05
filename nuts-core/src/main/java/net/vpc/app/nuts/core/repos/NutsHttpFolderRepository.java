@@ -51,17 +51,12 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     private static final Logger log = Logger.getLogger(NutsHttpFolderRepository.class.getName());
 
     public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW);
+        super(options, workspace, parentRepository, SPEED_SLOW,false);
     }
 
     @Override
     public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isSupportedMirroring() {
-        return false;
     }
 
     @Override

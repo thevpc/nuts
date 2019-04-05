@@ -34,6 +34,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -91,16 +92,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String[] getImports();
 
-    NutsId[] getExtensions();
-
-    void setRepositoryEnabled(String repoId, boolean enabled);
-
-    boolean addExtension(NutsId extensionId);
-
-    boolean removeExtension(NutsId extensionId);
-
-    boolean updateExtension(NutsId extensionId);
-
     /**
      * save config file if force is activated or non read only and some changes
      * was detected in config file
@@ -124,14 +115,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setSecure(boolean secure);
 
-    void addRepository(NutsRepositoryRef repository);
-
-    void removeRepository(String repositoryName);
-
-    NutsRepositoryRef getRepository(String repositoryName);
-
-    boolean containsExtension(NutsId extensionId);
-
+//    void addRepositoryRef(NutsRepositoryRef repository);
+//
+//    void removeRepositoryRef(String repositoryName);
+//
+//    NutsRepositoryRef getRepositoryRef(String repositoryName);
     void removeUser(String userId);
 
     void setUsers(NutsUserConfig[] users);
@@ -206,6 +194,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     Path getStoreLocation(NutsId id, NutsStoreLocation folderType);
 
+    Path getStoreLocation(NutsId id, Path path);
+
     NutsOsFamily getPlatformOsFamily();
 
     NutsId getPlatformOs();
@@ -226,8 +216,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     String getDefaultIdFilename(NutsId id);
 
-    String getDefaultIdExtension(NutsId id);
-
     NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
 
     String getUuid();
@@ -236,9 +224,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
 
-    NutsRepositoryRef[] getRepositories();
-
-    String getDefaultIdComponentExtension(String packaging);
+    NutsRepositoryRef[] getRepositoryRefs();
 
     NutsWorkspaceListManager createWorkspaceListManager(String name);
 
@@ -247,4 +233,40 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsId getApiId();
 
     NutsId getRuntimeId();
+
+    boolean isSupportedRepositoryType(String repositoryType);
+
+    NutsRepository addRepository(NutsRepositoryDefinition definition);
+
+    NutsRepository addRepository(NutsCreateRepositoryOptions options);
+
+    /**
+     *
+     * @param repositoryIdPath
+     * @return null if not found
+     */
+    NutsRepository findRepository(String repositoryIdPath);
+
+    NutsRepository getRepository(String repositoryIdPath) throws NutsRepositoryNotFoundException;
+
+    void removeRepository(String locationOrRepositoryId);
+
+    NutsRepository[] getRepositories();
+
+    NutsRepositoryDefinition[] getDefaultRepositories();
+
+    Set<String> getAvailableArchetypes();
+
+    Path resolveRepositoryPath(String repositoryLocation);
+
+    NutsIndexStoreClientFactory getIndexStoreClientFactory();
+
+    NutsRepository createRepository(NutsCreateRepositoryOptions options, Path rootFolder, NutsRepository parentRepository);
+
+    boolean isGlobal();
+
+    String getDefaultIdComponentExtension(String packaging);
+
+    String getDefaultIdExtension(NutsId id);
+
 }

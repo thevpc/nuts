@@ -59,22 +59,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
     protected Map<String, String> extensions = new HashMap<>();
     private String repositoryName;
-    private String globalName;
     private NutsRepository parentRepository;
     private NutsWorkspace workspace;
-    private final Map<String, NutsRepository> mirrors = new HashMap<>();
     private final NutsRepositorySecurityManager securityManager = new DefaultNutsRepositorySecurityManager(this);
     private DefaultNutsRepositoryConfigManager configManager;
-    private boolean temporary;
-    private boolean enabled = true;
-    private boolean supportedMirroring = false;
-    private NutsIndexStoreClient nutsIndexStoreClient;
+    protected NutsIndexStoreClient nutsIndexStoreClient;
 
-    public AbstractNutsRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed) {
-        init(options, workspace, parentRepository, speed);
+    public AbstractNutsRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring) {
+        init(options, workspace, parentRepository, speed, supportedMirroring);
     }
 
-    protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed) {
+    protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring) {
         if (options.getConfig() == null) {
             throw new NutsIllegalArgumentException("Null Config");
         }
@@ -87,21 +82,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
             throw new NutsInvalidRepositoryException(folder, "Unable to resolve root as a valid folder " + options.getLocation());
         }
-        configManager = new DefaultNutsRepositoryConfigManager(this, folder, options.getConfig(), Math.max(0, speed),options.getDeployOrder());
-
-        this.temporary = options.isTemporay();
+        configManager = new DefaultNutsRepositoryConfigManager(this, folder, options.getConfig(), Math.max(0, speed), options.getDeployOrder(), options.isTemporay(), options.isEnabled(), options.getConfig() == null ? null : options.getConfig().getName(), supportedMirroring);
         this.repositoryName = options.getName();
-        this.enabled = options.isEnabled();
-        this.globalName = options.getName();
         this.workspace = workspace;
         this.parentRepository = parent;
-        this.nutsIndexStoreClient = workspace.repositories().getIndexStoreClientFactory().createNutsIndexStoreClient(this);
+        this.nutsIndexStoreClient = workspace.config().getIndexStoreClientFactory().createNutsIndexStoreClient(this);
         open(options.isCreate());
-    }
-
-    @Override
-    public boolean isSupportedMirroring() {
-        return supportedMirroring;
     }
 
     @Override
@@ -155,13 +141,6 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 newConfig.setType(getRepositoryType());
                 checkNutsRepositoryConfig(newConfig);
                 configManager.setConfig(newConfig);
-                globalName = config().getName();
-                for (NutsRepositoryRef ref : config().getMirrors()) {
-                    wireRepository(getWorkspace().repositories().createRepository(
-                            CoreNutsUtils.refToOptions(ref).setCreate(true),
-                            getMirrorsRoot(), this));
-                }
-
             }
         }
         if (!found) {
@@ -175,11 +154,6 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 throw new NutsRepositoryNotFoundException(getName());
             }
         }
-    }
-
-    @Override
-    public String getGlobalName() {
-        return globalName;
     }
 
 //    protected NutsRepository createRepository(NutsCreateRepositoryOptions options) {
@@ -199,70 +173,28 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 //        wireRepository(r);
 //        return r;
 //    }
-    private Path getMirrorsRoot() {
-        return config().getStoreLocation().resolve(NutsConstants.FOLDER_NAME_REPOSITORIES);
-    }
-
-    protected NutsRepository wireRepository(NutsRepository repository) {
-        if (repository == null) {
-            return null;
-        }
-        CoreNutsUtils.validateRepositoryName(repository.getName(), mirrors.keySet());
-        mirrors.put(repository.getName(), repository);
-        fireOnAddRepository(repository);
-        return repository;
-    }
-
-    @Override
-    public int getDeploymentSupportLevel(NutsId id, boolean offlineOnly, boolean transitive) {
-        int namespaceSupport = getDeploymentSupportLevelCurrent(id, offlineOnly);
-        if (transitive) {
-            for (NutsRepository remote : mirrors.values()) {
-                int r = remote.getDeploymentSupportLevel(id, offlineOnly, transitive);
-                if (r > 0 && r > namespaceSupport) {
-                    namespaceSupport = r;
-                }
-            }
-        }
-        return namespaceSupport;
-    }
-
     protected int getDeploymentSupportLevelCurrent(NutsId id, boolean offlineOnly) {
-        if(offlineOnly && config().getSpeed()<SPEED_FAST){
+        if (offlineOnly && config().getSpeed() < SPEED_FAST) {
             return 0;
         }
         String groups = config().getGroups();
         if (StringUtils.isEmpty(groups)) {
-            return 1*config().getDeployOrder();
+            return 1 * config().getDeployOrder();
         }
         return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
     }
 
-    @Override
-    public int getFindSupportLevel(NutsId id, NutsFetchMode mode, boolean transitive) {
-        int namespaceSupport = getFindSupportLevelCurrent(id, mode);
-        if (transitive) {
-            for (NutsRepository remote : mirrors.values()) {
-                int r = remote.getFindSupportLevel(id, mode, transitive);
-                if (r > 0 && r > namespaceSupport) {
-                    namespaceSupport = r;
-                }
-            }
-        }
-        return namespaceSupport;
-    }
-
     protected int getFindSupportLevelCurrent(NutsId id, NutsFetchMode mode) {
-        switch(mode){
+        switch (mode) {
             case INSTALLED:
-            case LOCAL:{
-                if(config().getSpeed()<SPEED_FAST){
+            case LOCAL: {
+                if (config().getSpeed() < SPEED_FAST) {
                     return 0;
                 }
                 break;
             }
-            case REMOTE:{
-                if(config().getSpeed()>=SPEED_FAST){
+            case REMOTE: {
+                if (config().getSpeed() >= SPEED_FAST) {
                     return 0;
                 }
                 break;
@@ -286,115 +218,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public void save() {
-        config().save();
-        NutsException error = null;
-        for (NutsRepository repository : mirrors.values()) {
-            try {
-                repository.save();
-            } catch (NutsException ex) {
-                error = ex;
-            }
-        }
-        if (error != null) {
-            throw error;
-        }
-    }
-
-    @Override
     public void save(boolean force) {
         config().save(force);
-        NutsException error = null;
-        for (NutsRepository repository : mirrors.values()) {
-            try {
-                repository.save(force);
-            } catch (NutsException ex) {
-                error = ex;
-            }
-        }
-        if (error != null) {
-            throw error;
-        }
-    }
-
-    @Override
-    public void removeMirror(String repositoryId) {
-        if (!isSupportedMirroring()) {
-            throw new NutsUnsupportedOperationException();
-        }
-        boolean updated = false;
-        NutsRepository repo = null;
-        try {
-            repo = getMirror(repositoryId);
-        } catch (NutsRepositoryNotFoundException ex) {
-            //ignore
-        }
-        if (repo != null) {
-            updated = true;
-        }
-        if (config().getMirror(repositoryId) != null) {
-            updated = true;
-        }
-        if (!updated) {
-            throw new NutsRepositoryNotFoundException(repositoryId);
-        }
-        if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, "{0} remove repo {1}", new Object[]{StringUtils.alignLeft(getName(), 20), repositoryId});
-        }
-        config().removeMirror(repositoryId);
-        if (repo != null) {
-            mirrors.remove(repositoryId);
-            fireOnRemoveRepository(repo);
-        }
-    }
-
-    @Override
-    public boolean containsMirror(String repositoryIdPath) {
-        return mirrors.containsKey(repositoryIdPath);
-    }
-
-    @Override
-    public NutsRepository getMirror(String repositoryIdPath) {
-        NutsRepository r = mirrors.get(repositoryIdPath);
-        if (r != null) {
-            return r;
-        }
-        throw new NutsRepositoryNotFoundException(repositoryIdPath);
-    }
-    
-    @Override
-    public NutsRepository findMirror(String repositoryIdPath) {
-        NutsRepository r = mirrors.get(repositoryIdPath);
-        if (r != null) {
-            return r;
-        }
-        return null;
-    }
-
-    @Override
-    public NutsRepository[] getMirrors() {
-        return mirrors.values().toArray(new NutsRepository[0]);
-    }
-
-    @Override
-    public NutsRepository addMirror(NutsRepositoryDefinition definition) {
-        return addMirror(CoreNutsUtils.defToOptions(definition));
-    }
-
-    @Override
-    public NutsRepository addMirror(NutsCreateRepositoryOptions options) {
-        if (!isSupportedMirroring()) {
-            throw new NutsUnsupportedOperationException();
-        }
-        String mirrorName = options.getName();
-        NutsRepositoryRef repoConf = config().getMirror(mirrorName);
-        if (repoConf != null) {
-            throw new NutsRepositoryAlreadyRegisteredException(mirrorName);
-        }
-        if (!options.isTemporay()) {
-            config().addMirror(CoreNutsUtils.optionsToRef(options));
-        }
-        return wireRepository(getWorkspace().repositories().createRepository(options, getMirrorsRoot(), this));
     }
 
     @Override
@@ -773,16 +598,6 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return workspace;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     private void checkNutsRepositoryConfig(NutsRepositoryConfig config) {
         if (StringUtils.isEmpty(config.getType())) {
             throw new NutsIllegalArgumentException("Empty Repository Type");
@@ -799,7 +614,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onUndeploy(evt);
         }
-        for (NutsRepositoryListener listener : getWorkspace().repositories().getRepositoryListeners()) {
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onUndeploy(evt);
         }
     }
@@ -808,7 +623,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onDeploy(file);
         }
-        for (NutsRepositoryListener listener : getWorkspace().repositories().getRepositoryListeners()) {
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onDeploy(file);
         }
     }
@@ -817,7 +632,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onInstall(evt);
         }
-        for (NutsRepositoryListener listener : getWorkspace().repositories().getRepositoryListeners()) {
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onInstall(evt);
         }
     }
@@ -826,7 +641,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onPush(file);
         }
-        for (NutsRepositoryListener listener : getWorkspace().repositories().getRepositoryListeners()) {
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onPush(file);
         }
     }
@@ -836,7 +651,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onAddRepository(event);
         }
-        for (NutsRepositoryListener listener : getWorkspace().repositories().getRepositoryListeners()) {
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onAddRepository(event);
         }
     }
@@ -846,30 +661,9 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onRemoveRepository(event);
         }
-        for (NutsRepositoryListener listener : getWorkspace().repositories().getRepositoryListeners()) {
+        for (NutsRepositoryListener listener : getWorkspace().getRepositoryListeners()) {
             listener.onRemoveRepository(event);
         }
-    }
-
-    @Override
-    public int getSpeed() {
-        int s = config().getSpeed();
-        if (isSupportedMirroring()) {
-            for (NutsRepository mirror : getMirrors()) {
-                s += mirror.getSpeed();
-            }
-        }
-        return s;
-    }
-
-    @Override
-    public boolean isTemporary() {
-        return temporary;
-    }
-
-    public AbstractNutsRepository setTransientRepository(boolean transientRepository) {
-        this.temporary = transientRepository;
-        return this;
     }
 
     protected abstract void undeployImpl(NutsId id, NutsRepositorySession session);
@@ -920,29 +714,4 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     public String getUuid() {
         return config().getUuid();
     }
-
-//    @Override
-//    public Path getStoreLocation(NutsStoreLocation folderType) {
-//        return config().getStoreLocation(folderType);
-//    }
-
-    @Override
-    public boolean isIndexSubscribed() {
-        return this.nutsIndexStoreClient.isSubscribed(this);
-    }
-
-    @Override
-    public boolean subscribeIndex() {
-        return this.nutsIndexStoreClient.subscribe();
-    }
-
-    @Override
-    public void unsubscribeIndex() {
-        this.nutsIndexStoreClient.unsubscribe();
-    }
-
-    protected void setSupportedMirroring(boolean supportedMirroring) {
-        this.supportedMirroring = supportedMirroring;
-    }
-    
 }

@@ -150,7 +150,7 @@ public class NutsIOHelper {
             //
         }
         if (basePath != null) {
-            return createSource(source);
+            return createSource(basePath);
         }
 
         try {
@@ -159,7 +159,7 @@ public class NutsIOHelper {
             //
         }
         if (basePath != null) {
-            return createSource(source);
+            return createSource(basePath);
         }
 
         URL baseURL = null;

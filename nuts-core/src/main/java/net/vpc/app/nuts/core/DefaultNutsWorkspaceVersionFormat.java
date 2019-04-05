@@ -1,6 +1,13 @@
 package net.vpc.app.nuts.core;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
@@ -8,8 +15,10 @@ import net.vpc.common.io.ByteArrayPrintStream;
 import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsTerminal;
 
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
+
     private NutsWorkspace ws;
     private Set<String> options = new HashSet<>();
     private Properties extraProperties = new Properties();
@@ -54,18 +63,45 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public String toString() {
-        return format();
-    }
-
-    @Override
-    public String format() {
         ByteArrayPrintStream out = new ByteArrayPrintStream();
         format(out);
         return out.toString();
     }
+
+    @Override
+    public void format() {
+        format(ws.getTerminal());
+    }
+
+    @Override
+    public void format(NutsTerminal terminal) {
+        format(terminal.getOut());
+    }
+
+    @Override
+    public void format(File file) {
+        format(file.toPath());
+    }
     
     @Override
+    public void format(Path path) {
+        try (Writer w = Files.newBufferedWriter(path)) {
+            format(w);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
     public void format(PrintStream out) {
+        PrintWriter p = new PrintWriter(out);
+        format(p);
+        p.flush();
+    }
+
+    @Override
+    public void format(Writer w) {
+        PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
         NutsWorkspaceConfigManager configManager = ws.config();
         if (options.contains("min")) {
             out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
@@ -102,6 +138,5 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
             }
         }
     }
-
 
 }

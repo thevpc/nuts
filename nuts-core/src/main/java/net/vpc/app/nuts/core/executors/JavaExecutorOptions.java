@@ -148,13 +148,13 @@ public class JavaExecutorOptions {
                 throw new NutsIllegalArgumentException("Missing Main Class for " + nutsMainDef.getId());
             }
             if(!isExcludeBase()) {
-                nutsPath.add(nutsIdFormat.format(nutsMainDef.getId()));
+                nutsPath.add(nutsIdFormat.toString(nutsMainDef.getId()));
                 classPath.add(contentFile.toString());
             }
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 if (nutsDefinition.getContent().getPath() != null) {
                     classPath.add(nutsDefinition.getContent().getPath().toString());
-                    nutsPath.add(nutsIdFormat.format(nutsDefinition.getId()));
+                    nutsPath.add(nutsIdFormat.toString(nutsDefinition.getId()));
                 }
             }
             for (String cp : classPath0) {

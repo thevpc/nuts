@@ -102,4 +102,15 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean isRegisteredType(Class extensionPointType, Class extensionType);
 
+    NutsId[] getExtensions();
+
+    boolean addExtension(NutsId extensionId);
+
+    boolean removeExtension(NutsId extensionId);
+
+    boolean updateExtension(NutsId extensionId);
+
+    boolean containsExtension(NutsId extensionId);
+
+
 }

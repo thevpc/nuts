@@ -94,7 +94,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                         ,
                                         context.getSession()
                                 );
-                                context.out().printf("File %s deployed successfully as "+ws.formatter().createIdFormat().format(deployedId)+"\n", s, deployedId);
+                                context.out().printf("File %s deployed successfully as "+ws.formatter().createIdFormat().toString(deployedId)+"\n", s, deployedId);
                             }
                         } else if (bundleOnly) {
                             for (String s : context.getShell().expandPath(id)) {
@@ -106,7 +106,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                         context.getSession()
                                 );
                                 context.out().printf("File %s bundled successfully as "+ws.formatter().createIdFormat()
-                                        .format(deployedFileId.getId())+" to %s\n", s, deployedFileId.getContent().getPath());
+                                        .toString(deployedFileId.getId())+" to %s\n", s, deployedFileId.getContent().getPath());
                             }
                         } else {
 
@@ -122,7 +122,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                             ,
                                             context.getSession()
                                     );
-                                    context.out().printf("File %s deployed successfully as "+ws.formatter().createIdFormat().format(deployedId)+"\n", s);
+                                    context.out().printf("File %s deployed successfully as "+ws.formatter().createIdFormat().toString(deployedId)+"\n", s);
                                     s = deployedId.toString();
                                 }
                                 logInstallStatus(s, context, options);

@@ -51,7 +51,7 @@ public abstract class AbstractNAdminSubCommand implements NAdminSubCommand {
                     out.print("##workspace saved.##\n");
                 } else {
                     out.printf("##repository %s saved.##\n", repository.getName());
-                    repository.save();
+                    repository.config().save();
                 }
             }
         }

@@ -43,7 +43,7 @@ public class NutsRepositoryDefinition {
     private boolean create;
     private int order;
     private NutsStoreLocationStrategy storeLocationStrategy;
-    private int deployOrder=1000000;
+    private int deployOrder=100;
 
     public NutsRepositoryDefinition() {
 

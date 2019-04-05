@@ -29,7 +29,13 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.nio.file.Path;
+
 public interface NutsIdFormat {
+
     boolean isOmitNamespace();
 
     NutsIdFormat setOmitNamespace(boolean omitNamespace);
@@ -62,5 +68,19 @@ public interface NutsIdFormat {
 
     NutsIdFormat setHighlightOptional(boolean highlightOptional);
 
-    String format(NutsId id);
+//    String formatString(NutsId id);
+
+    String toString(NutsId id);
+
+    void format(NutsId id, PrintStream out);
+
+    void format(NutsId id, Writer out);
+
+    void format(NutsId id, Path out);
+
+    void format(NutsId id, File out);
+
+    void format(NutsId id);
+
+    void format(NutsId id, NutsTerminal terminal);
 }

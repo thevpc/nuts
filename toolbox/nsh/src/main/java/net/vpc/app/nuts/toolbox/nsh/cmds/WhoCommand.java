@@ -101,7 +101,7 @@ public class WhoCommand extends AbstractNutsCommand {
             if (user.getMappedUser() != null) {
                 context.out().printf("===remote-id===  : %s\n", (user.getMappedUser() == null ? "NONE" : user.getMappedUser()));
             }
-            for (NutsRepository repository : context.getWorkspace().repositories().getRepositories()) {
+            for (NutsRepository repository : context.getWorkspace().config().getRepositories()) {
                 NutsEffectiveUser ruser = repository.security().getEffectiveUser(login);
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0

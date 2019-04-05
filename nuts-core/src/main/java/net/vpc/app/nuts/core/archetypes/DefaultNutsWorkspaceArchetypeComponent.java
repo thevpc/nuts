@@ -49,7 +49,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initialize(NutsWorkspace workspace, NutsSession session) {
-        NutsWorkspaceRepositoryManager rm = workspace.repositories();
+        NutsWorkspaceConfigManager rm = workspace.config();
         NutsRepository defaultRepo = rm.addRepository(new NutsRepositoryDefinition()
                 .setDeployOrder(10)
                 .setCreate(true)

@@ -70,11 +70,11 @@ public class NutsWorkspaceHelper {
                 try {
                     switch (fmode) {
                         case FIND: {
-                            t = repository.getFindSupportLevel(id, mode, options.isTransitive());
+                            t = repository.config().getFindSupportLevel(id, mode, options.isTransitive());
                             break;
                         }
                         case DEPLOY: {
-                            t = repository.getDeploymentSupportLevel(id, mode != NutsFetchMode.REMOTE, options.isTransitive());
+                            t = repository.config().getDeploymentSupportLevel(id, mode != NutsFetchMode.REMOTE, options.isTransitive());
                             break;
                         }
                     }

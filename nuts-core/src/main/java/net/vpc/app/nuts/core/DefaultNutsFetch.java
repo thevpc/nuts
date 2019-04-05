@@ -129,7 +129,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
     public String fetchDescriptorHash() {
         NutsDescriptor d = fetchDescriptor();
         return ws.io().computeHash(new ByteArrayInputStream(
-                ws.formatter().createDescriptorFormat().format(d).getBytes()
+                ws.formatter().createDescriptorFormat().toString(d).getBytes()
         ));
     }
 

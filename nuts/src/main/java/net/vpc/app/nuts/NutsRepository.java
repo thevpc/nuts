@@ -45,8 +45,6 @@ public interface NutsRepository {
 
     String getRepositoryType();
 
-    boolean isTemporary();
-
     String getUuid();
 
     /**
@@ -56,13 +54,6 @@ public interface NutsRepository {
      * @return local name
      */
     String getName();
-
-    /**
-     * global name is independent from workspace
-     *
-     * @return
-     */
-    String getGlobalName();
 
     NutsWorkspace getWorkspace();
 
@@ -85,47 +76,6 @@ public interface NutsRepository {
 
     Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
 
-    int getDeploymentSupportLevel(NutsId id, boolean offlineOnly, boolean transitive);
-
-    int getFindSupportLevel(NutsId id, NutsFetchMode fetchMode, boolean transitive);
-
-    boolean isSupportedMirroring();
-
-    NutsRepository[] getMirrors();
-
-    boolean containsMirror(String repositoryIdPath);
-
-    /**
-     * @param repositoryIdPath
-     * @return
-     */
-    NutsRepository getMirror(String repositoryIdPath);
-
-    NutsRepository findMirror(String repositoryIdPath);
-
-    /**
-     *
-     * @param definition
-     * @return
-     */
-    NutsRepository addMirror(NutsRepositoryDefinition definition);
-
-    /**
-     * @param options
-     * @return
-     */
-    NutsRepository addMirror(NutsCreateRepositoryOptions options);
-
-    /**
-     * @param repositoryId
-     */
-    void removeMirror(String repositoryId);
-
-    /**
-     * @return
-     */
-    void save();
-
     void save(boolean force);
 
     /**
@@ -143,23 +93,4 @@ public interface NutsRepository {
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
-    /**
-     * @param enabled
-     */
-    void setEnabled(boolean enabled);
-
-    /**
-     * true if this repository is enabled
-     *
-     * @return
-     */
-    boolean isEnabled();
-
-    int getSpeed();
-
-    boolean isIndexSubscribed();
-
-    boolean subscribeIndex();
-
-    void unsubscribeIndex();
 }

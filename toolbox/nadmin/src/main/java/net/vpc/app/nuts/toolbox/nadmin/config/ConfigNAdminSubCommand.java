@@ -105,7 +105,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                     throw new UncheckedIOException(ex);
                 }
             }
-            for (NutsRepository repository : context.getWorkspace().repositories().getRepositories()) {
+            for (NutsRepository repository : context.getWorkspace().config().getRepositories()) {
                 deleteRepoCache(repository, context, force);
             }
         }
@@ -127,8 +127,8 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
         }
-        if (repository.isSupportedMirroring()) {
-            for (NutsRepository mirror : repository.getMirrors()) {
+        if (repository.config().isSupportedMirroring()) {
+            for (NutsRepository mirror : repository.config().getMirrors()) {
                 deleteRepoCache(mirror, context, force);
             }
         }

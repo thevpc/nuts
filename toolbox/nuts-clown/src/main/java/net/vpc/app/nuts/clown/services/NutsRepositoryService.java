@@ -35,7 +35,7 @@ public class NutsRepositoryService {
     public ResponseEntity<List<Map<String, Object>>> deleteRepository(@RequestParam("name") String name,
             @RequestParam("workspace") String workspace) {
         NutsWorkspace ws = NutsWorkspacePool.openWorkspace(workspace);
-        ws.repositories().removeRepository(name);
+        ws.config().removeRepository(name);
         ws.config().save();
         logger.info(String.format("Repository with name %s was deleted", name));
         return getAllRepositories(workspace);
@@ -52,7 +52,7 @@ public class NutsRepositoryService {
                     .setName(dataMap.get("name"))
                     .setLocation(dataMap.get("location"))
                     .setType(dataMap.get("type"));
-            ws.repositories().addRepository(location);
+            ws.config().addRepository(location);
             ws.config().save();
             logger.info(String.format("Repository with name %s was created", location.getName()));
         } catch (NutsIllegalArgumentException | IOException ex) {
