@@ -141,11 +141,11 @@ Java         Version: ${java.version} (${java.vm.name})
       {{standalone}} : use a self contained folder for all types of data of the workspace. This is interesting for sharing 
                    workspaces across multiple machines.
 
- [[--standalone]] or [[--standalone-strategy]]
+ [[--standalone-workspace]]
        will boot with standalone strategy so that all file will be stored in the workspace folder
        overriding workspace config. same as  [[--store-strategy]] {{standalone}}
  
- [[--exploded]] or [[--exploded-strategy]]
+ [[--exploded-workspace]]
        will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
        particularly will be stored elsewhere depending on on configuration.
        same as  [[--store-strategy]] {{exploded}}
@@ -166,6 +166,12 @@ Java         Version: ${java.version} (${java.vm.name})
        will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
        particularly will be stored elsewhere depending on on configuration.
        same as  [[--repo-store-strategy]] {{exploded}}
+
+ [[--standalone]]
+    Equivalent of [[--standalone-workspace]] and [--standalone-repositories]]
+
+ [[--exploded]]
+    Equivalent of [[--exploded-workspace]] and [--exploded-repositories]]
 
  [[--store-layout]] {{\<store-layout\>}}
       Defines store layout relatively to the running operating system. This resolve root locations of data folders.

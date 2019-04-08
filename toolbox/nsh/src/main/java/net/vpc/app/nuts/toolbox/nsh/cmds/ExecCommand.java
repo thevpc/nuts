@@ -84,7 +84,7 @@ public class ExecCommand extends AbstractNutsCommand {
             return 0;
         }
         return context.getWorkspace()
-                .createExecBuilder()
+                .exec()
                 .setExecutionType(executionType)
                 .setCommand(sargs)
                 .setExecutorOptions(execOptions)

@@ -3,16 +3,14 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.common.fprint.parser.DefaultFormattedPrintStreamParser;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.fprint.util.FormattedPrintStreamUtils;
 
 public class DefaultNutsParseManager implements NutsParseManager {
 
@@ -68,7 +66,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
 
     @Override
     public NutsDescriptor parseDescriptor(String str) {
-        if (StringUtils.isEmpty(str)) {
+        if (CoreStringUtils.isBlank(str)) {
             return null;
         }
         return parseDescriptor(new ByteArrayInputStream(str.getBytes()), true);
@@ -146,7 +144,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
 
     @Override
     public String filterText(String value) {
-        return DefaultFormattedPrintStreamParser.INSTANCE.filterText(value);
+        return FormattedPrintStreamUtils.filterText(value);
     }
 
     @Override
@@ -154,7 +152,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
         if (str == null) {
             return "";
         }
-        return DefaultFormattedPrintStreamParser.INSTANCE.escapeText(str);
+        return FormattedPrintStreamUtils.escapeText(str);
     }
 
 }

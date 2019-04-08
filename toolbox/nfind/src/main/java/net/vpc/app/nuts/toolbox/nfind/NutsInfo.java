@@ -19,7 +19,7 @@ import net.vpc.app.nuts.app.NutsApplicationContext;
  * @author vpc
  */
 class NutsInfo {
-    
+
     NutsId nuts;
     String desc;
     Boolean fetched;
@@ -45,23 +45,23 @@ class NutsInfo {
 
     public boolean isFetched() {
         if (this.fetched == null) {
-            this.fetched = getNutsDefinition(true)!=null;
+            this.fetched = getNutsDefinition(true) != null;
         }
         return this.fetched;
     }
 
     public NutsDefinition getNutsDefinition(boolean checkDependencies) {
         if (this.def == null) {
-            def = ws.fetch(nuts).setSession(session).offline()
+            def = ws.fetch().id(nuts).setSession(session).offline()
                     .setIncludeInstallInformation(true)
                     .setIncludeFile(true)
                     .setAcceptOptional(false)
                     .includeDependencies(checkDependencies)
-                    .fetchDefinition();
+                    .getResultDefinition();
         }
         return def;
     }
-    
+
     public boolean isInstalled(boolean checkDependencies) {
         if (this.is_installed == null) {
             this.is_installed = getNutsDefinition(checkDependencies).getInstallation().isInstalled();
@@ -75,7 +75,7 @@ class NutsInfo {
             if (this.isFetched()) {
                 NutsId nut2 = null;
                 try {
-                    nut2 = ws.fetch(nuts.setVersion("")).setSession(session.copy().setProperty("monitor-allowed", false)).setTransitive(true).wired().fetchId();
+                    nut2 = ws.fetch().id(nuts.setVersion("")).setSession(session.copy().setProperty("monitor-allowed", false)).setTransitive(true).wired().getResultId();
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -108,12 +108,12 @@ class NutsInfo {
             //                        System.out.println("");
             //                    }
             try {
-                descriptor = ws.fetch(nuts).setSession(session).setTransitive(true).wired().setIncludeEffective(true).fetchDescriptor();
+                descriptor = ws.fetch().id(nuts).setSession(session).setTransitive(true).wired().effective(true).getResultDescriptor();
             } catch (Exception ex) {
-                descriptor = ws.fetch(nuts).setSession(session).setTransitive(true).wired().setIncludeEffective(false).fetchDescriptor();
+                descriptor = ws.fetch().id(nuts).setSession(session).setTransitive(true).wired().effective(false).getResultDescriptor();
             }
         }
         return descriptor;
     }
-    
+
 }

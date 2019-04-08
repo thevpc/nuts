@@ -1,10 +1,6 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.io.ByteArrayPrintStream;
-import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Chronometer;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
 
 public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
@@ -48,7 +49,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     public NutsWorkspaceInfoFormat addOption(String o) {
         if (o != null) {
             for (String o1 : Arrays.asList(o.split(","))) {
-                if (!StringUtils.isEmpty(o1)) {
+                if (!CoreStringUtils.isBlank(o1)) {
                     options.add(o1);
                 }
             }
@@ -146,7 +147,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
             }
 
-            props.put("nuts-runtime-path", StringUtils.join(":", runtimeClassPath));
+            props.put("nuts-runtime-path", CoreStringUtils.join(":", runtimeClassPath));
             props.put("nuts-workspace", configManager.getWorkspaceLocation().toString());
             props.put("nuts-workspace-id", configManager.getUuid());
             props.put("nuts-secure", String.valueOf(configManager.isSecure()));
@@ -162,7 +163,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 props.put("nuts-workspace-" + folderType.name().toLowerCase(), configManager.getStoreLocation(folderType).toString());
             }
             props.put("java-version", System.getProperty("java.version"));
-            props.put("java-executable", CoreNutsUtils.resolveJavaCommand(null));
+            props.put("java-executable", CoreIOUtils.resolveJavaCommand(null));
             props.put("java-classpath", System.getProperty("java.class.path"));
             props.put("java-library-path", System.getProperty("java.library.path"));
             props.put("os-name", ws.config().getPlatformOs().toString());
@@ -177,7 +178,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             props.put("user-dir", System.getProperty("user.dir"));
             props.put("creation-started", dateFormat.format(ws.config().getCreationStartTimeMillis()));
             props.put("creation-finished", dateFormat.format(ws.config().getCreationFinishTimeMillis()));
-            props.put("creation-within", Chronometer.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
+            props.put("creation-within", CoreCommonUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
             props.put("repositories-count", String.valueOf(ws.config().getRepositories().length));
             for (String extraKey : extraKeys) {
                 props.put(extraKey, extraProperties.getProperty(extraKey));
@@ -192,7 +193,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     private void printRepo(PrintWriter out, boolean fancy, String prefix, NutsRepository repo) {
-        out.printf(prefix + "REPOSITORY : " + repo.getName() + "\n");
+        out.printf(prefix + "**REPOSITORY :** " + repo.config().getName() + "\n");
         prefix += "   ";
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
         props.put("name", String.valueOf(repo.config().getName()));
@@ -272,10 +273,10 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             prefix = "";
         }
         if (fancy) {
-            String space = prefix + StringUtils.formatLeft("", len + 3) + "[[%s]]";
+            String space = prefix + CoreStringUtils.alignLeft("", len + 3) + "[[%s]]";
             String[] split = value.split(fancySep);
             if (split.length == 0) {
-                out.print(prefix + StringUtils.formatLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : ");
+                out.print(prefix + CoreStringUtils.alignLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : ");
             } else {
                 for (int i = 0; i < split.length; i++) {
                     String s = split[i];
@@ -288,7 +289,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
             }
         } else {
-            out.printf(prefix + StringUtils.formatLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
+            out.printf(prefix + CoreStringUtils.alignLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
         }
     }
 }

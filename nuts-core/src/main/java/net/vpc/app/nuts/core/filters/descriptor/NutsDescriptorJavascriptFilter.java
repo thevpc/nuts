@@ -34,11 +34,11 @@ import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.JavascriptHelper;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -52,7 +52,7 @@ public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Sim
     private static final WeakHashMap<String, NutsDescriptorJavascriptFilter> cached = new WeakHashMap<>();
 
     public static NutsDescriptorJavascriptFilter valueOf(String value) {
-        if (StringUtils.isEmpty(value)) {
+        if (CoreStringUtils.isBlank(value)) {
             return null;
         }
         synchronized (cached) {

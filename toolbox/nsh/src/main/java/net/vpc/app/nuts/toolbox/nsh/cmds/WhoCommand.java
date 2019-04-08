@@ -106,7 +106,7 @@ public class WhoCommand extends AbstractNutsCommand {
                 if (ruser != null && (ruser.getGroups().length > 0
                         || ruser.getRights().length > 0
                         || !StringUtils.isEmpty(ruser.getMappedUser()))) {
-                    context.out().printf("[ [[%s]] ]: \n", repository.getName());
+                    context.out().printf("[ [[%s]] ]: \n", repository.config().getName());
                     Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
                     Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getRights()));
                     Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedRights()));

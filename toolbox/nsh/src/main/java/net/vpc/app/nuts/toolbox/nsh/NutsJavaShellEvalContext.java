@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.toolbox.nsh;
@@ -87,11 +87,9 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
         this.session = session;
     }
 
-
     public NutsConsoleContext getCommandContext() {
         return commandContext;
     }
-
 
     public NutsSessionTerminal getTerminal() {
         if (commandContext != null) {
@@ -104,7 +102,6 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
     public InputStream in() {
         return getTerminal().getIn();
     }
-
 
     @Override
     public ConsoleContext setOut(PrintStream out) {
@@ -146,7 +143,6 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
         c.copyFrom(this);
         return c;
     }
-
 
     @Override
     public String getServiceName() {
@@ -220,7 +216,6 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
         return getTerminal().getErr();
     }
 
-
     public List<AutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         Command command = this.getShell().findCommand(commandName);
         CommandAutoComplete autoComplete = new AbstractCommandAutoComplete() {
@@ -244,25 +239,23 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
             ((NutsCommand) command).autoComplete(new DefaultNutsCommandContext(this, (NutsCommand) command), autoComplete);
         } else {
             NutsWorkspace ws = this.getWorkspace();
-            List<NutsId> nutsIds = ws.createQuery()
+            List<NutsId> nutsIds = ws.find()
                     .addId(commandName)
                     .latestVersions()
                     .addScope(NutsDependencyScope.PROFILE_RUN)
                     .setIncludeOptional(false)
                     .offline()
                     .setSession(this.getSession())
-                    .find();
+                    .getResultIds().list();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = ws.fetch(selectedId).setIncludeEffective(true).setSession(this.getSession()).offline().fetchDefinition();
+                NutsDefinition def = ws.fetch().id(selectedId).effective(true).session(this.getSession()).offline().getResultDefinition();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
-                if (
-                        d.isNutsApplication() ||
-                                "true".equalsIgnoreCase(nuts_autocomplete_support)
-                                || "supported".equalsIgnoreCase(nuts_autocomplete_support)
-                ) {
-                    NutsCommandExecBuilder t = ws.createExecBuilder()
+                if (d.isNutsApplication()
+                        || "true".equalsIgnoreCase(nuts_autocomplete_support)
+                        || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
+                    NutsExecCommand t = ws.exec()
                             .grabOutputString()
                             .grabErrorString()
                             .setCommand(

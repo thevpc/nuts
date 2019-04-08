@@ -41,6 +41,7 @@ import net.vpc.app.nuts.NutsUpdateOptions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsUpdateCommand;
 
 /**
  * Created by vpc on 1/7/17.
@@ -54,18 +55,22 @@ public class UpdateCommand extends AbstractNutsCommand {
     @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
-        NutsUpdateOptions uoptions = new NutsUpdateOptions().setTrace(true).setApplyUpdates(true);
+        NutsUpdateCommand uoptions = context.getWorkspace().update().setSession(context.getSession()).setTrace(true);
         String version = null;
         List<String> ids = new ArrayList<>();
         Argument a;
+        boolean apply = true;
+        boolean extensions = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             } else if (cmdLine.readAllOnce("--dry", "-t")) {
-                uoptions.setApplyUpdates(false);
+                apply = false;
             } else if (cmdLine.readAllOnce("--force", "-f")) {
                 uoptions.setForce(true);
                 uoptions.setEnableInstall(true);
+            } else if (cmdLine.readAllOnce("--extensions")) {
+                extensions = true;
             } else if (cmdLine.readAllOnce("--set-version", "-v")) {
                 version = cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getStringExpression();
             } else {
@@ -76,27 +81,21 @@ public class UpdateCommand extends AbstractNutsCommand {
         if (cmdLine.isExecMode()) {
             if (ids.isEmpty()) {
                 //should update nuts
-                if (context.getWorkspace().checkWorkspaceUpdates(
-                        new NutsWorkspaceUpdateOptions()
-                                .setEnableMajorUpdates(version != null)
-                                .setForceBootAPIVersion(version)
-                                .setTrace(uoptions.isTrace())
-                                .setUpdateExtensions(uoptions.isApplyUpdates())
-                                .setApplyUpdates(uoptions.isApplyUpdates()),
-                        context.getSession()).length == 0) {
+                if (context.getWorkspace().updateWorkspace()
+                        .setEnableMajorUpdates(version != null)
+                        .setForceBootAPIVersion(version)
+                        .setTrace(uoptions.isTrace())
+                        .setUpdateExtensions(extensions || apply)
+                        .setSession(context.getSession())
+                        .checkUpdates(apply) == null) {
                     context.out().printf("workspace **upto-date**\n");
                 }
             } else {
                 for (String id : ids) {
-                    update(id, uoptions, context);
+                    uoptions.id(id).checkUpdates(apply);
                 }
             }
         }
         return 0;
-    }
-
-    private void update(String id, NutsUpdateOptions options, NutsCommandContext context) throws IOException {
-        NutsWorkspace ws = context.getWorkspace();
-        ws.update(id, options, context.getSession());
     }
 }

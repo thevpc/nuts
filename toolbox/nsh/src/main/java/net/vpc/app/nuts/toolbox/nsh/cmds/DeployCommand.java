@@ -38,7 +38,6 @@ import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.FileNonOption;
 import net.vpc.common.strings.StringUtils;
 
-import java.io.File;
 import java.io.PrintStream;
 
 /**
@@ -104,29 +103,27 @@ public class DeployCommand extends AbstractNutsCommand {
             }
             for (String s : context.consoleContext().getShell().expandPath(contentFile)) {
                 NutsId nid = null;
-                nid = ws.deploy(
-                        ws.createDeploymentBuilder()
-                                .setContent(s)
-                                .setDescriptorPath(descriptorFile)
-                                .setRepository(to).build(),
-                        context.getSession()
-                );
+                nid = ws.deploy()
+                        .setContent(s)
+                        .setDescriptorPath(descriptorFile)
+                        .setRepository(to)
+                        .setSession(context.getSession())
+                        .deploy();
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
             }
         } else if (idMode) {
             if (StringUtils.isEmpty(id)) {
                 throw new NutsExecutionException("Missing Id", 1);
             }
-            for (NutsId nutsId : ws.createQuery().setSession(context.getSession()).addId(id).latestVersions().setRepositoryFilter(from).find()) {
-                NutsDefinition fetched = ws.fetch(nutsId).setSession(context.getSession()).fetchDefinition();
+            for (NutsId nutsId : ws.find().setSession(context.getSession()).addId(id).latestVersions().setRepositoryFilter(from).getResultIds()) {
+                NutsDefinition fetched = ws.fetch().id(nutsId).setSession(context.getSession()).getResultDefinition();
                 if (fetched.getContent().getPath() != null) {
-                    NutsId nid = ws.deploy(
-                            ws.createDeploymentBuilder()
-                                    .setContent(fetched.getContent().getPath())
-                                    .setDescriptor(fetched.getDescriptor())
-                                    .setRepository(to).build(),
-                            context.getSession()
-                    );
+                    NutsId nid = ws.deploy()
+                            .setContent(fetched.getContent().getPath())
+                            .setDescriptor(fetched.getDescriptor())
+                            .setRepository(to)
+                            .setSession(context.getSession())
+                            .deploy();
                     out.printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);
                 }
             }

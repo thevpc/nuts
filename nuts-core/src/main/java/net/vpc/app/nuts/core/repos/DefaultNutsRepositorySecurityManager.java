@@ -7,11 +7,11 @@ package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsEffectiveUserImpl;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  *
@@ -67,7 +67,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
 
     @Override
     public void addUser(String user, String credentials, String... rights) {
-        if (StringUtils.isEmpty(user)) {
+        if (CoreStringUtils.isBlank(user)) {
             throw new NutsIllegalArgumentException("Invalid user");
         }
         repo.config().setUser(new NutsUserConfig(user, null, null, null, null));
@@ -75,7 +75,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (rights != null) {
             NutsUserConfig security = repo.config().getUser(user);
             for (String right : rights) {
-                if (!StringUtils.isEmpty(right)) {
+                if (!CoreStringUtils.isBlank(right)) {
                     security.addRight(right);
                 }
             }
@@ -90,7 +90,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
                 security.removeRight(right);
             }
             for (String right : rights) {
-                if (!StringUtils.isEmpty(right)) {
+                if (!CoreStringUtils.isBlank(right)) {
                     security.addRight(right);
                 }
             }
@@ -102,7 +102,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (rights != null) {
             NutsUserConfig security = repo.config().getUser(user);
             for (String right : rights) {
-                if (!StringUtils.isEmpty(right)) {
+                if (!CoreStringUtils.isBlank(right)) {
                     security.addRight(right);
                 }
             }
@@ -138,7 +138,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (groups != null) {
             NutsUserConfig usr = repo.config().getUser(user);
             for (String grp : groups) {
-                if (!StringUtils.isEmpty(grp)) {
+                if (!CoreStringUtils.isBlank(grp)) {
                     usr.addGroup(grp);
                 }
             }
@@ -166,10 +166,10 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
 
     @Override
     public void setUserCredentials(String username, String password, String oldPassword) {
-        if (!isAllowed(NutsConstants.RIGHT_SET_PASSWORD)) {
-            throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_SET_PASSWORD);
+        if (!isAllowed(NutsConstants.Rights.SET_PASSWORD)) {
+            throw new NutsSecurityException("Not Allowed " + NutsConstants.Rights.SET_PASSWORD);
         }
-        if (StringUtils.isEmpty(username)) {
+        if (CoreStringUtils.isBlank(username)) {
             username = repo.getWorkspace().security().getCurrentLogin();
         }
         NutsUserConfig u = repo.config().getUser(username);
@@ -177,29 +177,29 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
             throw new NutsIllegalArgumentException("No such user " + username);
         }
         if (!repo.getWorkspace().security().getCurrentLogin().equals(username)) {
-            if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
-                throw new NutsSecurityException("Not Allowed " + NutsConstants.RIGHT_ADMIN);
+            if (!isAllowed(NutsConstants.Rights.ADMIN)) {
+                throw new NutsSecurityException("Not Allowed " + NutsConstants.Rights.ADMIN);
             }
         }
-        if (!isAllowed(NutsConstants.RIGHT_ADMIN)) {
+        if (!isAllowed(NutsConstants.Rights.ADMIN)) {
             repo.getWorkspace().config().createAuthenticationAgent(u.getAuthenticationAgent())
                     .checkCredentials(
                             u.getCredentials(), u.getAuthenticationAgent(), oldPassword,
                             repo.config()
                     );
-//            if (StringUtils.isEmpty(password)) {
+//            if (CoreStringUtils.isEmpty(password)) {
 //                throw new NutsSecurityException("Missing old password");
 //            }
 //            //check old password
-//            if (!StringUtils.isEmpty(u.getCredentials()) && !u.getCredentials().equals(CoreSecurityUtils.evalSHA1(oldPassword))) {
+//            if (!CoreStringUtils.isEmpty(u.getCredentials()) && !u.getCredentials().equals(CoreSecurityUtils.evalSHA1(oldPassword))) {
 //                throw new NutsSecurityException("Invalid password");
 //            }
         }
-        if (StringUtils.isEmpty(password)) {
+        if (CoreStringUtils.isBlank(password)) {
             throw new NutsIllegalArgumentException("Missing password");
         }
         if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, StringUtils.alignLeft(repo.getName(), 20) + " Update user credentials " + username);
+            log.log(Level.FINEST, CoreStringUtils.alignLeft(repo.config().getName(), 20) + " Update user credentials " + username);
         }
 
         u.setCredentials(

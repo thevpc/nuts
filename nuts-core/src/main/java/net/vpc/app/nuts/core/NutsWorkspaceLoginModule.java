@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core;
 
 import com.sun.security.auth.UserPrincipal;
 import net.vpc.app.nuts.*;
-import net.vpc.common.strings.StringUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -40,6 +39,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.util.Map;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class NutsWorkspaceLoginModule implements LoginModule {
 
@@ -47,7 +47,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
     private Subject subject;
     private UserPrincipal userPrincipal;
     private String login;
-    private static ThreadLocal<NutsWorkspace> workspace=new ThreadLocal<>();
+    private static ThreadLocal<NutsWorkspace> workspace = new ThreadLocal<>();
 
     static {
         final Configuration configuration = Configuration.getConfiguration();
@@ -105,20 +105,20 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 try {
                     workspace.config().createAuthenticationAgent(registeredUser.getAuthenticationAgent())
                             .checkCredentials(
-                            registeredUser.getCredentials(),
+                                    registeredUser.getCredentials(),
                                     registeredUser.getAuthenticationAgent(),
                                     password,
                                     workspace.config()
-                    );
+                            );
                     this.login = name;
                     return true;
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     //
                 }
 
-//                if(!StringUtils.isEmpty(registeredUser.getCredentials())){
-//                    if ((StringUtils.isEmpty(password) && StringUtils.isEmpty(registeredUser.getCredentials()))
-//                            || (!StringUtils.isEmpty(password) && !StringUtils.isEmpty(registeredUser.getCredentials())
+//                if(!CoreStringUtils.isEmpty(registeredUser.getCredentials())){
+//                    if ((CoreStringUtils.isEmpty(password) && CoreStringUtils.isEmpty(registeredUser.getCredentials()))
+//                            || (!CoreStringUtils.isEmpty(password) && !CoreStringUtils.isEmpty(registeredUser.getCredentials())
 //                            && registeredUser.getCredentials().equals(CoreSecurityUtils.evalSHA1(password)))) {
 //                        this.login = name;
 //                        return true;
@@ -130,9 +130,9 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             throw new LoginException("Authentication failed");
 
         } catch (IOException e) {
-            throw new LoginException(StringUtils.exceptionToString(e));
+            throw new LoginException(CoreStringUtils.exceptionToString(e));
         } catch (UnsupportedCallbackException e) {
-            throw new LoginException(StringUtils.exceptionToString(e));
+            throw new LoginException(CoreStringUtils.exceptionToString(e));
         }
 
     }

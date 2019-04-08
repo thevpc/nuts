@@ -233,7 +233,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         cmdList.add("--verbose");
         cmdList.add(this.config.getServer());
         cmdList.addAll(Arrays.asList(cmd));
-        context.getWorkspace().createExecBuilder()
+        context.getWorkspace().exec()
                 .setSession(context.getSession())
                 .setCommand(cmdList)
                 .setFailFast()

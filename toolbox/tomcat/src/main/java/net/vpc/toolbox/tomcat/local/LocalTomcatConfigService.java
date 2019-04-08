@@ -16,8 +16,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
@@ -291,12 +289,15 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
-            catalinaNutsDefinition = context.getWorkspace().install("org.apache.catalina:tomcat#" + catalinaVersion + "*", new String[0], new NutsInstallOptions().setTrace(true), context.getSession().copy().addListeners(new NutsInstallListener() {
+            catalinaNutsDefinition = context.getWorkspace()
+                    .install()
+                    .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
+                    .setTrace(true).setSession(context.getSession().copy().addListeners(new NutsInstallListener() {
                 @Override
                 public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
                     context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
                 }
-            }));
+            })).install()[0];
         }
         return catalinaNutsDefinition;
     }

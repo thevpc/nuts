@@ -62,12 +62,12 @@ public class NutsHttpServletFacade {
             public void executeImpl(FacadeCommandContext context) throws IOException {
                 context.sendResponseText(200,
                         context.getWorkspace()
-                        .createIdBuilder()
+                                .createIdBuilder()
                                 .setNamespace(context.getServerId())
-                        .setGroup("net.vpc.app.nuts")
-                        .setName("nuts-server")
-                        .setVersion(context.getWorkspace().config().getRunningContext().getRuntimeId().getVersion().toString())
-                        .build().toString()
+                                .setGroup("net.vpc.app.nuts")
+                                .setName("nuts-server")
+                                .setVersion(context.getWorkspace().config().getRunningContext().getRuntimeId().getVersion().toString())
+                                .build().toString()
                 );
             }
         });
@@ -79,7 +79,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDefinition fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchDefinition();
+                    fetch = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultDefinition();
                 } catch (Exception exc) {
                     //
                 }
@@ -98,7 +98,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsDescriptor fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchDescriptor();
+                    fetch = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultDescriptor();
                 } catch (Exception exc) {
                     //
                 }
@@ -117,7 +117,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchContentHash();
+                    hash = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultContentHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -136,7 +136,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 String hash = null;
                 try {
-                    hash = context.getWorkspace().fetch(id).setSession(context.getSession()).setTransitive(transitive).fetchDescriptorHash();
+                    hash = context.getWorkspace().fetch().id(id).setSession(context.getSession()).setTransitive(transitive).getResultDescriptorHash();
                 } catch (Exception exc) {
                     //
                 }
@@ -156,7 +156,7 @@ public class NutsHttpServletFacade {
                 List<NutsId> fetch = null;
                 try {
                     NutsWorkspace ws = context.getWorkspace();
-                    fetch = ws.createQuery().setSession(context.getSession()).setTransitive(transitive).addId(id).find();
+                    fetch = ws.find().setSession(context.getSession()).setTransitive(transitive).addId(id).getResultIds().list();
                 } catch (Exception exc) {
                     //
                 }
@@ -175,7 +175,7 @@ public class NutsHttpServletFacade {
                 boolean transitive = parameters.containsKey("transitive");
                 NutsId fetch = null;
                 try {
-                    fetch = context.getWorkspace().fetch(id).setSession(context.getSession().copy()).setTransitive(transitive).fetchId();
+                    fetch = context.getWorkspace().fetch().id(id).setSession(context.getSession().copy()).setTransitive(transitive).getResultId();
                 } catch (Exception exc) {
                     //
                 }
@@ -217,11 +217,10 @@ public class NutsHttpServletFacade {
                             break;
                     }
                 }
-                Iterator<NutsId> it = context.getWorkspace().createQuery()
-                                .setSession(context.getSession())
-                                .setTransitive(transitive)
-                                .addJs(js).addId(pattern).findIterator()
-                        ;
+                Iterator<NutsId> it = context.getWorkspace().find()
+                        .setSession(context.getSession())
+                        .setTransitive(transitive)
+                        .addJs(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                 context.sendResponseText(200, iteratorNutsIdToString(it));
             }
@@ -250,19 +249,19 @@ public class NutsHttpServletFacade {
                         case "descriptor":
                             try {
                                 descriptor = context.getWorkspace().parser().parseDescriptor(info.getContent());
-                            }finally{
+                            } finally {
                                 info.getContent().close();
                             }
                             break;
                         case "content-hash":
                             try {
                                 receivedContentHash = context.getWorkspace().io().computeHash(info.getContent());
-                            }finally {
+                            } finally {
                                 info.getContent().close();
                             }
                             break;
                         case "content":
-                            contentFile =context.getWorkspace().io().createTempFile(
+                            contentFile = context.getWorkspace().io().createTempFile(
                                     context.getWorkspace().config().getDefaultIdFilename(
                                             descriptor.getId().setFaceDescriptor()
                                     )
@@ -277,11 +276,11 @@ public class NutsHttpServletFacade {
                 if (contentFile == null) {
                     context.sendError(400, "Invalid Command Arguments : " + getName() + " : Missing File");
                 }
-                NutsId id = context.getWorkspace().deploy(
-                        context.getWorkspace().createDeploymentBuilder().setContent(contentFile)
-                                .setSha1(receivedContentHash)
-                                .setDescriptor(descriptor).build(),
-                        context.getSession().copy());
+                NutsId id = context.getWorkspace().deploy().setContent(contentFile)
+                        .setSha1(receivedContentHash)
+                        .setDescriptor(descriptor)
+                        .setSession(context.getSession().copy())
+                        .deploy();
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
             }
@@ -324,16 +323,15 @@ public class NutsHttpServletFacade {
 
                 NutsSession session = ws.createSession();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                session.getTerminal().setOut(ws.io().createPrintStream(out,NutsTerminalMode.FILTERED));
+                session.getTerminal().setOut(ws.io().createPrintStream(out, NutsTerminalMode.FILTERED));
                 session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
-                int result=ws.
-                        createExecBuilder()
+                int result = ws.exec()
                         .setCommand(cmd)
                         .setSession(session)
                         .exec().getResult();
-                
-                context.sendResponseText(200, String.valueOf(result)+"\n"+new String(out.toByteArray()));
+
+                context.sendResponseText(200, String.valueOf(result) + "\n" + new String(out.toByteArray()));
             }
         });
     }

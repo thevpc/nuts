@@ -44,13 +44,13 @@ public class NutsWorkspaceHelper {
         DEPLOY
     }
 
-    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsQueryOptions options) {
+    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
         return filterRepositories(repos, fmode, id, repositoryFilter, session, true, null, mode, options);
     }
 
     public static List<NutsRepository> filterRepositories(
             List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter,
-            NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsQueryOptions options) {
+            NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsFetchCommand options) {
         class RepoAndLevel {
 
             NutsRepository r;
@@ -112,7 +112,7 @@ public class NutsWorkspaceHelper {
 
     public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
         Map<String, String> qm = id.getQueryMap();
-        if (qm.get(NutsConstants.QUERY_FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
+        if (qm.get(NutsConstants.QueryKeys.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
             qm.put("arch", ws.config().getPlatformArch().toString());
             qm.put("os", ws.config().getPlatformOs().toString());
             if (ws.config().getPlatformOsDist() != null) {
@@ -124,7 +124,7 @@ public class NutsWorkspaceHelper {
     }
 
 //    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
-//        if (StringUtils.isEmpty(workspace)) {
+//        if (CoreStringUtils.isEmpty(workspace)) {
 //            File file = CoreIOUtils.expandPath(workspaceRoot + "/" + defaultName, null, workspaceRoot);
 //            workspace = file == null ? null : file.getPath();
 //        } else {
@@ -133,11 +133,11 @@ public class NutsWorkspaceHelper {
 //        }
 //        return workspace;
 //    }
-    public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsQueryOptions options) {
+    public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
         return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
-    public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsQueryOptions options) {
+    public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
         return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 

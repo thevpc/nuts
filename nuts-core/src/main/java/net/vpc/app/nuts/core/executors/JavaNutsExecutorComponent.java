@@ -31,15 +31,12 @@ package net.vpc.app.nuts.core.executors;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
-import net.vpc.common.util.Convert;
-import net.vpc.common.util.IntegerParserConfig;
 
 /**
  * Created by vpc on 1/7/17.
@@ -87,7 +84,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
         HashMap<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = executionContext.getWorkspace().config().getOptions().getExportedBootArgumentsString();
-        if (!StringUtils.isEmpty(bootArgumentsString)) {
+        if (!CoreStringUtils.isBlank(bootArgumentsString)) {
             osEnv.put("nuts_boot_args", bootArgumentsString);
             joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
         }
@@ -100,11 +97,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         // fix infinite recusion
-        int maxDepth = Math.abs(Convert.toInt(sysProperties.get("nuts.export.watchdog.max-depth"), IntegerParserConfig.LENIENT.setNullValue(24).setInvalidValue(24)));
+        int maxDepth = Math.abs(CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
         if (maxDepth > 512) {
             maxDepth = 512;
         }
-        int currentDepth = Convert.toInt(sysProperties.get("nuts.export.watchdog.depth"), IntegerParserConfig.LENIENT);
+        int currentDepth = CoreCommonUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
         currentDepth++;
         if (currentDepth > maxDepth) {
             System.err.println("############# Process Stack Overflow Error");
@@ -124,7 +121,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         args.add(joptions.getJavaHome());
         args.addAll(joptions.getJvmArgs());
 
-        if (!StringUtils.isEmpty(bootArgumentsString)) {
+        if (!CoreStringUtils.isBlank(bootArgumentsString)) {
             String Dnuts_boot_args = "-Dnuts.export.boot.args=" + bootArgumentsString;
             xargs.add(Dnuts_boot_args);
             args.add(Dnuts_boot_args);
@@ -137,11 +134,11 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             args.add(contentFile.toString());
         } else {
             xargs.add("--nuts-path");
-            xargs.add(StringUtils.join(File.pathSeparator, joptions.getNutsPath()));
+            xargs.add(CoreStringUtils.join(File.pathSeparator, joptions.getNutsPath()));
             xargs.add(joptions.getMainClass());
 
             args.add("-classpath");
-            args.add(StringUtils.join(File.pathSeparator, joptions.getClassPath()));
+            args.add(CoreStringUtils.join(File.pathSeparator, joptions.getClassPath()));
             args.add(joptions.getMainClass());
         }
         xargs.addAll(joptions.getApp());
@@ -162,7 +159,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
 
-        String directory = StringUtils.isEmpty(joptions.getDir()) ? null : executionContext.getWorkspace().io().expandPath(joptions.getDir());
+        String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : executionContext.getWorkspace().io().expandPath(joptions.getDir());
         return CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory,

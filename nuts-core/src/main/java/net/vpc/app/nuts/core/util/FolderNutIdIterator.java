@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Stack;
+import net.vpc.app.nuts.core.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
 
 /**
@@ -104,7 +105,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     if (!CoreNutsUtils.isEffectiveId(t.getId())) {
                         NutsDescriptor nutsDescriptor = null;
                         try {
-                            nutsDescriptor = workspace.resolveEffectiveDescriptor(t, session.getSession());
+                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session.getSession());
                         } catch (Exception e) {
                             //throw new NutsException(e);
                         }

@@ -8,7 +8,7 @@
     <version>0.5.4.0</version>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
-<description>Nuts Reference Implementation</description>
+    <description>Nuts Reference Implementation</description>
     <organization>
         <name>vpc open source initiative</name>
         <url>http://tahabensalah.net</url>
@@ -67,32 +67,6 @@
             <version>0.5.4</version>
         </dependency>
         <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-utils</artifactId>
-            <version>1.22.5</version>
-        </dependency>
-        <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-fprint</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-strings</artifactId>
-            <version>1.2.16</version>
-        </dependency>
-        <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-mvn</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>net.vpc.common</groupId>
-            <artifactId>vpc-common-io</artifactId>
-            <version>1.3.11</version>
-        </dependency>
-        <!-- CorePlatformUtils.getMainClassType(...)-->
-        <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
             <version>5.2</version>
@@ -102,11 +76,6 @@
             <artifactId>gson</artifactId>
             <version>2.8.5</version>
         </dependency>
-
-        <!--
-        This dependency is needed by fprint.
-        It is added because Nuts can not handle
-        transitive dependencies at bootstrap-->
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
@@ -185,6 +154,25 @@
                         <configuration>
                             <outputDirectory>${targetdirectory}</outputDirectory>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

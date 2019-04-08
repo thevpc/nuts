@@ -83,7 +83,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
         if(findCommand.length>0 && execCommand.length>0){
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NutsCommandExecBuilder exec = workspace.createExecBuilder().setCommand(fc)
+            NutsExecCommand exec = workspace.exec().setCommand(fc)
 //                        .setExecutorOptions("--show-command")
                     .setRedirectErrorStream()
                     .grabOutputString()
@@ -105,7 +105,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
     public List<NutsWorkspaceCommandConfig> findCommands(NutsWorkspace workspace) {
         List<NutsWorkspaceCommandConfig> c = new ArrayList<>();
         if(listCommand.length>0) {
-            NutsCommandExecBuilder b = workspace.createExecBuilder().setCommand(listCommand)
+            NutsExecCommand b = workspace.exec().setCommand(listCommand)
                     .setRedirectErrorStream()
                     .grabOutputString();
             int r = b.exec().getResult();

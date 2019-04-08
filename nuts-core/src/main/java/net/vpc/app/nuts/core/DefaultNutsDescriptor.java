@@ -30,10 +30,10 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreCollectionUtils;
-import net.vpc.common.strings.StringUtils;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
 
 import java.util.*;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -105,24 +105,24 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             throw new NutsIllegalArgumentException("id should not have query defined in descriptors");
         }
         this.id = id;
-        this.alternative = StringUtils.trimToNull(alternative);
-        this.packaging = StringUtils.trimToNull(packaging);
+        this.alternative = CoreStringUtils.trimToNull(alternative);
+        this.packaging = CoreStringUtils.trimToNull(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
         if (parents != null) {
             System.arraycopy(parents, 0, this.parents, 0, this.parents.length);
         }
         this.executable = executable;
         this.nutsApplication = nutsApplication;
-        this.description = StringUtils.trimToNull(description);
-        this.name = StringUtils.trimToNull(name);
+        this.description = CoreStringUtils.trimToNull(description);
+        this.name = CoreStringUtils.trimToNull(name);
         this.executor = executor;
         this.installer = installer;
-//        this.ext = StringUtils.trimToNull(ext);
-        this.arch = CoreCollectionUtils.toArraySet(arch);
-        this.os = CoreCollectionUtils.toArraySet(os);
-        this.osdist = CoreCollectionUtils.toArraySet(osdist);
-        this.platform = CoreCollectionUtils.toArraySet(platform);
-        this.locations = CoreCollectionUtils.toArraySet(locations);
+//        this.ext = CoreStringUtils.trimToNull(ext);
+        this.arch = CoreCommonUtils.toArraySet(arch);
+        this.os = CoreCommonUtils.toArraySet(os);
+        this.osdist = CoreCommonUtils.toArraySet(osdist);
+        this.platform = CoreCommonUtils.toArraySet(platform);
+        this.locations = CoreCommonUtils.toArraySet(locations);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
             if (dependencies[i] == null) {

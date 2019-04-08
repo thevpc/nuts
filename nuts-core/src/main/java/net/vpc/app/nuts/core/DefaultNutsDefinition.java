@@ -115,7 +115,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
         if (effectiveDescriptor == null) {
-            effectiveDescriptor = ws.resolveEffectiveDescriptor(getDescriptor(), null);
+            effectiveDescriptor = ((DefaultNutsWorkspace)ws).resolveEffectiveDescriptor(getDescriptor(), null);
         }
         return effectiveDescriptor;
     }

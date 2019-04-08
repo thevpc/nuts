@@ -9,25 +9,26 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.common.io.URLUtils;
-import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.ListMap;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.util.ListMap;
 
 /**
  * @author vpc
  */
 public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
 
+    public static final Logger log = Logger.getLogger(DefaultNutsWorkspaceExtensionManager.class.getName());
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(
                     //order is important!!because autowiring should follow this very order
@@ -85,7 +86,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         List<NutsExtensionInfo> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + CoreNutsUtils.getPath(id, "." + extensionType, '/');
+            String url = r + "/" + CoreIOUtils.getPath(id, "." + extensionType, '/');
             allUrls.add(url);
             URL u = expandURL(url);
             if (u != null) {
@@ -130,7 +131,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         NutsId oldId = CoreNutsUtils.finNutsIdBySimpleName(id, extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
-            NutsWorkspaceExtension e = wireExtension(id, new DefaultNutsQueryOptions().setFetchStratery(NutsFetchStrategy.ONLINE), session);
+            NutsWorkspaceExtension e = wireExtension(id, ws.fetch().setFetchStratery(NutsFetchStrategy.ONLINE), session);
             addExtension(id);
             return e;
         } else {
@@ -156,7 +157,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return extensions.values().toArray(new NutsWorkspaceExtension[0]);
     }
 
-    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsQueryOptions options, NutsSession session) {
+    protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options, NutsSession session) {
         session = CoreNutsUtils.validateSession(session, ws);
         if (id == null) {
             throw new NutsIllegalArgumentException("Extension Id could not be null");
@@ -165,13 +166,13 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         if (wired != null) {
             throw new NutsWorkspaceExtensionAlreadyRegisteredException(id.toString(), wired.toString());
         }
-        DefaultNutsWorkspace.log.log(Level.FINE, "Installing extension {0}", id);
-        List<NutsDefinition> nutsDefinitions = ws.createQuery()
+        log.log(Level.FINE, "Installing extension {0}", id);
+        List<NutsDefinition> nutsDefinitions = ws.find()
                 .copyFrom(options)
                 .addId(id).setSession(session)
                 .addScope(NutsDependencyScope.PROFILE_RUN_STANDALONE)
                 .setIncludeOptional(false)
-                .mainAndDependencies().fetch();
+                .mainAndDependencies().getResultDefinitions().list();
         NutsId toWire = null;
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (nutsDefinition.getId().equalsSimpleName(id)) {
@@ -199,10 +200,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         extensions.put(id, workspaceExtension);
-        DefaultNutsWorkspace.log.log(Level.FINE, "Extension {0} installed successfully", id);
+        log.log(Level.FINE, "Extension {0} installed successfully", id);
         NutsSessionTerminal newTerminal = createTerminal(session.getTerminal() == null ? null : session.getTerminal().getClass());
         if (newTerminal != null) {
-            DefaultNutsWorkspace.log.log(Level.FINE, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
+            log.log(Level.FINE, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -210,7 +211,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsSimpleName(ws.parser().parseRequiredId(NutsConstants.NUTS_ID_BOOT_API))) {
+        if (file.getId().equalsSimpleName(ws.parser().parseRequiredId(NutsConstants.Ids.NUTS_API))) {
             return true;
         }
         try {
@@ -254,7 +255,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
         }
-        DefaultNutsWorkspace.log.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
+        log.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
         return false;
     }
 
@@ -263,7 +264,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerType(extensionPointType, extensionType);
             return true;
         }
-        DefaultNutsWorkspace.log.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
+        log.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
         return false;
     }
 
@@ -309,7 +310,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public NutsURLLocation[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType) {
         List<NutsURLLocation> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
-            String url = r + "/" + CoreNutsUtils.getPath(nutsId, "." + extensionType, '/');
+            String url = r + "/" + CoreIOUtils.getPath(nutsId, "." + extensionType, '/');
             URL u = expandURL(url);
             bootUrls.add(new NutsURLLocation(url, u));
         }
@@ -321,11 +322,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         //should read this form config?
         //or should be read from and extension component?
         String repos = ws.config().getEnv("bootstrapRepositoryLocations", "") + ";"
-                + NutsConstants.URL_BOOTSTRAP_LOCAL
-                + ";" + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT;
+                + NutsConstants.BootsrapURLs.LOCAL_NUTS_FOLDER
+                + ";" + NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT;
         List<String> urls = new ArrayList<>();
         for (String r : CoreStringUtils.split(repos, "; ")) {
-            if (!StringUtils.isEmpty(r)) {
+            if (!CoreStringUtils.isBlank(r)) {
                 urls.add(r);
             }
         }
@@ -335,8 +336,11 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     protected URL expandURL(String url) {
         try {
             url = ws.io().expandPath(url);
-            if (URLUtils.isRemoteURL(url)) {
+            if (CoreIOUtils.isPathHttp(url)) {
                 return new URL(url);
+            }
+            if (CoreIOUtils.isPathFile(url)) {
+                return CoreIOUtils.toPathFile(url).toUri().toURL();
             }
             return new File(url).toURI().toURL();
         } catch (MalformedURLException ex) {

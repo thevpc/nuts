@@ -35,10 +35,10 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Convert;
 
 /**
  * Created by vpc on 1/15/17.
@@ -50,7 +50,7 @@ public class DefaultNutsVersion implements NutsVersion {
     public static final NutsVersion EMPTY = new DefaultNutsVersion("");
 
     public static NutsVersion valueOf(String value) {
-        value = StringUtils.trim(value);
+        value = CoreStringUtils.trim(value);
         if (value.isEmpty()) {
             return EMPTY;
         }
@@ -58,7 +58,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     private DefaultNutsVersion(String value) {
-        this.value = StringUtils.trim(value);
+        this.value = CoreStringUtils.trim(value);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultNutsVersion implements NutsVersion {
 
     @Override
     public boolean isEmpty() {
-        return StringUtils.isEmpty(value);
+        return CoreStringUtils.isBlank(value);
     }
 
     @Override
@@ -170,14 +170,14 @@ public class DefaultNutsVersion implements NutsVersion {
 
     @Override
     public boolean matches(String expression) {
-        if (StringUtils.isEmpty(expression)) {
+        if (CoreStringUtils.isBlank(expression)) {
             return true;
         }
         return DefaultNutsVersionFilter.parse(expression).accept(this);
     }
 
     public static boolean versionMatches(String version, String pattern) {
-        if (pattern == null || StringUtils.isEmpty(pattern) || pattern.equals("LATEST") || pattern.equals("RELEASE")) {
+        if (pattern == null || CoreStringUtils.isBlank(pattern) || pattern.equals("LATEST") || pattern.equals("RELEASE")) {
             return true;
         }
         return pattern.equals(version);
@@ -202,8 +202,8 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     public static int compareVersions(String v1, String v2) {
-        v1 = StringUtils.trim(v1);
-        v2 = StringUtils.trim(v2);
+        v1 = CoreStringUtils.trim(v1);
+        v2 = CoreStringUtils.trim(v2);
         if (v1.equals(v2)) {
             return 0;
         }
@@ -311,7 +311,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     private static VersionParts splitVersionParts2(String v1) {
-        v1 = StringUtils.trim(v1);
+        v1 = CoreStringUtils.trim(v1);
         List<VersionPart> parts = new ArrayList<>();
         StringBuilder last = new StringBuilder();
         boolean digit = false;
@@ -322,7 +322,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     last.append(c);
                 } else {
                     parts.add(new VersionPart(last.toString(), false));
-                    StringUtils.clear(last);
+                    CoreStringUtils.clear(last);
                     digit = true;
                     last.append(c);
                 }
@@ -334,7 +334,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     last.append(c);
                 } else {
                     parts.add(new VersionPart(last.toString(), true));
-                    StringUtils.clear(last);
+                    CoreStringUtils.clear(last);
                     digit = false;
                     last.append(c);
                 }
@@ -347,7 +347,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     private static String[] splitVersionParts(String v1) {
-        v1 = StringUtils.trim(v1);
+        v1 = CoreStringUtils.trim(v1);
         List<String> parts = new ArrayList<>();
         StringBuilder last = new StringBuilder();
         for (char c : v1.toCharArray()) {
@@ -357,7 +357,7 @@ public class DefaultNutsVersion implements NutsVersion {
                 last.append(c);
             } else {
                 parts.add(last.toString());
-                StringUtils.clear(last);
+                CoreStringUtils.clear(last);
             }
         }
         if (last.length() > 0) {
@@ -372,8 +372,8 @@ public class DefaultNutsVersion implements NutsVersion {
 
         if (v1.equals(v2)) {
             return 0;
-        } else if ((i1 = Convert.toInt(v1, CoreNutsUtils.INTEGER_LENIENT_NULL)) != null
-                && (i2 = Convert.toInt(v2, CoreNutsUtils.INTEGER_LENIENT_NULL)) != null) {
+        } else if ((i1 = CoreCommonUtils.convertToInteger(v1, null)) != null
+                && (i2 = CoreCommonUtils.convertToInteger(v2, null)) != null) {
             return i1 - i2;
         } else if ("SNAPSHOT".equalsIgnoreCase(v1)) {
             return -1;
@@ -391,7 +391,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     public static boolean isStaticVersionPattern(String pattern) {
-        if (StringUtils.isEmpty(pattern)) {
+        if (CoreStringUtils.isBlank(pattern)) {
             return false;
         }
         if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",") || pattern.contains("*")) {

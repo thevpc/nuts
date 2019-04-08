@@ -34,7 +34,6 @@ import net.vpc.app.nuts.NutsDependencyBuilder;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 
@@ -53,14 +52,14 @@ public class DefaultNutsDependency implements NutsDependency {
     private final NutsId[] exclusions;
 
     public DefaultNutsDependency(String namespace, String group, String name, String classifier,NutsVersion version, String scope, String optional, NutsId[] exclusions) {
-        this.namespace = StringUtils.trimToNull(namespace);
-        this.group = StringUtils.trimToNull(group);
-        this.name = StringUtils.trimToNull(name);
+        this.namespace = CoreStringUtils.trimToNull(namespace);
+        this.group = CoreStringUtils.trimToNull(group);
+        this.name = CoreStringUtils.trimToNull(name);
         this.version = version==null? DefaultNutsVersion.EMPTY:version;
-        String s = StringUtils.trimToNull(scope);
-        this.classifier = StringUtils.trimToNull(classifier);
-        this.scope = StringUtils.isEmpty(s) ? "compile" : s;
-        this.optional = StringUtils.isEmpty(optional) ? "false" : StringUtils.trim(optional);
+        String s = CoreStringUtils.trimToNull(scope);
+        this.classifier = CoreStringUtils.trimToNull(classifier);
+        this.scope = CoreStringUtils.isBlank(s) ? "compile" : s;
+        this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
     }
 
@@ -87,13 +86,13 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public NutsId getId() {
         Map<String, String> m = new LinkedHashMap<>();
-        if (!StringUtils.isEmpty(scope) && !"compile".equals(scope)) {
+        if (!CoreStringUtils.isBlank(scope) && !"compile".equals(scope)) {
             m.put("scope", scope);
         }
-        if (!StringUtils.isEmpty(optional) && !"false".equals(optional)) {
+        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
             m.put("optional", optional);
         }
-        if (!StringUtils.isEmpty(classifier)) {
+        if (!CoreStringUtils.isBlank(classifier)) {
             m.put("classifier", classifier);
         }
         if(exclusions.length>0){
@@ -101,7 +100,7 @@ public class DefaultNutsDependency implements NutsDependency {
             for (NutsId exclusion : exclusions) {
                 ex.add(exclusion.getSimpleName());
             }
-            m.put("exclusions", StringUtils.join(",",ex));
+            m.put("exclusions", CoreStringUtils.join(",",ex));
         }
         return new DefaultNutsId(
                 getNamespace(),
@@ -129,10 +128,10 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getSimpleName() {
-        if (StringUtils.isEmpty(group)) {
-            return StringUtils.trim(name);
+        if (CoreStringUtils.isBlank(group)) {
+            return CoreStringUtils.trim(name);
         }
-        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
+        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
     }
 
     @Override
@@ -173,23 +172,23 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!StringUtils.isEmpty(namespace)) {
+        if (!CoreStringUtils.isBlank(namespace)) {
             sb.append(namespace).append("://");
         }
-        if (!StringUtils.isEmpty(group)) {
+        if (!CoreStringUtils.isBlank(group)) {
             sb.append(group).append(":");
         }
         sb.append(name);
-        if (!StringUtils.isEmpty(version.getValue())) {
+        if (!CoreStringUtils.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
         Map<String, String> p = new TreeMap<>();
-        if (!StringUtils.isEmpty(scope)) {
+        if (!CoreStringUtils.isBlank(scope)) {
             if (!scope.equals("compile")) {
                 p.put("scope", scope);
             }
         }
-        if (!StringUtils.isEmpty(optional)) {
+        if (!CoreStringUtils.isBlank(optional)) {
             if (!optional.equals("false")) {
                 p.put("optional", optional);
             }

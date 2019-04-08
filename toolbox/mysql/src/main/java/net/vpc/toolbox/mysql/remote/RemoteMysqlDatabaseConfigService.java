@@ -1,6 +1,5 @@
 package net.vpc.toolbox.mysql.remote;
 
-import net.vpc.app.nuts.NutsCommandExecBuilder;
 import net.vpc.app.nuts.NutsCommandStringFormatterAdapter;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.app.NutsApplicationContext;
@@ -16,6 +15,7 @@ import net.vpc.toolbox.mysql.local.LocalMysqlDatabaseConfigService;
 
 import java.io.PrintStream;
 import java.util.List;
+import net.vpc.app.nuts.NutsExecCommand;
 
 public class RemoteMysqlDatabaseConfigService {
     private RemoteMysqlDatabaseConfig config;
@@ -92,8 +92,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteFullFilePath = new SshAddress(server).getPath(remoteFilePath).getPath();
 
         context.out().printf("==[%s]== copy %s to %s\n", name, archiveResult.path, remoteFullFilePath);
-        context.getWorkspace().
-                createExecBuilder()
+        context.getWorkspace().exec()
                 .setCommand(
                         "nsh",
                         "cp",
@@ -129,7 +128,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public int execRemoteNuts(String... cmd) {
-        NutsCommandExecBuilder b = context.getWorkspace().createExecBuilder()
+        NutsExecCommand b = context.getWorkspace().exec()
                 .setSession(context.getSession());
         b.addCommand("nsh", "ssh");
         b.addCommand("--nuts");

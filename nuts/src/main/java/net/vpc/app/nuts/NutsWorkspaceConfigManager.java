@@ -162,7 +162,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     boolean uninstallCommandFactory(String name, NutsSession session);
 
-    boolean installCommand(NutsWorkspaceCommandConfig command, NutsInstallOptions options, NutsSession session);
+    boolean installCommand(NutsWorkspaceCommandConfig command, NutsInstallCommandOptions options, NutsSession session);
 
     boolean uninstallCommand(String name, NutsUninstallOptions options, NutsSession session);
 

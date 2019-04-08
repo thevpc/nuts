@@ -11,11 +11,11 @@ import java.nio.file.Path;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
-import net.vpc.common.io.ByteArrayPrintStream;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
 
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
 
@@ -45,7 +45,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     public NutsWorkspaceVersionFormat addOption(String o) {
         if (o != null) {
             for (String o1 : Arrays.asList(o.split(","))) {
-                if (!StringUtils.isEmpty(o1)) {
+                if (!CoreStringUtils.isBlank(o1)) {
                     options.add(o1);
                 }
             }
@@ -82,7 +82,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     public void format(File file) {
         format(file.toPath());
     }
-    
+
     @Override
     public void format(Path path) {
         try (Writer w = Files.newBufferedWriter(path)) {
@@ -134,7 +134,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
                 }
                 String key = e.getKey();
                 String value = e.getValue();
-                out.printf(StringUtils.formatLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
+                out.printf(CoreStringUtils.alignLeft(key, len - key.length() + ws.parser().escapeText(key).length()) + " : [[%s]]", value);
             }
         }
     }

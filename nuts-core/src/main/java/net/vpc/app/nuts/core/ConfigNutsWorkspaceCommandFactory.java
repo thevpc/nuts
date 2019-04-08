@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
@@ -68,13 +69,13 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
 
     @Override
     public List<NutsWorkspaceCommandConfig> findCommands(NutsWorkspace workspace) {
-        return findCommands((NutsObjectFilter<NutsWorkspaceCommandConfig>) null);
+        return findCommands((Predicate<NutsWorkspaceCommandConfig>) null);
     }
 
     public List<NutsWorkspaceCommandConfig> findCommands(NutsId id, NutsWorkspace workspace) {
-        return findCommands(new NutsObjectFilter<NutsWorkspaceCommandConfig>() {
+        return findCommands(new Predicate<NutsWorkspaceCommandConfig>() {
             @Override
-            public boolean accept(NutsWorkspaceCommandConfig value) {
+            public boolean test(NutsWorkspaceCommandConfig value) {
                 if (id.getVersion().isEmpty()) {
                     return value.getOwner().getSimpleName().equals(id.getSimpleName());
                 } else {
@@ -84,7 +85,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
         });
     }
 
-    public List<NutsWorkspaceCommandConfig> findCommands(NutsObjectFilter<NutsWorkspaceCommandConfig> filter) {
+    public List<NutsWorkspaceCommandConfig> findCommands(Predicate<NutsWorkspaceCommandConfig> filter) {
         List<NutsWorkspaceCommandConfig> all = new ArrayList<>();
         try {
             Files.list(getStoreLocation()).forEach(file -> {
@@ -98,7 +99,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
                     }
                     if (c != null) {
                         c.setName(fileName.substring(0, fileName.length() - 4));
-                        if (filter == null || filter.accept(c)) {
+                        if (filter == null || filter.test(c)) {
                             all.add(c);
                         }
                     }

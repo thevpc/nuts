@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -18,8 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.Function;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsNotInstallableException;
@@ -28,9 +26,8 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.util.Converter;
-import net.vpc.common.util.IteratorBuilder;
-import net.vpc.common.util.LazyIterator;
+import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
+import net.vpc.app.nuts.core.util.bundledlibs.util.LazyIterator;
 
 /**
  *
@@ -101,9 +98,9 @@ public class DefaultNutsInstalledRepository {
                 if (installFolder.isDirectory()) {
                     final NutsVersionFilter filter0 = id.getVersion().toFilter();
                     return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
-                            .map(new Converter<File, NutsId>() {
+                            .map(new Function<File, NutsId>() {
                                 @Override
-                                public NutsId convert(File folder) {
+                                public NutsId apply(File folder) {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
                                         NutsVersion vv = ws.parser().parseVersion(folder.getName());
@@ -132,9 +129,9 @@ public class DefaultNutsInstalledRepository {
                     final NutsVersionFilter filter0 = id.getVersion().toFilter();
 
                     return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
-                            .map(new Converter<File, NutsId>() {
+                            .map(new Function<File, NutsId>() {
                                 @Override
-                                public NutsId convert(File folder) {
+                                public NutsId apply(File folder) {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
                                         NutsVersion vv = ws.parser().parseVersion(folder.getName());

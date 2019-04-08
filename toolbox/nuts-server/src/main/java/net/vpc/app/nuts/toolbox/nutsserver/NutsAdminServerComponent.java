@@ -173,7 +173,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                         finalExecutor.execute(new Runnable() {
                             @Override
                             public void run() {
-                                String[] args = {NutsConstants.NUTS_SHELL};
+                                String[] args = {NutsConstants.Ids.NUTS_SHELL};
                                 NutsJavaShell cli = null;
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());

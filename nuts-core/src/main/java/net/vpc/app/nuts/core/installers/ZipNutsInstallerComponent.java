@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
-import net.vpc.common.io.UnzipOptions;
-import net.vpc.common.io.ZipUtils;
 
 import java.nio.file.Path;
+import net.vpc.app.nuts.core.util.bundledlibs.io.UnzipOptions;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -70,7 +70,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         nutsDefinition.setInstallation(new NutsInstallInfo(true, installFolder));
         if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
-                    .createExecBuilder()
+                    .exec()
                     .setCommand(executionContext.getExecutorOptions())
                     .setSession(executionContext.getSession())
                     .setEnv(executionContext.getExecutorProperties())

@@ -7,13 +7,13 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.io.InputStreamEvent;
-import net.vpc.common.io.InputStreamMonitor;
-import net.vpc.common.util.BytesSizeFormat;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamEvent;
+import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamMonitor;
+import net.vpc.app.nuts.core.util.bundledlibs.util.BytesSizeFormat;
 
 /**
  * @author vpc

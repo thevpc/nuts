@@ -6,7 +6,6 @@ import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.FolderNonOption;
 import net.vpc.common.commandline.format.TableFormatter;
-import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
 import net.vpc.common.strings.StringUtils;
 import net.vpc.toolbox.worky.config.ProjectConfig;
@@ -20,8 +19,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class WorkspaceService {
 

@@ -40,13 +40,16 @@ public interface NutsDescriptorFormat {
 
     boolean isPretty();
 
+    NutsDescriptorFormat pretty(boolean pretty);
+
+    NutsDescriptorFormat pretty();
+
     NutsDescriptorFormat setPretty(boolean pretty);
 
 //    String formatString(NutsDescriptor descriptor);
-
     void format(NutsDescriptor descriptor);
 
-    void format(NutsDescriptor descriptor,NutsTerminal terminal);
+    void format(NutsDescriptor descriptor, NutsTerminal terminal);
 
     void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
 

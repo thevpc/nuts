@@ -29,17 +29,17 @@
  */
 package net.vpc.app.nuts;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 
 /**
  * Created by vpc on 1/21/17.
  */
 public interface NutsHttpConnectionFacade {
 
-    InputStream open() throws IOException;
+    InputStream open() throws UncheckedIOException;
 
-    NutsURLHeader getURLHeader() throws IOException;
+    NutsURLHeader getURLHeader() throws UncheckedIOException;
 
-    InputStream upload(NutsTransportParamPart... parts) throws IOException;
+    InputStream upload(NutsTransportParamPart... parts) throws UncheckedIOException;
 }

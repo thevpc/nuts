@@ -36,7 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
-import net.vpc.common.util.IteratorUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -50,7 +50,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     private NutsRepositoryMirroringHelper mirroring;
 
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FAST, true);
+        super(options, workspace, parentRepository, SPEED_FAST, true, NutsConstants.RepoTypes.NUTS);
         extensions.put("src", "-src.zip");
         cache = new NutsRepositoryFolderHelper(this, config().getStoreLocation(NutsStoreLocation.CACHE));
         lib = new NutsRepositoryFolderHelper(this, config().getStoreLocation(NutsStoreLocation.LIB));
@@ -78,7 +78,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
+    protected void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
         mirroring.push(id, options, session);
     }
 
@@ -156,7 +156,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return super.findLatestVersion(id, filter, session);
     }
 
-    public void reindexFolder() {
+    public void updateStatistics() {
         lib.reindexFolder();
         cache.reindexFolder();
     }

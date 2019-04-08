@@ -5,25 +5,21 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
 import net.vpc.app.nuts.core.util.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
-import net.vpc.common.io.*;
-import net.vpc.common.strings.StringConverter;
-import net.vpc.common.strings.StringConverterMap;
-import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Convert;
-import net.vpc.common.util.MapBuilder;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
+import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamEvent;
+import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamMonitor;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -31,9 +27,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
     private NutsWorkspace ws;
     private static Gson GSON;
     private static Gson GSON_PRETTY;
-    private final StringConverter pathExpansionConverter = new StringConverter() {
+    private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
-        public String convert(String from) {
+        public String apply(String from) {
             switch (from) {
                 case "home.config":
                     return ws.config().getHomeLocation(NutsStoreLocation.CONFIG).toString();
@@ -87,14 +83,14 @@ public class DefaultNutsIOManager implements NutsIOManager {
         NutsURLHeader header = null;
         long size = -1;
         try {
-            if (URLUtils.isURL(path)) {
-                if (URLUtils.isFileURL(path)) {
+            if (CoreIOUtils.isURL(path)) {
+                if (CoreIOUtils.isPathFile(path)) {
 //                    path = URLUtils.toFile(new URL(path)).getPath();
-                    Path p = URLUtils.toPath(new URL(path));
+                    Path p = CoreIOUtils.toPathFile(path);
                     size = Files.size(p);
                     stream = Files.newInputStream(p);
                 } else {
-                    NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(ws, path);
+                    NutsHttpConnectionFacade f = CoreIOUtils.getHttpClientFacade(ws, path);
                     try {
 
                         header = f.getURLHeader();
@@ -119,7 +115,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session) {
         if (length > 0) {
-            return IOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
+            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
         } else {
             return stream;
         }
@@ -131,22 +127,22 @@ public class DefaultNutsIOManager implements NutsIOManager {
         boolean monitorable = true;
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
-            o = Convert.toBoolean(o);
+            o = CoreCommonUtils.convertToBoolean(String.valueOf(o), false);
         }
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         } else {
             if (source instanceof NutsId) {
                 NutsId d = (NutsId) source;
-                if (NutsConstants.FACE_COMPONENT_HASH.equals(d.getFace())) {
+                if (NutsConstants.QueryFaces.COMPONENT_HASH.equals(d.getFace())) {
                     monitorable = false;
                 }
-                if (NutsConstants.FACE_DESC_HASH.equals(d.getFace())) {
+                if (NutsConstants.QueryFaces.DESC_HASH.equals(d.getFace())) {
                     monitorable = false;
                 }
             }
         }
-        if (!CoreNutsUtils.getSystemBoolean("nuts.monitor.enabled", true)) {
+        if (!CoreCommonUtils.getSystemBoolean("nuts.monitor.enabled", true)) {
             monitorable = false;
         }
         DefaultNutsInputStreamMonitor monitor = null;
@@ -154,7 +150,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut());
         }
         boolean verboseMode
-                = CoreNutsUtils.getSystemBoolean("nuts.monitor.start", false)
+                = CoreCommonUtils.getSystemBoolean("nuts.monitor.start", false)
                 || ws.config().getOptions().getLogConfig() != null && ws.config().getOptions().getLogConfig().getLogLevel() == Level.FINEST;
         InputStream stream = null;
         NutsURLHeader header = null;
@@ -163,7 +159,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             if (verboseMode && monitor != null) {
                 monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
             }
-            NutsHttpConnectionFacade f = CoreHttpUtils.getHttpClientFacade(ws, path);
+            NutsHttpConnectionFacade f = CoreIOUtils.getHttpClientFacade(ws, path);
             try {
 
                 header = f.getURLHeader();
@@ -172,11 +168,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 //ignore error
             }
             stream = f.open();
-        } catch (IOException e) {
+        } catch (UncheckedIOException e) {
             if (verboseMode && monitor != null) {
                 monitor.onComplete(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
             }
-            throw new UncheckedIOException(e);
+            throw e;
         }
         if (stream != null) {
             if (path.toLowerCase().startsWith("file://")) {
@@ -197,7 +193,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
             }
             //adapt to disable onStart call (it is already invoked)
-            return IOUtils.monitor(stream, source, sourceName, size, new InputStreamMonitor() {
+            return CoreIOUtils.monitor(stream, source, sourceName, size, new InputStreamMonitor() {
                 @Override
                 public void onStart(InputStreamEvent event) {
                 }
@@ -315,8 +311,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public String expandPath(String path, String baseFolder) {
         if (path != null && path.length() > 0) {
-            path = StringUtils.replaceDollarPlaceHolders(path, pathExpansionConverter);
-            if (URLUtils.isURL(path)) {
+            path = CoreStringUtils.replaceDollarPlaceHolders(path, pathExpansionConverter);
+            if (CoreIOUtils.isURL(path)) {
                 return path;
             }
             Path ppath = path(path);
@@ -335,12 +331,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
                     return System.getProperty("user.home") + File.separator + path.substring(2);
                 } else if (baseFolder != null) {
-                    if (URLUtils.isURL(baseFolder)) {
+                    if (CoreIOUtils.isURL(baseFolder)) {
                         return baseFolder + "/" + path;
                     }
                     return path(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
                 } else {
-                    if (URLUtils.isURL(path)) {
+                    if (CoreIOUtils.isURL(path)) {
                         return path;
                     }
                     return ppath.toAbsolutePath().normalize().toString();
@@ -348,7 +344,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             } else if (ppath.isAbsolute()) {
                 return ppath.normalize().toString();
             } else if (baseFolder != null) {
-                if (URLUtils.isURL(baseFolder)) {
+                if (CoreIOUtils.isURL(baseFolder)) {
                     return baseFolder + "/" + path;
                 }
                 return path(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
@@ -356,7 +352,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 return ppath.toAbsolutePath().normalize().toString();
             }
         }
-        if (URLUtils.isURL(baseFolder)) {
+        if (CoreIOUtils.isURL(baseFolder)) {
             return baseFolder;
         }
         return path(baseFolder).toAbsolutePath().normalize().toString();
@@ -370,7 +366,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             try {
                 s = cls.getResourceAsStream(resource);
                 if (s != null) {
-                    help = IOUtils.loadString(s, true);
+                    help = CoreIOUtils.loadString(s, true);
                 }
             } finally {
                 if (s != null) {
@@ -385,7 +381,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
         props.putAll(ws.config().getRuntimeProperties());
-        help = StringUtils.replaceDollarPlaceHolders(help, new StringConverterMap(props));
+        help = CoreStringUtils.replaceDollarPlaceHolders(help, props);
         return help;
     }
 
@@ -395,12 +391,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public InputStream createNullInputStream() {
+    public InputStream nullInputStream() {
         return NullInputStream.INSTANCE;
     }
 
     @Override
-    public PrintStream createNullPrintStream() {
+    public PrintStream nullPrintStream() {
         return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.INHERITED);
     }
 
@@ -449,7 +445,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
-                        MapBuilder.of("workspace", this, "out", out).build(),
+                        Map.of("workspace", this, "out", out),
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
             case FILTERED: {
@@ -461,7 +457,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormatFilteredPrintStream.class,
-                        MapBuilder.of("workspace", this, "out", out).build(),
+                        Map.of("workspace", this, "out", out),
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
             case INHERITED: {
@@ -532,7 +528,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             folder = repository.config().getStoreLocation(NutsStoreLocation.TEMP).toFile();
         }
         final File temp;
-        if (StringUtils.isEmpty(name)) {
+        if (CoreStringUtils.isBlank(name)) {
             name = "temp-";
         } else if (name.length() < 3) {
             name += "-temp-";
@@ -564,8 +560,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
         folder.mkdirs();
         String prefix = "temp-";
         String ext = null;
-        if (!StringUtils.isEmpty(name)) {
-            ext = FileUtils.getFileExtension(name);
+        if (!CoreStringUtils.isBlank(name)) {
+            ext = CoreIOUtils.getFileExtension(name);
             prefix = name;
             if (prefix.length() < 3) {
                 prefix = prefix + "-temp-";
@@ -703,7 +699,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsIOCopyAction copy() {
+    public NutsPathCopyAction copy() {
         return new DefaultNutsIOCopyAction(this);
     }
 

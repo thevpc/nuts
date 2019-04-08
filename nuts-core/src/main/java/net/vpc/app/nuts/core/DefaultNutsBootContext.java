@@ -55,10 +55,10 @@ public final class DefaultNutsBootContext implements NutsBootContext {
 
     public DefaultNutsBootContext(NutsBootConfig c) {
         this.workspace = c.getWorkspace();
-        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_API + "#" + c.getApiVersion());
+        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#")
                 ? CoreNutsUtils.parseNutsId(c.getRuntimeId())
-                : CoreNutsUtils.parseNutsId(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + c.getRuntimeId());
+                : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         this.bootRuntimeDependencies = c.getRuntimeDependencies();
         this.bootRepositories = c.getRepositories();
         this.bootJavaCommand = c.getJavaCommand();

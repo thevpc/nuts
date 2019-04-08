@@ -70,9 +70,9 @@ public class NAdminMain extends NutsApplication {
         PrintStream out = context.out();
         out.print(prefix);
         if (enabled) {
-            out.print("==" + repository.getName() + disabledString + "==");
+            out.print("==" + repository.config().getName() + disabledString + "==");
         } else {
-            out.print("@@" + repository.getName() + disabledString + "@@");
+            out.print("@@" + repository.config().getName() + disabledString + "@@");
         }
         out.print(" : " + repository.getRepositoryType() + " " + repository.config().getLocation(false));
         out.println();

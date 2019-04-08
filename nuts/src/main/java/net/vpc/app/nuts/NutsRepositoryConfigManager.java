@@ -15,7 +15,17 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     String getUuid();
 
+    String uuid();
+
+    /**
+     * name is the name attributed by the containing workspace. It is defined in
+     * NutsRepositoryRef
+     *
+     * @return local name
+     */
     String getName();
+
+    String name();
 
     /**
      * global name is independent from workspace
@@ -59,7 +69,6 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 //    NutsRepositoryRef getMirrorRef(String id);
 //
 //    NutsRepositoryRef[] getMirrorRefs();
-
     boolean save(boolean force);
 
     void save();

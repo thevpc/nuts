@@ -1,17 +1,14 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreCollectionUtils;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.NutsObjectConverterUtilAdapter;
-import net.vpc.common.strings.StringConverter;
-import net.vpc.common.strings.StringConverterMap;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
@@ -147,7 +144,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setName(String name) {
-        this.name = StringUtils.trim(name);
+        this.name = CoreStringUtils.trim(name);
         return this;
     }
 
@@ -171,7 +168,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setDescription(String description) {
-        this.description = StringUtils.trim(description);
+        this.description = CoreStringUtils.trim(description);
         return this;
     }
 
@@ -189,7 +186,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
 //    @Override
 //    public NutsDescriptorBuilder setExt(String ext) {
-//        this.ext = StringUtils.trim(ext);
+//        this.ext = CoreStringUtils.trim(ext);
 //        return this;
 //    }
     public NutsDescriptorBuilder addPlatform(String platform) {
@@ -203,22 +200,22 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     public NutsDescriptorBuilder setPlatform(String[] platform) {
-        this.platform = new ArrayList<>(Arrays.asList(CoreCollectionUtils.toArraySet(platform)));
+        this.platform = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(platform)));
         return this;
     }
 
     public NutsDescriptorBuilder setOs(String[] os) {
-        this.os = new ArrayList<>(Arrays.asList(CoreCollectionUtils.toArraySet(os)));
+        this.os = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(os)));
         return this;
     }
 
     public NutsDescriptorBuilder setOsdist(String[] osdist) {
-        this.osdist = new ArrayList<>(Arrays.asList(CoreCollectionUtils.toArraySet(osdist)));
+        this.osdist = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(osdist)));
         return this;
     }
 
     public NutsDescriptorBuilder setArch(String[] arch) {
-        this.arch = new ArrayList<>(Arrays.asList(CoreCollectionUtils.toArraySet(arch)));
+        this.arch = new ArrayList<>(Arrays.asList(CoreCommonUtils.toArraySet(arch)));
         return this;
     }
 
@@ -265,7 +262,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setPackaging(String packaging) {
-        this.packaging = StringUtils.trim(packaging);
+        this.packaging = CoreStringUtils.trim(packaging);
         return this;
     }
 
@@ -653,9 +650,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
-        StringConverter map = new StringConverterMap(properties);
+        Function<String,String> map = new CoreStringUtils.MapToFunction<>(properties);
 
-        NutsId n_id = getId().apply(new NutsObjectConverterUtilAdapter(map));
+        NutsId n_id = getId().apply(map);
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
 //        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
@@ -701,7 +698,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, StringConverter properties) {
+    private NutsId applyNutsIdProperties(NutsId child, Function<String,String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -711,7 +708,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringConverter properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, Function<String,String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);

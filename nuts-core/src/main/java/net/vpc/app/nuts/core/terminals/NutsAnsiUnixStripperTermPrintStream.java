@@ -31,8 +31,8 @@ package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.NutsFormatFilteredPrintStream;
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
-import net.vpc.common.fprint.FPrint;
-import net.vpc.common.fprint.FormattedPrintStream;
+import net.vpc.app.nuts.core.util.bundledlibs.fprint.FPrint;
+import net.vpc.app.nuts.core.util.bundledlibs.fprint.FormattedPrintStream;
 
 import java.io.OutputStream;
 
@@ -42,7 +42,7 @@ import java.io.OutputStream;
 public class NutsAnsiUnixStripperTermPrintStream extends FormattedPrintStream implements NutsFormatFilteredPrintStream, NutsOutputStreamTransparentAdapter {
     private OutputStream out;
     public NutsAnsiUnixStripperTermPrintStream(OutputStream out) {
-        super(out,FPrint.RENDERER_ANSI_STRIPPER,FPrint.PARSER_DEFAULT);
+        super(out,FPrint.RENDERER_ANSI_STRIPPER);
         this.out=out;
     }
 

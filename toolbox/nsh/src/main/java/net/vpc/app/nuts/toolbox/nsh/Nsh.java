@@ -66,7 +66,8 @@ public class Nsh extends NutsApplication {
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         NutsCommand[] commands = c.getCommands();
-        int count = 0;
+        int reinstalledCount = 0;
+        int firstInstallCount = 0;
         for (NutsCommand command : commands) {
             if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
@@ -76,14 +77,22 @@ public class Nsh extends NutsApplication {
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId()),
-                        new net.vpc.app.nuts.NutsInstallOptions().setForce(force), null
+                        new net.vpc.app.nuts.NutsInstallCommandOptions().setForce(force), null
                 )) {
-                    count++;
+                    reinstalledCount++;
+                } else {
+                    firstInstallCount++;
                 }
             }
         }
         if (!silent) {
-            applicationContext.out().printf("Installed ==%s== nsh commands.\n", count);
+            if (reinstalledCount == 0) {
+                applicationContext.out().printf("Installed ==%s== nsh commands.\n", reinstalledCount + firstInstallCount);
+            } else if (firstInstallCount == 0) {
+                applicationContext.out().printf("Reinstalled ==%s== nsh commands.\n", reinstalledCount + firstInstallCount);
+            } else {
+                applicationContext.out().printf("Installed ==%s== and Reinstalled ==%s== nsh commands.\n", firstInstallCount, reinstalledCount);
+            }
         }
         cfg.save(false);
     }

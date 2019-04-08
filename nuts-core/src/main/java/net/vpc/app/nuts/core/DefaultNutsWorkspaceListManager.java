@@ -1,11 +1,11 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.strings.StringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Class for managing a Workspace list
@@ -22,7 +22,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     public DefaultNutsWorkspaceListManager(NutsWorkspace ws, String name) {
         this.defaultWorkspace = ws;
-        if (StringUtils.isEmpty(name)) {
+        if (CoreStringUtils.isBlank(name)) {
             name = "default";
         }
         this.name = name.trim();

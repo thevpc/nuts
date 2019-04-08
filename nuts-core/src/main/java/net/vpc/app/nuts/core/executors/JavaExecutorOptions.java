@@ -1,18 +1,18 @@
 package net.vpc.app.nuts.core.executors;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Convert;
 
-import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
 
 public class JavaExecutorOptions {
     private String javaVersion = null;//runnerProps.getProperty("java.version");
@@ -21,7 +21,7 @@ public class JavaExecutorOptions {
     private String dir = null;
     private boolean mainClassApp = false;
     private boolean excludeBase = false;
-    private boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
+    private boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.always-show-command",false);
     private boolean jar = false;
     private List<String> classPath = new ArrayList<>();
     private List<String> nutsPath = new ArrayList<>();
@@ -99,27 +99,26 @@ public class JavaExecutorOptions {
             }
         }
         if (getJavaHome() == null) {
-            if (!StringUtils.isEmpty(getJavaVersion())) {
+            if (!CoreStringUtils.isBlank(getJavaVersion())) {
                 javaHome = "${java#" + getJavaVersion() + "}";
             } else {
                 javaHome = "${java}";
             }
         } else {
-            javaHome = CoreNutsUtils.resolveJavaCommand(getJavaHome());
+            javaHome = CoreIOUtils.resolveJavaCommand(getJavaHome());
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsDescriptor descriptor = nutsMainDef.getDescriptor();
-        descriptor = ws.resolveEffectiveDescriptor(descriptor, session);
+        NutsDescriptor descriptor = nutsMainDef.getEffectiveDescriptor();
         nutsDefinitions.addAll(
                 ws
-                        .createQuery().addId(descriptor.getId())
+                        .find().addId(descriptor.getId())
                         .setSession(session)
                         .setTransitive(true)
                         .addScope(NutsDependencyScope.PROFILE_RUN)
                         .setIncludeOptional(false)
                         .mainAndDependencies()
-                        .fetch()
+                        .getResultDefinitions().list()
 
         );
 
@@ -140,7 +139,10 @@ public class JavaExecutorOptions {
                     //check manifest!
                     NutsExecutionEntry[] classes = ws.parser().parseExecutionEntries(contentFile);
                     if (classes.length > 0) {
-                        mainClass = StringUtils.join(":", classes, NutsExecutionEntry::getName);
+                        mainClass = CoreStringUtils.join(":", 
+                                Arrays.stream(classes).map(NutsExecutionEntry::getName)
+                                .collect(Collectors.toList())
+                        );
                     }
                 }
             }
@@ -181,7 +183,7 @@ public class JavaExecutorOptions {
                                 if (line.equals("cancel")) {
                                     throw new NutsUserCancelException();
                                 }
-                                Integer anyInt = Convert.toInt(line, CoreNutsUtils.INTEGER_LENIENT_NULL);
+                                Integer anyInt = CoreCommonUtils.convertToInteger(line, null);
                                 if (anyInt!=null) {
                                     int i = anyInt;
                                     if (i >= 1 && i <= possibleClasses.size()) {
@@ -207,23 +209,23 @@ public class JavaExecutorOptions {
 
     private void addToCp(List<String> classPath, String value) {
         for (String n : CoreStringUtils.split(value, ":;, ")) {
-            if (!StringUtils.isEmpty(n)) {
+            if (!CoreStringUtils.isBlank(n)) {
                 classPath.add(n);
             }
         }
     }
 
     private void npToCp(List<String> classPath, String value) {
-        NutsQuery ns = getWs().createQuery().latestVersions()
+        NutsFindCommand ns = getWs().find().latestVersions()
                 .setSession(this.session);
         for (String n : CoreStringUtils.split(value, ";, ")) {
-            if (!StringUtils.isEmpty(n)) {
+            if (!CoreStringUtils.isBlank(n)) {
                 ns.addId(n);
             }
         }
-        for (NutsId nutsId : ns.find()) {
+        for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWs()
-                    .fetch(nutsId).setSession(this.session).setIncludeInstallInformation(true).fetchDefinition();
+                    .fetch().id(nutsId).setSession(this.session).setIncludeInstallInformation(true).getResultDefinition();
             classPath.add(f.getContent().getPath().toString());
         }
     }

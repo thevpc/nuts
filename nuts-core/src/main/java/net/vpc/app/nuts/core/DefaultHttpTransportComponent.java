@@ -34,7 +34,9 @@ import net.vpc.app.nuts.core.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -64,16 +66,20 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         @Override
-        public InputStream open() throws IOException {
-            return url.openStream();
+        public InputStream open()  {
+            try {
+                return url.openStream();
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
         
         @Override
-        public NutsURLHeader getURLHeader() throws IOException {
+        public NutsURLHeader getURLHeader(){
             return CoreIOUtils.getURLHeader(url);
         }
 
-        public InputStream upload(NutsTransportParamPart... parts) throws IOException {
+        public InputStream upload(NutsTransportParamPart... parts) {
             throw new NutsUnsupportedOperationException("Upload unsupported");
         }
     }

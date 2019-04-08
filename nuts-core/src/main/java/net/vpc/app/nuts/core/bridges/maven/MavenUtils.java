@@ -36,10 +36,6 @@ import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.MapStringMapper;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.mvn.*;
-import net.vpc.common.strings.StringUtils;
-import net.vpc.common.util.Chronometer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,6 +43,18 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.ArchetypeCatalogParser;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadata;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadataParser;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.Pom;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomDependency;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomId;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomIdFilter;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomXmlParser;
 
 /**
  * Created by vpc on 2/20/17.
@@ -100,7 +108,7 @@ public class MavenUtils {
             if (stream == null) {
                 return null;
             }
-            byte[] bytes = IOUtils.loadByteArray(stream);
+            byte[] bytes = CoreIOUtils.loadByteArray(stream);
             Pom pom = new PomXmlParser().parse(new ByteArrayInputStream(bytes));
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
@@ -122,7 +130,7 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
+                log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
                 log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0}", new Object[]{urlDesc});
             }
@@ -143,7 +151,7 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, Chronometer.formatPeriodMilli(time)});
+                log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
                 log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
             }
@@ -175,13 +183,13 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = ws.fetch(parentId).setIncludeEffective(true)
+                            parentDescriptor = ws.fetch().id(parentId).setEffective(true)
                                     .setSession(session.getSession())
                                     .setTransitive(true)
                                     .setFetchStratery(
                                             session.getFetchMode() == NutsFetchMode.REMOTE ? NutsFetchStrategy.ONLINE
                                             : NutsFetchStrategy.OFFLINE
-                                    ).fetchDescriptor();
+                                    ).getResultDescriptor();
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
@@ -203,10 +211,10 @@ public class MavenUtils {
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (StringUtils.isEmpty(thisId.getGroup())) {
+                        if (CoreStringUtils.isBlank(thisId.getGroup())) {
                             thisId = thisId.setGroup(parentId.getGroup());
                         }
-                        if (StringUtils.isEmpty(thisId.getVersion().getValue())) {
+                        if (CoreStringUtils.isBlank(thisId.getVersion().getValue())) {
                             thisId = thisId.setVersion(parentId.getVersion().getValue());
                         }
                     }
@@ -220,7 +228,7 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetch(pid).setIncludeEffective(true).setSession(session.getSession()).fetchDescriptor();
+                                d = ws.fetch().id(pid).setEffective(true).setSession(session.getSession()).getResultDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
@@ -245,7 +253,7 @@ public class MavenUtils {
                     nutsDescriptor = nutsDescriptor.setId(thisId);
                 }
                 String nutsPackaging = nutsDescriptor.getProperties().get("nuts-packaging");
-                if (!StringUtils.isEmpty(nutsPackaging)) {
+                if (!CoreStringUtils.isBlank(nutsPackaging)) {
                     nutsDescriptor = nutsDescriptor.setPackaging(nutsPackaging);
                 }
                 properties.put("pom.groupId", thisId.getGroup());

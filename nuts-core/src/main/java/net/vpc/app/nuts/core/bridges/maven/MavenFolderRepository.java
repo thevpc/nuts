@@ -31,17 +31,15 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.common.util.IteratorUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -51,7 +49,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
 
     public MavenFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_FAST);
+        super(options, workspace, parentRepository, SPEED_FAST, NutsConstants.RepoTypes.MAVEN);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     @Override
     protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
-        return CoreSecurityUtils.evalSHA1(getStream(id.setFace(NutsConstants.FACE_COMPONENT_HASH), session), true);
+        return CoreSecurityUtils.evalSHA1(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session), true);
     }
 
     @Override
@@ -83,7 +81,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     @Override
     protected String getIdPath(NutsId id) {
-        return getLocationAsPath().resolve(CoreNutsUtils.syspath(getIdRelativePath(id))).toString();
+        return getLocationAsPath().resolve(CoreIOUtils.syspath(getIdRelativePath(id))).toString();
     }
 
 //    @Override
@@ -115,10 +113,10 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id) {
-        if (StringUtils.isEmpty(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroup())) {
             return null;
         }
-        if (StringUtils.isEmpty(id.getName())) {
+        if (CoreStringUtils.isBlank(id.getName())) {
             return null;
         }
         Path groupFolder = getLocationAsPath().resolve(id.getGroup().replace('.', File.separatorChar));
@@ -141,7 +139,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                         //
                     }
                     if (d != null) {
-                        return Collections.singletonList(id.setNamespace(getName())).iterator();
+                        return Collections.singletonList(id.setNamespace(config().getName())).iterator();
                     }
                 }
 //                return Collections.emptyIterator();
@@ -203,7 +201,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             return null;//Collections.emptyIterator();
         }
-        return new FolderNutIdIterator(getWorkspace(), getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getWorkspace(), config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
                 MavenFolderRepository.this.undeploy(id, session);

@@ -32,14 +32,13 @@ package net.vpc.app.nuts.core.bridges.maven;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
 import net.vpc.app.nuts.core.util.CoreSecurityUtils;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 2/20/17.
@@ -48,8 +47,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     private static final Logger log = Logger.getLogger(AbstractMavenRepository.class.getName());
 
-    public AbstractMavenRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, int speed) {
-        super(options, workspace, parentRepository, speed, false);
+    public AbstractMavenRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, int speed, String repositoryType) {
+        super(options, workspace, parentRepository, speed, false, repositoryType);
         extensions.put("src", "-src.zip");
         extensions.put("pom", ".pom");
     }
@@ -63,17 +62,13 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected String getStreamAsString(NutsId id, NutsRepositorySession session) {
         String url = getIdPath(id);
-        try {
-            return IOUtils.loadString(openStream(id, url, id, session), true);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        return CoreIOUtils.loadString(openStream(id, url, id, session), true);
     }
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
-        switch (StringUtils.trim(id.getFace())) {
-            case NutsConstants.FACE_COMPONENT_HASH:
-            case NutsConstants.FACE_DESC_HASH: {
+        switch (CoreStringUtils.trim(id.getFace())) {
+            case NutsConstants.QueryFaces.COMPONENT_HASH:
+            case NutsConstants.QueryFaces.DESC_HASH: {
                 break;
             }
             default: {
@@ -105,7 +100,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     protected abstract InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session);
 
     @Override
-    public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
+    public void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -128,14 +123,14 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
             NutsId idDesc = id.setFaceDescriptor();
             try {
                 stream = getStream(idDesc, session);
-                bytes = IOUtils.loadByteArray(stream, true);
+                bytes = CoreIOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getIdPath(id));
             } finally {
                 if (stream != null) {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.setFace(NutsConstants.FACE_DESC_HASH), new ByteArrayInputStream(bytes), session);
+            checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.DESC_HASH), new ByteArrayInputStream(bytes), session);
             return nutsDescriptor;
         } catch (IOException ex) {
             throw new NutsNotFoundException(id, null, ex);
@@ -147,22 +142,22 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     @Override
     protected String getIdExtension(NutsId id) {
         Map<String, String> q = id.getQueryMap();
-        String f = StringUtils.trim(q.get(NutsConstants.QUERY_FACE));
+        String f = CoreStringUtils.trim(q.get(NutsConstants.QueryKeys.FACE));
         switch (f) {
-            case NutsConstants.FACE_DESCRIPTOR: {
+            case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";
             }
-            case NutsConstants.FACE_DESC_HASH: {
+            case NutsConstants.QueryFaces.DESC_HASH: {
                 return ".pom.sha1";
             }
-            case NutsConstants.FACE_CATALOG: {
+            case NutsConstants.QueryFaces.CATALOG: {
                 return ".catalog";
             }
-            case NutsConstants.FACE_COMPONENT_HASH: {
+            case NutsConstants.QueryFaces.COMPONENT_HASH: {
                 return getIdExtension(id.setFaceComponent()) + ".sha1";
             }
-            case NutsConstants.FACE_COMPONENT: {
-                String packaging = q.get(NutsConstants.QUERY_PACKAGING);
+            case NutsConstants.QueryFaces.COMPONENT: {
+                String packaging = q.get(NutsConstants.QueryKeys.PACKAGING);
                 return getIdComponentExtension(packaging);
             }
             default: {

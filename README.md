@@ -60,6 +60,7 @@ java -jar nuts-0.5.3.jar
 ## Change Log
 ### nuts 0.5.4.0 (IN PROGRESS)
     1- Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
+    1- Removed dependencies to common,strings, io and utils. From Now on only gson and jansi are retained.
     1- Layout changes
         * from now on configuration will be version specific. some migration should be done to import previous configs
         * system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json

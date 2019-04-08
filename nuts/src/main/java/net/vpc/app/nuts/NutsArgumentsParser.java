@@ -38,8 +38,13 @@ public final class NutsArgumentsParser {
     }
 
     public static NutsWorkspaceOptions parseNutsArguments(String[] bootArguments) {
-        List<String> showError = new ArrayList<>();
         NutsWorkspaceOptions o = new NutsWorkspaceOptions();
+        parseNutsArguments(bootArguments, o);
+        return o;
+    }
+
+    public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptions o) {
+        List<String> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> excludedRepositories = new HashSet<>();
         HashSet<String> tempRepositories = new HashSet<>();
@@ -110,7 +115,7 @@ public final class NutsArgumentsParser {
                             if (br.indexOf("#") > 0) {
                                 //this is a full id
                             } else {
-                                br = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + br;
+                                br = NutsConstants.Ids.NUTS_RUNTIME + "#" + br;
                             }
                             o.setBootRuntime(br);
                         }
@@ -552,7 +557,7 @@ public final class NutsArgumentsParser {
                             if (cmdArg.getValue() != null) {
                                 throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
                             }
-                            applicationArguments.add(NutsConstants.NUTS_SHELL);
+                            applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             applicationArguments.add("-c");
                             applicationArguments.addAll(cmdArgList.removeAll());
                         } else {
@@ -717,7 +722,6 @@ public final class NutsArgumentsParser {
         }
         o.setApplicationArguments(applicationArguments.toArray(new String[0]));
         o.setExecutorOptions(executorOptions.toArray(new String[0]));
-        return o;
     }
 
     private static void parseLogLevel(NutsLogConfig logConfig, NutsMinimalCommandLine.Arg cmdArg, NutsMinimalCommandLine cmdArgList, boolean enabled) {

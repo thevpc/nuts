@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
 import net.vpc.app.nuts.NutsConfirmAction;
+import net.vpc.app.nuts.NutsUninstallCommand;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
@@ -50,7 +51,7 @@ public class UninstallCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Argument a;
-        NutsUninstallOptions options = new NutsUninstallOptions().setTrace(true);
+        NutsUninstallCommand options = context.getWorkspace().uninstall().setTrace(true).setSession(context.getSession());
         int ret = 1;
         do {
             if (cmdLine.isOption()) {
@@ -65,7 +66,13 @@ public class UninstallCommand extends AbstractNutsCommand {
                 String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
                 if (cmdLine.isExecMode()) {
                     NutsWorkspace ws = context.getWorkspace();
-                    ret = ws.uninstall(id, args, options, context.getSession()) ? 0 : 1;
+                    ret = 0;
+                    try {
+                        options.id(id).setArgs(args).uninstall();
+                        ret = 1;
+                    } catch (Exception ex) {
+                        //ignore
+                    }
                 }
             }
         } while (cmdLine.hasNext());

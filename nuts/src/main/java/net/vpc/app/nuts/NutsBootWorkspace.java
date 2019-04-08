@@ -36,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -72,9 +73,9 @@ public class NutsBootWorkspace {
     private String requiredJavaOptions;
     //    String workspaceLocation;
     private NutsBootId bootId;
-    private final NutsObjectConverter<String, String> pathExpansionConverter = new NutsObjectConverter<String, String>() {
+    private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
-        public String convert(String from) {
+        public String apply(String from) {
             switch (from) {
                 case "workspace":
                     return runningBootConfig.getWorkspace();
@@ -114,7 +115,7 @@ public class NutsBootWorkspace {
         }
         actualVersion = Nuts.getVersion();
         this.options = options;
-        this.bootId = NutsBootId.parse(NutsConstants.NUTS_ID_BOOT_API + "#" + actualVersion);
+        this.bootId = NutsBootId.parse(NutsConstants.Ids.NUTS_API + "#" + actualVersion);
         newInstance = true;
         if (options.getBootCommand() != null) {
             switch (options.getBootCommand()) {
@@ -168,12 +169,12 @@ public class NutsBootWorkspace {
         if ("LATEST".equalsIgnoreCase(requiredBootVersion) || "RELEASE".equalsIgnoreCase(requiredBootVersion)) {
             String releaseVersion = null;
             try {
-                String NUTS_ID_BOOT_API_PATH = "/" + NutsConstants.NUTS_ID_BOOT_API.replaceAll("[.:]", "/");
-                releaseVersion = NutsUtils.resolveMavenReleaseVersion(NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT, NUTS_ID_BOOT_API_PATH);
+                String NUTS_ID_BOOT_API_PATH = "/" + NutsConstants.Ids.NUTS_API.replaceAll("[.:]", "/");
+                releaseVersion = NutsUtils.resolveMavenReleaseVersion(NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT, NUTS_ID_BOOT_API_PATH);
                 requiredBootVersion = releaseVersion;
             } catch (Exception ex) {
-                errors.append("Unable to load nuts version from " + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT + ".\n");
-                throw new NutsIllegalArgumentException("Unable to load nuts version from " + NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT);
+                errors.append("Unable to load nuts version from " + NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT + ".\n");
+                throw new NutsIllegalArgumentException("Unable to load nuts version from " + NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT);
             }
             System.out.println("detected version " + requiredBootVersion);
         }
@@ -184,12 +185,11 @@ public class NutsBootWorkspace {
         if (!NutsUtils.getSystemBoolean("nuts.export.no-m2", false)) {
             repos.add(System.getProperty("user.home") + NutsUtils.syspath("/.m2/repository"));
         }
-        repos.addAll(Arrays.asList(
-                NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT,
-                NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
-                NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL
+        repos.addAll(Arrays.asList(NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT,
+                NutsConstants.BootsrapURLs.REMOTE_MAVEN_GIT,
+                NutsConstants.BootsrapURLs.REMOTE_MAVEN_CENTRAL
         ));
-        File file = NutsUtils.resolveOrDownloadJar(NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion,
+        File file = NutsUtils.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + requiredBootVersion,
                 repos.toArray(new String[0]),
                 defaultWorkspaceLibFolder
         );
@@ -205,7 +205,7 @@ public class NutsBootWorkspace {
                     options.getWorkspace(), null,
                     errors.toString()
             );
-            throw new NutsIllegalArgumentException("Unable to load " + NutsConstants.NUTS_ID_BOOT_API + "#" + requiredBootVersion);
+            throw new NutsIllegalArgumentException("Unable to load " + NutsConstants.Ids.NUTS_API + "#" + requiredBootVersion);
         }
 
         List<String> cmd = new ArrayList<>();
@@ -283,11 +283,11 @@ public class NutsBootWorkspace {
         String workspaceBootLibFolder = runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE) + "/bootstrap";
         NutsBootId bootRuntime = null;
         if (NutsUtils.isEmpty(info.actualBootConfig.getRuntimeId())) {
-            bootRuntime = NutsBootId.parse(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
+            bootRuntime = NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
         } else if (info.actualBootConfig.getRuntimeId().contains("#")) {
             bootRuntime = NutsBootId.parse(info.actualBootConfig.getRuntimeId());
         } else {
-            bootRuntime = NutsBootId.parse(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
+            bootRuntime = NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
         }
         String[] repositories = NutsUtils.splitUrlStrings(info.actualBootConfig.getRepositories()).toArray(new String[0]);
         File f = getBootFile(bootRuntime, getFileName(bootRuntime, "jar"), repositories, workspaceBootLibFolder, !recover);
@@ -457,7 +457,7 @@ public class NutsBootWorkspace {
 
             if (options.getOpenMode() == NutsWorkspaceOpenMode.OPEN_EXISTING) {
                 //add fail fast test!!
-                if (!new File(runningBootConfig.getWorkspace(), NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME).isFile()) {
+                if (!new File(runningBootConfig.getWorkspace(), NutsConstants.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
                     throw new NutsWorkspaceNotFoundException(runningBootConfig.getWorkspace());
                 }
             }
@@ -489,7 +489,7 @@ public class NutsBootWorkspace {
             }
             if (info.actualBootConfig == null) {
                 info.actualBootConfig = new NutsBootConfig()
-                        .setApiVersion(NutsConstants.NUTS_ID_BOOT_API + "#" + this.actualVersion)
+                        .setApiVersion(NutsConstants.Ids.NUTS_API + "#" + this.actualVersion)
                         .setRuntimeId(runtimeId);
             }
             showError(
@@ -539,15 +539,15 @@ public class NutsBootWorkspace {
         initial.add(runtimeSourceURL);
 //        initial.add(home + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
         if (!NutsUtils.getSystemBoolean("nuts.export.no-m2", false)) {
-            initial.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
+            initial.add(NutsConstants.BootsrapURLs.LOCAL_MAVEN_CENTRAL);
         }
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
         }
-        initial.add("${workspace}/" + NutsConstants.FOLDER_NAME_REPOSITORIES + "/" + NutsConstants.DEFAULT_REPOSITORY_NAME + "/" + NutsConstants.FOLDER_NAME_LIB);
-        initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT);
-        initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL);
-        initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT);
+        initial.add("${workspace}/" + NutsConstants.Folders.REPOSITORIES + "/" + NutsConstants.DEFAULT_REPOSITORY_NAME + "/" + NutsConstants.Folders.LIB);
+        initial.add(NutsConstants.BootsrapURLs.REMOTE_MAVEN_GIT);
+        initial.add(NutsConstants.BootsrapURLs.REMOTE_MAVEN_CENTRAL);
+        initial.add(NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT);
         return NutsUtils.splitAndRemoveDuplicates(initial.toArray(new String[0]));
     }
 
@@ -563,7 +563,7 @@ public class NutsBootWorkspace {
         }
         List<String> resolvedBootRepositories = new ArrayList<>();
         if (NutsUtils.isEmpty(runtimeId) || NutsUtils.isEmpty(repositories)) {
-            resolvedBootRepositories.addAll(Arrays.asList(NutsUtils.splitAndRemoveDuplicates(this.runtimeSourceURL, NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT)));
+            resolvedBootRepositories.addAll(Arrays.asList(NutsUtils.splitAndRemoveDuplicates(this.runtimeSourceURL, NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT)));
             for (String repo : resolvedBootRepositories) {
                 URL urlString = buildURL(repo, bootAPIPropertiesPath);
                 if (urlString != null) {
@@ -590,7 +590,7 @@ public class NutsBootWorkspace {
         }
 
         if (NutsUtils.isEmpty(runtimeId)) {
-            runtimeId = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + apiId.getVersion() + ".0";
+            runtimeId = NutsConstants.Ids.NUTS_RUNTIME + "#" + apiId.getVersion() + ".0";
             log.log(Level.CONFIG, "[ERROR  ] Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
         }
         NutsBootId _runtimeId = NutsBootId.parse(runtimeId);
@@ -641,17 +641,16 @@ public class NutsBootWorkspace {
             } else {
                 String bootAPI = apiId.toString();
                 runtimeVersion = NutsBootId.parse(bootAPI).version + ".0";
-                runtimeId0 = NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + runtimeVersion;
+                runtimeId0 = NutsConstants.Ids.NUTS_RUNTIME + "#" + runtimeVersion;
             }
             log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
             LinkedHashSet<String> jarRepositories = new LinkedHashSet();
             if (!NutsUtils.getSystemBoolean("nuts.boot.no-m2", false)) {
-                jarRepositories.add(NutsConstants.URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL);
+                jarRepositories.add(NutsConstants.BootsrapURLs.LOCAL_MAVEN_CENTRAL);
             }
-            jarRepositories.addAll(Arrays.asList(
-                    NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_GIT,
-                    NutsConstants.URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL,
-                    NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT
+            jarRepositories.addAll(Arrays.asList(NutsConstants.BootsrapURLs.REMOTE_MAVEN_GIT,
+                    NutsConstants.BootsrapURLs.REMOTE_MAVEN_CENTRAL,
+                    NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT
             ));
             if (!NutsUtils.isEmpty(repositories)) {
                 for (String r : repositories.split(";")) {
@@ -1100,7 +1099,7 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 Map<String, List<String>> ids = new LinkedHashMap<>();
-                NutsInstallOptions options = new NutsInstallOptions().setTrace(true);
+                NutsInstallCommand options = workspace.install().setTrace(true);
                 String[] applicationArguments = o.getApplicationArguments();
                 for (int i = 0; i < applicationArguments.length; i++) {
                     String c = applicationArguments[i];
@@ -1131,7 +1130,7 @@ public class NutsBootWorkspace {
                     throw new NutsExecutionException("Missing nuts to install", 1);
                 }
                 for (Map.Entry<String, List<String>> id : ids.entrySet()) {
-                    workspace.install(id.getKey(), id.getValue().toArray(new String[0]), options, null);
+                    options.setId(id.getKey()).setArgs(id.getValue().toArray(new String[0])).install();
                 }
                 return 0;
             }
@@ -1141,7 +1140,7 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 Map<String, List<String>> ids = new LinkedHashMap<>();
-                NutsUninstallOptions options = new NutsUninstallOptions().setTrace(true);
+                NutsUninstallCommand options = workspace.uninstall().setTrace(true);
                 String[] applicationArguments = o.getApplicationArguments();
                 for (int i = 0; i < applicationArguments.length; i++) {
                     String c = applicationArguments[i];
@@ -1167,7 +1166,7 @@ public class NutsBootWorkspace {
                     throw new NutsExecutionException("Missing nuts to uninstall", 1);
                 }
                 for (Map.Entry<String, List<String>> id : ids.entrySet()) {
-                    workspace.uninstall(id.getKey(), id.getValue().toArray(new String[0]), options, null);
+                    options.id(id.getKey()).addArgs(id.getValue().toArray(new String[0])).uninstall();
                 }
                 return 0;
             }
@@ -1185,7 +1184,7 @@ public class NutsBootWorkspace {
                         silent = true;
                     }
                 }
-                workspace.installCompanionTools(new NutsInstallCompanionOptions().setAsk(!force).setForce(force).setTrace(!silent), null);
+                workspace.install().setIncludecompanions(true).setAsk(!force).setForce(force).setTrace(!silent).install();
                 return 0;
             }
             case UPDATE: {
@@ -1194,18 +1193,14 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 if (o.getApplicationArguments().length == 0) {
-                    if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
-                            .setApplyUpdates(true)
-                            .setEnableMajorUpdates(true),
-                            null).length > 0) {
+                    if (workspace.updateWorkspace().setEnableMajorUpdates(true).update() != null) {
                         return 0;
                     }
                 } else {
                     final NutsSession session = workspace.createSession();
-                    NutsUpdateResult[] defs = workspace.update(o.getApplicationArguments(), null, new NutsUpdateOptions()
-                            .setApplyUpdates(false)
-                            .setTrace(true),
-                            session);
+                    NutsUpdateResult[] defs = workspace.update().ids(o.getApplicationArguments())
+                            .setTrace(true).setSession(session)
+                            .checkUpdates(false);
                     boolean someUpdatable = false;
                     for (NutsUpdateResult d : defs) {
                         if (d.isUpdateAvailable()) {
@@ -1224,19 +1219,15 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 if (o.getApplicationArguments().length == 0) {
-                    if (workspace.checkWorkspaceUpdates(new NutsWorkspaceUpdateOptions()
-                            .setApplyUpdates(false)
+                    if (workspace.updateWorkspace()
                             .setEnableMajorUpdates(true)
-                            .setEnableMajorUpdates(true),
-                            null).length > 0) {
+                            .checkUpdates() != null) {
                         return 0;
                     }
                 } else {
                     final NutsSession session = workspace.createSession();
-                    NutsUpdateResult[] defs = workspace.update(o.getApplicationArguments(), null, new NutsUpdateOptions()
-                            .setApplyUpdates(false)
-                            .setTrace(true),
-                            session);
+                    NutsUpdateResult[] defs = workspace.update().ids(o.getApplicationArguments())
+                            .setTrace(true).setSession(session).checkUpdates();
                     boolean someUpdatable = false;
                     for (NutsUpdateResult d : defs) {
                         if (d.isUpdateAvailable()) {
@@ -1272,7 +1263,7 @@ public class NutsBootWorkspace {
             workspace.getTerminal().getFormattedOut().println(workspace.getWelcomeText());
             return 0;
         }
-        return workspace.createExecBuilder()
+        return workspace.exec()
                 .setCommand(o.getApplicationArguments())
                 .setExecutorOptions(o.getExecutorOptions())
                 .setExecutionType(o.getExecutionType())
@@ -1377,10 +1368,10 @@ public class NutsBootWorkspace {
             folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS)));
             folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.TEMP)));
         }
-        File[] children = new File(this.runningBootConfig.getWorkspace(), NutsConstants.FOLDER_NAME_REPOSITORIES).listFiles();
+        File[] children = new File(this.runningBootConfig.getWorkspace(), NutsConstants.Folders.REPOSITORIES).listFiles();
         if (children != null) {
             for (File child : children) {
-                folders.add(new File(child, NutsConstants.FOLDER_NAME_LIB));
+                folders.add(new File(child, NutsConstants.Folders.LIB));
             }
         }
         NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, null, workspace != null ? workspace.getTerminal() : null);

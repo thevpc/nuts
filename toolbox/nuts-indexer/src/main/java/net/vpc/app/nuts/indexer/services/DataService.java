@@ -1,7 +1,5 @@
 package net.vpc.app.nuts.indexer.services;
 
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.indexer.NutsIndexerUtils;
@@ -138,13 +136,13 @@ public class DataService {
         }
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
-            List<NutsId> allDependencies = ws.createQuery()
+            List<NutsId> allDependencies = ws.find()
                     .dependenciesOnly()
                     .addId(id)
-                    .setIgnoreNotFound(true)
+                    .setLenient(true)
                     .setIncludeInstallInformation(false)
                     .setIncludeFile(false)
-                    .find();
+                    .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
             row.put("allDependencies", ws.io().
                     toJsonString(allDependencies.stream().map(Object::toString).collect(Collectors.toList()), true));

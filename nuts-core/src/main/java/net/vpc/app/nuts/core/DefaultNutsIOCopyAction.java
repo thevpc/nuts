@@ -16,26 +16,23 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsIOCopyAction;
 import net.vpc.app.nuts.NutsTerminalProvider;
-import static net.vpc.app.nuts.core.util.CoreIOUtils.mkdirs;
-import net.vpc.app.nuts.core.util.NutsIOHelper;
-import net.vpc.common.io.FileValidationException;
-import net.vpc.common.io.IOUtils;
+import net.vpc.app.nuts.NutsPathCopyAction;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
 
 /**
  *
  * @author vpc
  */
-public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
+public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
     private static final Logger log = Logger.getLogger(DefaultNutsIOCopyAction.class.getName());
 
     private Checker checker;
     private boolean safeCopy = true;
     private boolean monitorable = false;
-    private NutsIOHelper.SourceItem source;
-    private NutsIOHelper.TargetItem target;
+    private CoreIOUtils.SourceItem source;
+    private CoreIOUtils.TargetItem target;
     private DefaultNutsIOManager iom;
     private NutsTerminalProvider terminalProvider;
 
@@ -49,61 +46,61 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     @Override
-    public NutsIOCopyAction setSource(InputStream source) {
-        this.source = NutsIOHelper.createSource(source);
+    public NutsPathCopyAction setSource(InputStream source) {
+        this.source = CoreIOUtils.createSource(source);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction setSource(File source) {
-        this.source = NutsIOHelper.createSource(source);
+    public NutsPathCopyAction setSource(File source) {
+        this.source = CoreIOUtils.createSource(source);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction setSource(Path source) {
-        this.source = NutsIOHelper.createSource(source);
+    public NutsPathCopyAction setSource(Path source) {
+        this.source = CoreIOUtils.createSource(source);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction setSource(URL source) {
-        this.source = NutsIOHelper.createSource(source);
+    public NutsPathCopyAction setSource(URL source) {
+        this.source = CoreIOUtils.createSource(source);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction setTarget(OutputStream target) {
-        this.target = NutsIOHelper.createTarget(target);
+    public NutsPathCopyAction setTarget(OutputStream target) {
+        this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction setTarget(Path target) {
-        this.target = NutsIOHelper.createTarget(target);
+    public NutsPathCopyAction setTarget(Path target) {
+        this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction setTarget(File target) {
-        this.target = NutsIOHelper.createTarget(target);
+    public NutsPathCopyAction setTarget(File target) {
+        this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
     public DefaultNutsIOCopyAction setSource(Object source) {
-        this.source = NutsIOHelper.createSource(source);
+        this.source = CoreIOUtils.createSource(source);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction from(String source) {
-        this.source = NutsIOHelper.createSource(source);
+    public NutsPathCopyAction from(String source) {
+        this.source = CoreIOUtils.createSource(source);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction to(String target) {
-        this.target = NutsIOHelper.createTarget(target);
+    public NutsPathCopyAction to(String target) {
+        this.target = CoreIOUtils.createTarget(target);
         return this;
     }
 
@@ -152,65 +149,65 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     @Override
-    public NutsIOCopyAction from(InputStream source) {
+    public NutsPathCopyAction from(InputStream source) {
         return setSource(source);
     }
 
     @Override
-    public NutsIOCopyAction from(File source) {
+    public NutsPathCopyAction from(File source) {
         return setSource(source);
     }
 
     @Override
-    public NutsIOCopyAction from(Path source) {
+    public NutsPathCopyAction from(Path source) {
         return setSource(source);
     }
 
     @Override
-    public NutsIOCopyAction from(URL source) {
+    public NutsPathCopyAction from(URL source) {
         return setSource(source);
     }
 
     @Override
-    public NutsIOCopyAction to(File target) {
+    public NutsPathCopyAction to(File target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsIOCopyAction to(OutputStream target) {
+    public NutsPathCopyAction to(OutputStream target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsIOCopyAction to(Path target) {
+    public NutsPathCopyAction to(Path target) {
         return setTarget(target);
     }
 
     @Override
-    public NutsIOCopyAction check(Checker validationVerifier) {
+    public NutsPathCopyAction check(Checker validationVerifier) {
         return setChecker(validationVerifier);
     }
 
     @Override
-    public NutsIOCopyAction safeCopy() {
+    public NutsPathCopyAction safeCopy() {
         setSafeCopy(true);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction safeCopy(boolean safeCopy) {
+    public NutsPathCopyAction safeCopy(boolean safeCopy) {
         setSafeCopy(safeCopy);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction monitorable() {
+    public NutsPathCopyAction monitorable() {
         setMonitorable(true);
         return this;
     }
 
     @Override
-    public NutsIOCopyAction monitorable(boolean safeCopy) {
+    public NutsPathCopyAction monitorable(boolean safeCopy) {
         setMonitorable(safeCopy);
         return this;
     }
@@ -221,14 +218,14 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     @Override
-    public NutsIOCopyAction setTerminalProvider(NutsTerminalProvider terminalProvider) {
+    public NutsPathCopyAction setTerminalProvider(NutsTerminalProvider terminalProvider) {
         this.terminalProvider = terminalProvider;
         return this;
     }
 
     @Override
     public void run() {
-        NutsIOHelper.SourceItem _source = source;
+        CoreIOUtils.SourceItem _source = source;
         if (_source == null) {
             throw new UnsupportedOperationException("Missing Source");
         }
@@ -241,11 +238,11 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         }
         if (monitorable) {
             if (_source.isPath()) {
-                _source = NutsIOHelper.createSource(iom.monitorInputStream(_source.getPath().toString(), _source.getPath().toString(), terminalProvider));
-            } else if (_source.getValue() instanceof URL) {
-                _source = NutsIOHelper.createSource(iom.monitorInputStream(_source.getValue().toString(), _source.getValue().toString(), terminalProvider));
+                _source = CoreIOUtils.createSource(iom.monitorInputStream(_source.getPath().toString(), _source.getPath().toString(), terminalProvider));
+            } else if (_source.getSource() instanceof URL) {
+                _source = CoreIOUtils.createSource(iom.monitorInputStream(_source.getSource().toString(), _source.getSource().toString(), terminalProvider));
             } else {
-                _source = NutsIOHelper.createSource(iom.monitorInputStream(_source.getStream(), -1, _source.getValue().toString(), terminalProvider));
+                _source = CoreIOUtils.createSource(iom.monitorInputStream(_source.open(), -1, _source.getSource().toString(), terminalProvider));
             }
         }
         boolean _source_isPath = _source.isPath();
@@ -253,7 +250,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             Path temp = null;
             if (_target_isPath) {
                 Path to = target.getPath();
-                mkdirs(to.getParent());
+                CoreIOUtils.mkdirs(to.getParent());
                 temp = to.resolveSibling(to.getFileName() + "~");
             } else {
                 temp = iom.createTempFile("temp~");
@@ -263,16 +260,16 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     if (_source_isPath) {
                         Files.copy(_source.getPath(), temp, StandardCopyOption.REPLACE_EXISTING);
                     } else {
-                        Files.copy(_source.getStream(), temp, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(_source.open(), temp, StandardCopyOption.REPLACE_EXISTING);
                     }
                     if (checker != null) {
                         try {
                             checker.check(temp);
                         } catch (Exception ex) {
-                            if (ex instanceof FileValidationException) {
+                            if (ex instanceof ValidationException) {
                                 throw ex;
                             }
-                            throw new FileValidationException("Validate file " + temp + " failed", ex);
+                            throw new ValidationException("Validate file " + temp + " failed", ex);
                         }
                     }
                     if (_target_isPath) {
@@ -287,38 +284,38 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getValue(), target.getValue(), ex.toString()});
+                log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         } else {
             try {
                 if (_target_isPath) {
                     Path to = target.getPath();
-                    mkdirs(to.getParent());
+                    CoreIOUtils.mkdirs(to.getParent());
                     if (_source_isPath) {
                         Files.copy(_source.getPath(), target.getPath(), StandardCopyOption.REPLACE_EXISTING);
                     } else {
-                        Files.copy(_source.getStream(), target.getPath(), StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(_source.open(), target.getPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                 } else {
                     if (_source_isPath) {
                         Files.copy(_source.getPath(), target.getStream());
                     } else {
-                        IOUtils.copy(_source.getStream(), target.getStream());
+                        CoreIOUtils.copy(_source.open(), target.getStream());
                     }
                 }
                 if (checker != null) {
                     try {
                         checker.check(target.getPath());
                     } catch (Exception ex) {
-                        if (ex instanceof FileValidationException) {
+                        if (ex instanceof ValidationException) {
                             throw ex;
                         }
-                        throw new FileValidationException("Validate file " + target.getValue() + " failed", ex);
+                        throw new ValidationException("Validate file " + target.getValue() + " failed", ex);
                     }
                 }
             } catch (IOException ex) {
-                log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getValue(), target.getValue(), ex.toString()});
+                log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         }

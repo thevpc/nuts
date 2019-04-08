@@ -32,11 +32,13 @@ package net.vpc.app.nuts.core.executors;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -77,7 +79,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
         String bootArgumentsString = executionContext.getWorkspace().config().getOptions().getExportedBootArgumentsString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
-        boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
+        boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.always-show-command",false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {
@@ -89,7 +91,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        String directory = StringUtils.isEmpty(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
+        String directory = CoreStringUtils.isBlank(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
         return CoreIOUtils.execAndWait(
                 nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),

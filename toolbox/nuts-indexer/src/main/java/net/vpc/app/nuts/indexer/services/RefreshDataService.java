@@ -54,13 +54,13 @@ public class RefreshDataService {
                     .getAllData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()))
                     .stream()
                     .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
-            Iterator<NutsDefinition> definitions = ws.createQuery()
+            Iterator<NutsDefinition> definitions = ws.find()
                     .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
-                    .setIgnoreNotFound(true)
+                    .setLenient(true)
                     .setIncludeInstallInformation(false)
                     .setIncludeFile(false)
-                    .setIncludeEffective(true)
-                    .fetchIterator();
+                    .effective(true)
+                    .getResultDefinitions().iterator();
             List<Map<String, String>> dataToIndex = new ArrayList<>();
             Map<String, Boolean> visited = new HashMap<>();
             while (definitions.hasNext()) {

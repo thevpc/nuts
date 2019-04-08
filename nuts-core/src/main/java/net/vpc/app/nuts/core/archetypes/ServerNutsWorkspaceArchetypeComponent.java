@@ -58,28 +58,27 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
                         .setCreate(true)
                         .setConfig(new NutsRepositoryConfig()
                                 .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
-                                .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
+                                .setType(NutsConstants.RepoTypes.NUTS)
                         )
         );
         if (defaultRepo == null) {
             throw new IllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
         }
-        defaultRepo.config().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
         workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //has read rights
         workspace.security().addUser("guest", "user",
-                NutsConstants.RIGHT_FETCH_DESC,
-                NutsConstants.RIGHT_FETCH_CONTENT,
-                NutsConstants.RIGHT_DEPLOY
+                NutsConstants.Rights.FETCH_DESC,
+                NutsConstants.Rights.FETCH_CONTENT,
+                NutsConstants.Rights.DEPLOY
         );
 
         //has write rights
         workspace.security().addUser("contributor", "user",
-                NutsConstants.RIGHT_FETCH_DESC,
-                NutsConstants.RIGHT_FETCH_CONTENT,
-                NutsConstants.RIGHT_DEPLOY,
-                NutsConstants.RIGHT_UNDEPLOY
+                NutsConstants.Rights.FETCH_DESC,
+                NutsConstants.Rights.FETCH_CONTENT,
+                NutsConstants.Rights.DEPLOY,
+                NutsConstants.Rights.UNDEPLOY
         );
     }
 }

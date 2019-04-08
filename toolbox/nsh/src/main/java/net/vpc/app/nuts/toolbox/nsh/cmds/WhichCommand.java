@@ -81,7 +81,7 @@ public class WhichCommand extends AbstractNutsCommand {
         } else {
             for (String id : elems) {
                 if (cmdLine.isExecMode()) {
-                    NutsId found = validWorkspace.fetch(id).setSession(context.getSession()).fetchId();
+                    NutsId found = validWorkspace.fetch().id(id).setSession(context.getSession()).getResultId();
                     if (found == null) {
                         context.err().printf("%s not found\n", id);
                         ret = 1;
@@ -134,10 +134,10 @@ public class WhichCommand extends AbstractNutsCommand {
 
         NutsDefinition core = null;
         try {
-            core = workspace.fetch(NutsConstants.NUTS_ID_BOOT_RUNTIME)
+            core = workspace.fetch().id(NutsConstants.Ids.NUTS_RUNTIME)
                     .setSession(session)
                     .offline()
-                    .fetchDefinition();
+                    .getResultDefinition();
         } catch (Exception e) {
             //ignore
         }

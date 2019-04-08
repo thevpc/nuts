@@ -30,25 +30,18 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
-import net.vpc.common.io.*;
-import net.vpc.common.strings.StringUtils;
-//import jdk.internal.org.objectweb.asm.*;
 import org.objectweb.asm.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -56,6 +49,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamVisitor;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ProcessBuilder2;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
 
 /**
  * Created by vpc on 5/16/17.
@@ -111,7 +107,7 @@ public class CorePlatformUtils {
 //            }
 //            case "windows": {
 //                String pf = System.getenv("ProgramFiles");
-//                if (StringUtils.isEmpty(pf)) {
+//                if (CoreStringUtils.isEmpty(pf)) {
 //                    pf = "C:\\Program Files";
 //                }
 //                return pf;
@@ -127,7 +123,7 @@ public class CorePlatformUtils {
      * @return
      */
     public static Map<String, String> getOsDistMapLinux() {
-        File dir = FileUtils.getAbsoluteFile(null, "/etc/");
+        File dir = new File("/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
             File[] a = dir.listFiles((File dir1, String filename) -> filename.endsWith("-release"));
@@ -135,14 +131,14 @@ public class CorePlatformUtils {
                 fileList.addAll(Arrays.asList(a));
             }
         }
-        File fileVersion = FileUtils.getAbsoluteFile(null, "/proc/version");
+        File fileVersion = new File("/proc/version");
         if (fileVersion.exists()) {
             fileList.add(fileVersion);
         }
         String disId = null;
         String disName = null;
         String disVersion = null;
-        File linuxOsrelease = FileUtils.getAbsoluteFile(null, "/proc/sys/kernel/osrelease");
+        File linuxOsrelease = new File("/proc/sys/kernel/osrelease");
         StringBuilder osVersion = new StringBuilder();
         if (linuxOsrelease.isFile()) {
             BufferedReader myReader = null;
@@ -163,7 +159,7 @@ public class CorePlatformUtils {
             }
         }
         if (osVersion.toString().trim().isEmpty()) {
-            StringUtils.clear(osVersion);
+            CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
                         new ProcessBuilder2().setCommand("uname", "-r")
@@ -219,7 +215,7 @@ public class CorePlatformUtils {
                                     disVersion = v;
                                     break;
                             }
-                            if (!StringUtils.isEmpty(disVersion) && !StringUtils.isEmpty(disName) && !StringUtils.isEmpty(disId)) {
+                            if (!CoreStringUtils.isBlank(disVersion) && !CoreStringUtils.isBlank(disName) && !CoreStringUtils.isBlank(disId)) {
                                 break;
                             }
                         }
@@ -243,8 +239,8 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
-            if (!StringUtils.isEmpty(distId)) {
-                if (!StringUtils.isEmpty(distId)) {
+            if (!CoreStringUtils.isBlank(distId)) {
+                if (!CoreStringUtils.isBlank(distId)) {
                     return distId + "#" + distVersion;
                 } else {
                     return distId;
@@ -265,7 +261,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (StringUtils.isEmpty(v)) {
+            if (CoreStringUtils.isBlank(v)) {
                 return "linux";
             }
             return "linux#" + v;
@@ -304,7 +300,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (StringUtils.isEmpty(v)) {
+            if (CoreStringUtils.isBlank(v)) {
                 return "sunos";
             }
             return "sunos#" + v;
@@ -313,7 +309,7 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap();
 
             String v = m.get("osVersion");
-            if (StringUtils.isEmpty(v)) {
+            if (CoreStringUtils.isBlank(v)) {
                 return "freebsd";
             }
             return "freebsd#" + v;
@@ -323,7 +319,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedArch(String arch) {
-        if (StringUtils.isEmpty(arch)) {
+        if (CoreStringUtils.isBlank(arch)) {
             return true;
         }
         if (SUPPORTED_ARCH.contains(arch)) {
@@ -333,7 +329,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedOs(String os) {
-        if (StringUtils.isEmpty(os)) {
+        if (CoreStringUtils.isBlank(os)) {
             return true;
         }
         if (SUPPORTED_OS.contains(os)) {
@@ -348,89 +344,7 @@ public class CorePlatformUtils {
         return (aliased == null) ? property : aliased;
     }
 
-    public static File resolveLocalFileFromResource(Class cls, String url) throws MalformedURLException {
-        return resolveLocalFileFromURL(resolveURLFromResource(cls, url));
-    }
 
-    public static File resolveLocalFileFromURL(URL url) {
-        try {
-            return new File(url.toURI());
-        } catch (URISyntaxException e) {
-            return new File(url.getPath());
-        }
-    }
-    public static Path resolveLocalPathFromURL(URL url) {
-        try {
-            return new File(url.toURI()).toPath();
-        } catch (URISyntaxException e) {
-            return new File(url.getPath()).toPath();
-        }
-    }
-
-    public static URL resolveURLFromResource(Class cls, String urlPath) throws MalformedURLException {
-        if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlPath);
-        }
-        URL url = cls.getResource(urlPath);
-        String urlFile = url.getFile();
-        int separatorIndex = urlFile.indexOf("!/");
-        if (separatorIndex != -1) {
-            String jarFile = urlFile.substring(0, separatorIndex);
-            try {
-                return new URL(jarFile);
-            } catch (MalformedURLException ex) {
-                // Probably no protocol in original jar URL, like "jar:C:/mypath/myjar.jar".
-                // This usually indicates that the jar file resides in the file system.
-                if (!jarFile.startsWith("/")) {
-                    jarFile = "/" + jarFile;
-                }
-                return new URL("file:" + jarFile);
-            }
-        } else {
-            String encoded = encodePath(urlPath);
-            String url_tostring = url.toString();
-            if (url_tostring.endsWith(encoded)) {
-                return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
-            }
-            throw new NutsIllegalArgumentException("Unable to resolve url from " + urlPath);
-        }
-    }
-
-    private static String encodePath(String path) {
-        StringTokenizer st = new StringTokenizer(path, "/", true);
-        StringBuilder encoded = new StringBuilder();
-        while (st.hasMoreTokens()) {
-            String t = st.nextToken();
-            if (t.equals("/")) {
-                encoded.append(t);
-            } else {
-                try {
-                    encoded.append(URLEncoder.encode(t, "UTF-8"));
-                } catch (UnsupportedEncodingException ex) {
-                    throw new NutsIllegalArgumentException("Unable to encode " + t, ex);
-                }
-            }
-        }
-        return encoded.toString();
-    }
-
-    public static String getterName(String name, Class type) {
-        if (Boolean.TYPE.equals(type)) {
-            return "is" + suffix(name);
-        }
-        return "get" + suffix(name);
-    }
-
-    public static String setterName(String name) {
-        //Class<?> type = field.getDataType();
-        return "set" + suffix(name);
-    }
-
-    private static String suffix(String s) {
-        char[] chars = s.toCharArray();
-        chars[0] = Character.toUpperCase(chars[0]);
-        return new String(chars);
-    }
 
     public static PlatformBeanProperty[] findPlatformBeanProperties(Class platformType) {
         LinkedHashMap<String, PlatformBeanProperty> visited = new LinkedHashMap<>();
@@ -473,9 +387,9 @@ public class CorePlatformUtils {
             } catch (NoSuchFieldException e) {
                 //ignore
             }
-            String g1 = getterName(field, Object.class);
-            String g2 = getterName(field, Boolean.TYPE);
-            String s = setterName(field);
+            String g1 = CoreCommonUtils.getterName(field, Object.class);
+            String g2 = CoreCommonUtils.getterName(field, Boolean.TYPE);
+            String s = CoreCommonUtils.setterName(field);
             Class<?> x = platformType;
             Method getter = null;
             Method setter = null;
@@ -598,70 +512,6 @@ public class CorePlatformUtils {
         return clsAndLibs.toArray(new String[0]);
     }
 
-    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader) {
-        String fullName = "META-INF/services/" + service.getName();
-        Enumeration<URL> configs;
-        LinkedHashSet<String> names = new LinkedHashSet<>();
-        try {
-            if (classLoader == null) {
-                configs = ClassLoader.getSystemResources(fullName);
-            } else {
-                configs = classLoader.getResources(fullName);
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        while (configs.hasMoreElements()) {
-            names.addAll(loadServiceClasses(service, configs.nextElement()));
-        }
-        List<Class> classes = new ArrayList<>();
-        for (String n : names) {
-            Class<?> c = null;
-            try {
-                c = Class.forName(n, false, classLoader);
-            } catch (ClassNotFoundException x) {
-                throw new NutsException(x);
-            }
-            if (!service.isAssignableFrom(c)) {
-                throw new NutsException("Not a valid type " + c + " <> " + service);
-            }
-            classes.add(c);
-        }
-        return classes;
-    }
-
-    public static List<String> loadServiceClasses(Class<?> service, URL u)
-            throws ServiceConfigurationError {
-        InputStream in = null;
-        BufferedReader r = null;
-        List<String> names = new ArrayList<>();
-        try {
-            in = u.openStream();
-            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
-            int lc = 1;
-            String line;
-            while ((line = r.readLine()) != null) {
-                line = line.trim();
-                if (!line.isEmpty() && line.charAt(0) != '#') {
-                    names.add(line);
-                }
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        } finally {
-            try {
-                if (r != null) {
-                    r.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex2) {
-                throw new UncheckedIOException(ex2);
-            }
-        }
-        return names;
-    }
 
     public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NutsSessionTerminal terminal) {
         try {
@@ -752,7 +602,7 @@ public class CorePlatformUtils {
                     return null;
                 }
                 String mainClass = manifest.getMainAttributes().getValue("Main-Class");
-                return !StringUtils.isEmpty(mainClass) ? mainClass : null;
+                return !CoreStringUtils.isBlank(mainClass) ? mainClass : null;
             }
         } catch (Exception ex) {
             //invalid file
@@ -765,9 +615,9 @@ public class CorePlatformUtils {
         final List<NutsExecutionEntry> classes = new ArrayList<>();
         final List<String> manifiestClass = new ArrayList<>();
         try {
-            ZipUtils.visitZipStream(jarStream, new PathFilter() {
+            ZipUtils.visitZipStream(jarStream, new Predicate<String>() {
                 @Override
-                public boolean accept(String path) {
+                public boolean test(String path) {
                     return path.endsWith(".class")
                             || path.equals("META-INF/MANIFEST.MF");
                 }
@@ -871,8 +721,8 @@ public class CorePlatformUtils {
             }
             case WINDOWS: {
                 conf = new String[]{
-                    StringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java",
-                    StringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"
+                    CoreStringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java",
+                    CoreStringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"
                 };
                 break;
             }
@@ -919,14 +769,14 @@ public class CorePlatformUtils {
         if (!Files.isDirectory(path)) {
             return null;
         }
-        Path javaExePath = path.resolve(FileUtils.getNativePath("bin/java"));
+        Path javaExePath = path.resolve("bin").resolve("java");
         if (!Files.exists(javaExePath)) {
             return null;
         }
         String type = null;
         String jdkVersion = null;
         try {
-            NutsCommandExecBuilder b = ws.createExecBuilder()
+            NutsExecCommand b = ws.exec()
                     .setExecutionType(NutsExecutionType.NATIVE)
                     .setCommand(javaExePath.toString(), "-version")
                     .setRedirectErrorStream()
@@ -993,5 +843,6 @@ public class CorePlatformUtils {
         }
         return "unknown";
     }
+
 
 }

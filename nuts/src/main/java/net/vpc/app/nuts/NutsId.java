@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.function.Function;
 
 public interface NutsId extends Serializable {
 
@@ -168,7 +169,7 @@ public interface NutsId extends Serializable {
 
     String getOptional();
 
-    NutsId apply(NutsObjectConverter<String, String> properties);
+    NutsId apply(Function<String, String> properties);
 
     NutsIdBuilder builder();
 

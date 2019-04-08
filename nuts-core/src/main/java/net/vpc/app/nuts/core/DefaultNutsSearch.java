@@ -10,12 +10,12 @@ public class DefaultNutsSearch {
     private final NutsDescriptorFilter descriptorFilter;
     private final String[] ids;
     private final DefaultNutsWorkspace ws;
-    private final NutsQueryOptions options;
+    private final NutsFetchCommand options;
 
     public DefaultNutsSearch(String[] ids, NutsRepositoryFilter repositoryFilter, NutsVersionFilter versionFilter, NutsIdFilter idFilter,
             NutsDescriptorFilter descriptorFilter,
             DefaultNutsWorkspace ws,
-            NutsQueryOptions options) {
+            NutsFetchCommand options) {
         this.ids = ids;
         this.ws = ws;
         this.options = options;
@@ -25,7 +25,7 @@ public class DefaultNutsSearch {
         this.descriptorFilter = descriptorFilter;
     }
 
-    public NutsQueryOptions getOptions() {
+    public NutsFetchCommand getOptions() {
         return options;
     }
 

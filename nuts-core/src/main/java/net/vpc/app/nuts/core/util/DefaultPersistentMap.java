@@ -19,9 +19,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import net.vpc.common.util.FileDepthFirstIterator;
-import net.vpc.common.util.IteratorBuilder;
-import net.vpc.common.util.LRUMap;
+import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
+import net.vpc.app.nuts.core.util.bundledlibs.util.LRUMap;
 
 /**
  *

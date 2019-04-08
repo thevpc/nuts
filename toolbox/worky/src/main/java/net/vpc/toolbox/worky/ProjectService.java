@@ -164,10 +164,10 @@ public class ProjectService {
                                         .setWorkspace(a.getNutsWorkspace())
                         );
                         NutsSession s = ws2.createSession();
-                        List<NutsId> found = ws2.createQuery()
+                        List<NutsId> found = ws2.find()
                                 .setIds(g.getGroupId() + ":" + g.getArtifactId())
                                 .setRepositoryFilter(nutsRepository)
-                                .latestVersions().setSession(s).find();
+                                .latestVersions().setSession(s).getResultIds().list();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

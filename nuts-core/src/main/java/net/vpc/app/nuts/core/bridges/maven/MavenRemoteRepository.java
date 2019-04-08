@@ -33,9 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.TraceResult;
-import net.vpc.common.io.URLUtils;
-import net.vpc.common.mvn.MavenMetadata;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,6 +42,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadata;
 
 /**
  * Created by vpc on 1/15/17.
@@ -55,7 +54,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     private MvnClient wrapper;
 
     public MavenRemoteRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW);
+        super(options, workspace, parentRepository, SPEED_SLOW, NutsConstants.RepoTypes.MAVEN);
     }
 
     @Override
@@ -70,10 +69,10 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         InputStream metadataStream = null;
         List<NutsId> ret = new ArrayList<>();
         try {
-            String metadataURL = URLUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
+            String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
-                metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.FACE_CATALOG), session);
+                metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session);
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(id, ex);
             }
@@ -114,9 +113,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return Collections.emptyIterator();
         }
-        String url = URLUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
+        String url = CoreIOUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
         try {
-            InputStream s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", config().getLocation(true)).setFace(NutsConstants.FACE_CATALOG), session);
+            InputStream s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", config().getLocation(true)).setFace(NutsConstants.QueryFaces.CATALOG), session);
             return MavenUtils.createArchetypeCatalogIterator(s, filter, true);
         } catch (UncheckedIOException ex) {
             return Collections.emptyIterator();
@@ -125,7 +124,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
 
     private NutsRepository getLocalMavenRepo() {
         for (NutsRepository nutsRepository : getWorkspace().config().getRepositories()) {
-            if (nutsRepository.getRepositoryType().equals(NutsConstants.REPOSITORY_TYPE_MAVEN)
+            if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
                     && nutsRepository.config().getLocation(true) != null
                     && nutsRepository.config().getLocation(true).equals(
                             getWorkspace().io().path(getWorkspace().io().expandPath("~/.m2")).toString()
@@ -177,11 +176,11 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             String p = getIdPath(id);
             Path tempFile = getWorkspace().io().createTempFile(new File(p).getName(), this);
             try {
-                getWorkspace().io().copy().from(getStream(id, session)).to(tempFile).check(new NutsIOCopyAction.Checker() {
+                getWorkspace().io().copy().from(getStream(id, session)).to(tempFile).check(new NutsPathCopyAction.Checker() {
                     @Override
                     public void check(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
-                            checkSHA1Hash(id.setFace(NutsConstants.FACE_COMPONENT_HASH), in, session);
+                            checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), in, session);
                         } catch (IOException ex) {
                             return;
                         }
@@ -193,13 +192,13 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             return new NutsContent(tempFile, false, true);
         } else {
             try {
-                getWorkspace().io().copy().from(getStream(id, session)).to(localPath).check(new NutsIOCopyAction.Checker() {
+                getWorkspace().io().copy().from(getStream(id, session)).to(localPath).check(new NutsPathCopyAction.Checker() {
                     @Override
                     public void check(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
-                            checkSHA1Hash(id.setFace(NutsConstants.FACE_COMPONENT_HASH), in, session);
+                            checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), in, session);
                         } catch (IOException ex) {
-                            throw new NutsIOCopyAction.ValidationException(ex);
+                            throw new NutsPathCopyAction.ValidationException(ex);
                         }
                     }
                 }).run();
@@ -225,8 +224,8 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         try {
             InputStream in = getWorkspace().io().monitorInputStream(path, source, session);
             if (log.isLoggable(Level.FINEST)) {
-                if (URLUtils.isRemoteURL(path)) {
-                    String message = URLUtils.isRemoteURL(path) ? "Downloading maven" : "Open local file";
+                if (CoreIOUtils.isPathHttp(path)) {
+                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
                     message += " url=" + path;
                     traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
                 }
@@ -234,8 +233,8 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             return in;
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
-                if (URLUtils.isRemoteURL(path)) {
-                    String message = URLUtils.isRemoteURL(path) ? "Downloading maven" : "Open local file";
+                if (CoreIOUtils.isPathHttp(path)) {
+                    String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
                     message += " url=" + path;
                     traceMessage(session, id, TraceResult.ERROR, message, startTime);
                 }

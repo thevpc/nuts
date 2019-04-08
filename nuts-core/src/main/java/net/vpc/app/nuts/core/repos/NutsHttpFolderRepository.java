@@ -30,10 +30,6 @@
 package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreHttpUtils;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.URLUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,17 +41,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
     private static final Logger log = Logger.getLogger(NutsHttpFolderRepository.class.getName());
 
     public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
-        super(options, workspace, parentRepository, SPEED_SLOW,false);
+        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
     }
 
     @Override
-    public void pushImpl(NutsId id, NutsPushOptions options, NutsRepositorySession session) {
+    public void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 
@@ -66,10 +64,10 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
     protected InputStream getDescStream(NutsId id, NutsRepositorySession session) {
         String url = getDescPath(id);
-        if (URLUtils.isRemoteURL(url)) {
-            String message = URLUtils.isRemoteURL(url) ? "Downloading maven" : "Open local file";
+        if (CoreIOUtils.isPathHttp(url)) {
+            String message = "Downloading maven" ;//: "Open local file";
             if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, StringUtils.alignLeft(getName(), 20) + " " + message + " url " + url);
+                log.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
             }
         }
         return openStream(url, id, session);
@@ -83,7 +81,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         String version = id.getVersion().getValue();
-        return (URLUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
+        return (CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + "nuts.json"
         ));
     }
@@ -94,7 +92,6 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
     @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        boolean transitive = session.isTransitive();
         InputStream stream = null;
         try {
             try {
@@ -126,10 +123,10 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         String groupId = id.getGroup();
         String artifactId = id.getName();
         try {
-            String[] all = httpGetString(URLUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId) + "/.folders").split("\n");
+            String[] all = httpGetString(CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId) + "/.folders").split("\n");
             List<NutsId> n = new ArrayList<>();
             for (String s : all) {
-                if (!StringUtils.isEmpty(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)) {
+                if (!CoreStringUtils.isBlank(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)) {
                     NutsId id2 = id.builder().setVersion(s).build();
                     if (idFilter == null || idFilter.accept(id2)) {
                         n.add(id2);
@@ -170,12 +167,12 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
     private String httpGetString(String url) {
         try {
-            String s = IOUtils.loadString(CoreHttpUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
+            String s = CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
             log.log(Level.FINEST, "[SUCCESS] Get URL {0}", url);
             return s;
-        } catch (IOException e) {
+        } catch (UncheckedIOException e) {
             log.log(Level.FINEST, "[ERROR  ] Get URL {0}", url);
-            throw new UncheckedIOException(e);
+            throw e;
         }
     }
 

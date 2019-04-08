@@ -7,9 +7,9 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsEffectiveUser;
 import net.vpc.app.nuts.NutsUserConfig;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Arrays;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  *
@@ -27,7 +27,7 @@ public class NutsEffectiveUserImpl implements NutsEffectiveUser {
     public NutsEffectiveUserImpl(NutsUserConfig config, String[] inheritedRights) {
         user = config.getUser();
         mappedUser = config.getMappedUser();
-        credentials = !StringUtils.isEmpty(config.getCredentials());
+        credentials = !CoreStringUtils.isBlank(config.getCredentials());
 
         String[] rights0 = config.getRights();
         rights = Arrays.copyOf(rights0, rights0.length);

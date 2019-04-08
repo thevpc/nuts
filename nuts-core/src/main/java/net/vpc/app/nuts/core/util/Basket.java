@@ -13,14 +13,13 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import net.vpc.common.util.CollectionUtils;
 
 /**
  *
  * @author vpc
  */
 public class Basket<T> {
-    
+
     private final Object o;
     private final char type;
 
@@ -42,13 +41,34 @@ public class Basket<T> {
     public List<T> list() {
         switch (type) {
             case 'i':
-                return CollectionUtils.toList((Iterator<T>) o);
+                return CoreCommonUtils.toList((Iterator<T>) o);
             case 'l':
                 return (List<T>) o;
             case 'c':
                 return new ArrayList<>((Collection<T>) o);
         }
         throw new IllegalArgumentException("Illegal type");
+    }
+
+    public T first() {
+        Iterator<T> it = iterator();
+        if (it.hasNext()) {
+            return it.next();
+        }
+        return null;
+    }
+
+    public T singleton() {
+        Iterator<T> it = iterator();
+        if (it.hasNext()) {
+            T t = it.next();
+            if (it.hasNext()) {
+                throw new IllegalArgumentException("Too many Elements");
+            }
+            return t;
+        } else {
+            throw new IllegalArgumentException("Missing Element");
+        }
     }
 
     public Iterator<T> iterator() {
@@ -74,5 +94,13 @@ public class Basket<T> {
         }
         throw new IllegalArgumentException("Illegal type");
     }
-    
+
+    public long count() {
+        long count = 0;
+        Iterator<T> it = iterator();
+        if (it.hasNext()) {
+            count++;
+        }
+        return count;
+    }
 }

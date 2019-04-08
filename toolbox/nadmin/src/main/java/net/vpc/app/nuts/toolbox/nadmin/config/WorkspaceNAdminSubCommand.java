@@ -35,13 +35,13 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.readAllOnce("check updates")) {
             if (cmdLine.isExecMode()) {
                 PrintStream out = context.getTerminal().getFormattedOut();
-                if(context.getWorkspace().checkWorkspaceUpdates(
-                        new NutsWorkspaceUpdateOptions()
-                                .setEnableMajorUpdates(true)
-                                .setTrace(true)
-                                .setUpdateExtensions(true)
-                                .setApplyUpdates(false)
-                        , context.getSession()).length==0){
+                if (context.getWorkspace()
+                        .updateWorkspace()
+                        .setSession(context.getSession())
+                        .setEnableMajorUpdates(true)
+                        .setTrace(true)
+                        .setUpdateExtensions(true)
+                        .checkUpdates()==null) {
                     out.printf("workspace **upto-date**\n");
                 }
             }
@@ -52,14 +52,13 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             String version = null;
             if (cmdLine.isExecMode()) {
                 PrintStream out = context.getTerminal().getFormattedOut();
-                if(context.getWorkspace().checkWorkspaceUpdates(
-                        new NutsWorkspaceUpdateOptions()
+                if (context.getWorkspace().updateWorkspace()
                                 .setEnableMajorUpdates(force)
                                 .setForceBootAPIVersion(version)
                                 .setTrace(true)
                                 .setUpdateExtensions(true)
-                                .setApplyUpdates(true)
-                        , context.getSession()).length==0){
+                        .setSession(context.getSession())
+                        .update()==null) {
                     out.printf("workspace **upto-date**\n");
                 }
             }
@@ -90,7 +89,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                 new NutsWorkspaceOptions()
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
-                                        .setOpenMode(ignoreIdFound?NutsWorkspaceOpenMode.OPEN_OR_CREATE:NutsWorkspaceOpenMode.CREATE_NEW)
+                                        .setOpenMode(ignoreIdFound ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.CREATE_NEW)
                                         .setReadOnly(!save)
                         );
                         if (!StringUtils.isEmpty(login)) {
@@ -104,7 +103,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 if (!processed) {
-                    throw new NutsExecutionException("config: incorrect command : create workspace",2);
+                    throw new NutsExecutionException("config: incorrect command : create workspace", 2);
                 }
             }
             return true;
@@ -115,12 +114,12 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             context.getWorkspace().config().setBootConfig(c);
             cmdLine.unexpectedArgument("config set workspace version");
 
-        } else if (cmdLine.readAll("set workspace runtime-version","set workspace runtime-id")) {
+        } else if (cmdLine.readAll("set workspace runtime-version", "set workspace runtime-id")) {
             String version = cmdLine.readRequiredNonOption(new DefaultNonOption("version")).getStringExpression();
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
-            if(version.contains("#")) {
-                c.setRuntimeId(NutsConstants.NUTS_ID_BOOT_RUNTIME + "#" + version);
-            }else{
+            if (version.contains("#")) {
+                c.setRuntimeId(NutsConstants.Ids.NUTS_RUNTIME + "#" + version);
+            } else {
                 c.setRuntimeId(version);
             }
             context.getWorkspace().config().setBootConfig(c);
@@ -129,8 +128,8 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.readAll("get workspace version", "gwv")) {
             cmdLine.unexpectedArgument("config get workspace version");
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
-            context.out().printf("boot-version  : %s\n",StringUtils.trim(c.getApiVersion()));
-            context.out().printf("runtime-id    : %s\n",StringUtils.trim(c.getRuntimeId()));
+            context.out().printf("boot-version  : %s\n", StringUtils.trim(c.getApiVersion()));
+            context.out().printf("runtime-id    : %s\n", StringUtils.trim(c.getRuntimeId()));
         } else if (cmdLine.readAll("set workspace", "sw")) {
             boolean createIfNotFound = false;
             boolean save = true;
@@ -163,7 +162,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
                                         .setWorkspace(ws)
                                         .setArchetype(archetype)
                                         .setReadOnly(!save)
-                                        .setOpenMode(createIfNotFound?NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)
+                                        .setOpenMode(createIfNotFound ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : NutsWorkspaceOpenMode.OPEN_EXISTING)
                         );
                         if (!StringUtils.isEmpty(login)) {
                             workspace.security().login(login, password);
@@ -178,7 +177,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             cmdLine.unexpectedArgument("config set workspace");
             if (cmdLine.isExecMode()) {
                 if (!processed) {
-                    throw new NutsExecutionException("incorrect command : create workspace",2);
+                    throw new NutsExecutionException("incorrect command : create workspace", 2);
                 }
             }
             return true;

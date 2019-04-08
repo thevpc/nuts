@@ -45,11 +45,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static net.vpc.app.nuts.NutsBootWorkspace.log;
 
 /**
  * Created by vpc on 1/15/17.
@@ -374,11 +374,11 @@ final class NutsUtils {
         return null;
     }
 
-    public static String replaceDollarString(String path, NutsObjectConverter<String, String> m) {
+    public static String replaceDollarString(String path, Function<String, String> m) {
         Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
-            String x = m.convert(matcher.group("name"));
+            String x = m.apply(matcher.group("name"));
             matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
         }
         matcher.appendTail(sb);
@@ -386,7 +386,7 @@ final class NutsUtils {
     }
 
     public static NutsBootConfig loadNutsBootConfig(String workspace) {
-        File versionFile = new File(workspace, NutsConstants.NUTS_WORKSPACE_CONFIG_FILE_NAME);
+        File versionFile = new File(workspace, NutsConstants.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (versionFile.isFile()) {
                 String str = readStringFromFile(versionFile).trim();

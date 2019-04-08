@@ -235,7 +235,7 @@ public class NFindMain extends NutsApplication {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        NutsQuery query = findContext.context.getWorkspace().createQuery().addJs(findWhat.jsCode)
+        NutsFindCommand query = findContext.context.getWorkspace().find().addJs(findWhat.jsCode)
                 .addId(findWhat.nonjs)
                 .addArch(findContext.arch)
                 .addPackaging(findContext.pack)
@@ -244,8 +244,7 @@ public class NFindMain extends NutsApplication {
                 .setIncludeAllVersions(findContext.allVersions)
                 .setIncludeDuplicateVersions(findContext.duplicateVersions)
                 .setSession(findContext.context.getSession())
-                .setTransitive(findContext.transitive)
-                ;
+                .setTransitive(findContext.transitive);
 
         NutsWorkspace ws = findContext.context.getWorkspace();
         switch (findContext.fetchMode) {
@@ -271,10 +270,10 @@ public class NFindMain extends NutsApplication {
         return Collections.emptyIterator();
     }
 
-    private Iterator<NutsIdExt> searchUpdate(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+    private Iterator<NutsIdExt> searchUpdate(FindContext findContext, NutsFindCommand query, NutsWorkspace ws) {
         Map<String, NutsId> local = new LinkedHashMap<>();
         for (NutsId nutsId : query.setSession(findContext.context.getSession()).setTransitive(findContext.transitive)
-                .offline().find()) {
+                .offline().getResultIds()) {
             NutsId r = local.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getSimpleName(), nutsId);
@@ -283,7 +282,7 @@ public class NFindMain extends NutsApplication {
         Map<String, NutsId> remote = new LinkedHashMap<>();
         for (NutsId nutsId : query.setSession(findContext.context.getSession()).setTransitive(findContext.transitive)
                 .remote()
-                .find()) {
+                .getResultIds()) {
             NutsId r = remote.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getSimpleName(), nutsId);
@@ -292,8 +291,8 @@ public class NFindMain extends NutsApplication {
 
         //force search of all local nutIds because some repositories could not make a wildcard search...
         for (NutsId localNutsId : local.values()) {
-            for (NutsId nutsId : ws.createQuery().addId(localNutsId.toString()).setSession(findContext.context.getSession())
-                    .setTransitive(findContext.transitive).remote().find()) {
+            for (NutsId nutsId : ws.find().addId(localNutsId.toString()).setSession(findContext.context.getSession())
+                    .setTransitive(findContext.transitive).remote().getResultIds()) {
                 NutsId r = remote.get(nutsId.getSimpleName());
                 if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                     remote.put(nutsId.getSimpleName(), nutsId);
@@ -313,16 +312,16 @@ public class NFindMain extends NutsApplication {
         return new ArrayList<NutsIdExt>(ret.values()).iterator();
     }
 
-    private Iterator<NutsIdExt> searchCommit(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+    private Iterator<NutsIdExt> searchCommit(FindContext findContext, NutsFindCommand query, NutsWorkspace ws) {
         Map<String, NutsId> local = new LinkedHashMap<>();
         Map<String, NutsId> remote = new LinkedHashMap<>();
-        for (NutsId nutsId : query.setSession(findContext.context.getSession()).setTransitive(findContext.transitive).offline().find()) {
+        for (NutsId nutsId : query.setSession(findContext.context.getSession()).setTransitive(findContext.transitive).offline().getResultIds()) {
             NutsId r = local.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 local.put(nutsId.getSimpleName(), nutsId);
             }
         }
-        for (NutsId nutsId : query.setSession(findContext.context.getSession()).setTransitive(findContext.transitive).wired().find()) {
+        for (NutsId nutsId : query.setSession(findContext.context.getSession()).setTransitive(findContext.transitive).wired().getResultIds()) {
             NutsId r = remote.get(nutsId.getSimpleName());
             if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                 remote.put(nutsId.getSimpleName(), nutsId);
@@ -331,8 +330,8 @@ public class NFindMain extends NutsApplication {
 
         //force search of all local nutIds because some repositories could not make a wildcard search...
         for (NutsId localNutsId : local.values()) {
-            for (NutsId nutsId : ws.createQuery().addId(localNutsId.toString()).setSession(findContext.context.getSession().copy()
-            ).setTransitive(findContext.transitive).wired().find()) {
+            for (NutsId nutsId : ws.find().addId(localNutsId.toString()).setSession(findContext.context.getSession().copy()
+            ).setTransitive(findContext.transitive).wired().getResultIds()) {
                 NutsId r = remote.get(nutsId.getSimpleName());
                 if (r == null || nutsId.getVersion().compareTo(r.getVersion()) >= 0) {
                     remote.put(nutsId.getSimpleName(), nutsId);
@@ -353,19 +352,19 @@ public class NFindMain extends NutsApplication {
         return new ArrayList<NutsIdExt>(ret.values()).iterator();
     }
 
-    private Iterator<NutsId> searchFetchType(FindContext findContext, NutsQuery query, NutsFetchStrategy m) {
-        return query.setFetchStratery(m).findIterator();
+    private Iterator<NutsId> searchFetchType(FindContext findContext, NutsFindCommand query, NutsFetchStrategy m) {
+        return query.setFetchStratery(m).getResultIds().iterator();
     }
 
-    private Iterator<NutsId> searchRemote(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+    private Iterator<NutsId> searchRemote(FindContext findContext, NutsFindCommand query, NutsWorkspace ws) {
         return searchFetchType(findContext, query, NutsFetchStrategy.REMOTE);
     }
 
-    private Iterator<NutsId> searchOffline(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+    private Iterator<NutsId> searchOffline(FindContext findContext, NutsFindCommand query, NutsWorkspace ws) {
         return searchFetchType(findContext, query, NutsFetchStrategy.OFFLINE);
     }
 
-    private Iterator<NutsId> searchOnline(FindContext findContext, NutsQuery query, NutsWorkspace ws) {
+    private Iterator<NutsId> searchOnline(FindContext findContext, NutsFindCommand query, NutsWorkspace ws) {
         return searchFetchType(findContext, query, NutsFetchStrategy.ONLINE);
         //display(nutsIdIterator,findContext);
     }
@@ -588,7 +587,7 @@ public class NFindMain extends NutsApplication {
         if (!nid.getVersion().isSingleValue()) {
             return new ArrayList<>();
         }
-        for (NutsDependency dependency : ws.fetch(id).setSession(session.setProperty("monitor-allowed", false)).setIncludeEffective(true).fetchDescriptor()
+        for (NutsDependency dependency : ws.fetch().id(id).session(session.setProperty("monitor-allowed", false)).effective().getResultDescriptor()
                 .getDependencies(findContext.equivalentDependencyFilter)) {
             all.add(dependency);
         }
@@ -671,7 +670,7 @@ public class NFindMain extends NutsApplication {
     private void printDependencyList(FindContext findContext, NutsWorkspace ws, NutsInfo info, Set<String> imports) {
         NutsFetchStrategy m = getNutsFetchMode(findContext.fetchMode);
         NutsSession session = findContext.context.getSession();
-        List<NutsDefinition> depsFiles = ws.createQuery().setSession(session).setFetchStratery(m)
+        List<NutsDefinition> depsFiles = ws.find().setSession(session).setFetchStratery(m)
                 .setTransitive(findContext.transitive)
                 .addId(info.nuts)
                 .setScope(findContext.scopes)
@@ -680,9 +679,9 @@ public class NFindMain extends NutsApplication {
                 .setAcceptOptional(findContext.acceptOptional)
                 .dependenciesOnly()
                 .sort()
-                .fetch();
-        Set<String> immediateSelfDependencies = toDependencySet(ws.fetch(info.nuts).setSession(session).setIncludeEffective(false).fetchDescriptor().getDependencies());
-        Set<String> immediateInheritedDependencies = toDependencySet(ws.fetch(info.nuts).setSession(session).setIncludeEffective(true).fetchDescriptor().getDependencies());
+                .getResultDefinitions().list();
+        Set<String> immediateSelfDependencies = toDependencySet(ws.fetch().id(info.nuts).setSession(session).effective(false).getResultDescriptor().getDependencies());
+        Set<String> immediateInheritedDependencies = toDependencySet(ws.fetch().id(info.nuts).setSession(session).effective(true).getResultDescriptor().getDependencies());
         int packagingSize = 3;
         int archSizeSize = 2;
         for (NutsDefinition dd : depsFiles) {

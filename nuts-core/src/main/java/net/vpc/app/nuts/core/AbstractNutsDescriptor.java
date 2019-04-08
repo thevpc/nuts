@@ -31,15 +31,13 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.NutsObjectConverterUtilAdapter;
-import net.vpc.common.strings.StringConverter;
-import net.vpc.common.strings.StringConverterMap;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils.MapToFunction;
 
 /**
  * Created by vpc on 2/19/17.
@@ -65,10 +63,10 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesPackaging(String packaging) {
-        if (StringUtils.isEmpty(packaging)) {
+        if (CoreStringUtils.isBlank(packaging)) {
             return true;
         }
-        if (StringUtils.isEmpty(getPackaging())) {
+        if (CoreStringUtils.isBlank(getPackaging())) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(packaging);
@@ -86,14 +84,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesArch(String arch) {
-        if (StringUtils.isEmpty(arch)) {
+        if (CoreStringUtils.isBlank(arch)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(arch);
         String[] all = getArch();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (StringUtils.isEmpty(v)) {
+                if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
@@ -111,14 +109,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesOs(String os) {
-        if (StringUtils.isEmpty(os)) {
+        if (CoreStringUtils.isBlank(os)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(os);
         String[] all = getOs();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (StringUtils.isEmpty(v)) {
+                if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
@@ -136,14 +134,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesOsdist(String osdist) {
-        if (StringUtils.isEmpty(osdist)) {
+        if (CoreStringUtils.isBlank(osdist)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(osdist);
         String[] all = getOsdist();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (StringUtils.isEmpty(v)) {
+                if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
@@ -162,14 +160,14 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public boolean matchesPlatform(String platform) {
-        if (StringUtils.isEmpty(platform)) {
+        if (CoreStringUtils.isBlank(platform)) {
             return true;
         }
         NutsId _v = CoreNutsUtils.parseNutsId(platform);
         String[] all = getPlatform();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (StringUtils.isEmpty(v)) {
+                if (CoreStringUtils.isBlank(v)) {
                     return true;
                 }
                 NutsId y = CoreNutsUtils.parseRequiredNutsId(v);
@@ -284,9 +282,9 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor applyProperties(Map<String, String> properties) {
-        StringConverterMap map = new StringConverterMap(properties);
+        Function<String, String> map = new MapToFunction<String,String>(properties);
 
-        NutsId n_id = getId().apply(new NutsObjectConverterUtilAdapter(map));
+        NutsId n_id = getId().apply(map);
         String n_alt = CoreNutsUtils.applyStringProperties(getAlternative(), map);
         String n_packaging = CoreNutsUtils.applyStringProperties(getPackaging(), map);
 //        String n_ext = CoreNutsUtils.applyStringProperties(getExt(), map);
@@ -333,7 +331,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
                 .build();
     }
 
-    private NutsId applyNutsIdProperties(NutsId child, StringConverter properties) {
+    private NutsId applyNutsIdProperties(NutsId child, Function<String,String> properties) {
         return new DefaultNutsId(
                 CoreNutsUtils.applyStringProperties(child.getNamespace(), properties),
                 CoreNutsUtils.applyStringProperties(child.getGroup(), properties),
@@ -343,7 +341,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
         );
     }
 
-    private NutsDependency applyNutsDependencyProperties(NutsDependency child, StringConverter properties) {
+    private NutsDependency applyNutsDependencyProperties(NutsDependency child, Function<String,String> properties) {
         NutsId[] exclusions = child.getExclusions();
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
@@ -464,7 +462,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor setPackaging(String packaging) {
-        if (StringUtils.trim(packaging).equals(getPackaging())) {
+        if (CoreStringUtils.trim(packaging).equals(getPackaging())) {
             return this;
         }
         return builder().setPackaging(packaging).build();
@@ -480,7 +478,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptor setAlternative(String alternative) {
-        if (StringUtils.trim(alternative).equals(getAlternative())) {
+        if (CoreStringUtils.trim(alternative).equals(getAlternative())) {
             return this;
         }
         return builder().setAlternative(alternative).build();

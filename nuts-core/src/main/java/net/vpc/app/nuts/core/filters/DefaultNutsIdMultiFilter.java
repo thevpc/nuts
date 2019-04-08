@@ -6,13 +6,14 @@ import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.filters.version.JsNutsVersionFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.NutsWorkspaceExt;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
 
@@ -110,7 +111,8 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                     NutsDescriptor nutsDescriptor = null;
                     try {
-                        nutsDescriptor = repository.getWorkspace().resolveEffectiveDescriptor(descriptor, session.getSession());
+                        NutsWorkspace ws = repository.getWorkspace();
+                        nutsDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(descriptor, session.getSession());
                     } catch (Exception e) {
                         //throw new NutsException(e);
                     }
@@ -119,7 +121,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
             } catch (Exception ex) {
                 //suppose we cannot retrieve descriptor
                 if (log.isLoggable(Level.FINER)) {
-                    log.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.getName() + " : " + ex.toString());
+                    log.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.config().getName() + " : " + ex.toString());
                 }
                 return false;
             }
@@ -184,7 +186,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (id.value instanceof NutsJsAwareIdFilter) {
                     NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id.value;
                     String expr = b.toJsNutsIdFilterExpr();
-                    if (StringUtils.isEmpty(expr)) {
+                    if (CoreStringUtils.isBlank(expr)) {
                         return null;
                     }
                     sb.append("(").append(expr).append("')");
@@ -195,7 +197,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (id.value instanceof JsNutsVersionFilter) {
                     JsNutsVersionFilter b = (JsNutsVersionFilter) id.value;
                     String expr = b.toJsNutsVersionFilterExpr();
-                    if (StringUtils.isEmpty(expr)) {
+                    if (CoreStringUtils.isBlank(expr)) {
                         return null;
                     }
                     sb.append("(").append(expr).append("')");
@@ -206,7 +208,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (id.value instanceof JsNutsDescriptorFilter) {
                     JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id.value;
                     String expr = b.toJsNutsDescriptorFilterExpr();
-                    if (StringUtils.isEmpty(expr)) {
+                    if (CoreStringUtils.isBlank(expr)) {
                         return null;
                     }
                     sb.append("(").append(expr).append("')");
@@ -225,7 +227,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
 
     @Override
     public String toString() {
-        return "DefaultNutsIdMultiFilter{" + "idFilter=" + idFilter + ", versionFilter=" + versionFilter + ", descriptorFilter=" + descriptorFilter + ", repository=" + (repository == null ? "" : repository.getName()) + '}';
+        return "DefaultNutsIdMultiFilter{" + "idFilter=" + idFilter + ", versionFilter=" + versionFilter + ", descriptorFilter=" + descriptorFilter + ", repository=" + (repository == null ? "" : repository.config().getName()) + '}';
     }
 
 }

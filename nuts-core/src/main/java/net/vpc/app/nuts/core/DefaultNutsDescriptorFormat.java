@@ -19,6 +19,16 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
+    public NutsDescriptorFormat pretty(boolean pretty) {
+        return setPretty(pretty);
+    }
+
+    @Override
+    public NutsDescriptorFormat pretty() {
+        return pretty(true);
+    }
+
+    @Override
     public boolean isPretty() {
         return pretty;
     }

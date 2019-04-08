@@ -5,47 +5,42 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 /**
  *
  * @author vpc
  */
-public interface NutsFetchStrategy extends Iterable<NutsFetchMode> {
+public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
 
-    public static final NutsFetchStrategy OFFLINE = new DefaultNutsFetchStrategy("OFFLINE", true, NutsFetchMode.INSTALLED, NutsFetchMode.LOCAL);
-    public static final NutsFetchStrategy WIRED = new DefaultNutsFetchStrategy("WIRED", true, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE);
-    public static final NutsFetchStrategy ONLINE = new DefaultNutsFetchStrategy("ONLINE", true, NutsFetchMode.INSTALLED, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE);
-    public static final NutsFetchStrategy ANYWHERE = new DefaultNutsFetchStrategy("ANYWHERE", false, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE);
+    OFFLINE(true, NutsFetchMode.INSTALLED, NutsFetchMode.LOCAL),
+    WIRED(true, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+    ONLINE(true, NutsFetchMode.INSTALLED, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+    ANYWHERE(false, NutsFetchMode.LOCAL, NutsFetchMode.REMOTE),
+    INSTALLED(true, NutsFetchMode.INSTALLED),
+    LOCAL(true, NutsFetchMode.LOCAL),
+    REMOTE(true, NutsFetchMode.REMOTE);
 
-    public static final NutsFetchStrategy INSTALLED = new DefaultNutsFetchStrategy("INSTALLED", true, NutsFetchMode.INSTALLED);
-    public static final NutsFetchStrategy LOCAL = new DefaultNutsFetchStrategy("OFFLINE", true, NutsFetchMode.LOCAL);
-    public static final NutsFetchStrategy REMOTE = new DefaultNutsFetchStrategy("REMOTE", true, NutsFetchMode.REMOTE);
+    private boolean stopFast;
+    private NutsFetchMode[] all;
 
-    String name();
+    private NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {
+        this.stopFast = stopFast;
+        this.all = Arrays.copyOf(all, all.length);
+    }
 
-    NutsFetchMode[] modes();
+    public boolean isStopFast() {
+        return stopFast;
+    }
 
-    boolean isStopFast();
+    public NutsFetchMode[] modes() {
+        return Arrays.copyOf(all, all.length);
+    }
 
-    public static NutsFetchStrategy valueOf(String s) {
-        if (s != null) {
-            switch (s) {
-                case "ONLINE":
-                    return ONLINE;
-                case "WIRED":
-                    return WIRED;
-                case "INSTALLED":
-                    return INSTALLED;
-                case "LOCAL":
-                    return LOCAL;
-                case "OFFLINE":
-                    return OFFLINE;
-                case "REMOTE":
-                    return REMOTE;
-                case "ANYWHERE":
-                    return ANYWHERE;
-            }
-        }
-        throw new IllegalArgumentException("Unsupported NutsFetchModeFiltrer " + s);
+    @Override
+    public Iterator<NutsFetchMode> iterator() {
+        return Arrays.asList(all).iterator();
     }
 
 }

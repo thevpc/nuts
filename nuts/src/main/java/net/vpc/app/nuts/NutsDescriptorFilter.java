@@ -32,9 +32,8 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 2/19/17.
  */
-public interface NutsDescriptorFilter extends NutsObjectFilter<NutsDescriptor>, NutsSearchIdFilter {
+public interface NutsDescriptorFilter extends NutsSearchIdFilter {
 
-    @Override
     boolean accept(NutsDescriptor descriptor);
 
     @Override

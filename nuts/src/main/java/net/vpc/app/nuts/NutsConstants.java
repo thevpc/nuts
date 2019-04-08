@@ -29,15 +29,137 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by vpc on 1/14/17.
  */
 public final class NutsConstants {
 
+    public static final class RepoTypes {
+
+        private RepoTypes() {
+        }
+
+        /**
+         * default repository type. Nuts workspace can managed different
+         * repositories with different types. For instance, one can initialize a
+         * default (nuts) repository along with a maven repository. Repository
+         * Type expresses mainly manager subsystem type (nuts, maven, gradle,
+         * zypper, apt-get, etc...)
+         */
+        public static final String NUTS = "nuts";
+        public static final String NUTS_SERVER = "nuts-server";
+        public static final String MAVEN = "maven";
+        public static final String MAVEN_GITHUB = "maven-github";
+    }
+
+    public static final class QueryKeys {
+
+        private QueryKeys() {
+        }
+        public static final String CLASSIFIER = "classifier";
+        public static final String ALTERNATIVE_DEFAULT_VALUE = "default";
+        public static final String PACKAGING = "packaging";
+        public static final String PLATFORM = "platform";
+        public static final String OS = "os";
+        public static final String OPTIONAL = "optional";
+        public static final String SCOPE = "scope";
+        public static final String ALTERNATIVE = "alt";
+        public static final String OSDIST = "osdist";
+        public static final String FACE = "face";
+        public static final String FACE_DEFAULT_VALUE = "default";
+        public static final String ARCH = "arch";
+
+    }
+
+    public static final class QueryFaces {
+
+        private QueryFaces() {
+        }
+
+        public static final String COMPONENT_HASH = "component-hash";
+        public static final String COMPONENT = "component";
+        public static final String DESCRIPTOR = "descriptor";
+        public static final String DESC_HASH = "descriptor-hash";
+        public static final String CATALOG = "catalog";
+
+    }
+
+    public static final class BootsrapURLs {
+
+        private BootsrapURLs() {
+        }
+
+        public static final String REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
+        public static final String LOCAL_NUTS_FOLDER = "${home.config}/.vpc-public-nuts";
+        public static final String REMOTE_MAVEN_CENTRAL = "http://repo.maven.apache.org/maven2/";
+        public static final String REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
+        public static final String LOCAL_MAVEN_CENTRAL = "~/.m2/repository";
+
+    }
+
+    public static final class Rights {
+
+        private Rights() {
+        }
+
+        public static final String FETCH_DESC = "fetch-desc";
+        public static final String FETCH_CONTENT = "fetch-content";
+        public static final String SAVE_REPOSITORY = "save";
+        public static final String SAVE_WORKSPACE = "save";
+        public static final String AUTO_INSTALL = "auto-install";
+        public static final String INSTALL = "install";
+        public static final String UNINSTALL = "uninstall";
+        public static final String EXEC = "exec";
+        public static final String DEPLOY = "deploy";
+        public static final String UNDEPLOY = "undeploy";
+        public static final String PUSH = "push";
+        public static final String ADD_REPOSITORY = "add-repo";
+        public static final String REMOVE_REPOSITORY = "remove-repo";
+        public static final String SET_PASSWORD = "set-password";
+        public static final String ADMIN = "admin";
+        public static final String[] RIGHTS = {FETCH_DESC, FETCH_CONTENT, SAVE_REPOSITORY,
+            SAVE_WORKSPACE, INSTALL, AUTO_INSTALL, UNINSTALL, EXEC, DEPLOY, UNDEPLOY,
+            PUSH, ADD_REPOSITORY, REMOVE_REPOSITORY, SET_PASSWORD, ADMIN};
+
+    }
+
+    public static final class Ids {
+
+        private Ids() {
+        }
+
+        public static final String NUTS_API = "net.vpc.app.nuts:nuts";
+        public static final String NUTS_RUNTIME = "net.vpc.app.nuts:nuts-core";
+        /**
+         * repository config file name
+         */
+        public static final String NUTS_SHELL = "net.vpc.app.nuts.toolbox:nsh";
+
+    }
+
+    public static final class Folders {
+
+        private Folders() {
+        }
+        /**
+         * default components root name. By default repositories are stored
+         * under ${workspace-location}/lib
+         */
+        public static final String LIB = "lib";
+        public static final String DEFAULT_CONTENT = "default";
+        /**
+         * default repositories root name. By default repositories are stored
+         * under ${workspace-location}/repos or ${repository-location}/repos
+         */
+        public static final String REPOSITORIES = "repos";
+
+    }
+
+//    public static final class Envs {
+//
+//        private Envs() {
+//        }
+//    }
     /**
      * default workspace name
      */
@@ -51,72 +173,22 @@ public final class NutsConstants {
     public static final String DEFAULT_REPOSITORY_NAME = "local";
 
     /**
-     * default repositories root name. By default repositories are stored under
-     * ${workspace-location}/repositories or ${repository-location}/repositories
-     */
-    public static final String FOLDER_NAME_REPOSITORIES = "repositories";
-
-    /**
-     * default components root name. By default repositories are stored under
-     * ${workspace-location}/components
-     */
-    public static final String FOLDER_NAME_LIB = "lib";
-
-    /**
-     * default repository type. Nuts workspace can managed different
-     * repositories with different types. For instance, one can initialize a
-     * default (nuts) repository along with a maven repository. Repository Type
-     * expresses mainly manager subsystem type (nuts, maven, gradle, zypper,
-     * apt-get, etc...)
-     */
-    public static final String REPOSITORY_TYPE_NUTS = "nuts";
-    public static final String REPOSITORY_TYPE_NUTS_FOLDER = "nuts-folder";
-    public static final String REPOSITORY_TYPE_NUTS_SERVER = "nuts-server";
-    public static final String REPOSITORY_TYPE_MAVEN = "maven";
-    public static final String REPOSITORY_TYPE_MAVEN_GITHUB = "maven-github";
-
-    /**
      * workspace config file name
      */
-    public static final String NUTS_WORKSPACE_CONFIG_FILE_NAME = "nuts-workspace.json";
+    public static final String WORKSPACE_CONFIG_FILE_NAME = "nuts-workspace.json";
 
     /**
      * repository config file name
      */
-    public static final String NUTS_REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";
-
-    /**
-     * repository config file name
-     */
-    public static final String NUTS_SHELL = "net.vpc.app.nuts.toolbox:nsh";
+    public static final String REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";
 
     /**
      * component (nuts) descriptor file name
      */
-    public static final String NUTS_DESC_FILE_NAME = "nuts.json";
-
-    public static final String RIGHT_FETCH_DESC = "fetch-desc";
-    public static final String RIGHT_FETCH_CONTENT = "fetch-content";
-    public static final String RIGHT_SAVE_REPOSITORY = "save";
-    public static final String RIGHT_SAVE_WORKSPACE = "save";
-    public static final String RIGHT_AUTO_INSTALL = "auto-install";
-    public static final String RIGHT_INSTALL = "install";
-    public static final String RIGHT_UNINSTALL = "uninstall";
-    public static final String RIGHT_EXEC = "exec";
-    public static final String RIGHT_DEPLOY = "deploy";
-    public static final String RIGHT_UNDEPLOY = "undeploy";
-    public static final String RIGHT_PUSH = "push";
-    public static final String RIGHT_ADD_REPOSITORY = "add-repo";
-    public static final String RIGHT_REMOVE_REPOSITORY = "remove-repo";
-    public static final String RIGHT_SET_PASSWORD = "set-password";
-    public static final String RIGHT_ADMIN = "admin";
-    public static final String[] RIGHTS = {RIGHT_FETCH_DESC, RIGHT_FETCH_CONTENT, RIGHT_SAVE_REPOSITORY,
-        RIGHT_SAVE_WORKSPACE, RIGHT_INSTALL, RIGHT_AUTO_INSTALL,RIGHT_UNINSTALL, RIGHT_EXEC, RIGHT_DEPLOY, RIGHT_UNDEPLOY,
-        RIGHT_PUSH, RIGHT_ADD_REPOSITORY, RIGHT_REMOVE_REPOSITORY, RIGHT_SET_PASSWORD, RIGHT_ADMIN};
+    public static final String DESCRIPTOR_FILE_NAME = "nuts.json";
 
     public static final String ENV_KEY_EXCLUDE_CORE_EXTENSION = "exclude-core-extension";
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
-    public static final String ENV_KEY_DEPLOY_PRIORITY = "deploy-priority";
 
     public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
@@ -126,35 +198,9 @@ public final class NutsConstants {
     public static final String USER_ADMIN = "admin";
     public static final String USER_ANONYMOUS = "anonymous";
 
-    public static final String NUTS_ID_BOOT_API = "net.vpc.app.nuts:nuts";
-    public static final String NUTS_ID_BOOT_RUNTIME = "net.vpc.app.nuts:nuts-core";
-    public static final String QUERY_ALTERNATIVE = "alt";
-    public static final String QUERY_CLASSIFIER = "classifier";
-    public static final String QUERY_FACE = "face";
-    public static final String QUERY_SCOPE = "scope";
-    public static final String QUERY_OPTIONAL = "optional";
-    public static final String QUERY_ARCH = "arch";
-    public static final String QUERY_OS = "os";
-    public static final String QUERY_OSDIST = "osdist";
-    public static final String QUERY_PLATFORM = "platform";
-    public static final String QUERY_FACE_DEFAULT_VALUE = "default";
-    public static final String QUERY_ALTERNATIVE_DEFAULT_VALUE = "default";
-    public static final String ALTERNATIVE_DEFAULT_VALUE = "default";
-    public static final String QUERY_PACKAGING = "packaging";
     public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
-    public static final String URL_BOOTSTRAP_REMOTE_NUTS_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
-    public static final String URL_BOOTSTRAP_REMOTE_MAVEN_GIT = "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
-    public static final String URL_BOOTSTRAP_REMOTE_MAVEN_CENTRAL = "http://repo.maven.apache.org/maven2/";
-    public static final String URL_BOOTSTRAP_LOCAL_MAVEN_CENTRAL = "~/.m2/repository";
-    public static final String URL_BOOTSTRAP_LOCAL = "${home.config}/.vpc-public-nuts";
-    public static final String FACE_CATALOG = "catalog";
-    public static final String FACE_DESCRIPTOR = "descriptor";
-    public static final String FACE_COMPONENT = "package";
-    public static final String FACE_DESC_HASH = "descriptor-hash";
-    public static final String FACE_COMPONENT_HASH = "package-hash";
 
     public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
-
 
     private NutsConstants() {
     }

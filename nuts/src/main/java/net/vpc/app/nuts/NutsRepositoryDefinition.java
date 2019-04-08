@@ -170,4 +170,10 @@ public class NutsRepositoryDefinition {
         return new NutsRepositoryDefinition(this);
     }
 
+    @Override
+    public String toString() {
+        return "NutsRepositoryDefinition{" + "name=" + name + ", location=" + location + ", type=" + type + ", proxy=" + proxy + ", reference=" + reference + ", failSafe=" + failSafe + ", create=" + create + ", order=" + order + ", storeLocationStrategy=" + storeLocationStrategy + ", deployOrder=" + deployOrder + '}';
+    }
+
+    
 }

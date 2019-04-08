@@ -11,13 +11,13 @@ import java.util.Set;
 
 public class DefaultNutsClassLoaderBuilder implements NutsClassLoaderBuilder {
 
-    private NutsQuery query;
+    private NutsFindCommand query;
     private NutsWorkspace ws;
     private ClassLoader parentClassLoader;
 
     public DefaultNutsClassLoaderBuilder(NutsWorkspace workspace) {
         this.ws = workspace;
-        query = workspace.createQuery();
+        query = workspace.find();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class DefaultNutsClassLoaderBuilder implements NutsClassLoaderBuilder {
 
     @Override
     public ClassLoader build() {
-        List<NutsDefinition> nutsDefinitions = query.mainAndDependencies().fetch();
+        List<NutsDefinition> nutsDefinitions = query.mainAndDependencies().getResultDefinitions().list();
         URL[] all = new URL[nutsDefinitions.size()];
         for (int i = 0; i < all.length; i++) {
             try {

@@ -12,11 +12,12 @@ import java.util.Properties;
  * @author vpc
  */
 public class NutsCommandExecOptions {
+
     private String[] executorOptions;
     private Properties env;
     private String directory;
     private boolean failFast;
-    private boolean embedded;
+    private NutsExecutionType executionType;
 
     public String[] getExecutorOptions() {
         return executorOptions;
@@ -54,13 +55,13 @@ public class NutsCommandExecOptions {
         return this;
     }
 
-    public boolean isEmbedded() {
-        return embedded;
+    public NutsExecutionType getExecutionType() {
+        return executionType;
     }
 
-    public NutsCommandExecOptions setEmbedded(boolean embedded) {
-        this.embedded = embedded;
+    public NutsCommandExecOptions setExecutionType(NutsExecutionType executionType) {
+        this.executionType = executionType;
         return this;
     }
-    
+
 }

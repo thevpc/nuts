@@ -104,7 +104,7 @@ public class DerbyMain extends NutsApplication {
         String v = derbyVersion;
         Path h = derbyDataHome;
         if (v == null) {
-            NutsId best = ws.createQuery().addId("org.apache.derby:derbynet").latestVersions().findOne();
+            NutsId best = ws.find().addId("org.apache.derby:derbynet").latestVersions().getResultIds().singleton();
             v = best.getVersion().toString();
         }
         if (h == null) {
@@ -144,7 +144,7 @@ public class DerbyMain extends NutsApplication {
         }
 
         ws
-                .createExecBuilder()
+                .exec()
                 .setExecutorOptions(executorOptions)
                 .setCommand(command)
                 .setFailFast(true)
@@ -156,7 +156,7 @@ public class DerbyMain extends NutsApplication {
         Path downloadBaseFolder = derbyBinHome.resolve(iid.getVersion().getValue());
         Path targetFile = downloadBaseFolder.resolve(iid.getName() + ".jar");
         if (!Files.exists(targetFile)) {
-            appContext.getWorkspace().copyTo(id, targetFile, null);
+            appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
             if (appContext.isVerbose()) {
                 appContext.getSession().getTerminal().getOut().println("downloading " + id + " to " + targetFile);
             }

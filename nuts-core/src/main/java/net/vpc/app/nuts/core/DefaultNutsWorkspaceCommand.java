@@ -1,15 +1,16 @@
 package net.vpc.app.nuts.core;
 
+import com.sun.tools.javac.util.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.NutsCommandExecOptions;
-import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommand;
-import net.vpc.common.util.ArrayUtils;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
 
 public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
 
@@ -74,16 +75,23 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
 
     @Override
     public int exec(String[] args, NutsCommandExecOptions options, NutsSession session) {
-        String[] executorOptions=options.getExecutorOptions();
-        NutsDefinition nutToRun = ws.fetch(this.getCommand()[0]).setSession(session).installed().fetchDefinition();
+        String[] executorOptions = options.getExecutorOptions();
+        executorOptions = CoreCommonUtils.concatArrays(this.getExecutorOptions(), executorOptions);
         List<String> r = new ArrayList<>(Arrays.asList(this.getCommand()));
-        //remove first element
-        r.remove(0);
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
-        executorOptions = ArrayUtils.concatArrays(this.getExecutorOptions(), executorOptions);
+
+        return ws.exec()
+                .setCommand(args)
+                .setExecutorOptions(executorOptions)
+                .setDirectory(options.getDirectory())
+                .setFailFast()
+                .setSession(session)
+                .setEnv(options.getEnv())
+                .setExecutionType(options.getExecutionType())
+                .getResult();
 
         //load all needed dependencies!
-        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
+//        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
     }
 }

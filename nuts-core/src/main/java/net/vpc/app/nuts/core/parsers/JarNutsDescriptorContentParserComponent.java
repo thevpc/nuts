@@ -33,24 +33,23 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.bridges.maven.MavenUtils;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.Ref;
-import net.vpc.common.io.InputStreamVisitor;
-import net.vpc.common.io.PathFilter;
-import net.vpc.common.io.ZipUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamVisitor;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -76,9 +75,9 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
         final Ref<String> mainClass = new Ref<>();
 
         try {
-            ZipUtils.visitZipStream(parserContext.getFullStream(), new PathFilter() {
+            ZipUtils.visitZipStream(parserContext.getFullStream(), new Predicate<String>() {
                 @Override
-                public boolean accept(String path) {
+                public boolean test(String path) {
                     if ("META-INF/MANIFEST.MF".equals(path)) {
                         return true;
                     }
@@ -154,7 +153,11 @@ public class JarNutsDescriptorContentParserComponent implements NutsDescriptorCo
             return null;
         } else {
             return baseNutsDescriptor.setExecutor(new NutsExecutorDescriptor(JAVA, new String[]{
-                "--main-class=" + StringUtils.join(":", classes, x -> x.getName())}, null)).setExecutable(true);
+                "--main-class=" + CoreStringUtils.join(":",
+                Arrays.stream(classes)
+                .map(x -> x.getName())
+                .collect(Collectors.toList())
+                )}, null)).setExecutable(true);
         }
     }
 }

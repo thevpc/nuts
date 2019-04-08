@@ -3,39 +3,40 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.io.ByteArrayPrintStream;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.PrintStream;
 import java.util.*;
+import net.vpc.app.nuts.core.filters.dependency.NutsExclusionDependencyFilter;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
 
 public class NutsIdGraph {
 
@@ -46,9 +47,9 @@ public class NutsIdGraph {
     private final DefaultNutsWorkspace ws;
     private final NutsSession session;
     private final boolean ignoreNotFound;
-    private int maxComplexity=300;
+    private int maxComplexity = 300;
 
-    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session,boolean ignoreNotFound) {
+    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session, boolean ignoreNotFound) {
         this.ws = ws;
         this.session = session;
         this.ignoreNotFound = ignoreNotFound;
@@ -81,16 +82,16 @@ public class NutsIdGraph {
             }
         }
 
-        Map<String,NutsIdNode> wildIds = new HashMap<>();
+        Map<String, NutsIdNode> wildIds = new HashMap<>();
         for (NutsIdNode wildeId : this.wildeIds) {
-            wildIds.put(cleanup(wildeId.id).toString(),wildeId);
+            wildIds.put(cleanup(wildeId.id).toString(), wildeId);
         }
         for (SimpleNutsIdInfo node1 : context.snutsIds.values()) {
             for (NutsIdInfo node2 : node1.nodes) {
                 for (NutsIdNode node3 : node2.nodes) {
                     if (!node3.getVersion().isSingleValue()) {
                         String key = cleanup(node3.id).toString();
-                        wildIds.put(key,node3);
+                        wildIds.put(key, node3);
                     }
                 }
             }
@@ -98,23 +99,22 @@ public class NutsIdGraph {
         Set<NutsIdNode> toaddOk = new HashSet<>();
         for (NutsIdNode nutsId : wildIds.values()) {
             try {
-                NutsId nutsId1 = ws.fetch(nutsId.id).setSession(session).fetchId();
+                NutsId nutsId1 = ws.fetch().id(nutsId.id).setSession(session).getResultId();
                 toaddOk.add(new NutsIdNode(nutsId1, nutsId.path, nutsId.filter));
-            }catch (NutsNotFoundException ex){
-                if(!nutsId.id.isOptional()){
+            } catch (NutsNotFoundException ex) {
+                if (!nutsId.id.isOptional()) {
                     throw ex;
                 }
             }
         }
         if (!toaddOk.isEmpty()) {
             maxComplexity--;
-            if(maxComplexity<0){
+            if (maxComplexity < 0) {
                 //System.out.println("Why");
             }
             push0(toaddOk);
         }
     }
-
 
     private static NutsId cleanup(NutsId id) {
         if (id == null) {
@@ -123,14 +123,13 @@ public class NutsIdGraph {
         id = id.setNamespace(null);
         Map<String, String> m = id.getQueryMap();
         if (m != null && !m.isEmpty()) {
-            if (NutsConstants.QUERY_FACE_DEFAULT_VALUE.equals(m.get(NutsConstants.QUERY_FACE))) {
-                m.remove(NutsConstants.QUERY_FACE);
+            if (NutsConstants.QueryKeys.FACE_DEFAULT_VALUE.equals(m.get(NutsConstants.QueryKeys.FACE))) {
+                m.remove(NutsConstants.QueryKeys.FACE);
             }
             id = id.setQuery(m);
         }
         return id;
     }
-
 
     public void add(NutsIdNode from, NutsIdNode to) {
         context.register(from);
@@ -140,23 +139,23 @@ public class NutsIdGraph {
     }
 
     public NutsId[] collect() {
-        List<NutsId> all=new ArrayList<>();
+        List<NutsId> all = new ArrayList<>();
         for (NutsIdInfo root : getRoots()) {
             all.add(root.getBest().id);
         }
-        return collect(all,null);
+        return collect(all, null);
     }
 
-    private NutsId uniformNutsId(NutsId id){
+    private NutsId uniformNutsId(NutsId id) {
         NutsIdBuilder b = id.builder();
         Map<String, String> m = b.getQueryMap();
-        Map<String, String> ok=new HashMap<>();
-        ok.put(NutsConstants.QUERY_ARCH,m.get(NutsConstants.QUERY_ARCH));
-        ok.put(NutsConstants.QUERY_OSDIST,m.get(NutsConstants.QUERY_OSDIST));
-        ok.put(NutsConstants.QUERY_OS,m.get(NutsConstants.QUERY_OS));
-        ok.put(NutsConstants.QUERY_PLATFORM,m.get(NutsConstants.QUERY_PLATFORM));
-        ok.put(NutsConstants.QUERY_ALTERNATIVE,m.get(NutsConstants.QUERY_ALTERNATIVE));
-        ok.put(NutsConstants.QUERY_CLASSIFIER,m.get(NutsConstants.QUERY_CLASSIFIER));
+        Map<String, String> ok = new HashMap<>();
+        ok.put(NutsConstants.QueryKeys.ARCH, m.get(NutsConstants.QueryKeys.ARCH));
+        ok.put(NutsConstants.QueryKeys.OSDIST, m.get(NutsConstants.QueryKeys.OSDIST));
+        ok.put(NutsConstants.QueryKeys.OS, m.get(NutsConstants.QueryKeys.OS));
+        ok.put(NutsConstants.QueryKeys.PLATFORM, m.get(NutsConstants.QueryKeys.PLATFORM));
+        ok.put(NutsConstants.QueryKeys.ALTERNATIVE, m.get(NutsConstants.QueryKeys.ALTERNATIVE));
+        ok.put(NutsConstants.QueryKeys.CLASSIFIER, m.get(NutsConstants.QueryKeys.CLASSIFIER));
         b.setNamespace(null);
         b.setQuery(ok);
         return b.build();
@@ -167,8 +166,8 @@ public class NutsIdGraph {
         for (NutsId id : ids) {
             visit(context.getNutsIdInfo(id, true), collected);
         }
-        Set<NutsId> excludeSet=new HashSet<>();
-        if(exclude!=null) {
+        Set<NutsId> excludeSet = new HashSet<>();
+        if (exclude != null) {
             for (NutsId nutsId : exclude) {
                 excludeSet.add(uniformNutsId(nutsId));
             }
@@ -231,7 +230,7 @@ public class NutsIdGraph {
         for (NutsIdNode id : ids) {
             stack.push(new NutsIdAndNutsDependencyFilterItem(id));
         }
-        int processed=0;
+        int processed = 0;
         while (!stack.isEmpty()) {
             NutsIdAndNutsDependencyFilterItem curr = stack.pop();
             if (acceptVisit(curr)) {
@@ -239,8 +238,8 @@ public class NutsIdGraph {
                     NutsDescriptor effDescriptor = null;
                     try {
                         effDescriptor = curr.getEffDescriptor(ws, session);
-                    }catch (NutsNotFoundException ex){
-                        if(!curr.id.id.isOptional() && !ignoreNotFound){
+                    } catch (NutsNotFoundException ex) {
+                        if (!curr.id.id.isOptional() && !ignoreNotFound) {
                             throw ex;
                         }
                     }
@@ -251,7 +250,11 @@ public class NutsIdGraph {
                         NutsDependency[] dependencies = effDescriptor.getDependencies(curr.id.filter);
                         for (NutsDependency dept : dependencies) {
                             NutsId[] exclusions = dept.getExclusions();
-                            NutsDependencyFilter filter2 = ws.createNutsDependencyFilter(curr.id.filter, exclusions);
+
+                            NutsDependencyFilter filter2 = curr.id.filter;
+                            if (exclusions != null && exclusions.length > 0) {
+                                filter2 = new NutsExclusionDependencyFilter(curr.id.filter, exclusions);
+                            }
                             if (curr.id.filter == null || curr.id.filter.accept(curr.id.id, dept)) {
                                 NutsId item = dept.getId();
                                 NutsIdNode nextNode = new NutsIdNode(prepareDepId(dept, item), curr.id.path, currentOrder++, curr.id.id, filter2);
@@ -277,14 +280,14 @@ public class NutsIdGraph {
                 }
             }
         }
-        if(processed>0) {
+        if (processed > 0) {
             this.fixConflicts();
         }
     }
 
     private NutsId prepareDepId(NutsDependency dept, NutsId item) {
         String scope = dept.getScope();
-        if (StringUtils.isEmpty(scope)) {
+        if (CoreStringUtils.isBlank(scope)) {
             scope = "compile";
         }
         if (!"compile".equals(scope)) {
@@ -297,6 +300,7 @@ public class NutsIdGraph {
     }
 
     public static class SimpleNutsIdInfo {
+
         private String id;
         private Set<NutsIdInfo> nodes = new HashSet<>();
 
@@ -306,8 +310,12 @@ public class NutsIdGraph {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             SimpleNutsIdInfo that = (SimpleNutsIdInfo) o;
             return Objects.equals(id, that.id);
         }
@@ -319,6 +327,7 @@ public class NutsIdGraph {
     }
 
     public static class NutsIdInfo {
+
         private NutsId id;
         private Set<NutsIdNode> nodes = new HashSet<>();
         public List<NutsIdInfo> input = new ArrayList<>();
@@ -344,8 +353,12 @@ public class NutsIdGraph {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             NutsIdInfo that = (NutsIdInfo) o;
             return Objects.equals(id, that.id);
         }
@@ -378,16 +391,17 @@ public class NutsIdGraph {
 
         @Override
         public String toString() {
-            return "NutsIdInfo{" +
-                    "id=" + id +
-                    ", nodes=" + nodes.size() +
-                    ", input=" + input.size() +
-                    ", output=" + output.size() +
-                    '}';
+            return "NutsIdInfo{"
+                    + "id=" + id
+                    + ", nodes=" + nodes.size()
+                    + ", input=" + input.size()
+                    + ", output=" + output.size()
+                    + '}';
         }
     }
 
     public static class NutsIdGraphContext {
+
         private Set<NutsIdNode> nodes = new HashSet<>();
         private Map<NutsId, NutsIdInfo> nutsIds = new HashMap<>();
         private Map<String, SimpleNutsIdInfo> snutsIds = new HashMap<>();
@@ -453,6 +467,7 @@ public class NutsIdGraph {
     }
 
     public static class NutsIdNode {
+
         public NutsId id0;
         public NutsId id;
         public List<Integer> path;
@@ -487,14 +502,17 @@ public class NutsIdGraph {
             return id.getLongNameId();
         }
 
-
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             NutsIdNode that = (NutsIdNode) o;
-            return Objects.equals(id, that.id) &&
-                    Objects.equals(path, that.path);
+            return Objects.equals(id, that.id)
+                    && Objects.equals(path, that.path);
         }
 
         @Override
@@ -564,7 +582,6 @@ public class NutsIdGraph {
         public String toString() {
             return id.toString() + path.toString();
         }
-
 
     }
 

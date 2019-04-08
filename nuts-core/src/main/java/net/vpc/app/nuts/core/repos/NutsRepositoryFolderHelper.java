@@ -31,11 +31,11 @@ import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.log;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.strings.StringUtils;
 
 /**
  *
@@ -54,22 +54,22 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getIdLocalFile(NutsId id) {
-        if (StringUtils.isEmpty(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroup())) {
             return null;
         }
-        if (StringUtils.isEmpty(id.getName())) {
+        if (CoreStringUtils.isBlank(id.getName())) {
             return null;
         }
         if (id.getVersion().isEmpty()) {
             return null;
         }
-        String alt = StringUtils.trim(id.getAlternative());
+        String alt = CoreStringUtils.trim(id.getAlternative());
         String defaultIdFilename = repo.getIdFilename(id);
-        return (alt.isEmpty() || alt.equals(NutsConstants.ALTERNATIVE_DEFAULT_VALUE)) ? getLocalVersionFolder(id).resolve(defaultIdFilename) : getLocalVersionFolder(id).resolve(alt).resolve(defaultIdFilename);
+        return (alt.isEmpty() || alt.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE)) ? getLocalVersionFolder(id).resolve(defaultIdFilename) : getLocalVersionFolder(id).resolve(alt).resolve(defaultIdFilename);
     }
 
     public Path getLocalVersionFolder(NutsId id) {
-        return CoreNutsUtils.resolveNutsDefaultPath(id, getStoreLocation());
+        return CoreIOUtils.resolveNutsDefaultPath(id, getStoreLocation());
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
@@ -97,12 +97,12 @@ public class NutsRepositoryFolderHelper {
         String alt = id.getAlternative();
         String goodAlt = null;
         Path versionFolder = getLocalVersionFolder(id);
-        if (NutsConstants.ALTERNATIVE_DEFAULT_VALUE.equals(alt)) {
+        if (NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE.equals(alt)) {
             goodFile = versionFolder.resolve(idFilename);
             if (Files.exists(goodFile)) {
                 return getWorkspace().parser().parseDescriptor(goodFile);
             }
-        } else if (!StringUtils.isEmpty(alt)) {
+        } else if (!CoreStringUtils.isBlank(alt)) {
             goodAlt = alt.trim();
             goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
             if (Files.exists(goodFile)) {
@@ -171,10 +171,10 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getLocalGroupAndArtifactFile(NutsId id) {
-        if (StringUtils.isEmpty(id.getGroup())) {
+        if (CoreStringUtils.isBlank(id.getGroup())) {
             return null;
         }
-        if (StringUtils.isEmpty(id.getName())) {
+        if (CoreStringUtils.isBlank(id.getName())) {
             return null;
         }
         Path groupFolder = getStoreLocation().resolve(id.getGroup().replace('.', File.separatorChar));
@@ -186,7 +186,7 @@ public class NutsRepositoryFolderHelper {
             NutsId id1 = id.setFaceDescriptor();
             Path localFile = getIdLocalFile(id1);
             if (localFile != null && Files.isRegularFile(localFile)) {
-                return Collections.singletonList(id.setNamespace(repo == null ? null : repo.getName())).iterator();
+                return Collections.singletonList(id.setNamespace(repo == null ? null : repo.config().getName())).iterator();
             }
             return null;
         }
@@ -199,7 +199,7 @@ public class NutsRepositoryFolderHelper {
             //            return Collections.emptyIterator();
             return null;
         }
-        return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(getWorkspace(), repo == null ? null : repo.config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
                 if (repo == null) {
@@ -278,7 +278,7 @@ public class NutsRepositoryFolderHelper {
         Path localFolder = getIdLocalFile(id);
         if (localFolder != null && Files.exists(localFolder)) {
             try {
-                IOUtils.delete(localFolder);
+                CoreIOUtils.delete(localFolder);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

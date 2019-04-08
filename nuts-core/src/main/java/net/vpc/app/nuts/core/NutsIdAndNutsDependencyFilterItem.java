@@ -14,14 +14,14 @@ public class NutsIdAndNutsDependencyFilterItem {
 
     public NutsDescriptor getEffDescriptor(NutsWorkspace ws, NutsSession session) {
         if (effDescriptor == null) {
-            effDescriptor = ws.fetch(id.id).setIncludeInstallInformation(true).setSession(session).setIncludeEffective(true).fetchDescriptor();
+            effDescriptor = ws.fetch().id(id.id).setIncludeInstallInformation(true).setSession(session).setEffective(true).getResultDescriptor();
         }
         return effDescriptor;
     }
 
     public NutsDescriptor getDescriptor(NutsWorkspace ws, NutsSession session) {
         if (descriptor == null) {
-            descriptor = ws.fetch(id.id).setIncludeInstallInformation(true).setSession(session).fetchDescriptor();
+            descriptor = ws.fetch().id(id.id).setIncludeInstallInformation(true).setSession(session).getResultDescriptor();
         }
         return descriptor;
     }

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("indexer/components")
+@RequestMapping("indexer/"+NutsConstants.Folders.LIB)
 public class NutsComponentController {
 
     @Autowired
@@ -217,14 +217,14 @@ public class NutsComponentController {
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
                 List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
-                    Iterator<NutsDefinition> it = ws.createQuery()
+                    Iterator<NutsDefinition> it = ws.find()
                             .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
                             .setId(id)
-                            .setIgnoreNotFound(true)
+                            .setLenient(true)
                             .setIncludeInstallInformation(false)
                             .setIncludeFile(false)
-                            .setIncludeEffective(true)
-                            .fetchIterator();
+                            .effective(true)
+                            .getResultDefinitions().iterator();
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();

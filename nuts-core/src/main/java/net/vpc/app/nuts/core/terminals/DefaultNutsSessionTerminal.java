@@ -155,6 +155,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
             }
         }
         out.printf(prompt, params);
+        out.flush();
         try {
             return getReader().readLine();
         } catch (IOException e) {

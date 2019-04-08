@@ -34,7 +34,6 @@ import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.JavascriptHelper;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Objects;
 import java.util.Set;
@@ -77,7 +76,7 @@ public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifia
     private static final WeakHashMap<String, NutsVersionJavascriptFilter> cached = new WeakHashMap<>();
 
     public static NutsVersionJavascriptFilter valueOf(String value) {
-        if (StringUtils.isEmpty(value)) {
+        if (CoreStringUtils.isBlank(value)) {
             return null;
         }
         synchronized (cached) {

@@ -13,47 +13,41 @@ import java.util.Set;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsFetchStrategy;
-import net.vpc.app.nuts.NutsQueryBaseOptions;
 
 /**
  *
  * @author vpc
  * @param <T>
  */
-public class DefaultNutsQueryBaseOptions<T extends NutsQueryBaseOptions> implements NutsQueryBaseOptions<T> {
-
+public class DefaultNutsQueryBaseOptions<T> {
 
     private boolean ignoreCache = false;
     private boolean transitive = true;
     private boolean cached = true;
-    private Boolean indexEnabled = null;
+    private Boolean indexed = null;
     private NutsFetchStrategy mode = null;
     private NutsSession session;
     private Boolean acceptOptional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
     private boolean includeContent = true;
     private boolean includeDependencies = false;
-    private boolean includeEffectiveDesc = false;
+    private boolean effective = false;
     private boolean includeInstallInfo = true;
     private Path location = null;
 
-    
-
-
-    @Override
-    public T copyFrom(NutsQueryBaseOptions other) {
+    //@Override
+    protected T copyFrom0(DefaultNutsQueryBaseOptions other) {
         if (other != null) {
             this.acceptOptional = other.getAcceptOptional();
             this.session = other.getSession();
             this.ignoreCache = other.isIgnoreCache();
             this.mode = other.getFetchStrategy();
-            this.indexEnabled = other.getIndexEnabled();
+            this.indexed = other.getIndexed();
             this.includeContent = other.isIncludeFile();
             this.includeDependencies = other.isIncludeDependencies();
-            this.includeEffectiveDesc = other.isIncludeEffective();
+            this.effective = other.isEffective();
             this.includeInstallInfo = other.isIncludeInstallInformation();
             this.scope = EnumSet.copyOf(other.getScope());
-            this.includeEffectiveDesc = other.isIncludeEffective();
             this.includeInstallInfo = other.isIncludeInstallInformation();
             this.includeContent = other.isIncludeFile();
             this.includeDependencies = other.isIncludeDependencies();
@@ -64,276 +58,292 @@ public class DefaultNutsQueryBaseOptions<T extends NutsQueryBaseOptions> impleme
         return (T) this;
     }
 
-    @Override
+    //@Override
     public boolean isCached() {
         return cached;
     }
 
-    @Override
+    //@Override
     public T setCached(boolean cached) {
         this.cached = cached;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public boolean isTransitive() {
         return transitive;
     }
 
-    @Override
+    //@Override
     public T setTransitive(boolean transitive) {
         this.transitive = transitive;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T transitive(boolean transitive) {
         return setTransitive(transitive);
     }
 
-    @Override
+    //@Override
     public T transitive() {
         return setTransitive(true);
     }
 
-    @Override
+    //@Override
     public T setFetchStratery(NutsFetchStrategy mode) {
         this.mode = mode;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T remote() {
         return setFetchStratery(NutsFetchStrategy.REMOTE);
     }
 
-    @Override
+    //@Override
     public T local() {
         return setFetchStratery(NutsFetchStrategy.LOCAL);
     }
 
-    @Override
+    //@Override
     public T offline() {
         return setFetchStratery(NutsFetchStrategy.OFFLINE);
     }
 
-    @Override
+    //@Override
     public T online() {
         return setFetchStratery(NutsFetchStrategy.ONLINE);
     }
 
-    @Override
+    //@Override
     public T wired() {
         return setFetchStratery(NutsFetchStrategy.WIRED);
     }
 
-    @Override
+    //@Override
     public T installed() {
         return setFetchStratery(NutsFetchStrategy.INSTALLED);
     }
 
-    @Override
+    //@Override
     public T anyWhere() {
         return setFetchStratery(NutsFetchStrategy.ANYWHERE);
     }
 
-    @Override
+    //@Override
     public NutsFetchStrategy getFetchStrategy() {
         return mode;
     }
 
-    @Override
-    public Boolean getIndexEnabled() {
-        return indexEnabled;
+    //@Override
+    public Boolean getIndexed() {
+        return indexed;
     }
 
-    @Override
+    //@Override
     public boolean isIndexed() {
-        return indexEnabled == null || indexEnabled;
+        return indexed == null || indexed;
     }
 
-    @Override
+    //@Override
     public T setIndexed(Boolean indexEnabled) {
-        this.indexEnabled = indexEnabled;
+        this.indexed = indexEnabled;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T indexed() {
         return setIndexed(true);
     }
 
-    @Override
+    //@Override
     public T indexDisabled() {
         return setIndexed(false);
     }
 
-    @Override
+    //@Override
     public boolean isIgnoreCache() {
         return ignoreCache;
     }
 
-    @Override
+    //@Override
     public T setIgnoreCache(boolean ignoreCache) {
         this.ignoreCache = ignoreCache;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T ignoreCache() {
         return setIgnoreCache(true);
     }
 
-    @Override
+    //@Override
     public Boolean getAcceptOptional() {
         return acceptOptional;
     }
 
-    @Override
+    //@Override
     public T setAcceptOptional(Boolean acceptOptional) {
         this.acceptOptional = acceptOptional;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T setIncludeOptional(boolean includeOptional) {
         return setAcceptOptional(includeOptional ? null : false);
     }
 
-    @Override
+    //@Override
     public NutsSession getSession() {
         return session;
     }
 
-    @Override
+    //@Override
     public T session(NutsSession session) {
         return setSession(session);
     }
 
-    @Override
+    //@Override
     public T setSession(NutsSession session) {
         this.session = session;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T addScope(Collection<NutsDependencyScope> scope) {
         this.scope = NutsDependencyScope.add(this.scope, scope);
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T addScope(NutsDependencyScope scope) {
         this.scope = NutsDependencyScope.add(this.scope, scope);
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T addScope(NutsDependencyScope... scope) {
         this.scope = NutsDependencyScope.add(this.scope, scope);
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T removeScope(Collection<NutsDependencyScope> scope) {
         this.scope = NutsDependencyScope.remove(this.scope, scope);
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T removeScope(NutsDependencyScope scope) {
         this.scope = NutsDependencyScope.remove(this.scope, scope);
         return (T) this;
     }
 
-    @Override
+    //@Override
     public Set<NutsDependencyScope> getScope() {
         return scope;
     }
 
-    @Override
+    //@Override
     public T setScope(NutsDependencyScope scope) {
         return setScope(scope == null ? null : EnumSet.of(scope));
     }
 
-    @Override
+    //@Override
     public T setScope(NutsDependencyScope... scope) {
         return setScope(scope == null ? null : EnumSet.<NutsDependencyScope>copyOf(Arrays.asList(scope)));
     }
 
-    @Override
+    //@Override
     public T setScope(Collection<NutsDependencyScope> scope) {
         this.scope = scope == null ? EnumSet.noneOf(NutsDependencyScope.class) : EnumSet.<NutsDependencyScope>copyOf(scope);
         return (T) this;
     }
 
-    @Override
+    //@Override
     public boolean isIncludeFile() {
         return includeContent;
     }
 
-    @Override
+    //@Override
     public T setIncludeFile(boolean includeContent) {
         this.includeContent = includeContent;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public boolean isIncludeInstallInformation() {
         return includeInstallInfo;
     }
 
-    @Override
+    //@Override
     public T setIncludeInstallInformation(boolean includeInstallInfo) {
         this.includeInstallInfo = includeInstallInfo;
         return (T) this;
     }
 
-    @Override
-    public boolean isIncludeEffective() {
-        return includeEffectiveDesc;
+    //@Override
+    public boolean isEffective() {
+        return effective;
     }
 
-    @Override
-    public T setIncludeEffective(boolean includeEffectiveDesc) {
-        this.includeEffectiveDesc = includeEffectiveDesc;
+    //@Override
+    public T setEffective(boolean includeEffectiveDesc) {
+        this.effective = includeEffectiveDesc;
         return (T) this;
     }
 
-    @Override
+    //@Override
+    public T effective(boolean effective) {
+        return setEffective(effective);
+    }
+
+    //@Override
+    public T effective() {
+        return setEffective(true);
+    }
+
+    //@Override
     public boolean isIncludeDependencies() {
         return includeDependencies;
     }
 
-    @Override
+    //@Override
     public T includeDependencies() {
         return setIncludeDependencies(true);
     }
 
-    @Override
+    //@Override
     public T setIncludeDependencies(boolean include) {
         includeDependencies = include;
         return (T) this;
     }
 
-    @Override
+    //@Override
     public T includeDependencies(boolean include) {
         return setIncludeDependencies(include);
     }
 
-    @Override
+    //@Override
     public Path getLocation() {
         return location;
     }
-    @Override
+
+    //@Override
     public T setLocation(Path location) {
         this.location = location;
-        return (T)this;
+        return (T) this;
     }
 
-    @Override
+    //@Override
+    public T location(Path location) {
+        return setLocation(location);
+    }
+
+    //@Override
     public T setDefaultLocation() {
         this.location = null;
-        return (T)this;
+        return (T) this;
     }
 }

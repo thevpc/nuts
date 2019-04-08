@@ -54,9 +54,8 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                 .setDeployOrder(10)
                 .setCreate(true)
                 .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
-                .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
+                .setType(NutsConstants.RepoTypes.NUTS)
         );
-        defaultRepo.config().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
         NutsStoreLocationStrategy s = workspace.config().getStoreLocationStrategy();
         for (NutsRepositoryDefinition d : rm.getDefaultRepositories()) {
@@ -71,17 +70,17 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         workspace.config().addImports("net.vpc.app");
         workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
-        workspace.security().setUserRights(NutsConstants.USER_ANONYMOUS, NutsConstants.RIGHT_FETCH_DESC, NutsConstants.RIGHT_FETCH_CONTENT);
+        workspace.security().setUserRights(NutsConstants.USER_ANONYMOUS, NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT);
 
         //has read rights
         workspace.security().addUser("user", "user",
-                NutsConstants.RIGHT_FETCH_DESC,
-                NutsConstants.RIGHT_FETCH_CONTENT,
-                NutsConstants.RIGHT_DEPLOY,
-                NutsConstants.RIGHT_UNDEPLOY,
-                NutsConstants.RIGHT_PUSH,
-                NutsConstants.RIGHT_SAVE_WORKSPACE,
-                NutsConstants.RIGHT_SAVE_REPOSITORY
+                NutsConstants.Rights.FETCH_DESC,
+                NutsConstants.Rights.FETCH_CONTENT,
+                NutsConstants.Rights.DEPLOY,
+                NutsConstants.Rights.UNDEPLOY,
+                NutsConstants.Rights.PUSH,
+                NutsConstants.Rights.SAVE_WORKSPACE,
+                NutsConstants.Rights.SAVE_REPOSITORY
         );
         workspace.security().setUserRemoteIdentity("user", "contributor");
     }

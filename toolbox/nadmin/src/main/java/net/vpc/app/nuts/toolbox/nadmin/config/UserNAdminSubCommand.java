@@ -117,9 +117,9 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (cmdLine.isExecMode()) {
                     boolean admin;
                     if (repository == null) {
-                        admin = workspace.security().isAllowed(NutsConstants.RIGHT_ADMIN);
+                        admin = workspace.security().isAllowed(NutsConstants.Rights.ADMIN);
                     } else {
-                        admin = repository.security().isAllowed(NutsConstants.RIGHT_ADMIN);
+                        admin = repository.security().isAllowed(NutsConstants.Rights.ADMIN);
                     }
 
                     if (oldPassword == null && !admin) {

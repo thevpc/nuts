@@ -1,31 +1,62 @@
 package net.vpc.app.nuts.core;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.*;
+import static net.vpc.app.nuts.core.DefaultNutsWorkspace.NOT_INSTALLED;
+import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.core.util.TraceResult;
 
-public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> implements NutsFetch {
+public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
+    public static final Logger log = Logger.getLogger(DefaultNutsFetch.class.getName());
     private final DefaultNutsWorkspace ws;
     private NutsId id;
+    private boolean lenient;
 
     public DefaultNutsFetch(DefaultNutsWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
-    public NutsFetch setId(String id) {
+    public NutsFetchCommand id(String id) {
+        return setId(id);
+    }
+
+    @Override
+    public NutsFetchCommand id(NutsId id) {
+        return setId(id);
+    }
+
+    @Override
+    public NutsFetchCommand setId(String id) {
         this.id = ws.parser().parseRequiredId(id);
         return this;
     }
 
     @Override
-    public NutsFetch setId(NutsId id) {
+    public NutsFetchCommand nutsApi() {
+        return setId(ws.config().getApiId());
+    }
+
+    @Override
+    public NutsFetchCommand nutsRuntime() {
+        return setId(ws.config().getRuntimeId());
+    }
+
+    @Override
+    public NutsFetchCommand setId(NutsId id) {
         if (id == null) {
             throw new NutsParseException("Invalid Id format : null");
         }
@@ -34,121 +65,126 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
     }
 
     @Override
-    public NutsFetch includeDependencies() {
+    public NutsFetchCommand includeDependencies() {
         return this.includeDependencies(true);
     }
 
     @Override
-    public NutsDefinition fetchDefinition() {
-        NutsDefinition def = ws.fetchDefinition(id, toOptions(), getSession());
-        loadDeps(def.getId());
-        return def;
+    public NutsFetchCommand setLenient(boolean lenient) {
+        this.lenient = lenient;
+        return this;
     }
 
     @Override
-    public NutsQueryOptions toOptions() {
-        return new DefaultNutsQueryOptions().copyFrom(this);
-    }
-
-    @Override
-    public NutsDefinition fetchDefinitionOrNull() {
+    public NutsDefinition getResultDefinition() {
         try {
-            return fetchDefinition();
+            NutsDefinition def = fetchDefinition(id, this);
+            loadDeps(def.getId());
+            return def;
         } catch (NutsNotFoundException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public NutsContent fetchContentOrNull() {
-        try {
-            return fetchContent();
-        } catch (NutsNotFoundException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public NutsId fetchIdOrNull() {
-        try {
-            return fetchId();
-        } catch (NutsNotFoundException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public Path fetchFileOrNull() {
-        try {
-            return fetchFile();
-        } catch (NutsNotFoundException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public NutsDescriptor fetchDescriptorOrNull() {
-        try {
-            return fetchDescriptor();
-        } catch (NutsNotFoundException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public NutsContent fetchContent() {
-
-        NutsDefinition def = ws.fetchDefinition(id, toOptions().setIncludeFile(true).setIncludeEffective(false).setIncludeInstallInformation(false), getSession());
-        loadDeps(def.getId());
-        return def.getContent();
-    }
-
-    @Override
-    public NutsId fetchId() {
-        NutsDefinition def = ws.fetchDefinition(id, toOptions(), getSession());
-        loadDeps(def.getId());
-        if (isIncludeEffective()) {
-            return ws.resolveEffectiveId(def.getEffectiveDescriptor(), toOptions(), getSession());
-        }
-        return def.getId();
-    }
-
-    @Override
-    public String fetchContentHash() {
-        Path f = fetchDefinition().getContent().getPath();
-        try {
-            try (InputStream in = Files.newInputStream(f)) {
-                return ws.io().computeHash((in));
+            if (lenient) {
+                return null;
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw ex;
         }
     }
 
     @Override
-    public String fetchDescriptorHash() {
-        NutsDescriptor d = fetchDescriptor();
-        return ws.io().computeHash(new ByteArrayInputStream(
-                ws.formatter().createDescriptorFormat().toString(d).getBytes()
-        ));
-    }
-
-    @Override
-    public NutsDescriptor fetchDescriptor() {
-
-        NutsDefinition def = ws.fetchDefinition(id, toOptions().setIncludeFile(false).setIncludeInstallInformation(false), getSession());
-        loadDeps(def.getId());
-        if (isIncludeEffective()) {
-            return def.getEffectiveDescriptor();
+    public NutsContent getResultContent() {
+        try {
+            NutsDefinition def = fetchDefinition(id, copy().setIncludeFile(true).setEffective(false).setIncludeInstallInformation(false));
+            loadDeps(def.getId());
+            return def.getContent();
+        } catch (NutsNotFoundException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
         }
-        return def.getDescriptor();
     }
 
     @Override
-    public Path fetchFile() {
+    public NutsId getResultId() {
+        try {
+            NutsDefinition def = fetchDefinition(id, this);
+            loadDeps(def.getId());
+            if (isEffective()) {
+                return NutsWorkspaceExt.of(ws).resolveEffectiveId(def.getEffectiveDescriptor(), this);
+            }
+            return def.getId();
+        } catch (NutsNotFoundException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
+        }
+    }
 
-        NutsDefinition def = ws.fetchDefinition(id, toOptions().setIncludeFile(true).setIncludeEffective(false).setIncludeInstallInformation(false), getSession());
-        return def.getContent().getPath();
+    @Override
+    public String getResultContentHash() {
+        try {
+            Path f = getResultDefinition().getContent().getPath();
+            try {
+                try (InputStream in = Files.newInputStream(f)) {
+                    return ws.io().computeHash((in));
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        } catch (NutsNotFoundException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
+        }
+    }
+
+    @Override
+    public String getResultDescriptorHash() {
+        try {
+            return ws.io().computeHash(new ByteArrayInputStream(
+                    ws.formatter().createDescriptorFormat().toString(getResultDescriptor()).getBytes()
+            ));
+        } catch (NutsNotFoundException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
+        }
+    }
+
+    @Override
+    public NutsDescriptor getResultDescriptor() {
+        try {
+            NutsDefinition def = fetchDefinition(id, copy().setIncludeFile(false).setIncludeInstallInformation(false));
+            loadDeps(def.getId());
+            if (isEffective()) {
+                return def.getEffectiveDescriptor();
+            }
+            return def.getDescriptor();
+        } catch (NutsNotFoundException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
+        }
+    }
+
+    @Override
+    public Path getResultPath() {
+        try {
+            NutsDefinition def = fetchDefinition(id, copy().setIncludeFile(true).setEffective(false).setIncludeInstallInformation(false));
+            Path p = def.getContent().getPath();
+            if (getLocation() != null) {
+                return getLocation();
+            }
+            return p;
+        } catch (NutsNotFoundException ex) {
+            if (lenient) {
+                return null;
+            }
+            throw ex;
+        }
     }
 
     private void loadDeps(NutsId id) {
@@ -156,16 +192,16 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
             NutsDependencyScope[] s = (getScope() == null || getScope().isEmpty())
                     ? new NutsDependencyScope[]{NutsDependencyScope.PROFILE_RUN}
                     : getScope().toArray(new NutsDependencyScope[0]);
-            ws.createQuery().addId(id).setSession(getSession()).setFetchStratery(getFetchStrategy())
+            ws.find().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
                     .addScope(s)
                     .setAcceptOptional(getAcceptOptional())
-                    .dependenciesOnly().fetch();
+                    .dependenciesOnly().getResultDefinitions();
 
         }
     }
 
     @Override
-    public NutsFetch copy() {
+    public NutsFetchCommand copy() {
         DefaultNutsFetch b = new DefaultNutsFetch(ws);
         b.copyFrom(this);
         return b;
@@ -177,12 +213,233 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetch> imp
     }
 
     @Override
-    public NutsFetch copyFrom(NutsFetch other) {
-        super.copyFrom(other);
+    public NutsFetchCommand copyFrom(NutsFetchCommand other) {
+        super.copyFrom0((DefaultNutsQueryBaseOptions) other);
         if (other != null) {
-            NutsFetch o = other;
+            NutsFetchCommand o = other;
             this.id = o.getId();
         }
         return this;
+    }
+
+    public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options) {
+        long startTime = System.currentTimeMillis();
+        options = CoreNutsUtils.validateSession(options, ws);
+        NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
+        NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
+        if (log.isLoggable(Level.FINEST)) {
+            CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.START, "Fetch component", 0);
+        }
+        DefaultNutsDefinition foundDefinition = null;
+        try {
+            //add env parameters to fetch adequate nuts
+            id = NutsWorkspaceHelper.configureFetchEnv(id, ws);
+            NutsFetchMode modeForSuccessfulDescRetreival = null;
+            //use
+            for (NutsFetchMode mode : nutsFetchModes) {
+                try {
+                    if (id.getGroup() == null) {
+                        String[] groups = ws.config().getImports();
+                        for (String group : groups) {
+                            try {
+                                foundDefinition = fetchDescriptorAsDefinition(id.setGroup(group), options, mode);
+                                if (foundDefinition != null) {
+                                    break;
+                                }
+                            } catch (NutsNotFoundException ex) {
+                                //not found
+                            }
+                        }
+                        if (foundDefinition != null) {
+                            modeForSuccessfulDescRetreival = mode;
+                            break;
+                        }
+                        throw new NutsNotFoundException(id);
+                    }
+                    foundDefinition = fetchDescriptorAsDefinition(id, options, mode);
+                    if (foundDefinition != null) {
+                        modeForSuccessfulDescRetreival = mode;
+                        break;
+                    }
+                } catch (NutsNotFoundException ex) {
+                    //ignore
+                }
+            }
+            if (foundDefinition != null) {
+                if (options.isEffective()) {
+                    try {
+                        foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), options.getSession()));
+                    } catch (NutsNotFoundException ex) {
+                        //ignore
+                        log.log(Level.WARNING, "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.toString(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
+                        foundDefinition = null;
+                    }
+                }
+                if (foundDefinition != null) {
+                    if (options.isIncludeFile() || options.isIncludeInstallInformation()) {
+                        NutsId id1 = ws.config().createComponentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
+                        Path copyTo = options.getLocation();
+                        if (copyTo != null && Files.isDirectory(copyTo)) {
+                            copyTo = copyTo.resolve(ws.config().getDefaultIdFilename(id1));
+                        }
+                        for (NutsFetchMode mode : nutsFetchModes) {
+                            try {
+                                NutsRepository repo = foundDefinition.getRepository();
+                                NutsContent content = repo.fetchContent(id1, copyTo,
+                                        NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options));
+                                if (content != null) {
+                                    foundDefinition.setContent(content);
+                                    foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getPath()));
+                                    break;
+                                }
+                            } catch (NutsNotFoundException ex) {
+                                if (mode.ordinal() < modeForSuccessfulDescRetreival.ordinal()) {
+                                    //ignore because actually there is more chance to find it in later modes!
+                                } else {
+                                    log.log(Level.WARNING, "Nuts Descriptor Found, but component could not be resolved : {0}", id.toString());
+                                }
+                            }
+                        }
+                        if (foundDefinition.getContent() == null || foundDefinition.getContent().getPath() == null) {
+                            CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
+                            foundDefinition = null;
+                        }
+                    }
+                    if (foundDefinition != null && options.isIncludeInstallInformation()) {
+                        NutsInstallerComponent installer = null;
+                        if (foundDefinition.getContent().getPath() != null) {
+                            installer = dws.getInstaller(foundDefinition, options.getSession());
+                        }
+                        if (installer != null) {
+                            if (dws.getInstalledRepository().isInstalled(foundDefinition.getId())) {
+                                foundDefinition.setInstallation(new NutsInstallInfo(true,
+                                        ws.config().getStoreLocation(foundDefinition.getId(), NutsStoreLocation.PROGRAMS)
+                                ));
+                            } else {
+                                foundDefinition.setInstallation(NOT_INSTALLED);
+                            }
+                        } else {
+                            foundDefinition.setInstallation(NOT_INSTALLED);
+                        }
+                    }
+                }
+            }
+        } catch (NutsNotFoundException ex) {
+            if (log.isLoggable(Level.FINEST)) {
+                CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetch component", startTime);
+            }
+            throw ex;
+        } catch (RuntimeException ex) {
+            if (log.isLoggable(Level.FINEST)) {
+                CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetch component", startTime);
+            }
+            throw ex;
+        }
+        if (foundDefinition != null) {
+            if (log.isLoggable(Level.FINEST)) {
+                CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.SUCCESS, "Fetch component", startTime);
+            }
+            return foundDefinition;
+        }
+        throw new NutsNotFoundException(id);
+    }
+
+    protected NutsDescriptor resolveExecProperties(NutsDescriptor nutsDescriptor, Path jar) {
+        boolean executable = nutsDescriptor.isExecutable();
+        boolean nutsApp = nutsDescriptor.isNutsApplication();
+        if (jar.getFileName().toString().toLowerCase().endsWith(".jar") && Files.isRegularFile(jar)) {
+            Path f = ws.config().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE).resolve(ws.config().getDefaultIdFilename(nutsDescriptor.getId().setFace("cache-info"))
+            );
+            Map<String, String> map = null;
+            try {
+                if (Files.isRegularFile(f)) {
+                    map = ws.io().readJson(f, Map.class);
+                }
+            } catch (Exception ex) {
+                //
+            }
+            if (map != null) {
+                executable = "true".equals(map.get("executable"));
+                nutsApp = "true".equals(map.get("nutsApplication"));
+            } else {
+                try {
+                    NutsExecutionEntry[] t = ws.parser().parseExecutionEntries(jar);
+                    if (t.length > 0) {
+                        executable = true;
+                        if (t[0].isApp()) {
+                            nutsApp = true;
+                        }
+                    }
+                    try {
+                        map = new LinkedHashMap<>();
+                        map.put("executable", String.valueOf(executable));
+                        map.put("nutsApplication", String.valueOf(nutsApp));
+                        ws.io().writeJson(map, f, true);
+                    } catch (Exception ex) {
+                        //
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+            }
+        }
+        nutsDescriptor = nutsDescriptor.setExecutable(executable);
+        nutsDescriptor = nutsDescriptor.setNutsApplication(nutsApp);
+
+        return nutsDescriptor;
+    }
+
+    protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsFetchCommand options, NutsFetchMode mode) {
+        options = CoreNutsUtils.validateSession(options, ws);
+        NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
+        NutsRepositoryFilter repositoryFilter = null;
+        if (mode == NutsFetchMode.INSTALLED) {
+            final String[] all = dws.getInstalledVersions(id);
+            if (all.length > 0) {
+                id = id.setVersion(all[all.length - 1]);
+                mode = NutsFetchMode.LOCAL;
+            } else {
+                throw new NutsNotFoundException(id);
+            }
+        }
+        for (NutsRepository repo : dws.getEnabledRepositories(NutsWorkspaceHelper.FilterMode.FIND, id, repositoryFilter, options.getSession(), mode, options)) {
+            try {
+                NutsDescriptor descriptor = repo.fetchDescriptor(id, NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
+                        options
+                ));
+                if (descriptor != null) {
+                    NutsId nutsId = dws.resolveEffectiveId(descriptor,
+                            options);
+                    NutsIdBuilder newIdBuilder = nutsId.builder();
+                    if (CoreStringUtils.isBlank(newIdBuilder.getNamespace())) {
+                        newIdBuilder.setNamespace(repo.config().getName());
+                    }
+                    //inherit classifier from requested id
+                    String classifier = id.getClassifier();
+                    if (!CoreStringUtils.isBlank(classifier)) {
+                        newIdBuilder.setClassifier(classifier);
+                    }
+                    Map<String, String> q = id.getQueryMap();
+                    if (!CoreNutsUtils.isDefaultScope(q.get(NutsConstants.QueryKeys.SCOPE))) {
+                        newIdBuilder.setScope(q.get(NutsConstants.QueryKeys.SCOPE));
+                    }
+                    if (!CoreNutsUtils.isDefaultOptional(q.get(NutsConstants.QueryKeys.OPTIONAL))) {
+                        newIdBuilder.setOptional(q.get(NutsConstants.QueryKeys.OPTIONAL));
+                    }
+                    NutsId newId = newIdBuilder.build();
+                    return new DefaultNutsDefinition(
+                            ws,
+                            repo,
+                            newId,
+                            descriptor,
+                            null,
+                            null
+                    );
+                }
+            } catch (NutsNotFoundException exc) {
+                //
+            }
+        }
+        throw new NutsNotFoundException(id);
     }
 }

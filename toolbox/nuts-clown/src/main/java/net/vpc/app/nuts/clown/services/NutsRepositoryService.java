@@ -15,10 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsRepositoryDefinition;
 
 @RestController
-@RequestMapping("ws/repositories")
+@RequestMapping("ws/"+NutsConstants.Folders.REPOSITORIES)
 public class NutsRepositoryService {
 
     private Logger logger = Logger.getLogger(NutsRepositoryService.class.getName());
@@ -26,7 +27,7 @@ public class NutsRepositoryService {
     @SuppressWarnings("unchecked")
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, Object>>> getAllRepositories(@RequestParam("workspace") String workspace) {
-        String URL = "http://localhost:7070/indexer/repositories?workspace=" + workspace;
+        String URL = "http://localhost:7070/indexer/"+NutsConstants.Folders.REPOSITORIES+"?workspace=" + workspace;
         RestTemplate template = new RestTemplate();
         return ResponseEntity.ok((List<Map<String, Object>>) template.getForObject(URL, List.class));
     }

@@ -2,7 +2,6 @@ package net.vpc.app.nuts.clown.services;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.clown.NutsClownUtils;
-import net.vpc.common.io.FileUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -14,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -52,18 +49,18 @@ public class NutsComponentService {
     public ResponseEntity<List<Map<String, String>>> getAll(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsWorkspace workspace = Nuts.openWorkspace(workspaceLocation);
-        List<NutsId> ids = workspace.createQuery()
+        List<NutsId> ids = workspace.find()
                 .setRepositoryFilter(new NutsRepositoryFilter() {
                     @Override
                     public boolean accept(NutsRepository repository) {
                         return repository.getUuid().equals(repositoryUuid);
                     }
                 })
-                .setIgnoreNotFound(true)
+                .setLenient(true)
                 .setIncludeInstallInformation(false)
                 .setIncludeFile(false)
-                .setIncludeEffective(true)
-                .find();
+                .effective(true)
+                .getResultIds().list();
         List<Map<String, String>> result = ids.stream()
                 .map(NutsClownUtils::nutsIdToMap)
                 .collect(Collectors.toList());
@@ -85,7 +82,7 @@ public class NutsComponentService {
             @RequestParam("alternative") String alternative,
             @RequestParam("all") String all) {
 
-        String URL = String.format("http://localhost:7070/indexer/components/dependencies"
+        String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/dependencies"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
                 + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=%s&all=%s",
                 workspace, name, namespace, group, version, face, os, osdist, scope, alternative, arch, all);
@@ -116,8 +113,8 @@ public class NutsComponentService {
                 .setScope(scope)
                 .setAlternative(alternative)
                 .build();
-        NutsFetch fetch = ws.fetch(id);
-        Path filePath = fetch.fetchFile();
+        NutsFetchCommand fetch = ws.fetch().id(id);
+        Path filePath = fetch.getResultPath();
         System.out.println(filePath);
         try {
             InputStreamResource resource = new InputStreamResource(
@@ -157,14 +154,14 @@ public class NutsComponentService {
                 .setScope(scope)
                 .setAlternative(alternative)
                 .build();
-        NutsFetch fetch = ws.fetch(id);
-        Path filePath = fetch.fetchFile();
+        NutsFetchCommand fetch = ws.fetch().id(id);
+        Path filePath = fetch.getResultPath();
         try {
             IOUtils.delete(filePath.getParent());
         } catch (IOException ex) {
             Logger.getLogger(NutsComponentService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String URL = String.format("http://localhost:7070/indexer/components/delete"
+        String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/delete"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
                 + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=",
                 workspace, name, namespace, group, version, face, os, osdist, scope, alternative);

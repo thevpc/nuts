@@ -65,21 +65,9 @@ public class RightNonOption extends DefaultNonOption {
     @Override
     public List<ArgumentCandidate> getValues() {
         List<ArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_ADD_REPOSITORY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_ADMIN));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_DEPLOY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_EXEC));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_FETCH_CONTENT));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_FETCH_DESC));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_INSTALL));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_AUTO_INSTALL));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_PUSH));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_REMOVE_REPOSITORY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SAVE_REPOSITORY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SAVE_WORKSPACE));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_SET_PASSWORD));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_UNDEPLOY));
-        all.add(new DefaultArgumentCandidate(NutsConstants.RIGHT_UNINSTALL));
+        for (String r : NutsConstants.Rights.RIGHTS) {
+            all.add(new DefaultArgumentCandidate(r));
+        }
         Iterator<ArgumentCandidate> i = all.iterator();
         NutsEffectiveUser info = repository != null ? repository.security().getEffectiveUser(user) : workspace != null ? workspace.security().findUser(user) : null;
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getRights()));

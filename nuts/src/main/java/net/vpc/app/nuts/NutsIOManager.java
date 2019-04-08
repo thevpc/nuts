@@ -37,9 +37,9 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     String computeHash(InputStream input);
 
-    InputStream createNullInputStream();
+    InputStream nullInputStream();
 
-    PrintStream createNullPrintStream();
+    PrintStream nullPrintStream();
 
     PrintStream createPrintStream(Path out);
 
@@ -61,7 +61,7 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     String getSHA1(NutsDescriptor descriptor);
 
-    NutsIOCopyAction copy();
+    NutsPathCopyAction copy();
     
     Path path(String first, String... more);
 }

@@ -31,15 +31,15 @@ package net.vpc.app.nuts.core.executors;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static net.vpc.app.nuts.NutsConstants.NUTS_SHELL;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -72,7 +72,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         String[] appArgs = executionContext.getArgs();
 
         String dir = null;
-        boolean showCommand = CoreNutsUtils.getSystemBoolean("nuts.export.always-show-command",false);
+        boolean showCommand = CoreCommonUtils.getSystemBoolean("nuts.export.always-show-command",false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {
@@ -90,13 +90,13 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 //        env.addAll(Arrays.asList(envAndApp[0]));
 
         List<String> app = new ArrayList<>();
-        app.add(NUTS_SHELL);
+        app.add(NutsConstants.Ids.NUTS_SHELL);
         app.add(nutMainFile.getContent().getPath().toString());
         app.addAll(Arrays.asList(appArgs));
 
-        File directory = StringUtils.isEmpty(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
+        File directory = CoreStringUtils.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
         return executionContext.getWorkspace()
-                .createExecBuilder()
+                .exec()
                 .setCommand(app)
                 .setSession(executionContext.getSession())
                 .setEnv(executionContext.getEnv())

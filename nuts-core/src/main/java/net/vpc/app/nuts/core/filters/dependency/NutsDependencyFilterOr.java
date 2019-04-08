@@ -5,10 +5,10 @@ import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 
@@ -58,7 +58,7 @@ public class NutsDependencyFilterOr implements NutsDependencyFilter, Simplifiabl
 
         @Override
     public String toString() {
-        return StringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
     @Override

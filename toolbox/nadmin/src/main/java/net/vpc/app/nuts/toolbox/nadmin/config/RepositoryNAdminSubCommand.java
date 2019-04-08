@@ -152,7 +152,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                     for (NutsRepository repository : ws.config().getRepositories()) {
                         t.addRow(
-                                "==" + repository.getName() + "==",
+                                "==" + repository.config().getName() + "==",
                                 repository.config().isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
                                 repository.getRepositoryType(),
                                 repository.config().getLocation(false)
@@ -235,7 +235,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                     for (NutsRepository repository : linkRepositories) {
                         t.addRow(
-                                "==" + repository.getName() + "==",
+                                "==" + repository.config().getName() + "==",
                                 repository.config().isEnabled() ? "ENABLED" : "@@<DISABLED>@@",
                                 repository.getRepositoryType(),
                                 repository.config().getLocation(false)

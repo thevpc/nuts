@@ -127,30 +127,40 @@ public class CoreSecurityUtils {
     }
 
     public static String evalSHA1(InputStream input, boolean closeStream) {
-
-        MessageDigest sha1 = null;
-
         try {
-            sha1 = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException ex) {
-            throw new UncheckedIOException(new IOException(ex));
-        }
+            MessageDigest sha1 = null;
 
-        byte[] buffer = new byte[8192];
-        int len = 0;
-        try {
-            len = input.read(buffer);
-
-            while (len != -1) {
-                sha1.update(buffer, 0, len);
-                len = input.read(buffer);
+            try {
+                sha1 = MessageDigest.getInstance("SHA-1");
+            } catch (NoSuchAlgorithmException ex) {
+                throw new UncheckedIOException(new IOException(ex));
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            try {
+                len = input.read(buffer);
+
+                while (len != -1) {
+                    sha1.update(buffer, 0, len);
+                    len = input.read(buffer);
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+
+            return toHexString(sha1.digest());
+        } finally {
+            if (closeStream) {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                }
+            }
         }
-
-        return toHexString(sha1.digest());
-
     }
 
     public static String toHexString(byte[] bytes) {

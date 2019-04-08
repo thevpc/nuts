@@ -1,6 +1,5 @@
 package net.vpc.toolbox.tomcat.remote;
 
-import net.vpc.app.nuts.NutsCommandExecBuilder;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.common.io.FileUtils;
 import net.vpc.common.io.IOUtils;
@@ -15,6 +14,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
+import net.vpc.app.nuts.NutsExecCommand;
 
 public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
     private RemoteTomcatAppConfig config;
@@ -48,8 +48,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
             server = "ssh://" + server;
         }
         SshPath srvp = new SshPath(server);
-        context.getWorkspace().
-                createExecBuilder()
+        context.getWorkspace().exec()
                 .setCommand(
                         "nsh",
                         "cp",
@@ -74,8 +73,8 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
         if (!fileAdded) {
             cmd.add(config.getPath());
         }
-        NutsCommandExecBuilder s = context.getWorkspace()
-                .createExecBuilder()
+        NutsExecCommand s = context.getWorkspace()
+                .exec()
                 .setRedirectErrorStream()
                 .grabOutputString()
                 .setCommand(cmd).exec();

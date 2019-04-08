@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.common.io.InputStreamSource;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -46,7 +45,7 @@ import java.util.List;
  */
 public class CharacterizedFile implements AutoCloseable {
 
-    public InputStreamSource contentFile;
+    public CoreIOUtils.SourceItem contentFile;
     public List<Path> temps = new ArrayList<>();
     public NutsDescriptor descriptor;
 

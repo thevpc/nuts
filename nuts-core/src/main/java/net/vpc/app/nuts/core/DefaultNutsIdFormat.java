@@ -10,12 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.common.io.ByteArrayPrintStream;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class DefaultNutsIdFormat implements NutsIdFormat {
 
@@ -133,17 +130,17 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             idBuilder.setQuery(CoreNutsUtils.QUERY_EMPTY_ENV, true);
         }
         if (omitFace) {
-            idBuilder.setQueryProperty(NutsConstants.QUERY_FACE, null);
+            idBuilder.setQueryProperty(NutsConstants.QueryKeys.FACE, null);
         }
         id = idBuilder.build();
         StringBuilder sb = new StringBuilder();
         if (!omitNamespace) {
-            if (!StringUtils.isEmpty(id.getNamespace())) {
+            if (!CoreStringUtils.isBlank(id.getNamespace())) {
                 sb.append(id.getNamespace()).append("://");
             }
         }
         if (!omitGroup) {
-            if (!StringUtils.isEmpty(id.getGroup())) {
+            if (!CoreStringUtils.isBlank(id.getGroup())) {
                 boolean importedGroup = false;
                 for (String anImport : ws.config().getImports()) {
                     if (id.getGroup().equals(anImport)) {
@@ -166,13 +163,13 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         sb.append("[[");
         sb.append(ws.parser().escapeText(id.getName()));
         sb.append("]]");
-        if (!StringUtils.isEmpty(id.getVersion().getValue())) {
+        if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
             sb.append("#");
             sb.append(ws.parser().escapeText(id.getVersion().toString()));
         }
         boolean firstQ = true;
 
-        if (!StringUtils.isEmpty(classifier)) {
+        if (!CoreStringUtils.isBlank(classifier)) {
             if (firstQ) {
                 sb.append("{{?}}");
                 firstQ = false;
@@ -186,7 +183,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         }
 
 //        if (highlightScope) {
-        if (!StringUtils.isEmpty(scope) && !"compile".equals(scope)) {
+        if (!CoreStringUtils.isBlank(scope) && !"compile".equals(scope)) {
             if (firstQ) {
                 sb.append("{{?}}");
                 firstQ = false;
@@ -200,7 +197,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
         }
 //        }
 //        if (highlightOptional) {
-        if (!StringUtils.isEmpty(optional) && !"false".equals(optional)) {
+        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
             if (firstQ) {
                 sb.append("{{?}}");
                 firstQ = false;
@@ -212,7 +209,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             sb.append("**");
         }
 //        }
-        if (!StringUtils.isEmpty(exclusions)) {
+        if (!CoreStringUtils.isBlank(exclusions)) {
             if (firstQ) {
                 sb.append("{{?}}");
                 firstQ = false;
@@ -223,7 +220,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
             sb.append(ws.parser().escapeText(exclusions));
             sb.append("@@");
         }
-        if (!StringUtils.isEmpty(id.getQuery())) {
+        if (!CoreStringUtils.isBlank(id.getQuery())) {
             for (Map.Entry<String, String> ee : id.getQueryMap().entrySet()) {
                 switch (ee.getKey()) {
                     case "exclusions":

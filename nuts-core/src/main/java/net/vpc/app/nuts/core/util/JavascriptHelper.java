@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.core.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.core.filters.version.NutsVersionJavascriptFilter;
-import net.vpc.common.strings.StringUtils;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -72,8 +71,8 @@ public class JavascriptHelper {
                 }
                 return value.toString().matches(CoreStringUtils.simpexpToRegexp(pattern, true));
             }
-            if (StringUtils.isEmpty(pattern)) {
-                return StringUtils.isEmpty(value.toString());
+            if (CoreStringUtils.isBlank(pattern)) {
+                return CoreStringUtils.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
                 NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern);
@@ -93,7 +92,7 @@ public class JavascriptHelper {
         }
 
         public String trim(String s) {
-            return StringUtils.trim(s);
+            return CoreStringUtils.trim(s);
         }
 
         public int compareVersions(String v1, String v2) {
@@ -131,7 +130,7 @@ public class JavascriptHelper {
             engine = createManagerJdk();
         }
         try {
-            if (StringUtils.isEmpty(initExprs)) {
+            if (CoreStringUtils.isBlank(initExprs)) {
                 initExprs = "";
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");

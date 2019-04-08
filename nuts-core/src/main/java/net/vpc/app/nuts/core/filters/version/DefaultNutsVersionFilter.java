@@ -36,7 +36,6 @@ import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
     }
 
     public static DefaultNutsVersionFilter parse(String version) {
-        if (version == null || StringUtils.isEmpty(version) || version.equals("LAST") || version.equals("LATEST") || version.equals("RELEASE")) {
+        if (version == null || CoreStringUtils.isBlank(version) || version.equals("LAST") || version.equals("LATEST") || version.equals("RELEASE")) {
             return new DefaultNutsVersionFilter();
         }
 

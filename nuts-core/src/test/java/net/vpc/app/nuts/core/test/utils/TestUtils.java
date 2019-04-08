@@ -24,7 +24,7 @@ public class TestUtils {
     public static final String LINUX_CONFIG = new File(System.getProperty("user.home") + "/.nuts").getPath();
     public static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
     public static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
-    public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG,LINUX_CACHE,LINUX_TEMP};
+    public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP};
     public static final String NUTS_VERSION = Nuts.getVersion();
     public static final String NDI_VERSION = NUTS_VERSION + ".0";
 
@@ -79,6 +79,61 @@ public class TestUtils {
                 p.remove(entry.getKey());
             }
         }
+    }
+
+    public static String getCallerSimpleClasMethod(int index) {
+        StackTraceElement i = getCallerStackTraceElement0(3+index);
+        String cn=i.getClassName();
+        String m=i.getClassName();
+        return cn+"."+m;
+    }
+    
+    public static String getCallerMethodId() {
+        return getCallerMethodId(1);
+    }
+    
+    public static String getCallerMethodId(int index) {
+        StackTraceElement i = getCallerStackTraceElement0(3+index);
+        String cn=i.getClassName();
+        if(cn.indexOf('.')>0){
+            cn=cn.substring(cn.lastIndexOf('.')+1);
+        }
+        String m=i.getMethodName();
+        return cn+"_"+m;
+    }
+    
+    public static String getCallerMethodName() {
+        return getCallerMethodId(1);
+    }
+    
+    public static String getCallerMethodName(int index) {
+        return getCallerStackTraceElement0(3+index).getMethodName();
+    }
+    
+    public static String getCallerClassSimpleName() {
+        return getCallerClassSimpleName(1);
+    }
+    
+    public static String getCallerClassSimpleName(int index) {
+        StackTraceElement i = getCallerStackTraceElement0(3+index);
+        String cn=i.getClassName();
+        if(cn.indexOf('.')>0){
+            cn=cn.substring(cn.lastIndexOf('.')+1);
+        }
+        return cn;
+    }
+    
+    public static StackTraceElement getCallerStackTraceElement(int index) {
+        return getCallerStackTraceElement0(3 + index);
+    }
+
+    public static StackTraceElement getCallerStackTraceElement() {
+        return getCallerStackTraceElement0(3);
+    }
+
+    public static StackTraceElement getCallerStackTraceElement0(int index) {
+        StackTraceElement[] s = Thread.currentThread().getStackTrace();
+        return s[index];
     }
 
 }

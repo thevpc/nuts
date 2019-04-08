@@ -6,7 +6,7 @@ import net.vpc.app.nuts.NutsSecurityException;
 import net.vpc.app.nuts.NutsSingleton;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreSecurityUtils;
-import net.vpc.common.strings.StringUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 @NutsSingleton
 public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
@@ -19,18 +19,18 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
     }
 
     public void checkCredentials(String credentialsId, String authenticationAgent,String password, NutsEnvProvider envProvider) {
-        if (StringUtils.isEmpty(password)) {
+        if (CoreStringUtils.isBlank(password)) {
             throw new NutsSecurityException("Missing old password");
         }
         //check old password
-        if (StringUtils.isEmpty(credentialsId) || credentialsId.equals(CoreSecurityUtils.evalSHA1(password))) {
+        if (CoreStringUtils.isBlank(credentialsId) || credentialsId.equals(CoreSecurityUtils.evalSHA1(password))) {
             throw new NutsSecurityException("Invalid password");
         }
 
 
-        if(!StringUtils.isEmpty(credentialsId)){
-            if ((StringUtils.isEmpty(password) && StringUtils.isEmpty(credentialsId))
-                    || (!StringUtils.isEmpty(password) && !StringUtils.isEmpty(credentialsId)
+        if(!CoreStringUtils.isBlank(credentialsId)){
+            if ((CoreStringUtils.isBlank(password) && CoreStringUtils.isBlank(credentialsId))
+                    || (!CoreStringUtils.isBlank(password) && !CoreStringUtils.isBlank(credentialsId)
                     && credentialsId.equals(CoreSecurityUtils.evalSHA1(password)))) {
                 return;
             }
@@ -41,7 +41,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
     @Override
     public String getCredentials(String credentialsId, String authenticationAgent, NutsEnvProvider envProvider) {
         //credentials are already encrypted with default passphrase!
-        if (!StringUtils.isEmpty(credentialsId)) {
+        if (!CoreStringUtils.isBlank(credentialsId)) {
             credentialsId = new String(CoreSecurityUtils.httpDecrypt(credentialsId.getBytes(), CoreNutsUtils.DEFAULT_PASSPHRASE));
         }
         return credentialsId;
@@ -49,7 +49,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
 
     @Override
     public String setCredentials(String credentials, String authenticationAgent, NutsEnvProvider envProvider) {
-        if (StringUtils.isEmpty(credentials)) {
+        if (CoreStringUtils.isBlank(credentials)) {
             credentials = null;
         } else {
             credentials = CoreSecurityUtils.evalSHA1(credentials);

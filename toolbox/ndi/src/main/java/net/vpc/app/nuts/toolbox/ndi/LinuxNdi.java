@@ -30,13 +30,13 @@ public class LinuxNdi implements SystemNdi {
             NutsId nutsId = appContext.getWorkspace().parser().parseId(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isEmpty()) {
-                fetched = appContext.getWorkspace().fetch(options.getId()).fetchDefinition();
+                fetched = appContext.getWorkspace().fetch().id(options.getId()).getResultDefinition();
                 nutsId = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();
             }
             if (options.isFetch()) {
                 if (fetched == null) {
-                    fetched = appContext.getWorkspace().fetch(options.getId()).fetchDefinition();
+                    fetched = appContext.getWorkspace().fetch().id(options.getId()).getResultDefinition();
                 }
                 //appContext.out().printf("==%s== resolved as ==%s==\n", id,fetched.getId());
             }
@@ -62,7 +62,7 @@ public class LinuxNdi implements SystemNdi {
 
     public void createBootScript(boolean force, boolean silent) throws IOException {
         NutsId b = appContext.getWorkspace().config().getRunningContext().getApiId();
-        NutsDefinition f = appContext.getWorkspace().fetch(b).setAcceptOptional(false).fetchDefinition();
+        NutsDefinition f = appContext.getWorkspace().fetch().id(b).setAcceptOptional(false).getResultDefinition();
         Path ff = getScriptFile("nuts");
         if (!force && Files.exists(ff)) {
             if (!silent) {

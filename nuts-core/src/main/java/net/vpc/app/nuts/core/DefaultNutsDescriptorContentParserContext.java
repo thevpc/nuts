@@ -32,16 +32,13 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.NutsDescriptorContentParserContext;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.io.IOUtils;
-import net.vpc.common.io.InputStreamSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.vpc.app.nuts.NutsQueryOptions;
+import net.vpc.app.nuts.NutsFetchCommand;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
 
 /**
  * Created by vpc on 1/29/17.
@@ -50,15 +47,15 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
 
     private final NutsWorkspace workspace;
     private final NutsSession session;
-    private final InputStreamSource file;
+    private final CoreIOUtils.SourceItem file;
     private final String fileExtension;
     private final String fileType;
     private final String mimeType;
     private byte[] bytes;
-    private final NutsQueryOptions options;
+    private final NutsFetchCommand options;
 
-    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputStreamSource file, String fileExtension, String fileType, String mimeType,NutsQueryOptions options) {
-        this.file = file;
+    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, CoreIOUtils.SourceItem file, String fileExtension, String fileType, String mimeType, NutsFetchCommand options) {
+        this.file = file.toMultiReadSourceItem();
         this.workspace = workspace;
         this.session = session;
         this.fileExtension = fileExtension;
@@ -79,7 +76,9 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     public InputStream getHeadStream() {
         if (bytes == null) {
             try {
-                bytes = IOUtils.loadByteArray(file.open(), 1024 * 1024 * 10, true);
+                try(InputStream is=file.open()){
+                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
+                }
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -89,11 +88,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
 
     @Override
     public InputStream getFullStream() {
-        try {
-            return file.open();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        return file.open();
     }
 
     @Override
@@ -117,8 +112,8 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     }
 
     @Override
-    public NutsQueryOptions getQueryOptions() {
+    public NutsFetchCommand getQueryOptions() {
         return options;
     }
-    
+
 }

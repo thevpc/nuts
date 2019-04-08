@@ -4,12 +4,12 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
@@ -80,7 +80,7 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
             if (id instanceof JsNutsDescriptorFilter) {
                 JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id;
                 String expr = b.toJsNutsDescriptorFilterExpr();
-                if (StringUtils.isEmpty(expr)) {
+                if (CoreStringUtils.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");
@@ -121,7 +121,7 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
 
     @Override
     public String toString() {
-        return StringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return CoreStringUtils.join(" And ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
 }

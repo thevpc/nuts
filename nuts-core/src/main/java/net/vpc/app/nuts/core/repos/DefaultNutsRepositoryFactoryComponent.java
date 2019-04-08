@@ -30,9 +30,8 @@
 package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.common.io.FileUtils;
-import net.vpc.common.strings.StringUtils;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -43,12 +42,11 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     public int getSupportLevel(NutsRepositoryConfig criteria) {
         String repositoryType = criteria.getType();
         String location = criteria.getLocation();
-        if (!NutsConstants.REPOSITORY_TYPE_NUTS.equals(repositoryType)
-                && !NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(repositoryType)
-                && !NutsConstants.REPOSITORY_TYPE_NUTS_SERVER.equals(repositoryType)) {
+        if (!NutsConstants.RepoTypes.NUTS.equals(repositoryType)
+                && !NutsConstants.RepoTypes.NUTS_SERVER.equals(repositoryType)) {
             return NO_SUPPORT;
         }
-        if (StringUtils.isEmpty(location)) {
+        if (CoreStringUtils.isBlank(location)) {
             return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {
@@ -63,21 +61,21 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
     @Override
     public NutsRepository create(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         NutsRepositoryConfig config = options.getConfig();
-        if (NutsConstants.REPOSITORY_TYPE_NUTS.equals(config.getType())
-                || NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(config.getType())
-                || NutsConstants.REPOSITORY_TYPE_NUTS_SERVER.equals(config.getType())) {
-            if (StringUtils.isEmpty(config.getLocation())) {
-                config.setType(NutsConstants.REPOSITORY_TYPE_NUTS);
+        if (CoreStringUtils.isBlank(config.getType())) {
+            if (CoreStringUtils.isBlank(config.getLocation())) {
+                config.setType(NutsConstants.RepoTypes.NUTS);
+            }
+        }
+        if (NutsConstants.RepoTypes.NUTS.equals(config.getType())) {
+            if (CoreStringUtils.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
                 return new NutsFolderRepository(options, workspace, parentRepository);
             }
-            if (!config.getLocation().contains("://")) {
-                config.setType(NutsConstants.REPOSITORY_TYPE_NUTS);
-                return new NutsFolderRepository(options, workspace, parentRepository);
+            if (CoreIOUtils.isPathURL(config.getLocation())) {
+                return (new NutsHttpFolderRepository(options, workspace, parentRepository));
             }
-            if (config.getLocation().startsWith("http://") || config.getLocation().startsWith("https://")) {
-                if (NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER.equals(config.getType())) {
-                    return (new NutsHttpFolderRepository(options, workspace, parentRepository));
-                }
+        }
+        if (NutsConstants.RepoTypes.NUTS_SERVER.equals(config.getType())) {
+            if (CoreIOUtils.isPathHttp(config.getLocation())) {
                 return (new NutsHttpSrvRepository(options, workspace, parentRepository));
             }
         }
@@ -89,9 +87,14 @@ public class DefaultNutsRepositoryFactoryComponent implements NutsRepositoryFact
         if (!workspace.config().isGlobal()) {
             return new NutsRepositoryDefinition[]{
                 new NutsRepositoryDefinition()
-                        .setDeployOrder(100)
-                        .setName("system")
-                        .setLocation(FileUtils.getNativePath(workspace.config().getPlatformOsHome(NutsStoreLocation.CONFIG)+ "/default-workspace/repositories/local")).setType(NutsConstants.REPOSITORY_TYPE_NUTS_FOLDER).setProxy(false).setReference(true).setFailSafe(true).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL),};
+                .setDeployOrder(100)
+                .setName("system")
+                .setLocation(
+                        CoreIOUtils.getNativePath(workspace.config().getPlatformOsHome(NutsStoreLocation.CONFIG) 
+                        + "/"+NutsConstants.DEFAULT_WORKSPACE_NAME
+                        +"/"+NutsConstants.Folders.REPOSITORIES
+                        +"/"+NutsConstants.DEFAULT_REPOSITORY_NAME
+                )).setType(NutsConstants.RepoTypes.NUTS).setProxy(false).setReference(true).setFailSafe(true).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_SYSTEM_LOCAL),};
         }
         return new NutsRepositoryDefinition[0];
     }

@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Objects;
 
@@ -62,7 +61,7 @@ public class NutsDescriptorFilterPackaging implements NutsDescriptorFilter, Simp
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (StringUtils.isEmpty(packaging)) {
+        if (CoreStringUtils.isBlank(packaging)) {
             return null;
         }
         return this;

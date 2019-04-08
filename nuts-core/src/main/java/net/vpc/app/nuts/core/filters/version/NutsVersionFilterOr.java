@@ -5,12 +5,12 @@ import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
 
@@ -81,7 +81,7 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
             if (id instanceof NutsJsAwareIdFilter) {
                 NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
-                if (StringUtils.isEmpty(expr)) {
+                if (CoreStringUtils.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");
@@ -122,7 +122,7 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
     
     @Override
     public String toString() {
-        return StringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return CoreStringUtils.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
 }

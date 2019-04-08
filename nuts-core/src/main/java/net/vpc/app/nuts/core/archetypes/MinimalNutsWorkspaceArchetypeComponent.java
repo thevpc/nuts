@@ -59,18 +59,17 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                         .setCreate(true)
                         .setConfig(new NutsRepositoryConfig()
                                 .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
-                                .setType(NutsConstants.REPOSITORY_TYPE_NUTS)
+                                .setType(NutsConstants.RepoTypes.NUTS)
                         )
         );
-        if(defaultRepo==null){
-            throw new IllegalArgumentException("Unable to configure repository : "+NutsConstants.DEFAULT_REPOSITORY_NAME);
+        if (defaultRepo == null) {
+            throw new IllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
         }
-        defaultRepo.config().setEnv(NutsConstants.ENV_KEY_DEPLOY_PRIORITY, "10");
         workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //simple rights for minimal utilization
-        for (String right : NutsConstants.RIGHTS) {
-            if (!NutsConstants.RIGHT_ADMIN.equals(right)) {
+        for (String right : NutsConstants.Rights.RIGHTS) {
+            if (!NutsConstants.Rights.ADMIN.equals(right)) {
                 workspace.security().addUserRights(NutsConstants.USER_ANONYMOUS, right);
             }
         }

@@ -204,6 +204,17 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
      */
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
 
+    public void parse(String[] args) {
+        NutsArgumentsParser.parseNutsArguments(args, this);
+    }
+
+    public NutsWorkspaceOptions() {
+    }
+
+    public NutsWorkspaceOptions(String[] args) {
+        NutsArgumentsParser.parseNutsArguments(args, this);
+    }
+
     public String getWorkspace() {
         return workspace;
     }
@@ -502,17 +513,17 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
         }
         if (runtimeOptions) {
 
-            if (initMode!=null) {
-                switch(initMode){
-                    case RECOVER:{
+            if (initMode != null) {
+                switch (initMode) {
+                    case RECOVER: {
                         all.add("--recover");
                         break;
                     }
-                    case CLEANUP:{
+                    case CLEANUP: {
                         all.add("--cleanup");
                         break;
                     }
-                    case RESET:{
+                    case RESET: {
                         all.add("--reset");
                         break;
                     }
@@ -794,5 +805,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     public String[] getHomeLocations() {
         return Arrays.copyOf(homeLocations, homeLocations.length);
     }
+
 
 }

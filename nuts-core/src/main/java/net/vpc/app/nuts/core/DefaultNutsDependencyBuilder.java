@@ -33,9 +33,9 @@ import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyBuilder;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsVersion;
-import net.vpc.common.strings.StringUtils;
 
 import java.util.Arrays;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -82,19 +82,19 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setNamespace(String namespace) {
-        this.namespace = StringUtils.trimToNull(namespace);
+        this.namespace = CoreStringUtils.trimToNull(namespace);
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setGroup(String group) {
-        this.group = StringUtils.trimToNull(group);
+        this.group = CoreStringUtils.trimToNull(group);
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setName(String name) {
-        this.name = StringUtils.trimToNull(name);
+        this.name = CoreStringUtils.trimToNull(name);
         return this;
     }
 
@@ -128,20 +128,20 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setClassifier(String classifier) {
-        this.classifier = StringUtils.trimToNull(classifier);
+        this.classifier = CoreStringUtils.trimToNull(classifier);
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setScope(String scope) {
-        String s = StringUtils.trimToNull(scope);
-        this.scope = StringUtils.isEmpty(s) ? "compile" : s;
+        String s = CoreStringUtils.trimToNull(scope);
+        this.scope = CoreStringUtils.isBlank(s) ? "compile" : s;
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setOptional(String optional) {
-        this.optional = StringUtils.isEmpty(optional) ? "false" : StringUtils.trim(optional);
+        this.optional = CoreStringUtils.isBlank(optional) ? "false" : CoreStringUtils.trim(optional);
         return this;
     }
 
@@ -213,10 +213,10 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public String getFullName() {
-        if (StringUtils.isEmpty(group)) {
-            return StringUtils.trim(name);
+        if (CoreStringUtils.isBlank(group)) {
+            return CoreStringUtils.trim(name);
         }
-        return StringUtils.trim(group) + ":" + StringUtils.trim(name);
+        return CoreStringUtils.trim(group) + ":" + CoreStringUtils.trim(name);
     }
 
     @Override

@@ -46,14 +46,7 @@ public interface NutsRepository {
     String getRepositoryType();
 
     String getUuid();
-
-    /**
-     * name is the name attributed by the containing workspace. It is defined in
-     * NutsRepositoryRef
-     *
-     * @return local name
-     */
-    String getName();
+    String uuid();
 
     NutsWorkspace getWorkspace();
 
@@ -61,12 +54,11 @@ public interface NutsRepository {
 
     NutsRepositoryConfigManager config();
 
-//    Path getStoreLocation(NutsStoreLocation folderType);
     NutsRepositorySecurityManager security();
 
     void deploy(NutsRepositoryDeploymentOptions options, NutsRepositorySession session);
 
-    void push(NutsId id, NutsPushOptions options, NutsRepositorySession session);
+    void push(NutsId id, NutsPushCommand options, NutsRepositorySession session);
 
     NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session);
 
@@ -75,8 +67,6 @@ public interface NutsRepository {
     Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session);
 
     Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
-
-    void save(boolean force);
 
     /**
      * @param listener
@@ -93,4 +83,5 @@ public interface NutsRepository {
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
+    void updateStatistics();
 }

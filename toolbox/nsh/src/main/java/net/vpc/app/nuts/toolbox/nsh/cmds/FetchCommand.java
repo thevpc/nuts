@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by vpc on 1/7/17.
@@ -74,10 +75,10 @@ public class FetchCommand extends AbstractNutsCommand {
                     if (descMode) {
                         NutsDefinition file = null;
                         if (lastLocationFile == null) {
-                            file = context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDefinition();
+                            file = context.getWorkspace().fetch().id(id).effective(effective).setSession(context.getSession()).getResultDefinition();
                         } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getShell().getAbsolutePath(lastLocationFile)).isDirectory()) {
                             Path folder = ws.io().path(context.getShell().getAbsolutePath(lastLocationFile));
-                            NutsDescriptor descriptor = context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDescriptor();
+                            NutsDescriptor descriptor = context.getWorkspace().fetch().id(id).effective(effective).setSession(context.getSession()).getResultDescriptor();
                             Path target = folder.resolve(ws.config().getDefaultIdFilename(
                                     context.getWorkspace().parser().parseId(id)
                                             .setFaceDescriptor()
@@ -87,7 +88,7 @@ public class FetchCommand extends AbstractNutsCommand {
                             file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), descriptor, target, false, true, null);
                         } else {
                             File target = new File(context.getShell().getAbsolutePath(lastLocationFile));
-                            file = context.getWorkspace().fetch(id).setIncludeEffective(effective).setSession(context.getSession()).fetchDefinition();
+                            file = context.getWorkspace().fetch().id(id).effective(effective).setSession(context.getSession()).getResultDefinition();
                             NutsDescriptor descriptor = file.getDescriptor();
                             context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(descriptor, target);
                             lastLocationFile = null;
@@ -96,15 +97,13 @@ public class FetchCommand extends AbstractNutsCommand {
                     } else {
                         NutsDefinition file = null;
                         if (lastLocationFile == null) {
-                            file = context.getWorkspace().fetch(id).setSession(context.getSession()).fetchDefinition();
+                            file = context.getWorkspace().fetch().id(id).setSession(context.getSession()).getResultDefinition();
                         } else if (lastLocationFile.endsWith("/") || lastLocationFile.endsWith("\\") || new File(context.getShell().getAbsolutePath(lastLocationFile)).isDirectory()) {
                             Path folder = ws.io().path(context.getShell().getAbsolutePath(lastLocationFile));
-                            Path fetched = context.getWorkspace().copyTo(id, folder, context.getSession());
-                            file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), null, fetched, false, true, null);
+                            file = context.getWorkspace().fetch().id(id).location(folder).setSession(context.getSession()).getResultDefinition();
                         } else {
                             Path simpleFile = ws.io().path(context.getShell().getAbsolutePath(lastLocationFile));
-                            Path fetched = context.getWorkspace().copyTo(id, simpleFile, context.getSession());
-                            file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), null, fetched, false, true, null);
+                            file = context.getWorkspace().fetch().id(id).location(simpleFile).setSession(context.getSession()).getResultDefinition();
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);
