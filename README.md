@@ -10,16 +10,16 @@ Network Updatable Things Services
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
 packages, installing these  packages to the current machine and executing such  packages on need.
-Each managed package  is also called a ==nuts== which  is a **Network Updatable Thing Service** .
+Each managed package  is also called a **nuts** which  is a **Network Updatable Thing Service** .
 Nuts packages are  stored  into repositories. A  *repository*  may be local for  storing local Nuts
 or remote for accessing  remote packages (good examples  are  remote maven  repositories). It may
 also be a proxy repository so that remote packages are fetched and cached locally to save network
 resources.
-One manages a set of repositories called a  workspace. Managed ==nuts==  (packages)  have descriptors
-that depicts dependencies between them. This dependency is seamlessly handled by  ==nuts==  (tool) to
+One manages a set of repositories called a  workspace. Managed **nuts**  (packages)  have descriptors
+that depicts dependencies between them. This dependency is seamlessly handled by  **nuts**  (tool) to
 resolve and download on-need dependencies over the wire.
 
-==nuts== is a swiss army knife tool as it acts like (and supports) *maven* build tool to have an abstract
+**nuts** is a swiss army knife tool as it acts like (and supports) *maven* build tool to have an abstract
 view of the the  packages dependency, like  *zypper/apt-get*  package manager tools  to  install and
 uninstall packages allowing multiple versions of the very same package to  be installed.
 
@@ -59,22 +59,22 @@ java -jar nuts-0.5.3.jar
 
 ## Change Log
 ### nuts 0.5.4.0 (IN PROGRESS)
-    1- Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
-    1- Removed dependencies to common,strings, io and utils. From Now on only gson and jansi are retained.
-    1- Layout changes
+    - Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
+    - Removed dependencies to common,strings, io and utils. From Now on only gson and jansi are retained.
+    - Layout changes
         * from now on configuration will be version specific. some migration should be done to import previous configs
         * system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json
-    1- Added Stream Support ("findStream" in NutsQuery)
-    1- Introduced delayed search results while getting asap items (using iterators anywhere this makes sense)
-    1- Introduced NutsSearchIdFilter to speedup search time
-    1- Introduced maven-github repository type to help use github api for search and navigate remote folders
-    1- Added JUnit test battery
-    1- Several Fixes
+    - Better support for JDK 8+ (New IO)
+    - Added Stream Support ("findStream" in NutsQuery)
+    - Introduced delayed search results while getting asap items (using iterators anywhere this makes sense)
+    - Introduced NutsSearchIdFilter to speedup search time
+    - Added JUnit test battery
+    - Several Fixes
         * Fixed Problem with Layout
         * All System properties now start with "nuts."
         * System properties starting with "nuts.export." are exported to children processes
         * Added watch dog agains infinite child process creation
-    1- TODO
+    - TODO
         * Add maven-github repository type support (web API)
         * FIX : executable and appExecutable are not well supported in nfind!
         * FIX : Migrating from File to New I/O Path
