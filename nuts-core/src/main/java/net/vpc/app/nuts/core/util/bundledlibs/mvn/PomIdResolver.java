@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 public class PomIdResolver {
 
@@ -186,7 +187,7 @@ public class PomIdResolver {
             return null;
         }
         if (v.length >= 2) {
-            throw new IllegalArgumentException("Too many Ids");
+            throw new NutsIllegalArgumentException("Too many Ids");
         }
         return v[0];
     }

@@ -100,7 +100,7 @@ public class Nuts {
      * @param args arguments
      * @return NutsWorkspace instance
      */
-    public static NutsWorkspace openInheritedWorkspace(String[] args) {
+    public static NutsWorkspace openInheritedWorkspace(String[] args) throws NutsUnsatisfiedRequirementsExeption{
         long startTime = System.currentTimeMillis();
 //        System.out.println("OPEN INHERITED : "+NutsMinimalCommandLine.escapeArguments(args));
         NutsBootWorkspace boot = null;
@@ -121,8 +121,8 @@ public class Nuts {
                 boot = new NutsBootWorkspace(t);
             }
         }
-        if (boot.isRequiredNewProcess()) {
-            throw new IllegalArgumentException("Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());
+        if (boot.hasUnsatisfiedRequirements()) {
+            throw new NutsUnsatisfiedRequirementsExeption("Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());
         }
         boot.getOptions().setCreationTime(startTime);
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
@@ -134,11 +134,11 @@ public class Nuts {
      * @param args nuts boot arguments
      * @return new NutsWorkspace instance
      */
-    public static NutsWorkspace openWorkspace(String[] args) {
+    public static NutsWorkspace openWorkspace(String[] args) throws NutsUnsatisfiedRequirementsExeption{
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
-        if (boot.isRequiredNewProcess()) {
-            throw new IllegalArgumentException("Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());
+        if (boot.hasUnsatisfiedRequirements()) {
+            throw new NutsUnsatisfiedRequirementsExeption("Unable to open a distinct version : " + boot.getRequirementsHelpString(true));
         }
         if (boot.getOptions().getCreationTime() == 0) {
             boot.getOptions().setCreationTime(startTime);

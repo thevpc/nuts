@@ -47,7 +47,7 @@ public class NutsAlreadyInstalledException extends NutsElementNotFoundException 
     }
 
     public NutsAlreadyInstalledException(String nuts, String msg, Exception ex) {
-        super(NutsUtils.isEmpty(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,ex);
+        super(NutsUtils.isBlank(msg) ? "Already installed nuts " + (nuts == null ? "<null>" : nuts) : msg,ex);
         this.id = nuts;
     }
 

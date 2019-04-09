@@ -389,10 +389,10 @@ public class FormattedPrintStream extends PrintStream {
 
     public final void writeRaw(String rawString) {
         byte[] b = rawString.getBytes();
-        String ss = new String(b);
-        if (ss.contains("Foreground(FG_P")) {
-            System.out.print("");
-        }
+//        String ss = new String(b);
+//        if (ss.contains("Foreground(FG_P")) {
+//            System.out.print("");
+//        }
         super.write(b, 0, b.length);
     }
 

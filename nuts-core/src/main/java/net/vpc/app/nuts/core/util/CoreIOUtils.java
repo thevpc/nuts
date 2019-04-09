@@ -35,6 +35,7 @@ import net.vpc.app.nuts.core.DefaultNutsVersion;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -49,6 +50,8 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -80,6 +83,7 @@ public class CoreIOUtils {
             }
         }
     };
+    private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
     public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
@@ -454,9 +458,15 @@ public class CoreIOUtils {
         }
         if (s.startsWith("file:")) {
             try {
-                return Paths.get(new URL(s).toURI());
+                URI uri = new URL(s).toURI();
+                if (uri.getAuthority() != null && uri.getAuthority().length() > 0) {
+                    // Hack for UNC Path
+                    uri = (new URL("file://" + s.substring("file:".length()))).toURI();
+                }
+
+                return Paths.get(uri);
             } catch (URISyntaxException ex) {
-                throw new IllegalArgumentException("Not a file Path");
+                throw new NutsParseException("Not a file Path : " + s);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -467,10 +477,10 @@ public class CoreIOUtils {
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")
                 || s.startsWith("ssh:")) {
-            throw new IllegalArgumentException("Not a file Path");
+            throw new NutsParseException("Not a file Path");
         }
         if (isURL(s)) {
-            throw new IllegalArgumentException("Not a file Path");
+            throw new NutsParseException("Not a file Path");
         }
         return Paths.get(s);
     }
@@ -550,7 +560,7 @@ public class CoreIOUtils {
         return false;
     }
 
-    public static CharacterizedFile characterize(NutsWorkspace ws, SourceItem contentFile, NutsFetchCommand options, NutsSession session) {
+    public static CharacterizedFile characterize(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
         session = CoreNutsUtils.validateSession(session, ws);
         CharacterizedFile c = new CharacterizedFile();
         try {
@@ -558,13 +568,13 @@ public class CoreIOUtils {
             if (c.contentFile.getSource() instanceof Path) {
                 //okkay
             } else if (c.contentFile.getSource() instanceof File) {
-                c.contentFile = createSource(((File) c.contentFile.getSource()).toPath());
+                c.contentFile = createInputSource(((File) c.contentFile.getSource()).toPath());
             } else {
                 Path temp = ws.io().createTempFile(contentFile.getName());
                 contentFile.copyTo(temp);
-                c.contentFile = createSource(temp).toMultiReadSourceItem();
+                c.contentFile = createInputSource(temp).multi();
                 c.addTemp(temp);
-                return characterize(ws, createSource(temp).toMultiReadSourceItem(), options, session);
+                return characterize(ws, createInputSource(temp).multi(), options, session);
             }
             Path fileSource = (Path) c.contentFile.getSource();
             if (!Files.exists(fileSource)) {
@@ -581,7 +591,7 @@ public class CoreIOUtils {
                     if ("zip".equals(c.descriptor.getPackaging())) {
                         Path zipFilePath = ws.io().path(ws.io().expandPath(fileSource.toString() + ".zip"));
                         ZipUtils.zip(fileSource.toString(), new ZipOptions(), zipFilePath.toString());
-                        c.contentFile = createSource(zipFilePath).toMultiReadSourceItem();
+                        c.contentFile = createInputSource(zipFilePath).multi();
                         c.addTemp(zipFilePath);
                     } else {
                         throw new NutsIllegalArgumentException("Invalid Nut Folder source. expected 'zip' ext in descriptor");
@@ -693,7 +703,7 @@ public class CoreIOUtils {
         return (session == null || session.getTerminal() == null) ? ws.io().nullPrintStream() : session.getTerminal().getOut();
     }
 
-    public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, CoreIOUtils.SourceItem localPath, NutsFetchCommand queryOptions, NutsSession session) {
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
         session = CoreNutsUtils.validateSession(session, ws);
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, ws);
@@ -870,6 +880,17 @@ public class CoreIOUtils {
         return new MonitoredInputStream(from, source, sourceName, length, monitor);
     }
 
+    public static InputStream monitor(InputStream from, Object source, InputStreamMonitor monitor) {
+        String sourceName = null;
+        long length = -1;
+        if (from instanceof InputStreamMetadataAware) {
+            final InputStreamMetadataAware m = (InputStreamMetadataAware) from;
+            sourceName = m.getMetaData().getName();
+            length = m.getMetaData().getLength();
+        }
+        return new MonitoredInputStream(from, source, sourceName, length, monitor);
+    }
+
     public static void delete(File file) throws IOException {
         delete(file.toPath());
     }
@@ -991,226 +1012,51 @@ public class CoreIOUtils {
         return name;
     }
 
-    public static SourceItem createSource(InputStream source) {
+    public static InputSource createInputSource(InputStream source) {
         if (source == null) {
             return null;
         }
-        return new AbstractSourceItem(String.valueOf(source), source, false, false) {
-
-            @Override
-            public InputStream open() {
-                return (InputStream) getSource();
-            }
-
-            @Override
-            public void copyTo(Path path) {
-                try {
-                    Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-
-        };
+        return new InputStreamSource(String.valueOf(source), source);
     }
 
-    public static SourceItem createSource(Path source) {
+    public static InputSource createInputSource(Path source) {
         if (source == null) {
             return null;
         }
-        return new AbstractMultiReadSourceItem(source.getFileName().toString(), source, true, true) {
-            @Override
-            public Path getPath() {
-                return (Path) getSource();
-            }
-
-            @Override
-            public URL getURL() throws MalformedURLException {
-                return getPath().toUri().toURL();
-            }
-
-            @Override
-            public InputStream open() {
-                try {
-                    return Files.newInputStream(getPath());
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-
-            @Override
-            public void copyTo(Path path) {
-                try {
-                    Files.copy(getPath(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-        };
+        return new PathInputSource(source.getFileName().toString(), source);
     }
 
-    public static SourceItem createSource(File source) {
+    public static InputSource createInputSource(File source) {
         if (source == null) {
             return null;
         }
-        return new AbstractMultiReadSourceItem(source.getName(), source, true, true) {
-            @Override
-            public Path getPath() {
-                return ((File) getSource()).toPath();
-            }
-
-            @Override
-            public URL getURL() throws MalformedURLException {
-                return getPath().toUri().toURL();
-            }
-
-            @Override
-            public InputStream open() {
-                try {
-                    return Files.newInputStream(getPath());
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-
-            @Override
-            public void copyTo(Path path) {
-                try {
-                    Files.copy(getPath(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-        };
+        return createInputSource(source.toPath());
     }
 
-    public static SourceItem createSource(byte[] source) {
+    public static InputSource createInputSource(byte[] source) {
         if (source == null) {
             return null;
         }
-        return new AbstractMultiReadSourceItem(String.valueOf(source), source, false, false) {
-            @Override
-            public Path getPath() {
-                throw new IllegalArgumentException("Unsupported");
-            }
-
-            @Override
-            public URL getURL() throws MalformedURLException {
-                throw new IllegalArgumentException("Unsupported");
-            }
-
-            @Override
-            public InputStream open() {
-                return new ByteArrayInputStream(source);
-            }
-
-            @Override
-            public void copyTo(Path path) {
-                try {
-                    Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-        };
+        return new ByteArrayInputSource(String.valueOf(source), source);
     }
 
-    public static SourceItem createSource(URL source) {
+    public static InputSource createInputSource(URL source) {
         if (source == null) {
             return null;
         }
-        Path basePath = null;
-        try {
-            basePath = Paths.get(((URL) source).toURI());
-        } catch (Exception ex) {
-            //
+        if (isPathFile(source.toString())) {
+            return createInputSource(toPathFile(source.toString()));
         }
-        if (basePath != null) {
-            Path finalPath = basePath;
-            return new AbstractMultiReadSourceItem(
-                    finalPath.getFileName().toString(), source,
-                    true, true) {
-                @Override
-                public Path getPath() {
-                    return finalPath;
-                }
-
-                @Override
-                public URL getURL() throws MalformedURLException {
-                    return (URL) getSource();
-                }
-
-                @Override
-                public InputStream open() {
-                    try {
-                        return Files.newInputStream(finalPath);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-
-                @Override
-                public void copyTo(Path path) {
-                    try {
-                        Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-            };
-        } else {
-            return new AbstractSourceItem(
-                    source.toString(),
-                    source, false, true) {
-                @Override
-                public URL getURL() throws MalformedURLException {
-                    return (URL) getSource();
-                }
-
-                @Override
-                public InputStream open() {
-                    try {
-                        return ((URL) getSource()).openStream();
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-
-                @Override
-                public void copyTo(Path path) {
-                    try {
-                        Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-            };
-        }
+        return new URLInputSource(source.toString(), source);
     }
 
-    public static SourceItem createSource(String source) {
+    public static InputSource createInputSource(String source) {
         if (source == null) {
             return null;
         }
-        Path basePath = null;
-        try {
-            basePath = Paths.get(source);
-        } catch (Exception ex) {
-            //
+        if (isPathFile(source)) {
+            return createInputSource(toPathFile(source));
         }
-        if (basePath != null) {
-            return createSource(basePath);
-        }
-
-        try {
-            basePath = Paths.get(new URL(source).toURI());
-        } catch (Exception ex) {
-            //
-        }
-        if (basePath != null) {
-            return createSource(basePath);
-        }
-
         URL baseURL = null;
         try {
             baseURL = new URL(source);
@@ -1218,10 +1064,10 @@ public class CoreIOUtils {
             //
         }
         if (baseURL != null) {
-            return createSource(baseURL);
+            return new URLInputSource(source, baseURL);
         }
 
-        throw new IllegalArgumentException("Unsuported source : " + source);
+        throw new NutsUnsupportedArgumentException("Unsupported source : " + source);
     }
 
     public static boolean isValidInputStreamSource(Class type) {
@@ -1230,26 +1076,29 @@ public class CoreIOUtils {
                 || Path.class.isAssignableFrom(type)
                 || byte[].class.isAssignableFrom(type)
                 || InputStream.class.isAssignableFrom(type)
-                || String.class.isAssignableFrom(type);
+                || String.class.isAssignableFrom(type)
+                || InputSource.class.isAssignableFrom(type);
     }
 
-    public static SourceItem createSource(Object source) {
+    public static InputSource createInputSource(Object source) {
         if (source == null) {
             return null;
+        } else if (source instanceof InputSource) {
+            return (InputSource) source;
         } else if (source instanceof InputStream) {
-            return createSource((InputStream) source);
+            return createInputSource((InputStream) source);
         } else if (source instanceof Path) {
-            return createSource((Path) source);
+            return createInputSource((Path) source);
         } else if (source instanceof File) {
-            return createSource((File) source);
+            return createInputSource((File) source);
         } else if (source instanceof URL) {
-            return createSource((URL) source);
+            return createInputSource((URL) source);
         } else if (source instanceof byte[]) {
-            return createSource(new ByteArrayInputStream((byte[]) source));
+            return createInputSource(new ByteArrayInputStream((byte[]) source));
         } else if (source instanceof String) {
-            return createSource((String) source);
+            return createInputSource((String) source);
         } else {
-            throw new IllegalArgumentException("Unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException("Unsupported type " + source.getClass().getName());
         }
     }
 
@@ -1259,7 +1108,7 @@ public class CoreIOUtils {
         }
         return new TargetItem(target, false) {
             @Override
-            public OutputStream getStream() {
+            public OutputStream open() {
                 return (OutputStream) getValue();
             }
         };
@@ -1297,7 +1146,7 @@ public class CoreIOUtils {
         if (baseURL != null) {
             return createTarget(baseURL);
         }
-        throw new IllegalArgumentException("Unsuported source : " + target);
+        throw new NutsUnsupportedArgumentException("Unsuported source : " + target);
     }
 
     public static TargetItem createTarget(Path target) {
@@ -1311,7 +1160,7 @@ public class CoreIOUtils {
             }
 
             @Override
-            public OutputStream getStream() {
+            public OutputStream open() {
                 try {
                     return Files.newOutputStream(getPath());
                 } catch (IOException ex) {
@@ -1332,7 +1181,7 @@ public class CoreIOUtils {
             }
 
             @Override
-            public OutputStream getStream() {
+            public OutputStream open() {
                 try {
                     return Files.newOutputStream(getPath());
                 } catch (IOException ex) {
@@ -1345,6 +1194,8 @@ public class CoreIOUtils {
     public static TargetItem createTarget(Object target) {
         if (target == null) {
             return null;
+        } else if (target instanceof TargetItem) {
+            return (TargetItem) target;
         } else if (target instanceof OutputStream) {
             return createTarget((OutputStream) target);
         } else if (target instanceof Path) {
@@ -1354,7 +1205,7 @@ public class CoreIOUtils {
         } else if (target instanceof String) {
             return createTarget((String) target);
         } else {
-            throw new IllegalArgumentException("Unsupported type " + target.getClass().getName());
+            throw new NutsUnsupportedArgumentException("Unsupported type " + target.getClass().getName());
         }
     }
 
@@ -1449,16 +1300,107 @@ public class CoreIOUtils {
         }
     }
 
-    public static interface MultiReadSourceItem extends SourceItem {
-
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 255;
+            hexChars[j * 2] = HEX_ARR[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARR[v & 15];
+        }
+        return new String(hexChars);
     }
 
-    public static class DefaultMultiReadSourceItem implements MultiReadSourceItem {
+    public static String toHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte aByte : bytes) {
+            sb.append(toHex(aByte >> 4));
+            sb.append(toHex(aByte));
+        }
+        return sb.toString();
+    }
 
-        private SourceItem base;
+    private static char toHex(int nibble) {
+        return HEX_ARR[nibble & 15];
+    }
+
+    public static byte[] evalMD5(String input) {
+        try {
+            byte[] bytesOfMessage = input.getBytes("UTF-8");
+            return evalMD5(bytesOfMessage);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static byte[] evalMD5(byte[] bytesOfMessage) {
+        try {
+            MessageDigest md;
+            md = MessageDigest.getInstance("MD5");
+            return md.digest(bytesOfMessage);
+        } catch (NoSuchAlgorithmException e) {
+            throw new UncheckedIOException(new IOException(e));
+        }
+    }
+
+    public static String evalSHA1(Path file) {
+        try {
+            return evalSHA1(Files.newInputStream(file), true);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static String evalSHA1(File file) {
+        try {
+            return evalSHA1(new FileInputStream(file), true);
+        } catch (FileNotFoundException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static String evalSHA1(String input) {
+        return evalSHA1(new ByteArrayInputStream(input.getBytes()), true);
+    }
+
+    public static String evalSHA1(InputStream input, boolean closeStream) {
+        try {
+            MessageDigest sha1 = null;
+            try {
+                sha1 = MessageDigest.getInstance("SHA-1");
+            } catch (NoSuchAlgorithmException ex) {
+                throw new UncheckedIOException(new IOException(ex));
+            }
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            try {
+                len = input.read(buffer);
+                while (len != -1) {
+                    sha1.update(buffer, 0, len);
+                    len = input.read(buffer);
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return toHexString(sha1.digest());
+        } finally {
+            if (closeStream) {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                }
+            }
+        }
+    }
+
+    public static class DefaultMultiReadSourceItem implements MultiInputSource {
+
+        private InputSource base;
         private byte[] content;
 
-        public DefaultMultiReadSourceItem(SourceItem base) {
+        public DefaultMultiReadSourceItem(InputSource base) {
             try {
                 content = CoreIOUtils.loadByteArray(base.open());
             } catch (IOException ex) {
@@ -1487,7 +1429,7 @@ public class CoreIOUtils {
         }
 
         @Override
-        public URL getURL() throws MalformedURLException {
+        public URL getURL() {
             return base.getURL();
         }
 
@@ -1502,7 +1444,7 @@ public class CoreIOUtils {
         }
 
         @Override
-        public MultiReadSourceItem toMultiReadSourceItem() {
+        public MultiInputSource multi() {
             return this;
         }
 
@@ -1511,32 +1453,16 @@ public class CoreIOUtils {
             base.copyTo(path);
         }
 
-    }
+        @Override
+        public void close() {
+            base.close();
+        }
 
-    public static interface SourceItem {
-
-        String getName();
-
-        boolean isPath();
-
-        boolean isURL();
-
-        Path getPath();
-
-        URL getURL() throws MalformedURLException;
-
-        Object getSource();
-
-        InputStream open();
-
-        void copyTo(Path path);
-
-        MultiReadSourceItem toMultiReadSourceItem();
     }
 
     public static abstract class AbstractMultiReadSourceItem
             extends AbstractSourceItem
-            implements MultiReadSourceItem {
+            implements MultiInputSource {
 
         public AbstractMultiReadSourceItem(String name, Object value, boolean path, boolean url) {
             super(name, value, path, url);
@@ -1544,12 +1470,12 @@ public class CoreIOUtils {
 
     }
 
-    public static abstract class AbstractSourceItem implements SourceItem {
+    public static abstract class AbstractSourceItem implements InputSource {
 
-        private Object value;
-        private boolean path;
-        private boolean url;
-        private String name;
+        Object value;
+        boolean path;
+        boolean url;
+        String name;
 
         public AbstractSourceItem(String name, Object value, boolean path, boolean url) {
             this.name = name;
@@ -1571,26 +1497,43 @@ public class CoreIOUtils {
             return url;
         }
 
+        @Override
         public Path getPath() {
-            throw new UnsupportedOperationException("Not supported");
+            throw new NutsUnsupportedOperationException();
         }
 
-        public URL getURL() throws MalformedURLException {
-            throw new UnsupportedOperationException("Not supported");
+        @Override
+        public URL getURL() {
+            throw new NutsUnsupportedOperationException();
         }
 
+        @Override
         public Object getSource() {
             return value;
         }
 
+        @Override
         public abstract InputStream open();
 
         @Override
-        public MultiReadSourceItem toMultiReadSourceItem() {
-            if (this instanceof MultiReadSourceItem) {
-                return (MultiReadSourceItem) this;
+        public MultiInputSource multi() {
+            if (this instanceof MultiInputSource) {
+                return (MultiInputSource) this;
             }
             return new DefaultMultiReadSourceItem(this);
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public void copyTo(Path path) {
+            try {
+                Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
 
     }
@@ -1617,6 +1560,176 @@ public class CoreIOUtils {
             throw new UnsupportedOperationException("Not supported");
         }
 
-        public abstract OutputStream getStream();
+        public abstract OutputStream open();
+    }
+
+    public static InputSource getCachedUrlWithSHA1(NutsWorkspace ws, String path, NutsSession session) {
+        final Path cacheBasePath = ws.config().getStoreLocation(ws.config().getRuntimeId(), NutsStoreLocation.CACHE);
+        final Path urlContent = cacheBasePath.resolve("urls-content");
+        ByteArrayOutputStream t = new ByteArrayOutputStream();
+        ws.io().copy().from(path + ".sha1").to(t).run();
+        String sha1 = new String(t.toByteArray()).trim();
+        final PersistentMap<String, String> cu = getCachedUrls(ws);
+        String cachedSha1 = cu.get("sha1://" + path);
+        if (cachedSha1 != null && sha1.equalsIgnoreCase(cachedSha1)) {
+            String cachedID = cu.get("id://" + path);
+            if (cachedID != null) {
+                Path p = urlContent.resolve(cachedID);
+                if (Files.exists(p)) {
+                    return createInputSource(p);
+                }
+            }
+        }
+        try {
+            final String s = UUID.randomUUID().toString();
+            final Path outPath = urlContent.resolve(s + "~");
+            Files.createDirectories(urlContent);
+            final OutputStream p = Files.newOutputStream(outPath);
+            NutsURLHeader header = null;
+            long size = -1;
+            NutsHttpConnectionFacade f = CoreIOUtils.getHttpClientFacade(ws, path);
+            try {
+
+                header = f.getURLHeader();
+                size = header.getContentLength();
+            } catch (Exception ex) {
+                //ignore error
+            }
+
+            InputStreamTee ist = new InputStreamTee(f.open(), p, () -> {
+                if (Files.exists(outPath)) {
+                    cu.put("id://" + path, s);
+                    cu.put("sha1://" + path, evalSHA1(outPath));
+                    try {
+                        Files.move(outPath, urlContent.resolve(s), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                    cu.flush();
+                }
+            });
+            return createInputSource(new InputStreamMetadataAwareImpl(ist, new FixedInputStreamMetadata(path, size)));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static PersistentMap<String, String> getCachedUrls(NutsWorkspace ws) {
+        final String k = PersistentMap.class.getName() + ":getCachedUrls";
+        PersistentMap<String, String> m = (PersistentMap<String, String>) ws.getUserProperties().get(k);
+        if (m == null) {
+            m = new DefaultPersistentMap<String, String>(String.class, String.class, ws.config().getStoreLocation(
+                    ws.config().getRuntimeId(),
+                    NutsStoreLocation.CACHE
+            ).resolve("urls-db").toFile());
+            ws.getUserProperties().put(k, m);
+        }
+        return m;
+    }
+
+    private static class ByteArrayInputSource extends AbstractMultiReadSourceItem {
+
+        public ByteArrayInputSource(String name, byte[] value) {
+            super(name, value, false, false);
+        }
+
+        @Override
+        public InputStream open() {
+            byte[] bytes = (byte[]) this.getSource();
+            return new InputStreamMetadataAwareImpl(new ByteArrayInputStream(bytes), new FixedInputStreamMetadata(name, bytes.length));
+        }
+    }
+
+    private static class URLInputSource extends AbstractSourceItem {
+
+        public URLInputSource(String name, URL value) {
+            super(name, value, false, true);
+        }
+
+        @Override
+        public URL getURL() {
+            return (URL) getSource();
+        }
+
+        @Override
+        public InputStream open() {
+            try {
+                URL u = getURL();
+                if (CoreIOUtils.isPathHttp(u.toString())) {
+                    try {
+                        NutsHttpConnectionFacade hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
+                        long len = hf.getURLHeader().getContentLength();
+                        return new InputStreamMetadataAwareImpl(u.openStream(), new FixedInputStreamMetadata(u.toString(), len));
+                    } catch (Exception ex) {
+                        //ignore
+                    }
+                }
+                return u.openStream();
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+    }
+
+    private static class PathInputSource extends AbstractMultiReadSourceItem {
+
+        public PathInputSource(String name, Path value) {
+            super(name, value, true, true);
+        }
+
+        @Override
+        public Path getPath() {
+            return (Path) getSource();
+        }
+
+        @Override
+        public URL getURL() {
+            try {
+                return getPath().toUri().toURL();
+            } catch (MalformedURLException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+
+        @Override
+        public InputStream open() {
+            try {
+                Path p = getPath();
+                return new InputStreamMetadataAwareImpl(Files.newInputStream(p), new FixedInputStreamMetadata(p.toString(),
+                        Files.size(p)));
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+
+        @Override
+        public void copyTo(Path path) {
+            try {
+                Files.copy(getPath(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+    }
+
+    private static class InputStreamSource extends AbstractSourceItem {
+
+        public InputStreamSource(String name, Object value) {
+            super(name, value, false, false);
+        }
+
+        @Override
+        public InputStream open() {
+            return (InputStream) getSource();
+        }
+
+        @Override
+        public void copyTo(Path path) {
+            try {
+                Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
     }
 }

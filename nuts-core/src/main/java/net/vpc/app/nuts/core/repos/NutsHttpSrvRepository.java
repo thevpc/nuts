@@ -81,13 +81,13 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             throw new NutsIllegalArgumentException("Offline");
         }
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(deployment.getDescriptor(), new OutputStreamWriter(descStream));
+        getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(deployment.getDescriptor(), new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart()),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", deployment.getContent().getFileName().toString(), deployment.getContent()),
                 new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().getSHA1(deployment.getDescriptor())),
-                new NutsTransportParamParamPart("content-hash", CoreSecurityUtils.evalSHA1(deployment.getContent())),
+                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1(deployment.getContent())),
                 new NutsTransportParamParamPart("force", String.valueOf(deployment.isForce()))
         );
         //TODO should read the id
@@ -128,8 +128,8 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         try {
             helperHttpDownloadToFile(getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-            String lhash = CoreSecurityUtils.evalSHA1(localPath);
-            if (rhash.equals(lhash)) {
+            String lhash = CoreIOUtils.evalSHA1(localPath);
+            if (rhash.equalsIgnoreCase(lhash)) {
                 return;
             }
         } catch (IOException e) {
@@ -213,8 +213,8 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         try {
             helperHttpDownloadToFile(getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()), localPath, true);
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
-            String lhash = CoreSecurityUtils.evalSHA1(localPath);
-            if (rhash.equals(lhash)) {
+            String lhash = CoreIOUtils.evalSHA1(localPath);
+            if (rhash.equalsIgnoreCase(lhash)) {
                 return new NutsContent(localPath, false, temp);
             }
         } catch (IOException ex) {

@@ -52,6 +52,7 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
@@ -149,7 +150,7 @@ public class CpCommand extends AbstractNutsCommand {
             context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
             IOUtils.copy(from1, to1);
         } else {
-            throw new IllegalArgumentException("cp: Unsupported protocols " + from + "->" + to);
+            throw new NutsIllegalArgumentException("cp: Unsupported protocols " + from + "->" + to);
         }
     }
 

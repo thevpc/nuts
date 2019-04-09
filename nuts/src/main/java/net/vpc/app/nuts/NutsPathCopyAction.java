@@ -27,6 +27,8 @@ public interface NutsPathCopyAction {
 
     NutsPathCopyAction setSource(URL source);
 
+    NutsPathCopyAction from(Object source);
+
     NutsPathCopyAction from(String source);
 
     NutsPathCopyAction from(InputStream source);
@@ -55,11 +57,11 @@ public interface NutsPathCopyAction {
 
     NutsPathCopyAction to(File target);
 
-    Checker getChecker();
+    Validator getChecker();
 
-    NutsPathCopyAction check(Checker validationVerifier);
+    NutsPathCopyAction validator(Validator validator);
 
-    NutsPathCopyAction setChecker(Checker validationVerifier);
+    NutsPathCopyAction setValidator(Validator validator);
 
     boolean isSafeCopy();
 
@@ -75,13 +77,15 @@ public interface NutsPathCopyAction {
 
     void run();
 
-    NutsPathCopyAction monitorable(boolean safeCopy);
+    NutsPathCopyAction monitorable(boolean monitorable);
 
     NutsPathCopyAction monitorable();
 
     boolean isMonitorable();
 
     NutsPathCopyAction setMonitorable(boolean monitorable);
+
+    NutsPathCopyAction to(Object target);
 
     public static class ValidationException extends RuntimeException {
 
@@ -102,9 +106,9 @@ public interface NutsPathCopyAction {
 
     }
 
-    public static interface Checker {
+    public static interface Validator {
 
-        void check(Path path) throws ValidationException;
+        void validate(Path path) throws ValidationException;
     }
 
 }

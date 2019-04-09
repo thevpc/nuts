@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.dependency.*;
@@ -40,6 +43,10 @@ import net.vpc.app.nuts.core.filters.version.NutsVersionFilterAnd;
 import net.vpc.app.nuts.core.filters.version.NutsVersionFilterOr;
 
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -56,7 +63,7 @@ public class CoreNutsUtils {
     private static final Logger log = Logger.getLogger(CoreNutsUtils.class.getName());
 //    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
-    public static final String DEFAULT_PASSPHRASE = CoreSecurityUtils.bytesToHex("It's completely nuts!!".getBytes());
+    public static final String DEFAULT_PASSPHRASE = CoreIOUtils.bytesToHex("It's completely nuts!!".getBytes());
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
     public static final NutsDependencyFilter OPTIONAL = new OptionalNutsDependencyFilter(true);
     public static final NutsDependencyFilter NON_OPTIONAL = new OptionalNutsDependencyFilter(false);
@@ -243,9 +250,6 @@ public class CoreNutsUtils {
     }
 
     public static void validateRepositoryName(String repositoryName, Set<String> registered) {
-        if (repositoryName.equalsIgnoreCase("bootstrap")) {
-            throw new NutsIllegalArgumentException("Reserved repository name " + repositoryName);
-        }
         if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
             throw new NutsIllegalArgumentException("Invalid repository id " + repositoryName);
         }
@@ -858,5 +862,6 @@ public class CoreNutsUtils {
         log.log(Level.FINEST, tracePhaseString + fetchString
                 + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
     }
+
 
 }

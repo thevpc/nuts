@@ -84,13 +84,13 @@ public class FetchCommand extends AbstractNutsCommand {
                                             .setFaceDescriptor()
                             ));
                             target = target.resolveSibling("effective-" + target.getFileName().toString());
-                            context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(descriptor, target);
+                            context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(descriptor, target);
                             file = new DefaultNutsDefinition2(ws.parser().parseRequiredId(id), descriptor, target, false, true, null);
                         } else {
                             File target = new File(context.getShell().getAbsolutePath(lastLocationFile));
                             file = context.getWorkspace().fetch().id(id).effective(effective).setSession(context.getSession()).getResultDefinition();
                             NutsDescriptor descriptor = file.getDescriptor();
-                            context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(descriptor, target);
+                            context.getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(descriptor, target);
                             lastLocationFile = null;
                         }
                         printFetchedFile(file, context);

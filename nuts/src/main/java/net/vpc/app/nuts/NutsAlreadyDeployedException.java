@@ -62,7 +62,7 @@ public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
      * @param ex exception
      */
     public NutsAlreadyDeployedException(String id, String msg, Exception ex) {
-        super(NutsUtils.isEmpty(msg) ? "Already deployed nuts " + (id == null ? "<null>" : id) : msg,
+        super(NutsUtils.isBlank(msg) ? "Already deployed nuts " + (id == null ? "<null>" : id) : msg,
                 ex);
         this.id = id;
     }

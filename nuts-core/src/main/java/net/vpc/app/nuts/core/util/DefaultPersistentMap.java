@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 import net.vpc.app.nuts.core.util.bundledlibs.util.LRUMap;
 
@@ -71,6 +72,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
         return hash.path(k.hashCode());
     }
 
+    @Override
     public Set<Map.Entry<K, V>> entrySet() {
         return new AbstractSet<Map.Entry<K, V>>() {
             int size = -1;
@@ -345,7 +347,7 @@ public class DefaultPersistentMap<K, V> implements PersistentMap<K, V>, AutoClos
             case "java.lang.Integer":
                 return new IntegerSerializer();
         }
-        throw new IllegalArgumentException("Not supported yet");
+        throw new NutsUnsupportedArgumentException();
     }
 
     private static class DefaultHashPath implements HashPath {

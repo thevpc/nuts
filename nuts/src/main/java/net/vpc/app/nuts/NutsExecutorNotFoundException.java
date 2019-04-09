@@ -51,14 +51,14 @@ public class NutsExecutorNotFoundException extends NutsElementNotFoundException 
 
     public NutsExecutorNotFoundException(String nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isEmpty(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
+                NutsUtils.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.id = nuts;
     }
 
     public NutsExecutorNotFoundException(NutsId nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isEmpty(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts.toString()) : msg,
+                NutsUtils.isBlank(msg) ? "No such nuts executor " + (nuts == null ? "<null>" : nuts.toString()) : msg,
                 ex);
         this.id = nuts==null?null:nuts.toString();
     }

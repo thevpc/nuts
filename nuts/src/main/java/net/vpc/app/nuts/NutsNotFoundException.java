@@ -51,14 +51,14 @@ public class NutsNotFoundException extends NutsElementNotFoundException {
 
     public NutsNotFoundException(String nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
+                NutsUtils.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts) : msg,
                 ex);
         this.id = nuts;
     }
 
     public NutsNotFoundException(NutsId nuts, String msg, Exception ex) {
         super(
-                NutsUtils.isEmpty(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts.toString()) : msg,
+                NutsUtils.isBlank(msg) ? "No such nuts " + (nuts == null ? "<null>" : nuts.toString()) : msg,
                 ex);
         this.id = nuts==null?null:nuts.toString();
     }

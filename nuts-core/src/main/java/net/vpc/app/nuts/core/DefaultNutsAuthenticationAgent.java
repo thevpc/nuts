@@ -4,6 +4,7 @@ import net.vpc.app.nuts.NutsAuthenticationAgent;
 import net.vpc.app.nuts.NutsEnvProvider;
 import net.vpc.app.nuts.NutsSecurityException;
 import net.vpc.app.nuts.NutsSingleton;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
@@ -23,7 +24,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
             throw new NutsSecurityException("Missing old password");
         }
         //check old password
-        if (CoreStringUtils.isBlank(credentialsId) || credentialsId.equals(CoreSecurityUtils.evalSHA1(password))) {
+        if (CoreStringUtils.isBlank(credentialsId) || credentialsId.equals(CoreIOUtils.evalSHA1(password))) {
             throw new NutsSecurityException("Invalid password");
         }
 
@@ -31,7 +32,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
         if(!CoreStringUtils.isBlank(credentialsId)){
             if ((CoreStringUtils.isBlank(password) && CoreStringUtils.isBlank(credentialsId))
                     || (!CoreStringUtils.isBlank(password) && !CoreStringUtils.isBlank(credentialsId)
-                    && credentialsId.equals(CoreSecurityUtils.evalSHA1(password)))) {
+                    && credentialsId.equals(CoreIOUtils.evalSHA1(password)))) {
                 return;
             }
         }
@@ -52,7 +53,7 @@ public class DefaultNutsAuthenticationAgent implements NutsAuthenticationAgent {
         if (CoreStringUtils.isBlank(credentials)) {
             credentials = null;
         } else {
-            credentials = CoreSecurityUtils.evalSHA1(credentials);
+            credentials = CoreIOUtils.evalSHA1(credentials);
         }
         return credentials;
     }

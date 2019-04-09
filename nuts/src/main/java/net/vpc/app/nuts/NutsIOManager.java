@@ -11,6 +11,8 @@ public interface NutsIOManager extends NutsComponent<Object> {
 
     InputStream monitorInputStream(String path, Object source, NutsTerminalProvider session);
 
+    InputStream monitorInputStream(InputStream stream, NutsTerminalProvider session);
+
     String toJsonString(Object obj, boolean pretty);
 
     void writeJson(Object obj, Writer out, boolean pretty);
@@ -64,4 +66,5 @@ public interface NutsIOManager extends NutsComponent<Object> {
     NutsPathCopyAction copy();
     
     Path path(String first, String... more);
+
 }

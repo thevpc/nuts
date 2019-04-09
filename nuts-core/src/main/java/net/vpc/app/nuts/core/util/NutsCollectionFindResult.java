@@ -13,31 +13,35 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
+import net.vpc.app.nuts.core.AbstractNutsFindResult;
 
 /**
  *
  * @author vpc
+ * @param <T>
  */
-public class Basket<T> {
+public class NutsCollectionFindResult<T> extends AbstractNutsFindResult<T> {
 
     private final Object o;
     private final char type;
 
-    public Basket(Iterator<T> o) {
+    public NutsCollectionFindResult(Iterator<T> o) {
         this.o = o;
         this.type = 'i';
     }
 
-    public Basket(Collection<T> o) {
+    public NutsCollectionFindResult(Collection<T> o) {
         this.o = o;
         this.type = (o instanceof List) ? 'l' : 'c';
     }
 
-    public Basket(List<T> o) {
+    public NutsCollectionFindResult(List<T> o) {
         this.o = o;
         this.type = 'l';
     }
 
+    @Override
     public List<T> list() {
         switch (type) {
             case 'i':
@@ -47,30 +51,10 @@ public class Basket<T> {
             case 'c':
                 return new ArrayList<>((Collection<T>) o);
         }
-        throw new IllegalArgumentException("Illegal type");
+        throw new NutsUnsupportedArgumentException("Illegal type "+type);
     }
 
-    public T first() {
-        Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            return it.next();
-        }
-        return null;
-    }
-
-    public T singleton() {
-        Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            T t = it.next();
-            if (it.hasNext()) {
-                throw new IllegalArgumentException("Too many Elements");
-            }
-            return t;
-        } else {
-            throw new IllegalArgumentException("Missing Element");
-        }
-    }
-
+    @Override
     public Iterator<T> iterator() {
         switch (type) {
             case 'i':
@@ -80,9 +64,10 @@ public class Basket<T> {
             case 'c':
                 return ((Collection<T>) o).iterator();
         }
-        throw new IllegalArgumentException("Illegal type");
+        throw new NutsUnsupportedArgumentException("Illegal type "+type);
     }
 
+    @Override
     public Stream<T> stream() {
         switch (type) {
             case 'i':
@@ -92,15 +77,6 @@ public class Basket<T> {
             case 'c':
                 return ((Collection<T>) o).stream();
         }
-        throw new IllegalArgumentException("Illegal type");
-    }
-
-    public long count() {
-        long count = 0;
-        Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            count++;
-        }
-        return count;
+        throw new NutsUnsupportedArgumentException("Illegal type "+type);
     }
 }

@@ -63,7 +63,7 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
                         )
         );
         if (defaultRepo == null) {
-            throw new IllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
+            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
         }
         workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 

@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.File;
 import java.util.Arrays;
 
 public final class NutsBootConfig implements Cloneable {
@@ -156,7 +157,7 @@ public final class NutsBootConfig implements Cloneable {
         try {
             return (NutsBootConfig) clone();
         } catch (CloneNotSupportedException e) {
-            throw new IllegalArgumentException("Unexpected Behaviour");
+            throw new NutsUnexpectedException();
         }
     }
 
@@ -169,6 +170,10 @@ public final class NutsBootConfig implements Cloneable {
         return this;
     }
 
+    public String getBootsrap() {
+        return getWorkspace()+File.separator+NutsConstants.Folders.BOOT;
+    }
+    
     public String getWorkspace() {
         return workspace;
     }
@@ -229,43 +234,43 @@ public final class NutsBootConfig implements Cloneable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!NutsUtils.isEmpty(apiVersion)) {
+        if (!NutsUtils.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("apiVersion='").append(apiVersion).append('\'');
         }
-        if (!NutsUtils.isEmpty(runtimeId)) {
+        if (!NutsUtils.isBlank(runtimeId)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("runtimeId='").append(runtimeId).append('\'');
         }
-        if (!NutsUtils.isEmpty(runtimeDependencies)) {
+        if (!NutsUtils.isBlank(runtimeDependencies)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("runtimeDependencies='").append(runtimeDependencies).append('\'');
         }
-        if (!NutsUtils.isEmpty(repositories)) {
+        if (!NutsUtils.isBlank(repositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("repositories='").append(repositories).append('\'');
         }
-        if (!NutsUtils.isEmpty(javaCommand)) {
+        if (!NutsUtils.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!NutsUtils.isEmpty(javaOptions)) {
+        if (!NutsUtils.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!NutsUtils.isEmpty(workspace)) {
+        if (!NutsUtils.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -273,7 +278,7 @@ public final class NutsBootConfig implements Cloneable {
         }
         for (int i = 0; i < NutsStoreLocation.values().length; i++) {
             String s = getStoreLocation(NutsStoreLocation.values()[i]);
-            if (!NutsUtils.isEmpty(s)) {
+            if (!NutsUtils.isBlank(s)) {
                 if (sb.length() > 0) {
                     sb.append(", ");
                 }
@@ -283,7 +288,7 @@ public final class NutsBootConfig implements Cloneable {
         for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
             for (int j = 0; j < NutsStoreLocation.values().length; j++) {
                 String s = getHomeLocation(NutsStoreLocationLayout.values()[i], NutsStoreLocation.values()[j]);
-                if (!NutsUtils.isEmpty(s)) {
+                if (!NutsUtils.isBlank(s)) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }

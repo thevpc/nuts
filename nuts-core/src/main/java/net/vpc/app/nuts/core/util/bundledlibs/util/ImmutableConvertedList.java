@@ -3,6 +3,8 @@ package net.vpc.app.nuts.core.util.bundledlibs.util;
 import java.util.AbstractList;
 import java.util.List;
 import java.util.function.Function;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsUnsupportedOperationException;
 
 /**
  * Created by vpc on 8/15/14.
@@ -29,6 +31,6 @@ public class ImmutableConvertedList<A, B> extends AbstractList<B> {
 
     @Override
     public B set(int index, B element) {
-        throw new IllegalArgumentException("Immutable List");
+        throw new NutsUnsupportedOperationException("Immutable List");
     }
 }

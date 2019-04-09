@@ -43,6 +43,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
@@ -91,7 +92,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             }
             setUserCredentials(NutsConstants.USER_ADMIN, "admin");
         }
-        String credentials = CoreSecurityUtils.evalSHA1(adminPassword);
+        String credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Objects.equals(credentials, adminPassword)) {
             throw new NutsSecurityException("Invalid credentials");
         }
@@ -114,7 +115,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             adminPassword = "";
         }
         boolean deactivated = false;
-        String credentials = CoreSecurityUtils.evalSHA1(adminPassword);
+        String credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Objects.equals(credentials, adminPassword)) {
             throw new NutsSecurityException("Invalid credentials");
         }

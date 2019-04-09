@@ -60,21 +60,23 @@ public interface NutsUpdateWorkspaceCommand {
     NutsUpdateWorkspaceCommand setForceBootAPIVersion(String forceBootAPIVersion);
 
     /**
-     * 
+     *
      * @return null if no updates
      */
-    NutsWorkspaceUpdateResult update();
+    NutsUpdateWorkspaceCommand update();
 
     /**
-     * 
-     * @return  null if no updates
+     *
+     * @return null if no updates
      */
-    NutsWorkspaceUpdateResult checkUpdates();
+    NutsUpdateWorkspaceCommand checkUpdates();
 
     /**
-     * 
+     *
      * @param applyUpdates
-     * @return  null if no updates
+     * @return null if no updates
      */
-    NutsWorkspaceUpdateResult checkUpdates(boolean applyUpdates);
+    NutsUpdateWorkspaceCommand checkUpdates(boolean applyUpdates);
+
+    NutsWorkspaceUpdateResult getUpdateResult();
 }

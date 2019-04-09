@@ -7,6 +7,8 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsTerminal;
 
 public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
@@ -41,9 +43,14 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public String toString(NutsDescriptor descriptor) {
+        return format(descriptor);
+    }
+
+    @Override
+    public String format(NutsDescriptor descriptor) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         OutputStreamWriter w = new OutputStreamWriter(b);
-        format(descriptor, w);
+        print(descriptor, w);
         try {
             w.flush();
         } catch (IOException e) {
@@ -53,9 +60,9 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, OutputStream os) throws UncheckedIOException {
+    public void print(NutsDescriptor descriptor, OutputStream os) throws UncheckedIOException {
         OutputStreamWriter o = new OutputStreamWriter(os);
-        format(descriptor, o);
+        print(descriptor, o);
         try {
             o.flush();
         } catch (IOException e) {
@@ -64,38 +71,94 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().writeJson(descriptor, out, pretty);
+    public void println(NutsDescriptor descriptor, OutputStream os) throws UncheckedIOException {
+        OutputStreamWriter o = new OutputStreamWriter(os);
+        println(descriptor, o);
+        try {
+            o.flush();
+        } catch (IOException e) {
+            //
+        }
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException {
+    public void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
+        ws.io().writeJson(descriptor, out, pretty);
+
+    }
+
+    @Override
+    public void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
+        ws.io().writeJson(descriptor, out, pretty);
+        try {
+            out.write("\n");
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void print(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException {
         PrintWriter out1 = new PrintWriter(out);
-        format(descriptor, out1);
+        print(descriptor, out1);
         out1.flush();
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, File file) throws UncheckedIOException {
-        format(descriptor, file.toPath());
+    public void println(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException {
+        PrintWriter out1 = new PrintWriter(out);
+        println(descriptor, out1);
+        out1.flush();
     }
 
     @Override
-    public void format(NutsDescriptor descriptor) {
-        format(descriptor, ws.getTerminal());
+    public void print(NutsDescriptor descriptor, File file) throws UncheckedIOException {
+        print(descriptor, file.toPath());
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, NutsTerminal terminal) {
-        format(descriptor, terminal.getOut());
+    public void println(NutsDescriptor descriptor, File file) throws UncheckedIOException {
+        println(descriptor, file.toPath());
     }
 
     @Override
-    public void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
+    public void print(NutsDescriptor descriptor) {
+        print(descriptor, ws.getTerminal());
+    }
+
+    @Override
+    public void println(NutsDescriptor descriptor) {
+        println(descriptor, ws.getTerminal());
+    }
+
+    @Override
+    public void print(NutsDescriptor descriptor, NutsTerminal terminal) {
+        print(descriptor, terminal.getOut());
+    }
+
+    @Override
+    public void println(NutsDescriptor descriptor, NutsTerminal terminal) {
+        println(descriptor, terminal.getOut());
+    }
+
+    @Override
+    public void print(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
         try {
             Files.createDirectories(file.getParent());
             try (Writer os = Files.newBufferedWriter(file)) {
-                format(descriptor, os);
+                print(descriptor, os);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public void println(NutsDescriptor descriptor, Path file) throws UncheckedIOException {
+        try {
+            Files.createDirectories(file.getParent());
+            try (Writer os = Files.newBufferedWriter(file)) {
+                println(descriptor, os);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);

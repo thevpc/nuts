@@ -64,7 +64,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                                                 .setType(repoType))
                 );
                 if (repository == null) {
-                    throw new IllegalArgumentException("Unable to configure repository : " + repositoryName);
+                    throw new NutsIllegalArgumentException("Unable to configure repository : " + repositoryName);
                 }
                 trySave(context, ws, repository, autoSave, null);
             }

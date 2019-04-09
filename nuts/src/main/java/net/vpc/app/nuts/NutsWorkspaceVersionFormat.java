@@ -18,18 +18,31 @@ public interface NutsWorkspaceVersionFormat {
 
     @Override
     String toString();
-    
+
+    String format();
+
 //    String formatString();
+    void print(PrintStream out);
 
-    void format(PrintStream out);
+    void print(Writer out);
 
-    void format(Writer out);
+    void print(Path out);
 
-    void format(Path out);
+    void print(File out);
 
-    void format(File out);
+    void print();
 
-    void format();
+    void print(NutsTerminal terminal);
 
-    void format(NutsTerminal terminal);
+    void println(Writer w);
+
+    void println(PrintStream out);
+
+    void println(Path path);
+
+    void println();
+
+    void println(NutsTerminal terminal);
+
+    void println(File file);
 }

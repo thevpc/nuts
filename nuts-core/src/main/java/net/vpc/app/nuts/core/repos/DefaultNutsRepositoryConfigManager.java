@@ -33,16 +33,16 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
 
     public DefaultNutsRepositoryConfigManager(AbstractNutsRepository repository, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
         if (CoreStringUtils.isBlank(repositoryType)) {
-            throw new IllegalArgumentException("Missing Repository Type");
+            throw new NutsIllegalArgumentException("Missing Repository Type");
         }
         if (CoreStringUtils.isBlank(repositoryName)) {
-            throw new IllegalArgumentException("Missing Repository Name");
+            throw new NutsIllegalArgumentException("Missing Repository Name");
         }
         if (CoreStringUtils.isBlank(globalName)) {
-            throw new IllegalArgumentException("Missing Repository Global Name");
+            throw new NutsIllegalArgumentException("Missing Repository Global Name");
         }
         if (CoreStringUtils.isBlank(storeLocation)) {
-            throw new IllegalArgumentException("Missing folder");
+            throw new NutsIllegalArgumentException("Missing folder");
         }
         Path pfolder = repository.getWorkspace().io().path(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
@@ -224,11 +224,10 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     public String getUuid() {
         return config.getUuid();
     }
-    
 
     public void setConfig(NutsRepositoryConfig newConfig) {
         if (newConfig == null) {
-            throw new IllegalArgumentException("Missing Config");
+            throw new NutsIllegalArgumentException("Missing Config");
         }
         this.config = newConfig;
         if (this.config.getUuid() == null) {

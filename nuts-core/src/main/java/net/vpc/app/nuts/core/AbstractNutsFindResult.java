@@ -7,10 +7,13 @@ package net.vpc.app.nuts.core;
 
 import java.util.Iterator;
 import net.vpc.app.nuts.NutsFindResult;
+import net.vpc.app.nuts.NutsMissingElementsException;
+import net.vpc.app.nuts.NutsTooManyElementsException;
 
 /**
  *
  * @author vpc
+ * @param <T>
  */
 public abstract class AbstractNutsFindResult<T> implements NutsFindResult<T> {
 
@@ -29,11 +32,11 @@ public abstract class AbstractNutsFindResult<T> implements NutsFindResult<T> {
         if (it.hasNext()) {
             T t = it.next();
             if (it.hasNext()) {
-                throw new IllegalArgumentException("Too many Elements");
+                throw new NutsTooManyElementsException();
             }
             return t;
         } else {
-            throw new IllegalArgumentException("Missing Element");
+            throw new NutsMissingElementsException();
         }
     }
 

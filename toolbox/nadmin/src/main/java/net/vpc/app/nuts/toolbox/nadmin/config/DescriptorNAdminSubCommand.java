@@ -220,7 +220,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (save) {
                 if (file != null) {
-                    ws.formatter().createDescriptorFormat().setPretty(true).format(desc.build(), new File(file));
+                    ws.formatter().createDescriptorFormat().setPretty(true).print(desc.build(), new File(file));
                 } else {
                     if (cmdLine.isExecMode()) {
                         throw new NutsIllegalArgumentException("config new|update descriptor: -file missing");

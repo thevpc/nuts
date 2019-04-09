@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.InputSource;
 
 /**
  * Created by vpc on 2/20/17.
@@ -55,14 +56,14 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     protected abstract String getIdPath(NutsId id);
 
-    protected InputStream getStream(NutsId id, NutsRepositorySession session) {
+    protected InputSource getStream(NutsId id, NutsRepositorySession session) {
         String url = getIdPath(id);
         return openStream(id, url, id, session);
     }
 
     protected String getStreamAsString(NutsId id, NutsRepositorySession session) {
         String url = getIdPath(id);
-        return CoreIOUtils.loadString(openStream(id, url, id, session), true);
+        return CoreIOUtils.loadString(openStream(id, url, id, session).open(), true);
     }
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, NutsRepositorySession session) throws IOException {
@@ -78,8 +79,8 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
         try {
             String rhash = getStreamSHA1(id, session);
-            String lhash = CoreSecurityUtils.evalSHA1(stream, true);
-            if (!rhash.equals(lhash)) {
+            String lhash = CoreIOUtils.evalSHA1(stream, true);
+            if (!rhash.equalsIgnoreCase(lhash)) {
                 throw new IOException("Invalid file hash " + id);
             }
         } finally {
@@ -97,7 +98,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session);
+    protected abstract InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session);
 
     @Override
     public void pushImpl(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
@@ -116,14 +117,14 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
     @Override
     protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
-        InputStream stream = null;
+        InputSource stream = null;
         try {
             NutsDescriptor nutsDescriptor = null;
             byte[] bytes = null;
             NutsId idDesc = id.setFaceDescriptor();
             try {
                 stream = getStream(idDesc, session);
-                bytes = CoreIOUtils.loadByteArray(stream, true);
+                bytes = CoreIOUtils.loadByteArray(stream.open(), true);
                 nutsDescriptor = MavenUtils.parsePomXml(new ByteArrayInputStream(bytes), getWorkspace(), session, getIdPath(id));
             } finally {
                 if (stream != null) {
@@ -161,7 +162,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 return getIdComponentExtension(packaging);
             }
             default: {
-                throw new IllegalArgumentException("Unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException("Unsupported fact " + f);
             }
         }
     }

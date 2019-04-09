@@ -49,14 +49,14 @@ final class NutsWorkspaceClassPath {
     }
 
     public NutsWorkspaceClassPath(String id, String version, String dependencies, String repositories) {
-        if (NutsUtils.isEmpty(id)) {
-            throw new IllegalArgumentException("Missing id");
+        if (NutsUtils.isBlank(id)) {
+            throw new NutsIllegalArgumentException("Missing id");
         }
-        if (NutsUtils.isEmpty(version)) {
-            throw new IllegalArgumentException("Missing version");
+        if (NutsUtils.isBlank(version)) {
+            throw new NutsIllegalArgumentException("Missing version");
         }
-        if (NutsUtils.isEmpty(dependencies)) {
-            throw new IllegalArgumentException("Missing dependencies");
+        if (NutsUtils.isBlank(dependencies)) {
+            throw new NutsIllegalArgumentException("Missing dependencies");
         }
         if (repositories == null) {
             repositories = "";

@@ -46,8 +46,8 @@ import java.util.zip.ZipFile;
  * NutsBootWorkspace is responsible of loading initial nuts-core.jar and its
  * dependencies and for creating workspaces using the method
  * {@link #openWorkspace()} . NutsBootWorkspace is also responsible of managing
- * local jar cache folder located at $root/default-workspace/cache/bootstrap
- * where $root is the nuts root folder (~/.nuts)
+ * local jar cache folder located at $root/default-workspace/boot where $root is
+ * the nuts root folder (~/.nuts)
  * <p>
  * Default Bootstrap implementation. This class is responsible of loading
  * initial nuts-core.jar and its dependencies and for creating workspaces using
@@ -65,11 +65,11 @@ public class NutsBootWorkspace {
     private String runtimeId;
     private String actualVersion;
     private NutsClassLoaderProvider contextClassLoaderProvider;
-    private boolean newInstance;
+    private int newInstanceRequirements;
     private NutsBootConfig loadedBootConfig;
     private NutsBootConfig runningBootConfig;
+    private String requiredJavaCommand;
     private String requiredBootVersion;
-    private String bootJavaCommand;
     private String requiredJavaOptions;
     //    String workspaceLocation;
     private NutsBootId bootId;
@@ -116,55 +116,52 @@ public class NutsBootWorkspace {
         actualVersion = Nuts.getVersion();
         this.options = options;
         this.bootId = NutsBootId.parse(NutsConstants.Ids.NUTS_API + "#" + actualVersion);
-        newInstance = true;
-        if (options.getBootCommand() != null) {
-            switch (options.getBootCommand()) {
-                case UPDATE:
-                case CHECK_UPDATES:
-                case CLEANUP:
-                case RESET: {
-                    newInstance = false;
-                }
-            }
-        }
+        newInstanceRequirements = 0;
+//        if (options.getBootCommand() != null) {
+//            switch (options.getBootCommand()) {
+//                case UPDATE:
+//                case CHECK_UPDATES:
+//                case CLEANUP:
+//                case RESET: {
+//                    newInstanceRequirements = false;
+//                }
+//            }
+//        }
         runningBootConfig = new NutsBootConfig(options);
         NutsLogUtils.bootstrap(options.getLogConfig());
         log.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.getBootArgumentsString(true, true, true));
         loadedBootConfig = expandAllPaths(runningBootConfig);
-        NutsLogUtils.prepare(options.getLogConfig(), NutsUtils.syspath(runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS) + "/bootstrap/net/vpc/app/nuts/nuts/" + actualVersion));
+        NutsLogUtils.prepare(options.getLogConfig(), NutsUtils.syspath(runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS) + "/net/vpc/app/nuts/nuts/" + actualVersion));
 
         requiredBootVersion = options.getRequiredBootVersion();
         if (requiredBootVersion == null) {
             requiredBootVersion = loadedBootConfig.getApiVersion();
         }
-        bootJavaCommand = options.getBootJavaCommand();
-        if (bootJavaCommand == null) {
-            bootJavaCommand = loadedBootConfig.getJavaCommand();
+        requiredJavaCommand = options.getBootJavaCommand();
+        if (requiredJavaCommand == null) {
+            requiredJavaCommand = loadedBootConfig.getJavaCommand();
         }
         requiredJavaOptions = options.getBootJavaOptions();
         if (requiredJavaOptions == null) {
             requiredJavaOptions = loadedBootConfig.getJavaOptions();
         }
-        if ((requiredBootVersion == null || requiredBootVersion.trim().isEmpty() || requiredBootVersion.equals(actualVersion))
-                && NutsUtils.isActualJavaCommand(bootJavaCommand)) {
-            newInstance = false;
-        }
-        if (!newInstance) {
+        newInstanceRequirements = checkRequirements(true);
+        if (newInstanceRequirements == 0) {
             runningBootConfig.setApiVersion(actualVersion);
             runningBootConfig.setJavaCommand(null);
             runningBootConfig.setJavaOptions(null);
         }
         this.runtimeSourceURL = options.getBootRuntimeSourceURL();
-        this.runtimeId = NutsUtils.isEmpty(options.getBootRuntime()) ? null : NutsBootId.parse(options.getBootRuntime()).toString();
+        this.runtimeId = NutsUtils.isBlank(options.getBootRuntime()) ? null : NutsBootId.parse(options.getBootRuntime()).toString();
         this.contextClassLoaderProvider = options.getClassLoaderProvider() == null ? NutsDefaultClassLoaderProvider.INSTANCE : options.getClassLoaderProvider();
     }
 
-    public boolean isRequiredNewProcess() {
-        return newInstance;
+    public boolean hasUnsatisfiedRequirements() {
+        return newInstanceRequirements != 0;
     }
 
     public int startNewProcess() {
-        log.log(Level.FINE, "Running version {0}. Requested version {1}", new Object[]{actualVersion, requiredBootVersion});
+        log.log(Level.FINE, "Running version {0}.  {1}", new Object[]{actualVersion, getRequirementsHelpString(true)});
         StringBuilder errors = new StringBuilder();
         if ("LATEST".equalsIgnoreCase(requiredBootVersion) || "RELEASE".equalsIgnoreCase(requiredBootVersion)) {
             String releaseVersion = null;
@@ -191,7 +188,7 @@ public class NutsBootWorkspace {
         ));
         File file = NutsUtils.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + requiredBootVersion,
                 repos.toArray(new String[0]),
-                defaultWorkspaceLibFolder
+                loadedBootConfig.getBootsrap()//defaultWorkspaceLibFolder
         );
         if (file == null) {
             errors.append("Unable to load ").append(bootId).append("\n");
@@ -200,8 +197,8 @@ public class NutsBootWorkspace {
                     new NutsBootConfig()
                             .setApiVersion(requiredBootVersion)
                             .setRuntimeId(null)
-                            .setJavaCommand(bootJavaCommand)
-                            .setJavaOptions(bootJavaCommand),
+                            .setJavaCommand(requiredJavaCommand)
+                            .setJavaOptions(requiredJavaCommand),
                     options.getWorkspace(), null,
                     errors.toString()
             );
@@ -209,7 +206,7 @@ public class NutsBootWorkspace {
         }
 
         List<String> cmd = new ArrayList<>();
-        String jc = bootJavaCommand;
+        String jc = requiredJavaCommand;
         if (jc == null || jc.trim().isEmpty()) {
             jc = NutsUtils.resolveJavaCommand(null);
         }
@@ -224,12 +221,12 @@ public class NutsBootWorkspace {
                 }
             }
         }
-        Collections.addAll(cmd, NutsMinimalCommandLine.parseCommandLine(options.getBootJavaOptions()));
+//        Collections.addAll(cmd, NutsMinimalCommandLine.parseCommandLine(options.getBootJavaOptions()));
 //        cmd.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
         cmd.add("-jar");
         cmd.add(file.getPath());
         //cmd.add("--verbose");
-        cmd.addAll(Arrays.asList(options.getExportedBootArguments()));
+        cmd.addAll(Arrays.asList(options.getBootArguments(true, true, true)));
         if (showCommand) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < cmd.size(); i++) {
@@ -257,14 +254,14 @@ public class NutsBootWorkspace {
         LinkedHashMap<String, File> allExtensionFiles = new LinkedHashMap<>();
         info.bootConfig0 = runningBootConfig.copy();
         if (recover) {
-            if (!NutsUtils.isEmpty(info.bootConfig0.getRuntimeId())
-                    && !NutsUtils.isEmpty(info.bootConfig0.getRuntimeDependencies())) {
+            if (!NutsUtils.isBlank(info.bootConfig0.getRuntimeId())
+                    && !NutsUtils.isBlank(info.bootConfig0.getRuntimeDependencies())) {
                 log.log(Level.CONFIG, "[RECOV. ] Invalidating old  runtime.");
             }
             info.bootConfig0.setRuntimeId(null);
             info.bootConfig0.setRuntimeDependencies(null);
         }
-        if (!NutsUtils.isEmpty(info.bootConfig0.getApiVersion()) && !NutsUtils.isEmpty(info.bootConfig0.getRuntimeId()) && !NutsUtils.isEmpty(info.bootConfig0.getRuntimeDependencies())) {
+        if (!NutsUtils.isBlank(info.bootConfig0.getApiVersion()) && !NutsUtils.isBlank(info.bootConfig0.getRuntimeId()) && !NutsUtils.isBlank(info.bootConfig0.getRuntimeDependencies())) {
             //Ok
         } else {
             info.bootConfig0 = buildNutsBootConfig(info.bootConfig0, recover);
@@ -280,9 +277,9 @@ public class NutsBootWorkspace {
             throw new NutsInvalidWorkspaceException(this.runningBootConfig.getWorkspace(), "Unable to load ClassPath");
         }
 
-        String workspaceBootLibFolder = runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE) + "/bootstrap";
+        String workspaceBootLibFolder = runningBootConfig.getBootsrap();
         NutsBootId bootRuntime = null;
-        if (NutsUtils.isEmpty(info.actualBootConfig.getRuntimeId())) {
+        if (NutsUtils.isBlank(info.actualBootConfig.getRuntimeId())) {
             bootRuntime = NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
         } else if (info.actualBootConfig.getRuntimeId().contains("#")) {
             bootRuntime = NutsBootId.parse(info.actualBootConfig.getRuntimeId());
@@ -350,7 +347,7 @@ public class NutsBootWorkspace {
                 return actionCleanup(null, true);
             }
         }
-        if (isRequiredNewProcess()) {
+        if (hasUnsatisfiedRequirements()) {
             startNewProcess();
             return 0;
         }
@@ -489,7 +486,7 @@ public class NutsBootWorkspace {
             }
             if (info.actualBootConfig == null) {
                 info.actualBootConfig = new NutsBootConfig()
-                        .setApiVersion(NutsConstants.Ids.NUTS_API + "#" + this.actualVersion)
+                        .setApiVersion(this.actualVersion)
                         .setRuntimeId(runtimeId);
             }
             showError(
@@ -524,16 +521,6 @@ public class NutsBootWorkspace {
         return urls.toArray(new URL[0]);
     }
 
-//    private String[] resolveBootConfigRepositories(String... possibilities) {
-//        List<String> initial = new ArrayList<>();
-//        initial.add(runtimeSourceURL);
-////        initial.add(home + "/" + NutsConstants.BOOTSTRAP_REPOSITORY_NAME);
-//        if (possibilities != null) {
-//            initial.addAll(Arrays.asList(possibilities));
-//        }
-//        initial.add(NutsConstants.URL_BOOTSTRAP_REMOTE_NUTS_GIT);
-//        return NutsUtils.splitAndRemoveDuplicates(initial.toArray(new String[0]));
-//    }
     private String[] resolveBootClassPathRepositories(String... possibilities) {
         List<String> initial = new ArrayList<>();
         initial.add(runtimeSourceURL);
@@ -552,8 +539,8 @@ public class NutsBootWorkspace {
     }
 
     private NutsBootConfig buildNutsBootConfig(NutsBootConfig bootConfig0, boolean recover) {
-        String cacheFolder = runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE) + "/bootstrap";
-        NutsBootId apiId = NutsUtils.isEmpty(bootConfig0.getApiVersion()) ? bootId : new NutsBootId(bootId.getGroupId(), bootId.getArtifactId(), bootConfig0.getApiVersion());
+        String cacheFolder = runningBootConfig.getBootsrap();
+        NutsBootId apiId = NutsUtils.isBlank(bootConfig0.getApiVersion()) ? bootId : new NutsBootId(bootId.getGroupId(), bootId.getArtifactId(), bootConfig0.getApiVersion());
         String bootAPIPropertiesPath = '/' + getPathFile(apiId, apiId.getArtifactId() + ".properties");
         String runtimeId = bootConfig0.getRuntimeId();
         String repositories = bootConfig0.getRepositories();
@@ -562,7 +549,7 @@ public class NutsBootWorkspace {
             cacheRemoteOnly = false;
         }
         List<String> resolvedBootRepositories = new ArrayList<>();
-        if (NutsUtils.isEmpty(runtimeId) || NutsUtils.isEmpty(repositories)) {
+        if (NutsUtils.isBlank(runtimeId) || NutsUtils.isBlank(repositories)) {
             resolvedBootRepositories.addAll(Arrays.asList(NutsUtils.splitAndRemoveDuplicates(this.runtimeSourceURL, NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT)));
             for (String repo : resolvedBootRepositories) {
                 URL urlString = buildURL(repo, bootAPIPropertiesPath);
@@ -571,7 +558,7 @@ public class NutsBootWorkspace {
                     if (!wruntimeProperties.isEmpty()) {
                         String wruntimeId = wruntimeProperties.getProperty("bootRuntimeId");
                         String wrepositories = wruntimeProperties.getProperty("repositories");
-                        if (!NutsUtils.isEmpty(wruntimeId) && !NutsUtils.isEmpty(wrepositories)) {
+                        if (!NutsUtils.isBlank(wruntimeId) && !NutsUtils.isBlank(wrepositories)) {
                             runtimeId = wruntimeId;
                             repositories = wrepositories;
                             if (log.isLoggable(Level.CONFIG)) {
@@ -589,7 +576,7 @@ public class NutsBootWorkspace {
             }
         }
 
-        if (NutsUtils.isEmpty(runtimeId)) {
+        if (NutsUtils.isBlank(runtimeId)) {
             runtimeId = NutsConstants.Ids.NUTS_RUNTIME + "#" + apiId.getVersion() + ".0";
             log.log(Level.CONFIG, "[ERROR  ] Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
         }
@@ -608,7 +595,7 @@ public class NutsBootWorkspace {
                     String id = p.getProperty("project.id");
                     String version = p.getProperty("project.version");
                     String dependencies = p.getProperty("project.dependencies.compile");
-                    if (!NutsUtils.isEmpty(id) && !NutsUtils.isEmpty(version)) {
+                    if (!NutsUtils.isBlank(id) && !NutsUtils.isBlank(version)) {
                         String repositories0 = p.getProperty("project.repositories");
                         if (repositories0 == null) {
                             repositories0 = "";
@@ -652,7 +639,7 @@ public class NutsBootWorkspace {
                     NutsConstants.BootsrapURLs.REMOTE_MAVEN_CENTRAL,
                     NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT
             ));
-            if (!NutsUtils.isEmpty(repositories)) {
+            if (!NutsUtils.isBlank(repositories)) {
                 for (String r : repositories.split(";")) {
                     r = r.trim();
                     if (r.length() > 0) {
@@ -987,7 +974,7 @@ public class NutsBootWorkspace {
     }
 
     private String expandWorkspacePath(String workspace) {
-        if (NutsUtils.isEmpty(workspace)) {
+        if (NutsUtils.isBlank(workspace)) {
             workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
         }
         String uws = workspace.replace('\\', '/');
@@ -1042,14 +1029,14 @@ public class NutsBootWorkspace {
 
                 workspace.formatter().createWorkspaceVersionFormat()
                         .addOptions(o.getApplicationArguments())
-                        .format(out);
+                        .print(out);
                 out.println();
                 return 0;
             }
             case INFO: {
                 if (workspace == null) {
                     System.out.println("nuts-boot-api          :" + actualVersion);
-                    System.out.println("nuts-workspace         :" + runningBootConfig.getWorkspace() + "  ::  " + (NutsUtils.isEmpty(o.getWorkspace()) ? "<EMPTY>" : o.getWorkspace()));
+                    System.out.println("nuts-workspace         :" + runningBootConfig.getWorkspace() + "  ::  " + (NutsUtils.isBlank(o.getWorkspace()) ? "<EMPTY>" : o.getWorkspace()));
                     System.out.println("nuts-store-strategy    :" + runningBootConfig.getStoreLocationStrategy());
                     System.out.println("nuts-store-layout      :" + runningBootConfig.getStoreLocationLayout());
                     System.out.println("nuts-store-programs    :" + runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS));
@@ -1073,7 +1060,7 @@ public class NutsBootWorkspace {
                 PrintStream out = workspace.getTerminal().getFormattedOut();
                 workspace.formatter().createWorkspaceInfoFormat()
                         .addOptions(o.getApplicationArguments())
-                        .format(out);
+                        .print(out);
                 out.println();
                 return 0;
             }
@@ -1198,15 +1185,11 @@ public class NutsBootWorkspace {
                     }
                 } else {
                     final NutsSession session = workspace.createSession();
-                    NutsUpdateResult[] defs = workspace.update().ids(o.getApplicationArguments())
+                    NutsUpdateCommand defs = workspace.update().ids(o.getApplicationArguments())
                             .setTrace(true).setSession(session)
-                            .checkUpdates(false);
-                    boolean someUpdatable = false;
-                    for (NutsUpdateResult d : defs) {
-                        if (d.isUpdateAvailable()) {
-                            someUpdatable = true;
-                        }
-                    }
+                            .checkUpdates();
+
+                    boolean someUpdatable = defs.update().isUpdateAvailable();
                     if (someUpdatable) {
                         return 0;
                     }
@@ -1227,7 +1210,7 @@ public class NutsBootWorkspace {
                 } else {
                     final NutsSession session = workspace.createSession();
                     NutsUpdateResult[] defs = workspace.update().ids(o.getApplicationArguments())
-                            .setTrace(true).setSession(session).checkUpdates();
+                            .setTrace(true).setSession(session).checkUpdates().getUpdateResult();
                     boolean someUpdatable = false;
                     for (NutsUpdateResult d : defs) {
                         if (d.isUpdateAvailable()) {
@@ -1472,6 +1455,10 @@ public class NutsBootWorkspace {
         config.setWorkspace(lastConfigPath);
         if (lastConfigLoaded != null) {
             config.setWorkspace(lastConfigPath);
+            config.setApiVersion(lastConfigLoaded.getApiVersion());
+            config.setRuntimeId(lastConfigLoaded.getRuntimeId());
+            config.setJavaCommand(lastConfigLoaded.getJavaCommand());
+            config.setJavaOptions(lastConfigLoaded.getJavaOptions());
             config.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
             config.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
@@ -1481,7 +1468,7 @@ public class NutsBootWorkspace {
                 for (NutsStoreLocation loc : NutsStoreLocation.values()) {
                     String llid = layout.name().toLowerCase() + "." + loc.name().toLowerCase();
                     String homeLocation = lastConfigLoaded.getHomeLocation(layout, loc);
-                    if (!NutsUtils.isEmpty(homeLocation)) {
+                    if (!NutsUtils.isBlank(homeLocation)) {
                         config.setHomeLocation(layout, loc, homeLocation);
                     } else if (options.getHomeLocation(layout, loc) != null) {
 //                        System.err.println("runtime option "+llid+"="+options.getHomeLocation(layout, loc)+" is ignored");
@@ -1502,7 +1489,7 @@ public class NutsBootWorkspace {
             String[] homes = new String[NutsStoreLocation.values().length];
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
                 homes[type.ordinal()] = NutsPlatformUtils.resolveHomeFolder(storeLocationLayout, type, homeLocations, config.isGlobal());
-                if (NutsUtils.isEmpty(homes[type.ordinal()])) {
+                if (NutsUtils.isBlank(homes[type.ordinal()])) {
                     throw new NutsIllegalArgumentException("Missing Home for " + type.name().toLowerCase());
                 }
             }
@@ -1530,7 +1517,7 @@ public class NutsBootWorkspace {
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
                 switch (type) {
                     default: {
-                        if (NutsUtils.isEmpty(config.getStoreLocation(type))) {
+                        if (NutsUtils.isBlank(config.getStoreLocation(type))) {
                             switch (storeLocationStrategy) {
                                 case STANDALONE: {
                                     config.setStoreLocation(type, (workspace + File.separator + type.name().toLowerCase()));
@@ -1559,6 +1546,57 @@ public class NutsBootWorkspace {
             }
         }
         return config;
+    }
+
+    public String getRequiredBootVersion() {
+        return requiredBootVersion;
+    }
+
+    public String getRequiredJavaOptions() {
+        return requiredJavaOptions;
+    }
+
+    public String getRequiredJavaCommand() {
+        return requiredJavaCommand;
+    }
+
+    private int checkRequirements(boolean insatistfiedOnly) {
+        int req = 0;
+        if (!NutsUtils.isBlank(requiredBootVersion)) {
+            if ((insatistfiedOnly && !requiredBootVersion.equals(actualVersion)) || !insatistfiedOnly) {
+                req += 1;
+            }
+        }
+        if (!NutsUtils.isBlank(requiredJavaCommand)) {
+            if ((insatistfiedOnly && NutsUtils.isActualJavaCommand(requiredJavaCommand)) || !insatistfiedOnly) {
+                req += 2;
+            }
+        }
+        if (!NutsUtils.isBlank(requiredJavaOptions)) {
+            if ((insatistfiedOnly && NutsUtils.isActualJavaOptions(requiredJavaOptions)) || !insatistfiedOnly) {
+                req += 4;
+            }
+        }
+        return req;
+    }
+
+    public String getRequirementsHelpString(boolean insatistfiedOnly) {
+        int req = insatistfiedOnly ? newInstanceRequirements : checkRequirements(false);
+        StringBuilder sb = new StringBuilder();
+        if ((req & 1) != 0) {
+            sb.append("Nuts Version " + requiredBootVersion);
+        }
+        if ((req & 2) != 0) {
+            sb.append("Java Command " + requiredJavaCommand);
+        }
+        if ((req & 4) != 0) {
+            sb.append("Java Options " + requiredJavaCommand);
+        }
+        if (sb.length() > 0) {
+            sb.insert(0, "Required ");
+            return sb.toString();
+        }
+        return null;
     }
 
 }

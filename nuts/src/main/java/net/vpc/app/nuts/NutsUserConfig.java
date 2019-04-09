@@ -122,7 +122,7 @@ public final class NutsUserConfig implements Serializable {
 
 
     public void removeRight(String right) {
-        if (!NutsUtils.isEmpty(right)) {
+        if (!NutsUtils.isBlank(right)) {
             rights.remove(right);
         }
     }

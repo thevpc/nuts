@@ -229,7 +229,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         if (o instanceof SPrintStream2) {
             return ((SPrintStream2) o).out.getStringBuffer();
         }
-        throw new IllegalArgumentException("No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException("No Buffer was configured. Should call setOutString");
     }
 
     @Override
@@ -241,7 +241,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         if (o instanceof SPrintStream2) {
             return ((SPrintStream2) o).out.getStringBuffer();
         }
-        throw new IllegalArgumentException("No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException("No Buffer was configured. Should call setOutString");
     }
 
     @Override
@@ -498,7 +498,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
             NutsFetchCommand p = ws.fetch();
             p.setTransitive(true);
 
-            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createSource(cmdName), p, session)) {
+            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createInputSource(cmdName), p, session)) {
                 if (c.descriptor == null) {
                     //this is a native file?
                     c.descriptor = TEMP_DESC;

@@ -15,9 +15,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
 
@@ -66,24 +67,48 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     @Override
-    public void format() {
-        format(ws.getTerminal());
+    public void print() {
+        print(ws.getTerminal());
     }
 
     @Override
-    public void format(NutsTerminal terminal) {
-        format(terminal.getOut());
+    public void println() {
+        println(ws.getTerminal());
     }
 
     @Override
-    public void format(File file) {
-        format(file.toPath());
+    public void print(NutsTerminal terminal) {
+        print(terminal.getOut());
     }
 
     @Override
-    public void format(Path path) {
+    public void println(NutsTerminal terminal) {
+        println(terminal.getOut());
+    }
+
+    @Override
+    public void print(File file) {
+        print(file.toPath());
+    }
+
+    @Override
+    public void println(File file) {
+        println(file.toPath());
+    }
+
+    @Override
+    public void print(Path path) {
         try (Writer w = Files.newBufferedWriter(path)) {
-            format(w);
+            print(w);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void println(Path path) {
+        try (Writer w = Files.newBufferedWriter(path)) {
+            println(w);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -91,6 +116,11 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
     @Override
     public String toString() {
+        return format();
+    }
+
+    @Override
+    public String format() {
         ByteArrayPrintStream out = new ByteArrayPrintStream();
         PrintWriter w = new PrintWriter(out);
         format0(w);
@@ -99,15 +129,32 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     @Override
-    public void format(PrintStream out) {
+    public void print(PrintStream out) {
         PrintWriter p = new PrintWriter(out);
-        format(p);
+        print(p);
         p.flush();
     }
 
     @Override
-    public void format(Writer w) {
+    public void println(PrintStream out) {
+        PrintWriter p = new PrintWriter(out);
+        println(p);
+        p.flush();
+    }
+
+    @Override
+    public void print(Writer w) {
         format0(w);
+    }
+
+    @Override
+    public void println(Writer w) {
+        try {
+            format0(w);
+            w.write("\n");
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
 //    @Override

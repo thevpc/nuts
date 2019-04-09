@@ -44,9 +44,9 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String bootRepositories = null;
     private String bootJavaCommand = null;
     private String bootJavaOptions = null;
-    // folder types and layout types are exploded so thta it is easier 
+    // folder types and layout types are exploded so that it is easier 
     // to extract from json file eventhough no json library is available
-    // visa simple regexp
+    // via simple regexp
     private String programsStoreLocation = null;
     private String configStoreLocation = null;
     private String varStoreLocation = null;

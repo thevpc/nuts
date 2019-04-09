@@ -63,28 +63,6 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
             }
         }
         if (descriptorFilter != null) {
-//            NutsDescriptor descriptor = sid.getDescriptor(ws);
-//            try {
-//                if (descriptor == null) {
-//                    descriptor = repository.fetchDescriptor(sid.getId(ws), session);
-//                }
-//                if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
-//                    NutsDescriptor nutsDescriptor = null;
-//                    try {
-//                        nutsDescriptor = repository.getWorkspace().resolveEffectiveDescriptor(descriptor, session);
-//                    } catch (Exception e) {
-//                        //throw new NutsException(e);
-//                    }
-//                    descriptor = nutsDescriptor;
-//                }
-//            } catch (Exception ex) {
-//                //suppose we cannot retrieve descriptor
-//                if (log.isLoggable(Level.FINER)) {
-//                    log.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.getName() + " : " + ex.toString());
-//                }
-//                return false;
-//            }
-//            if (!descriptorFilter.accept(descriptor)) {
             if (!descriptorFilter.acceptSearchId(sid, ws)) {
                 return false;
             }

@@ -553,7 +553,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         String nn = config().getDefaultIdFilename(effDesc.getId().setFace("cache-eff-nuts"));
         Path eff = l.resolve(nn);
         try {
-            formatter().createDescriptorFormat().setPretty(true).format(effDesc, eff);
+            formatter().createDescriptorFormat().setPretty(true).print(effDesc, eff);
         } catch (Exception ex) {
             //
         }

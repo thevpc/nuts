@@ -44,7 +44,7 @@ public interface NutsFindResult<T> extends Iterable<T> {
      * to consume. An IllegalArgumentException is also thrown if the are more
      * than one element consumed
      */
-    T singleton();
+    T singleton() throws NutsTooManyElementsException, NutsMissingElementsException;
 
     /**
      *

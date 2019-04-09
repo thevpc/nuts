@@ -36,5 +36,5 @@ public enum NutsStoreLocation {
     LOGS,
     TEMP,
     CACHE,
-    LIB,
+    LIB
 }

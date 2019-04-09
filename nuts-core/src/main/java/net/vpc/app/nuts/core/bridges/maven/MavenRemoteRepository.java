@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.InputSource;
 import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadata;
 
 /**
@@ -72,7 +73,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
-                metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session);
+                metadataStream = openStream(id, metadataURL, id.setFace(NutsConstants.QueryFaces.CATALOG), session).open();
             } catch (UncheckedIOException ex) {
                 throw new NutsNotFoundException(id, ex);
             }
@@ -113,10 +114,14 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             return Collections.emptyIterator();
         }
+        //TODO
         String url = CoreIOUtils.buildUrl(config().getLocation(true), "/archetype-catalog.xml");
         try {
-            InputStream s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", config().getLocation(true)).setFace(NutsConstants.QueryFaces.CATALOG), session);
-            return MavenUtils.createArchetypeCatalogIterator(s, filter, true);
+            InputSource s = CoreIOUtils.getCachedUrlWithSHA1(getWorkspace(), url, session.getSession());
+            final InputStream is = getWorkspace().io().monitorInputStream(s.open(), session);
+            return MavenUtils.createArchetypeCatalogIterator(is, filter, true);
+//            InputSource s = openStream(null, url, CoreNutsUtils.parseNutsId("internal:repository").setQueryProperty("location", config().getLocation(true)).setFace(NutsConstants.QueryFaces.CATALOG), session);
+//            return MavenUtils.createArchetypeCatalogIterator(s.open(), filter, true);
         } catch (UncheckedIOException ex) {
             return Collections.emptyIterator();
         }
@@ -176,9 +181,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             String p = getIdPath(id);
             Path tempFile = getWorkspace().io().createTempFile(new File(p).getName(), this);
             try {
-                getWorkspace().io().copy().from(getStream(id, session)).to(tempFile).check(new NutsPathCopyAction.Checker() {
+                getWorkspace().io().copy().from(getStream(id, session)).to(tempFile).validator(new NutsPathCopyAction.Validator() {
                     @Override
-                    public void check(Path path) {
+                    public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
                             checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), in, session);
                         } catch (IOException ex) {
@@ -192,9 +197,9 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             return new NutsContent(tempFile, false, true);
         } else {
             try {
-                getWorkspace().io().copy().from(getStream(id, session)).to(localPath).check(new NutsPathCopyAction.Checker() {
+                getWorkspace().io().copy().from(getStream(id, session)).to(localPath).validator(new NutsPathCopyAction.Validator() {
                     @Override
-                    public void check(Path path) {
+                    public void validate(Path path) {
                         try (InputStream in = Files.newInputStream(path)) {
                             checkSHA1Hash(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), in, session);
                         } catch (IOException ex) {
@@ -219,7 +224,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
+    protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
         long startTime = System.currentTimeMillis();
         try {
             InputStream in = getWorkspace().io().monitorInputStream(path, source, session);
@@ -230,7 +235,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                     traceMessage(session, id, TraceResult.SUCCESS, message, startTime);
                 }
             }
-            return in;
+            return CoreIOUtils.createInputSource(in);
         } catch (RuntimeException ex) {
             if (log.isLoggable(Level.FINEST)) {
                 if (CoreIOUtils.isPathHttp(path)) {

@@ -15,6 +15,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.InputSource;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ZipOptions;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
@@ -217,8 +218,8 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
         try {
             Path tempFile = null;
             Object content = this.getContent();
-            CoreIOUtils.SourceItem contentSource;
-            contentSource = CoreIOUtils.createSource(content).toMultiReadSourceItem();
+            InputSource contentSource;
+            contentSource = CoreIOUtils.createInputSource(content).multi();
             NutsDescriptor descriptor = buildDescriptor();
 
             CharacterizedFile characterizedFile = null;
@@ -253,14 +254,14 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                             descriptor2 = ws.parser().parseDescriptor(descFile);
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, 
-                                    CoreIOUtils.createSource(contentFile).toMultiReadSourceItem()
+                                    CoreIOUtils.createInputSource(contentFile).multi()
                                     , fetchOptions, session);
                         }
                         if (descriptor == null) {
                             descriptor = descriptor2;
                         } else {
                             if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                                ws.formatter().createDescriptorFormat().setPretty(true).format(descriptor, descFile);
+                                ws.formatter().createDescriptorFormat().setPretty(true).print(descriptor, descFile);
                             }
                         }
                         if (descriptor != null) {
@@ -279,7 +280,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                         }
                     } else {
                         if (descriptor == null) {
-                            descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, CoreIOUtils.createSource(contentFile).toMultiReadSourceItem(), fetchOptions, session);
+                            descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, session);
                         }
                     }
                     if (descriptor == null) {
@@ -369,10 +370,10 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
             }
             return mdescriptor;
         } else if (CoreIOUtils.isValidInputStreamSource(descriptor.getClass())) {
-            CoreIOUtils.SourceItem inputStreamSource = CoreIOUtils.createSource(descriptor);
+            InputSource inputStreamSource = CoreIOUtils.createInputSource(descriptor);
             if (getDescSHA1() != null) {
-                inputStreamSource = inputStreamSource.toMultiReadSourceItem();
-                if (!CoreSecurityUtils.evalSHA1(inputStreamSource.open(), true).equals(getDescSHA1())) {
+                inputStreamSource = inputStreamSource.multi();
+                if (!CoreIOUtils.evalSHA1(inputStreamSource.open(), true).equalsIgnoreCase(getDescSHA1())) {
                     throw new NutsIllegalArgumentException("Invalid Content Hash");
                 }
             }

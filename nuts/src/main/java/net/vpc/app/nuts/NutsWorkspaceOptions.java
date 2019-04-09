@@ -373,7 +373,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
                 for (int j = 0; j < NutsStoreLocation.values().length; j++) {
                     String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    if (!NutsUtils.isEmpty(s)) {
+                    if (!NutsUtils.isBlank(s)) {
                         NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[i];
                         NutsStoreLocation folder = NutsStoreLocation.values()[j];
                         //config is exported!
@@ -384,35 +384,35 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                     }
                 }
             }
-            if (!NutsUtils.isEmpty(bootRuntime)) {
+            if (!NutsUtils.isBlank(bootRuntime)) {
                 all.add("--boot-runtime");
                 all.add(bootRuntime);
             }
-            if (!NutsUtils.isEmpty(bootJavaCommand)) {
+            if (!NutsUtils.isBlank(bootJavaCommand)) {
                 all.add("--java");
                 all.add(bootJavaCommand);
             }
-            if (!NutsUtils.isEmpty(bootJavaOptions)) {
+            if (!NutsUtils.isBlank(bootJavaOptions)) {
                 all.add("--java-options");
                 all.add(bootJavaOptions);
             }
-            if (!NutsUtils.isEmpty(bootJavaOptions)) {
+            if (!NutsUtils.isBlank(bootJavaOptions)) {
                 all.add("--java-options");
                 all.add(bootJavaOptions);
             }
-            if (!NutsUtils.isEmpty(workspace)) {
+            if (!NutsUtils.isBlank(workspace)) {
                 all.add("--workspace");
                 all.add(NutsUtils.getAbsolutePath(workspace));
             }
-            if (!NutsUtils.isEmpty(login)) {
+            if (!NutsUtils.isBlank(login)) {
                 all.add("--login");
                 all.add(login);
             }
-            if (!NutsUtils.isEmpty(password)) {
+            if (!NutsUtils.isBlank(password)) {
                 all.add("--password");
                 all.add(password);
             }
-            if (!NutsUtils.isEmpty(requiredBootVersion)) {
+            if (!NutsUtils.isBlank(requiredBootVersion)) {
                 all.add("--boot-version");
                 all.add(requiredBootVersion);
             }
@@ -432,11 +432,11 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                     all.add("--log-size");
                     all.add(String.valueOf(logConfig.getLogSize()));
                 }
-                if (!NutsUtils.isEmpty(logConfig.getLogFolder())) {
+                if (!NutsUtils.isBlank(logConfig.getLogFolder())) {
                     all.add("--log-folder");
                     all.add(NutsUtils.getAbsolutePath(logConfig.getLogFolder()));
                 }
-                if (!NutsUtils.isEmpty(logConfig.getLogName())) {
+                if (!NutsUtils.isBlank(logConfig.getLogName())) {
                     all.add("--log-name");
                     all.add(logConfig.getLogName());
                 }
@@ -474,7 +474,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             }
         }
         if (createOptions) {
-            if (!NutsUtils.isEmpty(archetype)) {
+            if (!NutsUtils.isBlank(archetype)) {
                 all.add("--archetype");
                 all.add(archetype);
             }
@@ -491,7 +491,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                 all.add(repositoryStoreLocationStrategy.toString().toLowerCase());
             }
             for (int i = 0; i < storeLocations.length; i++) {
-                if (!NutsUtils.isEmpty(storeLocations[i])) {
+                if (!NutsUtils.isBlank(storeLocations[i])) {
                     all.add("--" + NutsStoreLocation.values()[i].name().toLowerCase() + "-location");
                     all.add(storeLocations[i]);
                 }
@@ -499,7 +499,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
                 for (int j = 0; j < NutsStoreLocation.values().length; j++) {
                     String s = homeLocations[i * NutsStoreLocation.values().length + j];
-                    if (!NutsUtils.isEmpty(s)) {
+                    if (!NutsUtils.isBlank(s)) {
                         NutsStoreLocationLayout layout = NutsStoreLocationLayout.values()[i];
                         NutsStoreLocation folder = NutsStoreLocation.values()[j];
                         //config is exported!

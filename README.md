@@ -20,8 +20,8 @@ that depicts dependencies between them. This dependency is seamlessly handled by
 resolve and download on-need dependencies over the wire.
 
 **nuts** is a swiss army knife tool as it acts like (and supports) *maven* build tool to have an abstract
-view of the the  packages dependency, like  *zypper/apt-get*  package manager tools  to  install and
-uninstall packages allowing multiple versions of the very same package to  be installed.
+view of the the  packages dependency and like  *npm*, **pip** or *zypper/apt-get*  package manager tools  
+to  install and uninstall packages allowing multiple versions of the very same package to  be installed.
 
 ## COMMON VERBS:
 + deploy,undeploy   : to handle packages (package installers) on the local repositories

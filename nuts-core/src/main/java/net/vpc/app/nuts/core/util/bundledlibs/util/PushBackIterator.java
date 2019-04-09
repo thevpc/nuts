@@ -30,6 +30,7 @@
 package net.vpc.app.nuts.core.util.bundledlibs.util;
 
 import java.util.Iterator;
+import net.vpc.app.nuts.NutsUnsupportedOperationException;
 
 /**
  * Created by vpc on 3/19/17.
@@ -80,7 +81,7 @@ public class PushBackIterator<T> implements Iterator<T> {
     @Override
     public void remove() {
         if (lastHasNext == null) {
-            throw new IllegalArgumentException("Unsupported");
+            throw new NutsUnsupportedOperationException("Unsupported");
         }
         base.remove();
     }
@@ -89,7 +90,7 @@ public class PushBackIterator<T> implements Iterator<T> {
         if (lastHasNext == null || !lastValConsumed) {
             lastHasNext = true;
         } else {
-            throw new IllegalArgumentException("Unsupported");
+            throw new NutsUnsupportedOperationException("Unsupported");
         }
     }
 }

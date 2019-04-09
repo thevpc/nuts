@@ -1,6 +1,7 @@
 package net.vpc.app.nuts.core.util;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsUnexpectedException;
 
 public class MultiKeyMap<K, V> {
     private Map<K, Base<K, V>> keyMap = new LinkedHashMap<>();
@@ -81,7 +82,7 @@ public class MultiKeyMap<K, V> {
             s2.add(k1);
         } else {
             if (s1 != s2) {
-                throw new IllegalArgumentException("Impossible");
+                throw new NutsUnexpectedException();
             }
         }
     }

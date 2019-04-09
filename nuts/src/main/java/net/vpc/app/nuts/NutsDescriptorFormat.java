@@ -46,20 +46,35 @@ public interface NutsDescriptorFormat {
 
     NutsDescriptorFormat setPretty(boolean pretty);
 
-//    String formatString(NutsDescriptor descriptor);
-    void format(NutsDescriptor descriptor);
+    void print(NutsDescriptor descriptor);
 
-    void format(NutsDescriptor descriptor, NutsTerminal terminal);
+    void println(NutsDescriptor descriptor);
 
-    void format(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
+    void print(NutsDescriptor descriptor, NutsTerminal terminal);
 
-    void format(NutsDescriptor descriptor, File file) throws UncheckedIOException;
+    void println(NutsDescriptor descriptor, NutsTerminal terminal);
 
-    void format(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException;
+    void print(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
 
-    void format(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
+    void println(NutsDescriptor descriptor, Path file) throws UncheckedIOException;
 
-    void format(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
+    void print(NutsDescriptor descriptor, File file) throws UncheckedIOException;
+
+    void println(NutsDescriptor descriptor, File file) throws UncheckedIOException;
+
+    void print(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException;
+
+    void println(NutsDescriptor descriptor, PrintStream out) throws UncheckedIOException;
+
+    void print(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
+
+    void println(NutsDescriptor descriptor, OutputStream out) throws UncheckedIOException;
+
+    void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
+
+    void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException;
 
     String toString(NutsDescriptor descriptor);
+
+    String format(NutsDescriptor descriptor);
 }

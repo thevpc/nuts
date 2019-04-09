@@ -69,9 +69,13 @@ public interface NutsUpdateCommand {
 
     NutsUpdateCommand setEnableInstall(boolean enableInstall);
 
-    NutsUpdateResult[] update();
-
-    NutsUpdateResult[] checkUpdates();
+    NutsUpdateCommand update();
     
-    NutsUpdateResult[] checkUpdates(boolean applyUpdates);
+    boolean isUpdateAvailable() ;
+
+    NutsUpdateResult[] getUpdateResult();
+
+    NutsUpdateCommand checkUpdates();
+
+    NutsUpdateCommand checkUpdates(boolean applyUpdates);
 }

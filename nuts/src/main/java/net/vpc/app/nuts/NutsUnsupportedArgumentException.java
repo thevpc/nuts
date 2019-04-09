@@ -29,18 +29,24 @@
  */
 package net.vpc.app.nuts;
 
-/**
- * Generic usage Object filter interface
- * Created by vpc on 1/9/17.
- *
- * @param <T>
- */
-public interface NutsObjectFilter<T> {
+public class NutsUnsupportedArgumentException extends NutsException {
 
-    /**
-     * filter method
-     * @param value value to test against
-     * @return true if the value is accepted by the filter
-     */
-    boolean accept(T value);
+    public NutsUnsupportedArgumentException() {
+    }
+
+    public NutsUnsupportedArgumentException(String message) {
+        super(message);
+    }
+
+    public NutsUnsupportedArgumentException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public NutsUnsupportedArgumentException(Throwable cause) {
+        super(cause);
+    }
+
+    public NutsUnsupportedArgumentException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

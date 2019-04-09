@@ -32,11 +32,7 @@ package net.vpc.app.nuts.core.util;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 /**
@@ -44,11 +40,10 @@ import java.util.Base64;
  */
 public class CoreSecurityUtils {
 
-    private final static char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
 
     public static byte[] httpDecrypt(byte[] data, String passphrase) {
         try {
-            byte[] key = evalMD5(passphrase);
+            byte[] key = CoreIOUtils.evalMD5(passphrase);
             Cipher c = Cipher.getInstance("AES");
             SecretKeySpec k = new SecretKeySpec(key, "AES");
             c.init(Cipher.DECRYPT_MODE, k);
@@ -60,19 +55,10 @@ public class CoreSecurityUtils {
         }
     }
 
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARR[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARR[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
 
     public static byte[] httpEncrypt(byte[] data, String passphrase) {
         try {
-            byte[] key = evalMD5(passphrase);
+            byte[] key = CoreIOUtils.evalMD5(passphrase);
             Cipher c = null;
 
             c = Cipher.getInstance("AES");
@@ -85,95 +71,4 @@ public class CoreSecurityUtils {
         }
     }
 
-    public static String evalSHA1(Path file) {
-        try {
-            return evalSHA1(Files.newInputStream(file), true);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public static String evalSHA1(File file) {
-        try {
-            return evalSHA1(new FileInputStream(file), true);
-        } catch (FileNotFoundException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public static String evalSHA1(String input) {
-        return evalSHA1(new ByteArrayInputStream(input.getBytes()), true);
-    }
-
-    public static byte[] evalMD5(String input) {
-        try {
-            byte[] bytesOfMessage = input.getBytes("UTF-8");
-            return evalMD5(bytesOfMessage);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public static byte[] evalMD5(byte[] bytesOfMessage) {
-        try {
-
-            MessageDigest md;
-
-            md = MessageDigest.getInstance("MD5");
-            return md.digest(bytesOfMessage);
-        } catch (NoSuchAlgorithmException e) {
-            throw new UncheckedIOException(new IOException(e));
-        }
-    }
-
-    public static String evalSHA1(InputStream input, boolean closeStream) {
-        try {
-            MessageDigest sha1 = null;
-
-            try {
-                sha1 = MessageDigest.getInstance("SHA-1");
-            } catch (NoSuchAlgorithmException ex) {
-                throw new UncheckedIOException(new IOException(ex));
-            }
-
-            byte[] buffer = new byte[8192];
-            int len = 0;
-            try {
-                len = input.read(buffer);
-
-                while (len != -1) {
-                    sha1.update(buffer, 0, len);
-                    len = input.read(buffer);
-                }
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-
-            return toHexString(sha1.digest());
-        } finally {
-            if (closeStream) {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-            }
-        }
-    }
-
-    public static String toHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (byte aByte : bytes) {
-            sb.append(toHex(aByte >> 4));
-            sb.append(toHex(aByte));
-        }
-
-        return sb.toString();
-    }
-
-    private static char toHex(int nibble) {
-        return HEX_ARR[nibble & 0xF];
-    }
 }

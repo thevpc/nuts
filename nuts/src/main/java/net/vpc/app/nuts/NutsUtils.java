@@ -60,7 +60,7 @@ final class NutsUtils {
     private static final Pattern JSON_BOOT_KEY_VAL = Pattern.compile("\"(?<key>(.+))\"\\s*:\\s*\"(?<val>[^\"]*)\"");
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
-    public static boolean isEmpty(String str) {
+    public static boolean isBlank(String str) {
         return str == null || str.trim().length() == 0;
     }
 
@@ -119,7 +119,7 @@ final class NutsUtils {
     public static String[] splitAndRemoveDuplicates(String... possibilities) {
         LinkedHashSet<String> allValid = new LinkedHashSet<>();
         for (String v : possibilities) {
-            if (!isEmpty(v)) {
+            if (!isBlank(v)) {
                 v = v.trim();
                 for (String v0 : v.split(";")) {
                     v0 = v0.trim();
@@ -346,13 +346,16 @@ final class NutsUtils {
 
     public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder) {
         String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
+        File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
+        if(cachedFile.isFile()){
+            return cachedFile;
+        }
         for (String r : repositories) {
             log.fine("Checking " + nutsId + " jar from " + r);
             String path = resolveMavenFullPath(r, nutsId, "jar");
             File file = toFile(r);
             if (file == null) {
                 try {
-                    File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
                     copy(new URL(path), cachedFile);
                     log.log(Level.CONFIG, "[CACHED ] Cached jar file {0}", new Object[]{cachedFile.getPath()});
                     return cachedFile;
@@ -562,14 +565,14 @@ final class NutsUtils {
         String id = properties.getProperty("project.id");
         String version = properties.getProperty("project.version");
         String dependencies = properties.getProperty("project.dependencies.compile");
-        if (NutsUtils.isEmpty(id)) {
-            throw new IllegalArgumentException("Missing id");
+        if (NutsUtils.isBlank(id)) {
+            throw new NutsIllegalArgumentException("Missing id");
         }
-        if (NutsUtils.isEmpty(version)) {
-            throw new IllegalArgumentException("Missing version");
+        if (NutsUtils.isBlank(version)) {
+            throw new NutsIllegalArgumentException("Missing version");
         }
-        if (NutsUtils.isEmpty(dependencies)) {
-            throw new IllegalArgumentException("Missing dependencies");
+        if (NutsUtils.isBlank(dependencies)) {
+            throw new NutsIllegalArgumentException("Missing dependencies");
         }
         String repositories = properties.getProperty("project.repositories");
         if (repositories == null) {
@@ -646,7 +649,7 @@ final class NutsUtils {
         String exe = NutsPlatformUtils.getPlatformOsFamily().equals("windows") ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
-            if (NutsUtils.isEmpty(javaHome) || "null".equals(javaHome)) {
+            if (NutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
                 //this may happen is using a precompiled image (such as with graalvm)
                 return exe;
             }
@@ -871,12 +874,17 @@ final class NutsUtils {
         return false;
     }
 
+    public static boolean isActualJavaOptions(String options) {
+        //FIX ME
+        return true;
+    }
+    
     public static boolean isActualJavaCommand(String cmd) {
         if (cmd == null || cmd.trim().isEmpty()) {
             return true;
         }
         String javaHome = System.getProperty("java.home");
-        if (NutsUtils.isEmpty(javaHome) || "null".equals(javaHome)) {
+        if (NutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
             return cmd.equals("java") || cmd.equals("java.exe") || cmd.equals("javaw.exe") || cmd.equals("javaw");
         }
         String jh = javaHome.replace("\\", "/");
@@ -925,7 +933,7 @@ final class NutsUtils {
     }
 
     public static File toFile(String url) {
-        if (isEmpty(url)) {
+        if (isBlank(url)) {
             return null;
         }
         URL u = null;

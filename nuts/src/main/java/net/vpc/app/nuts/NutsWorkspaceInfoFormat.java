@@ -45,17 +45,31 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat addOptions(String... o);
 
-//    String formatString();
+    String toString();
 
-    void format(Path out);
+    String format();
 
-    void format(File out);
+    void print(Path out);
 
-    void format(Writer out);
+    void println(Path out);
 
-    void format(PrintStream out);
+    void print(File out);
 
-    void format();
+    void println(File out);
 
-    void format(NutsTerminal terminal);
+    void print(Writer out);
+
+    void println(Writer out);
+
+    void print(PrintStream out);
+
+    void println(PrintStream out);
+
+    void print();
+
+    void println();
+
+    void print(NutsTerminal terminal);
+
+    void println(NutsTerminal terminal);
 }

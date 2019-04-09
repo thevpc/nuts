@@ -264,10 +264,10 @@ public class NutsRepositoryFolderHelper {
             log.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
         }
 
-        getWorkspace().formatter().createDescriptorFormat().setPretty(true).format(deployment.getDescriptor(), descFile);
+        getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(deployment.getDescriptor(), descFile);
         getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().getSHA1(deployment.getDescriptor()).getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         getWorkspace().io().copy().from(deployment.getContent()).to(pckFile).safeCopy().run();
-        getWorkspace().io().copy().from(new ByteArrayInputStream(CoreSecurityUtils.evalSHA1(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
+        getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
         if (repo instanceof AbstractNutsRepository) {
             ((AbstractNutsRepository) repo).fireOnDeploy(new NutsContentEvent(pckFile, deployment, getWorkspace(), repo));
         }

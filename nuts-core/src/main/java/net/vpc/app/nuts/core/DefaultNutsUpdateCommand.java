@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.vpc.app.nuts.NutsConstants;
@@ -19,6 +20,8 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsUnexpectedException;
+import net.vpc.app.nuts.NutsUnsupportedOperationException;
 import net.vpc.app.nuts.NutsUpdateCommand;
 import net.vpc.app.nuts.NutsUpdateResult;
 import net.vpc.app.nuts.NutsVersion;
@@ -41,6 +44,8 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
     private List<NutsId> frozenIds = new ArrayList<>();
     private NutsSession session;
     private NutsWorkspace ws;
+    private NutsUpdateResult[] result;
+    private boolean resultApplied = false;
 
     public DefaultNutsUpdateCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -208,23 +213,62 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
         return this;
     }
 
-    public NutsUpdateResult[] update() {
-        return update(true);
-    }
-
-    public NutsUpdateResult[] checkUpdates() {
-        return update(false);
+    @Override
+    public NutsUpdateResult[] getUpdateResult() {
+        if (result == null) {
+            checkUpdates();
+        }
+        if (result == null) {
+            throw new NutsUnexpectedException();
+        }
+        return Arrays.copyOf(result, result.length);
     }
 
     @Override
-    public NutsUpdateResult[] checkUpdates(boolean applyUpdates) {
-        return update(applyUpdates);
+    public boolean isUpdateAvailable() {
+        for (NutsUpdateResult nutsUpdateResult : getUpdateResult()) {
+            if (nutsUpdateResult.isUpdateAvailable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public NutsUpdateResult[] update(boolean applyUpdates) {
+    @Override
+    public NutsUpdateCommand update() {
+        if (!resultApplied) {
+            List<NutsUpdateResult> todo = new ArrayList<>(Arrays.asList(result));
+            try {
+                for (Iterator<NutsUpdateResult> it = todo.iterator(); it.hasNext();) {
+                    NutsUpdateResult nutsUpdateResult = it.next();
+                    applyUpdate((DefaultNutsUpdateResult) nutsUpdateResult);
+                    it.remove();
+                }
+            } finally {
+                result = todo.toArray(new NutsUpdateResult[0]);
+            }
+            //result result
+            resultApplied = result.length == 0;
+        } else {
+            throw new NutsUnsupportedOperationException("Already applied");
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUpdateCommand checkUpdates(boolean applyUpdates) {
+        checkUpdates();
+        if (applyUpdates) {
+            update();
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUpdateCommand checkUpdates() {
         Map<String, NutsUpdateResult> all = new HashMap<>();
         for (NutsId id : new HashSet<>(Arrays.asList(this.getIds()))) {
-            NutsUpdateResult updated = update(id, applyUpdates);
+            NutsUpdateResult updated = checkUpdate(id);
             all.put(updated.getId().getSimpleName(), updated);
         }
         NutsId[] frozenIds = this.getFrozenIds();
@@ -240,23 +284,19 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
                 }
             }
         }
-        return all.values().toArray(new NutsUpdateResult[0]);
+        result = all.values().toArray(new NutsUpdateResult[0]);
+        return this;
     }
 
 //    @Override
-    protected NutsUpdateResult update(NutsId id, boolean applyUpdates) {
-        NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
+    protected NutsUpdateResult checkUpdate(NutsId id) {
         NutsSession session = CoreNutsUtils.validateSession(this.getSession(), ws);
-//        if (options == null) {
-//            options = new NutsUpdateOptions();
-//        }
-        ws.security().checkAllowed(NutsConstants.Rights.INSTALL, "update");
         NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
             throw new NutsIllegalArgumentException("Version is too restrictive. You would use fetch or install instead");
         }
 
-        NutsUpdateResult r = new NutsUpdateResult().setId(id.getSimpleNameId());
+        DefaultNutsUpdateResult r = new DefaultNutsUpdateResult().setId(id.getSimpleNameId());
 
         final PrintStream out = CoreIOUtils.resolveOut(ws, session);
         NutsDefinition d0 = ws.fetch().id(id).setSession(session).offline().setAcceptOptional(false).setLenient(true).getResultDefinition();
@@ -273,16 +313,8 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
             }
             r.setUpdateAvailable(true);
             r.setUpdateForced(false);
-            if (applyUpdates) {
-                dws.installImpl(d1, new String[0], null, session, true, this.isTrace());
-                r.setUpdateApplied(true);
-                if (this.isTrace()) {
-                    out.printf("==%s== is [[forced]] to latest version ==%s==\n", simpleName, d1.getId().getVersion());
-                }
-            } else {
-                if (this.isTrace()) {
-                    out.printf("==%s== is [[not-installed]] . New version is available ==%s==\n", simpleName, d1.getId().getVersion());
-                }
+            if (this.isTrace()) {
+                out.printf("==%s== is [[not-installed]] . New version is available ==%s==\n", simpleName, d1.getId().getVersion());
             }
         } else if (d1 == null) {
             //this is very interisting. Why the hell is this happening?
@@ -296,18 +328,9 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
                 if (this.isForce()) {
-                    if (applyUpdates) {
-                        dws.installImpl(d1, new String[0], null, session, true, this.isTrace());
-                        r.setUpdateApplied(true);
-                        r.setUpdateForced(true);
-                        if (this.isTrace()) {
-                            out.printf("==%s== is [[forced]] from ==%s== to older version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
-                        }
-                    } else {
-                        r.setUpdateForced(true);
-                        if (this.isTrace()) {
-                            out.printf("==%s== would be [[forced]] from ==%s== to older version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
-                        }
+                    r.setUpdateForced(true);
+                    if (this.isTrace()) {
+                        out.printf("==%s== would be [[forced]] from ==%s== to older version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 } else {
                     if (this.isTrace()) {
@@ -316,20 +339,54 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
                 }
             } else {
                 r.setUpdateAvailable(true);
-                if (applyUpdates) {
-                    dws.installImpl(d1, new String[0], null, session, true, this.isTrace());
-                    r.setUpdateApplied(true);
-                    if (this.isTrace()) {
-                        out.printf("==%s== is [[updated]] from ==%s== to latest version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
-                    }
-                } else {
-                    if (this.isTrace()) {
-                        out.printf("==%s== is [[updatable]] from ==%s== to latest version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
-                    }
+                if (this.isTrace()) {
+                    out.printf("==%s== is [[updatable]] from ==%s== to latest version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
                 }
             }
         }
+
         return r;
+    }
+
+    private void applyUpdate(DefaultNutsUpdateResult r) {
+        NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
+        final PrintStream out = CoreIOUtils.resolveOut(ws, session);
+        NutsId id = r.getId();
+        NutsDefinition d0 = r.getLocalVersion();
+        NutsDefinition d1 = r.getAvailableVersion();
+        final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
+        if (d0 == null) {
+            ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
+            dws.installImpl(d1, new String[0], null, session, true, this.isTrace());
+            r.setUpdateApplied(true);
+            if (this.isTrace()) {
+                out.printf("==%s== is [[forced]] to latest version ==%s==\n", simpleName, d1.getId().getVersion());
+            }
+        } else if (d1 == null) {
+            //this is very interisting. Why the hell is this happening?
+        } else {
+            NutsVersion v0 = d0.getId().getVersion();
+            NutsVersion v1 = d1.getId().getVersion();
+            if (v1.compareTo(v0) <= 0) {
+                //no update needed!
+                if (this.isForce()) {
+                    ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
+                    dws.installImpl(d1, new String[0], null, session, true, this.isTrace());
+                    r.setUpdateApplied(true);
+                    r.setUpdateForced(true);
+                    if (this.isTrace()) {
+                        out.printf("==%s== is [[forced]] from ==%s== to older version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                    }
+                }
+            } else {
+                ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
+                dws.installImpl(d1, new String[0], null, session, true, this.isTrace());
+                r.setUpdateApplied(true);
+                if (this.isTrace()) {
+                    out.printf("==%s== is [[updated]] from ==%s== to latest version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                }
+            }
+        }
     }
 
 }

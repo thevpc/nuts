@@ -89,10 +89,10 @@ public final class NutsLogUtils {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
-        if (name == null || NutsUtils.isEmpty(name)) {
+        if (name == null || NutsUtils.isBlank(name)) {
             name = new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSS").format(new Date()) + "-nuts-%g.log";
         }
-        if (folder == null || NutsUtils.isEmpty(folder)) {
+        if (folder == null || NutsUtils.isBlank(folder)) {
             folder = defaultLogFolder;
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);

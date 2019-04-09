@@ -37,14 +37,14 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.storeLocationLayout = storeLocationLayout;
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
         if (locations.length != NutsStoreLocation.values().length) {
-            throw new IllegalArgumentException("Invalid locations count");
+            throw new NutsIllegalArgumentException("Invalid locations count");
         }
         storeLocations = new String[NutsStoreLocation.values().length];
         for (int i = 0; i < storeLocations.length; i++) {
             this.storeLocations[i] = locations[i];
         }
         if (homeLocations.length != NutsStoreLocation.values().length * 2) {
-            throw new IllegalArgumentException("Invalid home locations count");
+            throw new NutsIllegalArgumentException("Invalid home locations count");
         }
         this.homeLocations = new String[NutsStoreLocation.values().length * 2];
         for (int i = 0; i < homeLocations.length; i++) {

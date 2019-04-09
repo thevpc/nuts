@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.InputSource;
 
 /**
  * Created by vpc on 1/29/17.
@@ -47,15 +48,15 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
 
     private final NutsWorkspace workspace;
     private final NutsSession session;
-    private final CoreIOUtils.SourceItem file;
+    private final InputSource file;
     private final String fileExtension;
     private final String fileType;
     private final String mimeType;
     private byte[] bytes;
     private final NutsFetchCommand options;
 
-    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, CoreIOUtils.SourceItem file, String fileExtension, String fileType, String mimeType, NutsFetchCommand options) {
-        this.file = file.toMultiReadSourceItem();
+    public DefaultNutsDescriptorContentParserContext(NutsWorkspace workspace, NutsSession session, InputSource file, String fileExtension, String fileType, String mimeType, NutsFetchCommand options) {
+        this.file = file.multi();
         this.workspace = workspace;
         this.session = session;
         this.fileExtension = fileExtension;

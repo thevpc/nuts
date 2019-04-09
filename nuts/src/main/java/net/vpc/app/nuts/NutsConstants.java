@@ -108,6 +108,7 @@ public final class NutsConstants {
         public static final String SAVE_WORKSPACE = "save";
         public static final String AUTO_INSTALL = "auto-install";
         public static final String INSTALL = "install";
+        public static final String UPDATE = "update";
         public static final String UNINSTALL = "uninstall";
         public static final String EXEC = "exec";
         public static final String DEPLOY = "deploy";
@@ -118,7 +119,7 @@ public final class NutsConstants {
         public static final String SET_PASSWORD = "set-password";
         public static final String ADMIN = "admin";
         public static final String[] RIGHTS = {FETCH_DESC, FETCH_CONTENT, SAVE_REPOSITORY,
-            SAVE_WORKSPACE, INSTALL, AUTO_INSTALL, UNINSTALL, EXEC, DEPLOY, UNDEPLOY,
+            SAVE_WORKSPACE, INSTALL, UPDATE, AUTO_INSTALL, UNINSTALL, EXEC, DEPLOY, UNDEPLOY,
             PUSH, ADD_REPOSITORY, REMOVE_REPOSITORY, SET_PASSWORD, ADMIN};
 
     }
@@ -146,7 +147,7 @@ public final class NutsConstants {
          * under ${workspace-location}/lib
          */
         public static final String LIB = "lib";
-        public static final String DEFAULT_CONTENT = "default";
+        public static final String BOOT = "boot";
         /**
          * default repositories root name. By default repositories are stored
          * under ${workspace-location}/repos or ${repository-location}/repos

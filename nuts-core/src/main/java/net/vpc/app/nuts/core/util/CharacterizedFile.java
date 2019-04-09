@@ -45,7 +45,7 @@ import java.util.List;
  */
 public class CharacterizedFile implements AutoCloseable {
 
-    public CoreIOUtils.SourceItem contentFile;
+    public InputSource contentFile;
     public List<Path> temps = new ArrayList<>();
     public NutsDescriptor descriptor;
 

@@ -50,13 +50,13 @@ public class NutsVersionInterval implements Serializable{
     }
 
     public boolean acceptVersion(NutsVersion version) {
-        if (!NutsUtils.isEmpty(min) && !min.equals("LATEST") && !min.equals("RELEASE")) {
+        if (!NutsUtils.isBlank(min) && !min.equals("LATEST") && !min.equals("RELEASE")) {
             int t = version.compareTo(min);
             if ((inclusiveLowerBoundary && t < 0) || (!inclusiveLowerBoundary && t <= 0)) {
                 return false;
             }
         }
-        if (!NutsUtils.isEmpty(max) && !max.equals("LATEST") && !max.equals("RELEASE")) {
+        if (!NutsUtils.isBlank(max) && !max.equals("LATEST") && !max.equals("RELEASE")) {
             int t = version.compareTo(max);
             return (!inclusiveUpperBoundary || t <= 0) && (inclusiveUpperBoundary || t < 0);
         }

@@ -29,16 +29,11 @@
  */
 package net.vpc.app.nuts.toolbox.nsh.cmds;
 
-import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceUpdateOptions;
 import net.vpc.app.nuts.toolbox.nsh.AbstractNutsCommand;
 import net.vpc.app.nuts.toolbox.nsh.NutsCommandContext;
 import net.vpc.app.nuts.app.options.NutsIdNonOption;
 import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.ValueNonOption;
-import net.vpc.app.nuts.NutsUpdateOptions;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import net.vpc.app.nuts.NutsUpdateCommand;

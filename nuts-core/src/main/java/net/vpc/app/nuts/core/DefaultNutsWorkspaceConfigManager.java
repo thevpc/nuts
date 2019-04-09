@@ -278,13 +278,13 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public boolean addSdk(String name, NutsSdkLocation location) {
         if (location != null) {
             if (CoreStringUtils.isBlank(location.getName())) {
-                throw new IllegalArgumentException("Sdk Name should not be null");
+                throw new NutsIllegalArgumentException("Sdk Name should not be null");
             }
             if (CoreStringUtils.isBlank(location.getVersion())) {
-                throw new IllegalArgumentException("Sdk Version should not be null");
+                throw new NutsIllegalArgumentException("Sdk Version should not be null");
             }
             if (CoreStringUtils.isBlank(location.getPath())) {
-                throw new IllegalArgumentException("Sdk Path should not be null");
+                throw new NutsIllegalArgumentException("Sdk Path should not be null");
             }
             List<NutsSdkLocation> list = getSdk().get(name);
             if (list == null) {
@@ -887,7 +887,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     @Override
     public void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactoryConfig, NutsSession session) {
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
-            throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + commandFactoryConfig);
+            throw new NutsIllegalArgumentException("Invalid WorkspaceCommandFactory " + commandFactoryConfig);
         }
         for (NutsWorkspaceCommandFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
@@ -933,7 +933,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     @Override
     public boolean uninstallCommandFactory(String factoryId, NutsSession session) {
         if (factoryId == null || factoryId.isEmpty()) {
-            throw new IllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
+            throw new NutsIllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
         }
         NutsWorkspaceCommandFactory removeMe = null;
         NutsWorkspaceCommandFactoryConfig removeMeConfig = null;
@@ -1000,7 +1000,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (storeLocation == null) {
             return null;
         }
-        return CoreIOUtils.resolveNutsDefaultPath(id, storeLocation.resolve(NutsConstants.Folders.DEFAULT_CONTENT));
+        return CoreIOUtils.resolveNutsDefaultPath(id, storeLocation);
     }
 
     @Override
@@ -1369,9 +1369,9 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             }
             default: {
                 if (CoreStringUtils.isBlank(f)) {
-                    throw new IllegalArgumentException("Missing face in " + id);
+                    throw new NutsIllegalArgumentException("Missing face in " + id);
                 }
-                throw new IllegalArgumentException("Unsupported face " + f + " in " + id);
+                throw new NutsIllegalArgumentException("Unsupported face " + f + " in " + id);
             }
         }
     }

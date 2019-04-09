@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core.util.bundledlibs.io;
 
 import java.io.*;
 import java.util.*;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 
 //    public static void main(String[] args) {
 //        try {
@@ -154,7 +155,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new IllegalArgumentException("Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException("Already used Base IO Rediection");
         }
         this.in = in;
         return this;
@@ -179,7 +180,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new IllegalArgumentException("No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException("No Buffer was configured. Should call setOutString");
     }
 
     public String getErrorString() {
@@ -190,7 +191,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new IllegalArgumentException("No Buffer was configured. Should call setOutString");
+        throw new NutsIllegalArgumentException("No Buffer was configured. Should call setOutString");
     }
 
     public ProcessBuilder2 setOutput(PrintStream out) {
@@ -207,7 +208,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new IllegalArgumentException("Already used Base IO Rediection");
+            throw new NutsIllegalArgumentException("Already used Base IO Rediection");
         }
         this.err = err;
         return this;

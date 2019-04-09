@@ -6,6 +6,7 @@
 package net.vpc.app.nuts.core.util.bundledlibs.util;
 
 import java.util.Iterator;
+import net.vpc.app.nuts.NutsUnsupportedOperationException;
 
 /**
  *
@@ -43,7 +44,7 @@ public class LazyIterator<T> implements Iterator<T> {
     }
 
     protected Iterator<T> iterator() {
-        throw new IllegalArgumentException("No implemented");
+        throw new NutsUnsupportedOperationException("No implemented");
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core.util.bundledlibs.util;
 
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 
@@ -208,7 +209,7 @@ public class BytesSizeFormat {
                             depth=-1;
                         }
                         if(depth<=0 || depth>9){
-                            throw new IllegalArgumentException("Invalid depth "+depth);
+                            throw new NutsIllegalArgumentException("Invalid depth "+depth);
                         }
                     }
                     case 'F': {
@@ -226,7 +227,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new IllegalArgumentException("Unsupported " + c);
+                        throw new NutsIllegalArgumentException("Unsupported " + c);
                     }
                 }
             }

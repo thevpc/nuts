@@ -33,6 +33,7 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
+import net.vpc.app.nuts.NutsUnexpectedException;
 import net.vpc.app.nuts.NutsWorkspaceUpdateResult;
 import net.vpc.app.nuts.NutsUpdateWorkspaceCommand;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -60,46 +61,57 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateWorkspaceCom
     private List<NutsId> frozenIds = new ArrayList<>();
     private NutsSession session;
     private NutsWorkspace ws;
+    private NutsWorkspaceUpdateResult result;
+    private boolean resultApplied;
 
     public DefaultNutsUpdateWorkspaceCommand(NutsWorkspace ws) {
         this.ws = ws;
     }
 
+    @Override
     public boolean isTrace() {
         return trace;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setTrace(boolean trace) {
         this.trace = trace;
         return this;
     }
 
+    @Override
     public boolean isForce() {
         return force;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setForce(boolean forceInstall) {
         this.force = forceInstall;
         return this;
     }
 
+    @Override
     public boolean isAsk() {
         return ask;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setAsk(boolean ask) {
         this.ask = ask;
         return this;
     }
 
+    @Override
     public String[] getArgs() {
         return args == null ? new String[0] : args.toArray(new String[0]);
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setArgs(String... args) {
         return setArgs(args == null ? null : Arrays.asList(args));
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setArgs(List<String> args) {
         this.args = new ArrayList<>();
         if (args != null) {
@@ -113,6 +125,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateWorkspaceCom
         return this;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand addArg(String arg) {
         if (this.args == null) {
             this.args = new ArrayList<>();
@@ -124,10 +137,12 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateWorkspaceCom
         return this;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand addArgs(String... args) {
         return addArgs(args == null ? null : Arrays.asList(args));
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand addArgs(List<String> args) {
         if (this.args == null) {
             this.args = new ArrayList<>();
@@ -143,10 +158,12 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateWorkspaceCom
         return this;
     }
 
+    @Override
     public NutsSession getSession() {
         return session;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setSession(NutsSession session) {
         this.session = session;
         return this;
@@ -168,44 +185,70 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateWorkspaceCom
         return this;
     }
 
+    @Override
     public boolean isEnableMajorUpdates() {
         return enableMajorUpdates;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setEnableMajorUpdates(boolean enableMajorUpdates) {
         this.enableMajorUpdates = enableMajorUpdates;
         return this;
     }
 
+    @Override
     public boolean isUpdateExtensions() {
         return updateExtensions;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setUpdateExtensions(boolean updateExtensions) {
         this.updateExtensions = updateExtensions;
         return this;
     }
 
+    @Override
     public String getForceBootAPIVersion() {
         return forceBootAPIVersion;
     }
 
+    @Override
     public NutsUpdateWorkspaceCommand setForceBootAPIVersion(String forceBootAPIVersion) {
         this.forceBootAPIVersion = forceBootAPIVersion;
         return this;
     }
 
     @Override
-    public NutsWorkspaceUpdateResult update() {
-        return checkUpdates(true);
+    public NutsWorkspaceUpdateResult getUpdateResult() {
+        if (result == null) {
+            checkUpdates();
+        }
+        if (result == null) {
+            throw new NutsUnexpectedException();
+        }
+        return result;
     }
 
     @Override
-    public NutsWorkspaceUpdateResult checkUpdates() {
-        return checkUpdates(false);
+    public NutsUpdateWorkspaceCommand update() {
+        if (!resultApplied) {
+            applyResult(getUpdateResult());
+            resultApplied = true;
+        }
+        return this;
     }
 
-    public NutsWorkspaceUpdateResult checkUpdates(boolean applyUpdates) {
+    @Override
+    public NutsUpdateWorkspaceCommand checkUpdates(boolean applyUpdates) {
+        checkUpdates();
+        if (applyUpdates) {
+            update();
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUpdateWorkspaceCommand checkUpdates() {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsBootContext actualBootConfig = ws.config().getRunningContext();
 //        NutsBootContext jsonBootConfig = getConfigManager().getBootContext();
@@ -265,102 +308,110 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateWorkspaceCom
                 }
             }
         }
-        if (!allUpdates.isEmpty() && applyUpdates) {
-            Path bootstrapFolder = ws.config().getStoreLocation(NutsStoreLocation.CACHE).resolve("bootstrap");
-            if (bootUpdate != null) {
-                if (bootUpdate.getAvailableId() != null) {
-                    CoreNutsUtils.checkReadOnly(ws);
-                    NutsBootConfig bc = ws.config().getBootConfig();
-                    bc.setApiVersion(bootUpdate.getAvailableId().getVersion().toString());
-                    ws.config().setBootConfig(bc);
-                    ws.io().copy().from(bootUpdate.getAvailableIdFile()).to(ws.config().getStoreLocation(bootUpdate.getAvailableId(), bootstrapFolder)
-                            .resolve(ws.config().getDefaultIdFilename(bootUpdate.getAvailableId().setFaceComponent().setPackaging("jar")))
-                    ).run();
-                    ws.formatter().createDescriptorFormat().pretty().format(ws.fetch().id(bootUpdate.getAvailableId()).getResultDescriptor(),
-                            ws.config().getStoreLocation(bootUpdate.getAvailableId(), bootstrapFolder)
-                                    .resolve(ws.config().getDefaultIdFilename(bootUpdate.getAvailableId().setFaceDescriptor()))
-                    );
-                    if (runtimeUpdate == null) {
+        result = new NutsWorkspaceUpdateResult(bootUpdate, runtimeUpdate, extUpdates.values().toArray(new NutsWorkspaceUpdateResultItem[0]));
+        return this;
+    }
 
-                    }
-                }
-            }
-            if (runtimeUpdate != null) {
-                NutsBootConfig bc = ws.config().getBootConfig();
-                bc.setRuntimeId(runtimeUpdate.getAvailableId().getVersion().toString());
-                StringBuilder sb = new StringBuilder();
-                for (NutsId dependency : runtimeUpdate.getDependencies()) {
-                    if (sb.length() > 0) {
-                        sb.append(";");
-                    }
-                    sb.append(dependency.setNamespace(null).toString());
-                }
-                bc.setRuntimeDependencies(sb.toString());
+    private void applyResult(NutsWorkspaceUpdateResult result) {
+        NutsWorkspaceUpdateResultItem bootUpdate = result.getApi();
+        NutsWorkspaceUpdateResultItem runtimeUpdate = result.getRuntime();
+        if (result.getUpdatesCount() == 0) {
+            return;
+        }
+        NutsBootContext actualBootConfig = ws.config().getRunningContext();
+        Path bootstrapFolder = ws.config().getWorkspaceLocation().resolve(NutsConstants.Folders.BOOT);
+        if (bootUpdate != null) {
+            if (bootUpdate.getAvailableId() != null) {
                 CoreNutsUtils.checkReadOnly(ws);
+                NutsBootConfig bc = ws.config().getBootConfig();
+                bc.setApiVersion(bootUpdate.getAvailableId().getVersion().toString());
                 ws.config().setBootConfig(bc);
-                ws.io().copy().from(runtimeUpdate.getAvailableIdFile()).to(ws.config().getStoreLocation(runtimeUpdate.getAvailableId(), bootstrapFolder)
-                        .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailableId().setFaceComponent().setPackaging("jar")))
+                ws.io().copy().from(bootUpdate.getAvailableIdFile()).to(ws.config().getStoreLocation(bootUpdate.getAvailableId(), bootstrapFolder)
+                        .resolve(ws.config().getDefaultIdFilename(bootUpdate.getAvailableId().setFaceComponent().setPackaging("jar")))
                 ).run();
-                NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailableId()).getResultDescriptor();
-                ws.formatter().createDescriptorFormat().pretty().format(runtimeDesc,
-                        ws.config().getStoreLocation(runtimeUpdate.getAvailableId(), bootstrapFolder)
-                                .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailableId().setFaceDescriptor()))
+                ws.formatter().createDescriptorFormat().pretty().print(ws.fetch().id(bootUpdate.getAvailableId()).getResultDescriptor(),
+                        ws.config().getStoreLocation(bootUpdate.getAvailableId(), bootstrapFolder)
+                                .resolve(ws.config().getDefaultIdFilename(bootUpdate.getAvailableId().setFaceDescriptor()))
                 );
-                for (NutsDependency dependency : runtimeDesc.getDependencies()) {
-                    if (dependency.getId().getSimpleNameId().equals(actualBootConfig.getApiId().getSimpleNameId())) {
-                        Properties pr = new Properties();
-                        pr.setProperty("project.id", dependency.getId().getSimpleNameId().toString());
-                        pr.setProperty("project.name", dependency.getId().getSimpleNameId().toString());
-                        pr.setProperty("project.version", dependency.getId().getVersion().toString());
-                        pr.setProperty("repositories", "~/.m2/repository;https\\://raw.githubusercontent.com/thevpc/vpc-public-maven/master;http\\://repo.maven.apache.org/maven2/;https\\://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
-                        pr.setProperty("bootRuntimeId", runtimeUpdate.getAvailableId().getLongName());
-                        try (Writer writer = Files.newBufferedWriter(
-                                ws.config().getStoreLocation(dependency.getId().getLongNameId(), bootstrapFolder)
-                                        .resolve("nuts.properties")
-                        )) {
-                            pr.store(writer, "Updated on " + new Date());
-                        } catch (IOException ex) {
-                            throw new UncheckedIOException(ex);
-                        }
-                    }
-                }
-                Properties pr = new Properties();
-                pr.setProperty("project.id", runtimeUpdate.getAvailableId().getSimpleNameId().toString());
-                pr.setProperty("project.name", runtimeUpdate.getAvailableId().getSimpleNameId().toString());
-                pr.setProperty("project.version", runtimeUpdate.getAvailableId().getVersion().toString());
-                final NutsId rtId = runtimeUpdate.getAvailableId();
-                pr.setProperty("project.dependencies.compile",
-                        CoreStringUtils.join(";",
-                                Arrays.stream(runtimeDesc.getDependencies())
-                                        .filter(new Predicate<NutsDependency>() {
-                                            @Override
-                                            public boolean test(NutsDependency x) {
-                                                return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x);
-                                            }
-                                        })
-                                        .map(x -> x.getId().getLongName())
-                                        .collect(Collectors.toList())
-                        )
-                );
-                try (Writer writer = Files.newBufferedWriter(
-                        ws.config().getStoreLocation(runtimeUpdate.getAvailableId().getLongNameId(), bootstrapFolder)
-                                .resolve("nuts.properties")
-                )) {
-                    pr.store(writer, "Updated on " + new Date());
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            for (NutsWorkspaceUpdateResultItem extension : extUpdates.values()) {
-                ws.extensions().updateExtension(extension.getAvailableId());
-            }
-            if (ws.config().save(false)) {
-                if (log.isLoggable(Level.INFO)) {
-                    log.log(Level.INFO, "Workspace is updated. Nuts should be restarted for changes to take effect.");
+                if (runtimeUpdate == null) {
+
                 }
             }
         }
-        return new NutsWorkspaceUpdateResult(bootUpdate, runtimeUpdate, extUpdates.values().toArray(new NutsWorkspaceUpdateResultItem[0]));
+        if (runtimeUpdate != null) {
+            NutsBootConfig bc = ws.config().getBootConfig();
+            bc.setRuntimeId(runtimeUpdate.getAvailableId().getVersion().toString());
+            StringBuilder sb = new StringBuilder();
+            for (NutsId dependency : runtimeUpdate.getDependencies()) {
+                if (sb.length() > 0) {
+                    sb.append(";");
+                }
+                sb.append(dependency.setNamespace(null).toString());
+            }
+            bc.setRuntimeDependencies(sb.toString());
+            CoreNutsUtils.checkReadOnly(ws);
+            ws.config().setBootConfig(bc);
+            ws.io().copy().from(runtimeUpdate.getAvailableIdFile()).to(ws.config().getStoreLocation(runtimeUpdate.getAvailableId(), bootstrapFolder)
+                    .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailableId().setFaceComponent().setPackaging("jar")))
+            ).run();
+            NutsDescriptor runtimeDesc = ws.fetch().id(runtimeUpdate.getAvailableId()).getResultDescriptor();
+            ws.formatter().createDescriptorFormat().pretty().print(runtimeDesc,
+                    ws.config().getStoreLocation(runtimeUpdate.getAvailableId(), bootstrapFolder)
+                            .resolve(ws.config().getDefaultIdFilename(runtimeUpdate.getAvailableId().setFaceDescriptor()))
+            );
+            for (NutsDependency dependency : runtimeDesc.getDependencies()) {
+                if (dependency.getId().getSimpleNameId().equals(actualBootConfig.getApiId().getSimpleNameId())) {
+                    Properties pr = new Properties();
+                    pr.setProperty("project.id", dependency.getId().getSimpleNameId().toString());
+                    pr.setProperty("project.name", dependency.getId().getSimpleNameId().toString());
+                    pr.setProperty("project.version", dependency.getId().getVersion().toString());
+                    pr.setProperty("repositories", "~/.m2/repository;https\\://raw.githubusercontent.com/thevpc/vpc-public-maven/master;http\\://repo.maven.apache.org/maven2/;https\\://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
+                    pr.setProperty("bootRuntimeId", runtimeUpdate.getAvailableId().getLongName());
+                    try (Writer writer = Files.newBufferedWriter(
+                            ws.config().getStoreLocation(dependency.getId().getLongNameId(), bootstrapFolder)
+                                    .resolve("nuts.properties")
+                    )) {
+                        pr.store(writer, "Updated on " + new Date());
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                }
+            }
+            Properties pr = new Properties();
+            pr.setProperty("project.id", runtimeUpdate.getAvailableId().getSimpleNameId().toString());
+            pr.setProperty("project.name", runtimeUpdate.getAvailableId().getSimpleNameId().toString());
+            pr.setProperty("project.version", runtimeUpdate.getAvailableId().getVersion().toString());
+            final NutsId rtId = runtimeUpdate.getAvailableId();
+            pr.setProperty("project.dependencies.compile",
+                    CoreStringUtils.join(";",
+                            Arrays.stream(runtimeDesc.getDependencies())
+                                    .filter(new Predicate<NutsDependency>() {
+                                        @Override
+                                        public boolean test(NutsDependency x) {
+                                            return !x.isOptional() && CoreNutsUtils.SCOPE_RUN.accept(rtId, x);
+                                        }
+                                    })
+                                    .map(x -> x.getId().getLongName())
+                                    .collect(Collectors.toList())
+                    )
+            );
+            try (Writer writer = Files.newBufferedWriter(
+                    ws.config().getStoreLocation(runtimeUpdate.getAvailableId().getLongNameId(), bootstrapFolder)
+                            .resolve("nuts.properties")
+            )) {
+                pr.store(writer, "Updated on " + new Date());
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+        for (NutsWorkspaceUpdateResultItem extension : result.getExtensions()) {
+            ws.extensions().updateExtension(extension.getAvailableId());
+        }
+        if (ws.config().save(false)) {
+            if (log.isLoggable(Level.INFO)) {
+                log.log(Level.INFO, "Workspace is updated. Nuts should be restarted for changes to take effect.");
+            }
+        }
     }
 
     public NutsWorkspaceUpdateResultItem checkUpdates(NutsId id, String bootApiVersion, NutsSession session) {

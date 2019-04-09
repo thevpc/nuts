@@ -29,7 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.core.util.Basket;
+import net.vpc.app.nuts.core.util.NutsCollectionFindResult;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyJavascriptFilter;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyOptionFilter;
@@ -603,12 +603,12 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         return new NutsDefinitionNutsFindResult();
     }
 
-    private DefaultNutsFindResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr) {
+    private NutsCollectionFindResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr) {
         if (includeAllVersions && includeDuplicatedVersions) {
-            return new DefaultNutsFindResult<NutsId>(curr);
+            return new NutsCollectionFindResult<NutsId>(curr);
             //nothind
         } else if (includeAllVersions && !includeDuplicatedVersions) {
-            return new DefaultNutsFindResult<NutsId>(
+            return new NutsCollectionFindResult<NutsId>(
                     IteratorBuilder.of(curr).unique(new Function<NutsId, String>() {
                         @Override
                         public String apply(NutsId nutsId) {
@@ -625,7 +625,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                     visited.put(k, nutsId);
                 }
             }
-            return new DefaultNutsFindResult<NutsId>(visited.values());
+            return new NutsCollectionFindResult<NutsId>(visited.values());
         } else if (!includeAllVersions && includeDuplicatedVersions) {
             Map<String, List<NutsId>> visited = new LinkedHashMap<>();
             while (curr.hasNext()) {
@@ -642,17 +642,17 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             for (List<NutsId> li : visited.values()) {
                 list.addAll(li);
             }
-            return new DefaultNutsFindResult<NutsId>(list);
+            return new NutsCollectionFindResult<NutsId>(list);
         }
-        throw new IllegalArgumentException("Unexpected");
+        throw new NutsUnexpectedException();
     }
 
-    private DefaultNutsFindResult<NutsId> findBasket() {
+    private NutsCollectionFindResult<NutsId> findBasket() {
         Iterator<NutsId> base0 = findIterator(build());
         if (includeAllVersions && includeDuplicatedVersions && !sort && !isIncludeDependencies()) {
-            return new DefaultNutsFindResult<NutsId>(base0);
+            return new NutsCollectionFindResult<NutsId>(base0);
         }
-        Basket<NutsId> a = applyVersionFlagFilters(base0);
+        NutsCollectionFindResult<NutsId> a = applyVersionFlagFilters(base0);
         Iterator<NutsId> curr = a.iterator();
         if (isIncludeDependencies()) {
             if (!includeMain) {
@@ -694,44 +694,15 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                 curr = IteratorUtils.concat(it);
             }
         }
-        DefaultNutsFindResult<NutsId> curr2 = applyVersionFlagFilters(curr);
+        NutsCollectionFindResult<NutsId> curr2 = applyVersionFlagFilters(curr);
         if (sort) {
             List<NutsId> listToSort = curr2.list();
             listToSort.sort(idComparator == null ? DefaultNutsIdComparator.INSTANCE : idComparator);
-            curr2 = new DefaultNutsFindResult<NutsId>(listToSort);
+            curr2 = new NutsCollectionFindResult<NutsId>(listToSort);
         }
         return curr2;
     }
 
-//    private class IdToDefConverter implements ObjectConverter<NutsId, NutsDefinition> {
-//
-//        private NutsSession s;
-//
-//        public IdToDefConverter(NutsSession s) {
-//            this.s = s;
-//        }
-//
-//        @Override
-//        public NutsDefinition convert(NutsId from) {
-//            try {
-//                return ws.fetchDefinition(from, creationFetchOptions(), s);
-//            } catch (NutsNotFoundException ex) {
-//                if (!ignoreNotFound) {
-//                    throw ex;
-//                }
-//            }
-//            return null;
-//        }
-//    }
-//    @Override
-//    public Iterable<NutsDefinition> fetchIterable() {
-//        return new Iterable<NutsDefinition>() {
-//            @Override
-//            public Iterator<NutsDefinition> iterator() {
-//                return fetchIterator();
-//            }
-//        };
-//    }
     private NutsId[] findDependencies(List<NutsId> ids) {
         NutsSession _session = this.getSession() == null ? ws.createSession() : this.getSession();
         NutsDependencyFilter _dependencyFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(
@@ -833,22 +804,6 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     @Override
     public boolean isIncludeMain() {
         return includeMain;
-    }
-
-    private static class DefaultNutsFindResult<T> extends Basket<T> implements NutsFindResult<T> {
-
-        public DefaultNutsFindResult(Iterator<T> o) {
-            super(o);
-        }
-
-        public DefaultNutsFindResult(Collection<T> o) {
-            super(o);
-        }
-
-        public DefaultNutsFindResult(List<T> o) {
-            super(o);
-        }
-
     }
 
     private class NutsDefinitionNutsFindResult extends AbstractNutsFindResult<NutsDefinition> {

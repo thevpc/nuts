@@ -174,10 +174,10 @@ public class NutsMinimalCommandLine {
                             break;
                         }
                         case '\'': {
-                            throw new IllegalArgumentException("Illegal char " + c);
+                            throw new NutsParseException("Illegal char " + c);
                         }
                         case '"': {
-                            throw new IllegalArgumentException("Illegal char " + c);
+                            throw new NutsParseException("Illegal char " + c);
                         }
                         case '\\': {
                             i++;
@@ -246,7 +246,7 @@ public class NutsMinimalCommandLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new IllegalArgumentException("Expected '");
+                throw new NutsParseException("Expected '");
             }
         }
         return args.toArray(new String[0]);

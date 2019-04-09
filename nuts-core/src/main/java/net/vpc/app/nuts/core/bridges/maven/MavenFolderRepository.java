@@ -53,17 +53,13 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected InputStream openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
-        try {
-            return Files.newInputStream(getWorkspace().io().path(path));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    protected InputSource openStream(NutsId id, String path, Object source, NutsRepositorySession session) {
+        return CoreIOUtils.createInputSource(getWorkspace().io().path(path));
     }
 
     @Override
     protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
-        return CoreSecurityUtils.evalSHA1(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session), true);
+        return CoreIOUtils.evalSHA1(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session).open(), true);
     }
 
     @Override

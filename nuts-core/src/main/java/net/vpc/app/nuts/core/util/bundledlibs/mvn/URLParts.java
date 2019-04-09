@@ -15,6 +15,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 
 /**
  *
@@ -45,7 +47,7 @@ class URLParts {
         } else if (r.startsWith("/")) {
             values = new URLPart[]{new URLPart("/", r.substring(1))};
         } else {
-            throw new IllegalArgumentException("Unsupported protocol " + r);
+            throw new NutsUnsupportedArgumentException("Unsupported protocol " + r);
         }
     }
 
@@ -115,7 +117,7 @@ class URLParts {
                                 }
                                 return found;
                             } else {
-                                throw new IllegalArgumentException("Unsupported");
+                                throw new NutsUnsupportedArgumentException("Unsupported");
                             }
                         } else if (parent instanceof URL) {
                             final URL uu = (URL) parent;
@@ -156,7 +158,7 @@ class URLParts {
                             }
                             parent = ff.get(0);
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException("Unsupported");
                         }
                     }
                 case "file":
@@ -183,10 +185,10 @@ class URLParts {
                                 }
                                 return found;
                             } else {
-                                throw new IllegalArgumentException("Unsupported");
+                                throw new NutsUnsupportedArgumentException("Unsupported");
                             }
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException("Unsupported");
                         }
                     }
                 case "jar":
@@ -199,7 +201,7 @@ class URLParts {
                     }
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedArgumentException("Unsupported");
     }
 
     public InputStream getInputStream() throws IOException {
@@ -211,7 +213,7 @@ class URLParts {
                         if (parent == null) {
                             parent = new File(value.getPath());
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException("Unsupported");
                         }
                     }
                 case "file":
@@ -219,7 +221,7 @@ class URLParts {
                         if (parent == null) {
                             parent = new URL(value.getPath());
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException("Unsupported");
                         }
                     }
                 case "jar":
@@ -227,7 +229,7 @@ class URLParts {
                         if (parent == null) {
                             parent = new URL(value.getPath()).openStream();
                         } else {
-                            throw new IllegalArgumentException("Unsupported");
+                            throw new NutsUnsupportedArgumentException("Unsupported");
                         }
                     }
             }
@@ -238,7 +240,7 @@ class URLParts {
         if (parent instanceof URL) {
             return ((URL) parent).openStream();
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedArgumentException("Unsupported");
     }
     
 }

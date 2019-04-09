@@ -63,44 +63,90 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public String toString() {
+        return format();
+    }
+
+    @Override
+    public String format() {
         ByteArrayPrintStream out = new ByteArrayPrintStream();
-        format(out);
+        print(out);
         return out.toString();
     }
 
     @Override
-    public void format() {
-        format(ws.getTerminal());
+    public void print() {
+        print(ws.getTerminal());
     }
 
     @Override
-    public void format(NutsTerminal terminal) {
-        format(terminal.getOut());
+    public void println() {
+        println(ws.getTerminal());
     }
 
     @Override
-    public void format(File file) {
-        format(file.toPath());
+    public void print(NutsTerminal terminal) {
+        print(terminal.getOut());
     }
 
     @Override
-    public void format(Path path) {
+    public void println(NutsTerminal terminal) {
+        println(terminal.getOut());
+    }
+
+    @Override
+    public void print(File file) {
+        print(file.toPath());
+    }
+
+    @Override
+    public void println(File file) {
+        println(file.toPath());
+    }
+
+    @Override
+    public void print(Path path) {
         try (Writer w = Files.newBufferedWriter(path)) {
-            format(w);
+            print(w);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     @Override
-    public void format(PrintStream out) {
+    public void println(Path path) {
+        try (Writer w = Files.newBufferedWriter(path)) {
+            println(w);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public void print(PrintStream out) {
         PrintWriter p = new PrintWriter(out);
-        format(p);
+        print(p);
         p.flush();
     }
 
     @Override
-    public void format(Writer w) {
+    public void println(PrintStream out) {
+        PrintWriter p = new PrintWriter(out);
+        println(p);
+        p.flush();
+    }
+
+    @Override
+    public void println(Writer w) {
+        print(w);
+        try {
+            w.write("\n");
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+    
+    @Override
+    public void print(Writer w) {
         PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
         NutsWorkspaceConfigManager configManager = ws.config();
         if (options.contains("min")) {

@@ -1,6 +1,8 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsResponseParser;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 
 public class DefaultNutsResponseParser implements NutsResponseParser {
     public static final NutsResponseParser INSTANCE=new DefaultNutsResponseParser();
@@ -70,10 +72,10 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                 ){
                     return false;
                 }
-                throw new IllegalArgumentException("Invalid response "+sReponse);
+                throw new NutsIllegalArgumentException("Invalid response "+sReponse);
             }
             default:{
-                throw new IllegalArgumentException("Unsupported type "+type.getName());
+                throw new NutsUnsupportedArgumentException("Unsupported type "+type.getName());
             }
         }
     }
@@ -108,7 +110,7 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
                 return new Object[]{"y","n"};
             }
             default:{
-                throw new IllegalArgumentException("Unsupported type "+type.getName());
+                throw new NutsUnsupportedArgumentException("Unsupported type "+type.getName());
             }
         }
     }

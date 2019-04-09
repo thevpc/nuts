@@ -115,7 +115,22 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session) {
         if (length > 0) {
+            if (session == null) {
+                session = ws.createSession();
+            }
             return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
+        } else {
+            return stream;
+        }
+    }
+
+    @Override
+    public InputStream monitorInputStream(InputStream stream, NutsTerminalProvider session) {
+        if (stream instanceof InputStreamMetadataAware) {
+            if (session == null) {
+                session = ws.createSession();
+            }
+            return CoreIOUtils.monitor(stream, null, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
         } else {
             return stream;
         }
@@ -387,7 +402,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     @Override
     public String computeHash(InputStream input) {
-        return CoreSecurityUtils.evalSHA1(input, false);
+        return CoreIOUtils.evalSHA1(input, false);
     }
 
     @Override
@@ -467,7 +482,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 return new PrintStream(out);
             }
         }
-        throw new IllegalArgumentException("Unsupported NutsTerminalMode " + mode);
+        throw new NutsUnsupportedArgumentException("Unsupported NutsTerminalMode " + mode);
     }
 
     @Override
@@ -586,8 +601,8 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public String getSHA1(NutsDescriptor descriptor) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
-        ws.formatter().createDescriptorFormat().setPretty(false).format(descriptor, o);
-        return CoreSecurityUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()), true);
+        ws.formatter().createDescriptorFormat().setPretty(false).print(descriptor, o);
+        return CoreIOUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()), true);
     }
 
     public static GsonBuilder prepareBuilder() {
