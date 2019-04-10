@@ -16,9 +16,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsTerminalProvider;
 import net.vpc.app.nuts.NutsPathCopyAction;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.InputSource;
 
 /**
  *
@@ -28,10 +30,10 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
     private static final Logger log = Logger.getLogger(DefaultNutsIOCopyAction.class.getName());
 
-    private Checker checker;
+    private Validator checker;
     private boolean safeCopy = true;
     private boolean monitorable = false;
-    private CoreIOUtils.SourceItem source;
+    private InputSource source;
     private CoreIOUtils.TargetItem target;
     private DefaultNutsIOManager iom;
     private NutsTerminalProvider terminalProvider;
@@ -47,25 +49,25 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
     @Override
     public NutsPathCopyAction setSource(InputStream source) {
-        this.source = CoreIOUtils.createSource(source);
+        this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
     public NutsPathCopyAction setSource(File source) {
-        this.source = CoreIOUtils.createSource(source);
+        this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
     public NutsPathCopyAction setSource(Path source) {
-        this.source = CoreIOUtils.createSource(source);
+        this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
     public NutsPathCopyAction setSource(URL source) {
-        this.source = CoreIOUtils.createSource(source);
+        this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
@@ -88,18 +90,30 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     public DefaultNutsIOCopyAction setSource(Object source) {
-        this.source = CoreIOUtils.createSource(source);
+        this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
     public NutsPathCopyAction from(String source) {
-        this.source = CoreIOUtils.createSource(source);
+        this.source = CoreIOUtils.createInputSource(source);
         return this;
     }
 
     @Override
     public NutsPathCopyAction to(String target) {
+        this.target = CoreIOUtils.createTarget(target);
+        return this;
+    }
+
+    @Override
+    public NutsPathCopyAction from(Object source) {
+        this.source = CoreIOUtils.createInputSource(source);
+        return this;
+    }
+
+    @Override
+    public NutsPathCopyAction to(Object target) {
         this.target = CoreIOUtils.createTarget(target);
         return this;
     }
@@ -116,12 +130,12 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public Checker getChecker() {
+    public Validator getChecker() {
         return checker;
     }
 
     @Override
-    public DefaultNutsIOCopyAction setChecker(Checker checker) {
+    public DefaultNutsIOCopyAction setValidator(Validator checker) {
         this.checker = checker;
         return this;
     }
@@ -184,8 +198,8 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
     }
 
     @Override
-    public NutsPathCopyAction check(Checker validationVerifier) {
-        return setChecker(validationVerifier);
+    public NutsPathCopyAction validator(Validator validationVerifier) {
+        return setValidator(validationVerifier);
     }
 
     @Override
@@ -225,7 +239,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
     @Override
     public void run() {
-        CoreIOUtils.SourceItem _source = source;
+        InputSource _source = source;
         if (_source == null) {
             throw new UnsupportedOperationException("Missing Source");
         }
@@ -234,15 +248,15 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         }
         boolean _target_isPath = target.isPath();
         if (checker != null && !_target_isPath && !safeCopy) {
-            throw new IllegalArgumentException("Unsupported validation if not safeCopy not path target");
+            throw new NutsIllegalArgumentException("Unsupported validation if neither safeCopy is armed nor path is defined");
         }
         if (monitorable) {
             if (_source.isPath()) {
-                _source = CoreIOUtils.createSource(iom.monitorInputStream(_source.getPath().toString(), _source.getPath().toString(), terminalProvider));
-            } else if (_source.getSource() instanceof URL) {
-                _source = CoreIOUtils.createSource(iom.monitorInputStream(_source.getSource().toString(), _source.getSource().toString(), terminalProvider));
+                _source = CoreIOUtils.createInputSource(iom.monitorInputStream(_source.getPath().toString(), _source.getPath().toString(), terminalProvider));
+            } else if (_source.isURL()) {
+                _source = CoreIOUtils.createInputSource(iom.monitorInputStream(_source.getURL().toString(), _source.getSource().toString(), terminalProvider));
             } else {
-                _source = CoreIOUtils.createSource(iom.monitorInputStream(_source.open(), -1, _source.getSource().toString(), terminalProvider));
+                _source = CoreIOUtils.createInputSource(iom.monitorInputStream(_source.open(), terminalProvider));
             }
         }
         boolean _source_isPath = _source.isPath();
@@ -260,11 +274,13 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     if (_source_isPath) {
                         Files.copy(_source.getPath(), temp, StandardCopyOption.REPLACE_EXISTING);
                     } else {
-                        Files.copy(_source.open(), temp, StandardCopyOption.REPLACE_EXISTING);
+                        try (InputStream ins = _source.open()) {
+                            Files.copy(ins, temp, StandardCopyOption.REPLACE_EXISTING);
+                        }
                     }
                     if (checker != null) {
                         try {
-                            checker.check(temp);
+                            checker.validate(temp);
                         } catch (Exception ex) {
                             if (ex instanceof ValidationException) {
                                 throw ex;
@@ -276,7 +292,9 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                         Files.move(temp, target.getPath(), StandardCopyOption.REPLACE_EXISTING);
                         temp = null;
                     } else {
-                        Files.copy(temp, target.getStream());
+                        try (OutputStream ops = target.open()) {
+                            Files.copy(temp, ops);
+                        }
                     }
                 } finally {
                     if (temp != null) {
@@ -295,18 +313,26 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     if (_source_isPath) {
                         Files.copy(_source.getPath(), target.getPath(), StandardCopyOption.REPLACE_EXISTING);
                     } else {
-                        Files.copy(_source.open(), target.getPath(), StandardCopyOption.REPLACE_EXISTING);
+                        try (InputStream ins = _source.open()) {
+                            Files.copy(ins, target.getPath(), StandardCopyOption.REPLACE_EXISTING);
+                        }
                     }
                 } else {
                     if (_source_isPath) {
-                        Files.copy(_source.getPath(), target.getStream());
+                        try (OutputStream ops = target.open()) {
+                            Files.copy(_source.getPath(), ops);
+                        }
                     } else {
-                        CoreIOUtils.copy(_source.open(), target.getStream());
+                        try (InputStream ins = _source.open()) {
+                            try (OutputStream ops = target.open()) {
+                                CoreIOUtils.copy(ins, ops);
+                            }
+                        }
                     }
                 }
                 if (checker != null) {
                     try {
-                        checker.check(target.getPath());
+                        checker.validate(target.getPath());
                     } catch (Exception ex) {
                         if (ex instanceof ValidationException) {
                             throw ex;
