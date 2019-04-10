@@ -118,13 +118,13 @@ public class FetchCommand extends AbstractNutsCommand {
         PrintStream out = context.out();
         if (!file.getContent().isCached()) {
             if (file.getContent().isTemporary()) {
-                out.printf("%s fetched successfully temporarily to %s\n", file.getId(), file.getContent().getPath());
+                out.printf("%s fetched successfully temporarily to %s\n", file.getId(), file.getPath());
             } else {
                 out.printf("%s fetched successfully\n", file.getId());
             }
         } else {
             if (file.getContent().isTemporary()) {
-                out.printf("%s already fetched temporarily to %s\n", file.getId(), file.getContent().getPath());
+                out.printf("%s already fetched temporarily to %s\n", file.getId(), file.getPath());
             } else {
                 out.printf("%s already fetched\n", file.getId());
             }
@@ -172,6 +172,11 @@ public class FetchCommand extends AbstractNutsCommand {
         @Override
         public NutsContent getContent() {
             return content;
+        }
+
+        @Override
+        public Path getPath() {
+            return content == null ? null : content.getPath();
         }
 
         @Override

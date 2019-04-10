@@ -32,7 +32,7 @@ package net.vpc.app.nuts.core.filters.id;
 /**
  * Created by vpc on 1/5/17.
  */
-public interface NutsJsAwareIdFilter {
+public interface NutsScriptAwareIdFilter {
 
     /**
      * if convertible to javascript boolean expression return valid non null

@@ -73,7 +73,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
             executor = new ThreadPoolExecutor(2, 10, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
         }
         if (StringUtils.isEmpty(serverId)) {
-            String serverName = NutsConstants.DEFAULT_ADMIN_SERVER;
+            String serverName = NutsServerConstants.DEFAULT_ADMIN_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
                 if (serverName != null && serverName.length() > 0) {
@@ -83,14 +83,14 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                 //
             }
             if (serverName == null) {
-                serverName = NutsConstants.DEFAULT_ADMIN_SERVER;
+                serverName = NutsServerConstants.DEFAULT_ADMIN_SERVER;
             }
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
 
         if (port <= 0) {
-            port = NutsConstants.DEFAULT_ADMIN_SERVER_PORT;
+            port = NutsServerConstants.DEFAULT_ADMIN_SERVER_PORT;
         }
         if (backlog <= 0) {
             backlog = 10;

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
-public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
+public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
     private NutsIdFilter[] children;
 
@@ -81,8 +81,8 @@ public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>
             if (sb.length() > 0) {
                 sb.append(" && ");
             }
-            if (id instanceof NutsJsAwareIdFilter) {
-                NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id;
+            if (id instanceof NutsScriptAwareIdFilter) {
+                NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
                 if (CoreStringUtils.isBlank(expr)) {
                     return null;

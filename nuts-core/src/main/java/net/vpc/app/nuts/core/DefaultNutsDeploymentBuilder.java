@@ -13,7 +13,6 @@ import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.InputSource;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
@@ -248,14 +247,14 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                 NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
                 try {
                     if (Files.isDirectory(contentFile)) {
-                        Path descFile = contentFile.resolve(NutsConstants.DESCRIPTOR_FILE_NAME);
+                        Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                         NutsDescriptor descriptor2;
                         if (Files.exists(descFile)) {
                             descriptor2 = ws.parser().parseDescriptor(descFile);
                         } else {
-                            descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, 
-                                    CoreIOUtils.createInputSource(contentFile).multi()
-                                    , fetchOptions, session);
+                            descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
+                                    CoreIOUtils.createInputSource(contentFile).multi(),
+                                     fetchOptions, session);
                         }
                         if (descriptor == null) {
                             descriptor = descriptor2;
@@ -288,7 +287,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                     }
                     //remove workspace
                     descriptor = descriptor.setId(descriptor.getId().setNamespace(null));
-                    if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(NutsConstants.VERSION_CHECKED_OUT_EXTENSION)) {
+                    if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                         throw new NutsIllegalArgumentException("Invalid Version " + descriptor.getId().getVersion());
                     }
 
@@ -357,7 +356,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
         }
 
     }
-    
+
     protected NutsDescriptor buildDescriptor() {
         if (descriptor == null) {
             return null;

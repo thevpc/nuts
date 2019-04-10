@@ -324,17 +324,36 @@ public final class NutsArgumentsParser {
                     case "--color":
                     case "-C": {
                         if (enabled) {
-                            o.setTerminalMode(NutsTerminalMode.FORMATTED);
-                        } else {
-                            o.setTerminalMode(NutsTerminalMode.FILTERED);
+                            String v = cmdArg.getValue();
+                            switch (NutsUtils.trim(v).toLowerCase()) {
+                                case "":
+                                case "always":
+                                case "yes":
+                                case "y":
+                                case "true": {
+                                    o.setTerminalMode(NutsTerminalMode.FORMATTED);
+                                    break;
+                                }
+                                case "never":
+                                case "no":
+                                case "none":
+                                case "false":
+                                case "filtered":
+                                case "n": {
+                                    o.setTerminalMode(NutsTerminalMode.FILTERED);
+                                    break;
+                                }
+                                case "inherited": {
+                                    o.setTerminalMode(NutsTerminalMode.INHERITED);
+                                    break;
+                                }
+                            }
                         }
                         break;
                     }
                     case "--no-color": {
                         if (enabled) {
                             o.setTerminalMode(NutsTerminalMode.FILTERED);
-                        } else {
-                            o.setTerminalMode(NutsTerminalMode.FORMATTED);
                         }
                         break;
                     }

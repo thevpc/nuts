@@ -65,7 +65,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path contentFile = nutsMainDef.getContent().getPath();
+        Path contentFile = nutsMainDef.getPath();
         JavaExecutorOptions joptions = new JavaExecutorOptions(
                 nutsMainDef, executionContext.getArgs(),
                 executionContext.getExecutorOptions(),

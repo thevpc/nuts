@@ -34,6 +34,31 @@ package net.vpc.app.nuts;
  */
 public final class NutsConstants {
 
+    public static final class Names {
+
+//    public static final class Envs {
+//
+//        private Envs() {
+//        }
+//    }
+        /**
+         * default workspace name
+         */
+        public static final String DEFAULT_WORKSPACE_NAME = "default-workspace";
+        /**
+         * default repository name. By default a repository named "local" is
+         * created as folder ~/.nuts/default-workspace/local (assuming default
+         * workspace and default root naming)
+         */
+        public static final String DEFAULT_REPOSITORY_NAME = "local";
+        public static final String USER_ADMIN = "admin";
+        public static final String USER_ANONYMOUS = "anonymous";
+
+        private Names() {
+        }
+
+    }
+
     public static final class RepoTypes {
 
         private RepoTypes() {
@@ -124,6 +149,24 @@ public final class NutsConstants {
 
     }
 
+    public static final class Files {
+
+        /**
+         * workspace config file name
+         */
+        public static final String WORKSPACE_CONFIG_FILE_NAME = "nuts-workspace.json";
+        /**
+         * repository config file name
+         */
+        public static final String REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";
+        public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
+        /**
+         * component (nuts) descriptor file name
+         */
+        public static final String DESCRIPTOR_FILE_NAME = "nuts.json";
+
+    }
+
     public static final class Ids {
 
         private Ids() {
@@ -156,52 +199,21 @@ public final class NutsConstants {
 
     }
 
-//    public static final class Envs {
-//
-//        private Envs() {
-//        }
-//    }
-    /**
-     * default workspace name
-     */
-    public static final String DEFAULT_WORKSPACE_NAME = "default-workspace";
+    public static final class Misc {
 
-    /**
-     * default repository name. By default a repository named "local" is created
-     * as folder ~/.nuts/default-workspace/local (assuming default workspace and
-     * default root naming)
-     */
-    public static final String DEFAULT_REPOSITORY_NAME = "local";
+        private Misc() {
+        }
+        public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
+    }
 
-    /**
-     * workspace config file name
-     */
-    public static final String WORKSPACE_CONFIG_FILE_NAME = "nuts-workspace.json";
+    public static final class Versions {
 
-    /**
-     * repository config file name
-     */
-    public static final String REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";
-
-    /**
-     * component (nuts) descriptor file name
-     */
-    public static final String DESCRIPTOR_FILE_NAME = "nuts.json";
-
-    public static final String ENV_KEY_EXCLUDE_CORE_EXTENSION = "exclude-core-extension";
-    public static final String ENV_KEY_PASSPHRASE = "passphrase";
-
-    public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
-    public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
-    public static final String DEFAULT_ADMIN_SERVER = "nuts-admin-server";
-    public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
-
-    public static final String USER_ADMIN = "admin";
-    public static final String USER_ANONYMOUS = "anonymous";
-
-    public static final String VERSION_CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
-
-    public static final String NUTS_COMMAND_FILE_EXTENSION = ".njc";
+        private Versions() {
+        }
+        public static final String CHECKED_OUT_EXTENSION = "-CHECKED-OUT";
+        public static final String LATEST = "LATEST";
+        public static final String RELEASE = "RELEASE";
+    }
 
     private NutsConstants() {
     }

@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.archetypes;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.CoreSecurityUtils;
 
 /**
  * Created by vpc on 1/23/17.
@@ -51,26 +51,25 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     public void initialize(NutsWorkspace workspace, NutsSession session) {
         NutsRepository defaultRepo = workspace.config().addRepository(
                 new NutsCreateRepositoryOptions()
-                        .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
-                        .setLocation(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                        .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
+                        .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                         .setDeployOrder(10)
                         .setEnabled(true)
                         .setFailSafe(false)
                         .setCreate(true)
                         .setConfig(new NutsRepositoryConfig()
-                                .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                                .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                                 .setType(NutsConstants.RepoTypes.NUTS)
                         )
         );
         if (defaultRepo == null) {
-            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
+            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.Names.DEFAULT_REPOSITORY_NAME);
         }
-        workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //simple rights for minimal utilization
         for (String right : NutsConstants.Rights.RIGHTS) {
             if (!NutsConstants.Rights.ADMIN.equals(right)) {
-                workspace.security().addUserRights(NutsConstants.USER_ANONYMOUS, right);
+                workspace.security().addUserRights(NutsConstants.Names.USER_ANONYMOUS, right);
             }
         }
     }

@@ -58,7 +58,7 @@ final class NutsBootId {
             if (dash >= 0) {
                 return new NutsBootId(id.substring(0, dots), id.substring(dots+1,dash), id.substring(dash+1));
             }
-            return new NutsBootId(id.substring(0, dots), id.substring(dots+1), "LATEST");
+            return new NutsBootId(id.substring(0, dots), id.substring(dots+1), NutsConstants.Versions.LATEST);
         }
         throw new NutsParseException("Unable to parse " + id);
     }

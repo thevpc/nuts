@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.archetypes;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.CoreSecurityUtils;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,7 +53,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         NutsRepository defaultRepo = rm.addRepository(new NutsRepositoryDefinition()
                 .setDeployOrder(10)
                 .setCreate(true)
-                .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                 .setType(NutsConstants.RepoTypes.NUTS)
         );
 //        defaultRepo.addMirror("nuts-server", "http://localhost:8899", NutsConstants.REPOSITORY_TYPE_NUTS, true);
@@ -68,9 +68,8 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 //        workspace.getConfigManager().setEnv(NutsConstants.ENV_KEY_AUTOSAVE, "true");
         workspace.config().addImports("net.vpc.app.nuts.toolbox");
         workspace.config().addImports("net.vpc.app");
-        workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
-        workspace.security().setUserRights(NutsConstants.USER_ANONYMOUS, NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT);
+        workspace.security().setUserRights(NutsConstants.Names.USER_ANONYMOUS, NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT);
 
         //has read rights
         workspace.security().addUser("user", "user",

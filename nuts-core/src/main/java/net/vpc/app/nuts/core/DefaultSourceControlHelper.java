@@ -45,11 +45,11 @@ public class DefaultSourceControlHelper {
             throw new NutsIllegalArgumentException("Not a directory " + folder);
         }
 
-        Path file = folder.resolve(NutsConstants.DESCRIPTOR_FILE_NAME);
+        Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
         NutsDescriptor d = ws.parser().parseDescriptor(file);
         String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
-        if (oldVersion.endsWith(NutsConstants.VERSION_CHECKED_OUT_EXTENSION)) {
-            oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.VERSION_CHECKED_OUT_EXTENSION.length());
+        if (oldVersion.endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
+            oldVersion = oldVersion.substring(0, oldVersion.length() - NutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
             String newVersion = ws.parser().parseVersion(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
@@ -88,15 +88,15 @@ public class DefaultSourceControlHelper {
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(nutToInstall.getContent().getPath().toString(), ws.io().expandPath(folder), new UnzipOptions().setSkipRoot(false));
+                ZipUtils.unzip(nutToInstall.getPath().toString(), ws.io().expandPath(folder), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
 
-            Path file = folder.resolve(NutsConstants.DESCRIPTOR_FILE_NAME);
+            Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
             NutsDescriptor d = ws.parser().parseDescriptor(file);
             NutsVersion oldVersion = d.getId().getVersion();
-            NutsId newId = d.getId().setVersion(oldVersion + NutsConstants.VERSION_CHECKED_OUT_EXTENSION);
+            NutsId newId = d.getId().setVersion(oldVersion + NutsConstants.Versions.CHECKED_OUT_EXTENSION);
             d = d.setId(newId);
 
             ws.formatter().createDescriptorFormat().setPretty(true).print(d, file);

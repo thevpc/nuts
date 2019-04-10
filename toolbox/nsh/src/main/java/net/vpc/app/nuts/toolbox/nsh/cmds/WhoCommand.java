@@ -88,7 +88,7 @@ public class WhoCommand extends AbstractNutsCommand {
             if (!groups.isEmpty()) {
                 context.out().printf("===identities=== : %s\n", groups.toString());
             }
-            if (!NutsConstants.USER_ADMIN.equals(login)) {
+            if (!NutsConstants.Names.USER_ADMIN.equals(login)) {
                 if (!rights.isEmpty()) {
                     context.out().printf("===rights===     : %s\n", rights.toString());
                 }
@@ -113,7 +113,7 @@ public class WhoCommand extends AbstractNutsCommand {
                     if (!rgroups.isEmpty()) {
                         context.out().printf("    ===identities=== : %s\n", rgroups.toString());
                     }
-                    if (!NutsConstants.USER_ADMIN.equals(login)) {
+                    if (!NutsConstants.Names.USER_ADMIN.equals(login)) {
                         if (!rrights.isEmpty()) {
                             context.out().printf("    ===rights===     : %s\n", rrights.toString());
                         }

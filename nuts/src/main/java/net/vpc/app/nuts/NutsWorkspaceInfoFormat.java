@@ -41,9 +41,7 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat addProperties(Properties p);
 
-    NutsWorkspaceInfoFormat addOption(String o);
-
-    NutsWorkspaceInfoFormat addOptions(String... o);
+    NutsWorkspaceInfoFormat parseOptions(String... o);
 
     String toString();
 
@@ -72,4 +70,16 @@ public interface NutsWorkspaceInfoFormat {
     void print(NutsTerminal terminal);
 
     void println(NutsTerminal terminal);
+
+    boolean isFancy();
+
+    boolean isMinimal();
+
+    NutsWorkspaceInfoFormat setFancy(boolean fancy);
+
+    NutsWorkspaceInfoFormat setMinimal(boolean minimal);
+
+    NutsFormatType getFormatType();
+
+    NutsWorkspaceInfoFormat setFormatType(NutsFormatType formatType);
 }

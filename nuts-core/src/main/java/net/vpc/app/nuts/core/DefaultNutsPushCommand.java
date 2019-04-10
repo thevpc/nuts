@@ -236,7 +236,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
-            if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(NutsConstants.VERSION_CHECKED_OUT_EXTENSION)) {
+            if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(NutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException("Invalid Version " + id.getVersion());
             }
             NutsDefinition file = ws.fetch().id(id).setSession(session).setTransitive(false).getResultDefinition();
@@ -287,7 +287,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
                 NutsId effId = ws.config().createComponentFaceId(id.unsetQuery(), file.getDescriptor()).setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()));
                 NutsRepositoryDeploymentOptions dep = new DefaultNutsRepositoryDeploymentOptions()
                         .setId(effId)
-                        .setContent(file.getContent().getPath())
+                        .setContent(file.getPath())
                         .setDescriptor(file.getDescriptor())
                         .setRepository(repo.config().getName())
                         .setTrace(this.isTrace())

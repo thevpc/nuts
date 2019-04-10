@@ -32,11 +32,11 @@ package net.vpc.app.nuts.core.filters.descriptor;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.NutsIdFilter;
-import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.Simplifiable;
 
 import java.util.Objects;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
+import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 /**
  *
@@ -77,8 +77,8 @@ public class NutsDescriptorFilterById implements NutsDescriptorFilter, Simplifia
         if (id == null) {
             return "true";
         }
-        if (id instanceof NutsJsAwareIdFilter) {
-            return ((NutsJsAwareIdFilter) id).toJsNutsIdFilterExpr();
+        if (id instanceof NutsScriptAwareIdFilter) {
+            return ((NutsScriptAwareIdFilter) id).toJsNutsIdFilterExpr();
         }
         return null;
     }

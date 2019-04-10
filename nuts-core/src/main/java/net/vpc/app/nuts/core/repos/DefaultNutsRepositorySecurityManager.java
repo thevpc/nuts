@@ -11,6 +11,7 @@ import net.vpc.app.nuts.core.NutsEffectiveUserImpl;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsWorkspaceConfigManager;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
@@ -37,7 +38,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
     @Override
     public boolean isAllowed(String right) {
         String name = repo.getWorkspace().security().getCurrentLogin();
-        if (NutsConstants.USER_ADMIN.equals(name)) {
+        if (NutsConstants.Names.USER_ADMIN.equals(name)) {
             return true;
         }
         Stack<String> items = new Stack<>();
@@ -70,7 +71,7 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         if (CoreStringUtils.isBlank(user)) {
             throw new NutsIllegalArgumentException("Invalid user");
         }
-        repo.config().setUser(new NutsUserConfig(user, null, null, null, null));
+        repo.config().setUser(new NutsUserConfig(user, null, null, null));
         setUserCredentials(user, credentials, null);
         if (rights != null) {
             NutsUserConfig security = repo.config().getUser(user);
@@ -182,9 +183,9 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
             }
         }
         if (!isAllowed(NutsConstants.Rights.ADMIN)) {
-            repo.getWorkspace().config().createAuthenticationAgent(u.getAuthenticationAgent())
+            getAuthenticationAgent()
                     .checkCredentials(
-                            u.getCredentials(), u.getAuthenticationAgent(), oldPassword,
+                            u.getCredentials(), oldPassword,
                             repo.config()
                     );
 //            if (CoreStringUtils.isEmpty(password)) {
@@ -203,9 +204,8 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         }
 
         u.setCredentials(
-                repo.getWorkspace().config().createAuthenticationAgent(u.getAuthenticationAgent())
-                        .setCredentials(password, u.getAuthenticationAgent(),
-                                repo.config())
+                getAuthenticationAgent()
+                        .setCredentials(password, repo.config())
         );
         repo.config().setUser(u);
     }
@@ -245,4 +245,26 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
         return u == null ? null : new NutsEffectiveUserImpl(u, inherited.toArray(new String[0]));
     }
 
+    @Override
+    public NutsAuthenticationAgent getAuthenticationAgent() {
+        return repo.getWorkspace().config().createAuthenticationAgent(
+                ((DefaultNutsRepositoryConfigManager) repo.config())
+                        .getStoredConfig().getAuthenticationAgent());
+    }
+
+    @Override
+    public void setAuthenticationAgent(String authenticationAgent) {
+
+        DefaultNutsRepositoryConfigManager cc = (DefaultNutsRepositoryConfigManager) repo.config();
+
+        if (repo.getWorkspace().config().createAuthenticationAgent(authenticationAgent) == null) {
+            throw new NutsIllegalArgumentException("Unsupported Authentication Agent " + authenticationAgent);
+        }
+
+        NutsRepositoryConfig conf = cc.getStoredConfig();
+        if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgent)) {
+            conf.setAuthenticationAgent(authenticationAgent);
+            cc.fireConfigurationChanged();
+        }
+    }
 }

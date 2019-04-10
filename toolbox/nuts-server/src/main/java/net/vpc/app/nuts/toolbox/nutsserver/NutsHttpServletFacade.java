@@ -83,8 +83,8 @@ public class NutsHttpServletFacade {
                 } catch (Exception exc) {
                     //
                 }
-                if (fetch != null && fetch.getContent().getPath() != null && Files.exists(fetch.getContent().getPath())) {
-                    context.sendResponseFile(200, fetch.getContent().getPath());
+                if (fetch != null && fetch.getPath() != null && Files.exists(fetch.getPath())) {
+                    context.sendResponseFile(200, fetch.getPath());
                 } else {
                     context.sendError(404, "File Note Found");
                 }
@@ -220,7 +220,7 @@ public class NutsHttpServletFacade {
                 Iterator<NutsId> it = context.getWorkspace().find()
                         .setSession(context.getSession())
                         .setTransitive(transitive)
-                        .addJs(js).addId(pattern).getResultIds().iterator();
+                        .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
                 context.sendResponseText(200, iteratorNutsIdToString(it));
             }

@@ -70,7 +70,7 @@ public class LinuxNdi implements SystemNdi {
             }
         } else {
             String idContent = "BOOT : " + f.getId().toString();
-            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getContent().getPath() + "\" \"$@\"");
+            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getPath() + "\" \"$@\"");
         }
     }
 

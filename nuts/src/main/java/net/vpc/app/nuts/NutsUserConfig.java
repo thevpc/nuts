@@ -39,7 +39,6 @@ public final class NutsUserConfig implements Serializable {
     private static transient final long serialVersionUID = 1;
     private String user;
     private String mappedUser;
-    private String authenticationAgent;
     private String credentials;
     private Set<String> groups = new HashSet<>();
     private Set<String> rights = new HashSet<>();
@@ -51,16 +50,14 @@ public final class NutsUserConfig implements Serializable {
         this.user = other.getUser();
         this.mappedUser = other.getMappedUser();
         this.credentials = other.getCredentials();
-        this.authenticationAgent = other.getAuthenticationAgent();
         this.groups.addAll(Arrays.asList(other.getGroups()));
         this.rights.addAll(Arrays.asList(other.getRights()));
     }
 
 
-    public NutsUserConfig(String user, String credentials, String authenticationAgent, String[] groups, String[] rights) {
+    public NutsUserConfig(String user, String credentials, String[] groups, String[] rights) {
         this.user = (user);
         this.credentials = (credentials);
-        this.authenticationAgent = authenticationAgent;
         setGroups(groups);
         setRights(rights);
     }
@@ -142,12 +139,4 @@ public final class NutsUserConfig implements Serializable {
         return rights.contains(right);
     }
 
-    public String getAuthenticationAgent() {
-        return authenticationAgent;
-    }
-
-    public NutsUserConfig setAuthenticationAgent(String authenticationAgent) {
-        this.authenticationAgent = authenticationAgent;
-        return this;
-    }
 }

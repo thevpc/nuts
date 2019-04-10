@@ -286,9 +286,16 @@ Java         Version: ${java.version} (${java.vm.name})
 
  [[--color]] or [[-C]]
       enables formatted (colorful) terminal ({{formatted}} terminal)
+    [[--color]]=always|yes|true|y
+      equivalent to [[--term-formatted]]
+    [[--color]]=never|none|no|false|n
+      equivalent to [[--term-filtered]]
+    [[--color]]=inherited|system
+      equivalent to [[--color]]=none or [[--term-filtered]]
 
- [[--no-color]] or [[--!color]]  or [[-!c]]
-      disable formatted (colorful) terminal ({{filtered}} terminal)
+ [[--no-color]]
+      disable formatted (colorful) terminal ({{filtered}} terminal).
+      equivalent to 
 
  [[--term-system]] or [[-S]]
       uses default (system's) terminal (may be or may be not {{formatted}} terminal)
@@ -417,7 +424,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[-U]] {{\<nuts-package\>}}...
       uninstall  ==nuts== package {{\<nuts-package\>}}
 
- [[--exe]] ...
+ [[--exec]] ...
  [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
       runs command with the given options (it will be considered an option if it 
       starts with '-')
@@ -429,7 +436,7 @@ Java         Version: ${java.version} (${java.vm.name})
       show license info
 
  [[--!...]] or [[-!...]] 
-      option will be discarded (and its parameters)
+      option will be discarded (and all of its parameters)
 
 
 @@EXAMPLES:@@

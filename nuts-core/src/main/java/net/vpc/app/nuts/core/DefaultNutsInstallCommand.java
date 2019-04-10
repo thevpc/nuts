@@ -260,7 +260,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
         List<NutsDefinition> defsToInstall = new ArrayList<>();
         for (NutsId id : options.getIds()) {
             NutsDefinition def = ws.fetch().id(id).session(session).setAcceptOptional(false).includeDependencies().setIncludeInstallInformation(true).getResultDefinition();
-            if (def != null && def.getContent().getPath() != null) {
+            if (def != null && def.getPath() != null) {
                 boolean installed = false;
                 if (def.getInstallation().isInstalled()) {
                     if (!options.isForce()) {

@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.filters.DefaultNutsIdMultiFilter;
-import net.vpc.app.nuts.core.filters.id.NutsSimpleIdFilter;
 import net.vpc.app.nuts.core.util.*;
 
 import java.io.IOException;
@@ -41,6 +40,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 
 /**
@@ -279,20 +279,18 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         try {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
-            if (DefaultNutsVersion.isStaticVersionPattern(versionString) || CoreStringUtils.isBlank(versionString)) {
-                if (CoreStringUtils.isBlank(versionString) || "LATEST".equals(versionString) || "RELEASE".equals(versionString)) {
-                    NutsId a = findLatestVersion(id.setVersion(""), null, session);
-                    if (a == null) {
-                        throw new NutsNotFoundException(id);
-                    }
-                    a = a.setFaceDescriptor();
-                    d = fetchDescriptorImpl(a, session);
-                } else {
-                    id = id.setFaceDescriptor();
-                    d = fetchDescriptorImpl(id, session);
+            if (DefaultNutsVersion.isBlank(versionString)) {
+                NutsId a = findLatestVersion(id.setVersion(""), null, session);
+                if (a == null) {
+                    throw new NutsNotFoundException(id);
                 }
+                a = a.setFaceDescriptor();
+                d = fetchDescriptorImpl(a, session);
+            } else if (DefaultNutsVersion.isStaticVersionPattern(versionString)) {
+                id = id.setFaceDescriptor();
+                d = fetchDescriptorImpl(id, session);
             } else {
-                NutsIdFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), new NutsSimpleIdFilter(id), workspace.parser().parseVersionFilter(versionString), null, this, session).simplify();
+                NutsIdFilter filter = new DefaultNutsIdMultiFilter(id.getQueryMap(), new NutsPatternIdFilter(id), null, this, session).simplify();
                 NutsId a = findLatestVersion(id.setVersion(""), filter, session);
                 if (a == null) {
                     throw new NutsNotFoundException(id);
@@ -379,7 +377,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             throw new NutsIllegalArgumentException("Empty version");
         }
         if ("RELEASE".equals(deployment.getId().getVersion().getValue())
-                || "LATEST".equals(deployment.getId().getVersion().getValue())) {
+                || NutsConstants.Versions.LATEST.equals(deployment.getId().getVersion().getValue())) {
             throw new NutsIllegalArgumentException("Invalid version " + deployment.getId().getVersion());
         }
 //        if (descriptor.getArch().length > 0 || descriptor.getOs().length > 0 || descriptor.getOsdist().length > 0 || descriptor.getPlatform().length > 0) {
@@ -689,7 +687,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     public String getUuid() {
         return config().getUuid();
     }
-    
+
     @Override
     public String uuid() {
         return getUuid();

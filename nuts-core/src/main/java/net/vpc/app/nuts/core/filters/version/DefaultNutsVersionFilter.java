@@ -33,7 +33,6 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
 
@@ -43,12 +42,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 /**
- * examples [2.6,], ]2.6,] Created by vpc on 1/20/17.
+ * examples [2.6,], ]2.6,] 
+ * Created by vpc on 1/20/17.
  */
-public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter,Serializable {
-    private static final long serialVersionUID= 1L;
+public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final Pattern NUTS_VERSION_PATTERN = Pattern.compile("(((?<VAL1>(?<L1>[\\[\\]])(?<LV1>[^\\[\\],]*),(?<RV1>[^\\[\\],]*)(?<R1>[\\[\\]]))|(?<VAL2>(?<L2>[\\[\\]])(?<V2>[^\\[\\],]*)(?<R2>[\\[\\]]))|(?<VAL3>(?<V3>[^\\[\\], ]+)))(\\s|,|\n)*)");
     private final List<NutsVersionInterval> intervals = new ArrayList<>();
@@ -70,9 +72,9 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         return intervals.toArray(new NutsVersionInterval[0]);
     }
 
-    public static DefaultNutsVersionFilter parse(String version) {
-        if (version == null || CoreStringUtils.isBlank(version) || version.equals("LAST") || version.equals("LATEST") || version.equals("RELEASE")) {
-            return new DefaultNutsVersionFilter();
+    public static NutsVersionFilter parse(String version) {
+        if (DefaultNutsVersion.isBlank(version)) {
+            return AllNutsVersionFilter.INSTANCE;
         }
 
         DefaultNutsVersionFilter d = new DefaultNutsVersionFilter();
@@ -101,11 +103,11 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
                 }
             } else {
                 String v3 = y.group("V3");
-                if(v3.endsWith("*")){
+                if (v3.endsWith("*")) {
                     String min = v3.substring(0, v3.length() - 1);
                     String max = DefaultNutsVersion.valueOf(min).inc(-1).getValue();
                     d.add(new NutsVersionInterval(true, false, min, max));
-                }else {
+                } else {
                     d.add(new NutsVersionInterval(true, true, v3, v3));
                 }
             }
@@ -167,5 +169,5 @@ public class DefaultNutsVersionFilter implements NutsVersionFilter, Simplifiable
         }
         return true;
     }
-    
+
 }

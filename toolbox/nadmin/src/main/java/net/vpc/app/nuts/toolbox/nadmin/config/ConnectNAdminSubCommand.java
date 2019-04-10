@@ -25,7 +25,7 @@ import java.net.Socket;
  * @author vpc
  */
 public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
-
+    public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
     @Override
     public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAll("connect")) {
@@ -64,7 +64,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
             Socket socket = null;
             try {
                 try {
-                    int validPort = port <= 0 ? NutsConstants.DEFAULT_ADMIN_SERVER_PORT : port;
+                    int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.out());
                     PrintStream out = new PrintStream(socket.getOutputStream());

@@ -17,15 +17,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsNotInstallableException;
+import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.bridges.maven.MavenFolderRepository;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 import net.vpc.app.nuts.core.util.bundledlibs.util.LazyIterator;
 
@@ -69,25 +74,59 @@ public class DefaultNutsInstalledRepository {
         return contains(id, NUTS_INSTALL_FILE);
     }
 
-    public NutsId[] findAll(NutsIdFilter all) {
-        final Path path = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
-        try {
-            return Files.walk(path)
-                    .map(p -> p.resolve(".nuts-install.log")).filter(p -> Files.exists(p))
-                    .map(p -> {
-                        try {
-                            return ws.io().readJson(p, InstallInfo.class);
-
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    })
-                    .filter(p -> p != null && p.getId() != null)
-                    .map(p -> p.getId())
-                    .toArray(NutsId[]::new);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+    protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+        if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
+            return null;//Collections.emptyIterator();
         }
+        return new FolderNutIdIterator(ws, "installed", folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+            @Override
+            public void undeploy(NutsId id, NutsRepositorySession session) {
+                //MavenFolderRepository.this.undeploy(id, session);
+            }
+
+            @Override
+            public boolean isDescFile(Path pathname) {
+                return pathname.getFileName().toString().equals("nuts-install.json");
+            }
+
+            @Override
+            public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
+                Map<String, Object> m = ws.io().readJson(pathname, Map.class);
+                if (m != null) {
+                    String id = (String) m.get("id");
+                    if (id != null) {
+                        return ws.fetch().id(id).local().session(session.getSession())
+                                .setTransitive(session.isTransitive())
+                                .setIndexed(session.isIndexed())
+                                .setCached(session.isCached())
+                                .getResultDescriptor();
+                    }
+                }
+                return null;
+            }
+        }, deep);
+    }
+
+    public Iterator<NutsId> findAll(NutsIdFilter all, NutsRepositorySession session) {
+        final Path path = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
+        return findInFolder(path, all, true, session);
+//        try {
+//            return Files.walk(path)
+//                    .map(p -> p.resolve(".nuts-install.log")).filter(p -> Files.exists(p))
+//                    .map(p -> {
+//                        try {
+//                            return ws.io().readJson(p, InstallInfo.class);
+//
+//                        } catch (Exception e) {
+//                            return null;
+//                        }
+//                    })
+//                    .filter(p -> p != null && p.getId() != null)
+//                    .map(p -> p.getId())
+//                    .toArray(NutsId[]::new);
+//        } catch (IOException ex) {
+//            throw new UncheckedIOException(ex);
+//        }
     }
 
     public Iterator<NutsId> findVersions(NutsId id, NutsIdFilter filter) {

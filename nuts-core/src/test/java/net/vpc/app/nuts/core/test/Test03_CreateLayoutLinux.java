@@ -58,7 +58,7 @@ public class Test03_CreateLayoutLinux {
         );
         Assert.assertEquals(
                 35,
-                listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 5,
@@ -95,7 +95,7 @@ public class Test03_CreateLayoutLinux {
         );
         Assert.assertEquals(
                 35,
-                listNamesSet(new File(base, "programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(base, "programs/net/vpc/app/nuts/nuts/" + NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 5,
@@ -125,7 +125,7 @@ public class Test03_CreateLayoutLinux {
         );
         Assert.assertEquals(
                 35,
-                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/nuts/" + TestUtils.NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)).size()
+                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/nuts/" + TestUtils.NUTS_VERSION), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assert.assertEquals(
                 5,

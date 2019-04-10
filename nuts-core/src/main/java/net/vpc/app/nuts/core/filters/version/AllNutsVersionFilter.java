@@ -2,10 +2,10 @@ package net.vpc.app.nuts.core.filters.version;
 
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
-public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
+public class AllNutsVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
     public static final AllNutsVersionFilter INSTANCE = new AllNutsVersionFilter();
 

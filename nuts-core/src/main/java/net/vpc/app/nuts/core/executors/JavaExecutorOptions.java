@@ -133,7 +133,7 @@ public class JavaExecutorOptions {
                 throw new NutsIllegalArgumentException("Cannot exclude base with jar modifier");
             }
         }else{
-            Path contentFile = nutsMainDef.getContent().getPath();
+            Path contentFile = nutsMainDef.getPath();
             if (mainClass == null) {
                 if (contentFile != null) {
                     //check manifest!
@@ -154,8 +154,8 @@ public class JavaExecutorOptions {
                 classPath.add(contentFile.toString());
             }
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
-                if (nutsDefinition.getContent().getPath() != null) {
-                    classPath.add(nutsDefinition.getContent().getPath().toString());
+                if (nutsDefinition.getPath() != null) {
+                    classPath.add(nutsDefinition.getPath().toString());
                     nutsPath.add(nutsIdFormat.toString(nutsDefinition.getId()));
                 }
             }
@@ -226,7 +226,7 @@ public class JavaExecutorOptions {
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWs()
                     .fetch().id(nutsId).setSession(this.session).setIncludeInstallInformation(true).getResultDefinition();
-            classPath.add(f.getContent().getPath().toString());
+            classPath.add(f.getPath().toString());
         }
     }
 

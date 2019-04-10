@@ -576,7 +576,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     protected int ws_exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
         ws.security().checkAllowed(NutsConstants.Rights.EXEC, "exec");
         session = CoreNutsUtils.validateSession(session, ws);
-        if (nutToRun != null && nutToRun.getContent().getPath() != null) {
+        if (nutToRun != null && nutToRun.getPath() != null) {
             NutsDescriptor descriptor = nutToRun.getDescriptor();
             if (!descriptor.isExecutable()) {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");

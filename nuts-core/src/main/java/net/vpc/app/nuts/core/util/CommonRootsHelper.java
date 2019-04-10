@@ -6,7 +6,6 @@
 package net.vpc.app.nuts.core.util;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,14 +15,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.DefaultNutsIdMultiFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
 import net.vpc.app.nuts.core.filters.id.NutsJavascriptIdFilter;
-import net.vpc.app.nuts.core.filters.id.NutsPatternIdFilter;
-import net.vpc.app.nuts.core.filters.id.NutsSimpleIdFilter;
 
 /**
  *
@@ -192,19 +189,6 @@ public class CommonRootsHelper {
         }
         if (filter instanceof NutsPatternIdFilter) {
             NutsPatternIdFilter f = ((NutsPatternIdFilter) filter);
-            List<NutsId> c = new ArrayList<>();
-            String[] y = f.getIds();
-            if (y.length == 0) {
-                return null;
-            }
-            Set<PathBase> xx = resolveRootId(y[0]);
-            for (int i = 1; i < y.length; i++) {
-                xx = resolveRootIdOr(xx, resolveRootId(y[i]));
-            }
-            return xx;
-        }
-        if (filter instanceof NutsSimpleIdFilter) {
-            NutsSimpleIdFilter f = ((NutsSimpleIdFilter) filter);
             return resolveRootId(f.getId().getGroup());
         }
         return null;

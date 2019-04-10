@@ -186,7 +186,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         for (NutsDefinition nutsDefinition : nutsDefinitions) {
             if (!isLoadedClassPath(nutsDefinition, session)) {
-                this.workspaceExtensionsClassLoader.addPath(nutsDefinition.getContent().getPath());
+                this.workspaceExtensionsClassLoader.addPath(nutsDefinition.getPath());
             }
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, toWire, this.workspaceExtensionsClassLoader);
@@ -216,10 +216,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         try {
             //            NutsDefinition file = fetch(id.toString(), session);
-            if (file.getContent().getPath() != null) {
+            if (file.getPath() != null) {
                 ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(file.getContent().getPath().toFile());
+                    zipFile = new ZipFile(file.getPath().toFile());
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
@@ -420,8 +420,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public NutsId[] getExtensions() {
-        if (workspaceConfig().getExtensions() != null) {
-            return workspaceConfig().getExtensions().toArray(new NutsId[0]);
+        if (getStoredConfig().getExtensions() != null) {
+            return getStoredConfig().getExtensions().toArray(new NutsId[0]);
         }
         return new NutsId[0];
     }
@@ -432,10 +432,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             throw new NutsIllegalArgumentException("Invalid Extension");
         }
         if (!containsExtension(extensionId)) {
-            if (workspaceConfig().getExtensions() == null) {
-                workspaceConfig().setExtensions(new ArrayList<>());
+            if (getStoredConfig().getExtensions() == null) {
+                getStoredConfig().setExtensions(new ArrayList<>());
             }
-            workspaceConfig().getExtensions().add(extensionId);
+            getStoredConfig().getExtensions().add(extensionId);
             fireConfigurationChanged();
             return true;
         }
@@ -449,8 +449,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         }
         for (NutsId extension : getExtensions()) {
             if (extension.equalsSimpleName(extensionId)) {
-                if (workspaceConfig().getExtensions() != null) {
-                    workspaceConfig().getExtensions().remove(extension);
+                if (getStoredConfig().getExtensions() != null) {
+                    getStoredConfig().getExtensions().remove(extension);
                 }
                 fireConfigurationChanged();
                 return true;
@@ -470,7 +470,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             NutsId extension = extensions[i];
             if (extension.equalsSimpleName(extensionId)) {
                 extensions[i] = extensionId;
-                workspaceConfig().setExtensions(new ArrayList<>(Arrays.asList(extensions)));
+                getStoredConfig().setExtensions(new ArrayList<>(Arrays.asList(extensions)));
                 fireConfigurationChanged();
                 return true;
             }
@@ -499,8 +499,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return (DefaultNutsWorkspaceConfigManager) ws.config();
     }
 
-    private NutsWorkspaceConfig workspaceConfig() {
-        return config0().config;
+    private NutsWorkspaceConfig getStoredConfig() {
+        return config0().getStoredConfig();
     }
 
 }

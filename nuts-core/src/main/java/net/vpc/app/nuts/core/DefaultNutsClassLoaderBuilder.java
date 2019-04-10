@@ -92,7 +92,7 @@ public class DefaultNutsClassLoaderBuilder implements NutsClassLoaderBuilder {
         URL[] all = new URL[nutsDefinitions.size()];
         for (int i = 0; i < all.length; i++) {
             try {
-                all[i] = nutsDefinitions.get(i).getContent().getPath().toUri().toURL();
+                all[i] = nutsDefinitions.get(i).getPath().toUri().toURL();
             } catch (MalformedURLException ex) {
                 throw new UncheckedIOException(ex);
             }

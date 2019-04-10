@@ -29,36 +29,39 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by vpc on 6/23/17.
  */
-public final class NutsWorkspaceUpdateResult implements Iterable<NutsWorkspaceUpdateResultItem> {
+public final class NutsWorkspaceUpdateResult /*implements Iterable<NutsWorkspaceUpdateResultItem>*/ {
 
-    private NutsWorkspaceUpdateResultItem api;
-    private NutsWorkspaceUpdateResultItem runtime;
-    private NutsWorkspaceUpdateResultItem[] extensions;
+    private NutsUpdateResult api;
+    private NutsUpdateResult runtime;
+    private NutsUpdateResult[] extensions;
+    private NutsUpdateResult[] components;
 
-    public NutsWorkspaceUpdateResult(NutsWorkspaceUpdateResultItem api, NutsWorkspaceUpdateResultItem runtime, NutsWorkspaceUpdateResultItem[] extensions) {
+    public NutsWorkspaceUpdateResult(NutsUpdateResult api, NutsUpdateResult runtime, NutsUpdateResult[] extensions, NutsUpdateResult[] components) {
         this.api = api;
         this.runtime = runtime;
         this.extensions = extensions;
+        this.components = components;
     }
 
-    public NutsWorkspaceUpdateResultItem getApi() {
+    public NutsUpdateResult getApi() {
         return api;
     }
 
-    public NutsWorkspaceUpdateResultItem getRuntime() {
+    public NutsUpdateResult getRuntime() {
         return runtime;
     }
 
-    public NutsWorkspaceUpdateResultItem[] getExtensions() {
+    public NutsUpdateResult[] getExtensions() {
         return Arrays.copyOf(extensions, extensions.length);
+    }
+
+    public NutsUpdateResult[] getComponents() {
+        return Arrays.copyOf(components, components.length);
     }
 
     public boolean isUpdatableApi() {
@@ -73,18 +76,22 @@ public final class NutsWorkspaceUpdateResult implements Iterable<NutsWorkspaceUp
         return extensions.length > 0;
     }
 
-    public NutsWorkspaceUpdateResultItem[] toArray() {
-        List<NutsWorkspaceUpdateResultItem> all = new ArrayList<NutsWorkspaceUpdateResultItem>();
-        if (api != null) {
-            all.add(api);
-        }
-        if (runtime != null) {
-            all.add(runtime);
-        }
-        all.addAll(Arrays.asList(extensions));
-        return all.toArray(new NutsWorkspaceUpdateResultItem[0]);
-    }
+//    public NutsWorkspaceUpdateResultItem[] toArray() {
+//        List<NutsWorkspaceUpdateResultItem> all = new ArrayList<NutsWorkspaceUpdateResultItem>();
+//        if (api != null) {
+//            all.add(api);
+//        }
+//        if (runtime != null) {
+//            all.add(runtime);
+//        }
+//        all.addAll(Arrays.asList(extensions));
+//        return all.toArray(new NutsWorkspaceUpdateResultItem[0]);
+//    }
 
+    public boolean isUpdateAvailable() {
+        return getUpdatesCount()>0;
+    }
+    
     public int getUpdatesCount() {
         int c = 0;
         if (api != null) {
@@ -93,12 +100,12 @@ public final class NutsWorkspaceUpdateResult implements Iterable<NutsWorkspaceUp
         if (runtime != null) {
             c++;
         }
-        return c + extensions.length;
+        return c + extensions.length+components.length;
     }
 
-    @Override
-    public Iterator<NutsWorkspaceUpdateResultItem> iterator() {
-        return Arrays.asList(toArray()).iterator();
-    }
+//    @Override
+//    public Iterator<NutsWorkspaceUpdateResultItem> iterator() {
+//        return Arrays.asList(toArray()).iterator();
+//    }
 
 }

@@ -19,29 +19,11 @@ public interface NutsUpdateCommand {
 
     NutsUpdateCommand addArgs(String... args);
 
-    NutsUpdateCommand addId(NutsId id);
-
-    NutsUpdateCommand addId(String id);
-
-    NutsUpdateCommand addIds(NutsId... ids);
-
-    NutsUpdateCommand addIds(String... ids);
-
-    NutsId[] getIds();
-
     NutsId[] getFrozenIds();
 
     String[] getArgs();
 
     NutsSession getSession();
-
-    NutsUpdateCommand id(NutsId id);
-
-    NutsUpdateCommand id(String id);
-
-    NutsUpdateCommand ids(NutsId... id);
-
-    NutsUpdateCommand ids(String... id);
 
     boolean isEnableInstall();
 
@@ -59,23 +41,81 @@ public interface NutsUpdateCommand {
 
     NutsUpdateCommand setForce(boolean forceInstall);
 
-    NutsUpdateCommand setId(NutsId id);
-
-    NutsUpdateCommand setId(String id);
-
     NutsUpdateCommand setSession(NutsSession session);
 
     NutsUpdateCommand setTrace(boolean trace);
 
     NutsUpdateCommand setEnableInstall(boolean enableInstall);
 
+    boolean isUpdateWorkspace();
+
+    NutsUpdateCommand setUpdateWorkspace(boolean enableMajorUpdates);
+
+    boolean isUpdateExtensions();
+
+    NutsUpdateCommand setUpdateExtensions(boolean updateExtensions);
+
+    String getApiVersion();
+
+    NutsUpdateCommand setApiVersion(String forceBootAPIVersion);
+
+    /**
+     *
+     * @return null if no updates
+     */
     NutsUpdateCommand update();
-    
-    boolean isUpdateAvailable() ;
 
-    NutsUpdateResult[] getUpdateResult();
-
+    /**
+     *
+     * @return null if no updates
+     */
     NutsUpdateCommand checkUpdates();
 
+    /**
+     *
+     * @param applyUpdates
+     * @return null if no updates
+     */
     NutsUpdateCommand checkUpdates(boolean applyUpdates);
+
+    NutsWorkspaceUpdateResult getUpdateResult();
+
+    int getUpdatesCount();
+
+    NutsUpdateCommand addId(NutsId id);
+
+    NutsUpdateCommand addId(String id);
+
+    NutsUpdateCommand addIds(NutsId... ids);
+
+    NutsUpdateCommand addIds(String... ids);
+
+    NutsId[] getIds();
+
+    NutsUpdateCommand id(NutsId id);
+
+    NutsUpdateCommand id(String id);
+
+    NutsUpdateCommand ids(NutsId... id);
+
+    NutsUpdateCommand ids(String... id);
+
+    NutsUpdateCommand setId(NutsId id);
+
+    NutsUpdateCommand setId(String id);
+
+    boolean isUpdateRuntime();
+
+    boolean isUpdateInstalled();
+
+    NutsUpdateCommand workspace();
+
+    NutsUpdateCommand runtime();
+
+    NutsUpdateCommand extensions();
+
+    NutsUpdateCommand installed();
+
+    NutsUpdateCommand all();
+
 }

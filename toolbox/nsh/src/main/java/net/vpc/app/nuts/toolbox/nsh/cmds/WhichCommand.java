@@ -145,7 +145,7 @@ public class WhichCommand extends AbstractNutsCommand {
             if (core == null) {
                 cp_nutsCoreFile = "not found, will be downloaded on need";
             } else {
-                cp_nutsCoreFile = core.getContent().getPath().toString();
+                cp_nutsCoreFile = core.getPath().toString();
             }
         }
         map.put("nuts.workspace.version", workspace.config().getRunningContext().getApiId().getVersion().getValue());

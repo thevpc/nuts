@@ -76,9 +76,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         if (cmdLine.isExecMode()) {
             if (ids.isEmpty()) {
                 //should update nuts
-                if (context.getWorkspace().updateWorkspace()
-                        .setEnableMajorUpdates(version != null)
-                        .setForceBootAPIVersion(version)
+                if (context.getWorkspace().update()
+                        .setUpdateWorkspace(version != null)
+                        .setApiVersion(version)
                         .setTrace(uoptions.isTrace())
                         .setUpdateExtensions(extensions || apply)
                         .setSession(context.getSession())

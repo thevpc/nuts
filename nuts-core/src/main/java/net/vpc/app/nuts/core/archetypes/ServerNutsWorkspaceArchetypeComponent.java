@@ -51,20 +51,19 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     public void initialize(NutsWorkspace workspace, NutsSession session) {
         NutsRepository defaultRepo = workspace.config().addRepository(
                 new NutsCreateRepositoryOptions()
-                        .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
-                        .setLocation(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                        .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
+                        .setLocation(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                         .setEnabled(true)
                         .setFailSafe(false)
                         .setCreate(true)
                         .setConfig(new NutsRepositoryConfig()
-                                .setName(NutsConstants.DEFAULT_REPOSITORY_NAME)
+                                .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
                                 .setType(NutsConstants.RepoTypes.NUTS)
                         )
         );
         if (defaultRepo == null) {
-            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.DEFAULT_REPOSITORY_NAME);
+            throw new NutsIllegalArgumentException("Unable to configure repository : " + NutsConstants.Names.DEFAULT_REPOSITORY_NAME);
         }
-        workspace.config().setEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
 
         //has read rights
         workspace.security().addUser("guest", "user",

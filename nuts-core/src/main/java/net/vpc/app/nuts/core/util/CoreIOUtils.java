@@ -87,7 +87,7 @@ public class CoreIOUtils {
 
     public static int execAndWait(NutsDefinition nutMainFile, NutsWorkspace workspace, NutsSession session, Properties execProperties, String[] args, Map<String, String> env, String directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getContent().getPath();
+        Path installerFile = nutMainFile.getPath();
         Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
@@ -106,7 +106,7 @@ public class CoreIOUtils {
         map.put("nuts.id.name", id.getName());
         map.put("nuts.id.fullName", id.getSimpleName());
         map.put("nuts.id.group", id.getGroup());
-        map.put("nuts.file", nutMainFile.getContent().getPath().toString());
+        map.put("nuts.file", nutMainFile.getPath().toString());
         String defaultJavaCommand = resolveJavaCommand("", workspace);
 
         map.put("nuts.java", defaultJavaCommand);
@@ -143,8 +143,8 @@ public class CoreIOUtils {
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = workspace.fetch().id(NutsConstants.Ids.NUTS_API).setSession(session).getResultDefinition();
-                    if (nutsDefinition.getContent().getPath() != null) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getContent().getPath());
+                    if (nutsDefinition.getPath() != null) {
+                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
                     }
                     return null;
                 }
@@ -581,7 +581,7 @@ public class CoreIOUtils {
                 throw new NutsIllegalArgumentException("File does not exists " + fileSource);
             }
             if (Files.isDirectory(fileSource)) {
-                Path ext = fileSource.resolve(NutsConstants.DESCRIPTOR_FILE_NAME);
+                Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
                     c.descriptor = ws.parser().parseDescriptor(ext);
                 } else {
@@ -598,7 +598,7 @@ public class CoreIOUtils {
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
-                File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.DESCRIPTOR_FILE_NAME));
+                File ext = new File(ws.io().expandPath(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME));
                 if (ext.exists()) {
                     c.descriptor = ws.parser().parseDescriptor(ext);
                 } else {

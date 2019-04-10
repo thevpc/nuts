@@ -30,7 +30,6 @@
 package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.*;
 
 import java.io.*;
@@ -40,6 +39,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
+import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
@@ -160,8 +160,8 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveEncryptedAuth();
-        if (filter instanceof NutsJsAwareIdFilter) {
-            String js = ((NutsJsAwareIdFilter) filter).toJsNutsIdFilterExpr();
+        if (filter instanceof NutsScriptAwareIdFilter) {
+            String js = ((NutsScriptAwareIdFilter) filter).toJsNutsIdFilterExpr();
             if (js != null) {
                 ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()),
                         new NutsTransportParamParamPart("root", "/"),
@@ -259,12 +259,11 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             if (CoreStringUtils.isBlank(newLogin)) {
                 newLogin = login;
             }
-            credentials = getWorkspace().config().createAuthenticationAgent(security.getAuthenticationAgent())
-                    .getCredentials(credentials, security.getAuthenticationAgent(),
-                            config());
+            credentials = getWorkspace().security().getAuthenticationAgent()
+                    .getCredentials(credentials, config());
         }
 
-        String passphrase = config().getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE, true);
+        String passphrase = config().getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE, true);
         newLogin = new String(CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase));
         credentials = new String(CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(credentials).getBytes(), passphrase));
         return new String[]{newLogin, credentials};

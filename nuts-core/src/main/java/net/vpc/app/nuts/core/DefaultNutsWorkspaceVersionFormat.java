@@ -13,18 +13,87 @@ import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsFormatType;
 import net.vpc.app.nuts.NutsTerminal;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
 
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
 
     private NutsWorkspace ws;
-    private Set<String> options = new HashSet<>();
     private Properties extraProperties = new Properties();
+    private NutsFormatType formatType = null;
+    private boolean minimal = false;
+    private boolean pretty = true;
 
     public DefaultNutsWorkspaceVersionFormat(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public NutsWorkspaceVersionFormat parseOptions(String[] args) {
+        for (String arg : args) {
+            switch (arg) {
+                case "--min": {
+                    this.setMinimal(true);
+                    break;
+                }
+                case "--json": {
+                    this.setFormatType(NutsFormatType.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setFormatType(NutsFormatType.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setFormatType(NutsFormatType.PLAIN);
+                    break;
+                }
+                default: {
+                    if (arg.startsWith("--add:")) {
+                        String kv = arg.substring("--add:".length());
+                        int i = kv.indexOf('=');
+                        if (i >= 0) {
+                            extraProperties.put(kv.substring(0, i), kv.substring(i + 1));
+                        } else {
+                            extraProperties.put(kv, "");
+                        }
+                    } else {
+                        //ignore!
+                    }
+                }
+            }
+        }
+        return this;
+    }
+
+    public boolean isPretty() {
+        return pretty;
+    }
+
+    public NutsWorkspaceVersionFormat setPretty(boolean pretty) {
+        this.pretty = pretty;
+        return this;
+    }
+
+    public boolean isMinimal() {
+        return minimal;
+    }
+
+    public NutsWorkspaceVersionFormat setMinimal(boolean minimal) {
+        this.minimal = minimal;
+        return this;
+    }
+
+    public NutsFormatType getFormatType() {
+        return formatType;
+    }
+
+    public NutsWorkspaceVersionFormat setFormatType(NutsFormatType formatType) {
+        this.formatType = formatType;
+        return this;
     }
 
     @Override
@@ -37,26 +106,6 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     public NutsWorkspaceVersionFormat addProperties(Properties p) {
         if (p != null) {
             extraProperties.putAll(p);
-        }
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat addOption(String o) {
-        if (o != null) {
-            for (String o1 : Arrays.asList(o.split(","))) {
-                if (!CoreStringUtils.isBlank(o1)) {
-                    options.add(o1);
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceVersionFormat addOptions(String... o) {
-        for (String option : options) {
-            addOption(option);
         }
         return this;
     }
@@ -144,27 +193,71 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
             throw new UncheckedIOException(ex);
         }
     }
-    
+
     @Override
-    public void print(Writer w) {
+    public void print(Writer out) {
+        NutsFormatType t = formatType;
+        if (t == null) {
+            t = NutsFormatType.PLAIN;
+        }
+        switch (t) {
+            case PLAIN:
+                printPlain(out);
+                return;
+            case PROPS:
+                printProps(out);
+                return;
+            case JSON:
+                printJson(out);
+                return;
+        }
+        throw new NutsUnsupportedArgumentException("Unsupported format Type " + t);
+    }
+
+    public Map<String, String> buildProps() {
+        LinkedHashMap<String, String> props = new LinkedHashMap<>();
+        NutsWorkspaceConfigManager configManager = ws.config();
+        if (isMinimal()) {
+            props.put("nuts-boot-api-version", configManager.getRunningContext().getApiId().getVersion().toString());
+            props.put("nuts-boot-runtime-version", configManager.getRunningContext().getRuntimeId().getVersion().toString());
+            return props;
+        }
+        Set<String> extraKeys = new TreeSet<>();
+        if (extraProperties != null) {
+            extraKeys = new TreeSet(extraProperties.keySet());
+        }
+        props.put("nuts-boot-api-version", configManager.getRunningContext().getApiId().getVersion().toString());
+        props.put("nuts-boot-runtime-version", configManager.getRunningContext().getRuntimeId().getVersion().toString());
+        props.put("java-version", System.getProperty("java.version"));
+        props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
+        for (String extraKey : extraKeys) {
+            props.put(extraKey, extraProperties.getProperty(extraKey));
+        }
+        return props;
+    }
+
+    public void printProps(Writer w) {
+        Properties p = new Properties();
+        p.putAll(buildProps());
+        try {
+            p.store(w, null);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public void printJson(Writer w) {
+        ws.io().writeJson(buildProps(), w, true);
+    }
+
+    public void printPlain(Writer w) {
         PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
         NutsWorkspaceConfigManager configManager = ws.config();
-        if (options.contains("min")) {
+        if (isMinimal()) {
             out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
         } else {
-            Set<String> extraKeys = new TreeSet<>();
-            if (extraProperties != null) {
-                extraKeys = new TreeSet(extraProperties.keySet());
-            }
             int len = 23;
-            LinkedHashMap<String, String> props = new LinkedHashMap<>();
-            props.put("nuts-boot-api", configManager.getRunningContext().getApiId().toString());
-            props.put("nuts-boot-runtime", configManager.getRunningContext().getRuntimeId().toString());
-            props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
-            for (String extraKey : extraKeys) {
-                props.put(extraKey, extraProperties.getProperty(extraKey));
-            }
+            Map<String, String> props = buildProps();
             for (String extraKey : props.keySet()) {
                 int x = ws.parser().escapeText(extraKey).length();
                 if (x > len) {

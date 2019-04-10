@@ -235,11 +235,11 @@ public class NFindMain extends NutsApplication {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        NutsFindCommand query = findContext.context.getWorkspace().find().addJs(findWhat.jsCode)
-                .addId(findWhat.nonjs)
-                .addArch(findContext.arch)
-                .addPackaging(findContext.pack)
-                .addRepository(findContext.repos)
+        NutsFindCommand query = findContext.context.getWorkspace().find().addScripts(findWhat.jsCode)
+                .addIds(findWhat.nonjs)
+                .addArchs(findContext.arch)
+                .addPackagings(findContext.pack)
+                .addRepositories(findContext.repos)
                 .setSort(findContext.sort)
                 .setIncludeAllVersions(findContext.allVersions)
                 .setIncludeDuplicateVersions(findContext.duplicateVersions)

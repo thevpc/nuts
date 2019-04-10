@@ -21,7 +21,6 @@ import net.vpc.app.nuts.NutsFetchStrategy;
  */
 public class DefaultNutsQueryBaseOptions<T> {
 
-    private boolean ignoreCache = false;
     private boolean transitive = true;
     private boolean cached = true;
     private Boolean indexed = null;
@@ -40,16 +39,15 @@ public class DefaultNutsQueryBaseOptions<T> {
         if (other != null) {
             this.acceptOptional = other.getAcceptOptional();
             this.session = other.getSession();
-            this.ignoreCache = other.isIgnoreCache();
             this.mode = other.getFetchStrategy();
             this.indexed = other.getIndexed();
-            this.includeContent = other.isIncludeFile();
+            this.includeContent = other.isIncludeContent();
             this.includeDependencies = other.isIncludeDependencies();
             this.effective = other.isEffective();
             this.includeInstallInfo = other.isIncludeInstallInformation();
             this.scope = EnumSet.copyOf(other.getScope());
             this.includeInstallInfo = other.isIncludeInstallInformation();
-            this.includeContent = other.isIncludeFile();
+            this.includeContent = other.isIncludeContent();
             this.includeDependencies = other.isIncludeDependencies();
             this.transitive = other.isTransitive();
             this.cached = other.isCached();
@@ -61,6 +59,16 @@ public class DefaultNutsQueryBaseOptions<T> {
     //@Override
     public boolean isCached() {
         return cached;
+    }
+
+    //@Override
+    public T cached() {
+        return cached(true);
+    }
+
+    //@Override
+    public T cached(boolean cached) {
+        return setCached(cached);
     }
 
     //@Override
@@ -158,24 +166,8 @@ public class DefaultNutsQueryBaseOptions<T> {
     }
 
     //@Override
-    public T indexDisabled() {
-        return setIndexed(false);
-    }
-
-    //@Override
-    public boolean isIgnoreCache() {
-        return ignoreCache;
-    }
-
-    //@Override
-    public T setIgnoreCache(boolean ignoreCache) {
-        this.ignoreCache = ignoreCache;
-        return (T) this;
-    }
-
-    //@Override
-    public T ignoreCache() {
-        return setIgnoreCache(true);
+    public T indexed(boolean indexed) {
+        return setIndexed(indexed);
     }
 
     //@Override
@@ -262,19 +254,37 @@ public class DefaultNutsQueryBaseOptions<T> {
     }
 
     //@Override
-    public boolean isIncludeFile() {
+    public boolean isIncludeContent() {
         return includeContent;
     }
 
     //@Override
-    public T setIncludeFile(boolean includeContent) {
+    public T setIncludeContent(boolean includeContent) {
         this.includeContent = includeContent;
         return (T) this;
+    }
+
+    public T includeContent(boolean includeContent) {
+        return (T) setIncludeContent(includeContent);
+    }
+
+    public T includeContent() {
+        return (T) setIncludeContent(true);
     }
 
     //@Override
     public boolean isIncludeInstallInformation() {
         return includeInstallInfo;
+    }
+
+    //@Override
+    public T includeInstallInformation() {
+        return includeInstallInformation(true);
+    }
+
+    //@Override
+    public T includeInstallInformation(boolean includeInstallInfo) {
+        return setIncludeInstallInformation(includeInstallInfo);
     }
 
     //@Override

@@ -43,7 +43,7 @@ import net.vpc.app.nuts.core.util.CoreStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsJsAwareIdFilter {
+public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
     private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
 
@@ -81,6 +81,7 @@ public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsId
         return code;
     }
 
+    @Override
     public boolean accept(NutsId id) {
         return engineHelper.accept(id);
     }

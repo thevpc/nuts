@@ -174,4 +174,6 @@ public interface NutsId extends Serializable {
     NutsIdBuilder builder();
 
     boolean isOptional();
+    
+    NutsIdFilter toFilter();
 }

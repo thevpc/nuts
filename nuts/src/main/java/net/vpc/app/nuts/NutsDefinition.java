@@ -30,6 +30,7 @@
 package net.vpc.app.nuts;
 
 import java.io.Serializable;
+import java.nio.file.Path;
 
 /**
  * Created by vpc on 1/6/17.
@@ -41,6 +42,8 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsId getId();
 
     NutsContent getContent();
+    
+    Path getPath();
 
     NutsInstallInfo getInstallation();
 

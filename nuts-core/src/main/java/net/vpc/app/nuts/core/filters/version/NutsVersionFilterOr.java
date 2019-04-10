@@ -2,7 +2,6 @@ package net.vpc.app.nuts.core.filters.version;
 
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.core.filters.id.NutsJsAwareIdFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.Simplifiable;
 
@@ -11,8 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
-public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsJsAwareIdFilter {
+public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
     private NutsVersionFilter[] all;
 
@@ -78,8 +78,8 @@ public class NutsVersionFilterOr implements NutsVersionFilter, Simplifiable<Nuts
             if (sb.length() > 0) {
                 sb.append(" || ");
             }
-            if (id instanceof NutsJsAwareIdFilter) {
-                NutsJsAwareIdFilter b = (NutsJsAwareIdFilter) id;
+            if (id instanceof NutsScriptAwareIdFilter) {
+                NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
                 if (CoreStringUtils.isBlank(expr)) {
                     return null;

@@ -10,51 +10,87 @@ public interface NutsFindCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-    NutsFindCommand setId(String id);
-
-    NutsFindCommand setId(NutsId value);
+    NutsFindCommand clearIds();
 
     NutsFindCommand mainAndDependencies();
 
     NutsFindCommand mainOnly();
 
-    NutsFindCommand setVersionFilter(NutsVersionFilter filter);
+    NutsFindCommand addId(String id);
 
-    NutsFindCommand setVersionFilter(String filter);
+    NutsFindCommand addId(NutsId id);
 
     NutsFindCommand addIds(String... ids);
 
     NutsFindCommand addIds(NutsId... ids);
 
-    NutsFindCommand setIds(String... ids);
+    NutsFindCommand addIds(Collection<String> value);
+
+    NutsFindCommand ids(Collection<String> value);
+
+    NutsFindCommand removeId(String id);
+
+    NutsFindCommand removeId(NutsId id);
 
     NutsFindCommand id(String id);
-    
-    NutsFindCommand addId(String id);
 
-    NutsFindCommand addId(NutsId id);
+    NutsFindCommand id(NutsId id);
 
-    NutsFindCommand addJs(Collection<String> value);
+    NutsFindCommand ids(String... ids);
 
-    NutsFindCommand addJs(String... value);
+    NutsFindCommand ids(NutsId... ids);
 
-    NutsFindCommand addId(Collection<String> value);
+    NutsFindCommand addScripts(Collection<String> value);
 
-    NutsFindCommand addId(String... value);
+    NutsFindCommand addScripts(String... value);
 
-    NutsFindCommand addId(NutsId... value);
+    NutsFindCommand clearArchs();
 
-    NutsFindCommand addArch(Collection<String> value);
+    NutsFindCommand addArch(String value);
 
-    NutsFindCommand addArch(String... value);
+    NutsFindCommand removeArch(String value);
 
-    NutsFindCommand addPackaging(Collection<String> value);
+    NutsFindCommand addArchs(Collection<String> value);
 
-    NutsFindCommand addPackaging(String... value);
+    NutsFindCommand addArchs(String... value);
 
-    NutsFindCommand addRepository(Collection<String> value);
+    NutsFindCommand arch(String value);
 
-    NutsFindCommand addRepository(String... value);
+    NutsFindCommand archs(Collection<String> value);
+
+    NutsFindCommand archs(String... value);
+
+    NutsFindCommand packaging(String value);
+
+    NutsFindCommand packagings(Collection<String> value);
+
+    NutsFindCommand packagings(String... value);
+
+    NutsFindCommand clearPackagings();
+
+    NutsFindCommand addPackagings(Collection<String> value);
+
+    NutsFindCommand addPackagings(String... value);
+
+    NutsFindCommand addPackaging(String value);
+
+    NutsFindCommand removePackaging(String value);
+
+    NutsFindCommand clearRepositories();
+
+    NutsFindCommand repositories(Collection<String> value);
+
+    NutsFindCommand addRepositories(Collection<String> value);
+
+    NutsFindCommand addRepositories(String... value);
+
+    NutsFindCommand addRepository(String value);
+
+    NutsFindCommand removeRepository(String value);
+
+    NutsFindCommand repository(String value);
+
+    NutsFindCommand repositories(String... value);
 
     /**
      * setSort(true)
@@ -87,7 +123,7 @@ public interface NutsFindCommand {
 
     NutsFindCommand setRepositoryFilter(NutsRepositoryFilter filter);
 
-    NutsFindCommand setRepositoryFilter(String filter);
+    NutsFindCommand setRepository(String filter);
 
     NutsFindCommand setDescriptorFilter(NutsDescriptorFilter filter);
 
@@ -127,8 +163,6 @@ public interface NutsFindCommand {
     NutsDependencyFilter getDependencyFilter();
 
     NutsRepositoryFilter getRepositoryFilter();
-
-    NutsVersionFilter getVersionFilter();
 
     NutsDescriptorFilter getDescriptorFilter();
 
@@ -253,15 +287,10 @@ public interface NutsFindCommand {
 
     NutsFindCommand setIncludeOptional(boolean includeOptional);
 
-    NutsFindCommand setIgnoreCache(boolean ignoreCache);
-
-    NutsFindCommand ignoreCache();
-
     NutsFindCommand setIndexed(Boolean indexEnabled);
 
     NutsFindCommand indexed();
-
-    NutsFindCommand indexDisabled();
+    NutsFindCommand indexed(boolean enable);
 
     NutsFindCommand includeDependencies();
 
@@ -275,9 +304,19 @@ public interface NutsFindCommand {
 
     NutsFindCommand effective();
 
+    NutsFindCommand cached();
+    NutsFindCommand cached(boolean cached);
     NutsFindCommand setCached(boolean cached);
 
-    NutsFindCommand setIncludeFile(boolean includeFile);
+    NutsFindCommand includeContent();
+
+    NutsFindCommand includeContent(boolean includeContent);
+
+    NutsFindCommand setIncludeContent(boolean includeContent);
+
+    NutsFindCommand includeInstallInformation();
+
+    NutsFindCommand includeInstallInformation(boolean includeInstallInformation);
 
     NutsFindCommand setIncludeInstallInformation(boolean includeInstallInformation);
 
@@ -304,9 +343,7 @@ public interface NutsFindCommand {
 
     NutsSession getSession();
 
-    boolean isIgnoreCache();
-
-    boolean isIncludeFile();
+    boolean isIncludeContent();
 
     boolean isIncludeInstallInformation();
 

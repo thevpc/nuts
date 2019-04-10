@@ -29,15 +29,19 @@
  */
 package net.vpc.app.nuts.core;
 
+import java.util.ArrayList;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 1/5/17.
@@ -69,9 +73,8 @@ public class DefaultNutsId implements NutsId {
             for (String k : sortedKeys) {
                 String v = query.get(k);
                 switch (k) {
-                    case "face": 
-                    case "alternative": 
-                    {
+                    case "face":
+                    case "alternative": {
                         if ("default".equals(v)) {
                             v = null;
                         }
@@ -238,8 +241,8 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId setVersion(NutsVersion newVersion) {
-        if(newVersion==null){
-            newVersion=DefaultNutsVersion.EMPTY;
+        if (newVersion == null) {
+            newVersion = DefaultNutsVersion.EMPTY;
         }
         if (newVersion.equals(version)) {
             return this;
@@ -557,6 +560,7 @@ public class DefaultNutsId implements NutsId {
         return sb.toString();
     }
 
+    @Override
     public boolean isOptional() {
         return Boolean.parseBoolean(getOptional());
     }
@@ -619,4 +623,11 @@ public class DefaultNutsId implements NutsId {
     public NutsIdBuilder builder() {
         return new DefaultNutsIdBuilder(this);
     }
+
+    @Override
+    public NutsIdFilter toFilter() {
+        return new NutsPatternIdFilter(this);
+    }
+
+
 }

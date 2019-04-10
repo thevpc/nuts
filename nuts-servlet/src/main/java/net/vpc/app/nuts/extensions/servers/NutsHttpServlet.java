@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.extensions.servers;
@@ -53,6 +53,9 @@ import java.util.logging.Logger;
  * Created by vpc on 1/7/17.
  */
 public class NutsHttpServlet extends HttpServlet {
+
+    public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
+    public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
 
     private static final Logger log = Logger.getLogger(NutsHttpServlet.class.getName());
     private NutsHttpServletFacade facade;
@@ -105,7 +108,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
 
         if (StringUtils.isEmpty(serverId)) {
-            String serverName = NutsConstants.DEFAULT_HTTP_SERVER;
+            String serverName = DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
                 if (serverName != null && serverName.length() > 0) {
@@ -115,7 +118,7 @@ public class NutsHttpServlet extends HttpServlet {
                 //
             }
             if (serverName == null) {
-                serverName = NutsConstants.DEFAULT_HTTP_SERVER;
+                serverName = DEFAULT_HTTP_SERVER;
             }
 
             serverId = serverName;
@@ -140,7 +143,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
         if (adminServer) {
             if (log.isLoggable(Level.INFO)) {
-                log.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? NutsConstants.DEFAULT_HTTP_SERVER_PORT : adminServerPort));
+                log.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? DEFAULT_HTTP_SERVER_PORT : adminServerPort));
             }
         }
         adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
@@ -150,15 +153,15 @@ public class NutsHttpServlet extends HttpServlet {
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
             String s = config.getInitParameter("nuts-workspaces-map");
-            if(s==null){
-                s="";
+            if (s == null) {
+                s = "";
             }
-            workspaces=new HashMap<>();
+            workspaces = new HashMap<>();
             for (String s1 : s.split("[\n;]")) {
-                s1=s1.trim();
-                if(s1.startsWith("#") || s1.isEmpty() || ! s1.contains("=")){
+                s1 = s1.trim();
+                if (s1.startsWith("#") || s1.isEmpty() || !s1.contains("=")) {
                     //ignore
-                }else {
+                } else {
                     String[] kv = s1.split("=");
                     workspaces.put(
                             kv[0].trim(),

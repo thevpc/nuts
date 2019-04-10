@@ -39,6 +39,8 @@ import java.util.Base64;
  * Created by vpc on 5/16/17.
  */
 public class CoreSecurityUtils {
+    public static final String ENV_KEY_PASSPHRASE = "passphrase";
+    public static final String DEFAULT_PASSPHRASE = CoreIOUtils.bytesToHex("It's completely nuts!!".getBytes());
 
 
     public static byte[] httpDecrypt(byte[] data, String passphrase) {

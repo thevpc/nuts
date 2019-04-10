@@ -128,7 +128,7 @@ public class SshCommand extends AbstractNutsCommand {
                         workspace = userHome + "/.nuts/default-workspace";
                     }
                     Path t = ws.io().createTempFile("ws-config.json");
-                    sshSession.setFailFast(true).copyRemoteToLocal(workspace + "/" + NutsConstants.WORKSPACE_CONFIG_FILE_NAME, t.toString(), true);
+                    sshSession.setFailFast(true).copyRemoteToLocal(workspace + "/" + NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME, t.toString(), true);
                     Map confMap = ws.io().readJson(t, Map.class);
                     String bootApiVersion = confMap == null ? null : (String) confMap.get("bootApiVersion");
                     boolean versionExists = false;

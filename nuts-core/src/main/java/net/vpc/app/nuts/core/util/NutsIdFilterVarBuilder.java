@@ -8,10 +8,10 @@ package net.vpc.app.nuts.core.util;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
 import net.vpc.app.nuts.core.filters.id.NutsJavascriptIdFilter;
-import net.vpc.app.nuts.core.filters.id.NutsSimpleIdFilter;
 
 /**
  *
@@ -47,7 +47,7 @@ public class NutsIdFilterVarBuilder {
 //    }
 
     public NutsIdFilterVarBuilder id(String n, String id) {
-        return store(n, new NutsSimpleIdFilter(CoreNutsUtils.parseNutsId(id)));
+        return store(n, new NutsPatternIdFilter(CoreNutsUtils.parseNutsId(id)));
     }
 
     private NutsIdFilter get(String n) {

@@ -92,7 +92,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
     @Override
     public NutsContent getResultContent() {
         try {
-            NutsDefinition def = fetchDefinition(id, copy().setIncludeFile(true).setEffective(false).setIncludeInstallInformation(false));
+            NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(true).setEffective(false).setIncludeInstallInformation(false));
             loadDeps(def.getId());
             return def.getContent();
         } catch (NutsNotFoundException ex) {
@@ -123,7 +123,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
     @Override
     public String getResultContentHash() {
         try {
-            Path f = getResultDefinition().getContent().getPath();
+            Path f = getResultDefinition().getPath();
             try {
                 try (InputStream in = Files.newInputStream(f)) {
                     return ws.io().computeHash((in));
@@ -156,7 +156,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
     @Override
     public NutsDescriptor getResultDescriptor() {
         try {
-            NutsDefinition def = fetchDefinition(id, copy().setIncludeFile(false).setIncludeInstallInformation(false));
+            NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(false).setIncludeInstallInformation(false));
             loadDeps(def.getId());
             if (isEffective()) {
                 return def.getEffectiveDescriptor();
@@ -173,8 +173,8 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
     @Override
     public Path getResultPath() {
         try {
-            NutsDefinition def = fetchDefinition(id, copy().setIncludeFile(true).setEffective(false).setIncludeInstallInformation(false));
-            Path p = def.getContent().getPath();
+            NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(true).setEffective(false).setIncludeInstallInformation(false));
+            Path p = def.getPath();
             if (getLocation() != null) {
                 return getLocation();
             }
@@ -276,7 +276,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
                     }
                 }
                 if (foundDefinition != null) {
-                    if (options.isIncludeFile() || options.isIncludeInstallInformation()) {
+                    if (options.isIncludeContent() || options.isIncludeInstallInformation()) {
                         NutsId id1 = ws.config().createComponentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
                         Path copyTo = options.getLocation();
                         if (copyTo != null && Files.isDirectory(copyTo)) {
@@ -300,14 +300,14 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
                                 }
                             }
                         }
-                        if (foundDefinition.getContent() == null || foundDefinition.getContent().getPath() == null) {
+                        if (foundDefinition.getContent() == null || foundDefinition.getPath() == null) {
                             CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
                             foundDefinition = null;
                         }
                     }
                     if (foundDefinition != null && options.isIncludeInstallInformation()) {
                         NutsInstallerComponent installer = null;
-                        if (foundDefinition.getContent().getPath() != null) {
+                        if (foundDefinition.getPath() != null) {
                             installer = dws.getInstaller(foundDefinition, options.getSession());
                         }
                         if (installer != null) {

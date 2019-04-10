@@ -36,9 +36,9 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.isExecMode()) {
                 PrintStream out = context.getTerminal().getFormattedOut();
                 if (context.getWorkspace()
-                        .updateWorkspace()
+                        .update()
+                        .all()
                         .setSession(context.getSession())
-                        .setEnableMajorUpdates(true)
                         .setTrace(true)
                         .setUpdateExtensions(true)
                         .checkUpdates()==null) {
@@ -52,9 +52,9 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             String version = null;
             if (cmdLine.isExecMode()) {
                 PrintStream out = context.getTerminal().getFormattedOut();
-                if (context.getWorkspace().updateWorkspace()
-                                .setEnableMajorUpdates(force)
-                                .setForceBootAPIVersion(version)
+                if (context.getWorkspace().update()
+                                .setUpdateWorkspace(force)
+                                .setApiVersion(version)
                                 .setTrace(true)
                                 .setUpdateExtensions(true)
                         .setSession(context.getSession())

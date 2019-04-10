@@ -32,51 +32,85 @@ package net.vpc.app.nuts;
 /**
  * Created by vpc on 6/23/17.
  */
-public final class NutsWorkspaceUpdateResultItem {
+public final class DefaultNutsUpdateResult implements NutsUpdateResult{
 
-    private String oldIdFile;
-    private String availableIdFile;
-    private NutsId baseId;
-    private NutsId localId;
-    private NutsId availableId;
+    private NutsId id;
+    private NutsDefinition local;
+    private NutsDefinition available;
     private NutsId[] dependencies;
     private boolean runtime;
+    private boolean updateApplied;
+    private boolean updateForced;
+    private boolean updateAvailable;
 
-    public NutsWorkspaceUpdateResultItem(NutsId baseId, NutsId localId, NutsId availableId, String oldIdFile, String availableIdFile, NutsId[] dependencies,boolean runtime) {
-        this.baseId = baseId;
-        this.localId = localId;
-        this.availableId = availableId;
-        this.availableIdFile = availableIdFile;
-        this.oldIdFile = oldIdFile;
+    public DefaultNutsUpdateResult() {
+    }
+
+    
+    public DefaultNutsUpdateResult(NutsId id, NutsDefinition local, NutsDefinition available, NutsId[] dependencies,boolean runtime) {
+        this.id = id;
+        this.local = local;
+        this.available = available;
         this.runtime = runtime;
         this.dependencies = dependencies;
-    }
-
-    public String getOldIdFile() {
-        return oldIdFile;
-    }
-
-    public String getAvailableIdFile() {
-        return availableIdFile;
     }
 
     public boolean isRuntime() {
         return runtime;
     }
 
-    public NutsId getBaseId() {
-        return baseId;
+    public NutsId getId() {
+        return id;
     }
 
-    public NutsId getLocalId() {
-        return localId;
+    public NutsDefinition getLocal() {
+        return local;
     }
 
-    public NutsId getAvailableId() {
-        return availableId;
+    public NutsDefinition getAvailable() {
+        return available;
     }
 
     public NutsId[] getDependencies() {
         return dependencies;
     }
+
+    public boolean isUpdateApplied() {
+        return updateApplied;
+    }
+
+    public void setUpdateApplied(boolean updateApplied) {
+        this.updateApplied = updateApplied;
+    }
+
+    public boolean isUpdateForced() {
+        return updateForced;
+    }
+
+    public void setUpdateForced(boolean updateForced) {
+        this.updateForced = updateForced;
+    }
+
+    public boolean isUpdateAvailable() {
+        return updateAvailable;
+    }
+
+    public void setUpdateAvailable(boolean updateAvailable) {
+        this.updateAvailable = updateAvailable;
+    }
+
+    public void setLocal(NutsDefinition local) {
+        this.local = local;
+    }
+
+    public void setAvailable(NutsDefinition available) {
+        this.available = available;
+    }
+
+    public void setId(NutsId id) {
+        this.id = id;
+    }
+    
+    
+    
 }

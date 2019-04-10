@@ -13,14 +13,16 @@ public interface NutsUpdateResult {
 
     NutsId getId();
 
-    NutsDefinition getLocalVersion();
+    NutsDefinition getLocal();
 
-    NutsDefinition getAvailableVersion();
+    NutsDefinition getAvailable();
 
     boolean isUpdateForced();
 
     boolean isUpdateApplied();
 
     boolean isUpdateAvailable();
+
+    NutsId[] getDependencies();
 
 }

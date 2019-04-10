@@ -52,6 +52,7 @@ public class NutsRepositoryConfig implements Serializable {
     private List<NutsRepositoryRef> mirrors;
     private List<NutsUserConfig> users;
     private boolean indexEnabled;
+    private String authenticationAgent;
 
     public NutsRepositoryConfig() {
     }
@@ -72,6 +73,7 @@ public class NutsRepositoryConfig implements Serializable {
         this.cacheStoreLocation = other.cacheStoreLocation;
         this.storeLocationStrategy = other.storeLocationStrategy;
         this.indexEnabled = other.indexEnabled;
+        this.authenticationAgent = other.authenticationAgent;
         this.mirrors = other.getMirrors() == null ? null : new ArrayList<>(other.getMirrors());
         this.users = other.getUsers() == null ? null : new ArrayList<>(other.getUsers());
         if (other.getEnv() == null) {
@@ -241,8 +243,113 @@ public class NutsRepositoryConfig implements Serializable {
         return this;
     }
 
-    public String toString() {
-        return "NutsRepositoryConfig{" + "mirrors=" + mirrors + ", users=" + users + ", name=" + name + ", uuid=" + uuid + ", type=" + type + ", location=" + location + ", groups=" + groups + ", env=" + env + '}';
+    public String getAuthenticationAgent() {
+        return authenticationAgent;
     }
+
+    public NutsRepositoryConfig setAuthenticationAgent(String authenticationAgent) {
+        this.authenticationAgent = authenticationAgent;
+        return this;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.uuid);
+        hash = 59 * hash + Objects.hashCode(this.name);
+        hash = 59 * hash + Objects.hashCode(this.type);
+        hash = 59 * hash + Objects.hashCode(this.location);
+        hash = 59 * hash + Objects.hashCode(this.programsStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.configStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.varStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.libStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.logsStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.tempStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.cacheStoreLocation);
+        hash = 59 * hash + Objects.hashCode(this.storeLocationStrategy);
+        hash = 59 * hash + Objects.hashCode(this.groups);
+        hash = 59 * hash + Objects.hashCode(this.env);
+        hash = 59 * hash + Objects.hashCode(this.mirrors);
+        hash = 59 * hash + Objects.hashCode(this.users);
+        hash = 59 * hash + (this.indexEnabled ? 1 : 0);
+        hash = 59 * hash + Objects.hashCode(this.authenticationAgent);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NutsRepositoryConfig other = (NutsRepositoryConfig) obj;
+        if (this.indexEnabled != other.indexEnabled) {
+            return false;
+        }
+        if (!Objects.equals(this.uuid, other.uuid)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
+        if (!Objects.equals(this.location, other.location)) {
+            return false;
+        }
+        if (!Objects.equals(this.programsStoreLocation, other.programsStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.configStoreLocation, other.configStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.varStoreLocation, other.varStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.libStoreLocation, other.libStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.logsStoreLocation, other.logsStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.tempStoreLocation, other.tempStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.cacheStoreLocation, other.cacheStoreLocation)) {
+            return false;
+        }
+        if (!Objects.equals(this.groups, other.groups)) {
+            return false;
+        }
+        if (!Objects.equals(this.authenticationAgent, other.authenticationAgent)) {
+            return false;
+        }
+        if (this.storeLocationStrategy != other.storeLocationStrategy) {
+            return false;
+        }
+        if (!Objects.equals(this.env, other.env)) {
+            return false;
+        }
+        if (!Objects.equals(this.mirrors, other.mirrors)) {
+            return false;
+        }
+        if (!Objects.equals(this.users, other.users)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logsStoreLocation=" + logsStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+    }
+
+    
 
 }

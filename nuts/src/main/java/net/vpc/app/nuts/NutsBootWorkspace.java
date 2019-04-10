@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -102,7 +103,7 @@ public class NutsBootWorkspace {
         }
     };
 
-    public NutsBootWorkspace(String[] args) {
+    public NutsBootWorkspace(String... args) {
         this(NutsArgumentsParser.parseNutsArguments(args));
     }
 
@@ -161,9 +162,23 @@ public class NutsBootWorkspace {
     }
 
     public int startNewProcess() {
+        try {
+            return createProcessBuilder().inheritIO().start().waitFor();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        } catch (InterruptedException ex) {
+            throw new UncheckedIOException(new IOException(ex));
+        }
+    }
+
+    public ProcessBuilder createProcessBuilder() {
+        return new ProcessBuilder(createProcessCommandLine());
+    }
+
+    public String[] createProcessCommandLine() {
         log.log(Level.FINE, "Running version {0}.  {1}", new Object[]{actualVersion, getRequirementsHelpString(true)});
         StringBuilder errors = new StringBuilder();
-        if ("LATEST".equalsIgnoreCase(requiredBootVersion) || "RELEASE".equalsIgnoreCase(requiredBootVersion)) {
+        if (NutsConstants.Versions.LATEST.equalsIgnoreCase(requiredBootVersion) || NutsConstants.Versions.RELEASE.equalsIgnoreCase(requiredBootVersion)) {
             String releaseVersion = null;
             try {
                 String NUTS_ID_BOOT_API_PATH = "/" + NutsConstants.Ids.NUTS_API.replaceAll("[.:]", "/");
@@ -238,12 +253,7 @@ public class NutsBootWorkspace {
             }
             System.out.println("[EXEC] " + sb);
         }
-        try {
-            new ProcessBuilder(cmd).inheritIO().start().waitFor();
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("Unable to start nuts", ex);
-        }
-        return 0;
+        return cmd.toArray(new String[0]);
     }
 
     public NutsWorkspaceOptions getOptions() {
@@ -348,8 +358,7 @@ public class NutsBootWorkspace {
             }
         }
         if (hasUnsatisfiedRequirements()) {
-            startNewProcess();
-            return 0;
+            return startNewProcess();
         }
 //o.setCreationTime(startTime);
         NutsWorkspace workspace = null;
@@ -454,7 +463,7 @@ public class NutsBootWorkspace {
 
             if (options.getOpenMode() == NutsWorkspaceOpenMode.OPEN_EXISTING) {
                 //add fail fast test!!
-                if (!new File(runningBootConfig.getWorkspace(), NutsConstants.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
+                if (!new File(runningBootConfig.getWorkspace(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
                     throw new NutsWorkspaceNotFoundException(runningBootConfig.getWorkspace());
                 }
             }
@@ -531,7 +540,7 @@ public class NutsBootWorkspace {
         if (possibilities != null) {
             initial.addAll(Arrays.asList(possibilities));
         }
-        initial.add("${workspace}/" + NutsConstants.Folders.REPOSITORIES + "/" + NutsConstants.DEFAULT_REPOSITORY_NAME + "/" + NutsConstants.Folders.LIB);
+        initial.add("${workspace}/" + NutsConstants.Folders.REPOSITORIES + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME + "/" + NutsConstants.Folders.LIB);
         initial.add(NutsConstants.BootsrapURLs.REMOTE_MAVEN_GIT);
         initial.add(NutsConstants.BootsrapURLs.REMOTE_MAVEN_CENTRAL);
         initial.add(NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT);
@@ -975,7 +984,7 @@ public class NutsBootWorkspace {
 
     private String expandWorkspacePath(String workspace) {
         if (NutsUtils.isBlank(workspace)) {
-            workspace = NutsConstants.DEFAULT_WORKSPACE_NAME;
+            workspace = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
         }
         String uws = workspace.replace('\\', '/');
         if (workspace.equals("~")) {
@@ -1026,13 +1035,13 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 PrintStream out = workspace.getTerminal().getFormattedOut();
-
-                workspace.formatter().createWorkspaceVersionFormat()
-                        .addOptions(o.getApplicationArguments())
-                        .print(out);
-                out.println();
+                workspace
+                        .formatter().createWorkspaceVersionFormat()
+                        .parseOptions(o.getApplicationArguments())
+                        .println(out);
                 return 0;
             }
+
             case INFO: {
                 if (workspace == null) {
                     System.out.println("nuts-boot-api          :" + actualVersion);
@@ -1059,7 +1068,7 @@ public class NutsBootWorkspace {
                 }
                 PrintStream out = workspace.getTerminal().getFormattedOut();
                 workspace.formatter().createWorkspaceInfoFormat()
-                        .addOptions(o.getApplicationArguments())
+                        .parseOptions(o.getApplicationArguments())
                         .print(out);
                 out.println();
                 return 0;
@@ -1180,7 +1189,7 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 if (o.getApplicationArguments().length == 0) {
-                    if (workspace.updateWorkspace().setEnableMajorUpdates(true).update() != null) {
+                    if (workspace.update().all().update() != null) {
                         return 0;
                     }
                 } else {
@@ -1189,8 +1198,8 @@ public class NutsBootWorkspace {
                             .setTrace(true).setSession(session)
                             .checkUpdates();
 
-                    boolean someUpdatable = defs.update().isUpdateAvailable();
-                    if (someUpdatable) {
+                    NutsWorkspaceUpdateResult someUpdatable = defs.update().getUpdateResult();
+                    if (someUpdatable.getUpdatesCount() > 0) {
                         return 0;
                     }
                 }
@@ -1202,22 +1211,16 @@ public class NutsBootWorkspace {
                     return 1;
                 }
                 if (o.getApplicationArguments().length == 0) {
-                    if (workspace.updateWorkspace()
-                            .setEnableMajorUpdates(true)
+                    if (workspace.update()
+                            .all()
                             .checkUpdates() != null) {
                         return 0;
                     }
                 } else {
                     final NutsSession session = workspace.createSession();
-                    NutsUpdateResult[] defs = workspace.update().ids(o.getApplicationArguments())
+                    NutsWorkspaceUpdateResult defs = workspace.update().ids(o.getApplicationArguments())
                             .setTrace(true).setSession(session).checkUpdates().getUpdateResult();
-                    boolean someUpdatable = false;
-                    for (NutsUpdateResult d : defs) {
-                        if (d.isUpdateAvailable()) {
-                            someUpdatable = true;
-                        }
-                    }
-                    if (someUpdatable) {
+                    if (defs.getUpdatesCount()>0) {
                         return 0;
                     }
                 }

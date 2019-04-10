@@ -65,8 +65,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsUpdateCommand update();
 
-    NutsUpdateWorkspaceCommand updateWorkspace();
-
     NutsPushCommand push();
 
 //    NutsWorkspaceUpdateResult[] checkWorkspaceUpdates(NutsWorkspaceUpdateOptions options, NutsSession session);

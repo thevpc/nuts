@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
@@ -65,7 +66,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     protected InputStream getDescStream(NutsId id, NutsRepositorySession session) {
         String url = getDescPath(id);
         if (CoreIOUtils.isPathHttp(url)) {
-            String message = "Downloading maven" ;//: "Open local file";
+            String message = "Downloading maven";//: "Open local file";
             if (log.isLoggable(Level.FINEST)) {
                 log.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
             }
@@ -126,7 +127,7 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
             String[] all = httpGetString(CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId) + "/.folders").split("\n");
             List<NutsId> n = new ArrayList<>();
             for (String s : all) {
-                if (!CoreStringUtils.isBlank(s) && !"LATEST".equals(s) && !"RELEASE".equals(s)) {
+                if (!DefaultNutsVersion.isBlank(s)) {
                     NutsId id2 = id.builder().setVersion(s).build();
                     if (idFilter == null || idFilter.accept(id2)) {
                         n.add(id2);

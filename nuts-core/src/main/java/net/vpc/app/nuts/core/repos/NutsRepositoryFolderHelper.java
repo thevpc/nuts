@@ -30,6 +30,7 @@ import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.DefaultNutsVersion;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.log;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
@@ -297,7 +298,8 @@ public class NutsRepositoryFolderHelper {
         TreeSet<String> folders = new TreeSet<>();
         if (children != null) {
             for (File child : children) {
-                if (!child.getName().startsWith(".") && !child.getName().equals("LATEST") && !child.getName().equals("RELEASE")) {
+                if (!child.getName().startsWith(".") && 
+                        DefaultNutsVersion.isBlank(child.getName())) {
                     if (child.isDirectory()) {
                         reindexFolder(child.toPath());
                         folders.add(child.getName());

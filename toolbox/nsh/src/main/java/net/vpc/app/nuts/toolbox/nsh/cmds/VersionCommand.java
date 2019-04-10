@@ -38,6 +38,7 @@ import net.vpc.common.mvn.PomIdResolver;
 
 import java.io.PrintStream;
 import java.util.Properties;
+import net.vpc.app.nuts.NutsFormatType;
 
 /**
  * Created by vpc on 1/7/17.
@@ -53,14 +54,19 @@ public class VersionCommand extends AbstractNutsCommand {
         boolean fancy = false;
         boolean min = false;
         CommandLine cmdLine = new CommandLine(args);
+        NutsFormatType ft = NutsFormatType.PLAIN;
         Argument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
-            } else if ((a = cmdLine.readBooleanOption("-f", "--fancy")) != null) {
-                fancy = a.getBooleanValue();
             } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
                 min = true;
+            } else if ((a = cmdLine.readBooleanOption("--json")) != null) {
+                ft = NutsFormatType.JSON;
+            } else if ((a = cmdLine.readBooleanOption("--plain")) != null) {
+                ft = NutsFormatType.PLAIN;
+            } else if ((a = cmdLine.readBooleanOption("--props")) != null) {
+                ft = NutsFormatType.PROPS;
             } else {
                 cmdLine.unexpectedArgument(getName());
             }
@@ -68,7 +74,8 @@ public class VersionCommand extends AbstractNutsCommand {
         }
 
         ws.formatter().createWorkspaceVersionFormat()
-                .addOption(((fancy ? "fancy" : "") + "," + (min ? "min" : "")))
+                .setMinimal(min)
+                .setFormatType(ft)
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());
         return 0;

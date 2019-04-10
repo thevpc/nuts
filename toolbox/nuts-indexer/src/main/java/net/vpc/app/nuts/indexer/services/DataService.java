@@ -141,7 +141,7 @@ public class DataService {
                     .addId(id)
                     .setLenient(true)
                     .setIncludeInstallInformation(false)
-                    .setIncludeFile(false)
+                    .setIncludeContent(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
             row.put("allDependencies", ws.io().

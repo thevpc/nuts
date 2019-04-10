@@ -61,7 +61,6 @@ public interface NutsFetchCommand {
     ///////////////////////
     // REDIFNIED
     ///////////////////////
-
     NutsFetchCommand copy();
 
     NutsFetchCommand copyFrom(NutsFetchCommand other);
@@ -149,15 +148,11 @@ public interface NutsFetchCommand {
 
     NutsFetchCommand setIncludeOptional(boolean includeOptional);
 
-    NutsFetchCommand setIgnoreCache(boolean ignoreCache);
-
-    NutsFetchCommand ignoreCache();
-
     NutsFetchCommand setIndexed(Boolean indexEnabled);
 
     NutsFetchCommand indexed();
 
-    NutsFetchCommand indexDisabled();
+    NutsFetchCommand indexed(boolean enable);
 
     NutsFetchCommand includeDependencies();
 
@@ -171,9 +166,21 @@ public interface NutsFetchCommand {
 
     NutsFetchCommand effective();
 
+    NutsFetchCommand cached();
+
+    NutsFetchCommand cached(boolean cached);
+
     NutsFetchCommand setCached(boolean cached);
 
-    NutsFetchCommand setIncludeFile(boolean includeFile);
+    NutsFetchCommand includeContent();
+
+    NutsFetchCommand includeContent(boolean includeContent);
+
+    NutsFetchCommand setIncludeContent(boolean includeContent);
+
+    NutsFetchCommand includeInstallInformation();
+
+    NutsFetchCommand includeInstallInformation(boolean includeInstallInformation);
 
     NutsFetchCommand setIncludeInstallInformation(boolean includeInstallInformation);
 
@@ -194,9 +201,7 @@ public interface NutsFetchCommand {
 
     NutsSession getSession();
 
-    boolean isIgnoreCache();
-
-    boolean isIncludeFile();
+    boolean isIncludeContent();
 
     boolean isIncludeInstallInformation();
 
@@ -207,5 +212,5 @@ public interface NutsFetchCommand {
     boolean isTransitive();
 
     boolean isCached();
-    
+
 }

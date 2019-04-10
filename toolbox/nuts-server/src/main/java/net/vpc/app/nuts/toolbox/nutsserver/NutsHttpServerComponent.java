@@ -80,7 +80,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         int backlog = httpConfig.getBacklog();
         Executor executor = httpConfig.getExecutor();
         if (StringUtils.isEmpty(serverId)) {
-            String serverName = NutsConstants.DEFAULT_HTTP_SERVER;
+            String serverName = NutsServerConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
                 if (serverName != null && serverName.length() > 0) {
@@ -90,7 +90,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                 //
             }
             if (serverName == null) {
-                serverName = NutsConstants.DEFAULT_HTTP_SERVER;
+                serverName = NutsServerConstants.DEFAULT_HTTP_SERVER;
             }
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
@@ -99,7 +99,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
-            port = NutsConstants.DEFAULT_HTTP_SERVER_PORT;
+            port = NutsServerConstants.DEFAULT_HTTP_SERVER_PORT;
         }
         if (backlog <= 0) {
             backlog = 10;
@@ -158,7 +158,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                             SSLParameters defaultSSLParameters = c.getDefaultSSLParameters();
                             params.setSSLParameters(defaultSSLParameters);
                         } catch (Exception ex) {
-                            if(log.isLoggable(Level.CONFIG)) {
+                            if (log.isLoggable(Level.CONFIG)) {
                                 log.log(Level.CONFIG, "Failed to create HTTPS port");
                             }
                             terminal.getFormattedErr().printf("**Failed to create HTTPS port**");

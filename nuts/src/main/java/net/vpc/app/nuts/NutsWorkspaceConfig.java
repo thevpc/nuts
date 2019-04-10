@@ -89,6 +89,7 @@ public final class NutsWorkspaceConfig implements Serializable {
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
     private boolean secure = false;
+    private String authenticationAgent;
     private List<NutsUserConfig> users = new ArrayList<>();
 
     public NutsWorkspaceConfig() {
@@ -127,6 +128,8 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.logsLinuxHome = other.getLogsLinuxHome();
         this.tempLinuxHome = other.getTempLinuxHome();
         this.cacheLinuxHome = other.getCacheLinuxHome();
+
+        this.authenticationAgent = other.getAuthenticationAgent();
 
         this.bootJavaCommand = other.getBootJavaCommand();
         this.bootJavaOptions = other.getBootJavaOptions();
@@ -382,176 +385,206 @@ public final class NutsWorkspaceConfig implements Serializable {
         return programsSystemHome;
     }
 
-    public void setProgramsSystemHome(String programsSystemHome) {
+    public NutsWorkspaceConfig setProgramsSystemHome(String programsSystemHome) {
         this.programsSystemHome = programsSystemHome;
+        return this;
     }
 
     public String getConfigSystemHome() {
         return configSystemHome;
     }
 
-    public void setConfigSystemHome(String configSystemHome) {
+    public NutsWorkspaceConfig setConfigSystemHome(String configSystemHome) {
         this.configSystemHome = configSystemHome;
+        return this;
     }
 
     public String getVarSystemHome() {
         return varSystemHome;
     }
 
-    public void setVarSystemHome(String varSystemHome) {
+    public NutsWorkspaceConfig setVarSystemHome(String varSystemHome) {
         this.varSystemHome = varSystemHome;
+        return this;
     }
 
     public String getLibSystemHome() {
         return libSystemHome;
     }
 
-    public void setLibSystemHome(String libSystemHome) {
+    public NutsWorkspaceConfig setLibSystemHome(String libSystemHome) {
         this.libSystemHome = libSystemHome;
+        return this;
     }
 
     public String getLogsSystemHome() {
         return logsSystemHome;
     }
 
-    public void setLogsSystemHome(String logsSystemHome) {
+    public NutsWorkspaceConfig setLogsSystemHome(String logsSystemHome) {
         this.logsSystemHome = logsSystemHome;
+        return this;
     }
 
     public String getTempSystemHome() {
         return tempSystemHome;
     }
 
-    public void setTempSystemHome(String tempSystemHome) {
+    public NutsWorkspaceConfig setTempSystemHome(String tempSystemHome) {
         this.tempSystemHome = tempSystemHome;
+        return this;
     }
 
     public String getCacheSystemHome() {
         return cacheSystemHome;
     }
 
-    public void setCacheSystemHome(String cacheSystemHome) {
+    public NutsWorkspaceConfig setCacheSystemHome(String cacheSystemHome) {
         this.cacheSystemHome = cacheSystemHome;
+        return this;
     }
 
     public String getProgramsWindowsHome() {
         return programsWindowsHome;
     }
 
-    public void setProgramsWindowsHome(String programsWindowsHome) {
+    public NutsWorkspaceConfig setProgramsWindowsHome(String programsWindowsHome) {
         this.programsWindowsHome = programsWindowsHome;
+        return this;
     }
 
     public String getConfigWindowsHome() {
         return configWindowsHome;
     }
 
-    public void setConfigWindowsHome(String configWindowsHome) {
+    public NutsWorkspaceConfig setConfigWindowsHome(String configWindowsHome) {
         this.configWindowsHome = configWindowsHome;
+        return this;
     }
 
     public String getVarWindowsHome() {
         return varWindowsHome;
     }
 
-    public void setVarWindowsHome(String varWindowsHome) {
+    public NutsWorkspaceConfig setVarWindowsHome(String varWindowsHome) {
         this.varWindowsHome = varWindowsHome;
+        return this;
     }
 
     public String getLibWindowsHome() {
         return libWindowsHome;
     }
 
-    public void setLibWindowsHome(String libWindowsHome) {
+    public NutsWorkspaceConfig setLibWindowsHome(String libWindowsHome) {
         this.libWindowsHome = libWindowsHome;
+        return this;
     }
 
     public String getLogsWindowsHome() {
         return logsWindowsHome;
     }
 
-    public void setLogsWindowsHome(String logsWindowsHome) {
+    public NutsWorkspaceConfig setLogsWindowsHome(String logsWindowsHome) {
         this.logsWindowsHome = logsWindowsHome;
+        return this;
     }
 
     public String getTempWindowsHome() {
         return tempWindowsHome;
     }
 
-    public void setTempWindowsHome(String tempWindowsHome) {
+    public NutsWorkspaceConfig setTempWindowsHome(String tempWindowsHome) {
         this.tempWindowsHome = tempWindowsHome;
+        return this;
     }
 
     public String getCacheWindowsHome() {
         return cacheWindowsHome;
     }
 
-    public void setCacheWindowsHome(String cacheWindowsHome) {
+    public NutsWorkspaceConfig setCacheWindowsHome(String cacheWindowsHome) {
         this.cacheWindowsHome = cacheWindowsHome;
+        return this;
     }
 
     public String getProgramsLinuxHome() {
         return programsLinuxHome;
     }
 
-    public void setProgramsLinuxHome(String programsLinuxHome) {
+    public NutsWorkspaceConfig setProgramsLinuxHome(String programsLinuxHome) {
         this.programsLinuxHome = programsLinuxHome;
+        return this;
     }
 
     public String getConfigLinuxHome() {
         return configLinuxHome;
     }
 
-    public void setConfigLinuxHome(String configLinuxHome) {
+    public NutsWorkspaceConfig setConfigLinuxHome(String configLinuxHome) {
         this.configLinuxHome = configLinuxHome;
+        return this;
     }
 
     public String getVarLinuxHome() {
         return varLinuxHome;
     }
 
-    public void setVarLinuxHome(String varLinuxHome) {
+    public NutsWorkspaceConfig setVarLinuxHome(String varLinuxHome) {
         this.varLinuxHome = varLinuxHome;
+        return this;
     }
 
     public String getLibLinuxHome() {
         return libLinuxHome;
     }
 
-    public void setLibLinuxHome(String libLinuxHome) {
+    public NutsWorkspaceConfig setLibLinuxHome(String libLinuxHome) {
         this.libLinuxHome = libLinuxHome;
+        return this;
     }
 
     public String getLogsLinuxHome() {
         return logsLinuxHome;
     }
 
-    public void setLogsLinuxHome(String logsLinuxHome) {
+    public NutsWorkspaceConfig setLogsLinuxHome(String logsLinuxHome) {
         this.logsLinuxHome = logsLinuxHome;
+        return this;
     }
 
     public String getTempLinuxHome() {
         return tempLinuxHome;
     }
 
-    public void setTempLinuxHome(String tempLinuxHome) {
+    public NutsWorkspaceConfig setTempLinuxHome(String tempLinuxHome) {
         this.tempLinuxHome = tempLinuxHome;
+        return this;
     }
 
     public String getCacheLinuxHome() {
         return cacheLinuxHome;
     }
 
-    public void setCacheLinuxHome(String cacheLinuxHome) {
+    public NutsWorkspaceConfig setCacheLinuxHome(String cacheLinuxHome) {
         this.cacheLinuxHome = cacheLinuxHome;
+        return this;
     }
 
     public boolean isGlobal() {
         return global;
     }
 
-    public void setGlobal(boolean global) {
+    public NutsWorkspaceConfig setGlobal(boolean global) {
         this.global = global;
+        return this;
     }
 
+    public String getAuthenticationAgent() {
+        return authenticationAgent;
+    }
+
+    public NutsWorkspaceConfig setAuthenticationAgent(String authenticationAgent) {
+        this.authenticationAgent = authenticationAgent;
+        return this;
+    }
 }

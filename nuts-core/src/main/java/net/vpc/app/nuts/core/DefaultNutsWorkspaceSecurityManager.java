@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.core;
@@ -85,12 +85,12 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         if (adminPassword == null) {
             adminPassword = "";
         }
-        NutsEffectiveUser adminSecurity = findUser(NutsConstants.USER_ADMIN);
+        NutsEffectiveUser adminSecurity = findUser(NutsConstants.Names.USER_ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (log.isLoggable(Level.CONFIG)) {
-                log.log(Level.CONFIG, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+                log.log(Level.CONFIG, NutsConstants.Names.USER_ADMIN + " user has no credentials. reset to default");
             }
-            setUserCredentials(NutsConstants.USER_ADMIN, "admin");
+            setUserCredentials(NutsConstants.Names.USER_ADMIN, "admin");
         }
         String credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Objects.equals(credentials, adminPassword)) {
@@ -106,7 +106,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
 
     @Override
     public boolean isAdmin() {
-        return NutsConstants.USER_ADMIN.equals(getCurrentLogin());
+        return NutsConstants.Names.USER_ADMIN.equals(getCurrentLogin());
     }
 
     @Override
@@ -142,9 +142,9 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
 
     @Override
     public void setUserCredentials(String login, String password, String oldPassword) {
-        ws.security().checkAllowed(NutsConstants.Rights.SET_PASSWORD,"set-user-credentials");
+        ws.security().checkAllowed(NutsConstants.Rights.SET_PASSWORD, "set-user-credentials");
         if (CoreStringUtils.isBlank(login)) {
-            if (!NutsConstants.USER_ANONYMOUS.equals(getCurrentLogin())) {
+            if (!NutsConstants.Names.USER_ANONYMOUS.equals(getCurrentLogin())) {
                 login = getCurrentLogin();
             } else {
                 throw new NutsIllegalArgumentException("Not logged in");
@@ -155,13 +155,11 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             throw new NutsIllegalArgumentException("No such user " + login);
         }
         if (!getCurrentLogin().equals(login)) {
-            ws.security().checkAllowed(NutsConstants.Rights.ADMIN,"set-user-credentials");
+            ws.security().checkAllowed(NutsConstants.Rights.ADMIN, "set-user-credentials");
         }
         if (!isAllowed(NutsConstants.Rights.ADMIN)) {
-            ws.config().createAuthenticationAgent(u.getAuthenticationAgent())
-                    .checkCredentials(
-                            u.getCredentials(),
-                            u.getAuthenticationAgent(),
+            getAuthenticationAgent()
+                    .checkCredentials(u.getCredentials(),
                             password,
                             ws.config()
                     );
@@ -306,7 +304,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         if (CoreStringUtils.isBlank(user)) {
             throw new NutsIllegalArgumentException("Invalid user");
         }
-        ws.config().setUser(new NutsUserConfig(user, null, null, null, null));
+        ws.config().setUser(new NutsUserConfig(user, null, null, null));
         setUserCredentials(user, credentials);
         if (rights != null) {
             NutsUserConfig security = ws.config().getUser(user);
@@ -320,37 +318,24 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     @Override
-    public void setUserAuthenticationAgent(String user, String authenticationAgent) {
-        NutsUserConfig security = ws.config().getUser(user);
-        if (security == null) {
-            throw new NutsIllegalArgumentException("User not found " + user);
-        }
-        if (CoreStringUtils.isBlank(authenticationAgent)) {
-            authenticationAgent = null;
-        }
-        security.setAuthenticationAgent(authenticationAgent);
-        ws.config().setUser(security);
-    }
-
-    @Override
     public void setUserCredentials(String user, String credentials) {
         NutsUserConfig security = ws.config().getUser(user);
         if (security == null) {
             throw new NutsIllegalArgumentException("User not found " + user);
         }
-        security.setCredentials(ws.config().createAuthenticationAgent(security.getAuthenticationAgent())
-                .setCredentials(credentials, security.getAuthenticationAgent(),
-                        ws.config()));
+        security.setCredentials(
+                getAuthenticationAgent()
+                .setCredentials(credentials,ws.config()));
         ws.config().setUser(security);
     }
 
     @Override
-    public void checkAllowed(String right,String operationName) {
-        if(!isAllowed(right)){
-            if(CoreStringUtils.isBlank(operationName)){
-                throw new NutsSecurityException(right+" not allowed!");
-            }else{
-                throw new NutsSecurityException(operationName+": "+right+" not allowed!");
+    public void checkAllowed(String right, String operationName) {
+        if (!isAllowed(right)) {
+            if (CoreStringUtils.isBlank(operationName)) {
+                throw new NutsSecurityException(right + " not allowed!");
+            } else {
+                throw new NutsSecurityException(operationName + ": " + right + " not allowed!");
             }
         }
     }
@@ -364,7 +349,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         if (CoreStringUtils.isBlank(name)) {
             return false;
         }
-        if (NutsConstants.USER_ADMIN.equals(name)) {
+        if (NutsConstants.Names.USER_ADMIN.equals(name)) {
             return true;
         }
         Stack<String> items = new Stack<>();
@@ -406,9 +391,9 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         }
         if (logins.isEmpty()) {
             if (ws.isInitializing()) {
-                logins.add(NutsConstants.USER_ADMIN);
+                logins.add(NutsConstants.Names.USER_ADMIN);
             } else {
-                logins.add(NutsConstants.USER_ANONYMOUS);
+                logins.add(NutsConstants.Names.USER_ANONYMOUS);
             }
         }
         return logins.toArray(new String[0]);
@@ -417,7 +402,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     @Override
     public String getCurrentLogin() {
         if (ws.isInitializing()) {
-            return NutsConstants.USER_ADMIN;
+            return NutsConstants.Names.USER_ADMIN;
         }
         String name = null;
         Subject currentSubject = getLoginSubject();
@@ -431,7 +416,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
                 }
             }
         }
-        return NutsConstants.USER_ANONYMOUS;
+        return NutsConstants.Names.USER_ANONYMOUS;
     }
 
     private Subject getLoginSubject() {
@@ -445,7 +430,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     @Override
     public String login(CallbackHandler handler) {
         NutsWorkspaceLoginModule.configure(ws); //initialize it
-        //        if (!NutsConstants.USER_ANONYMOUS.equals(getCurrentLogin())) {
+        //        if (!NutsConstants.Misc.USER_ANONYMOUS.equals(getCurrentLogin())) {
         //            throw new NutsLoginException("Already logged in");
         //        }
         LoginContext login;
@@ -478,6 +463,29 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
             return null;
         }
         return c.peek();
+    }
+
+    @Override
+    public NutsAuthenticationAgent getAuthenticationAgent() {
+        return ws.config().createAuthenticationAgent(
+                ((DefaultNutsWorkspaceConfigManager) ws.config())
+                        .getStoredConfig().getAuthenticationAgent());
+    }
+
+    @Override
+    public void setAuthenticationAgent(String authenticationAgent) {
+
+        DefaultNutsWorkspaceConfigManager cc = (DefaultNutsWorkspaceConfigManager) ws.config();
+
+        if (cc.createAuthenticationAgent(authenticationAgent) == null) {
+            throw new NutsIllegalArgumentException("Unsupported Authentication Agent " + authenticationAgent);
+        }
+
+        NutsWorkspaceConfig conf = cc.getStoredConfig();
+        if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgent)) {
+            conf.setAuthenticationAgent(authenticationAgent);
+            cc.fireConfigurationChanged();
+        }
     }
 
 }

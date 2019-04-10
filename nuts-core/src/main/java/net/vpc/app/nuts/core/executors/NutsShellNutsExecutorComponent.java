@@ -91,7 +91,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
         List<String> app = new ArrayList<>();
         app.add(NutsConstants.Ids.NUTS_SHELL);
-        app.add(nutMainFile.getContent().getPath().toString());
+        app.add(nutMainFile.getPath().toString());
         app.addAll(Arrays.asList(appArgs));
 
         File directory = CoreStringUtils.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));

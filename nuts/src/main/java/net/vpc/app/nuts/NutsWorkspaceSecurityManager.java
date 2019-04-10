@@ -59,8 +59,6 @@ public interface NutsWorkspaceSecurityManager {
 
     void setUserRemoteIdentity(String user, String mappedIdentity);
 
-    void setUserAuthenticationAgent(String user, String authenticationAgent);
-
     void setUserCredentials(String user, String credentials);
 
     void setUserGroups(String user, String... groups);
@@ -82,5 +80,9 @@ public interface NutsWorkspaceSecurityManager {
     boolean switchSecureMode(String adminPassword);
 
     boolean isAdmin();
+
+    void setAuthenticationAgent(String authenticationAgent);
+
+    NutsAuthenticationAgent getAuthenticationAgent();
 
 }

@@ -389,7 +389,7 @@ final class NutsUtils {
     }
 
     public static NutsBootConfig loadNutsBootConfig(String workspace) {
-        File versionFile = new File(workspace, NutsConstants.WORKSPACE_CONFIG_FILE_NAME);
+        File versionFile = new File(workspace, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (versionFile.isFile()) {
                 String str = readStringFromFile(versionFile).trim();

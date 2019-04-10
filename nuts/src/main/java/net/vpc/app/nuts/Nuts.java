@@ -100,7 +100,7 @@ public class Nuts {
      * @param args arguments
      * @return NutsWorkspace instance
      */
-    public static NutsWorkspace openInheritedWorkspace(String[] args) throws NutsUnsatisfiedRequirementsExeption{
+    public static NutsWorkspace openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsExeption {
         long startTime = System.currentTimeMillis();
 //        System.out.println("OPEN INHERITED : "+NutsMinimalCommandLine.escapeArguments(args));
         NutsBootWorkspace boot = null;
@@ -134,7 +134,7 @@ public class Nuts {
      * @param args nuts boot arguments
      * @return new NutsWorkspace instance
      */
-    public static NutsWorkspace openWorkspace(String[] args) throws NutsUnsatisfiedRequirementsExeption{
+    public static NutsWorkspace openWorkspace(String... args) throws NutsUnsatisfiedRequirementsExeption {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
         if (boot.hasUnsatisfiedRequirements()) {
@@ -153,16 +153,6 @@ public class Nuts {
      */
     public static NutsWorkspace openWorkspace() {
         return openWorkspace((NutsWorkspaceOptions) null);
-    }
-
-    /**
-     * creates a workspace at location <code>workspace</code>
-     *
-     * @param workspace workspace location
-     * @return new NutsWorkspace instance
-     */
-    public static NutsWorkspace openWorkspace(String workspace) {
-        return openWorkspace(new NutsWorkspaceOptions().setWorkspace(workspace));
     }
 
     /**
@@ -188,7 +178,7 @@ public class Nuts {
      * @param args boot arguments
      * @return return code
      */
-    public static int runWorkspace(String[] args) {
+    public static int runWorkspace(String... args) {
         //long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
         return boot.run();

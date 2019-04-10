@@ -47,7 +47,7 @@ import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomIdResolver;
 /**
  * @author vpc
  */
-class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
+public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
 
     public static final Logger log = Logger.getLogger(DefaultNutsWorkspaceConfigManager.class.getName());
 
@@ -436,7 +436,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public boolean isValidWorkspaceFolder() {
-        Path file = getWorkspaceLocation().resolve(NutsConstants.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         return Files.isRegularFile(file);
     }
 
@@ -463,7 +463,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
                 plainSdks.addAll(value);
             }
             config.setSdk(plainSdks);
-            Path file = getWorkspaceLocation().resolve(NutsConstants.WORKSPACE_CONFIG_FILE_NAME);
+            Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
             ws.io().writeJson(config, file, true);
             configurationChanged = false;
             ok = true;
@@ -595,8 +595,8 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
     public NutsUserConfig getUser(String userId) {
         NutsUserConfig _config = getSecurity(userId);
         if (_config == null) {
-            if (NutsConstants.USER_ADMIN.equals(userId) || NutsConstants.USER_ANONYMOUS.equals(userId)) {
-                _config = new NutsUserConfig(userId, null, null, null, null);
+            if (NutsConstants.Names.USER_ADMIN.equals(userId) || NutsConstants.Names.USER_ANONYMOUS.equals(userId)) {
+                _config = new NutsUserConfig(userId, null, null, null);
                 setUser(_config);
             }
         }
@@ -767,7 +767,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (input == null || input.length == 0) {
             return new byte[0];
         }
-        String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
         return CoreSecurityUtils.httpDecrypt(input, passphrase);
     }
 
@@ -776,7 +776,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
         if (input == null || input.length == 0) {
             return new byte[0];
         }
-        String passphrase = getEnv(NutsConstants.ENV_KEY_PASSPHRASE, CoreNutsUtils.DEFAULT_PASSPHRASE);
+        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
         return CoreSecurityUtils.httpEncrypt(input, passphrase);
     }
 
@@ -1397,7 +1397,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
 
     @Override
     public Path getConfigFile() {
-        return getWorkspaceLocation().resolve(NutsConstants.WORKSPACE_CONFIG_FILE_NAME);
+        return getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
     }
 
     @Override
@@ -1749,7 +1749,7 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             NutsRepositoryConfig conf = options.getConfig();
             if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, ws));
-                conf = CoreIOUtils.loadNutsRepositoryConfig(ws.io().path(options.getLocation(), NutsConstants.REPOSITORY_CONFIG_FILE_NAME), ws);
+                conf = CoreIOUtils.loadNutsRepositoryConfig(ws.io().path(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), ws);
                 if (conf == null) {
                     throw new NutsInvalidRepositoryException(options.getLocation(), "Invalid location " + options.getLocation());
                 }
@@ -1778,4 +1778,9 @@ class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt
             throw ex;
         }
     }
+
+    public NutsWorkspaceConfig getStoredConfig() {
+        return config;
+    }
+    
 }

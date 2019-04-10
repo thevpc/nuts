@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
-class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
+public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
 
     private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
@@ -308,8 +308,8 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
     public NutsUserConfig getUser(String userId) {
         NutsUserConfig u = configUsers.get(userId);
         if (u == null) {
-            if (NutsConstants.USER_ADMIN.equals(userId) || NutsConstants.USER_ANONYMOUS.equals(userId)) {
-                u = new NutsUserConfig(userId, null, null, null, null);
+            if (NutsConstants.Names.USER_ADMIN.equals(userId) || NutsConstants.Names.USER_ANONYMOUS.equals(userId)) {
+                u = new NutsUserConfig(userId, null, null, null);
                 configUsers.put(userId, u);
                 fireConfigurationChanged();
             }
@@ -374,7 +374,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             CoreNutsUtils.checkReadOnly(repository.getWorkspace());
             repository.security().checkAllowed(NutsConstants.Rights.SAVE_REPOSITORY);
-            Path file = getStoreLocation().resolve(NutsConstants.REPOSITORY_CONFIG_FILE_NAME);
+            Path file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
             if (!Files.exists(file)) {
                 created = true;
@@ -426,7 +426,7 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
         return getEnv(property, defaultValue, true);
     }
 
-    private void fireConfigurationChanged() {
+    public void fireConfigurationChanged() {
         setConfigurationChanged(true);
     }
 
@@ -608,6 +608,10 @@ class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager 
             }
         }
         return namespaceSupport;
+    }
+
+    public NutsRepositoryConfig getStoredConfig() {
+        return config;
     }
 
 }

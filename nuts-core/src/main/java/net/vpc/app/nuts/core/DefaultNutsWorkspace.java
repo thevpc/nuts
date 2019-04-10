@@ -381,11 +381,6 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
     @Override
     public NutsUpdateCommand update() {
-        return new DefaultNutsUpdateCommand(this);
-    }
-
-    @Override
-    public NutsUpdateWorkspaceCommand updateWorkspace() {
         return new DefaultNutsUpdateWorkspaceCommand(this);
     }
 
@@ -404,29 +399,24 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
      *
      * @return true when core extension is required for running this workspace
      */
+    @Override
     public boolean requiresCoreExtension() {
-        boolean exclude = false;
-        if (extensions().getExtensions().length > 0) {
-            exclude = Boolean.parseBoolean(config().getEnv(NutsConstants.ENV_KEY_EXCLUDE_CORE_EXTENSION, "false"));
+        boolean coreFound = false;
+        for (NutsId ext : extensions().getExtensions()) {
+            if (ext.equalsSimpleName(config().getRunningContext().getRuntimeId())) {
+                coreFound = true;
+                break;
+            }
         }
-        if (!exclude) {
-            boolean coreFound = false;
-            for (NutsId ext : extensions().getExtensions()) {
-                if (ext.equalsSimpleName(config().getRunningContext().getRuntimeId())) {
-                    coreFound = true;
-                    break;
-                }
-            }
-            if (!coreFound) {
-                return true;
-            }
+        if (!coreFound) {
+            return true;
         }
         return false;
     }
 
 //    private Properties getBootInfo(NutsId id) {
 //        if (id.getVersion().isEmpty()) {
-//            id = id.setVersion("LATEST");
+//            id = id.setVersion(NutsConstants.Versions.LATEST);
 //        }
 //        List<NutsURLLocation> bootUrls = new ArrayList<>();
 //        for (NutsURLLocation r : extensionManager.getExtensionURLLocations(id, NutsConstants.NUTS_ID_BOOT_API, "properties")) {
@@ -802,7 +792,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
         //has all rights (by default)
         //no right nor group is needed for admin user
-        security().setUserCredentials(NutsConstants.USER_ADMIN, "admin");
+        security().setUserCredentials(NutsConstants.Names.USER_ADMIN, "admin");
 
         instance.initialize(this, session);
 
@@ -817,7 +807,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
     @Override
     public NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session) {
         session = CoreNutsUtils.validateSession(session, this);
-        if (nutToInstall != null && nutToInstall.getContent().getPath() != null) {
+        if (nutToInstall != null && nutToInstall.getPath() != null) {
             NutsDescriptor descriptor = nutToInstall.getDescriptor();
             NutsExecutorDescriptor installerDescriptor = descriptor.getInstaller();
             NutsDefinition runnerFile = nutToInstall;
@@ -863,7 +853,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         }
         if (resolveInstaller) {
             if (installerComponent == null) {
-                if (def.getContent().getPath() != null) {
+                if (def.getPath() != null) {
                     installerComponent = getInstaller(def, session);
                 }
             }
@@ -872,7 +862,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         boolean reinstall = def.getInstallation().isInstalled();
         PrintStream out = session.getTerminal().getFormattedOut();
         if (installerComponent != null) {
-            if (def.getContent().getPath() != null) {
+            if (def.getPath() != null) {
                 NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], session, true, null);
                 installedRepository.install(executionContext.getNutsDefinition().getId());
                 try {
@@ -899,13 +889,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             if (!def.getInstallation().isInstalled()) {
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
-                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed ##successfully## from temporarily file %s\n", def.getContent().getPath());
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed ##successfully## from temporarily file %s\n", def.getPath());
                     } else {
                         out.printf(formatter().createIdFormat().toString(def.getId()) + " installed ##successfully## from remote repository\n");
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
-                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed from local temporarily file %s \n", def.getContent().getPath());
+                        out.printf(formatter().createIdFormat().toString(def.getId()) + " installed from local temporarily file %s \n", def.getPath());
                     } else {
                         out.printf(formatter().createIdFormat().toString(def.getId()) + " installed from local repository\n");
                     }
@@ -1024,15 +1014,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 );
             }
 
-            NutsUserConfig adminSecurity = config().getUser(NutsConstants.USER_ADMIN);
-            if (adminSecurity == null
-                    || (CoreStringUtils.isBlank(adminSecurity.getAuthenticationAgent())
-                    && CoreStringUtils.isBlank(adminSecurity.getCredentials()))) {
+            NutsUserConfig adminSecurity = config().getUser(NutsConstants.Names.USER_ADMIN);
+            if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
                 if (log.isLoggable(Level.CONFIG)) {
-                    log.log(Level.CONFIG, NutsConstants.USER_ADMIN + " user has no credentials. reset to default");
+                    log.log(Level.CONFIG, NutsConstants.Names.USER_ADMIN + " user has no credentials. reset to default");
                 }
-                security().setUserAuthenticationAgent(NutsConstants.USER_ADMIN, "");
-                security().setUserCredentials(NutsConstants.USER_ADMIN, "admin");
+                security().setUserCredentials(NutsConstants.Names.USER_ADMIN, "admin");
             }
             for (NutsWorkspaceCommandFactoryConfig commandFactory : configManager.getCommandFactories()) {
                 try {
@@ -1105,7 +1092,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             }
             String s;
             try {
-                s = CoreIOUtils.loadString(resource.openStream(),true);
+                s = CoreIOUtils.loadString(resource.openStream(), true);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

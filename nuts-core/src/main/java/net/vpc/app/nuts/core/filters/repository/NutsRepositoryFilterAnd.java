@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NutsRepositoryFilterAnd implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+
     private NutsRepositoryFilter[] all;
 
     public NutsRepositoryFilterAnd(NutsRepositoryFilter... all) {
@@ -38,6 +39,9 @@ public class NutsRepositoryFilterAnd implements NutsRepositoryFilter, Simplifiab
 
     @Override
     public NutsRepositoryFilter simplify() {
+        if (all.length == 0) {
+            return null;
+        }
         NutsRepositoryFilter[] newValues = CoreNutsUtils.simplifyAndShrink(NutsRepositoryFilter.class, all);
         if (newValues != null) {
             if (newValues.length == 0) {

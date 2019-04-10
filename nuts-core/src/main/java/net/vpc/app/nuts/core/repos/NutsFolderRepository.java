@@ -148,7 +148,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         if (id.getVersion().isEmpty() && filter == null) {
             NutsId bestId = lib.findLatestVersion(id, filter, session);
             NutsId c1 = cache.findLatestVersion(id, filter, session);
-            if (bestId == null || c1.getVersion().compareTo(bestId.getVersion()) > 0) {
+            if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                 bestId = c1;
             }
             return mirroring.findLatestVersion(bestId, id, filter, session);
@@ -156,6 +156,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         return super.findLatestVersion(id, filter, session);
     }
 
+    @Override
     public void updateStatistics() {
         lib.reindexFolder();
         cache.reindexFolder();

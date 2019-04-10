@@ -54,7 +54,7 @@ class NutsInfo {
         if (this.def == null) {
             def = ws.fetch().id(nuts).setSession(session).offline()
                     .setIncludeInstallInformation(true)
-                    .setIncludeFile(true)
+                    .setIncludeContent(true)
                     .setAcceptOptional(false)
                     .includeDependencies(checkDependencies)
                     .getResultDefinition();
@@ -95,10 +95,10 @@ class NutsInfo {
                 //
             }
         }
-        if (_fetchedFile == null || _fetchedFile.getContent().getPath() == null) {
+        if (_fetchedFile == null || _fetchedFile.getPath() == null) {
             return null;
         }
-        return _fetchedFile.getContent().getPath();
+        return _fetchedFile.getPath();
     }
 
     public NutsDescriptor getDescriptor() {

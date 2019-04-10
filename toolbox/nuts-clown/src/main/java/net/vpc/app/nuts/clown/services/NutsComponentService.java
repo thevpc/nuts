@@ -48,7 +48,7 @@ public class NutsComponentService {
     @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<List<Map<String, String>>> getAll(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
-        NutsWorkspace workspace = Nuts.openWorkspace(workspaceLocation);
+        NutsWorkspace workspace = Nuts.openWorkspace("--workspace",workspaceLocation);
         List<NutsId> ids = workspace.find()
                 .setRepositoryFilter(new NutsRepositoryFilter() {
                     @Override
@@ -58,7 +58,7 @@ public class NutsComponentService {
                 })
                 .setLenient(true)
                 .setIncludeInstallInformation(false)
-                .setIncludeFile(false)
+                .setIncludeContent(false)
                 .effective(true)
                 .getResultIds().list();
         List<Map<String, String>> result = ids.stream()
@@ -101,7 +101,7 @@ public class NutsComponentService {
             @RequestParam("face") String face,
             @RequestParam("scope") String scope,
             @RequestParam("alternative") String alternative) {
-        NutsWorkspace ws = Nuts.openWorkspace(workspace);
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspace);
         NutsId id = ws.createIdBuilder()
                 .setName(name)
                 .setNamespace(namespace)
@@ -142,7 +142,7 @@ public class NutsComponentService {
             @RequestParam("face") String face,
             @RequestParam("scope") String scope,
             @RequestParam("alternative") String alternative) {
-        NutsWorkspace ws = Nuts.openWorkspace(workspace);
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspace);
         NutsId id = ws.createIdBuilder()
                 .setName(name)
                 .setNamespace(namespace)

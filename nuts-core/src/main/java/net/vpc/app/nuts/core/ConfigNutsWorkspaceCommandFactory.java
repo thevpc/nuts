@@ -39,7 +39,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public void uninstallCommand(String name) {
-        Path file = getStoreLocation().resolve(name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+        Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             try {
                 Files.delete(file);
@@ -50,13 +50,13 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
     }
 
     public void installCommand(NutsWorkspaceCommandConfig command) {
-        Path file = getStoreLocation().resolve(command.getName() + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+        Path file = getStoreLocation().resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         configManager.getWorkspace().io().writeJson(command, file, true);
     }
 
     @Override
     public NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace) {
-        Path file = getStoreLocation().resolve(name + NutsConstants.NUTS_COMMAND_FILE_EXTENSION);
+        Path file = getStoreLocation().resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
             NutsWorkspaceCommandConfig c = configManager.getWorkspace().io().readJson(file, NutsWorkspaceCommandConfig.class);
             if (c != null) {
@@ -90,7 +90,7 @@ class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory {
         try {
             Files.list(getStoreLocation()).forEach(file -> {
                 String fileName = file.getFileName().toString();
-                if (file.getFileName().toString().endsWith(NutsConstants.NUTS_COMMAND_FILE_EXTENSION)) {
+                if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsWorkspaceCommandConfig c = null;
                     try {
                         c = configManager.getWorkspace().io().readJson(file, NutsWorkspaceCommandConfig.class);

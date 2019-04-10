@@ -58,7 +58,7 @@ public class RefreshDataService {
                     .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
                     .setLenient(true)
                     .setIncludeInstallInformation(false)
-                    .setIncludeFile(false)
+                    .setIncludeContent(false)
                     .effective(true)
                     .getResultDefinitions().iterator();
             List<Map<String, String>> dataToIndex = new ArrayList<>();

@@ -12,10 +12,6 @@ public interface NutsWorkspaceVersionFormat {
 
     NutsWorkspaceVersionFormat addProperties(Properties p);
 
-    NutsWorkspaceVersionFormat addOption(String o);
-
-    NutsWorkspaceVersionFormat addOptions(String... o);
-
     @Override
     String toString();
 
@@ -45,4 +41,18 @@ public interface NutsWorkspaceVersionFormat {
     void println(NutsTerminal terminal);
 
     void println(File file);
+
+    NutsWorkspaceVersionFormat setFormatType(NutsFormatType formatType);
+
+    NutsFormatType getFormatType();
+
+    NutsWorkspaceVersionFormat parseOptions(String[] args);
+    
+    NutsWorkspaceVersionFormat setMinimal(boolean minimal);
+
+    boolean isMinimal();
+
+    NutsWorkspaceVersionFormat setPretty(boolean pretty);
+
+    boolean isPretty();
 }

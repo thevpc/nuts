@@ -95,7 +95,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 throw new LoginException("Authentication failed : No Workspace");
             }
 
-            if (NutsConstants.USER_ANONYMOUS.equals(name)) {
+            if (NutsConstants.Names.USER_ANONYMOUS.equals(name)) {
                 this.login = name;
                 return true;
             }
@@ -103,10 +103,9 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             NutsUserConfig registeredUser = workspace.config().getUser(name);
             if (registeredUser != null) {
                 try {
-                    workspace.config().createAuthenticationAgent(registeredUser.getAuthenticationAgent())
+                    workspace.security().getAuthenticationAgent()
                             .checkCredentials(
                                     registeredUser.getCredentials(),
-                                    registeredUser.getAuthenticationAgent(),
                                     password,
                                     workspace.config()
                             );

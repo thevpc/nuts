@@ -61,4 +61,8 @@ public interface NutsRepositorySecurityManager {
 
     NutsEffectiveUser getEffectiveUser(String username);
 
+    void setAuthenticationAgent(String authenticationAgent);
+
+    NutsAuthenticationAgent getAuthenticationAgent();
+
 }

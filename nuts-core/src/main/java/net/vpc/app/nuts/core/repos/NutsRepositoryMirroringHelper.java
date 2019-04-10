@@ -206,7 +206,8 @@ public class NutsRepositoryMirroringHelper {
                 if (nutsDescriptor != null) {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                     NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
-                    NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, getWorkspace().fetch()
+                    NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, 
+                            getWorkspace().fetch()
                             .setCached(session.isCached())
                             .setSession(session.getSession())
                             .setTransitive(session.isTransitive())

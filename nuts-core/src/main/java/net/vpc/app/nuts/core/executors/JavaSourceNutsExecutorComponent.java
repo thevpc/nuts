@@ -67,7 +67,7 @@ public class JavaSourceNutsExecutorComponent implements NutsExecutorComponent {
     @Override
     public int exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getContent().getPath();
+        Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         Path folder = executionContext.getWorkspace().io().createTempFolder("jj");
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());

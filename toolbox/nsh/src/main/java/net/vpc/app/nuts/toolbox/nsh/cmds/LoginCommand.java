@@ -56,7 +56,7 @@ public class LoginCommand extends AbstractNutsCommand {
                 String password = cmdLine.readNonOption(new DefaultNonOption("Password")).getStringExpression();
                 cmdLine.unexpectedArgument(getName());
                 if (cmdLine.isExecMode()) {
-                    if (!NutsConstants.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {
+                    if (!NutsConstants.Names.USER_ANONYMOUS.equals(login) && StringUtils.isEmpty(password)) {
                         password = context.getTerminal().readPassword("Password:");
                     }
                     context.getWorkspace().security().login(login, password);

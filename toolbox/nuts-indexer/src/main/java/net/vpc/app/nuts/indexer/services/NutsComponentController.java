@@ -49,7 +49,7 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace(workspaceLocation.getLocation());
+                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 List<Map<String, String>> rows = this.dataService.
                         getAllData(NutsIndexerUtils.getCacheDir(ws, subscriber.cacheFolderName()));
                 List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
@@ -79,7 +79,7 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace(workspaceLocation.getLocation());
+                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.createIdBuilder()
                         .setName(name)
                         .setNamespace(namespace)
@@ -122,7 +122,7 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace(workspaceLocation.getLocation());
+                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.createIdBuilder()
                         .setName(name)
                         .setNamespace(namespace)
@@ -161,7 +161,7 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace(workspaceLocation.getLocation());
+                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
                         ws.createIdBuilder()
                                 .setName(name)
@@ -201,7 +201,7 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace(workspaceLocation.getLocation());
+                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.createIdBuilder()
                         .setName(name)
                         .setNamespace(namespace)
@@ -219,10 +219,10 @@ public class NutsComponentController {
                 if (list.isEmpty()) {
                     Iterator<NutsDefinition> it = ws.find()
                             .setRepositoryFilter(repository -> repository.getUuid().equals(subscriber.getUuid()))
-                            .setId(id)
-                            .setLenient(true)
+                            .id(id)
+                            .lenient(true)
                             .setIncludeInstallInformation(false)
-                            .setIncludeFile(false)
+                            .setIncludeContent(false)
                             .effective(true)
                             .getResultDefinitions().iterator();
                     if (it.hasNext()) {

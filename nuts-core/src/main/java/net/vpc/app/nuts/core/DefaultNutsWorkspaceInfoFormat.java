@@ -15,8 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
@@ -25,8 +23,10 @@ import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
 public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
     private NutsWorkspace ws;
-    private Set<String> options = new HashSet<>();
     private Properties extraProperties = new Properties();
+    private boolean minimal = false;
+    private NutsFormatType formatType = null;
+    boolean fancy = false;
 
     public DefaultNutsWorkspaceInfoFormat(NutsWorkspace ws) {
         this.ws = ws;
@@ -47,11 +47,41 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     @Override
-    public NutsWorkspaceInfoFormat addOption(String o) {
-        if (o != null) {
-            for (String o1 : Arrays.asList(o.split(","))) {
-                if (!CoreStringUtils.isBlank(o1)) {
-                    options.add(o1);
+    public NutsWorkspaceInfoFormat parseOptions(String... args) {
+        for (String arg : args) {
+            switch (arg) {
+                case "--min": {
+                    this.setMinimal(true);
+                    break;
+                }
+                case "--fancy": {
+                    this.setFancy(true);
+                    break;
+                }
+                case "--json": {
+                    this.setFormatType(NutsFormatType.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setFormatType(NutsFormatType.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setFormatType(NutsFormatType.PLAIN);
+                    break;
+                }
+                default: {
+                    if (arg.startsWith("--add:")) {
+                        String kv = arg.substring("--add:".length());
+                        int i = kv.indexOf('=');
+                        if (i >= 0) {
+                            extraProperties.put(kv.substring(0, i), kv.substring(i + 1));
+                        } else {
+                            extraProperties.put(kv, "");
+                        }
+                    } else {
+                        //ignore!
+                    }
                 }
             }
         }
@@ -59,10 +89,35 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     @Override
-    public NutsWorkspaceInfoFormat addOptions(String... o) {
-        for (String option : options) {
-            addOption(option);
-        }
+    public boolean isFancy() {
+        return fancy;
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat setFancy(boolean fancy) {
+        this.fancy = fancy;
+        return this;
+    }
+
+    @Override
+    public boolean isMinimal() {
+        return minimal;
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat setMinimal(boolean minimal) {
+        this.minimal = minimal;
+        return this;
+    }
+
+    @Override
+    public NutsFormatType getFormatType() {
+        return formatType;
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat setFormatType(NutsFormatType formatType) {
+        this.formatType = formatType;
         return this;
     }
 
@@ -157,27 +212,63 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         }
     }
 
-//    @Override
     private void format0(Writer w) {
-        PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
+        NutsFormatType t = formatType;
+        if (t == null) {
+            t = NutsFormatType.PLAIN;
+        }
+        switch (t) {
+            case PLAIN:
+                printPlain(w);
+                return;
+            case JSON:
+                printJson(w);
+                return;
+            case PROPS:
+                printProps(w);
+                return;
+        }
+        throw new NutsUnsupportedArgumentException("Unsupported format type " + t);
+    }
 
+    public void printProps(Writer w) {
+        Properties p = new Properties();
+        p.putAll(buildWorkspaceMap(true, true));
+        try {
+            p.store(w, null);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public void printJson(Writer w) {
+        ws.io().writeJson(buildWorkspaceMap(true, false), w, true);
+    }
+
+    private static String key(String prefix, String key) {
+        if (prefix == null) {
+            return key;
+        }
+        return prefix + "." + key;
+    }
+
+//    @Override
+    private LinkedHashMap<String, Object> buildWorkspaceMap(boolean deep, boolean exploded) {
+        String prefix = null;
+        LinkedHashMap<String, Object> props = new LinkedHashMap<>();
         NutsWorkspaceConfigManager configManager = ws.config();
-        if (options.contains("min")) {
-            out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
+        if (isMinimal()) {
+            props.put("nuts-api", configManager.getRunningContext().getApiId().toString());
+            props.put("nuts-runtime", configManager.getRunningContext().getRuntimeId().toString());
         } else {
-            boolean fancy = false;
-            if (options.contains("fancy")) {
-                fancy = true;
-            }
             Set<String> extraKeys = new TreeSet<>();
             if (extraProperties != null) {
                 extraKeys = new TreeSet(extraProperties.keySet());
             }
 
-            LinkedHashMap<String, String> props = new LinkedHashMap<>();
-            props.put("nuts-version", configManager.getRunningContext().getApiId().getVersion().toString());
-            props.put("nuts-api", configManager.getRunningContext().getApiId().toString());
-            props.put("nuts-runtime", configManager.getRunningContext().getRuntimeId().toString());
+            props.put("nuts-boot-api-version", configManager.getRunningContext().getApiId().getVersion().toString());
+            props.put("nuts-boot-api-id", configManager.getRunningContext().getApiId().toString());
+            props.put("nuts-boot-runtime-id", configManager.getRunningContext().getRuntimeId().toString());
             URL[] cl = configManager.getBootClassWorldURLs();
             List<String> runtimeClassPath = new ArrayList<>();
             if (cl != null) {
@@ -194,7 +285,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
             }
 
-            props.put("nuts-runtime-path", CoreStringUtils.join(":", runtimeClassPath));
+            props.put("nuts-boot-runtime-path", CoreStringUtils.join(";", runtimeClassPath));
             props.put("nuts-workspace", configManager.getWorkspaceLocation().toString());
             props.put("nuts-workspace-id", configManager.getUuid());
             props.put("nuts-secure", String.valueOf(configManager.isSecure()));
@@ -230,7 +321,32 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             for (String extraKey : extraKeys) {
                 props.put(extraKey, extraProperties.getProperty(extraKey));
             }
-            printMap(out, fancy, "", props);
+            if (deep) {
+                Map<String, Object> repositories = new LinkedHashMap<>();
+                for (NutsRepository repository : ws.config().getRepositories()) {
+                    if (exploded) {
+                        repositories.put(repository.config().name(), buildRepoRepoMap(repository, deep, exploded, key(prefix, "repos." + repository.config().name())));
+                    } else {
+                        repositories.putAll(buildRepoRepoMap(repository, deep, false, key(prefix, "repos." + repository.config().name())));
+                    }
+                }
+                if (exploded) {
+                    props.put("repos", repositories);
+                }
+            }
+        }
+        return props;
+    }
+
+    private void printPlain(Writer w) {
+        PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
+
+        NutsWorkspaceConfigManager configManager = ws.config();
+        if (isMinimal()) {
+            out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
+        } else {
+            Map<String, Object> props = buildWorkspaceMap(false, false);
+            printMap(out, "", props);
             for (NutsRepository repository : ws.config().getRepositories()) {
                 out.append("\n");
                 printRepo(out, fancy, "", repository);
@@ -239,33 +355,55 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         out.flush();
     }
 
+    private Map<String, Object> buildRepoRepoMap(NutsRepository repo, boolean deep, boolean exploded, String prefix) {
+        LinkedHashMap<String, Object> props = new LinkedHashMap<>();
+        props.put(key(prefix, "name"), String.valueOf(repo.config().getName()));
+        props.put(key(prefix, "global-name"), repo.config().getGlobalName());
+        props.put(key(prefix, "uuid"), String.valueOf(repo.config().getUuid()));
+        props.put(key(prefix, "type"), repo.config().getType());
+        props.put(key(prefix, "speed"), String.valueOf(repo.config().getSpeed()));
+        props.put(key(prefix, "enabled"), String.valueOf(repo.config().isEnabled()));
+        props.put(key(prefix, "index-enabled"), String.valueOf(repo.config().isIndexEnabled()));
+        props.put(key(prefix, "index-subscribed"), String.valueOf(repo.config().isIndexSubscribed()));
+        props.put(key(prefix, "location"), repo.config().getLocation(false));
+        if (repo.config().getLocation(false) != null) {
+            props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));
+        }
+        props.put(key(prefix, "deploy-order"), String.valueOf(repo.config().getDeployOrder()));
+        props.put(key(prefix, "store-location-strategy"), String.valueOf(repo.config().getStoreLocationStrategy()));
+        props.put(key(prefix, "store-location"), String.valueOf(repo.config().getStoreLocation()));
+        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+            props.put(key(prefix, "store-location-" + value.name().toLowerCase()), String.valueOf(repo.config().getStoreLocation(value)));
+        }
+        props.put(key(prefix, "supported-mirroring"), String.valueOf(repo.config().isSupportedMirroring()));
+        if (repo.config().isSupportedMirroring()) {
+            props.put(key(prefix, "mirrors-count"), String.valueOf((!repo.config().isSupportedMirroring()) ? 0 : repo.config().getMirrors().length));
+        }
+        if (deep) {
+            if (repo.config().isSupportedMirroring()) {
+                Map<String, Object> mirrors = new LinkedHashMap<>();
+                for (NutsRepository mirror : repo.config().getMirrors()) {
+                    if (exploded) {
+                        mirrors.put(mirror.config().name(), buildRepoRepoMap(mirror, deep, true, null));
+                    } else {
+                        props.putAll(
+                                buildRepoRepoMap(mirror, deep, false, key(prefix, "mirrors." + mirror.config().name()))
+                        );
+                    }
+                }
+                if (exploded) {
+                    props.put("mirrors", mirrors);
+                }
+            }
+        }
+        return props;
+    }
+
     private void printRepo(PrintWriter out, boolean fancy, String prefix, NutsRepository repo) {
         out.printf(prefix + "**REPOSITORY :** " + repo.config().getName() + "\n");
         prefix += "   ";
-        LinkedHashMap<String, String> props = new LinkedHashMap<>();
-        props.put("name", String.valueOf(repo.config().getName()));
-        props.put("global-name", repo.config().getGlobalName());
-        props.put("uuid", String.valueOf(repo.config().getUuid()));
-        props.put("type", repo.config().getType());
-        props.put("speed", String.valueOf(repo.config().getSpeed()));
-        props.put("enabled", String.valueOf(repo.config().isEnabled()));
-        props.put("index-enabled", String.valueOf(repo.config().isIndexEnabled()));
-        props.put("index-subscribed", String.valueOf(repo.config().isIndexSubscribed()));
-        props.put("location", repo.config().getLocation(false));
-        if (repo.config().getLocation(false) != null) {
-            props.put("location-expanded", repo.config().getLocation(true));
-        }
-        props.put("deploy-order", String.valueOf(repo.config().getDeployOrder()));
-        props.put("store-location-strategy", String.valueOf(repo.config().getStoreLocationStrategy()));
-        props.put("store-location", String.valueOf(repo.config().getStoreLocation()));
-        for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put("store-location-" + value.name().toLowerCase(), String.valueOf(repo.config().getStoreLocation(value)));
-        }
-        props.put("supported-mirroring", String.valueOf(repo.config().isSupportedMirroring()));
-        if (repo.config().isSupportedMirroring()) {
-            props.put("mirrors-count", String.valueOf((!repo.config().isSupportedMirroring()) ? 0 : repo.config().getMirrors().length));
-        }
-        printMap(out, fancy, prefix, props);
+        Map<String, Object> props = buildRepoRepoMap(repo, false, false, null);
+        printMap(out, prefix, props);
         if (repo.config().isSupportedMirroring()) {
             for (NutsRepository mirror : repo.config().getMirrors()) {
                 out.append("\n");
@@ -274,7 +412,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         }
     }
 
-    private void printMap(PrintWriter out, boolean fancy, String prefix, Map<String, String> props) {
+    private void printMap(PrintWriter out, String prefix, Map<String, Object> props) {
         int len = 23;
         for (String extraKey : props.keySet()) {
             int x = ws.parser().escapeText(extraKey).length();
@@ -283,13 +421,13 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
             }
         }
         boolean first = true;
-        for (Map.Entry<String, String> e : props.entrySet()) {
+        for (Map.Entry<String, Object> e : props.entrySet()) {
             if (first) {
                 first = false;
             } else {
                 out.print("\n");
             }
-            printKeyValue(out, fancy, prefix, len, e.getKey(), e.getValue());
+            printKeyValue(out, fancy, prefix, len, e.getKey(), "" + e.getValue());
         }
     }
 

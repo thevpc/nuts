@@ -31,6 +31,7 @@ package net.vpc.app.nuts.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
@@ -118,8 +119,11 @@ public class DefaultNutsVersion implements NutsVersion {
 
     @Override
     public NutsVersionInterval[] toIntervals() {
-        DefaultNutsVersionFilter s = DefaultNutsVersionFilter.parse(value);
-        return s.getIntervals();
+        NutsVersionFilter s = DefaultNutsVersionFilter.parse(value);
+        if (s instanceof DefaultNutsVersionFilter) {
+            return ((DefaultNutsVersionFilter) s).getIntervals();
+        }
+        return new NutsVersionInterval[0];
     }
 
     @Override
@@ -177,7 +181,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     public static boolean versionMatches(String version, String pattern) {
-        if (pattern == null || CoreStringUtils.isBlank(pattern) || pattern.equals("LATEST") || pattern.equals("RELEASE")) {
+        if (isBlank(pattern)) {
             return true;
         }
         return pattern.equals(version);
@@ -207,16 +211,16 @@ public class DefaultNutsVersion implements NutsVersion {
         if (v1.equals(v2)) {
             return 0;
         }
-        if ("LATEST".equals(v1)) {
+        if (NutsConstants.Versions.LATEST.equals(v1)) {
             return 1;
         }
-        if ("LATEST".equals(v2)) {
+        if (NutsConstants.Versions.LATEST.equals(v2)) {
             return -1;
         }
-        if ("RELEASE".equals(v1)) {
+        if (NutsConstants.Versions.RELEASE.equals(v1)) {
             return 1;
         }
-        if ("RELEASE".equals(v2)) {
+        if (NutsConstants.Versions.RELEASE.equals(v2)) {
             return -1;
         }
         String[] v1arr = splitVersionParts(v1);
@@ -390,14 +394,21 @@ public class DefaultNutsVersion implements NutsVersion {
         }
     }
 
-    public static boolean isStaticVersionPattern(String pattern) {
+    public static boolean isBlank(String pattern) {
         if (CoreStringUtils.isBlank(pattern)) {
+            return true;
+        }
+        return NutsConstants.Versions.LATEST.equals(pattern) || "RELEASE".equals(pattern);
+    }
+
+    public static boolean isStaticVersionPattern(String pattern) {
+        if (isBlank(pattern)) {
             return false;
         }
         if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",") || pattern.contains("*")) {
             return false;
         } else {
-            return !"LATEST".equals(pattern) && !"RELEASE".equals(pattern);
+            return true;
         }
     }
 }
