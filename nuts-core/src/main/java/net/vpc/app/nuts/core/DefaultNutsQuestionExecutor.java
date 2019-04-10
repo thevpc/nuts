@@ -59,8 +59,10 @@ public class DefaultNutsQuestionExecutor<T> {
             String v = null;
             if (extraInfo) {
                 out.print("?\n");
+                out.flush();
                 v = terminal.readLine("\t Please enter value or @@%s@@ to cancel : ", "cancel!");
             } else {
+                out.flush();
                 v = terminal.readLine(" ? : ");
             }
             if ("cancel!".equals(v)) {

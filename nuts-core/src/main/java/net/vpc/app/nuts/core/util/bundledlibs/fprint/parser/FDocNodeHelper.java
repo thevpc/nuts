@@ -214,11 +214,12 @@ public class FDocNodeHelper {
                     }
                 }
                 TextNode convert = convert(p.getNode());
-                if (convert instanceof TextNodePlain) {
-                    return new TextNodePlain(((TextNodePlain) convert).getValue());
-                } else {
-                    return new TextNodePlain(convert.toString());
-                }
+                return convert;
+//                if (convert instanceof TextNodePlain) {
+//                    return new TextNodePlain(((TextNodePlain) convert).getValue());
+//                } else {
+//                    return new TextNodePlain(convert.toString());
+//                }
 //                return new TextNodePlain(String.valueOf(n.toString()));
             }
         }

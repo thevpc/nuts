@@ -408,6 +408,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                     if (wasEscape) {
                         wasEscape = false;
                         value.append(c);
+                        last = '\0';
                         return new ConsumeResut(ConsumeResutType.CONTINUE, null);
                     } else {
                         if (oldLast == c) {

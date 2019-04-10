@@ -100,6 +100,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = System.out;
         }
         out.printf(prompt, params);
+        out.flush();
         return scanner.nextLine();
     }
 
