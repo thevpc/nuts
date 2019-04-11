@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import net.vpc.app.nuts.core.util.CoreCommonUtils;
 
 /**
  *
@@ -114,6 +115,10 @@ public class IteratorBuilder<T> {
 
     public Iterator<T> iterator() {
         return it;
+    }
+
+    public List<T> list() {
+        return CoreCommonUtils.toList(it);
     }
 
     public Iterator<T> build() {

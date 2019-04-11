@@ -10,8 +10,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
-                <exec.executable>java</exec.executable>
+                <exec.args>--hold -e java -classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
+                <exec.executable>konsole</exec.executable>
                 
                 
             </properties>
@@ -52,8 +52,8 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
-                <exec.executable>java</exec.executable>
+                <exec.args>--hold -e java -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
+                <exec.executable>konsole</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
         </action>

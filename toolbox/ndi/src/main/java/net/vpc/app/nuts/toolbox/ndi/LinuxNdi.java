@@ -29,7 +29,7 @@ public class LinuxNdi implements SystemNdi {
             createBootScript(false, true);
             NutsId nutsId = appContext.getWorkspace().parser().parseId(options.getId());
             NutsDefinition fetched = null;
-            if (nutsId.getVersion().isEmpty()) {
+            if (nutsId.getVersion().isBlank()) {
                 fetched = appContext.getWorkspace().fetch().id(options.getId()).getResultDefinition();
                 nutsId = fetched.getId().getSimpleNameId();
                 //nutsId=fetched.getId().getLongNameId();

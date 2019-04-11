@@ -37,8 +37,6 @@ import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
@@ -68,7 +66,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isBlank() {
         return CoreStringUtils.isBlank(value);
     }
 

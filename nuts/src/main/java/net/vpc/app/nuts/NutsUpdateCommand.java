@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -117,5 +118,21 @@ public interface NutsUpdateCommand {
     NutsUpdateCommand installed();
 
     NutsUpdateCommand all();
+
+    NutsUpdateCommand addScope(NutsDependencyScope scope);
+
+    NutsUpdateCommand scope(NutsDependencyScope scope);
+
+    NutsUpdateCommand addScopes(Collection<NutsDependencyScope> scopes);
+
+    NutsUpdateCommand addScopes(NutsDependencyScope... scopes);
+
+    NutsUpdateCommand scopes(NutsDependencyScope... scopes);
+
+    NutsUpdateCommand scopes(Collection<NutsDependencyScope> scopes);
+
+    NutsUpdateCommand setIncludeOptional(boolean includeOptional);
+
+    boolean isIncludeOptional();
 
 }

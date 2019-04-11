@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.executors.CustomNutsExecutorComponent;
 import net.vpc.app.nuts.core.executors.JavaExecutorOptions;
@@ -35,6 +34,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     private NutsSession session;
     private int result;
     private boolean executed;
+    private boolean ask = true;
     private String directory;
     private PrintStream out;
     private PrintStream err;
@@ -49,7 +49,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsExecCommand setFailFast() {
+    public NutsExecCommand fFailFast() {
         return setFailFast(true);
     }
 
@@ -59,8 +59,30 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         return this;
     }
 
+    @Override
+    public NutsExecCommand failFast(boolean failFast) {
+        return setFailFast(failFast);
+    }
+
     public DefaultNutsExecCommand(DefaultNutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    public boolean isAsk() {
+        return ask;
+    }
+
+    public NutsExecCommand setAsk(boolean ask) {
+        this.ask = ask;
+        return this;
+    }
+
+    public NutsExecCommand ask(boolean ask) {
+        return setAsk(true);
+    }
+
+    public NutsExecCommand ask() {
+        return ask(true);
     }
 
     @Override
@@ -75,8 +97,23 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
+    public NutsExecCommand session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
     public List<String> getCommand() {
         return command;
+    }
+
+    @Override
+    public NutsExecCommand command(String... command) {
+        return addCommand(command);
+    }
+
+    @Override
+    public NutsExecCommand command(Collection<String> command) {
+        return addCommand(command);
     }
 
     @Override
@@ -89,12 +126,17 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsExecCommand addCommand(List<String> command) {
+    public NutsExecCommand addCommand(Collection<String> command) {
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
         this.command.addAll(command);
         return this;
+    }
+
+    @Override
+    public NutsExecCommand executorOptions(String... executorOptions) {
+        return addExecutorOptions(executorOptions);
     }
 
     @Override
@@ -107,7 +149,12 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsExecCommand addExecutorOptions(List<String> executorOptions) {
+    public NutsExecCommand executorOptions(Collection<String> executorOptions) {
+        return addExecutorOptions(executorOptions);
+    }
+
+    @Override
+    public NutsExecCommand addExecutorOptions(Collection<String> executorOptions) {
         if (this.executorOptions == null) {
             this.executorOptions = new ArrayList<>();
         }
@@ -122,7 +169,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsExecCommand setCommand(List<String> command) {
+    public NutsExecCommand setCommand(Collection<String> command) {
         this.command = command == null ? null : new ArrayList<>(command);
         return this;
     }
@@ -134,7 +181,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsExecCommand setExecutorOptions(List<String> options) {
+    public NutsExecCommand setExecutorOptions(Collection<String> options) {
         this.executorOptions = options == null ? null : new ArrayList<>(options);
         return this;
     }
@@ -155,6 +202,16 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
             }
         }
         return this;
+    }
+
+    @Override
+    public NutsExecCommand env(Map<String, String> env) {
+        return setEnv(env);
+    }
+
+    @Override
+    public NutsExecCommand env(String k, String val) {
+        return setEnv(k, val);
     }
 
     @Override
@@ -190,6 +247,11 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
+    public NutsExecCommand directory(String directory) {
+        return setDirectory(directory);
+    }
+
+    @Override
     public NutsExecCommand setDirectory(String directory) {
         this.directory = directory;
         return this;
@@ -198,6 +260,16 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     @Override
     public InputStream getIn() {
         return in;
+    }
+
+    @Override
+    public InputStream in() {
+        return getIn();
+    }
+
+    @Override
+    public NutsExecCommand in(InputStream in) {
+        return setIn(in);
     }
 
     @Override
@@ -263,7 +335,14 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
     @Override
     public NutsExecCommand exec() {
+        NutsExecutable exec = (NutsExecutable) which();
         executed = true;
+        result = exec.execute();
+        return this;
+    }
+
+    @Override
+    public NutsWhichExec which() {
         if (this.session == null) {
             this.session = ws.createSession();
         }
@@ -284,21 +363,25 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
             }
         }
         String[] ts = command.toArray(new String[0]);
+        NutsExecutable exec = null;
         switch (executionType) {
             case NATIVE: {
-                result = execNative(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal));
+                exec = new NativeExecutable(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal));
                 break;
             }
             case EXTERNAL: {
-                result = execExternal(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal));
+                exec = execEmbeddedOrExternal(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal), false);
                 break;
             }
             case EMBEDDED: {
-                result = execEmbedded(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal));
+                exec = execEmbeddedOrExternal(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal), true);
                 break;
             }
+            default: {
+                throw new NutsUnsupportedArgumentException("Invalid executionType " + executionType);
+            }
         }
-        return this;
+        return exec;
     }
 
     public boolean isRedirectErrorStream() {
@@ -306,7 +389,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsExecCommand setRedirectErrorStream() {
+    public NutsExecCommand redirectErrorStream() {
         return setRedirectErrorStream(true);
     }
 
@@ -370,10 +453,61 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         }
     }
 
+    private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
+        for (NutsExecutorComponent nutsExecutorComponent : ws.extensions().createAll(NutsExecutorComponent.class)) {
+            if (nutsExecutorComponent.getId().equalsSimpleName(nutsId)
+                    || nutsExecutorComponent.getId().getName().equals(nutsId.toString())
+                    || nutsExecutorComponent.getId().toString().equals("net.vpc.app.nuts.exec:exec-" + nutsId.toString())) {
+                return nutsExecutorComponent;
+            }
+        }
+        return new CustomNutsExecutorComponent(nutsId);
+    }
+
+    private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
+        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, nutsDefinition);
+        if (executorComponent != null) {
+            return executorComponent;
+        }
+        throw new NutsExecutorNotFoundException(nutsDefinition.getId());
+    }
+
+    @Override
+    public PrintStream out() {
+        return getOut();
+    }
+
+    @Override
+    public NutsExecCommand out(PrintStream out) {
+        return setOut(out);
+    }
+
+    @Override
+    public NutsExecCommand err(PrintStream err) {
+        return setErr(err);
+    }
+
+    @Override
+    public PrintStream err() {
+        return getErr();
+    }
+
+    @Override
+    public NutsExecCommand redirectErrorStream(boolean redirectErrorStream) {
+        return setRedirectErrorStream(redirectErrorStream);
+    }
+
+    @Override
+    public NutsExecCommand executionType(NutsExecutionType executionType) {
+        return setExecutionType(executionType);
+    }
+
+    @Override
     public String getCommandString() {
         return getCommandString(null);
     }
 
+    @Override
     public String getCommandString(NutsCommandStringFormatter f) {
         StringBuilder sb = new StringBuilder();
         if (env != null) {
@@ -477,49 +611,26 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         return result;
     }
 
-    public int execExternal(String[] cmd, String[] executorOptions, NutsSession session) {
+    public NutsExecutable execExternal(String[] cmd, String[] executorOptions, NutsSession session) {
         return execEmbeddedOrExternal(cmd, executorOptions, session, false);
     }
 
-    public int execEmbedded(String[] cmd, String[] executorOptions, NutsSession session) {
+    public NutsExecutable execEmbedded(String[] cmd, String[] executorOptions, NutsSession session) {
         return execEmbeddedOrExternal(cmd, executorOptions, session, true);
     }
 
-    private int execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession session, boolean embedded) {
+    private NutsExecutable execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession session, boolean embedded) {
         if (cmd == null || cmd.length == 0) {
             throw new NutsIllegalArgumentException("Missing command");
         }
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
         String cmdName = cmd[0];
-        ws.security().checkAllowed(NutsConstants.Rights.EXEC, cmdName);
         int result = 0;
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            NutsFetchCommand p = ws.fetch();
-            p.setTransitive(true);
-
-            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createInputSource(cmdName), p, session)) {
-                if (c.descriptor == null) {
-                    //this is a native file?
-                    c.descriptor = TEMP_DESC;
-                }
-                NutsDefinition nutToRun = new DefaultNutsDefinition(
-                        ws, null,
-                        c.descriptor.getId(),
-                        c.descriptor,
-                        new NutsContent(c.getContentPath(), false, c.temps.size() > 0),
-                        null
-                );
-                result = ws_exec(nutToRun, cmdName, args, executorOptions, env, directory, failFast, session, embedded);
-            }
+            return new PathComponentExecutable(cmdName, args, executorOptions, embedded);
         } else if (cmdName.contains(":")) {
-            NutsDefinition nutToRun = null;
-            nutToRun = ws.fetch().id(cmdName).session(session).setAcceptOptional(false).includeDependencies().installed().getResultDefinition();
-            if (!nutToRun.getInstallation().isInstalled()) {
-                ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, cmdName);
-                ws.install().id(nutToRun.getId()).setArgs(args).setForce(true).setSession(session).install();
-            }
-            result = ws_exec(nutToRun, cmdName, args, executorOptions, env, directory, failFast, session, embedded);
+            return ws_exec(cmdName, args, executorOptions, env, directory, failFast, session, embedded);
         } else {
             NutsWorkspaceCommand command = null;
             if (embedded) {
@@ -536,21 +647,11 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
             NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                     .setExecutionType(embedded ? NutsExecutionType.EMBEDDED : NutsExecutionType.EXTERNAL).setEnv(env);
             if (command != null) {
-                result = command.exec(args, o, session);
+                return new CommandExecutable(command, o, session, args);
             } else {
-                NutsDefinition def = null;
-                def = ws.fetch().id(cmdName).session(session).getResultDefinition();
-                log.log(Level.FINE, "Command {0} not found. Trying to resolve command as valid Nuts Id.", new Object[]{cmdName});
-                if (!def.getInstallation().isInstalled()) {
-                    ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, cmdName);
-                    ws.install().id(def.getId()).setArgs(args).setForce(true).setSession(session).install();
-                }
-                result = ws_exec(def, cmdName, args, executorOptions, env, directory, failFast, session, embedded);
+                return ws_exec(cmdName, args, executorOptions, env, directory, failFast, session, embedded);
             }
         }
-
-        checkFailFast(result);
-        return result;
     }
 
     private void checkFailFast(int result) {
@@ -573,8 +674,18 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         }
     }
 
+    protected NutsExecutable ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
+        NutsDefinition def = null;
+        NutsId nid = ws.parser().parseId(commandName);
+        def = ws.fetch().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(true).installed().getResultDefinition();
+        if (def == null) {
+            def = ws.fetch().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(false).wired().getResultDefinition();
+        }
+        return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, embedded);
+    }
+
     protected int ws_exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
-        ws.security().checkAllowed(NutsConstants.Rights.EXEC, "exec");
+        ws.security().checkAllowed(NutsConstants.Rights.EXEC, commandName);
         session = CoreNutsUtils.validateSession(session, ws);
         if (nutToRun != null && nutToRun.getPath() != null) {
             NutsDescriptor descriptor = nutToRun.getDescriptor();
@@ -671,23 +782,223 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         throw new NutsNotFoundException(nutToRun == null ? null : nutToRun.getId());
     }
 
-    private NutsExecutorComponent resolveNutsExecutorComponent(NutsId nutsId) {
-        for (NutsExecutorComponent nutsExecutorComponent : ws.extensions().createAll(NutsExecutorComponent.class)) {
-            if (nutsExecutorComponent.getId().equalsSimpleName(nutsId)
-                    || nutsExecutorComponent.getId().getName().equals(nutsId.toString())
-                    || nutsExecutorComponent.getId().toString().equals("net.vpc.app.nuts.exec:exec-" + nutsId.toString())) {
-                return nutsExecutorComponent;
-            }
-        }
-        return new CustomNutsExecutorComponent(nutsId);
+    public static interface NutsExecutable extends NutsWhichExec {
+
+        int execute();
     }
 
-    private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
-        NutsExecutorComponent executorComponent = ws.extensions().createSupported(NutsExecutorComponent.class, nutsDefinition);
-        if (executorComponent != null) {
-            return executorComponent;
+    public class CommandExecutable extends AbstractExecutable {
+
+        private NutsWorkspaceCommand command;
+        private NutsCommandExecOptions o;
+        private NutsSession session;
+        private String[] args;
+
+        public CommandExecutable(NutsWorkspaceCommand command, NutsCommandExecOptions o, NutsSession session, String[] args) {
+            super(NutsExecutableType.COMMAND);
+            this.command = command;
+            this.o = o;
+            this.session = session;
+            this.args = args;
         }
-        throw new NutsExecutorNotFoundException(nutsDefinition.getId());
+
+        @Override
+        public NutsId getId() {
+            return command.getOwner();
+        }
+
+        @Override
+        public String getName() {
+            return command.getName();
+        }
+
+        public int execute() {
+            int result = command.exec(args, o, session);
+            checkFailFast(result);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CMD " + command.getName() + " @ " + command.getOwner();
+        }
+
+    }
+
+    public abstract class AbstractExecutable implements NutsExecutable {
+
+        private NutsExecutableType type;
+
+        public AbstractExecutable(NutsExecutableType type) {
+            this.type = type;
+        }
+
+        @Override
+        public NutsExecutableType getType() {
+            return type;
+        }
+
+        @Override
+        public String getDescription() {
+            return toString();
+        }
+    }
+
+    public class PathComponentExecutable extends AbstractExecutable {
+
+        private String cmdName;
+        private String[] args;
+        private String[] executorOptions;
+        private boolean embedded;
+
+        public PathComponentExecutable(String cmdName, String[] args, String[] executorOptions, boolean embedded) {
+            super(NutsExecutableType.COMPONENT);
+            this.cmdName = cmdName;
+            this.args = args;
+            this.executorOptions = executorOptions;
+            this.embedded = embedded;
+        }
+
+        @Override
+        public String getName() {
+            return cmdName;
+        }
+
+        @Override
+        public NutsId getId() {
+            NutsFetchCommand p = ws.fetch();
+            p.setTransitive(true);
+            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createInputSource(cmdName), p, session)) {
+                return c.descriptor.getId();
+            }
+        }
+
+        @Override
+        public int execute() {
+            NutsFetchCommand p = ws.fetch();
+            p.setTransitive(true);
+
+            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createInputSource(cmdName), p, session)) {
+                if (c.descriptor == null) {
+                    //this is a native file?
+                    c.descriptor = TEMP_DESC;
+                }
+                NutsDefinition nutToRun = new DefaultNutsDefinition(
+                        ws, null,
+                        c.descriptor.getId(),
+                        c.descriptor,
+                        new NutsContent(c.getContentPath(), false, c.temps.size() > 0),
+                        null
+                );
+                return ws_exec(nutToRun, cmdName, args, executorOptions, env, directory, failFast, session, embedded);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "NUTS " + cmdName + " " + NutsMinimalCommandLine.escapeArguments(args);
+        }
+
+    }
+
+    public class ComponentExecutable extends AbstractExecutable {
+
+        private NutsDefinition def;
+        private String commandName;
+        private String[] appArgs;
+        private String[] executorOptions;
+        private Properties env;
+        private String dir;
+        private boolean failFast;
+        private NutsSession session;
+        private boolean embedded;
+
+        public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
+            super(NutsExecutableType.COMPONENT);
+            this.def = def;
+            this.commandName = commandName;
+            this.appArgs = appArgs;
+            this.executorOptions = executorOptions;
+            this.env = env;
+            this.dir = dir;
+            this.failFast = failFast;
+            this.session = session;
+            this.embedded = embedded;
+        }
+
+        @Override
+        public String getName() {
+            return getId().getName();
+        }
+
+        @Override
+        public NutsId getId() {
+            return def.getId();
+        }
+
+        @Override
+        public int execute() {
+            if (!def.getInstallation().isInstalled()) {
+                ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
+                if (session.getTerminal().ask(NutsQuestion.forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defautValue(true))) {
+                    ws.install().id(def.getId()).setArgs(appArgs).setForce(true).setSession(session).install();
+                } else {
+                    throw new NutsUserCancelException();
+                }
+            }
+            int result = ws_exec(def, commandName, appArgs, executorOptions, env, directory, failFast, session, embedded);
+            checkFailFast(result);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "NUTS " + getId().toString() + " " + NutsMinimalCommandLine.escapeArguments(appArgs);
+        }
+    }
+
+    public class NativeExecutable extends AbstractExecutable {
+
+        private String[] cmd;
+        private String[] executorOptions;
+        private NutsSession session;
+
+        public NativeExecutable(String[] cmd, String[] executorOptions, NutsSession session) {
+            super(NutsExecutableType.NATIVE);
+            this.cmd = cmd;
+            this.executorOptions = executorOptions;
+            this.session = session;
+        }
+
+        @Override
+        public NutsId getId() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return cmd[0];
+        }
+
+        @Override
+        public int execute() {
+            Map<String, String> e2 = null;
+            if (env != null) {
+                e2 = new HashMap<>((Map) env);
+            }
+            int result = CoreIOUtils.execAndWait(ws, cmd,
+                    e2,
+                    ws.io().path(directory),
+                    session.getTerminal(), true, isFailFast());
+            checkFailFast(result);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "SYSEXEC " + NutsMinimalCommandLine.escapeArguments(cmd);
+        }
+
     }
 
 }

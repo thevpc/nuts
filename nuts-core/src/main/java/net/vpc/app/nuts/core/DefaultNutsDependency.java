@@ -138,7 +138,7 @@ public class DefaultNutsDependency implements NutsDependency {
     public String getLongName() {
         String s = getSimpleName();
         NutsVersion v = getVersion();
-        if (v.isEmpty()) {
+        if (v.isBlank()) {
             return s;
         }
         return s + "#" + v;

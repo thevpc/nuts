@@ -100,9 +100,9 @@ public class RemoteMysqlDatabaseConfigService {
                         archiveResult.path,
                         remoteFullFilePath
                 ).setSession(context.getSession())
-                .setRedirectErrorStream()
+                .redirectErrorStream()
                 .grabOutputString()
-                .setFailFast()
+                .fFailFast()
                 .exec();
         context.out().printf("==[%s]== remote restore %s\n", name, remoteFilePath);
         execRemoteNuts(
@@ -146,8 +146,8 @@ public class RemoteMysqlDatabaseConfigService {
                 return null;
             }
         }));
-        b.setRedirectErrorStream()
-                .setFailFast();
+        b.redirectErrorStream()
+                .fFailFast();
         return b.exec().getResult();
 
     }

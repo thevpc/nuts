@@ -528,10 +528,10 @@ public class NutsIdGraph {
             if (other.id.getSimpleName().equals(this.id.getSimpleName())) {
                 NutsId id1 = this.id;
                 NutsId id2 = other.id;
-                if (id1.getVersion().isEmpty()) {
+                if (id1.getVersion().isBlank()) {
                     return 1;
                 }
-                if (id2.getVersion().isEmpty()) {
+                if (id2.getVersion().isBlank()) {
                     return -1;
                 }
                 int xx = Integer.compare(this.path.size(), other.path.size());

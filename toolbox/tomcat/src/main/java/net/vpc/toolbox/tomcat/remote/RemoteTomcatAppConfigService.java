@@ -75,7 +75,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
         }
         NutsExecCommand s = context.getWorkspace()
                 .exec()
-                .setRedirectErrorStream()
+                .redirectErrorStream()
                 .grabOutputString()
                 .setCommand(cmd).exec();
         if (s.getResult() == 0) {

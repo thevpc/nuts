@@ -88,15 +88,15 @@ public class NdedMain extends NutsApplication {
         if (!interactive) {
             return;
         }
-        if (!nullOnly || isEmpty(home)) {
+        if (!nullOnly || isBlank(home)) {
             String s = checkParam("home", home);
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 home = s;
             }
         }
         if (!nullOnly || b.getId() == null) {
             String s = checkParam("id", b.getId() == null ? null : b.getId().toString());
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 try {
                     b.setId(s);
                 } catch (Exception ex) {
@@ -104,9 +104,9 @@ public class NdedMain extends NutsApplication {
                 }
             }
         }
-        if (!nullOnly || isEmpty(b.getPackaging())) {
+        if (!nullOnly || isBlank(b.getPackaging())) {
             String s = checkParam("packaging", b.getPackaging());
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 b.setPackaging(s);
             }
         }
@@ -118,25 +118,25 @@ public class NdedMain extends NutsApplication {
 //        }
         if (!nullOnly || b.getArch().length == 0) {
             String s = checkParam("arch", Arrays.toString(b.getArch()));
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 b.addArch(s);
             }
         }
         if (!nullOnly || b.getOs().length == 0) {
             String s = checkParam("os", Arrays.toString(b.getOs()));
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 b.addOs(s);
             }
         }
         if (!nullOnly || b.getOsdist().length == 0) {
             String s = checkParam("osdist", Arrays.toString(b.getOs()));
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 b.addOsdist(s);
             }
         }
         if (!nullOnly || b.getLocations().length == 0) {
             String s = checkParam("location", Arrays.toString(b.getLocations()));
-            if (!isEmpty(s)) {
+            if (!isBlank(s)) {
                 b.addLocation(s);
             }
         }
@@ -163,11 +163,11 @@ public class NdedMain extends NutsApplication {
             }
 
         }
-        if (isEmpty(b.getPackaging())) {
+        if (isBlank(b.getPackaging())) {
             error = true;
             appContext.err().print("Missing packaging\n");
         }
-        if (isEmpty(home)) {
+        if (isBlank(home)) {
             error = true;
             appContext.err().print("Missing nuts-bootstrap\n");
         }
@@ -251,7 +251,7 @@ public class NdedMain extends NutsApplication {
         return p;
     }
 
-    private static boolean isEmpty(String s) {
+    private static boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
 }

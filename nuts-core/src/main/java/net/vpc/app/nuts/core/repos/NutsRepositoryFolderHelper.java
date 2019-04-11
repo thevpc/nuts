@@ -61,7 +61,7 @@ public class NutsRepositoryFolderHelper {
         if (CoreStringUtils.isBlank(id.getName())) {
             return null;
         }
-        if (id.getVersion().isEmpty()) {
+        if (id.getVersion().isBlank()) {
             return null;
         }
         String alt = CoreStringUtils.trim(id.getAlternative());

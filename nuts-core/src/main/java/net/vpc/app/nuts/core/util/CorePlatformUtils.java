@@ -779,7 +779,7 @@ public class CorePlatformUtils {
             NutsExecCommand b = ws.exec()
                     .setExecutionType(NutsExecutionType.NATIVE)
                     .setCommand(javaExePath.toString(), "-version")
-                    .setRedirectErrorStream()
+                    .redirectErrorStream()
                     .grabOutputString()
                     .exec();
             if (b.getResult() == 0) {

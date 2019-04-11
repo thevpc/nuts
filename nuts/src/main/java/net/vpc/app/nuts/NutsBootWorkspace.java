@@ -1180,7 +1180,7 @@ public class NutsBootWorkspace {
                         silent = true;
                     }
                 }
-                workspace.install().setIncludecompanions(true).setAsk(!force).setForce(force).setTrace(!silent).install();
+                workspace.install().setIncludeCompanions(true).setAsk(!force).setForce(force).setTrace(!silent).install();
                 return 0;
             }
             case UPDATE: {
@@ -1271,8 +1271,8 @@ public class NutsBootWorkspace {
                 }
             }
         }
-        boolean yes = Boolean.TRUE.equals(o.getDefaultResponse());
-        boolean no = Boolean.FALSE.equals(o.getDefaultResponse());
+        boolean yes = o.isYes();
+        boolean no = o.isNo();
         if (!force) {
             if (no) {
                 if (workspace == null) {

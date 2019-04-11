@@ -31,14 +31,15 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 
-public interface NutsVersion extends Serializable {
+public interface NutsVersion extends Serializable,Comparable<NutsVersion>{
 
     String getValue();
 
-    boolean isEmpty();
+    boolean isBlank();
 
     int compareTo(String other);
 
+    @Override
     int compareTo(NutsVersion other);
 
     boolean matches(String expression);

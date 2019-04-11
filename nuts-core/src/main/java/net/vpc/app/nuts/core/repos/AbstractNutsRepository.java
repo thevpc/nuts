@@ -373,7 +373,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         if (CoreStringUtils.isBlank(deployment.getId().getName())) {
             throw new NutsIllegalArgumentException("Empty name");
         }
-        if ((deployment.getId().getVersion().isEmpty())) {
+        if ((deployment.getId().getVersion().isBlank())) {
             throw new NutsIllegalArgumentException("Empty version");
         }
         if ("RELEASE".equals(deployment.getId().getVersion().getValue())

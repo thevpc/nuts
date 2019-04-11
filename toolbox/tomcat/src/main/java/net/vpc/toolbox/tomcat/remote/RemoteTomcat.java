@@ -176,16 +176,16 @@ public class RemoteTomcat {
         while (!ok) {
             try {
                 ok = true;
-                if (TomcatUtils.isEmpty(c.getConfig().getServer())) {
+                if (TomcatUtils.isBlank(c.getConfig().getServer())) {
                     ok = false;
                     c.getConfig().setServer(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--server").setDefautValue("ssh://login@myserver/instanceName")));
                 }
-                if (TomcatUtils.isEmpty(c.getConfig().getRemoteTempPath())) {
+                if (TomcatUtils.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig().setRemoteTempPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] Would you enter ==%s== value?", c.getName(), "--remote-temp-path").setDefautValue("/tmp")));
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
-                    if (TomcatUtils.isEmpty(aa.getConfig().getPath())) {
+                    if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(context.terminal().ask(NutsQuestion.forString("[instance=[[%s]]] [app=[[%s]]] Would you enter ==%s== value?", c.getName(), aa.getName(), "-app.path")));
                     }

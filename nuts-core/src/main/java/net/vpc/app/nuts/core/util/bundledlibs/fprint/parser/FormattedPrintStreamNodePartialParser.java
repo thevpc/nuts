@@ -18,7 +18,7 @@ import net.vpc.app.nuts.core.util.bundledlibs.fprint.util.FormattedPrintStreamUt
  */
 public class FormattedPrintStreamNodePartialParser implements FormattedPrintStreamParser {
 
-    List<FDocNode> all = new ArrayList<FDocNode>();
+    List<FDocNode> all = new ArrayList<>();
     StringBuilder curr = new StringBuilder();
     Stack<ParseAction> statusStack = new Stack<>();
 
@@ -34,6 +34,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         return s.toFDocNode();
     }
 
+    @Override
     public TextNode consumeNode() {
         ParseAction s = root().available.poll();
         if (s == null) {
@@ -50,6 +51,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         return statusStack.isEmpty() || root().available.isEmpty();
     }
 
+    @Override
     public void forceEnding() {
         while (true) {
             ParseAction s = statusStack.peek();
@@ -64,38 +66,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
     }
 
-    static enum ConsumeResutType {
-        POP,
-        POP_REJECT,
-        POP_REPLACE,
-        DROP_REPLACE,
-        PUSH,
-        CONTINUE,
-    }
-
-    static class ConsumeResut {
-
-        ConsumeResutType accepted;
-        ParseAction replacement;
-        char rejected;
-
-        public ConsumeResut(ConsumeResutType accepted, ParseAction replacement, char rejected) {
-            this.accepted = accepted;
-            this.replacement = replacement;
-            this.rejected = rejected;
-        }
-
-        public ConsumeResut(ConsumeResutType accepted, ParseAction replacement) {
-            this.accepted = accepted;
-            this.replacement = replacement;
-            this.rejected = '\0';
-        }
-
-    }
-
     static abstract class ParseAction {
 
-        abstract ConsumeResut consume(char c);
+        abstract void consume(char c, FormattedPrintStreamNodePartialParser p);
 
         abstract void appendChild(ParseAction tt);
 
@@ -112,8 +85,8 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        ConsumeResut consume(char c) {
-            return new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
+        void consume(char c, FormattedPrintStreamNodePartialParser p) {
+            p.applyStart(c);
         }
 
         @Override
@@ -164,7 +137,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        public ConsumeResut consume(char c) {
+        public void consume(char c, FormattedPrintStreamNodePartialParser p) {
             switch (status) {
                 case 0: {
                     if (c == start.charAt(0)) {
@@ -186,7 +159,8 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         }
                         status = 1;
                     }
-                    return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+//                    p.applyContinue();
+                    return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                 }
                 case 1: {
                     if (escape) {
@@ -197,7 +171,8 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                             status = 2;
                             end.append(c);
                             if (end.length() >= start.length()) {
-                                return new ConsumeResut(ConsumeResutType.POP, null);
+                                p.applyPop();
+                                return;//new ConsumeResut(ConsumeResutType.POP, null);
                             }
                         } else {
                             switch (c) {
@@ -211,15 +186,16 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                             }
                         }
                     }
-                    return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                    return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                 }
                 case 2: {
                     if (c == start.charAt(0)) {
                         end.append(c);
                         if (end.length() >= start.length()) {
-                            return new ConsumeResut(ConsumeResutType.POP, null);
+                            p.applyPop();
+                            return;//new ConsumeResut(ConsumeResutType.POP, null);
                         } else {
-                            return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                            return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                         }
                     } else {
                         value.append(end);
@@ -234,7 +210,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                             }
                         }
                         status = 1;
-                        return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                        return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                     }
                 }
             }
@@ -280,15 +256,16 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        public ConsumeResut consume(char c) {
+        public void consume(char c, FormattedPrintStreamNodePartialParser p) {
             if (!started) {
                 if (c == start.charAt(0)) {
                     if (start.length() < 4) {
                         start.append(c);
-                        return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                        return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                     } else {
                         started = true;
-                        return new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
+                        p.applyStart(c);
+                        return;//new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
                     }
                 } else {
                     char endChar = endOf(start.charAt(0));
@@ -296,34 +273,40 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                     if (c == endChar) {
                         end.append(c);
                         if (end.length() >= start.length()) {
-                            return new ConsumeResut(ConsumeResutType.POP, null);
+                            p.applyPop();
+                            return;//new ConsumeResut(ConsumeResutType.POP, null);
                         } else {
-                            return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                            return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                         }
                     } else {
-                        return new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
+                        p.applyStart(c);
+                        return;//new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
                     }
                 }
             } else {
                 char endChar = endOf(start.charAt(0));
                 if (c == endChar) {
                     if (end.length() >= start.length()) {
-                        return new ConsumeResut(ConsumeResutType.POP_REJECT, null, c);
+                        p.applyPopReject(c);
+                        return;//new ConsumeResut(ConsumeResutType.POP_REJECT, null, c);
                     } else {
                         end.append(c);
                         if (end.length() >= start.length()) {
-                            return new ConsumeResut(ConsumeResutType.POP, null);
+                            p.applyPop();
+                            return;//new ConsumeResut(ConsumeResutType.POP, null);
                         } else {
-                            return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                            return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                         }
                     }
                 } else {
                     if (end.length() == 0) {
-                        return new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
+                        p.applyStart(c);
+                        return;//new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
                     } else {
                         String y = end.toString();
                         end.delete(0, end.length());
-                        return new ConsumeResut(ConsumeResutType.PUSH, new TypedParseAction(y));
+                        p.applyPush(new TypedParseAction(y));
+                        return;//new ConsumeResut(ConsumeResutType.PUSH, new TypedParseAction(y));
                     }
                 }
             }
@@ -387,7 +370,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
 
         @Override
-        public ConsumeResut consume(char c) {
+        public void consume(char c, FormattedPrintStreamNodePartialParser p) {
             char oldLast = last;
             last = c;
             switch (c) {
@@ -409,17 +392,21 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         wasEscape = false;
                         value.append(c);
                         last = '\0';
-                        return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+                        //p.applyContinue();
+                        return;
                     } else {
                         if (oldLast == c) {
                             value.deleteCharAt(value.length() - 1);
                             if (value.length() == 0) {
-                                return new ConsumeResut(ConsumeResutType.DROP_REPLACE, new TypedParseAction(c + "" + c));
+                                p.applyDropReplace(new TypedParseAction(c + "" + c));
+                                return;
                             } else {
-                                return new ConsumeResut(ConsumeResutType.POP_REPLACE, new TypedParseAction(c + "" + c));
+                                p.applyPopReplace(new TypedParseAction(c + "" + c));
+                                return;
                             }
                         }
-                        return new ConsumeResut(ConsumeResutType.POP_REJECT, null, c);
+                        p.applyPopReject(c);
+                        return;
                     }
                 }
 
@@ -437,18 +424,19 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                     if (wasEscape) {
                         wasEscape = false;
                         value.append(c);
-                        return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+//                        p.applyContinue();
+                        return;
                     } else {
-                        return new ConsumeResut(ConsumeResutType.POP_REJECT, null, c);
+                        p.applyPopReject(c);
+                        return;
                     }
                 }
-                case '\n': {
+                case '\n': 
+                case '\r': 
+                {
                     value.append(c);
-                    return new ConsumeResut(ConsumeResutType.POP, null);
-                }
-                case '\r': {
-                    value.append(c);
-                    return new ConsumeResut(ConsumeResutType.POP, null);
+                    p.applyPop();
+                    return;
                 }
                 case '\\': {
                     if (wasEscape) {
@@ -457,11 +445,13 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                     } else {
                         wasEscape = true;
                     }
-                    return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+//                    p.appContinue();
+                    return;
                 }
                 default: {
                     value.append(c);
-                    return new ConsumeResut(ConsumeResutType.CONTINUE, null);
+//                    p.appContinue();
+                    return;
                 }
             }
         }
@@ -483,6 +473,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     }
 
+    @Override
     public void take(String str) {
         char[] c = str.toCharArray();
         write(c, 0, c.length);
@@ -500,50 +491,37 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
     public void write(char s) {
         ParseAction st = statusStack.peek();
-        applyConsumeResut(st.consume(s));
+        st.consume(s, this);
     }
 
-    private void applyConsumeResut(ConsumeResut r) {
-        switch (r.accepted) {
-            case CONTINUE: {
-                //DO NOTHGING
-                break;
-            }
-            case PUSH: {
-                //DO NOTHGING
-                statusStack.push(r.replacement);
-                break;
-            }
-            case POP: {
-                ParseAction tt = statusStack.pop();
-                ParseAction parent = statusStack.peek();
-                parent.appendChild(tt);
-                break;
-            }
-            case POP_REPLACE: {
-                ParseAction tt = statusStack.pop();
-                ParseAction parent = statusStack.peek();
-                parent.appendChild(tt);
+    private void applyPush(ParseAction r) {
+        statusStack.push(r);
+    }
 
-                statusStack.push(r.replacement);
-                break;
-            }
-            case DROP_REPLACE: {
-                ParseAction tt = statusStack.pop();
-                //just drop
+    private void applyPop() {
+        ParseAction tt = statusStack.pop();
+        ParseAction parent = statusStack.peek();
+        parent.appendChild(tt);
+    }
 
-                statusStack.push(r.replacement);
-                break;
-            }
-            case POP_REJECT: {
-                ParseAction tt = statusStack.pop();
-                ParseAction parent = statusStack.peek();
-                parent.appendChild(tt);
+    private void applyPopReplace(ParseAction r) {
+        ParseAction tt = statusStack.pop();
+        ParseAction parent = statusStack.peek();
+        parent.appendChild(tt);
+        statusStack.push(r);
+    }
 
-                applyConsumeResut(parent.consume(r.rejected));
-                break;
-            }
-        }
+    private void applyDropReplace(ParseAction r) {
+        ParseAction tt = statusStack.pop();
+        //just drop
+        statusStack.push(r);
+    }
+
+    private void applyPopReject(char rejected) {
+        ParseAction tt = statusStack.pop();
+        ParseAction parent = statusStack.peek();
+        parent.appendChild(tt);
+        parent.consume(rejected, this);
     }
 
     private void debug() {
@@ -552,35 +530,29 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         }
     }
 
-    static ParseAction consumeStart(char c) {
+    void applyStart(char c) {
         switch (c) {
             case '`':
             case '"':
             case '\'': {
-                return new QuotedParseAction(c);
+                this.applyPush(new QuotedParseAction(c));
+                break;
             }
-//            case '$':
-//            case '£':
-//            case '§':
-//            case '_':
-//            case '~':
-//            case '%':
-//            case '¤':
-//            case '@':
-//            case '^':
-//            case '#':
-//            case '¨':
-//            case '=':
-//            case '*':
-//            case '+':
             case '(':
             case '[':
             case '{':
             case '<': {
-                return new TypedParseAction(c);
+                this.applyPush(new TypedParseAction(c));
+                break;
+            }
+            case '\n':
+            case '\r': {
+                this.applyPush(new PlainParseAction(c));
+                applyPop();
+                break;
             }
             default: {
-                return new PlainParseAction(c);
+                this.applyPush(new PlainParseAction(c));
             }
         }
     }

@@ -60,8 +60,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatConfigService save() {
         String v = getConfig().getCatalinaVersion();
         String h = getConfig().getCatalinaHome();
-        if (!TomcatUtils.isEmpty(h)) {
-            if (TomcatUtils.isEmpty(v)) {
+        if (!TomcatUtils.isBlank(h)) {
+            if (TomcatUtils.isBlank(v)) {
                 File file = new File(h, "RELEASE-NOTES");
                 if (file.exists()) {
                     try (BufferedReader r = new BufferedReader(new FileReader(file))) {
@@ -70,7 +70,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             line = line.trim();
                             if (line.startsWith("Apache Tomcat Version")) {
                                 v = line.substring("Apache Tomcat Version".length()).trim();
-                                if (!TomcatUtils.isEmpty(v)) {
+                                if (!TomcatUtils.isBlank(v)) {
                                     getConfig().setCatalinaVersion(v);
                                 }
                             }
@@ -97,7 +97,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public String getEffectiveCatalinaVersion() {
         String h = getConfig().getCatalinaHome();
-        if (TomcatUtils.isEmpty(h)) {
+        if (TomcatUtils.isBlank(h)) {
             NutsDefinition nf = getCatalinaNutsDefinition();
             return nf.getId().getVersion().toString();
         }
@@ -108,7 +108,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         LocalTomcatConfig c = getConfig();
         Path catalinaBase = getContext().getWorkspace().io().path(c.getCatalinaBase());
         Path catalinaHome = getCatalinaHome();
-        if (TomcatUtils.isEmpty(getConfig().getCatalinaHome())
+        if (TomcatUtils.isBlank(getConfig().getCatalinaHome())
                 && catalinaBase == null) {
             catalinaBase = getContext().getWorkspace().io().path(getName());
         }
@@ -135,7 +135,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public Path getCatalinaHome() {
         String h = getConfig().getCatalinaHome();
-        if (TomcatUtils.isEmpty(h)) {
+        if (TomcatUtils.isBlank(h)) {
             NutsDefinition f = getCatalinaNutsDefinition();
             return f.getInstallation().getInstallFolder();
         } else {
@@ -164,7 +164,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
-                if (!TomcatUtils.isEmpty(arg)) {
+                if (!TomcatUtils.isBlank(arg)) {
                     for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
@@ -304,7 +304,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public void deployFile(Path file, String contextName, String domain) {
         if (file.getFileName().toString().endsWith(".war")) {
-            if (TomcatUtils.isEmpty(contextName)) {
+            if (TomcatUtils.isBlank(contextName)) {
                 contextName = file.getFileName().toString().substring(0, file.getFileName().toString().length() - ".war".length());
             }
             Path c = getDefaulDeployFolder(domain).resolve(contextName + ".war");

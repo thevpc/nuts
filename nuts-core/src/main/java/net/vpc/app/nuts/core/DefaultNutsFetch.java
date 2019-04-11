@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.TraceResult;
+import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 
 public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
@@ -73,6 +75,16 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
     public NutsFetchCommand setLenient(boolean lenient) {
         this.lenient = lenient;
         return this;
+    }
+
+    @Override
+    public NutsFetchCommand lenient(boolean lenient) {
+        return setLenient(lenient);
+    }
+
+    @Override
+    public NutsFetchCommand lenient() {
+        return lenient(true);
     }
 
     @Override
@@ -394,12 +406,25 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsRepositoryFilter repositoryFilter = null;
         if (mode == NutsFetchMode.INSTALLED) {
-            final String[] all = dws.getInstalledVersions(id);
-            if (all.length > 0) {
-                id = id.setVersion(all[all.length - 1]);
-                mode = NutsFetchMode.LOCAL;
-            } else {
-                throw new NutsNotFoundException(id);
+            if (id.getVersion().isBlank()) {
+                String v = dws.getInstalledRepository().getDefaultVersion(id);
+                if (v != null) {
+                    id=id.setVersion(v);
+                } else {
+                    id=id.setVersion("");
+                }
+            }
+            if (id.getVersion().isBlank()) {
+                List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, null))
+                        .convert(x -> x.getVersion()).list();
+//                all.sort();
+                if (all.size() > 0) {
+                    all.sort(null);
+                    id = id.setVersion(all.get(all.size() - 1));
+                    mode = NutsFetchMode.LOCAL;
+                } else {
+                    throw new NutsNotFoundException(id);
+                }
             }
         }
         for (NutsRepository repo : dws.getEnabledRepositories(NutsWorkspaceHelper.FilterMode.FIND, id, repositoryFilter, options.getSession(), mode, options)) {

@@ -354,7 +354,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
             }
-            install().setIncludecompanions(true).setSession(session).install();
+            install().setIncludeCompanions(true).setSession(session).install();
         }
     }
 
@@ -453,7 +453,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             log.log(Level.SEVERE, "Error", e);
             return false;
         }
-        return installedRepository.isInstalled(nutToInstall.getId());
+        return getInstalledRepository().isInstalled(nutToInstall.getId());
     }
 
     @Override
@@ -521,7 +521,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
     @Override
     public NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        if (!descriptor.getId().getVersion().isEmpty() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
+        if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
             Path l = config().getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE);
             String nn = config().getDefaultIdFilename(descriptor.getId().setFace("cache-eff-nuts"));
             Path eff = l.resolve(nn);
@@ -568,7 +568,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         for (int i = 0; i < old.length; i++) {
             NutsDependency d = old[i];
             if (CoreStringUtils.isBlank(d.getScope())
-                    || d.getVersion().isEmpty()
+                    || d.getVersion().isBlank()
                     || CoreStringUtils.isBlank(d.getOptional())) {
                 NutsDependency standardDependencyOk = null;
                 for (NutsDependency standardDependency : nutsDescriptor.getStandardDependencies()) {
@@ -588,8 +588,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                         someChange = true;
                         d = d.setOptional(standardDependencyOk.getOptional());
                     }
-                    if (d.getVersion().isEmpty()
-                            && !standardDependencyOk.getVersion().isEmpty()) {
+                    if (d.getVersion().isBlank()
+                            && !standardDependencyOk.getVersion().isBlank()) {
                         someChange = true;
                         d = d.setVersion(standardDependencyOk.getVersion());
                     }
@@ -840,7 +840,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
      */
     @Override
     public String[] getInstalledVersions(NutsId id) {
-        return Arrays.stream(installedRepository.findInstalledVersions(id))
+        return Arrays.stream(getInstalledRepository().findInstalledVersions(id))
                 .map(x -> x.getVersion().getValue())
                 .sorted((a, b) -> DefaultNutsVersion.compareVersions(a, b))
                 .toArray(String[]::new);
@@ -864,7 +864,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         if (installerComponent != null) {
             if (def.getPath() != null) {
                 NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], session, true, null);
-                installedRepository.install(executionContext.getNutsDefinition().getId());
+                getInstalledRepository().install(executionContext.getNutsDefinition().getId());
                 try {
                     installerComponent.install(executionContext);
 //                    out.print(getFormatManager().createIdFormat().format(def.getId()) + " installed ##successfully##.\n");
@@ -874,7 +874,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                     if (trace) {
                         out.printf(formatter().createIdFormat().toString(def.getId()) + " @@Failed@@ to install : %s.\n", ex.toString());
                     }
-                    installedRepository.uninstall(executionContext.getNutsDefinition().getId());
+                    getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
                     throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex, 1);
                 }
                 Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS);

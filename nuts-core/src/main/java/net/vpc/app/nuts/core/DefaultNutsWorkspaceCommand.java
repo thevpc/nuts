@@ -1,6 +1,5 @@
 package net.vpc.app.nuts.core;
 
-import com.sun.tools.javac.util.ArrayUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +9,6 @@ import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommand;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 
 public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
 
@@ -85,7 +83,7 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
                 .setCommand(args)
                 .setExecutorOptions(executorOptions)
                 .setDirectory(options.getDirectory())
-                .setFailFast()
+                .fFailFast()
                 .setSession(session)
                 .setEnv(options.getEnv())
                 .setExecutionType(options.getExecutionType())
@@ -94,4 +92,10 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
         //load all needed dependencies!
 //        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
     }
+
+    @Override
+    public String toString() {
+        return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + command + ", executorOptions=" + executorOptions + '}';
+    }
+    
 }

@@ -390,7 +390,7 @@ public class FormattedPrintStream extends PrintStream {
     public final void writeRaw(String rawString) {
         byte[] b = rawString.getBytes();
         String ss = new String(b);
-        if (ss.contains("Foreground")) {
+        if (ss.contains("\\u001B")) {
             System.out.print("");
         }
         super.write(b, 0, b.length);

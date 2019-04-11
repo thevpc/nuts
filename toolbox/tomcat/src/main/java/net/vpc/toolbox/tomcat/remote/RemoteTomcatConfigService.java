@@ -236,7 +236,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         context.getWorkspace().exec()
                 .setSession(context.getSession())
                 .setCommand(cmdList)
-                .setFailFast()
+                .fFailFast()
                 .exec();
 
     }

@@ -170,7 +170,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     @Override
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        if (id.getVersion().isEmpty() && filter == null) {
+        if (id.getVersion().isBlank() && filter == null) {
             Path file = getLocalGroupAndArtifactFile(id);
             NutsId bestId = null;
             if (Files.exists(file)) {

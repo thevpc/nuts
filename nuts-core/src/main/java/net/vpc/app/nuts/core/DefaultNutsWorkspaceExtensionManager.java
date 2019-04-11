@@ -80,7 +80,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public List<NutsExtensionInfo> findExtensions(NutsId id, String extensionType, NutsSession session) {
-        if (id.getVersion().isEmpty()) {
+        if (id.getVersion().isBlank()) {
             throw new NutsIllegalArgumentException("Missing version");
         }
         List<NutsExtensionInfo> ret = new ArrayList<>();

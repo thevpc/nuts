@@ -83,7 +83,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.out().printf("@@Deleting@@ ##%s## folder %s ...\n", name, storeLocation);
                 if (force
                         || context.getWorkspace().config().getOptions().isYes()
-                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefautValue(false))) {
                     try {
                         Files.delete(storeLocation);
                     } catch (IOException ex) {
@@ -118,7 +118,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
                 context.out().printf("@@Deleting@@ ##cache## folder %s ...\n", s);
                 if (force
                         || context.getWorkspace().config().getOptions().isYes()
-                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete ?").setDefautValue(false))) {
+                        || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefautValue(false))) {
                     try {
                         Files.delete(s);
                     } catch (IOException ex) {

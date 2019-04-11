@@ -706,7 +706,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                 NutsId nutsId = curr.next();
                 String k = nutsId.getSimpleNameId().setAlternative(nutsId.getAlternative()).toString();
                 NutsId old = visited.get(k);
-                if (old == null || old.getVersion().isEmpty() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
                     visited.put(k, nutsId);
                 }
             }
@@ -717,7 +717,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                 NutsId nutsId = curr.next();
                 String k = nutsId.getSimpleNameId().setAlternative(nutsId.getAlternative()).toString();
                 List<NutsId> oldList = visited.get(k);
-                if (oldList == null || oldList.get(0).getVersion().isEmpty() || oldList.get(0).getVersion().compareTo(nutsId.getVersion()) < 0) {
+                if (oldList == null || oldList.get(0).getVersion().isBlank() || oldList.get(0).getVersion().compareTo(nutsId.getVersion()) < 0) {
                     visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
                 } else if (oldList.get(0).getVersion().compareTo(nutsId.getVersion()) == 0) {
                     oldList.add(nutsId);

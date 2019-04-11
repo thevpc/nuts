@@ -35,6 +35,10 @@ public interface NutsFetchCommand {
      */
     NutsFetchCommand setLenient(boolean lenient);
 
+    NutsFetchCommand lenient(boolean lenient);
+
+    NutsFetchCommand lenient();
+
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
     // Getter

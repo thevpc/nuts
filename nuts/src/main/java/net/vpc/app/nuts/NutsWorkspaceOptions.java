@@ -589,13 +589,13 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                     }
                 }
             }
-            all.addAll(Arrays.asList(applicationArguments));
+            all.addAll(Arrays.asList(getApplicationArguments()));
         }
         return all.toArray(new String[0]);
     }
 
     public String[] getApplicationArguments() {
-        return applicationArguments;
+        return applicationArguments==null?new String[0]:Arrays.copyOf(applicationArguments, applicationArguments.length);
     }
 
     public NutsWorkspaceOptions setApplicationArguments(String[] applicationArguments) {

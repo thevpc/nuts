@@ -10,7 +10,8 @@ import java.util.Collection;
 import java.util.Map;
 
 public class TomcatUtils {
-    public static boolean isEmpty(String string) {
+
+    public static boolean isBlank(String string) {
         return string == null || string.trim().isEmpty();
     }
 
@@ -57,6 +58,7 @@ public class TomcatUtils {
     public static String[] splitInstanceAppPreferInstance(String value) {
         return splitInstanceApp(value, true);
     }
+
     public static String[] splitInstanceAppPreferApp(String value) {
         return splitInstanceApp(value, false);
     }
@@ -79,8 +81,7 @@ public class TomcatUtils {
         if (o instanceof Boolean
                 || o instanceof Number
                 || o instanceof Map
-                || o instanceof Collection
-        ) {
+                || o instanceof Collection) {
             return String.valueOf(o);
         }
         if (o.getClass().isArray()) {

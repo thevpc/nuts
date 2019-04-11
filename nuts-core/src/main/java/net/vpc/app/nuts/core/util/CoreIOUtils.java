@@ -655,7 +655,7 @@ public class CoreIOUtils {
         if (CoreStringUtils.isBlank(id.getName())) {
             throw new NutsElementNotFoundException("Missing name for " + id.toString());
         }
-        if (id.getVersion().isEmpty()) {
+        if (id.getVersion().isBlank()) {
             throw new NutsElementNotFoundException("Missing version for " + id.toString());
         }
         Path groupFolder = storeLocation.resolve(id.getGroup().replace('.', File.separatorChar));

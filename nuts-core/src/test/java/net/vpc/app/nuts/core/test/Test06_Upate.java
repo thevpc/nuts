@@ -68,7 +68,6 @@ public class Test06_Upate {
         NutsRepository updateRepo1 = uws.config().getRepository("local");
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         System.out.println(updateRepo1.config().getStoreLocationStrategy());
-        uws.getTerminal().getOut().println("Hello");
         uws.formatter().createWorkspaceInfoFormat().println();
         System.out.println("\n------------------------------------------");
         NutsWorkspace nws = Nuts.openWorkspace(

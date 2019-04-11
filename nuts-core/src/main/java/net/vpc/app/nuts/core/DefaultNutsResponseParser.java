@@ -6,6 +6,7 @@ import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 
 public class DefaultNutsResponseParser implements NutsResponseParser {
     public static final NutsResponseParser INSTANCE=new DefaultNutsResponseParser();
+    
     @Override
     public Object parse(Object response, Class type) {
         if (response == null) {

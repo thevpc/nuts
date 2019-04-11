@@ -50,7 +50,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
 
     public Path getRunningFile() {
         String s = getConfig().getSourceFilePath();
-        if (!TomcatUtils.isEmpty(s)) {
+        if (!TomcatUtils.isBlank(s)) {
             return context.getWorkspace().io().path(s);
         }
         String _runningFolder = tomcat.getConfig().getRunningFolder();
@@ -102,7 +102,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getDeployFile() {
         LocalTomcatDomainConfigService d = tomcat.getDomainOrCreate(getConfig().getDomain());
         String deployName = getConfig().getDeployName();
-        if (TomcatUtils.isEmpty(deployName)) {
+        if (TomcatUtils.isBlank(deployName)) {
             deployName = name + ".war";
         }
         if (!deployName.endsWith(".war")) {
@@ -131,7 +131,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     public LocalTomcatAppConfigService deploy(String version) {
-        if (TomcatUtils.isEmpty(version)) {
+        if (TomcatUtils.isBlank(version)) {
             version = getCurrentVersion();
         }
         Path runningFile = getRunningFile();

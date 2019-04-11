@@ -65,7 +65,7 @@ public class Test03_CreateLayoutLinux {
                 listNamesSet(new File(base, "system.programs/default-workspace/programs/net/vpc/app/nuts/toolbox/ndi/" + NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
-                2,
+                3,
                 listNamesSet(new File(base, "system.cache/default-workspace/cache"), x -> x.isDirectory()).size()
         );
         for (String f : TestUtils.NUTS_STD_FOLDERS) {
@@ -132,7 +132,7 @@ public class Test03_CreateLayoutLinux {
                 listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/programs/net/vpc/app/nuts/toolbox/ndi/" + TestUtils.NDI_VERSION), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assert.assertEquals(
-                2,
+                3,
                 listNamesSet(new File(TestUtils.LINUX_CACHE, "default-workspace/cache"), x -> x.isDirectory()).size()
         );
 //        Assert.assertEquals(

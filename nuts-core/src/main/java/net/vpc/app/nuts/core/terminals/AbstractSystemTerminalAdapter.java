@@ -9,9 +9,11 @@ import java.io.PrintStream;
 
 public abstract class AbstractSystemTerminalAdapter implements NutsSystemTerminal {
 
+    private NutsWorkspace ws;
+
     @Override
     public void install(NutsWorkspace workspace) {
-        getParent().install(workspace);
+        getParent().install(this.ws = workspace);
     }
 
     public abstract NutsSystemTerminalBase getParent();
@@ -94,7 +96,9 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         if (p instanceof NutsTerminal) {
             return ((NutsTerminal) p).ask(question);
         } else {
-            return new DefaultNutsQuestionExecutor<T>(question, this, getOut())
+            return new DefaultNutsQuestionExecutor<T>(
+                    ws,
+                    question, this, getOut())
                     .execute();
         }
     }

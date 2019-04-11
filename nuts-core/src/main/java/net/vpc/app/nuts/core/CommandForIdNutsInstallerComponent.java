@@ -25,7 +25,7 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         NutsId id = executionContext.getNutsDefinition().getId();
         NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
-            int r = executionContext.getWorkspace().exec().setCommand(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install").addExecutorOptions().addCommand(executionContext.getArgs()).exec().setFailFast().getResult();
+            int r = executionContext.getWorkspace().exec().setCommand(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install").addExecutorOptions().addCommand(executionContext.getArgs()).exec().fFailFast().getResult();
         }
         //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
         //            NutsWorkspaceCommand c = cc.findCommand(id.getName());

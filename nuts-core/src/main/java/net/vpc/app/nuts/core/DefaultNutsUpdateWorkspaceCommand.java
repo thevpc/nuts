@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +43,7 @@ import net.vpc.app.nuts.NutsWorkspaceUpdateResult;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.DefaultNutsUpdateResult;
+import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
@@ -63,8 +65,10 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     private boolean updateRuntime = true;
     private boolean updateExtensions = true;
     private boolean updateInstalled = true;
+    private boolean includeOptional = false;
     private String forceBootAPIVersion;
     private List<String> args;
+    private List<NutsDependencyScope> scopes = new ArrayList<>();
     private List<NutsId> frozenIds = new ArrayList<>();
     private NutsSession session;
     private NutsWorkspace ws;
@@ -148,6 +152,49 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     }
 
     @Override
+    public NutsUpdateCommand scope(NutsDependencyScope scope) {
+        return addScope(scope);
+    }
+
+    @Override
+    public NutsUpdateCommand addScope(NutsDependencyScope scope) {
+        if (scope != null) {
+            scopes.add(scope);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUpdateCommand scopes(NutsDependencyScope... scopes) {
+        return addScopes(scopes);
+    }
+
+    @Override
+    public NutsUpdateCommand scopes(Collection<NutsDependencyScope> scopes) {
+        return addScopes(scopes);
+    }
+
+    @Override
+    public NutsUpdateCommand addScopes(NutsDependencyScope... scopes) {
+        if (scopes != null) {
+            for (NutsDependencyScope s : scopes) {
+                addScope(s);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUpdateCommand addScopes(Collection<NutsDependencyScope> scopes) {
+        if (scopes != null) {
+            for (NutsDependencyScope s : scopes) {
+                addScope(s);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public boolean isTrace() {
         return trace;
     }
@@ -155,6 +202,17 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     @Override
     public NutsUpdateCommand setTrace(boolean trace) {
         this.trace = trace;
+        return this;
+    }
+
+    @Override
+    public boolean isIncludeOptional() {
+        return includeOptional;
+    }
+
+    @Override
+    public NutsUpdateCommand setIncludeOptional(boolean includeOptional) {
+        this.includeOptional = includeOptional;
         return this;
     }
 
@@ -594,7 +652,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         }
         if (runtimeUpdate != null && !runtimeUpdate.isUpdateApplied()) {
             NutsBootConfig bc = ws.config().getBootConfig();
-            bc.setRuntimeId(runtimeUpdate.getAvailable().getId().getVersion().toString());
+            bc.setRuntimeId(runtimeUpdate.getAvailable().getId().toString());
             StringBuilder sb = new StringBuilder();
             for (NutsId dependency : runtimeUpdate.getDependencies()) {
                 if (sb.length() > 0) {
@@ -751,7 +809,8 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
                 newFile = ws.find().addId(NutsConstants.Ids.NUTS_RUNTIME)
                         .setDescriptorFilter(new BootAPINutsDescriptorFilter(bootApiVersion))
                         .latestVersions().setSession(session).online().mainAndDependencies().getResultDefinitions().first();
-                for (NutsDefinition d : ws.find().addId(newFile.getId()).latestVersions()
+                for (NutsDefinition d : ws.find().id(newFile.getId()).latestVersions().setScope(scopes.isEmpty() ? Arrays.asList(NutsDependencyScope.PROFILE_RUN) : scopes)
+                        .setIncludeOptional(includeOptional)
                         .wired().setSession(session).dependenciesOnly().getResultDefinitions()) {
                     dependencies.add(d.getId());
                 }

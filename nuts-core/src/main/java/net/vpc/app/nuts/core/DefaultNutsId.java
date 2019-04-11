@@ -519,7 +519,7 @@ public class DefaultNutsId implements NutsId {
     public String getLongName() {
         String s = getSimpleName();
         NutsVersion v = getVersion();
-        if (v.isEmpty()) {
+        if (v.isBlank()) {
             return s;
         }
         return s + "#" + v;
@@ -550,7 +550,7 @@ public class DefaultNutsId implements NutsId {
             sb.append(group).append(":");
         }
         sb.append(name);
-        if (!version.isEmpty()) {
+        if (!version.isBlank()) {
             sb.append("#").append(version);
         }
         if (!CoreStringUtils.isBlank(query)) {

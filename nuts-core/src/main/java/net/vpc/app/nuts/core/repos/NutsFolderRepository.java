@@ -145,7 +145,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
 //    }
     @Override
     protected NutsId findLatestVersion(NutsId id, NutsIdFilter filter, NutsRepositorySession session) {
-        if (id.getVersion().isEmpty() && filter == null) {
+        if (id.getVersion().isBlank() && filter == null) {
             NutsId bestId = lib.findLatestVersion(id, filter, session);
             NutsId c1 = cache.findLatestVersion(id, filter, session);
             if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {

@@ -6,17 +6,20 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 public class DefaultNutsQuestionExecutor<T> {
+
     private NutsQuestion<T> question;
     private NutsTerminal terminal;
     private PrintStream out;
+    private NutsWorkspace ws;
 
-    public DefaultNutsQuestionExecutor(NutsQuestion<T> question, NutsTerminal terminal, PrintStream out) {
+    public DefaultNutsQuestionExecutor(NutsWorkspace ws, NutsQuestion<T> question, NutsTerminal terminal, PrintStream out) {
+        this.ws = ws;
         this.question = question;
         this.terminal = terminal;
         this.out = out;
     }
 
-    public T execute(){
+    public T execute() {
         String message = question.getMessage();
         if (message.endsWith("\n")) {
             message = message.substring(0, message.length() - 1);
@@ -24,7 +27,7 @@ public class DefaultNutsQuestionExecutor<T> {
         boolean extraInfo = false;
         while (true) {
             out.printf(message, question.getMessageParameters());
-            NutsResponseParser p = question.getParse();
+            NutsResponseParser p = question.getParser();
             if (p == null) {
                 p = DefaultNutsResponseParser.INSTANCE;
             }
@@ -56,6 +59,20 @@ public class DefaultNutsQuestionExecutor<T> {
             if (!first) {
                 out.print("\\)");
             }
+            out.flush();
+            if (question.getValueType().equals(Boolean.class) || question.getValueType().equals(Boolean.TYPE)) {
+                if (ws != null && ws.config().getOptions().isYes()) {
+                    out.flush();
+                    out.println(" ? : yes");
+                    return (T) Boolean.TRUE;
+                }
+                if (ws != null && ws.config().getOptions().isNo()) {
+                    out.flush();
+                    out.println(" ? : no");
+                    return (T) Boolean.FALSE;
+                }
+            }
+
             String v = null;
             if (extraInfo) {
                 out.print("?\n");
@@ -74,16 +91,16 @@ public class DefaultNutsQuestionExecutor<T> {
                     parsed = (T) p.parse(question.getDefautValue(), question.getValueType());
                     return parsed;
                 } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s\n",ex.getMessage()==null?ex.toString():ex.getMessage());
+                    out.printf("@@ERROR@@ : %s\n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                 }
             }
             try {
                 parsed = (T) p.parse(v, question.getValueType());
                 return parsed;
             } catch (Exception ex) {
-                out.printf("@@ERROR@@ : %s\n",ex.getMessage()==null?ex.toString():ex.getMessage());
+                out.printf("@@ERROR@@ : %s\n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
             }
-            extraInfo=true;
+            extraInfo = true;
         }
     }
 }

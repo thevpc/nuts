@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,11 +14,23 @@ import java.util.List;
  */
 public interface NutsInstallCommand {
 
+    NutsInstallCommand id(NutsId id);
+
+    NutsInstallCommand setId(NutsId id);
+
+    NutsInstallCommand id(String id);
+
+    NutsInstallCommand setId(String id);
+
     NutsInstallCommand addArg(String arg);
 
-    NutsInstallCommand addArgs(List<String> args);
+    NutsInstallCommand addArgs(Collection<String> args);
+
+    NutsInstallCommand args(Collection<String> args);
 
     NutsInstallCommand addArgs(String... args);
+
+    NutsInstallCommand args(String... args);
 
     NutsInstallCommand addId(NutsId id);
 
@@ -27,15 +40,15 @@ public interface NutsInstallCommand {
 
     NutsInstallCommand addIds(String... ids);
 
+    NutsInstallCommand ids(NutsId... ids);
+
+    NutsInstallCommand ids(String... ids);
+
     NutsId[] getIds();
-    
+
     String[] getArgs();
 
     NutsSession getSession();
-
-    NutsInstallCommand id(NutsId id);
-
-    NutsInstallCommand id(String id);
 
     NutsDefinition[] install();
 
@@ -45,25 +58,44 @@ public interface NutsInstallCommand {
 
     boolean isTrace();
 
+    boolean isDefaultVersion();
+
     NutsInstallCommand setArgs(List<String> args);
 
-    NutsInstallCommand setArgs(String ... args);
+    NutsInstallCommand setArgs(String... args);
 
     NutsInstallCommand setAsk(boolean ask);
 
     NutsInstallCommand setForce(boolean forceInstall);
 
-    NutsInstallCommand setId(NutsId id);
-
-    NutsInstallCommand setId(String id);
-
     NutsInstallCommand setSession(NutsSession session);
+
+    NutsInstallCommand session(NutsSession session);
 
     NutsInstallCommand setTrace(boolean trace);
 
+    NutsInstallCommand trace(boolean trace);
+
+    NutsInstallCommand trace();
+
+    /**
+     *
+     * @param defaultVersion when true, the installed version will be defined as
+     * default
+     * @return
+     */
+    NutsInstallCommand setDefaultVersion(boolean defaultVersion);
+
+    NutsInstallCommand defaultVersion(boolean defaultVersion);
+
+    NutsInstallCommand defaultVersion();
+
     boolean isIncludecompanions();
 
-    NutsInstallCommand setIncludecompanions(boolean includecompanions);
+    NutsInstallCommand setIncludeCompanions(boolean includecompanions);
 
+    NutsInstallCommand includeCompanions(boolean includecompanions);
+
+    NutsInstallCommand includecompanions();
 
 }
