@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,56 +14,82 @@ import java.util.List;
  */
 public interface NutsUninstallCommand {
 
-    NutsUninstallCommand addArg(String arg);
-
-    NutsUninstallCommand addArgs(List<String> args);
-
-    NutsUninstallCommand addArgs(String... args);
+    NutsUninstallCommand id(NutsId id);
 
     NutsUninstallCommand addId(NutsId id);
 
+    NutsUninstallCommand removeId(NutsId id);
+
+    NutsUninstallCommand id(String id);
+
     NutsUninstallCommand addId(String id);
+
+    NutsUninstallCommand removeId(String id);
 
     NutsUninstallCommand addIds(NutsId... ids);
 
     NutsUninstallCommand addIds(String... ids);
 
+    NutsUninstallCommand clearIds();
+
     NutsId[] getIds();
+
+    NutsUninstallCommand arg(String arg);
+
+    NutsUninstallCommand addArg(String arg);
+
+    NutsUninstallCommand args(List<String> args);
+
+    NutsUninstallCommand addArgs(Collection<String> args);
+
+    NutsUninstallCommand args(String... args);
+
+    NutsUninstallCommand addArgs(String... args);
+
+    NutsUninstallCommand clearArgs();
 
     String[] getArgs();
 
-    NutsSession getSession();
+    NutsUninstallCommand ask();
 
-    NutsUninstallCommand id(NutsId id);
-
-    NutsUninstallCommand id(String id);
-
-    void uninstall();
-
-    boolean isAsk();
-
-    boolean isForce();
-
-    boolean isTrace();
-
-    NutsUninstallCommand setArgs(List<String> args);
-
-    NutsUninstallCommand setArgs(String... args);
+    NutsUninstallCommand ask(boolean ask);
 
     NutsUninstallCommand setAsk(boolean ask);
 
+    boolean isAsk();
+
+    NutsUninstallCommand force();
+
+    NutsUninstallCommand force(boolean forceInstall);
+
     NutsUninstallCommand setForce(boolean forceInstall);
 
-    NutsUninstallCommand setId(NutsId id);
+    boolean isForce();
 
-    NutsUninstallCommand setId(String id);
+    NutsUninstallCommand trace();
 
-    NutsUninstallCommand setSession(NutsSession session);
+    NutsUninstallCommand trace(boolean trace);
 
     NutsUninstallCommand setTrace(boolean trace);
 
-    boolean isErase();
+    boolean isTrace();
+
+    NutsUninstallCommand erase();
+
+    NutsUninstallCommand erase(boolean erase);
 
     NutsUninstallCommand setErase(boolean erase);
+
+    boolean isErase();
+
+    NutsUninstallCommand session(NutsSession session);
+
+    NutsUninstallCommand setSession(NutsSession session);
+
+    NutsSession getSession();
+
+    NutsUninstallCommand parseOptions(String... args);
+
+    NutsUninstallCommand uninstall();
 
 }

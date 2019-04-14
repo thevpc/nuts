@@ -10,12 +10,14 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsSession;
@@ -24,6 +26,7 @@ import net.vpc.app.nuts.NutsUninstallCommand;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -45,24 +48,11 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     }
 
     public NutsUninstallCommand id(String id) {
-        return setId(id);
+        return addId(id);
     }
 
     public NutsUninstallCommand id(NutsId id) {
-        return setId(id);
-    }
-
-    public NutsUninstallCommand setId(String id) {
-        return setId(id == null ? null : ws.parser().parseId(id));
-    }
-
-    public NutsUninstallCommand setId(NutsId id) {
-        if (id == null) {
-            ids.clear();
-        } else {
-            ids.add(id);
-        }
-        return this;
+        return addId(id);
     }
 
     public NutsUninstallCommand addId(String id) {
@@ -119,61 +109,133 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return this;
     }
 
+    @Override
+    public NutsUninstallCommand removeId(NutsId id) {
+        if (id != null) {
+            this.ids.remove(id);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUninstallCommand removeId(String id) {
+        return removeId(ws.parser().parseId(id));
+    }
+
+    @Override
+    public NutsUninstallCommand clearIds() {
+        this.ids.clear();
+        return this;
+    }
+
+    @Override
+    public NutsUninstallCommand arg(String arg) {
+        return addArg(arg);
+    }
+
+    @Override
+    public NutsUninstallCommand args(List<String> args) {
+        return addArgs(args);
+    }
+
+    @Override
+    public NutsUninstallCommand args(String... args) {
+        return addArgs(args);
+    }
+
+    @Override
+    public NutsUninstallCommand clearArgs() {
+        this.args = null;
+        return this;
+    }
+
+    @Override
+    public NutsUninstallCommand ask() {
+        return setAsk(true);
+    }
+
+    @Override
+    public NutsUninstallCommand ask(boolean ask) {
+        return setAsk(ask);
+    }
+
+    @Override
+    public NutsUninstallCommand force() {
+        return setForce(true);
+    }
+
+    @Override
+    public NutsUninstallCommand force(boolean force) {
+        return setForce(force);
+    }
+
+    @Override
+    public NutsUninstallCommand trace() {
+        return setTrace(true);
+    }
+
+    @Override
+    public NutsUninstallCommand trace(boolean trace) {
+        return setTrace(trace);
+    }
+
+    @Override
+    public NutsUninstallCommand erase() {
+        return setErase(true);
+    }
+
+    @Override
+    public NutsUninstallCommand erase(boolean erase) {
+        return setErase(erase);
+    }
+
+    @Override
+    public NutsUninstallCommand session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
     public String[] getArgs() {
         return args == null ? new String[0] : args.toArray(new String[0]);
     }
 
-    public NutsUninstallCommand setArgs(String... args) {
-        return setArgs(args == null ? null : Arrays.asList(args));
-    }
-
-    public NutsUninstallCommand setArgs(List<String> args) {
-        this.args = new ArrayList<>();
-        if (args != null) {
-            for (String arg : args) {
-                if (arg == null) {
-                    throw new NullPointerException();
-                }
-                this.args.add(arg);
-            }
-        }
-        return this;
-    }
-
+    @Override
     public NutsUninstallCommand addArg(String arg) {
-        if (this.args == null) {
-            this.args = new ArrayList<>();
+        if (arg != null) {
+            if (this.args == null) {
+                this.args = new ArrayList<>();
+            }
+            this.args.add(arg);
         }
-        if (arg == null) {
-            throw new NullPointerException();
-        }
-        this.args.add(arg);
         return this;
     }
 
+    @Override
     public NutsUninstallCommand addArgs(String... args) {
         return addArgs(args == null ? null : Arrays.asList(args));
     }
 
-    public NutsUninstallCommand addArgs(List<String> args) {
+    @Override
+    public NutsUninstallCommand addArgs(Collection<String> args) {
         if (this.args == null) {
             this.args = new ArrayList<>();
         }
         if (args != null) {
             for (String arg : args) {
-                if (arg == null) {
-                    throw new NullPointerException();
+                if (arg != null) {
+                    this.args.add(arg);
                 }
-                this.args.add(arg);
             }
         }
         return this;
     }
 
+    @Override
     public NutsSession getSession() {
         return session;
     }
 
+    @Override
     public NutsUninstallCommand setSession(NutsSession session) {
         this.session = session;
         return this;
@@ -184,10 +246,11 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return ids == null ? new NutsId[0] : ids.toArray(new NutsId[0]);
     }
 
-    public void uninstall() {
-        CoreNutsUtils.checkReadOnly(ws);
+    @Override
+    public NutsUninstallCommand uninstall() {
+        NutsWorkspaceUtils.checkReadOnly(ws);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsSession session = CoreNutsUtils.validateSession(this.getSession(), ws);
+        NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         ws.security().checkAllowed(NutsConstants.Rights.UNINSTALL, "uninstall");
         List<NutsDefinition> defs = new ArrayList<>();
         for (NutsId id : this.getIds()) {
@@ -226,7 +289,7 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
                 }
             }
         }
-//        return true;
+        return this;
     }
 
     @Override
@@ -237,6 +300,58 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     @Override
     public NutsUninstallCommand setErase(boolean erase) {
         this.erase = erase;
+        return this;
+    }
+
+    @Override
+    public NutsUninstallCommand parseOptions(String... args) {
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                switch (arg) {
+                    case "-f":
+                    case "--force": {
+                        this.setForce(true);
+                        break;
+                    }
+                    case "-e":
+                    case "--earse": {
+                        this.setErase(true);
+                        break;
+                    }
+                    case "--true": {
+                        this.setTrace(false);
+                        break;
+                    }
+                    case "--trace": {
+                        this.setTrace(true);
+                        break;
+                    }
+                    case "--silent": {
+                        this.setTrace(false);
+                        break;
+                    }
+                    case "--args": {
+                        while (i < args.length) {
+                            this.addArg(args[i]);
+                            i++;
+                        }
+                        break;
+                    }
+                    case "--help": {
+
+                        break;
+                    }
+                    default: {
+                        if (args[i].startsWith("-")) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + args[i]);
+                        } else {
+                            id(args[i]);
+                        }
+                    }
+                }
+            }
+        }
         return this;
     }
 

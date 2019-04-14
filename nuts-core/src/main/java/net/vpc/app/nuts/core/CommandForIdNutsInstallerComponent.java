@@ -12,6 +12,7 @@ import net.vpc.app.nuts.NutsExecutionEntry;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -21,11 +22,11 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
     
     @Override
     public void install(NutsExecutionContext executionContext) {
-        CoreNutsUtils.checkReadOnly(executionContext.getWorkspace());
+        NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
         NutsId id = executionContext.getNutsDefinition().getId();
         NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
-            int r = executionContext.getWorkspace().exec().setCommand(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install").addExecutorOptions().addCommand(executionContext.getArgs()).exec().fFailFast().getResult();
+            int r = executionContext.getWorkspace().exec().command(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install").addExecutorOptions().addCommand(executionContext.getArgs()).exec().failFast().getResult();
         }
         //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
         //            NutsWorkspaceCommand c = cc.findCommand(id.getName());
@@ -43,14 +44,14 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
 
     @Override
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
-        CoreNutsUtils.checkReadOnly(executionContext.getWorkspace());
+        NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
         NutsId id = executionContext.getNutsDefinition().getId();
         if ("jar".equals(executionContext.getNutsDefinition().getDescriptor().getPackaging())) {
             NutsExecutionEntry[] executionEntries = executionContext.getWorkspace().parser().parseExecutionEntries(executionContext.getNutsDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = executionContext.getWorkspace().exec().setCommand(id.toString(), "--nuts-execution-mode=on-uninstall").addCommand(executionContext.getArgs()).exec().getResult();
+                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-execution-mode=on-uninstall").addCommand(executionContext.getArgs()).exec().getResult();
                     executionContext.getWorkspace().getTerminal().getFormattedOut().printf("Installation Exited with code : " + r);
                 }
             }

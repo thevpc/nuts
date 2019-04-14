@@ -58,7 +58,7 @@ public class MvnClient {
         try {
             NutsExecCommand b = ws
                     .exec()
-                    .fFailFast()
+                    .failFast()
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",

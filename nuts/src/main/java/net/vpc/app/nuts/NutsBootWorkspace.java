@@ -351,16 +351,12 @@ public class NutsBootWorkspace {
     public int run() {
         switch (this.getOptions().getBootCommand()) {
             case RESET: {
-                return actionReset(null, true);
-            }
-            case CLEANUP: {
-                return actionCleanup(null, true);
+                return actionReset(null, getOptions().getApplicationArguments());
             }
         }
         if (hasUnsatisfiedRequirements()) {
             return startNewProcess();
         }
-//o.setCreationTime(startTime);
         NutsWorkspace workspace = null;
         try {
             workspace = this.openWorkspace();
@@ -368,7 +364,6 @@ public class NutsBootWorkspace {
             log.log(Level.SEVERE, "Open Workspace Failed", ex);
             switch (this.getOptions().getBootCommand()) {
                 case VERSION:
-                case INFO:
                 case HELP:
                 case LICENSE: {
                     try {
@@ -416,11 +411,11 @@ public class NutsBootWorkspace {
         if (this.getOptions().getInitMode() != null) {
             switch (this.getOptions().getInitMode()) {
                 case CLEANUP: {
-                    actionCleanup(null, false);
+                    actionReset(null, new String[]{"cleanup"});
                     break;
                 }
                 case RESET: {
-                    actionReset(null, false);
+                    actionReset(null, new String[]{"all"});
                     break;
                 }
             }
@@ -1042,37 +1037,6 @@ public class NutsBootWorkspace {
                 return 0;
             }
 
-            case INFO: {
-                if (workspace == null) {
-                    System.out.println("nuts-boot-api          :" + actualVersion);
-                    System.out.println("nuts-workspace         :" + runningBootConfig.getWorkspace() + "  ::  " + (NutsUtils.isBlank(o.getWorkspace()) ? "<EMPTY>" : o.getWorkspace()));
-                    System.out.println("nuts-store-strategy    :" + runningBootConfig.getStoreLocationStrategy());
-                    System.out.println("nuts-store-layout      :" + runningBootConfig.getStoreLocationLayout());
-                    System.out.println("nuts-store-programs    :" + runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS));
-                    System.out.println("nuts-store-config      :" + runningBootConfig.getStoreLocation(NutsStoreLocation.CONFIG));
-                    System.out.println("nuts-store-var         :" + runningBootConfig.getStoreLocation(NutsStoreLocation.VAR));
-                    System.out.println("nuts-store-logs        :" + runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS));
-                    System.out.println("nuts-store-temp        :" + runningBootConfig.getStoreLocation(NutsStoreLocation.TEMP));
-                    System.out.println("nuts-store-cache       :" + runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE));
-                    System.out.println("nuts-store-lib         :" + runningBootConfig.getStoreLocation(NutsStoreLocation.LIB));
-                    System.out.println("java-home              :" + System.getProperty("java.home"));
-                    System.out.println("java-classpath         :" + System.getProperty("java.class.path"));
-                    System.out.println("java-library-path      :" + System.getProperty("java.library.path"));
-                    System.out.println("os-name                :" + System.getProperty("os.name"));
-                    System.out.println("os-arch                :" + System.getProperty("os.arch"));
-                    System.out.println("os-version             :" + System.getProperty("os.version"));
-                    System.out.println("user-dir               :" + System.getProperty("user.dir"));
-                    System.out.println("user-home              :" + System.getProperty("user.home"));
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                PrintStream out = workspace.getTerminal().getFormattedOut();
-                workspace.formatter().createWorkspaceInfoFormat()
-                        .parseOptions(o.getApplicationArguments())
-                        .print(out);
-                out.println();
-                return 0;
-            }
             case HELP: {
                 if (workspace == null) {
                     fallbackInstallActionUnavailable(message);
@@ -1089,155 +1053,11 @@ public class NutsBootWorkspace {
                 workspace.getTerminal().getFormattedOut().println(workspace.getLicenseText());
                 return 0;
             }
-            case INSTALL: {
-                if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                Map<String, List<String>> ids = new LinkedHashMap<>();
-                NutsInstallCommand options = workspace.install().setTrace(true);
-                String[] applicationArguments = o.getApplicationArguments();
-                for (int i = 0; i < applicationArguments.length; i++) {
-                    String c = applicationArguments[i];
-                    switch (c) {
-                        case "-f":
-                        case "--force":
-                            options.setForce(true);
-                            break;
-                        case "-i":
-                        case "--ignore":
-                            options.setForce(false);
-                            break;
-                        default: {
-                            ArrayList<String> args = new ArrayList<>();
-                            ids.put(c, args);
-                            if (i + 1 < applicationArguments.length && "--".equals(applicationArguments[i + 1])) {
-                                i += 2;
-                                while (i < applicationArguments.length) {
-                                    args.add(applicationArguments[i]);
-                                    i++;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
-                if (ids.isEmpty()) {
-                    throw new NutsExecutionException("Missing nuts to install", 1);
-                }
-                for (Map.Entry<String, List<String>> id : ids.entrySet()) {
-                    options.setId(id.getKey()).setArgs(id.getValue().toArray(new String[0])).install();
-                }
-                return 0;
-            }
-            case UNINSTALL: {
-                if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                Map<String, List<String>> ids = new LinkedHashMap<>();
-                NutsUninstallCommand options = workspace.uninstall().setTrace(true);
-                String[] applicationArguments = o.getApplicationArguments();
-                for (int i = 0; i < applicationArguments.length; i++) {
-                    String c = applicationArguments[i];
-                    switch (c) {
-                        case "-r":
-                        case "--erase":
-                            options.setErase(true);
-                            break;
-                        default:
-                            ArrayList<String> args = new ArrayList<>();
-                            ids.put(c, args);
-                            if (i + 1 < applicationArguments.length && "--".equals(applicationArguments[i + 1])) {
-                                i += 2;
-                                while (i < applicationArguments.length) {
-                                    args.add(applicationArguments[i]);
-                                    i++;
-                                }
-                            }
-                            break;
-                    }
-                }
-                if (ids.isEmpty()) {
-                    throw new NutsExecutionException("Missing nuts to uninstall", 1);
-                }
-                for (Map.Entry<String, List<String>> id : ids.entrySet()) {
-                    options.id(id.getKey()).addArgs(id.getValue().toArray(new String[0])).uninstall();
-                }
-                return 0;
-            }
-            case INSTALL_COMPANION_TOOLS: {
-                if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                boolean force = false;
-                boolean silent = false;
-                for (String argument : o.getApplicationArguments()) {
-                    if ("-f".equals(argument) || "--force".equals(argument)) {
-                        force = true;
-                    } else if ("-s".equals(argument) || "--silent".equals(argument)) {
-                        silent = true;
-                    }
-                }
-                workspace.install().setIncludeCompanions(true).setAsk(!force).setForce(force).setTrace(!silent).install();
-                return 0;
-            }
-            case UPDATE: {
-                if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                if (o.getApplicationArguments().length == 0) {
-                    if (workspace.update().all().update() != null) {
-                        return 0;
-                    }
-                } else {
-                    final NutsSession session = workspace.createSession();
-                    NutsUpdateCommand defs = workspace.update().ids(o.getApplicationArguments())
-                            .setTrace(true).setSession(session)
-                            .checkUpdates();
-
-                    NutsWorkspaceUpdateResult someUpdatable = defs.update().getUpdateResult();
-                    if (someUpdatable.getUpdatesCount() > 0) {
-                        return 0;
-                    }
-                }
-                return 1;
-            }
-            case CHECK_UPDATES: {
-                if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                if (o.getApplicationArguments().length == 0) {
-                    if (workspace.update()
-                            .all()
-                            .checkUpdates() != null) {
-                        return 0;
-                    }
-                } else {
-                    final NutsSession session = workspace.createSession();
-                    NutsWorkspaceUpdateResult defs = workspace.update().ids(o.getApplicationArguments())
-                            .setTrace(true).setSession(session).checkUpdates().getUpdateResult();
-                    if (defs.getUpdatesCount()>0) {
-                        return 0;
-                    }
-                }
-                return 1;
-            }
-            case CLEANUP: {
-                if (log.isLoggable(Level.SEVERE)) {
-                    log.log(Level.SEVERE, message);
-                }
-                actionCleanup(workspace, true);
-                return 0;
-            }
             case RESET: {
                 if (log.isLoggable(Level.SEVERE)) {
                     log.log(Level.SEVERE, message);
                 }
-                actionReset(workspace, true);
+                actionReset(workspace, getOptions().getApplicationArguments());
                 return 0;
             }
         }
@@ -1250,27 +1070,56 @@ public class NutsBootWorkspace {
             return 0;
         }
         return workspace.exec()
-                .setCommand(o.getApplicationArguments())
-                .setExecutorOptions(o.getExecutorOptions())
-                .setExecutionType(o.getExecutionType())
+                .command(o.getApplicationArguments())
+                .executorOptions(o.getExecutorOptions())
+                .executionType(o.getExecutionType())
                 .exec()
                 .getResult();
     }
 
-    private int actionReset(NutsWorkspace workspace, boolean readArguments) {
+    private int actionReset(NutsWorkspace workspace, String[] readArguments) {
 //        if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
 //            return 0;
 //        }
         NutsWorkspaceOptions o = getOptions();
         NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.config();
         boolean force = false;
-        if (readArguments) {
-            for (String argument : o.getApplicationArguments()) {
-                if ("-f".equals(argument) || "--force".equals(argument)) {
-                    force = true;
+        Set<NutsStoreLocation> toDelete = new HashSet();
+
+        for (String argument : readArguments) {
+            if ("-f".equals(argument) || "--force".equals(argument)) {
+                force = true;
+            } else {
+                if (!argument.startsWith("-")) {
+                    NutsStoreLocation z = null;
+                    try {
+                        z = NutsStoreLocation.valueOf(argument.trim().toUpperCase());
+                    } catch (Exception ex) {
+                        //ignore
+                    }
+                    if (z != null) {
+                        toDelete.add(z);
+                    } else {
+                        switch (argument) {
+                            case "soft":
+                            case "cleanup": {
+                                toDelete.add(NutsStoreLocation.CACHE);
+                                toDelete.add(NutsStoreLocation.TEMP);
+                                toDelete.add(NutsStoreLocation.LOGS);
+                                break;
+                            }
+                            case "all": {
+                                for (NutsStoreLocation v : NutsStoreLocation.values()) {
+                                    toDelete.add(v);
+                                }
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
+
         boolean yes = o.isYes();
         boolean no = o.isNo();
         if (!force) {
@@ -1304,63 +1153,10 @@ public class NutsBootWorkspace {
         String header = "**************\n"
                 + "** ATTENTION *\n"
                 + "**************\n"
-                + "You are about to delete all workspace configuration files.\n"
+                + "You are about to delete workspace files.\n"
                 + "Are you sure this is what you want ?";
         NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, header, workspace != null ? workspace.getTerminal() : null);
-        return 0;
-    }
 
-    private int actionCleanup(NutsWorkspace workspace, boolean readArguments) {
-        if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
-            return 0;
-        }
-        NutsWorkspaceOptions o = this.getOptions();
-        if (log.isLoggable(Level.CONFIG)) {
-            log.log(Level.CONFIG, "Running workspace pre-command : cleanup");
-        }
-        NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.config();
-        boolean force = false;
-        boolean yes = Boolean.TRUE.equals(o.getDefaultResponse());
-        boolean no = Boolean.FALSE.equals(o.getDefaultResponse());
-        if (readArguments) {
-            for (String argument : o.getApplicationArguments()) {
-                if ("-f".equals(argument) || "--force".equals(argument)) {
-                    force = true;
-                }
-            }
-        }
-        if (!force) {
-            if (no) {
-                if (workspace == null) {
-                    System.err.println("clean cancelled (applied '--no' argument)");
-                } else {
-                    workspace.getTerminal().getOut().println("clean cancelled (applied '--no' argument)");
-                }
-                throw new NutsUserCancelException();
-            }
-        }
-        if (yes) {
-            force = true;
-        }
-        List<File> folders = new ArrayList<>();
-        if (conf != null) {
-//            folders.add(new File(conf.getStoreLocation(NutsStoreLocation.LIB)));
-            folders.add(conf.getStoreLocation(NutsStoreLocation.CACHE).toFile());
-            folders.add(conf.getStoreLocation(NutsStoreLocation.LOGS).toFile());
-            folders.add(conf.getStoreLocation(NutsStoreLocation.TEMP).toFile());
-        } else {
-//            folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.LIB)));
-            folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)));
-            folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS)));
-            folders.add(new File(runningBootConfig.getStoreLocation(NutsStoreLocation.TEMP)));
-        }
-        File[] children = new File(this.runningBootConfig.getWorkspace(), NutsConstants.Folders.REPOSITORIES).listFiles();
-        if (children != null) {
-            for (File child : children) {
-                folders.add(new File(child, NutsConstants.Folders.LIB));
-            }
-        }
-        NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, null, workspace != null ? workspace.getTerminal() : null);
         return 0;
     }
 
@@ -1587,13 +1383,13 @@ public class NutsBootWorkspace {
         int req = insatistfiedOnly ? newInstanceRequirements : checkRequirements(false);
         StringBuilder sb = new StringBuilder();
         if ((req & 1) != 0) {
-            sb.append("Nuts Version " + requiredBootVersion);
+            sb.append("Nuts Version ").append(requiredBootVersion);
         }
         if ((req & 2) != 0) {
-            sb.append("Java Command " + requiredJavaCommand);
+            sb.append("Java Command ").append(requiredJavaCommand);
         }
         if ((req & 4) != 0) {
-            sb.append("Java Options " + requiredJavaCommand);
+            sb.append("Java Options ").append(requiredJavaCommand);
         }
         if (sb.length() > 0) {
             sb.insert(0, "Required ");

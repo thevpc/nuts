@@ -79,7 +79,7 @@ public class InstallCommand extends AbstractNutsCommand {
                             for (String s : context.getShell().expandPath(id)) {
                                 NutsId deployedId = ws.deploy()
                                         .setContent(s)
-                                        .setDescriptorPath(descriptorFile)
+                                        .setDescriptor(descriptorFile)
                                         .setRepository(repositoryId)
                                         .setSession(context.getSession())
                                         .deploy();
@@ -92,7 +92,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                     //this is a file to deploy first
                                     NutsId deployedId = ws.deploy()
                                             .setContent(s)
-                                            .setDescriptorPath(descriptorFile)
+                                            .setDescriptor(descriptorFile)
                                             .setRepository(repositoryId)
                                             .setSession(context.getSession())
                                             .deploy();
@@ -114,7 +114,7 @@ public class InstallCommand extends AbstractNutsCommand {
         NutsDefinition file = null;
         NutsWorkspace ws = context.getWorkspace();
         try {
-            file = options.id(s).install()[0];
+            file = options.id(s).install().getInstallResult()[0];
         } catch (NutsAlreadyInstalledException ex) {
             context.out().printf("%s already installed\n", s);
             return null;

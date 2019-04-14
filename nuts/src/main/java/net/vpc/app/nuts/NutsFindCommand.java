@@ -24,10 +24,6 @@ public interface NutsFindCommand {
 
     NutsFindCommand addIds(NutsId... ids);
 
-    NutsFindCommand addIds(Collection<String> value);
-
-    NutsFindCommand ids(Collection<String> value);
-
     NutsFindCommand removeId(String id);
 
     NutsFindCommand removeId(NutsId id);
@@ -40,9 +36,23 @@ public interface NutsFindCommand {
 
     NutsFindCommand ids(NutsId... ids);
 
+    NutsFindCommand script(String value);
+
+    NutsFindCommand addScript(String value);
+
+    NutsFindCommand removeScript(String value);
+
+    NutsFindCommand scripts(Collection<String> value);
+
     NutsFindCommand addScripts(Collection<String> value);
 
+    NutsFindCommand scripts(String... value);
+
     NutsFindCommand addScripts(String... value);
+
+    NutsFindCommand clearScripts();
+
+    String[] getScripts();
 
     NutsFindCommand clearArchs();
 
@@ -93,11 +103,13 @@ public interface NutsFindCommand {
     NutsFindCommand repositories(String... value);
 
     /**
-     * setSort(true)
+     * <code>setSort(true)</code>
      *
      * @return
      */
     NutsFindCommand sort();
+
+    NutsFindCommand sort(boolean sort);
 
     NutsFindCommand setSort(boolean sort);
 
@@ -133,8 +145,6 @@ public interface NutsFindCommand {
 
     NutsFindCommand setIdFilter(String filter);
 
-    NutsFindCommand setIds(Collection<String> ids);
-
     NutsFindCommand dependenciesOnly();
 
     NutsFindCommand lenient();
@@ -168,8 +178,6 @@ public interface NutsFindCommand {
 
     NutsIdFilter getIdFilter();
 
-    String[] getJs();
-
     String[] getArch();
 
     String[] getPackaging();
@@ -200,6 +208,10 @@ public interface NutsFindCommand {
 
     NutsFindResult<NutsDefinition> getResultDefinitions();
 
+    ClassLoader getResultClassLoader();
+
+    ClassLoader getResultClassLoader(ClassLoader parent);
+
     String getResultNutsPath();
 
     String getResultClassPath();
@@ -210,6 +222,8 @@ public interface NutsFindCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
+    NutsFindCommand fetchStratery(NutsFetchStrategy mode);
+
     NutsFindCommand setFetchStratery(NutsFetchStrategy mode);
 
     NutsFindCommand setTransitive(boolean transitive);
@@ -248,7 +262,7 @@ public interface NutsFindCommand {
     NutsFindCommand online();
 
     /**
-     * local and remote
+     * local and remote (regardless of installed or not)
      *
      * @return
      */
@@ -267,29 +281,38 @@ public interface NutsFindCommand {
 
     NutsFindCommand setSession(NutsSession session);
 
-    NutsFindCommand setScope(NutsDependencyScope scope);
+    NutsFindCommand clearScopes();
 
-    NutsFindCommand setScope(NutsDependencyScope... scope);
-
-    NutsFindCommand setScope(Collection<NutsDependencyScope> scope);
+    NutsFindCommand scope(NutsDependencyScope scope);
 
     NutsFindCommand addScope(NutsDependencyScope scope);
 
-    NutsFindCommand addScope(Collection<NutsDependencyScope> scope);
+    NutsFindCommand scopes(Collection<NutsDependencyScope> scope);
 
-    NutsFindCommand addScope(NutsDependencyScope... scope);
+    NutsFindCommand addScopes(Collection<NutsDependencyScope> scope);
 
-    NutsFindCommand removeScope(Collection<NutsDependencyScope> scope);
+    NutsFindCommand scopes(NutsDependencyScope... scope);
+
+    NutsFindCommand addScopes(NutsDependencyScope... scope);
 
     NutsFindCommand removeScope(NutsDependencyScope scope);
 
+    NutsFindCommand acceptOptional();
+
+    NutsFindCommand acceptOptional(Boolean acceptOptional);
+
     NutsFindCommand setAcceptOptional(Boolean acceptOptional);
+
+    NutsFindCommand includeOptional();
+
+    NutsFindCommand includeOptional(boolean includeOptional);
 
     NutsFindCommand setIncludeOptional(boolean includeOptional);
 
     NutsFindCommand setIndexed(Boolean indexEnabled);
 
     NutsFindCommand indexed();
+
     NutsFindCommand indexed(boolean enable);
 
     NutsFindCommand includeDependencies();
@@ -305,7 +328,9 @@ public interface NutsFindCommand {
     NutsFindCommand effective();
 
     NutsFindCommand cached();
+
     NutsFindCommand cached(boolean cached);
+
     NutsFindCommand setCached(boolean cached);
 
     NutsFindCommand includeContent();

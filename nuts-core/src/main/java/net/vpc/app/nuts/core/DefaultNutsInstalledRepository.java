@@ -31,6 +31,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 import net.vpc.app.nuts.core.util.bundledlibs.util.LazyIterator;
 
@@ -257,13 +258,13 @@ public class DefaultNutsInstalledRepository {
     }
 
     public void uninstall(NutsId id) {
-        CoreNutsUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.checkReadOnly(ws);
         remove(id, NUTS_INSTALL_FILE);
     }
 
     public boolean install(NutsId id) {
         if (!isInstalled(id)) {
-            CoreNutsUtils.checkReadOnly(ws);
+            NutsWorkspaceUtils.checkReadOnly(ws);
             try {
                 InstallInfo ii = new InstallInfo();
                 ii.setId(id);

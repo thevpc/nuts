@@ -145,9 +145,9 @@ public class DerbyMain extends NutsApplication {
 
         ws
                 .exec()
-                .setExecutorOptions(executorOptions)
-                .setCommand(command)
-                .setFailFast(true)
+                .executorOptions(executorOptions)
+                .command(command)
+                .failFast(true)
                 .exec().getResult();
     }
 

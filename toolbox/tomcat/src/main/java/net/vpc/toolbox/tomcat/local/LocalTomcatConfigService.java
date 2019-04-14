@@ -297,7 +297,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
                     context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
                 }
-            })).install()[0];
+            })).install().getInstallResult()[0];
         }
         return catalinaNutsDefinition;
     }

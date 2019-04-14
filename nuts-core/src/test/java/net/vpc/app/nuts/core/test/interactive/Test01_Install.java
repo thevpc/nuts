@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.Nuts;
-import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import org.junit.After;

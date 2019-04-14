@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
 
@@ -372,7 +373,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     public boolean save(boolean force) {
         boolean ok = false;
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
-            CoreNutsUtils.checkReadOnly(repository.getWorkspace());
+            NutsWorkspaceUtils.checkReadOnly(repository.getWorkspace());
             repository.security().checkAllowed(NutsConstants.Rights.SAVE_REPOSITORY);
             Path file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
@@ -583,25 +584,11 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     }
 
     @Override
-    public int getDeploymentSupportLevel(NutsId id, boolean offlineOnly, boolean transitive) {
-        int namespaceSupport = ((AbstractNutsRepository) repository).getDeploymentSupportLevelCurrent(id, offlineOnly);
+    public int getFindSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive) {
+        int namespaceSupport = ((AbstractNutsRepository) repository).getFindSupportLevelCurrent(supportedAction, id, mode);
         if (transitive) {
             for (NutsRepository remote : mirrors.values()) {
-                int r = remote.config().getDeploymentSupportLevel(id, offlineOnly, transitive);
-                if (r > 0 && r > namespaceSupport) {
-                    namespaceSupport = r;
-                }
-            }
-        }
-        return namespaceSupport;
-    }
-
-    @Override
-    public int getFindSupportLevel(NutsId id, NutsFetchMode mode, boolean transitive) {
-        int namespaceSupport = ((AbstractNutsRepository) repository).getFindSupportLevelCurrent(id, mode);
-        if (transitive) {
-            for (NutsRepository remote : mirrors.values()) {
-                int r = remote.config().getFindSupportLevel(id, mode, transitive);
+                int r = remote.config().getFindSupportLevel(supportedAction, id, mode, transitive);
                 if (r > 0 && r > namespaceSupport) {
                     namespaceSupport = r;
                 }

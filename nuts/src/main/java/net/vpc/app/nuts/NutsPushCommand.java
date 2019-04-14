@@ -5,7 +5,7 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  *
@@ -13,13 +13,15 @@ import java.util.List;
  */
 public interface NutsPushCommand {
 
-    NutsPushCommand addArg(String arg);
+    NutsPushCommand id(NutsId id);
 
-    NutsPushCommand addArgs(List<String> args);
+    NutsPushCommand id(String id);
 
-    NutsPushCommand addArgs(String... args);
+    NutsPushCommand removeId(NutsId id);
 
     NutsPushCommand addId(NutsId id);
+
+    NutsPushCommand removeId(String id);
 
     NutsPushCommand addId(String id);
 
@@ -27,54 +29,102 @@ public interface NutsPushCommand {
 
     NutsPushCommand addIds(String... ids);
 
+    NutsPushCommand ids(NutsId... ids);
+
+    NutsPushCommand ids(String... ids);
+
+    NutsPushCommand clearIds();
+
     NutsId[] getIds();
+
+    NutsPushCommand frozenId(NutsId id);
+
+    NutsPushCommand frozenId(String id);
+
+    NutsPushCommand removeFrozenId(NutsId id);
+    NutsPushCommand addFrozenId(NutsId id);
+
+    NutsPushCommand removeFrozenId(String id);
+    NutsPushCommand addFrozenId(String id);
+
+    NutsPushCommand addFrozenIds(NutsId... ids);
+
+    NutsPushCommand addFrozenIds(String... ids);
+
+    NutsPushCommand frozenIds(NutsId... ids);
+
+    NutsPushCommand frozenIds(String... ids);
+
+    NutsPushCommand clearFrozenIds();
 
     NutsId[] getFrozenIds();
 
+    NutsPushCommand arg(String arg);
+
+    NutsPushCommand addArg(String arg);
+
+    NutsPushCommand args(String... args);
+
+    NutsPushCommand addArgs(String... args);
+
+    NutsPushCommand args(Collection<String> args);
+
+    NutsPushCommand addArgs(Collection<String> args);
+
+    NutsPushCommand clearArgs();
+
     String[] getArgs();
 
-    NutsSession getSession();
-
-    NutsPushCommand id(NutsId id);
-
-    NutsPushCommand id(String id);
-
-    NutsPushCommand ids(NutsId... id);
-
-    NutsPushCommand ids(String... id);
-
-    boolean isAsk();
-
-    boolean isForce();
-
-    boolean isTrace();
-
-    boolean isOffline();
-
-    NutsPushCommand setArgs(List<String> args);
-
-    NutsPushCommand setArgs(String... args);
-
-    NutsPushCommand setAsk(boolean ask);
-
-    NutsPushCommand setForce(boolean force);
-
-    NutsPushCommand setOffline(boolean offline);
-
-    NutsPushCommand setId(NutsId id);
-
-    NutsPushCommand setId(String id);
+    NutsPushCommand session(NutsSession session);
 
     NutsPushCommand setSession(NutsSession session);
 
-    NutsPushCommand setTrace(boolean trace);
+    NutsSession getSession();
 
-    void push();
+    NutsPushCommand ask();
 
-    String getRepository();
+    NutsPushCommand ask(boolean enable);
+
+    NutsPushCommand setAsk(boolean enable);
+
+    boolean isAsk();
+
+    NutsPushCommand force();
+
+    NutsPushCommand force(boolean enable);
+
+    NutsPushCommand setForce(boolean enable);
+
+    boolean isForce();
+
+    NutsPushCommand trace();
+
+    NutsPushCommand trace(boolean enable);
+
+    NutsPushCommand setTrace(boolean enable);
+
+    boolean isTrace();
+
+    NutsPushCommand offline();
+
+    NutsPushCommand offline(boolean offline);
+
+    NutsPushCommand setOffline(boolean offline);
+
+    boolean isOffline();
+
+    NutsPushCommand repository(String repository);
 
     NutsPushCommand setRepository(String repository);
 
-    NutsPushCommand repository(String repository);
+    String getRepository();
+
+    /**
+     * execute the push command with the built options and return
+     * <code>this</code> instance.
+     *
+     * @return <code>this</code> instance
+     */
+    NutsPushCommand push();
 
 }

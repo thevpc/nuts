@@ -9,6 +9,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  */
-public enum NutsExecutableType {
-    INTERNAL, COMMAND, COMPONENT, NATIVE
+public enum NutsRepositorySupportedAction {
+    FIND,
+    DEPLOY
 }

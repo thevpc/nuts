@@ -134,7 +134,7 @@ public class Test06_Upate {
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().all().checkUpdates();
 
-        Assert.assertEquals(2, foundUpdates == null ? 0 : foundUpdates.getUpdatesCount());
+        Assert.assertEquals(2, foundUpdates == null ? 0 : foundUpdates.getUpdateResultCount());
         foundUpdates.update();
 
         final String newApiVersion = foundUpdates.getUpdateResult().getApi().getAvailable().getId().getVersion().toString();

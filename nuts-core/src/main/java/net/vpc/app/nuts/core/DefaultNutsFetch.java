@@ -17,6 +17,7 @@ import static net.vpc.app.nuts.core.DefaultNutsWorkspace.NOT_INSTALLED;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.TraceResult;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 
@@ -205,7 +206,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
                     ? new NutsDependencyScope[]{NutsDependencyScope.PROFILE_RUN}
                     : getScope().toArray(new NutsDependencyScope[0]);
             ws.find().addId(id).session(getSession()).setFetchStratery(getFetchStrategy())
-                    .addScope(s)
+                    .addScopes(s)
                     .setAcceptOptional(getAcceptOptional())
                     .dependenciesOnly().getResultDefinitions();
 
@@ -236,7 +237,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
 
     public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options) {
         long startTime = System.currentTimeMillis();
-        options = CoreNutsUtils.validateSession(options, ws);
+        options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
         if (log.isLoggable(Level.FINEST)) {
@@ -245,7 +246,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
         DefaultNutsDefinition foundDefinition = null;
         try {
             //add env parameters to fetch adequate nuts
-            id = NutsWorkspaceHelper.configureFetchEnv(id, ws);
+            id = NutsWorkspaceUtils.configureFetchEnv(ws, id);
             NutsFetchMode modeForSuccessfulDescRetreival = null;
             //use
             for (NutsFetchMode mode : nutsFetchModes) {
@@ -402,16 +403,16 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
     }
 
     protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsFetchCommand options, NutsFetchMode mode) {
-        options = CoreNutsUtils.validateSession(options, ws);
+        options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsRepositoryFilter repositoryFilter = null;
         if (mode == NutsFetchMode.INSTALLED) {
             if (id.getVersion().isBlank()) {
                 String v = dws.getInstalledRepository().getDefaultVersion(id);
                 if (v != null) {
-                    id=id.setVersion(v);
+                    id = id.setVersion(v);
                 } else {
-                    id=id.setVersion("");
+                    id = id.setVersion("");
                 }
             }
             if (id.getVersion().isBlank()) {
@@ -427,7 +428,7 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
                 }
             }
         }
-        for (NutsRepository repo : dws.getEnabledRepositories(NutsWorkspaceHelper.FilterMode.FIND, id, repositoryFilter, options.getSession(), mode, options)) {
+        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, id, repositoryFilter, mode, options)) {
             try {
                 NutsDescriptor descriptor = repo.fetchDescriptor(id, NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode,
                         options

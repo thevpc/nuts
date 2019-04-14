@@ -39,89 +39,8 @@ import net.vpc.app.nuts.core.DefaultNutsRepositorySession;
  */
 public class NutsWorkspaceHelper {
 
-    public enum FilterMode {
-        FIND,
-        DEPLOY
-    }
+    
 
-    public static List<NutsRepository> filterRepositories(List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
-        return filterRepositories(repos, fmode, id, repositoryFilter, session, true, null, mode, options);
-    }
-
-    public static List<NutsRepository> filterRepositories(
-            List<NutsRepository> repos, FilterMode fmode, NutsId id, NutsRepositoryFilter repositoryFilter,
-            NutsSession session, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, NutsFetchCommand options) {
-        class RepoAndLevel {
-
-            NutsRepository r;
-            int level;
-
-            public RepoAndLevel(NutsRepository r, int level) {
-                this.r = r;
-                this.level = level;
-            }
-        }
-        List<RepoAndLevel> repos2 = new ArrayList<>();
-//        List<Integer> reposLevels = new ArrayList<>();
-        for (NutsRepository repository : repos) {
-            if (repositoryFilter == null || repositoryFilter.accept(repository)) {
-
-                int t = 0;
-                try {
-                    switch (fmode) {
-                        case FIND: {
-                            t = repository.config().getFindSupportLevel(id, mode, options.isTransitive());
-                            break;
-                        }
-                        case DEPLOY: {
-                            t = repository.config().getDeploymentSupportLevel(id, mode != NutsFetchMode.REMOTE, options.isTransitive());
-                            break;
-                        }
-                    }
-
-                } catch (Exception e) {
-                    //ignore...
-                }
-                if (t > 0) {
-                    repos2.add(new RepoAndLevel(repository, t));
-//                    reposLevels.add(t);
-                }
-            }
-        }
-        if (sortByLevelDesc) {
-            Collections.sort(repos2, new Comparator<RepoAndLevel>() {
-                @Override
-                public int compare(RepoAndLevel o1, RepoAndLevel o2) {
-                    int x = Integer.compare(o2.level, o1.level);
-                    if (x != 0) {
-                        return x;
-                    }
-                    if (postComp != null) {
-                        return postComp.compare(o1.r, o2.r);
-                    }
-                    return 0;
-                }
-            });
-        }
-        List<NutsRepository> ret = new ArrayList<>();
-        for (RepoAndLevel repoAndLevel : repos2) {
-            ret.add(repoAndLevel.r);
-        }
-        return ret;
-    }
-
-    public static NutsId configureFetchEnv(NutsId id, NutsWorkspace ws) {
-        Map<String, String> qm = id.getQueryMap();
-        if (qm.get(NutsConstants.QueryKeys.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.config().getPlatformArch().toString());
-            qm.put("os", ws.config().getPlatformOs().toString());
-            if (ws.config().getPlatformOsDist() != null) {
-                qm.put("osdist", ws.config().getPlatformOsDist().toString());
-            }
-            return id.setQuery(qm);
-        }
-        return id;
-    }
 
 //    public static String resolveImmediateWorkspacePath(String workspace, String defaultName, String workspaceRoot) {
 //        if (CoreStringUtils.isEmpty(workspace)) {
@@ -134,7 +53,8 @@ public class NutsWorkspaceHelper {
 //        return workspace;
 //    }
     public static NutsRepositorySession createNoRepositorySession(NutsSession session, NutsFetchMode mode, NutsFetchCommand options) {
-        return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive()).setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
+        return new DefaultNutsRepositorySession().setSession(session).setTransitive(options.isTransitive())
+                .setIndexed(options.isIndexed()).setFetchMode(mode).setCached(options.isCached());
     }
 
     public static NutsRepositorySession createRepositorySession(NutsSession session, NutsRepository repo, NutsFetchMode mode, NutsFetchCommand options) {
@@ -149,4 +69,27 @@ public class NutsWorkspaceHelper {
         return mode == null ? NutsFetchStrategy.ONLINE : mode;
     }
 
+    public static List<NutsRepository> _getEnabledRepositories(NutsRepository parent, NutsRepositoryFilter repositoryFilter) {
+        List<NutsRepository> repos = new ArrayList<>();
+        NutsRepository repo = (NutsRepository) parent;
+        if (repo.config().isSupportedMirroring()) {
+            List<NutsRepository> subrepos = new ArrayList<>();
+            boolean ok = false;
+            for (NutsRepository repository : repo.config().getMirrors()) {
+                if (repository.config().isEnabled()) {
+                    if (repositoryFilter == null || repositoryFilter.accept(repository)) {
+                        repos.add(repository);
+                        ok = true;
+                    }
+                    if (!ok) {
+                        subrepos.add(repository);
+                    }
+                }
+            }
+            for (NutsRepository subrepo : subrepos) {
+                repos.addAll(_getEnabledRepositories(subrepo, repositoryFilter));
+            }
+        }
+        return repos;
+    }
 }

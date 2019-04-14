@@ -36,36 +36,67 @@ import java.nio.file.Path;
 
 public interface NutsDeployCommand {
 
+    NutsDeployCommand content(InputStream stream);
+
     NutsDeployCommand setContent(InputStream stream);
+
+    NutsDeployCommand content(String path);
 
     NutsDeployCommand setContent(String path);
 
+    NutsDeployCommand content(File file);
+
     NutsDeployCommand setContent(File file);
+
+    NutsDeployCommand content(Path file);
 
     NutsDeployCommand setContent(Path file);
 
+    NutsDeployCommand descriptor(InputStream stream);
+
     NutsDeployCommand setDescriptor(InputStream stream);
 
-    NutsDeployCommand setDescriptorPath(String path);
+    NutsDeployCommand descriptor(Path path);
+
+    NutsDeployCommand setDescriptor(Path path);
+
+    NutsDeployCommand descriptor(String path);
+
+    NutsDeployCommand setDescriptor(String path);
+
+    NutsDeployCommand descriptor(File file);
 
     NutsDeployCommand setDescriptor(File file);
 
+    NutsDeployCommand descriptor(URL url);
+
     NutsDeployCommand setDescriptor(URL url);
+
+    NutsDeployCommand sha1(String sha1);
 
     NutsDeployCommand setSha1(String sha1);
 
+    NutsDeployCommand descSHA1(String descSHA1);
+
     NutsDeployCommand setDescSHA1(String descSHA1);
+
+    NutsDeployCommand content(URL url);
 
     NutsDeployCommand setContent(URL url);
 
+    NutsDeployCommand descriptor(NutsDescriptor descriptor);
+
     NutsDeployCommand setDescriptor(NutsDescriptor descriptor);
 
+    NutsDeployCommand repository(String repository);
+
     NutsDeployCommand setRepository(String repository);
+
+    NutsDeployCommand session(NutsSession session);
 
     NutsDeployCommand setSession(NutsSession session);
 
 //    NutsDeployment build();
-
     String getRepository();
 
     boolean isForce();
@@ -76,11 +107,27 @@ public interface NutsDeployCommand {
 
     boolean isTransitive();
 
+    NutsDeployCommand force();
+
+    NutsDeployCommand force(boolean force);
+
     NutsDeployCommand setForce(boolean force);
+
+    NutsDeployCommand offline();
+
+    NutsDeployCommand offline(boolean offline);
 
     NutsDeployCommand setOffline(boolean offline);
 
+    NutsDeployCommand trace();
+
+    NutsDeployCommand trace(boolean trace);
+
     NutsDeployCommand setTrace(boolean trace);
+
+    NutsDeployCommand transitive();
+
+    NutsDeployCommand transitive(boolean transitive);
 
     NutsDeployCommand setTransitive(boolean transitive);
 

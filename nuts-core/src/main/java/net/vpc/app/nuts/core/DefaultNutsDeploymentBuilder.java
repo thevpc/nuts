@@ -16,6 +16,7 @@ import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.InputSource;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ZipOptions;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
 
@@ -68,7 +69,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     }
 
     @Override
-    public NutsDeployCommand setDescriptorPath(String path) {
+    public NutsDeployCommand setDescriptor(String path) {
         descriptor = path;
         return this;
     }
@@ -200,6 +201,128 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     }
 
     @Override
+    public NutsDeployCommand content(InputStream value) {
+        return setContent(value);
+    }
+
+    @Override
+    public NutsDeployCommand content(String path) {
+        return setContent(path);
+    }
+
+    @Override
+    public NutsDeployCommand content(File file) {
+        return setContent(file);
+    }
+
+    @Override
+    public NutsDeployCommand content(Path file) {
+        return setContent(file);
+    }
+
+    @Override
+    public NutsDeployCommand descriptor(InputStream stream) {
+        return setDescriptor(stream);
+    }
+
+    @Override
+    public NutsDeployCommand descriptor(Path path) {
+        return setDescriptor(path);
+    }
+
+    @Override
+    public NutsDeployCommand setDescriptor(Path path) {
+        return setDescriptor(path);
+    }
+
+    @Override
+    public NutsDeployCommand descriptor(String path) {
+        return setDescriptor(path);
+    }
+
+    @Override
+    public NutsDeployCommand descriptor(File file) {
+        return setDescriptor(file);
+    }
+
+    @Override
+    public NutsDeployCommand descriptor(URL url) {
+        return setDescriptor(url);
+    }
+
+    @Override
+    public NutsDeployCommand sha1(String sha1) {
+        return setSha1(sha1);
+    }
+
+    @Override
+    public NutsDeployCommand descSHA1(String descSHA1) {
+        return setDescSHA1(descSHA1);
+    }
+
+    @Override
+    public NutsDeployCommand content(URL url) {
+        return setContent(url);
+    }
+
+    @Override
+    public NutsDeployCommand descriptor(NutsDescriptor descriptor) {
+        return setDescriptor(descriptor);
+    }
+
+    @Override
+    public NutsDeployCommand repository(String repository) {
+        return setRepository(repository);
+    }
+
+    @Override
+    public NutsDeployCommand session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
+    public NutsDeployCommand force() {
+        return setForce(true);
+    }
+
+    @Override
+    public NutsDeployCommand force(boolean force) {
+        return setForce(force);
+    }
+
+    @Override
+    public NutsDeployCommand offline() {
+        return setOffline(true);
+    }
+
+    @Override
+    public NutsDeployCommand offline(boolean offline) {
+        return setOffline(offline);
+    }
+
+    @Override
+    public NutsDeployCommand trace() {
+        return setTrace(true);
+    }
+
+    @Override
+    public NutsDeployCommand trace(boolean trace) {
+        return setTrace(trace);
+    }
+
+    @Override
+    public NutsDeployCommand transitive() {
+        return setTransitive(true);
+    }
+
+    @Override
+    public NutsDeployCommand transitive(boolean transitive) {
+        return setTransitive(transitive);
+    }
+    
+    
+
+    @Override
     public NutsId deploy() {
 //        DefaultNutsDeployment deployment = new DefaultNutsDeployment(ws);
 //        deployment.setContent(content);
@@ -213,7 +336,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
 //        deployment.setTransitive(transitive);
 
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        CoreNutsUtils.checkReadOnly(ws);
+        NutsWorkspaceUtils.checkReadOnly(ws);
         try {
             Path tempFile = null;
             Object content = this.getContent();
@@ -240,9 +363,9 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                 Path contentFile0 = contentFile2;
                 String repository = this.getRepository();
 
-                CoreNutsUtils.checkReadOnly(ws);
+                NutsWorkspaceUtils.checkReadOnly(ws);
                 Path contentFile = contentFile0;
-                session = CoreNutsUtils.validateSession(session, ws);
+                session = NutsWorkspaceUtils.validateSession(ws, session);
                 Path tempFile2 = null;
                 NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
                 try {
@@ -301,7 +424,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
-                        for (NutsRepository repo : dws.getEnabledRepositories(NutsWorkspaceHelper.FilterMode.DEPLOY, effId, repositoryFilter, session, NutsFetchMode.LOCAL, fetchOptions)) {
+                        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws,NutsRepositorySupportedAction.FIND, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
                             effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));

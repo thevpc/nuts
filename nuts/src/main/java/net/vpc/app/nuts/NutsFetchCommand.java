@@ -75,6 +75,8 @@ public interface NutsFetchCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
+    NutsFetchCommand fetchStratery(NutsFetchStrategy mode);
+
     NutsFetchCommand setFetchStratery(NutsFetchStrategy mode);
 
     NutsFetchCommand setTransitive(boolean transitive);
@@ -132,31 +134,44 @@ public interface NutsFetchCommand {
 
     NutsFetchCommand setSession(NutsSession session);
 
-    NutsFetchCommand setScope(NutsDependencyScope scope);
-
-    NutsFetchCommand setScope(NutsDependencyScope... scope);
-
-    NutsFetchCommand setScope(Collection<NutsDependencyScope> scope);
+    NutsFetchCommand scope(NutsDependencyScope scope);
 
     NutsFetchCommand addScope(NutsDependencyScope scope);
 
-    NutsFetchCommand addScope(Collection<NutsDependencyScope> scope);
+    NutsFetchCommand scopes(Collection<NutsDependencyScope> scope);
 
-    NutsFetchCommand addScope(NutsDependencyScope... scope);
+    NutsFetchCommand addScopes(Collection<NutsDependencyScope> scope);
 
-    NutsFetchCommand removeScope(Collection<NutsDependencyScope> scope);
+    NutsFetchCommand scopes(NutsDependencyScope... scope);
 
+    NutsFetchCommand addScopes(NutsDependencyScope... scope);
+
+//    NutsFetchCommand removeScope(Collection<NutsDependencyScope> scope);
     NutsFetchCommand removeScope(NutsDependencyScope scope);
+
+    NutsFetchCommand clearScopes();
+
+    NutsFetchCommand acceptOptional();
+
+    NutsFetchCommand acceptOptional(Boolean acceptOptional);
 
     NutsFetchCommand setAcceptOptional(Boolean acceptOptional);
 
-    NutsFetchCommand setIncludeOptional(boolean includeOptional);
+    NutsFetchCommand includeOptional();
 
-    NutsFetchCommand setIndexed(Boolean indexEnabled);
+    NutsFetchCommand includeOptional(boolean includeOptional);
+
+    NutsFetchCommand setIncludeOptional(boolean includeOptional);
 
     NutsFetchCommand indexed();
 
-    NutsFetchCommand indexed(boolean enable);
+    NutsFetchCommand indexed(Boolean indexEnabled);
+
+    NutsFetchCommand setIndexed(Boolean indexEnabled);
+
+    Boolean getIndexed();
+
+    boolean isIndexed();
 
     NutsFetchCommand includeDependencies();
 
@@ -194,10 +209,6 @@ public interface NutsFetchCommand {
     Path getLocation();
 
     NutsFetchStrategy getFetchStrategy();
-
-    Boolean getIndexed();
-
-    boolean isIndexed();
 
     Set<NutsDependencyScope> getScope();
 

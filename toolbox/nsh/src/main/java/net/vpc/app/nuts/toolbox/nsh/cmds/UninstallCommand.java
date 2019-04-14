@@ -66,7 +66,7 @@ public class UninstallCommand extends AbstractNutsCommand {
                     NutsWorkspace ws = context.getWorkspace();
                     ret = 0;
                     try {
-                        options.id(id).setArgs(args).uninstall();
+                        options.id(id).args(args).uninstall();
                         ret = 1;
                     } catch (Exception ex) {
                         //ignore

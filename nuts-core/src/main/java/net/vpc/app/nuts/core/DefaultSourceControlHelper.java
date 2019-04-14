@@ -23,6 +23,7 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.io.UnzipOptions;
 import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
 
@@ -39,7 +40,7 @@ public class DefaultSourceControlHelper {
     
 //    @Override
     public NutsId commit(Path folder, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         ws.security().checkAllowed(NutsConstants.Rights.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
             throw new NutsIllegalArgumentException("Not a directory " + folder);
@@ -82,7 +83,7 @@ public class DefaultSourceControlHelper {
 
 //    @Override
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         ws.security().checkAllowed(NutsConstants.Rights.INSTALL, "checkout");
         NutsDefinition nutToInstall = ws.fetch().id(id).setSession(session).setAcceptOptional(false).includeDependencies().getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {

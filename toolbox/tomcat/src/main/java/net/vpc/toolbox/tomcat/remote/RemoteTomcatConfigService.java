@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.vpc.toolbox.tomcat.local.LocalTomcatConfigService;
 
 public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
@@ -45,10 +43,12 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         return this;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public RemoteTomcatConfig getConfig() {
         if (config == null) {
             loadConfig();
@@ -234,9 +234,9 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         cmdList.add(this.config.getServer());
         cmdList.addAll(Arrays.asList(cmd));
         context.getWorkspace().exec()
-                .setSession(context.getSession())
-                .setCommand(cmdList)
-                .fFailFast()
+                .session(context.getSession())
+                .command(cmdList)
+                .failFast()
                 .exec();
 
     }

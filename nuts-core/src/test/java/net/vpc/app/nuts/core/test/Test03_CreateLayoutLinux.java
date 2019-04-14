@@ -50,7 +50,7 @@ public class Test03_CreateLayoutLinux {
             "--system-cache-home", new File(base, "system.cache").getPath(),
             "--system-lib-home", new File(base, "system.lib").getPath(),
             //            "--verbose", 
-            "--yes", "--info"});
+            "--yes", "info"});
 
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nfind", "nsh"),
@@ -85,7 +85,7 @@ public class Test03_CreateLayoutLinux {
         System.out.println("Deleting "+base);
         CoreIOUtils.delete(base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
-        NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--workspace", base.getPath(), "--standalone", "--yes", "--info"});
+        NutsWorkspace ws = Nuts.openWorkspace(new String[]{"--workspace", base.getPath(), "--standalone", "--yes", "info"});
         Path c = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
         System.out.println(c);
         System.out.println(new File(base, "config").getPath());
@@ -118,7 +118,7 @@ public class Test03_CreateLayoutLinux {
     public void customLayout_use_standard() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         Assume.assumeTrue(CorePlatformUtils.getPlatformOsFamily().equals("linux"));
-        Nuts.runWorkspace(new String[]{"--verbose", "--yes", "--info"});
+        Nuts.runWorkspace(new String[]{"--verbose", "--yes", "info"});
         Assert.assertEquals(
                 createNamesSet("nadmin", "ndi", "nfind", "nsh"),
                 listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/net/vpc/app/nuts/toolbox"), File::isDirectory)

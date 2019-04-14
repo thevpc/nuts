@@ -105,7 +105,7 @@ public class DeployCommand extends AbstractNutsCommand {
                 NutsId nid = null;
                 nid = ws.deploy()
                         .setContent(s)
-                        .setDescriptorPath(descriptorFile)
+                        .setDescriptor(descriptorFile)
                         .setRepository(to)
                         .setSession(context.getSession())
                         .deploy();

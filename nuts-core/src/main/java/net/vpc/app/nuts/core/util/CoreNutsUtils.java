@@ -500,19 +500,6 @@ public class CoreNutsUtils {
         };
     }
 
-    public static NutsFetchCommand validateSession(NutsFetchCommand fetch, NutsWorkspace ws) {
-        if (fetch.getSession() == null) {
-            fetch = fetch.setSession(ws.createSession());
-        }
-        return fetch;
-    }
-
-    public static NutsSession validateSession(NutsSession session, NutsWorkspace ws) {
-        if (session == null) {
-            session = ws.createSession();
-        }
-        return session;
-    }
 
     public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
         if (parent != null) {
@@ -695,11 +682,6 @@ public class CoreNutsUtils {
         return 0;
     }
 
-    public static void checkReadOnly(NutsWorkspace ws) {
-        if (ws.config().isReadOnly()) {
-            throw new NutsReadOnlyException(ws.config().getWorkspaceLocation().toString());
-        }
-    }
 
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {

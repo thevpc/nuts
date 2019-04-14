@@ -258,7 +258,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                     NutsExecCommand t = ws.exec()
                             .grabOutputString()
                             .grabErrorString()
-                            .setCommand(
+                            .command(
                                     selectedId
                                             .getLongName(),
                                     "--nuts-execution-mode=auto-complete " + wordIndex

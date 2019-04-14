@@ -93,7 +93,7 @@ public class RemoteMysqlDatabaseConfigService {
 
         context.out().printf("==[%s]== copy %s to %s\n", name, archiveResult.path, remoteFullFilePath);
         context.getWorkspace().exec()
-                .setCommand(
+                .command(
                         "nsh",
                         "cp",
                         "--no-color",
@@ -102,7 +102,7 @@ public class RemoteMysqlDatabaseConfigService {
                 ).setSession(context.getSession())
                 .redirectErrorStream()
                 .grabOutputString()
-                .fFailFast()
+                .failFast()
                 .exec();
         context.out().printf("==[%s]== remote restore %s\n", name, remoteFilePath);
         execRemoteNuts(
@@ -147,7 +147,7 @@ public class RemoteMysqlDatabaseConfigService {
             }
         }));
         b.redirectErrorStream()
-                .fFailFast();
+                .failFast();
         return b.exec().getResult();
 
     }

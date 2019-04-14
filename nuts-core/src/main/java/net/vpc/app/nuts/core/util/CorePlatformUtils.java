@@ -30,23 +30,17 @@
 package net.vpc.app.nuts.core.util;
 
 import net.vpc.app.nuts.*;
-import org.objectweb.asm.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamVisitor;
@@ -344,8 +338,6 @@ public class CorePlatformUtils {
         return (aliased == null) ? property : aliased;
     }
 
-
-
     public static PlatformBeanProperty[] findPlatformBeanProperties(Class platformType) {
         LinkedHashMap<String, PlatformBeanProperty> visited = new LinkedHashMap<>();
         Class curr = platformType;
@@ -512,7 +504,6 @@ public class CorePlatformUtils {
         return clsAndLibs.toArray(new String[0]);
     }
 
-
     public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NutsSessionTerminal terminal) {
         try {
             if (file != null) {
@@ -676,154 +667,67 @@ public class CorePlatformUtils {
     public static int getMainClassType(InputStream stream) throws IOException {
         final List<Boolean> mainClass = new ArrayList<>(1);
         final List<Boolean> nutsApp = new ArrayList<>(1);
-        ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
+        SimpleClassStream.Visitor cl = new SimpleClassStream.Visitor() {
             String lastClass = null;
 
-            /**
-             * When a method is encountered
-             */
             @Override
-            public MethodVisitor visitMethod(int access, String name,
-                    String desc, String signature, String[] exceptions) {
+            public void visitMethod(int access, String name, String desc, SimpleClassStream.MethodAttribute[] attributes) {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {
                     mainClass.add(true);
                 }
-                return super.visitMethod(access, name, desc, signature, exceptions);
             }
 
             @Override
-            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+            public void visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
                 if (superName != null && superName.equals("net/vpc/app/nuts/app/NutsApplication")) {
                     nutsApp.add(true);
                 }
-                super.visit(version, access, name, signature, superName, interfaces);
             }
         };
-        ClassReader classReader = new ClassReader(stream);
-        classReader.accept(cl, 0);
+        SimpleClassStream classReader = new SimpleClassStream(stream, cl);
         return ((mainClass.isEmpty()) ? 0 : 1) + (nutsApp.isEmpty() ? 0 : 2);
     }
 
-    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, PrintStream out) {
-        String[] conf = {};
-        switch (ws.config().getPlatformOsFamily()) {
-            case LINUX:
-            case UNIX:
-            case UNKNOWN: {
-                conf = new String[]{
-                    "/usr/java",
-                    "/usr/lib64/jvm",
-                    "/usr/lib/jvm"
-                };
-                break;
-            }
-            case WINDOWS: {
-                conf = new String[]{
-                    CoreStringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java",
-                    CoreStringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"
-                };
-                break;
-            }
-            case MACOS: {
-                conf = new String[]{
-                    "/Library/Java/JavaVirtualMachines",
-                    "/System/Library/Frameworks/JavaVM.framework"
-                };
-                break;
-            }
-        }
-        List<NutsSdkLocation> all = new ArrayList<>();
-        for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(ws, ws.io().path(s), out)));
-        }
-        return all.toArray(new NutsSdkLocation[0]);
-    }
-
-    public static NutsSdkLocation[] searchJdkLocations(NutsWorkspace ws, Path s, PrintStream out) {
-        List<NutsSdkLocation> all = new ArrayList<>();
-        if (Files.isDirectory(s)) {
-            try (DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
-                for (Path d : it) {
-                    NutsSdkLocation r = resolveJdkLocation(d, ws);
-                    if (r != null) {
-                        all.add(r);
-                        if (out != null) {
-                            out.printf("Detected SDK [[%s]] at ==%s==\n", r.getVersion(), r.getPath());
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-
-        }
-        return all.toArray(new NutsSdkLocation[0]);
-    }
-
-    public static NutsSdkLocation resolveJdkLocation(Path path, NutsWorkspace ws) {
-        if (path == null) {
-            return null;
-        }
-        if (!Files.isDirectory(path)) {
-            return null;
-        }
-        Path javaExePath = path.resolve("bin").resolve("java");
-        if (!Files.exists(javaExePath)) {
-            return null;
-        }
-        String type = null;
-        String jdkVersion = null;
-        try {
-            NutsExecCommand b = ws.exec()
-                    .setExecutionType(NutsExecutionType.NATIVE)
-                    .setCommand(javaExePath.toString(), "-version")
-                    .redirectErrorStream()
-                    .grabOutputString()
-                    .exec();
-            if (b.getResult() == 0) {
-                String s = b.getOutputString();
-                if (s.length() > 0) {
-                    String prefix = "java version \"";
-                    int i = s.indexOf(prefix);
-                    if (i >= 0) {
-                        i = i + prefix.length();
-                        int j = s.indexOf("\"", i);
-                        if (i >= 0) {
-                            jdkVersion = s.substring(i, j);
-                            type = "JDK";
-                        }
-                    }
-                    if (jdkVersion == null) {
-
-                        prefix = "openjdk version \"";
-                        i = s.indexOf(prefix);
-                        if (i >= 0) {
-                            i = i + prefix.length();
-                            int j = s.indexOf("\"", i);
-                            if (i > 0) {
-                                jdkVersion = s.substring(i, j);
-                                type = "OpenJDK";
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(CorePlatformUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (jdkVersion == null) {
-            return null;
-        }
-        NutsSdkLocation loc = new NutsSdkLocation();
-        loc.setType("java");
-        loc.setName(type + " " + jdkVersion);
-        loc.setVersion(jdkVersion);
-        loc.setPath(path.toString());
-        return loc;
-    }
-
+//    /**
+//     * @param stream
+//     * @return
+//     * @throws IOException
+//     */
+//    public static int getMainClassType(InputStream stream) throws IOException {
+//        final List<Boolean> mainClass = new ArrayList<>(1);
+//        final List<Boolean> nutsApp = new ArrayList<>(1);
+//        ClassVisitor cl = new ClassVisitor(Opcodes.ASM4) {
+//            String lastClass = null;
+//
+//            /**
+//             * When a method is encountered
+//             */
+//            @Override
+//            public MethodVisitor visitMethod(int access, String name,
+//                    String desc, String signature, String[] exceptions) {
+//                if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
+//                        && Modifier.isPublic(access)
+//                        && Modifier.isStatic(access)) {
+//                    mainClass.add(true);
+//                }
+//                return super.visitMethod(access, name, desc, signature, exceptions);
+//            }
+//
+//            @Override
+//            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+//                if (superName != null && superName.equals("net/vpc/app/nuts/app/NutsApplication")) {
+//                    nutsApp.add(true);
+//                }
+//                super.visit(version, access, name, signature, superName, interfaces);
+//            }
+//        };
+//        ClassReader classReader = new ClassReader(stream);
+//        classReader.accept(cl, 0);
+//        return ((mainClass.isEmpty()) ? 0 : 1) + (nutsApp.isEmpty() ? 0 : 2);
+//    }
+//
     public static String getPlatformOsFamily() {
         String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         if (property.startsWith("linux")) {
@@ -843,6 +747,5 @@ public class CorePlatformUtils {
         }
         return "unknown";
     }
-
 
 }

@@ -327,8 +327,8 @@ public class NutsHttpServletFacade {
                 session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
                 int result = ws.exec()
-                        .setCommand(cmd)
-                        .setSession(session)
+                        .command(cmd)
+                        .session(session)
                         .exec().getResult();
 
                 context.sendResponseText(200, String.valueOf(result) + "\n" + new String(out.toByteArray()));

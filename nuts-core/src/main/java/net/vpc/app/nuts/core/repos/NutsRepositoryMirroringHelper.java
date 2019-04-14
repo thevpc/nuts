@@ -13,7 +13,6 @@ import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsContent;
 import net.vpc.app.nuts.NutsContentEvent;
 import net.vpc.app.nuts.NutsDescriptor;
-import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsNotFoundException;
@@ -23,6 +22,7 @@ import net.vpc.app.nuts.NutsRepositoryAmbiguousException;
 import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySession;
+import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
@@ -54,7 +54,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository repo : repo.config().getMirrors()) {
                 int sup = 0;
                 try {
-                    sup = repo.config().getFindSupportLevel(id, session.getFetchMode(), session.isTransitive());
+                    sup = repo.config().getFindSupportLevel(NutsRepositorySupportedAction.FIND, id, session.getFetchMode(), session.isTransitive());
                 } catch (Exception ex) {
                     //                errors.append(ex.toString()).append("\n");
                 }
@@ -162,7 +162,7 @@ public class NutsRepositoryMirroringHelper {
         if (options.getRepository() == null) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().getMirrors()) {
-                int lvl = remote.config().getDeploymentSupportLevel(id, session.getFetchMode() != NutsFetchMode.REMOTE, false);
+                int lvl = remote.config().getFindSupportLevel(NutsRepositorySupportedAction.DEPLOY,id, session.getFetchMode(), false);
                 if (lvl > 0) {
                     all.add(remote);
                 }

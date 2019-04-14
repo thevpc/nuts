@@ -57,12 +57,12 @@ public class Test04_CreateLoadLinux {
             //            "--verbose", 
             "--skip-install-companions",
             "--yes",
-            "--info"
+            "info"
         });
 
         NutsWorkspace w = Nuts.openWorkspace(new String[]{
             "--system-config-home", new File(base, "system.config").getPath(),
-            "--info"
+            "info"
         });
         System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));
         Assert.assertEquals(
@@ -96,7 +96,7 @@ public class Test04_CreateLoadLinux {
 
         w = Nuts.openWorkspace(new String[]{
             "--workspace", new File(base, "system.config/default-workspace").getPath(),
-            "--info"
+            "info"
         });
         System.out.println(w.config().getStoreLocation(NutsStoreLocation.PROGRAMS));
         Assert.assertEquals(

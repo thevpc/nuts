@@ -38,7 +38,7 @@ import java.util.Properties;
 
 public interface NutsExecCommand {
 
-    NutsExecCommand fFailFast();
+    NutsExecCommand failFast();
 
     /**
      * when the execution returns a non zero result, an exception is
@@ -65,7 +65,7 @@ public interface NutsExecCommand {
 
     NutsExecCommand session(NutsSession session);
 
-    List<String> getCommand();
+    String[] getCommand();
 
     NutsExecCommand command(String... command);
 
@@ -73,7 +73,13 @@ public interface NutsExecCommand {
 
     NutsExecCommand command(Collection<String> command);
 
+    NutsExecCommand clearCommand();
+
     NutsExecCommand addCommand(Collection<String> command);
+
+    NutsExecCommand addExecutorOption(String executorOption);
+
+    NutsExecCommand executorOption(String executorOption);
 
     NutsExecCommand executorOptions(String... executorOptions);
 
@@ -83,18 +89,14 @@ public interface NutsExecCommand {
 
     NutsExecCommand addExecutorOptions(Collection<String> executorOptions);
 
-    NutsExecCommand setCommand(String... command);
-
-    NutsExecCommand setCommand(Collection<String> command);
-
-    NutsExecCommand setExecutorOptions(String... options);
-
-    NutsExecCommand setExecutorOptions(Collection<String> options);
+    NutsExecCommand clearExecutorOptions();
 
     Properties getEnv();
 
     NutsExecCommand env(Map<String, String> env);
 
+    NutsExecCommand addEnv(Properties env);
+    
     NutsExecCommand addEnv(Map<String, String> env);
 
     NutsExecCommand env(String k, String val);
@@ -104,6 +106,10 @@ public interface NutsExecCommand {
     NutsExecCommand setEnv(Map<String, String> env);
 
     NutsExecCommand setEnv(Properties env);
+
+    NutsExecCommand env(Properties env);
+
+    NutsExecCommand clearEnv();
 
     String getDirectory();
 
@@ -159,6 +165,12 @@ public interface NutsExecCommand {
 
     NutsExecCommand executionType(NutsExecutionType executionType);
 
+    public NutsExecCommand copyFrom(NutsExecCommand other);
+    
+    public NutsExecCommand copy();
+
+    NutsExecCommand parseOptions(String... args);
+
     int getResult();
 
     String getCommandString();
@@ -166,4 +178,9 @@ public interface NutsExecCommand {
     String getCommandString(NutsCommandStringFormatter f);
 
     NutsWhichExec which();
+
+    String[] getExecutorOptions();
+
+    boolean isAsk();
+
 }

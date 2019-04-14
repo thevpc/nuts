@@ -236,7 +236,7 @@ public class NFindMain extends NutsApplication {
             findWhat.nonjs.add("*");
         }
         NutsFindCommand query = findContext.context.getWorkspace().find().addScripts(findWhat.jsCode)
-                .addIds(findWhat.nonjs)
+                .addIds(findWhat.nonjs.toArray(new String[0]))
                 .addArchs(findContext.arch)
                 .addPackagings(findContext.pack)
                 .addRepositories(findContext.repos)
@@ -673,7 +673,7 @@ public class NFindMain extends NutsApplication {
         List<NutsDefinition> depsFiles = ws.find().setSession(session).setFetchStratery(m)
                 .setTransitive(findContext.transitive)
                 .addId(info.nuts)
-                .setScope(findContext.scopes)
+                .scopes(findContext.scopes)
                 .setDependencyFilter(findContext.equivalentDependencyFilter)
                 .setIncludeAllVersions(findContext.allVersions)
                 .setAcceptOptional(findContext.acceptOptional)

@@ -128,9 +128,7 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
      */
     NutsRepositoryConfigManager removeMirror(String repositoryId);
 
-    int getDeploymentSupportLevel(NutsId id, boolean offlineOnly, boolean transitive);
-
-    int getFindSupportLevel(NutsId id, NutsFetchMode fetchMode, boolean transitive);
+    int getFindSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive);
 
     NutsRepositoryConfigManager removeUser(String userId);
 

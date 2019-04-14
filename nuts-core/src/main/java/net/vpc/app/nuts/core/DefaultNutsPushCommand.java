@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,10 +28,11 @@ import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySession;
+import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -43,10 +45,10 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     private boolean force = false;
     private boolean offline = false;
     private List<String> args;
-    private List<NutsId> ids = new ArrayList<>();
-    private List<NutsId> frozenIds = new ArrayList<>();
+    private final List<NutsId> ids = new ArrayList<>();
+    private List<NutsId> frozenIds;
     private NutsSession session;
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
     private String repository;
 
     public DefaultNutsPushCommand(NutsWorkspace ws) {
@@ -55,32 +57,22 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
 
     @Override
     public NutsPushCommand id(String id) {
-        return setId(id);
+        return addId(id);
     }
 
     @Override
     public NutsPushCommand id(NutsId id) {
-        return setId(id);
-    }
-
-    @Override
-    public NutsPushCommand setId(String id) {
-        return setId(id == null ? null : ws.parser().parseId(id));
-    }
-
-    @Override
-    public NutsPushCommand setId(NutsId id) {
-        if (id == null) {
-            ids.clear();
-        } else {
-            ids.add(id);
-        }
-        return this;
+        return addId(id);
     }
 
     @Override
     public NutsPushCommand addId(String id) {
-        return addId(id == null ? null : ws.parser().parseId(id));
+        return addId(id == null ? null : ws.parser().parseRequiredId(id));
+    }
+
+    @Override
+    public NutsPushCommand addFrozenId(String id) {
+        return addFrozenId(id == null ? null : ws.parser().parseRequiredId(id));
     }
 
     @Override
@@ -89,6 +81,55 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
             throw new NutsNotFoundException(id);
         } else {
             ids.add(id);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand removeId(NutsId id) {
+        if (id != null) {
+            ids.remove(id);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand removeId(String id) {
+        if (id != null) {
+            ids.remove(ws.parser().parseId(id));
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand removeFrozenId(NutsId id) {
+        if (id != null) {
+            if (frozenIds != null) {
+                frozenIds.remove(id);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand removeFrozenId(String id) {
+        if (id != null) {
+            if (frozenIds != null) {
+                frozenIds.remove(ws.parser().parseId(id));
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand addFrozenId(NutsId id) {
+        if (id == null) {
+            throw new NutsNotFoundException(id);
+        } else {
+            if (frozenIds == null) {
+                frozenIds = new ArrayList<>();
+            }
+            frozenIds.add(id);
         }
         return this;
     }
@@ -115,6 +156,22 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     public NutsPushCommand addIds(NutsId... ids) {
         for (NutsId id : ids) {
             addId(id);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand addFrozenIds(String... ids) {
+        for (String id : ids) {
+            addFrozenId(id);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand addFrozenIds(NutsId... ids) {
+        for (NutsId id : ids) {
+            addFrozenId(id);
         }
         return this;
     }
@@ -158,25 +215,6 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public NutsPushCommand setArgs(String... args) {
-        return setArgs(args == null ? null : Arrays.asList(args));
-    }
-
-    @Override
-    public NutsPushCommand setArgs(List<String> args) {
-        this.args = new ArrayList<>();
-        if (args != null) {
-            for (String arg : args) {
-                if (arg == null) {
-                    throw new NullPointerException();
-                }
-                this.args.add(arg);
-            }
-        }
-        return this;
-    }
-
-    @Override
     public NutsPushCommand addArg(String arg) {
         if (this.args == null) {
             this.args = new ArrayList<>();
@@ -194,7 +232,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public NutsPushCommand addArgs(List<String> args) {
+    public NutsPushCommand addArgs(Collection<String> args) {
         if (this.args == null) {
             this.args = new ArrayList<>();
         }
@@ -231,8 +269,8 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public void push() {
-        NutsSession session = CoreNutsUtils.validateSession(this.getSession(), ws);
+    public NutsPushCommand push() {
+        NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
@@ -253,7 +291,8 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
             if (CoreStringUtils.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHEK ME, why offline?
-                for (NutsRepository repo : dws.getEnabledRepositories(NutsWorkspaceHelper.FilterMode.DEPLOY, file.getId(), repositoryFilter, session, NutsFetchMode.LOCAL, fetchOptions)) {
+                boolean ok = false;
+                for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws,NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                     NutsDescriptor descr = null;
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                     try {
@@ -267,14 +306,17 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
                                 ws.fetch().setTransitive(true).session(session)), descr);
                         try {
                             repo.push(id2, this, rsession);
-                            return;
+                            ok = true;
+                            break;
                         } catch (Exception e) {
                             errors.add(CoreStringUtils.exceptionToString(e));
                             //
                         }
                     }
                 }
-                throw new NutsRepositoryNotFoundException(this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
+                if (!ok) {
+                    throw new NutsRepositoryNotFoundException(this.getRepository() + " : " + CoreStringUtils.join("\n", errors));
+                }
             } else {
                 NutsRepository repo = ws.config().getRepository(this.getRepository());
                 NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE,
@@ -292,12 +334,12 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
                         .setRepository(repo.config().getName())
                         .setTrace(this.isTrace())
                         .setForce(this.isForce())
-                        .setTransitive(true)
-                        .setOffline(this.isOffline());
+                        .setOffline(this.isOffline())
+                        .setTransitive(true);
                 repo.deploy(dep, rsession);
             }
         }
-
+        return this;
     }
 
     @Override
@@ -325,6 +367,104 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     @Override
     public NutsPushCommand repository(String repository) {
         return setRepository(repository);
+    }
+
+    @Override
+    public NutsPushCommand frozenId(NutsId id) {
+        return addFrozenId(id);
+    }
+
+    @Override
+    public NutsPushCommand frozenId(String id) {
+        return addFrozenId(id);
+    }
+
+    @Override
+    public NutsPushCommand frozenIds(NutsId... ids) {
+        return addFrozenIds(ids);
+    }
+
+    @Override
+    public NutsPushCommand frozenIds(String... ids) {
+        return addFrozenIds(ids);
+    }
+
+    @Override
+    public NutsPushCommand arg(String arg) {
+        return addArg(arg);
+    }
+
+    @Override
+    public NutsPushCommand args(String... args) {
+        return addArgs(args);
+    }
+
+    @Override
+    public NutsPushCommand args(Collection<String> args) {
+        return addArgs(args);
+    }
+
+    @Override
+    public NutsPushCommand clearArgs() {
+        this.args = null;
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand clearIds() {
+        this.ids.clear();
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand clearFrozenIds() {
+        frozenIds = null;
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand session(NutsSession session) {
+        return setSession(session);
+    }
+
+    @Override
+    public NutsPushCommand ask() {
+        return ask(true);
+    }
+
+    @Override
+    public NutsPushCommand ask(boolean enable) {
+        return setAsk(enable);
+    }
+
+    @Override
+    public NutsPushCommand force() {
+        return force(true);
+    }
+
+    @Override
+    public NutsPushCommand force(boolean enable) {
+        return setForce(enable);
+    }
+
+    @Override
+    public NutsPushCommand trace() {
+        return trace(true);
+    }
+
+    @Override
+    public NutsPushCommand trace(boolean enable) {
+        return setTrace(enable);
+    }
+
+    @Override
+    public NutsPushCommand offline() {
+        return offline(true);
+    }
+
+    @Override
+    public NutsPushCommand offline(boolean enable) {
+        return setOffline(enable);
     }
 
 }

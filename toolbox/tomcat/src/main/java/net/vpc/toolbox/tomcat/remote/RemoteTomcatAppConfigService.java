@@ -49,7 +49,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
         }
         SshPath srvp = new SshPath(server);
         context.getWorkspace().exec()
-                .setCommand(
+                .command(
                         "nsh",
                         "cp",
                         "--verbose",
@@ -77,7 +77,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
                 .exec()
                 .redirectErrorStream()
                 .grabOutputString()
-                .setCommand(cmd).exec();
+                .command(cmd).exec();
         if (s.getResult() == 0) {
             client.execRemoteNuts(
                     "net.vpc.app.nuts.toolbox:tomcat",

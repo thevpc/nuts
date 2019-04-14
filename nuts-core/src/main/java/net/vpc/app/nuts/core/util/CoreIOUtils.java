@@ -561,7 +561,7 @@ public class CoreIOUtils {
     }
 
     public static CharacterizedFile characterize(NutsWorkspace ws, InputSource contentFile, NutsFetchCommand options, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         CharacterizedFile c = new CharacterizedFile();
         try {
             c.contentFile = contentFile;
@@ -699,12 +699,12 @@ public class CoreIOUtils {
     }
 
     public static PrintStream resolveOut(NutsWorkspace ws, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         return (session == null || session.getTerminal() == null) ? ws.io().nullPrintStream() : session.getTerminal().getOut();
     }
 
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         if (localPath != null) {
             List<NutsDescriptorContentParserComponent> allParsers = ws.extensions().createAllSupported(NutsDescriptorContentParserComponent.class, ws);
             if (allParsers.size() > 0) {

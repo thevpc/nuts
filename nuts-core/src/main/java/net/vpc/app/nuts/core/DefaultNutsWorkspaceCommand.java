@@ -80,13 +80,13 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
         args = r.toArray(new String[0]);
 
         return ws.exec()
-                .setCommand(args)
-                .setExecutorOptions(executorOptions)
-                .setDirectory(options.getDirectory())
-                .fFailFast()
-                .setSession(session)
-                .setEnv(options.getEnv())
-                .setExecutionType(options.getExecutionType())
+                .command(args)
+                .executorOptions(executorOptions)
+                .directory(options.getDirectory())
+                .failFast()
+                .session(session)
+                .env(options.getEnv())
+                .executionType(options.getExecutionType())
                 .getResult();
 
         //load all needed dependencies!

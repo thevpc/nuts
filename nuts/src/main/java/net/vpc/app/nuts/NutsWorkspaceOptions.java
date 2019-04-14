@@ -543,10 +543,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             }
             if (bootCommand != null) {
                 switch (bootCommand) {
-                    case CHECK_UPDATES: {
-                        all.add("--check-updates");
-                        break;
-                    }
                     case EXEC: {
                         all.add("--exec");
                         break;
@@ -555,32 +551,12 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                         all.add("--help");
                         break;
                     }
-                    case INFO: {
-                        all.add("--info");
-                        break;
-                    }
-                    case INSTALL: {
-                        all.add("--install");
-                        break;
-                    }
-                    case INSTALL_COMPANION_TOOLS: {
-                        all.add("--install-companions");
-                        break;
-                    }
                     case LICENSE: {
                         all.add("--license");
                         break;
                     }
                     case RESET: {
-                        all.add("--dispose");
-                        break;
-                    }
-                    case UNINSTALL: {
-                        all.add("--uninstall");
-                        break;
-                    }
-                    case UPDATE: {
-                        all.add("--update");
+                        all.add("--reset");
                         break;
                     }
                     case VERSION: {

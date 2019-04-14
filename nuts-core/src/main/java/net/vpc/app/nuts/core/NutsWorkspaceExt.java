@@ -5,19 +5,14 @@
  */
 package net.vpc.app.nuts.core;
 
-import java.util.List;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsFetchCommand;
-import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 
 /**
  *
@@ -29,7 +24,6 @@ public interface NutsWorkspaceExt {
         return (NutsWorkspaceExt) ws;
     }
 
-    List<NutsRepository> getEnabledRepositories(NutsWorkspaceHelper.FilterMode fmode, NutsId nutsId, NutsRepositoryFilter repositoryFilter, NutsSession session, NutsFetchMode mode, NutsFetchCommand options);
 
     //    @Override
     //    public boolean isFetched(String id, NutsSession session) {
@@ -50,7 +44,7 @@ public interface NutsWorkspaceExt {
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 
-    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean trace);
+    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean trace, boolean updateDefaultVersion);
 
     /**
      * true when core extension is required for running this workspace. A

@@ -113,105 +113,54 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return securityManager;
     }
 
-//    protected void open(boolean autoCreate) {
-//        Path file = config().getStoreLocation().resolve(NutsConstants.NUTS_REPOSITORY_CONFIG_FILE_NAME);
-//        boolean found = false;
-//        if (Files.exists(file)) {
-//            NutsRepositoryConfig newConfig = null;
-//            try {
-//                newConfig = workspace.io().readJson(file, NutsRepositoryConfig.class);
-//            } catch (RuntimeException ex) {
-//                log.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
-//                if (!getWorkspace().config().isReadOnly()) {
-//                    Path newfile = config().getStoreLocation().resolve("nuts-repository-"
-//                            + new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date())
-//                            + ".json");
-//                    log.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile);
-//                    try {
-//                        Files.move(file, newfile);
-//                        autoCreate = true;
-//                    } catch (IOException e) {
-//                        throw new UncheckedIOException("Unable to load and re-create config file " + file + " : " + e.toString(), e);
-//                    }
-//                } else {
-//                    throw new UncheckedIOException("Unable to load config file " + file, new IOException(ex));
-//                }
-//            }
-//            if (newConfig != null) {
-//                found = true;
-//                if (CoreStringUtils.isEmpty(newConfig.getUuid())) {
-//                    newConfig.setUuid(UUID.randomUUID().toString());
-//                    if (!workspace.config().isReadOnly()) {
-//                        //save updates without processing mirrors
-//                        workspace.io().writeJson(newConfig, file, true);
-//                    }
-//                }
-//                newConfig.setType(getRepositoryType());
-//                checkNutsRepositoryConfig(newConfig);
-//                configManager.setConfig(newConfig);
-//            }
-//        }
-//        if (!found) {
-//            if (autoCreate) {
-//                NutsRepositoryConfig newConfig = new NutsRepositoryConfig(config().getName(), config().getLocation(true), getRepositoryType());
-//                newConfig.setUuid(UUID.randomUUID().toString());
-//                newConfig.setStoreLocationStrategy(getWorkspace().config().getRepositoryStoreLocationStrategy());
-//                checkNutsRepositoryConfig(newConfig);
-//                configManager.setConfig(newConfig);
-//            } else {
-//                throw new NutsRepositoryNotFoundException(config().getName());
-//            }
-//        }
-//    }
-//    protected NutsRepository createRepository(NutsCreateRepositoryOptions options) {
-//        NutsRepository r = ;
-//        wireRepository(r);
-//        return r;
-//    }
-//
-//    protected NutsRepository openRepository(NutsRepositoryRef loc, String path) {
-//        loc = loc.copy();
-//        String root = getWorkspace().getIOManager().expandPath(loc.getLocation(),
-//                path != null ? path : CoreIOUtils.createFile(
-//                                getStoreLocation(), NutsConstants.FOLDER_NAME_REPOSITORIES).getPath());
-//
-//        NutsRepository r = CoreNutsUtils.createRepository(root, getWorkspace());
-//        r.open(false);
-//        wireRepository(r);
-//        return r;
-//    }
-    protected int getDeploymentSupportLevelCurrent(NutsId id, boolean offlineOnly) {
-        if (offlineOnly && config().getSpeed() < SPEED_FAST) {
-            return 0;
-        }
-        String groups = config().getGroups();
-        if (CoreStringUtils.isBlank(groups)) {
-            return 1 * config().getDeployOrder();
-        }
-        return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
-    }
-
-    protected int getFindSupportLevelCurrent(NutsId id, NutsFetchMode mode) {
-        switch (mode) {
-            case INSTALLED:
-            case LOCAL: {
-                if (config().getSpeed() < SPEED_FAST) {
-                    return 0;
+    protected int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode) {
+        switch (supportedAction) {
+            case FIND: {
+                switch (mode) {
+                    case INSTALLED:
+                    case LOCAL: {
+                        if (config().getSpeed() < SPEED_FAST) {
+                            return 0;
+                        }
+                        break;
+                    }
+                    case REMOTE: {
+                        if (config().getSpeed() >= SPEED_FAST) {
+                            return 0;
+                        }
+                        break;
+                    }
                 }
-                break;
+                String groups = config().getGroups();
+                if (CoreStringUtils.isBlank(groups)) {
+                    return 1;
+                }
+                return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
             }
-            case REMOTE: {
-                if (config().getSpeed() >= SPEED_FAST) {
-                    return 0;
+            case DEPLOY: {
+                switch (mode) {
+                    case INSTALLED:
+                    case LOCAL: {
+                        if (config().getSpeed() < SPEED_FAST) {
+                            return 0;
+                        }
+                        break;
+                    }
+                    case REMOTE: {
+                        if (config().getSpeed() >= SPEED_FAST) {
+                            return 0;
+                        }
+                        break;
+                    }
                 }
-                break;
+                String groups = config().getGroups();
+                if (CoreStringUtils.isBlank(groups)) {
+                    return 1 * config().getDeployOrder();
+                }
+                return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
             }
         }
-        String groups = config().getGroups();
-        if (CoreStringUtils.isBlank(groups)) {
-            return 1;
-        }
-        return id.getGroup().matches(CoreStringUtils.simpexpToRegexp(groups)) ? groups.length() : 0;
+        throw new NutsUnsupportedArgumentException("Unsupported action " + supportedAction);
     }
 
     @Override

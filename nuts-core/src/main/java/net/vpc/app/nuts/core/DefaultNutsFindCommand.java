@@ -45,6 +45,9 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 import java.io.File;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -54,6 +57,7 @@ import net.vpc.app.nuts.core.filters.DefaultNutsIdMultiFilter;
 import static net.vpc.app.nuts.core.util.CoreNutsUtils.And;
 import static net.vpc.app.nuts.core.util.CoreNutsUtils.simplify;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
 import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
 
@@ -75,12 +79,28 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     private final DefaultNutsWorkspace ws;
     private final List<String> arch = new ArrayList<>();
     private final List<String> ids = new ArrayList<>();
-    private final List<String> js = new ArrayList<>();
+    private final List<String> scripts = new ArrayList<>();
     private final List<String> packaging = new ArrayList<>();
     private final List<String> repos = new ArrayList<>();
 
     public DefaultNutsFindCommand(DefaultNutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public NutsFindCommand clearScripts() {
+        scripts.clear();
+        return this;
+    }
+
+    @Override
+    public NutsFindCommand scripts(Collection<String> value) {
+        return addScripts(value);
+    }
+
+    @Override
+    public NutsFindCommand scripts(String... value) {
+        return addScripts(value);
     }
 
     @Override
@@ -92,25 +112,31 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     @Override
+    public NutsFindCommand removeScript(String value) {
+        scripts.remove(value);
+        return this;
+    }
+
+    @Override
+    public NutsFindCommand script(String value) {
+        return addScript(value);
+    }
+
+    @Override
+    public NutsFindCommand addScript(String value) {
+        if (value != null) {
+            scripts.add(value);
+        }
+        return this;
+    }
+
+    @Override
     public NutsFindCommand addScripts(String... value) {
         if (value != null) {
-            js.addAll(Arrays.asList(value));
+            scripts.addAll(Arrays.asList(value));
         }
         return this;
 
-    }
-
-    @Override
-    public NutsFindCommand ids(Collection<String> values) {
-        return addIds(values);
-    }
-
-    @Override
-    public NutsFindCommand addIds(Collection<String> values) {
-        if (values != null) {
-            addIds(values.toArray(new String[0]));
-        }
-        return this;
     }
 
     @Override
@@ -336,8 +362,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             this.arch.addAll(Arrays.asList(o.getArch()));
             this.ids.clear();
             this.ids.addAll(Arrays.asList(o.getIds()));
-            this.js.clear();
-            this.js.addAll(Arrays.asList(o.getJs()));
+            this.scripts.clear();
+            this.scripts.addAll(Arrays.asList(o.getScripts()));
             this.packaging.clear();
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
             this.repos.clear();
@@ -361,6 +387,11 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         this.idComparator = comparator;
         this.sort = true;
         return this;
+    }
+
+    @Override
+    public NutsFindCommand sort(boolean sort) {
+        return setSort(sort);
     }
 
     @Override
@@ -514,13 +545,6 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     @Override
-    public NutsFindCommand setIds(Collection<String> ids) {
-        this.ids.clear();
-        addIds(ids);
-        return this;
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("NutsSearch{");
         sb.append(getScope());
@@ -544,8 +568,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     @Override
-    public String[] getJs() {
-        return js.toArray(new String[0]);
+    public String[] getScripts() {
+        return scripts.toArray(new String[0]);
     }
 
     @Override
@@ -610,7 +634,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         NutsIdFilter _idFilter = null;
         NutsDependencyFilter depFilter = null;
         DefaultNutsRepositoryFilter rfilter = null;
-        for (String j : this.getJs()) {
+        for (String j : this.getScripts()) {
             if (!CoreStringUtils.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
                     _descriptorFilter = simplify(And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
@@ -950,7 +974,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
         List<Iterator<NutsId>> allResults = new ArrayList<>();
 
-        NutsSession session = CoreNutsUtils.validateSession(search.getOptions().getSession(), ws);
+        NutsSession session = NutsWorkspaceUtils.validateSession(ws, search.getOptions().getSession());
         NutsIdFilter idFilter = search.getIdFilter();
         NutsRepositoryFilter repositoryFilter = search.getRepositoryFilter();
         NutsDescriptorFilter descriptorFilter = search.getDescriptorFilter();
@@ -986,7 +1010,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                                             }
                                         }).safeIgnore().iterator());
                             } else {
-                                for (NutsRepository repo : ws.getEnabledRepositories(NutsWorkspaceHelper.FilterMode.FIND, nutsId1, repositoryFilter, session, mode, search.getOptions())) {
+                                for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, nutsId1, repositoryFilter, mode, search.getOptions())) {
                                     if (repositoryFilter == null || repositoryFilter.accept(repo)) {
                                         NutsIdFilter filter = new DefaultNutsIdMultiFilter(nutsId1.getQueryMap(), idFilter, descriptorFilter, repo, NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions())).simplify();
                                         all.add(
@@ -1053,6 +1077,25 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             allResults.add(fetchMode.isStopFast() ? IteratorUtils.coalesce(coalesce) : IteratorUtils.concat(coalesce));
         }
         return IteratorUtils.concat(allResults);
+    }
+
+    @Override
+    public ClassLoader getResultClassLoader() {
+        return getResultClassLoader(null);
+    }
+
+    @Override
+    public ClassLoader getResultClassLoader(ClassLoader parent) {
+        List<NutsDefinition> nutsDefinitions = getResultDefinitions().list();
+        URL[] all = new URL[nutsDefinitions.size()];
+        for (int i = 0; i < all.length; i++) {
+            try {
+                all[i] = nutsDefinitions.get(i).getPath().toUri().toURL();
+            } catch (MalformedURLException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }
+        return new NutsURLClassLoader(ws, all, parent);
     }
 
 }

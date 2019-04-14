@@ -21,6 +21,7 @@ import java.util.zip.ZipFile;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.bundledlibs.util.ListMap;
 
 /**
@@ -127,7 +128,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         NutsId oldId = CoreNutsUtils.finNutsIdBySimpleName(id, extensions.keySet());
         NutsWorkspaceExtension old = null;
         if (oldId == null) {
@@ -158,7 +159,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     protected NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options, NutsSession session) {
-        session = CoreNutsUtils.validateSession(session, ws);
+        session = NutsWorkspaceUtils.validateSession(ws, session);
         if (id == null) {
             throw new NutsIllegalArgumentException("Extension Id could not be null");
         }

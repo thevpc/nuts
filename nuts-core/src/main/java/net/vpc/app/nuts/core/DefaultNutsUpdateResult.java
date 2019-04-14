@@ -27,7 +27,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
-package net.vpc.app.nuts;
+package net.vpc.app.nuts.core;
+
+import net.vpc.app.nuts.NutsDefinition;
+import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.NutsUpdateResult;
 
 /**
  * Created by vpc on 6/23/17.

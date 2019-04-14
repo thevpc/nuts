@@ -123,7 +123,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    nutsClassLoader = resolveNutsWorkspace().createClassLoaderBuilder().addIds(pathList).build();
+                    nutsClassLoader = resolveNutsWorkspace().find().ids(pathList).mainAndDependencies().getResultClassLoader();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();

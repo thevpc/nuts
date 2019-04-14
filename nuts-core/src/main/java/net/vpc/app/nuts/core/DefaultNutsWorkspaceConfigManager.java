@@ -454,7 +454,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean save(boolean force) {
         boolean ok = false;
         if (force || (!isReadOnly() && isConfigurationChanged())) {
-            CoreNutsUtils.checkReadOnly(ws);
+            NutsWorkspaceUtils.checkReadOnly(ws);
             ws.security().checkAllowed(NutsConstants.Rights.SAVE_WORKSPACE, "save");
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
             config.setRepositories(configReposByName.isEmpty() ? null : new ArrayList<>(configReposByName.values()));
@@ -744,17 +744,17 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsSdkLocation[] searchJdkLocations(PrintStream out) {
-        return CorePlatformUtils.searchJdkLocations(ws, out);
+        return NutsWorkspaceUtils.searchJdkLocations(ws, out);
     }
 
     @Override
     public NutsSdkLocation[] searchJdkLocations(Path path, PrintStream out) {
-        return CorePlatformUtils.searchJdkLocations(ws, path, out);
+        return NutsWorkspaceUtils.searchJdkLocations(ws, path, out);
     }
 
     @Override
     public NutsSdkLocation resolveJdkLocation(Path path) {
-        return CorePlatformUtils.resolveJdkLocation(path, ws);
+        return NutsWorkspaceUtils.resolveJdkLocation(ws, path);
     }
 
     @Override

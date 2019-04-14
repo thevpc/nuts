@@ -401,39 +401,34 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--version]] or [[-version]] or [[-v]]
       show version
 
- [[--info]] or [[-f]]
-      show version detailed information (paths and libraries)
-
- [[--update]] or [[-u]]
-       check if a newer version of ==nuts== is available in the current workspace and perform update
-
- [[--check-updates]] or [[-D]]
-       check if a newer version of ==nuts== is available in the current workspace without performing updates
-
- [[--dispose]] or [[-c]]
+ [[--reset]]
        reset (delete) ==nuts== workspace folder and exit
-
- [[--install-companions]] or [[-X]]
-      (re)install companions
-
- [[--install]] {{\<nuts-package\>}}...
- [[-i]] {{\<nuts-package\>}}...
-      install ==nuts== package {{\<nuts-package\>}}
-
- [[--uninstall]] {{\<nuts-package\>}}...
- [[-U]] {{\<nuts-package\>}}...
-      uninstall  ==nuts== package {{\<nuts-package\>}}
-
- [[--exec]] ...
- [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
-      runs command with the given options (it will be considered an option if it 
-      starts with '-')
 
  [[--help]] or [[-?]] or [[-h]]
       show this help and exit
 
  [[--license]]
       show license info
+
+ [[info]]
+      show workspace detailed information (paths and libraries)
+
+ [[install]] {{\<nuts-package\>}}...
+      install ==nuts== package {{\<nuts-package\>}}
+
+ [[uninstall]] {{\<nuts-package\>}}...
+      uninstall  ==nuts== package {{\<nuts-package\>}}
+
+ [[update]]
+       check if a newer version of ==nuts== is available in the current workspace and perform update
+
+ [[check-updates]]
+       check if a newer version of ==nuts== is available in the current workspace without performing updates
+
+ [[--exec]] ...
+ [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
+      runs command with the given options (it will be considered an option if it 
+      starts with '-')
 
  [[--!...]] or [[-!...]] 
       option will be discarded (and all of its parameters)
@@ -446,6 +441,6 @@ Java         Version: ${java.version} (${java.vm.name})
             A minimal ('minimal' archetype) workspace will be created 
             and saved if no workspace was resolved. The workspace handles local 
             packages only (because of 'minimal' archetype)
-       ==nuts== [[--update]] [[--workspace]] /home/me/some-folder
+       ==nuts== [[--workspace]] /home/me/some-folder  [[update]]
             updates ==nuts== to the very latest version using workspace location
             /home/me/some-folder.

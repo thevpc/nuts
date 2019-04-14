@@ -53,11 +53,11 @@ public interface NutsWorkspace extends NutsComponent<Object> {
     //COMMANDS
     NutsFindCommand find();
 
+    NutsFetchCommand fetch();
+
     NutsDeployCommand deploy();
 
     NutsExecCommand exec();
-
-    NutsFetchCommand fetch();
 
     NutsInstallCommand install();
 
@@ -107,8 +107,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     ///////////////////// factory
     NutsSession createSession();
-
-    NutsClassLoaderBuilder createClassLoaderBuilder();
 
     NutsDescriptorBuilder createDescriptorBuilder();
 

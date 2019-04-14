@@ -6,7 +6,6 @@
 package net.vpc.app.nuts;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -16,21 +15,15 @@ public interface NutsInstallCommand {
 
     NutsInstallCommand id(NutsId id);
 
-    NutsInstallCommand setId(NutsId id);
-
     NutsInstallCommand id(String id);
 
-    NutsInstallCommand setId(String id);
+    NutsInstallCommand removeId(NutsId id);
 
-    NutsInstallCommand addArg(String arg);
+    NutsInstallCommand removeId(String id);
 
-    NutsInstallCommand addArgs(Collection<String> args);
+    NutsInstallCommand ids(NutsId... ids);
 
-    NutsInstallCommand args(Collection<String> args);
-
-    NutsInstallCommand addArgs(String... args);
-
-    NutsInstallCommand args(String... args);
+    NutsInstallCommand ids(String... ids);
 
     NutsInstallCommand addId(NutsId id);
 
@@ -40,43 +33,59 @@ public interface NutsInstallCommand {
 
     NutsInstallCommand addIds(String... ids);
 
-    NutsInstallCommand ids(NutsId... ids);
-
-    NutsInstallCommand ids(String... ids);
+    NutsInstallCommand clearIds();
 
     NutsId[] getIds();
 
+    NutsInstallCommand arg(String arg);
+
+    NutsInstallCommand addArg(String arg);
+
+    NutsInstallCommand args(Collection<String> args);
+
+    NutsInstallCommand addArgs(Collection<String> args);
+
+    NutsInstallCommand addArgs(String... args);
+
+    NutsInstallCommand args(String... args);
+
+    NutsInstallCommand clearArgs();
+
     String[] getArgs();
-
-    NutsSession getSession();
-
-    NutsDefinition[] install();
-
-    boolean isAsk();
-
-    boolean isForce();
-
-    boolean isTrace();
-
-    boolean isDefaultVersion();
-
-    NutsInstallCommand setArgs(List<String> args);
-
-    NutsInstallCommand setArgs(String... args);
-
-    NutsInstallCommand setAsk(boolean ask);
-
-    NutsInstallCommand setForce(boolean forceInstall);
 
     NutsInstallCommand setSession(NutsSession session);
 
     NutsInstallCommand session(NutsSession session);
 
-    NutsInstallCommand setTrace(boolean trace);
+    NutsSession getSession();
+
+    NutsInstallCommand ask();
+
+    NutsInstallCommand ask(boolean ask);
+
+    NutsInstallCommand setAsk(boolean ask);
+
+    boolean isAsk();
+
+    NutsInstallCommand force();
+
+    NutsInstallCommand force(boolean forceInstall);
+
+    NutsInstallCommand setForce(boolean forceInstall);
+
+    boolean isForce();
+
+    NutsInstallCommand trace();
 
     NutsInstallCommand trace(boolean trace);
 
-    NutsInstallCommand trace();
+    NutsInstallCommand setTrace(boolean trace);
+
+    boolean isTrace();
+
+    NutsInstallCommand defaultVersion();
+
+    NutsInstallCommand defaultVersion(boolean defaultVersion);
 
     /**
      *
@@ -86,16 +95,21 @@ public interface NutsInstallCommand {
      */
     NutsInstallCommand setDefaultVersion(boolean defaultVersion);
 
-    NutsInstallCommand defaultVersion(boolean defaultVersion);
+    boolean isDefaultVersion();
 
-    NutsInstallCommand defaultVersion();
+    boolean isIncludeCompanions();
 
-    boolean isIncludecompanions();
-
-    NutsInstallCommand setIncludeCompanions(boolean includecompanions);
+    NutsInstallCommand includeCompanions();
 
     NutsInstallCommand includeCompanions(boolean includecompanions);
 
-    NutsInstallCommand includecompanions();
+    NutsInstallCommand setIncludeCompanions(boolean includecompanions);
 
+    NutsInstallCommand parseOptions(String... args);
+
+    NutsInstallCommand install();
+
+    int getInstallResultCount();
+
+    NutsDefinition[] getInstallResult();
 }

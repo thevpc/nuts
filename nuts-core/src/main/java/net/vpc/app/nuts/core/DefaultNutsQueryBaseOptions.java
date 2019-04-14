@@ -99,6 +99,11 @@ public class DefaultNutsQueryBaseOptions<T> {
     }
 
     //@Override
+    public T fetchStratery(NutsFetchStrategy mode) {
+        return setFetchStratery(mode);
+    }
+    
+    //@Override
     public T setFetchStratery(NutsFetchStrategy mode) {
         this.mode = mode;
         return (T) this;
@@ -154,6 +159,10 @@ public class DefaultNutsQueryBaseOptions<T> {
         return indexed == null || indexed;
     }
 
+    public T indexed(Boolean indexEnabled) {
+        return setIndexed(indexEnabled);
+    }
+    
     //@Override
     public T setIndexed(Boolean indexEnabled) {
         this.indexed = indexEnabled;
@@ -175,6 +184,15 @@ public class DefaultNutsQueryBaseOptions<T> {
         return acceptOptional;
     }
 
+    public T acceptOptional() {
+        return acceptOptional(true);
+    }
+
+    //@Override
+    public T acceptOptional(Boolean acceptOptional) {
+        return setAcceptOptional(acceptOptional);
+    }
+
     //@Override
     public T setAcceptOptional(Boolean acceptOptional) {
         this.acceptOptional = acceptOptional;
@@ -182,6 +200,15 @@ public class DefaultNutsQueryBaseOptions<T> {
     }
 
     //@Override
+    public T includeOptional() {
+        return includeOptional(true);
+    }
+
+    //@Override
+    public T includeOptional(boolean includeOptional) {
+        return setAcceptOptional(includeOptional ? null : false);
+    }
+
     public T setIncludeOptional(boolean includeOptional) {
         return setAcceptOptional(includeOptional ? null : false);
     }
@@ -203,9 +230,24 @@ public class DefaultNutsQueryBaseOptions<T> {
     }
 
     //@Override
-    public T addScope(Collection<NutsDependencyScope> scope) {
+    public T scopes(Collection<NutsDependencyScope> scope) {
+        return DefaultNutsQueryBaseOptions.this.addScopes(scope);
+    }
+
+    //@Override
+    public T clearScopes() {
+        this.scope = EnumSet.noneOf(NutsDependencyScope.class);
+        return (T) this;
+    }
+
+    //@Override
+    public T addScopes(Collection<NutsDependencyScope> scope) {
         this.scope = NutsDependencyScope.add(this.scope, scope);
         return (T) this;
+    }
+
+    public T scope(NutsDependencyScope scope) {
+        return addScope(scope);
     }
 
     //@Override
@@ -214,14 +256,18 @@ public class DefaultNutsQueryBaseOptions<T> {
         return (T) this;
     }
 
+    public T scopes(NutsDependencyScope... scopes) {
+        return addScopes(scopes);
+    }
+
     //@Override
-    public T addScope(NutsDependencyScope... scope) {
+    public T addScopes(NutsDependencyScope... scope) {
         this.scope = NutsDependencyScope.add(this.scope, scope);
         return (T) this;
     }
 
     //@Override
-    public T removeScope(Collection<NutsDependencyScope> scope) {
+    public T removeScopes(Collection<NutsDependencyScope> scope) {
         this.scope = NutsDependencyScope.remove(this.scope, scope);
         return (T) this;
     }

@@ -596,79 +596,10 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--info":
-                    case "-f": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.INFO);
-                            applicationArguments.addAll(cmdArgList.removeAll());
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--update":
-                    case "-u": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.UPDATE);
-                            applicationArguments.addAll(cmdArgList.removeAll());
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--cleanup":
-                    case "-c": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.CLEANUP);
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
                     case "--reset":
                     case "-r": {
                         if (enabled) {
                             o.setBootCommand(NutsBootCommand.RESET);
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--install-companions":
-                    case "-X": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.INSTALL_COMPANION_TOOLS);
-                            applicationArguments.addAll(cmdArgList.removeAll());
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--check-updates":
-                    case "-D": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.CHECK_UPDATES);
-                            applicationArguments.addAll(cmdArgList.removeAll());
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--install":
-                    case "-i": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.INSTALL);
-                            applicationArguments.addAll(cmdArgList.removeAll());
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--uninstall":
-                    case "-U": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.UNINSTALL);
-                            applicationArguments.addAll(cmdArgList.removeAll());
                         } else {
                             cmdArgList.removeAll();
                         }
