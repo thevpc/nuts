@@ -18,7 +18,7 @@ public class NdiMain extends NutsApplication {
     public SystemNdi createNdi(NutsApplicationContext appContext) {
         SystemNdi ndi = null;
         NutsOsFamily fam = appContext.getWorkspace().config().getPlatformOsFamily();
-        if (fam==NutsOsFamily.LINUX || fam==NutsOsFamily.UNIX) {
+        if (fam == NutsOsFamily.LINUX || fam == NutsOsFamily.UNIX) {
             ndi = new LinuxNdi(appContext);
         }
         return ndi;
@@ -37,7 +37,7 @@ public class NdiMain extends NutsApplication {
                     throw new NutsExecutionException("Platform not supported : " + appContext.getWorkspace().config().getPlatformOs(), 2);
                 }
                 boolean force = false;
-                boolean silent = false;
+                boolean trace = true;
                 boolean forceAll = false;
                 boolean fetch = false;
                 boolean run = false;
@@ -51,13 +51,13 @@ public class NdiMain extends NutsApplication {
                         if (forceAll && !force) {
                             force = true;
                         }
-                    } else if ((a = cmd.readBooleanOption("-s", "--silent")) != null) {
-                        silent = a.getBooleanValue();
+                    } else if ((a = cmd.readBooleanOption("--trace")) != null) {
+                        trace = a.getBooleanValue();
                     } else if ((a = cmd.readBooleanOption("-t", "--fetch")) != null) {
                         fetch = a.getBooleanValue();
                     } else if ((a = cmd.readBooleanOption("-x", "--external")) != null) {
                         if (a.getBooleanValue()) {
-                            execType = NutsExecutionType.EXTERNAL;
+                            execType = NutsExecutionType.SPAWN;
                         }
                     } else if ((a = cmd.readBooleanOption("-m", "--embedded")) != null) {
                         if (a.getBooleanValue()) {
@@ -65,7 +65,7 @@ public class NdiMain extends NutsApplication {
                         }
                     } else if ((a = cmd.readBooleanOption("-n", "--native")) != null) {
                         if (a.getBooleanValue()) {
-                            execType = NutsExecutionType.NATIVE;
+                            execType = NutsExecutionType.SYSCALL;
                         }
                     } else if ((a = cmd.readStringOption("-X", "--exec-options")) != null) {
                         executorOptions.add(a.getStringValue());
@@ -74,21 +74,21 @@ public class NdiMain extends NutsApplication {
                     } else {
                         run = true;
                         Argument aa = null;
-                        try {
-                            aa = cmd.read();
-                            if (cmd.isExecMode()) {
+                        aa = cmd.read();
+                        if (cmd.isExecMode()) {
+                            try {
                                 ndi.createNutsScript(
                                         new NdiScriptOptions().setId(aa.getStringExpression())
                                                 .setForce(force)
                                                 .setForceBoot(forceAll)
                                                 .setFetch(fetch)
-                                                .setSilent(silent)
+                                                .setTrace(trace)
                                                 .setExecType(execType)
                                                 .setExecutorOptions(executorOptions)
                                 );
+                            } catch (IOException e) {
+                                throw new NutsExecutionException("Unable to run script " + aa + " : " + e.toString(), e);
                             }
-                        } catch (IOException e) {
-                            throw new NutsExecutionException("Unable to run script " + aa + " : " + e.toString(), e, 2);
                         }
                     }
                 }
@@ -97,9 +97,9 @@ public class NdiMain extends NutsApplication {
                     throw new NutsExecutionException("Missing arguments", 1);
                 }
                 try {
-                    ndi.configurePath(force, silent);
+                    ndi.configurePath(force, trace);
                 } catch (IOException e) {
-                    throw new NutsExecutionException("Unable to configure path : " + e.toString(), e, 2);
+                    throw new NutsExecutionException("Unable to configure path : " + e.toString(), e);
                 }
             } else {
                 cmd.unexpectedArgument("ndi");
@@ -112,12 +112,12 @@ public class NdiMain extends NutsApplication {
         CommandLine cmd = new CommandLine(applicationContext);
         Argument a;
         boolean force = false;
-        boolean silent = false;
+        boolean trace = true;
         while (cmd.hasNext()) {
             if ((a = cmd.readBooleanOption("-f", "--force")) != null) {
                 force = a.getBooleanValue();
-            } else if ((a = cmd.readBooleanOption("-s", "--silent")) != null) {
-                silent = a.getBooleanValue();
+            } else if ((a = cmd.readBooleanOption("--trace")) != null) {
+                trace = a.getBooleanValue();
             } else {
                 cmd.unexpectedArgument("ndi --nuts-execution-mode=on-install");
             }
@@ -125,7 +125,7 @@ public class NdiMain extends NutsApplication {
         SystemNdi ndi = createNdi(applicationContext);
         if (ndi != null) {
             try {
-                ndi.configurePath(force, silent);
+                ndi.configurePath(force, trace);
             } catch (IOException e) {
                 applicationContext.out().println("ndi: install failed : " + e.toString());
                 throw new NutsExecutionException("ndi: install failed : " + e.toString(), 1);
@@ -137,8 +137,8 @@ public class NdiMain extends NutsApplication {
                                     .setForce(force)
                                     .setForceBoot(false)
                                     .setFetch(false)
-                                    .setSilent(silent)
-                                    .setExecType(NutsExecutionType.EXTERNAL)
+                                    .setTrace(trace)
+                                    .setExecType(NutsExecutionType.SPAWN)
                                     .setExecutorOptions(new ArrayList<>()));
                 } catch (IOException e) {
                     applicationContext.out().println("ndi: " + s + "install failed : " + e.toString());

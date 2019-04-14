@@ -10,5 +10,14 @@ package net.vpc.app.nuts;
  * @author vpc
  */
 public enum NutsExecutableType {
-    INTERNAL, COMMAND, COMPONENT, NATIVE
+    /**
+     * internal command is one of : version, info, install, uninstall,check-updates,license, help, exec
+     */
+    INTERNAL, 
+    /**
+     * workspace configured command using {@link NutsWorkspaceConfigManager#}
+     */
+    ALIAS, 
+    COMPONENT, 
+    SYSTEM
 }

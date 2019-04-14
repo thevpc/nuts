@@ -816,6 +816,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         session = NutsWorkspaceUtils.validateSession(this, session);
         boolean reinstall = def.getInstallation().isInstalled();
         PrintStream out = session.getTerminal().getFormattedOut();
+        out.flush();
         if (installerComponent != null) {
             if (def.getPath() != null) {
                 NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], session, true, null);
@@ -830,7 +831,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                         out.printf(formatter().createIdFormat().toString(def.getId()) + " @@Failed@@ to install : %s.\n", ex.toString());
                     }
                     getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
-                    throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex, 1);
+                    throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex);
                 }
                 Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS);
                 ((DefaultNutsDefinition) def).setInstallation(new NutsInstallInfo(true, installFolder));
@@ -862,7 +863,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         if (updateDefaultVersion) {
             getInstalledRepository().setDefaultVersion(def.getId());
             if (trace) {
-                out.printf("Set default version as ==%s==...\n", formatter().createIdFormat().toString(def.getId()));
+                out.printf("Set default version as "+formatter().createIdFormat().toString(def.getId())+"...\n");
             }
         }
     }
@@ -984,7 +985,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             }
             for (NutsWorkspaceCommandFactoryConfig commandFactory : configManager.getCommandFactories()) {
                 try {
-                    config().installCommandFactory(commandFactory, session);
+                    config().addCommandFactory(commandFactory, session);
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "Unable to instantiate Command Factory {0}", commandFactory);
                 }
@@ -1090,7 +1091,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
     @Override
     public String getHelpText() {
-        return this.io().getResourceString("/net/vpc/app/nuts/nuts-help.help", getClass(), "no help found");
+       return this.io().getResourceString("/net/vpc/app/nuts/nuts-help.help", getClass(), "no help found");
     }
 
     @Override

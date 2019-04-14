@@ -58,17 +58,17 @@ public class ExecCommand extends AbstractNutsCommand {
             if (!command) {
                 if (context.configure(cmdLine)) {
                     //
-                } else if ((a = cmdLine.readBooleanOption("-n", "--native")) != null) {
+                } else if ((a = cmdLine.readBooleanOption("-n", "--native","--syscall")) != null) {
                     if (a.getBooleanValue()) {
-                        executionType = NutsExecutionType.NATIVE;
+                        executionType = NutsExecutionType.SYSCALL;
                     }
                 } else if ((a = cmdLine.readBooleanOption("-m", "--embedded")) != null) {
                     if (a.getBooleanValue()) {
                         executionType = NutsExecutionType.EMBEDDED;
                     }
-                } else if ((a = cmdLine.readBooleanOption("-x", "--external")) != null) {
+                } else if ((a = cmdLine.readBooleanOption("-x", "--external","--spawn")) != null) {
                     if (a.getBooleanValue()) {
-                        executionType = NutsExecutionType.EXTERNAL;
+                        executionType = NutsExecutionType.SPAWN;
                     }
                 } else if (cmdLine.isOption()) {
                     execOptions.add(cmdLine.read().getStringExpression());

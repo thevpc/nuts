@@ -98,7 +98,7 @@ public class NutsWorkspaceUtils {
         String type = null;
         String jdkVersion = null;
         try {
-            NutsExecCommand b = ws.exec().setExecutionType(NutsExecutionType.NATIVE).command(javaExePath.toString(), "-version").redirectErrorStream().grabOutputString().exec();
+            NutsExecCommand b = ws.exec().syscall().command(javaExePath.toString(), "-version").redirectErrorStream().grabOutputString().exec();
             if (b.getResult() == 0) {
                 String s = b.getOutputString();
                 if (s.length() > 0) {

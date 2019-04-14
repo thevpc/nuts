@@ -9,9 +9,9 @@ import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsExecutionEntry;
+import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -19,14 +19,18 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  * @author vpc
  */
 class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
-    
+
     @Override
     public void install(NutsExecutionContext executionContext) {
         NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
         NutsId id = executionContext.getNutsDefinition().getId();
         NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
         if (descriptor.isNutsApplication()) {
-            int r = executionContext.getWorkspace().exec().command(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install").addExecutorOptions().addCommand(executionContext.getArgs()).exec().failFast().getResult();
+            executionContext.getWorkspace().exec()
+                    //                    .executionType(NutsExecutionType.EMBEDDED)
+                    .command(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install")
+                    .addExecutorOptions().addCommand(executionContext.getArgs())
+                    .failFast().exec();
         }
         //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
         //            NutsWorkspaceCommand c = cc.findCommand(id.getName());
@@ -70,5 +74,5 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
     public int getSupportLevel(NutsDefinition criteria) {
         return 0;
     }
-    
+
 }

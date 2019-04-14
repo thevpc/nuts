@@ -61,17 +61,19 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext) {
+    @Override
+    public void exec(NutsExecutionContext executionContext) {
         List<String> args = new ArrayList<>();
         args.add(id.toString());
         args.addAll(Arrays.asList(executionContext.getArgs()));
-        return executionContext.getWorkspace()
+        executionContext.getWorkspace()
                 .exec()
                 .command(args)
                 .session(executionContext.getSession())
                 .env(executionContext.getEnv())
                 .directory(executionContext.getCwd())
-                .exec().getResult()
+                .failFast(true)
+                .exec()
         ;
     }
 

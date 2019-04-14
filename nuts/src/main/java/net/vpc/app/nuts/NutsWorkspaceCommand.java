@@ -37,5 +37,5 @@ public interface NutsWorkspaceCommand {
 
     String getName();
 
-    int exec(String[] args, NutsCommandExecOptions options, NutsSession session);
+    void exec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
 }

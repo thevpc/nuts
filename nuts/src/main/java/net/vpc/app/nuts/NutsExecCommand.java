@@ -32,7 +32,6 @@ package net.vpc.app.nuts;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -164,6 +163,8 @@ public interface NutsExecCommand {
     NutsExecCommand setExecutionType(NutsExecutionType executionType);
 
     NutsExecCommand executionType(NutsExecutionType executionType);
+    
+    NutsExecCommand embedded();
 
     public NutsExecCommand copyFrom(NutsExecCommand other);
     
@@ -182,5 +183,11 @@ public interface NutsExecCommand {
     String[] getExecutorOptions();
 
     boolean isAsk();
+    
+    NutsExecutionException getResultException();
+
+    NutsExecCommand syscall();
+
+    NutsExecCommand spawn();
 
 }

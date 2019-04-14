@@ -72,14 +72,14 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     }
 
     @Override
-    public int exec(String[] args, NutsCommandExecOptions options, NutsSession session) {
+    public void exec(String[] args, NutsCommandExecOptions options, NutsSession session) {
         String[] executorOptions = options.getExecutorOptions();
         executorOptions = CoreCommonUtils.concatArrays(this.getExecutorOptions(), executorOptions);
         List<String> r = new ArrayList<>(Arrays.asList(this.getCommand()));
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
 
-        return ws.exec()
+        ws.exec()
                 .command(args)
                 .executorOptions(executorOptions)
                 .directory(options.getDirectory())
@@ -87,7 +87,8 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
                 .session(session)
                 .env(options.getEnv())
                 .executionType(options.getExecutionType())
-                .getResult();
+                .failFast()
+                .exec();
 
         //load all needed dependencies!
 //        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());

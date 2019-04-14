@@ -505,16 +505,19 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--external":
-                    case "-x": {
+                    case "--spawn":
+                    case "-x": 
+                    {
                         if (enabled) {
-                            o.setExecutionType(NutsExecutionType.EXTERNAL);
+                            o.setExecutionType(NutsExecutionType.SPAWN);
                         }
                         break;
                     }
                     case "--native":
+                    case "--syscall":
                     case "-n": {
                         if (enabled) {
-                            o.setExecutionType(NutsExecutionType.NATIVE);
+                            o.setExecutionType(NutsExecutionType.SYSCALL);
                         }
                         break;
                     }
@@ -627,15 +630,6 @@ public final class NutsArgumentsParser {
                     case "-h": {
                         if (enabled) {
                             o.setBootCommand(NutsBootCommand.HELP);
-                            applicationArguments.addAll(cmdArgList.removeAll());
-                        } else {
-                            cmdArgList.removeAll();
-                        }
-                        break;
-                    }
-                    case "--license": {
-                        if (enabled) {
-                            o.setBootCommand(NutsBootCommand.LICENSE);
                             applicationArguments.addAll(cmdArgList.removeAll());
                         } else {
                             cmdArgList.removeAll();

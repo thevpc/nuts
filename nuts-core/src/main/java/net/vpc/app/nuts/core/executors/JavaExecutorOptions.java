@@ -1,7 +1,6 @@
 package net.vpc.app.nuts.core.executors;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 import java.io.PrintStream;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 
 public class JavaExecutorOptions {
     private String javaVersion = null;//runnerProps.getProperty("java.version");

@@ -79,12 +79,6 @@ public interface NutsWorkspace extends NutsComponent<Object> {
 
     NutsSessionTerminal getTerminal();
 
-    String getWelcomeText();
-
-    String getHelpText();
-
-    String getLicenseText();
-
     ///////////////////// sub system
     NutsWorkspaceExtensionManager extensions();
 

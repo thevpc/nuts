@@ -55,19 +55,18 @@ public class UpdateCommand extends AbstractNutsCommand {
         List<String> ids = new ArrayList<>();
         Argument a;
         boolean apply = true;
-        boolean extensions = false;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
                 //
             } else if (cmdLine.readAllOnce("--dry", "-t")) {
                 apply = false;
             } else if (cmdLine.readAllOnce("--force", "-f")) {
-                uoptions.setForce(true);
-                uoptions.setEnableInstall(true);
+                uoptions.force();
+                uoptions.enableInstall();
             } else if (cmdLine.readAllOnce("--extensions")) {
-                extensions = true;
+                uoptions.extensions();
             } else if (cmdLine.readAllOnce("--set-version", "-v")) {
-                version = cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getStringExpression();
+                uoptions.setApiVersion(cmdLine.readRequiredNonOption(new ValueNonOption("Version")).getStringExpression());
             } else {
                 String id = cmdLine.readRequiredNonOption(new NutsIdNonOption("NutsId", context.getWorkspace())).getStringExpression();
                 ids.add(id);
@@ -76,11 +75,9 @@ public class UpdateCommand extends AbstractNutsCommand {
         if (cmdLine.isExecMode()) {
             if (ids.isEmpty()) {
                 //should update nuts
-                if (context.getWorkspace().update()
-                        .setUpdateWorkspace(version != null)
+                if (uoptions
                         .setApiVersion(version)
                         .setTrace(uoptions.isTrace())
-                        .setUpdateExtensions(extensions || apply)
                         .setSession(context.getSession())
                         .checkUpdates(apply) == null) {
                     context.out().printf("workspace **upto-date**\n");

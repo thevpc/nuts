@@ -219,7 +219,14 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            return "Quoted{" + "value=" + value + ", start=" + start + ", end=" + end + '}';
+            StringBuilder sb = new StringBuilder("<Q>" + start);
+            sb.append(value);
+            sb.append("<").append(status).append(">");
+            sb.append(end);
+            if (escape) {
+                sb.append("<ESCAPED>");
+            }
+            return sb.toString();
         }
 
         @Override
@@ -314,7 +321,15 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            return "CMD_STATUS{" + "started=" + started + ", start=" + start + ", end=" + end + '}';
+            StringBuilder sb = new StringBuilder("<T>" + start);
+            if (!started) {
+                sb.append("<NEW>");
+            }
+            for (ParseAction parseAction : children) {
+                sb.append(parseAction.toString());
+            }
+            sb.append(end);
+            return sb.toString();
         }
 
         @Override
@@ -431,11 +446,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         return;
                     }
                 }
-                case '\n': 
-                case '\r': 
-                {
+                case '\n':
+                case '\r': {
                     value.append(c);
                     p.applyPop();
+                    p.forceEnding();
                     return;
                 }
                 case '\\': {
@@ -458,7 +473,11 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
 
         @Override
         public String toString() {
-            return "CHAR_STATUS{" + "wasEscape=" + wasEscape + ", value=" + value + '}';
+            StringBuilder sb = new StringBuilder("<P>" + value);
+            if (wasEscape) {
+                sb.append("<EScCAPE>");
+            }
+            return sb.toString();
         }
 
         @Override
@@ -549,6 +568,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             case '\r': {
                 this.applyPush(new PlainParseAction(c));
                 applyPop();
+                forceEnding();
                 break;
             }
             default: {

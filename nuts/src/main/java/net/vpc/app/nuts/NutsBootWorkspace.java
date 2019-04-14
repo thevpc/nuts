@@ -348,14 +348,16 @@ public class NutsBootWorkspace {
         }
     }
 
-    public int run() {
+    public void run() {
         switch (this.getOptions().getBootCommand()) {
             case RESET: {
-                return actionReset(null, getOptions().getApplicationArguments());
+                actionReset(null, getOptions().getApplicationArguments());
+                return;
             }
         }
         if (hasUnsatisfiedRequirements()) {
-            return startNewProcess();
+            startNewProcess();
+            return;
         }
         NutsWorkspace workspace = null;
         try {
@@ -364,11 +366,10 @@ public class NutsBootWorkspace {
             log.log(Level.SEVERE, "Open Workspace Failed", ex);
             switch (this.getOptions().getBootCommand()) {
                 case VERSION:
-                case HELP:
-                case LICENSE: {
+                case HELP: {
                     try {
                         runWorkspaceCommand(null, "Cannot start workspace to run command " + getOptions().getBootCommand() + ". " + ex.getMessage());
-                        return 0;
+                        return;
                     } catch (NutsUserCancelException e) {
                         System.err.println(e.getMessage());
                     } catch (Exception e) {
@@ -378,9 +379,12 @@ public class NutsBootWorkspace {
             }
             throw ex;
         } catch (Throwable ex) {
+            if (ex instanceof NutsExecutionException) {
+                throw ex;
+            }
             int x = 204;
             try {
-                x = runWorkspaceCommand(null, "Cannot start workspace to run command " + getOptions().getBootCommand() + ". Try --clean or --reset to help recovering :" + ex.toString());
+                runWorkspaceCommand(null, "Cannot start workspace to run command " + getOptions().getBootCommand() + ". Try --clean or --reset to help recovering :" + ex.toString());
             } catch (Exception e) {
                 System.err.println(e.toString());
             }
@@ -392,7 +396,7 @@ public class NutsBootWorkspace {
             }
             throw new NutsExecutionException(ex.getMessage(), ex, x);
         }
-        return runWorkspaceCommand(workspace, "Workspace started successfully");
+        runWorkspaceCommand(workspace, "Workspace started successfully");
     }
 
     private static class OpenWorkspaceData {
@@ -1017,7 +1021,7 @@ public class NutsBootWorkspace {
         return currentContextClassLoaderProvider.getContextClassLoader();
     }
 
-    private int runWorkspaceCommand(NutsWorkspace workspace, String message) {
+    private void runWorkspaceCommand(NutsWorkspace workspace, String message) {
         NutsWorkspaceOptions o = this.getOptions();
         if (log.isLoggable(Level.CONFIG)) {
             log.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
@@ -1025,62 +1029,50 @@ public class NutsBootWorkspace {
         switch (o.getBootCommand()) {
             case VERSION: {
                 if (workspace == null) {
-                    System.out.println("nuts-api :" + actualVersion);
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
+                    System.out.println("nuts-version :" + actualVersion);
+                    return;
                 }
-                PrintStream out = workspace.getTerminal().getFormattedOut();
-                workspace
-                        .formatter().createWorkspaceVersionFormat()
-                        .parseOptions(o.getApplicationArguments())
-                        .println(out);
-                return 0;
+                workspace.exec().command("version").command(o.getApplicationArguments()).failFast().exec();
+                return;
             }
 
             case HELP: {
                 if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
+                    System.out.println("Nuts is a package manager mainly for java applications.");
+                    System.err.println("Unluckily it was unable to locate nuts-core component which esessential for its execution.\n");
+                    System.out.println("nuts-version :" + actualVersion);
+                    System.out.println("Try to reinstall nuts (with internet access available) and type 'nuts help' to get a list of global options and commands");
+                    return;
                 }
-                workspace.getTerminal().getFormattedOut().println(workspace.getHelpText());
-                return 0;
-            }
-            case LICENSE: {
-                if (workspace == null) {
-                    fallbackInstallActionUnavailable(message);
-                    return 1;
-                }
-                workspace.getTerminal().getFormattedOut().println(workspace.getLicenseText());
-                return 0;
+                workspace.exec().command("help").command(o.getApplicationArguments()).failFast().exec();
+                return;
             }
             case RESET: {
                 if (log.isLoggable(Level.SEVERE)) {
                     log.log(Level.SEVERE, message);
                 }
                 actionReset(workspace, getOptions().getApplicationArguments());
-                return 0;
+                return;
             }
         }
         if (workspace == null) {
             fallbackInstallActionUnavailable(message);
-            return 1;
+            throw new NutsExecutionException("Workspace boot command not available : " + o.getBootCommand(), 1);
         }
         if (o.getApplicationArguments().length == 0) {
-            workspace.getTerminal().getFormattedOut().println(workspace.getWelcomeText());
-            return 0;
+            workspace.exec().command("version").failFast().exec();
+//            workspace.getTerminal().getFormattedOut().println(workspace.getWelcomeText());
+            return;
         }
-        return workspace.exec()
+        workspace.exec()
                 .command(o.getApplicationArguments())
                 .executorOptions(o.getExecutorOptions())
                 .executionType(o.getExecutionType())
-                .exec()
-                .getResult();
+                .failFast()
+                .exec();
     }
 
-    private int actionReset(NutsWorkspace workspace, String[] readArguments) {
-//        if (!new File(runningBootConfig.getWorkspace()).isDirectory()) {
-//            return 0;
-//        }
+    private void actionReset(NutsWorkspace workspace, String[] readArguments) {
         NutsWorkspaceOptions o = getOptions();
         NutsWorkspaceConfigManager conf = workspace == null ? null : workspace.config();
         boolean force = false;
@@ -1156,8 +1148,6 @@ public class NutsBootWorkspace {
                 + "You are about to delete workspace files.\n"
                 + "Are you sure this is what you want ?";
         NutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, header, workspace != null ? workspace.getTerminal() : null);
-
-        return 0;
     }
 
     private void fallbackInstallActionUnavailable(String message) {

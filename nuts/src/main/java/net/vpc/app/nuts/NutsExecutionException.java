@@ -34,8 +34,13 @@ package net.vpc.app.nuts;
  */
 public class NutsExecutionException extends NutsException {
 
+    public static  final int DEFAULT_ERROR_EXIT_CODE=244;
     private final int exitCode;
 
+    public NutsExecutionException() {
+        this(DEFAULT_ERROR_EXIT_CODE);
+    }
+    
     public NutsExecutionException(int exitCode) {
         super("Execution Failed with error code " + exitCode);
         this.exitCode = exitCode;
@@ -46,6 +51,10 @@ public class NutsExecutionException extends NutsException {
         this.exitCode = exitCode;
     }
 
+    public NutsExecutionException(String message, Throwable cause) {
+        this(message,cause,DEFAULT_ERROR_EXIT_CODE);
+    }
+    
     public NutsExecutionException(String message, Throwable cause, int exitCode) {
         super(message, cause);
         this.exitCode = exitCode;

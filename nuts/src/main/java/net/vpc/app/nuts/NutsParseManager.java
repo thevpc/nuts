@@ -71,7 +71,7 @@ public interface NutsParseManager {
 
     NutsExecutionEntry[] parseExecutionEntries(Path file);
 
-    NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type);
+    NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName);
 
     /**
      * this method removes all {@link NutsFormattedPrintStream}'s special

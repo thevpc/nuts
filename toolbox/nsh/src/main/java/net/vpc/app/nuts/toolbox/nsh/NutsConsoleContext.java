@@ -32,16 +32,10 @@ package net.vpc.app.nuts.toolbox.nsh;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTerminalMode;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.common.commandline.ArgumentCandidate;
 import net.vpc.common.commandline.CommandAutoComplete;
-import net.vpc.common.javashell.AutoCompleteCandidate;
 import net.vpc.common.javashell.ConsoleContext;
-import net.vpc.common.javashell.JavaShell;
 
 import java.io.PrintStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import net.vpc.app.nuts.NutsSessionTerminal;
 
 /**

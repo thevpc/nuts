@@ -24,9 +24,9 @@ public class LinuxNdi implements SystemNdi {
     @Override
     public void createNutsScript(NdiScriptOptions options) throws IOException {
         if ("nuts".equals(options.getId())) {
-            createBootScript(options.isForceBoot() || options.isForce(), false);
+            createBootScript(options.isForceBoot() || options.isForce(), true);
         } else {
-            createBootScript(false, true);
+            createBootScript(false, false);
             NutsId nutsId = appContext.getWorkspace().parser().parseId(options.getId());
             NutsDefinition fetched = null;
             if (nutsId.getVersion().isBlank()) {
@@ -44,7 +44,7 @@ public class LinuxNdi implements SystemNdi {
             Path ff = getScriptFile(n);
             boolean exists = Files.exists(ff);
             if (!options.isForce() && exists) {
-                if (!options.isSilent()) {
+                if (options.isTrace()) {
                     appContext.out().printf("Script already exists ==%s==\n", ff);
                 }
             } else {
@@ -55,27 +55,27 @@ public class LinuxNdi implements SystemNdi {
                 }
                 command.append(" \"").append(nutsId).append("\"");
                 command.append(" \"$@\"");
-                createScript(n, options.isSilent(), nutsId.toString(), idContent, command.toString());
+                createScript(n, options.isTrace(), nutsId.toString(), idContent, command.toString());
             }
         }
     }
 
-    public void createBootScript(boolean force, boolean silent) throws IOException {
+    public void createBootScript(boolean force, boolean trace) throws IOException {
         NutsId b = appContext.getWorkspace().config().getRunningContext().getApiId();
         NutsDefinition f = appContext.getWorkspace().fetch().id(b).setAcceptOptional(false).getResultDefinition();
         Path ff = getScriptFile("nuts");
         if (!force && Files.exists(ff)) {
-            if (!silent) {
+            if (trace) {
                 appContext.out().printf("Script already exists ==%s==\n", ff);
             }
         } else {
             String idContent = "BOOT : " + f.getId().toString();
-            createScript("nuts", silent, f.getId().getLongName(), idContent, "java -jar \"" + f.getPath() + "\" \"$@\"");
+            createScript("nuts", trace, f.getId().getLongName(), idContent, "java -jar \"" + f.getPath() + "\" \"$@\"");
         }
     }
 
     @Override
-    public void configurePath(boolean force, boolean silent) throws IOException {
+    public void configurePath(boolean force, boolean trace) throws IOException {
         File bashrc = new File(System.getProperty("user.home"), ".bashrc");
         boolean found = false;
         boolean ignore = false;
@@ -122,7 +122,7 @@ public class LinuxNdi implements SystemNdi {
                 sb.append(line);
                 sb.append("\n");
             }
-            if (!silent) {
+            if (trace) {
                 appContext.out().printf("Updating ==%s== file to point to workspace ==%s==\n", "~/.bashrc", appContext.getWorkspace().config().getWorkspaceLocation());
                 appContext.out().printf("@@ATTENTION@@ You may need to re-run terminal or issue \\\"==%s==\\\" in your current terminal for new environment to take effect.\n", ". ~/.bashrc");
                 while (true) {
@@ -161,17 +161,17 @@ public class LinuxNdi implements SystemNdi {
         return bin.resolve(name);
     }
 
-    public Path createScript(String name, boolean silent, String desc, String idContent, String content) throws IOException {
+    public Path createScript(String name, boolean trace, String desc, String idContent, String content) throws IOException {
         Path script = getScriptFile(name);
         if (script.getParent() != null) {
             if (!Files.exists(script.getParent())) {
-                if (!silent) {
+                if (trace) {
                     appContext.out().printf("Creating folder ==%s==\n", script.getParent());
                 }
                 Files.createDirectories(script.getParent());
             }
         }
-        if (!silent) {
+        if (trace) {
             if (Files.exists(script)) {
                 appContext.out().printf("Install (with override) script ==%s== for ==%s== at ==%s==\n", script.getFileName(), desc, script);
             } else {

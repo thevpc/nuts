@@ -743,17 +743,17 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation[] searchJdkLocations(PrintStream out) {
+    public NutsSdkLocation[] searchSdkLocations(String sdkType, PrintStream out) {
         return NutsWorkspaceUtils.searchJdkLocations(ws, out);
     }
 
     @Override
-    public NutsSdkLocation[] searchJdkLocations(Path path, PrintStream out) {
+    public NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, PrintStream out) {
         return NutsWorkspaceUtils.searchJdkLocations(ws, path, out);
     }
 
     @Override
-    public NutsSdkLocation resolveJdkLocation(Path path) {
+    public NutsSdkLocation resolveSdkLocation(Path path) {
         return NutsWorkspaceUtils.resolveJdkLocation(ws, path);
     }
 
@@ -780,10 +780,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return CoreSecurityUtils.httpEncrypt(input, passphrase);
     }
 
-    public NutsWorkspaceCommand findEmbeddedCommand(String name) {
-        return null;
-    }
-
+    @Override
     public NutsWorkspaceCommand findCommand(String name) {
         NutsWorkspaceCommandConfig c = defaultCommandFactory.findCommand(name, ws);
         if (c == null) {
@@ -818,7 +815,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public boolean installCommand(NutsWorkspaceCommandConfig command, NutsInstallCommandOptions options, NutsSession session) {
+    public boolean addCommand(NutsWorkspaceCommandConfig command, NutsInstallCommandOptions options, NutsSession session) {
         if (command == null
                 || CoreStringUtils.isBlank(command.getName())
                 || command.getName().contains(" ") || command.getName().contains("/") || command.getName().contains("\\")
@@ -835,7 +832,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (defaultCommandFactory.findCommand(command.getName(), ws) != null) {
             if (options.isForce()) {
                 forced = true;
-                uninstallCommand(command.getName(), new NutsUninstallOptions().setTrace(options.isTrace()), session);
+                removeCommand(command.getName(), new NutsUninstallOptions().setTrace(options.isTrace()), session);
             } else {
                 throw new NutsIllegalArgumentException("Command already exists " + command.getName());
             }
@@ -849,7 +846,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public boolean uninstallCommand(String name, NutsUninstallOptions options, NutsSession session) {
+    public boolean removeCommand(String name, NutsUninstallOptions options, NutsSession session) {
         if (CoreStringUtils.isBlank(name)) {
             throw new NutsIllegalArgumentException("Invalid command " + (name == null ? "<NULL>" : name));
         }
@@ -885,7 +882,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactoryConfig, NutsSession session) {
+    public void addCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactoryConfig, NutsSession session) {
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
             throw new NutsIllegalArgumentException("Invalid WorkspaceCommandFactory " + commandFactoryConfig);
         }
@@ -931,7 +928,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public boolean uninstallCommandFactory(String factoryId, NutsSession session) {
+    public boolean removeCommandFactory(String factoryId, NutsSession session) {
         if (factoryId == null || factoryId.isEmpty()) {
             throw new NutsIllegalArgumentException("Invalid WorkspaceCommandFactory " + factoryId);
         }

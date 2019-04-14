@@ -31,9 +31,11 @@ public class SimpleClassStream {
     private static final int FLAG_METHOD_HANDLE = 15;
     private static final int FLAG_METHOD_TYPE = 16;
     private static final int FLAG_INVOKE_DYNAMIC = 18;
+    private static final int FLAG_MODULE = 19;
+    private static final int FLAG_PACKAGE = 20;
     private DataInputStream stream;
     private Visitor visitor;
-    private Map<Integer, Constant> poolEntries = new HashMap<Integer, Constant>();
+    private Map<Integer, Constant> constants = new HashMap<Integer, Constant>();
 
     public SimpleClassStream(InputStream stream) throws IOException {
         this(stream, null);
@@ -63,7 +65,7 @@ public class SimpleClassStream {
         int thisClassIndex = stream.readUnsignedShort();
         String thisClass = SimpleClassStream.this.getConstant(thisClassIndex).asString();
         int superClassIndex = stream.readUnsignedShort();
-        String superClass = SimpleClassStream.this.getConstant(superClassIndex).asString();
+        String superClass = superClassIndex == 0 ? null : SimpleClassStream.this.getConstant(superClassIndex).asString();
 
         int interfacesCount = stream.readUnsignedShort();
         String[] interfaces = new String[interfacesCount];
@@ -174,41 +176,6 @@ public class SimpleClassStream {
 
     }
 
-    public class VerificationTypeInfo {
-
-        int type;
-        int offset;
-        Constant classConstant;
-
-        public VerificationTypeInfo() throws IOException {
-            type = stream.readUnsignedByte();
-            switch (type) {
-                //
-                case 0:
-                case 1:
-                case 2:
-                case 4:
-                case 3:
-                case 5:
-                case 6:
-                    break;
-                case 7: {
-                    int index = stream.readUnsignedShort();
-                    this.classConstant = getConstant(index);
-                    break;
-                }
-                case 8: {
-                    this.offset = stream.readUnsignedShort();
-                    break;
-                }
-                default: {
-                    throw new IOException("Unexpect : " + type);
-                }
-            }
-        }
-
-    }
-
     public class ClassAttribute {
 
         public ClassAttribute() throws IOException {
@@ -227,8 +194,6 @@ public class SimpleClassStream {
         int tag;
         int valKind;
         Constant valName;
-//        Constant valNameAndType;
-//        Constant valText;
         Constant valRef;
         int valInt;
         float valFloat;
@@ -244,10 +209,12 @@ public class SimpleClassStream {
             tag = stream.readUnsignedByte();
             switch (tag) {
                 case FLAG_UTF: {
+                    
                     int length = stream.readUnsignedShort();
                     byte[] bytes = new byte[length];
-                    stream.read(bytes, 0, length);
+                    stream.readFully(bytes);
                     this.valString = new String(bytes, "UTF-8");
+//                    this.valString = stream.readUTF();//new String(bytes, "UTF-8");
                     break;
                 }
                 case FLAG_INT: {
@@ -293,8 +260,8 @@ public class SimpleClassStream {
                     break;
                 }
                 case FLAG_METHOD_HANDLE: {
-                    this.valKind = stream.readByte();
-                    if(this.valKind<1 || this.valKind>9){
+                    this.valKind = stream.readUnsignedByte();
+                    if (this.valKind < 1 || this.valKind > 9) {
                         throw new IllegalArgumentException("Unsupported");
                     }
                     this.valRef = getConstant(stream.readUnsignedShort(), true);
@@ -309,9 +276,18 @@ public class SimpleClassStream {
                     this.valRef = getConstant(stream.readUnsignedShort(), true);
                     break;
                 }
+                case FLAG_MODULE: {
+                    this.valName = getConstant(stream.readUnsignedShort(), true);
+                    break;
+                }
+                case FLAG_PACKAGE: {
+                    this.valName = getConstant(stream.readUnsignedShort(), true);
+                    break;
+                }
                 default:
                     throw new IOException("Unknown constant tag: " + tag);
             }
+//            System.out.println("READ CONSTANT " + this);
         }
 
         public String asString() {
@@ -393,6 +369,14 @@ public class SimpleClassStream {
                     sb.append("NAME_AND_TYPE, ");
                     sb.append(valName).append(" ").append(valRef);
                     break;
+                case FLAG_MODULE:
+                    sb.append("MODULE, ");
+                    sb.append(valName);
+                    break;
+                case FLAG_PACKAGE:
+                    sb.append("PACKAGE, ");
+                    sb.append(valName);
+                    break;
             }
             sb.append('}');
             return sb.toString();
@@ -403,20 +387,20 @@ public class SimpleClassStream {
     public Constant getConstant(int index) throws IOException {
         Constant e = getConstant(index, false);
         if (e == null) {
-            throw new IllegalArgumentException("Not Found");
+            throw new IllegalArgumentException("Not Found Constant of index " + index);
         }
         return e;
     }
 
     public Constant getConstant(int index, boolean createNew) throws IOException {
-        Constant entry = this.poolEntries.get(index);
-        if (entry == null) {
+        Constant cst = this.constants.get(index);
+        if (cst == null) {
             if (createNew) {
-                entry = new Constant(index);
-                this.poolEntries.put(index, entry);
+                cst = new Constant(index);
+                this.constants.put(index, cst);
             }
         }
-        return entry;
+        return cst;
     }
 
     ////////////////////////////
@@ -435,14 +419,14 @@ public class SimpleClassStream {
 
     public void visitField(int accessFlags, String name, String descriptor, FieldAttribute[] attributes) {
         if (visitor != null) {
-            visitor.visitField(accessFlags, name, descriptor, attributes);
+            visitor.visitField(accessFlags, name, descriptor);
         }
 
     }
 
     public void visitMethod(int accessFlags, String name, String descriptor, MethodAttribute[] attributes) {
         if (visitor != null) {
-            visitor.visitMethod(accessFlags, name, descriptor, attributes);
+            visitor.visitMethod(accessFlags, name, descriptor);
         }
     }
 
@@ -455,11 +439,11 @@ public class SimpleClassStream {
 
         }
 
-        public default void visitField(int accessFlags, String name, String descriptor, FieldAttribute[] attributes) {
+        public default void visitField(int accessFlags, String name, String descriptor) {
 
         }
 
-        public default void visitMethod(int accessFlags, String name, String descriptor, MethodAttribute[] attributes) {
+        public default void visitMethod(int accessFlags, String name, String descriptor) {
 
         }
     }

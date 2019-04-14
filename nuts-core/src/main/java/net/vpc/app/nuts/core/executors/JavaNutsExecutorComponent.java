@@ -63,7 +63,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int exec(NutsExecutionContext executionContext) {
+    public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutsMainDef = executionContext.getNutsDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path contentFile = nutsMainDef.getPath();
         JavaExecutorOptions joptions = new JavaExecutorOptions(
@@ -160,10 +160,10 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         }
 
         String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : executionContext.getWorkspace().io().expandPath(joptions.getDir());
-        return CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
+        CoreIOUtils.execAndWait(nutsMainDef, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 args.toArray(new String[0]),
                 osEnv, directory,
-                executionContext.getTerminal(), joptions.isShowCommand(), executionContext.isFailFast()
+                executionContext.getTerminal(), joptions.isShowCommand(), true
         );
 
     }

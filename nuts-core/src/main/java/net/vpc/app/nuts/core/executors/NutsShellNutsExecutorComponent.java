@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 /**
@@ -66,7 +65,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public int exec(NutsExecutionContext executionContext) {
+    public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
         String[] execArgs = executionContext.getExecutorOptions();
         String[] appArgs = executionContext.getArgs();
@@ -95,13 +94,14 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
         app.addAll(Arrays.asList(appArgs));
 
         File directory = CoreStringUtils.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
-        return executionContext.getWorkspace()
+        executionContext.getWorkspace()
                 .exec()
                 .command(app)
                 .session(executionContext.getSession())
                 .env(executionContext.getEnv())
                 .directory(directory==null?null:directory.getPath())
-                .exec().getResult();
+                .failFast()
+                .exec();
     }
 
 }

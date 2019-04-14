@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
         <action>
-            <actionName>run</actionName>
-            <packagings>
-                <packaging>jar</packaging>
-            </packagings>
-            <goals>
-                <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
-            </goals>
-            <properties>
-                <exec.args>--hold -e java -classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
-                <exec.executable>konsole</exec.executable>
-                
-                
-            </properties>
-        </action>
-        <action>
             <actionName>profile</actionName>
             <packagings>
                 <packaging>jar</packaging>
@@ -26,8 +10,10 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes update --all</exec.args>
                 <exec.executable>java</exec.executable>
+                
+                
             </properties>
         </action>
         <action>
@@ -43,19 +29,35 @@
             </properties>
         </action>
         <action>
+            <actionName>run</actionName>
+            <packagings>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes update --all</exec.args>
+                <exec.executable>java</exec.executable>
+            </properties>
+        </action>
+        <action>
             <actionName>debug</actionName>
             <packagings>
                 <packaging>jar</packaging>
             </packagings>
             <goals>
                 <goal>process-classes</goal>
-                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>--hold -e java -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes --version</exec.args>
-                <exec.executable>konsole</exec.executable>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --init=reset --yes update --all</exec.args>
+                <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
         </action>
+        
+        
         
     </actions>

@@ -319,10 +319,6 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
                         this.setErase(true);
                         break;
                     }
-                    case "--true": {
-                        this.setTrace(false);
-                        break;
-                    }
                     case "--trace": {
                         this.setTrace(true);
                         break;

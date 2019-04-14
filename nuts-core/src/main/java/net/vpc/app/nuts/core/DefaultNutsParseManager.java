@@ -124,7 +124,15 @@ public class DefaultNutsParseManager implements NutsParseManager {
         if (file.getFileName().toString().toLowerCase().endsWith(".jar")) {
             try {
                 try (InputStream in = Files.newInputStream(file)) {
-                    return parseExecutionEntries(in, "java");
+                    return parseExecutionEntries(in, "java", file.toAbsolutePath().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        } else if (file.getFileName().toString().toLowerCase().endsWith(".class")) {
+            try {
+                try (InputStream in = Files.newInputStream(file)) {
+                    return parseExecutionEntries(in, "class", file.toAbsolutePath().normalize().toString());
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -135,9 +143,12 @@ public class DefaultNutsParseManager implements NutsParseManager {
     }
 
     @Override
-    public NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type) {
+    public NutsExecutionEntry[] parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
         if ("java".equals(type)) {
-            return CorePlatformUtils.parseMainClasses(inputStream);
+            return CorePlatformUtils.parseJarExecutionEntries(inputStream, sourceName);
+        } else if ("class".equals(type)) {
+            NutsExecutionEntry u = CorePlatformUtils.parseClassExecutionEntry(inputStream, sourceName);
+            return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
         }
         return new NutsExecutionEntry[0];
     }

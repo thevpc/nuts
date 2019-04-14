@@ -166,9 +166,9 @@ public interface NutsUpdateCommand {
 
     NutsUpdateCommand updateWorkspace(boolean enable);
 
-    NutsUpdateCommand setUpdateWorkspace(boolean enable);
+    NutsUpdateCommand setUpdateApi(boolean enable);
 
-    boolean isUpdateWorkspace();
+    boolean isUpdateApi();
 
     NutsUpdateCommand extensions();
 
@@ -217,5 +217,15 @@ public interface NutsUpdateCommand {
     NutsUpdateCommand clearScopes();
 
     NutsUpdateCommand parseOptions(String... applicationArguments);
+
+    NutsUpdateCommand api();
+
+    NutsUpdateCommand api(boolean enable);
+
+    NutsUpdateCommand runtime(boolean enable);
+
+    NutsUpdateCommand extensions(boolean enable);
+
+    NutsUpdateCommand installed(boolean enable);
 
 }

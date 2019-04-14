@@ -382,17 +382,21 @@ public class FormattedPrintStream extends PrintStream {
             //do nothing!!!
         } else {
             String raw = new String(buf, off, len);
-            parser.take(raw);
-            consumeNodes(false);
+            if (raw.contains("3,0001,\\u001B")) {
+                System.out.println("WHY");
+            }
+            try {
+                parser.take(raw);
+                consumeNodes(false);
+            } catch (Exception ex) {
+                System.out.print("");
+            }
         }
     }
 
     public final void writeRaw(String rawString) {
         byte[] b = rawString.getBytes();
-        String ss = new String(b);
-        if (ss.contains("\\u001B")) {
-            System.out.print("");
-        }
+//        String ss = new String(b);
         super.write(b, 0, b.length);
     }
 
@@ -417,7 +421,11 @@ public class FormattedPrintStream extends PrintStream {
     @Override
     public void flush() {
         super.flush();
-        consumeNodes(true);
+        try {
+            consumeNodes(true);
+        } catch (Exception ex) {
+            System.out.print("");
+        }
     }
 
 }

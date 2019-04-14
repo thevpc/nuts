@@ -61,10 +61,10 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     private boolean trace = true;
     private boolean force = false;
     private boolean enableInstall = true;
-    private boolean updateWorkspace = true;
-    private boolean updateRuntime = true;
-    private boolean updateExtensions = true;
-    private boolean updateInstalled = true;
+    private boolean updateApi = false;
+    private boolean updateRuntime = false;
+    private boolean updateExtensions = false;
+    private boolean updateInstalled = false;
     private boolean includeOptional = false;
     private String forceBootAPIVersion;
     private List<String> args;
@@ -318,10 +318,11 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public boolean isUpdateWorkspace() {
-        if (updateWorkspace) {
+    public boolean isUpdateApi() {
+        if (updateApi || isUpdateNone()) {
             return true;
         }
+
         for (NutsId id : ids) {
             if (id.getSimpleName().equals(NutsConstants.Ids.NUTS_API)) {
                 return true;
@@ -332,15 +333,12 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
 
     @Override
     public boolean isUpdateInstalled() {
-        if (isUpdateWorkspace()) {
-            return true;
-        }
         return updateInstalled;
     }
 
     @Override
     public boolean isUpdateRuntime() {
-        if (isUpdateWorkspace()) {
+        if (isUpdateApi()) {
             return true;
         }
         if (updateRuntime) {
@@ -356,14 +354,14 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public NutsUpdateCommand setUpdateWorkspace(boolean enableMajorUpdates) {
-        this.updateWorkspace = enableMajorUpdates;
+    public NutsUpdateCommand setUpdateApi(boolean enableMajorUpdates) {
+        this.updateApi = enableMajorUpdates;
         return this;
     }
 
     @Override
     public boolean isUpdateExtensions() {
-        if (isUpdateWorkspace()) {
+        if (isUpdateApi()) {
             return true;
         }
         return updateExtensions;
@@ -468,11 +466,12 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         return regulars;
     }
 
+    private boolean isUpdateNone() {
+        return !updateApi && !updateRuntime && !updateExtensions && !updateInstalled && ids.isEmpty();
+    }
+
     @Override
     public NutsUpdateCommand checkUpdates() {
-        if (!isUpdateWorkspace() && !isUpdateRuntime() && !isUpdateInstalled() && !isUpdateExtensions() && ids.isEmpty()) {
-            throw new NutsIllegalArgumentException("Nothing to update");
-        }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsBootContext actualBootConfig = ws.config().getRunningContext();
 //        NutsBootContext jsonBootConfig = getConfigManager().getBootContext();
@@ -485,7 +484,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         if (!CoreStringUtils.isBlank(this.getApiVersion())) {
             bootVersion = this.getApiVersion();
         }
-        if (this.isUpdateWorkspace() || !CoreStringUtils.isBlank(this.getApiVersion())) {
+        if (this.isUpdateApi() || !CoreStringUtils.isBlank(this.getApiVersion())) {
             apiUpdate = checkUpdates(ws.parser().parseId(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session);
             if (apiUpdate != null) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion().getValue();
@@ -538,7 +537,6 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         if (this.isTrace()) {
             if (updates.length == 0) {
                 out.printf("Workspace is [[up-to-date]]. You are running latest version ==%s==\n", actualBootConfig.getRuntimeId().getVersion());
-                return null;
             } else {
                 out.printf("Workspace has ##%s## component%s to update.\n", updates.length, (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
@@ -903,11 +901,13 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         }
     }
 
+    @Override
     public NutsUpdateCommand setUpdateRuntime(boolean updateRuntime) {
         this.updateRuntime = updateRuntime;
         return this;
     }
 
+    @Override
     public NutsUpdateCommand setUpdateInstalled(boolean updateInstalled) {
         this.updateInstalled = updateInstalled;
         return this;
@@ -915,26 +915,50 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
 
     @Override
     public NutsUpdateCommand workspace() {
-        setUpdateWorkspace(true);
-        return this;
-    }
-
-    @Override
-    public NutsUpdateCommand runtime() {
+        setUpdateApi(true);
         setUpdateRuntime(true);
         return this;
     }
 
     @Override
-    public NutsUpdateCommand extensions() {
-        setUpdateExtensions(true);
+    public NutsUpdateCommand api() {
+        return api(true);
+    }
+
+    @Override
+    public NutsUpdateCommand api(boolean enable) {
+        setUpdateApi(enable);
         return this;
     }
 
     @Override
+    public NutsUpdateCommand runtime() {
+        return runtime(true);
+    }
+
+    @Override
+    public NutsUpdateCommand runtime(boolean enable) {
+        return setUpdateRuntime(enable);
+    }
+
+    @Override
+    public NutsUpdateCommand extensions() {
+        return extensions(true);
+    }
+
+    @Override
+    public NutsUpdateCommand extensions(boolean enable) {
+        return setUpdateExtensions(enable);
+    }
+
+    @Override
     public NutsUpdateCommand installed() {
-        setUpdateInstalled(true);
-        return this;
+        return installed(true);
+    }
+
+    @Override
+    public NutsUpdateCommand installed(boolean enable) {
+        return setUpdateInstalled(enable);
     }
 
     @Override
@@ -979,7 +1003,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
 
     @Override
     public NutsUpdateCommand all() {
-        setUpdateWorkspace(true);
+        setUpdateApi(true);
         setUpdateRuntime(true);
         setUpdateExtensions(true);
         setUpdateInstalled(true);
@@ -1086,7 +1110,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
 
     @Override
     public NutsUpdateCommand updateWorkspace(boolean enable) {
-        return setUpdateWorkspace(enable);
+        return setUpdateApi(enable);
     }
 
     @Override
@@ -1130,17 +1154,42 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
                 switch (args[i]) {
+                    case "-a":
                     case "--all": {
                         this.all();
                         break;
                     }
+                    case "-i":
+                    case "--installed": {
+                        this.all();
+                        break;
+                    }
+                    case "-w":
                     case "--ws":
                     case "--workspace": {
                         this.workspace();
                         break;
                     }
+                    case "-r":
+                    case "--runtime": {
+                        this.runtime();
+                        break;
+                    }
+                    case "-A":
+                    case "--api": {
+                        this.runtime();
+                        break;
+                    }
+
+                    case "-e":
                     case "--extensions": {
                         this.extensions();
+                        break;
+                    }
+                    case "-v":
+                    case "--version": {
+                        i++;
+                        this.setApiVersion(args[i]);
                         break;
                     }
                     case "--args": {

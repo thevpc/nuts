@@ -23,6 +23,11 @@ public interface NutsWorkspaceExt {
     static NutsWorkspaceExt of(NutsWorkspace ws) {
         return (NutsWorkspaceExt) ws;
     }
+    String getWelcomeText();
+
+    String getHelpText();
+
+    String getLicenseText();
 
 
     //    @Override

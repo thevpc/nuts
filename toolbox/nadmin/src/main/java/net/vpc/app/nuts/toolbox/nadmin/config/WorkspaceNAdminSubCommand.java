@@ -53,7 +53,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.isExecMode()) {
                 PrintStream out = context.getTerminal().getFormattedOut();
                 if (context.getWorkspace().update()
-                                .setUpdateWorkspace(force)
+                                .api()
                                 .setApiVersion(version)
                                 .setTrace(true)
                                 .setUpdateExtensions(true)

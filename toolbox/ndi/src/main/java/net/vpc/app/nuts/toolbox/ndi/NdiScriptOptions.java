@@ -8,7 +8,7 @@ public class NdiScriptOptions {
     private String id;
     private boolean force;
     private boolean forceBoot;
-    private boolean silent;
+    private boolean trace=true;
     private boolean fetch;
     private NutsExecutionType execType;
     private List<String> executorOptions;
@@ -40,14 +40,16 @@ public class NdiScriptOptions {
         return this;
     }
 
-    public boolean isSilent() {
-        return silent;
+    public boolean isTrace() {
+        return trace;
     }
 
-    public NdiScriptOptions setSilent(boolean silent) {
-        this.silent = silent;
+    public NdiScriptOptions setTrace(boolean trace) {
+        this.trace = trace;
         return this;
     }
+
+    
 
     public boolean isFetch() {
         return fetch;

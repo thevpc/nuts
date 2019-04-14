@@ -319,7 +319,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                         this.setForce(true);
                         break;
                     }
-                    case "--true": {
+                    case "--trace": {
                         this.setTrace(false);
                         break;
                     }
@@ -398,7 +398,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                                 if (log.isLoggable(Level.CONFIG)) {
                                     log.log(Level.FINE, "Installing companion tool : {0}", companionTool);
                                 }
-                                ws.install().id(companionTool).args("--!silent", "--force").setForce(true).setSession(session).install();
+                                ws.install().id(companionTool).args("--trace", "--force").setForce(true).setSession(session).install();
                                 companionCount++;
                             }
 //            e.addCommand(companionTool.getId());

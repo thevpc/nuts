@@ -124,33 +124,38 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void setUsers(NutsUserConfig[] users);
 
-    boolean addSdk(String name, NutsSdkLocation location);
-
-    NutsSdkLocation findSdkByName(String name, String locationName);
-
-    NutsSdkLocation findSdkByPath(String name, Path path);
-
-    NutsSdkLocation findSdkByVersion(String name, String version);
-
-    NutsSdkLocation removeSdk(String name, NutsSdkLocation location);
-
-    NutsSdkLocation findSdk(String name, NutsSdkLocation location);
-
     void setBootConfig(NutsBootConfig other);
-
-    String[] getSdkTypes();
-
-    NutsSdkLocation getSdk(String type, String requestedVersion);
-
-    NutsSdkLocation[] getSdks(String type);
 
     void setLogLevel(Level levek);
 
-    NutsSdkLocation[] searchJdkLocations(PrintStream out);
+    String[] getSdkTypes();
 
-    NutsSdkLocation[] searchJdkLocations(Path path, PrintStream out);
+    boolean addSdk(String sdkType, NutsSdkLocation location);
 
-    NutsSdkLocation resolveJdkLocation(Path path);
+    NutsSdkLocation findSdkByName(String sdkType, String locationName);
+
+    NutsSdkLocation findSdkByPath(String sdkType, Path path);
+
+    NutsSdkLocation findSdkByVersion(String sdkType, String version);
+
+    NutsSdkLocation removeSdk(String sdkType, NutsSdkLocation location);
+
+    NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location);
+
+    NutsSdkLocation getSdk(String sdkType, String requestedVersion);
+
+    NutsSdkLocation[] getSdks(String sdkType);
+
+    NutsSdkLocation[] searchSdkLocations(String sdkType, PrintStream out);
+
+    NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, PrintStream out);
+
+    /**
+     * verify if the path is a valid a
+     * @param path
+     * @return null if not a valid jdk path
+     */
+    NutsSdkLocation resolveSdkLocation(Path path);
 
     NutsWorkspaceOptions getOptions();
 
@@ -158,17 +163,15 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     byte[] encryptString(byte[] input);
 
-    void installCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory, NutsSession session);
+    void addCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory, NutsSession session);
 
-    boolean uninstallCommandFactory(String name, NutsSession session);
+    boolean removeCommandFactory(String name, NutsSession session);
 
-    boolean installCommand(NutsWorkspaceCommandConfig command, NutsInstallCommandOptions options, NutsSession session);
+    boolean addCommand(NutsWorkspaceCommandConfig command, NutsInstallCommandOptions options, NutsSession session);
 
-    boolean uninstallCommand(String name, NutsUninstallOptions options, NutsSession session);
+    boolean removeCommand(String name, NutsUninstallOptions options, NutsSession session);
 
     NutsWorkspaceCommand findCommand(String name);
-
-    NutsWorkspaceCommand findEmbeddedCommand(String name);
 
     List<NutsWorkspaceCommand> findCommands();
 

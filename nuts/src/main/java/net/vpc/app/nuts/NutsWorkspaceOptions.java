@@ -166,7 +166,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private NutsExecutionType executionType = NutsExecutionType.EXTERNAL;
+    private NutsExecutionType executionType = NutsExecutionType.SPAWN;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -535,7 +535,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                         all.add("--embedded");
                         break;
                     }
-                    case NATIVE: {
+                    case SYSCALL: {
                         all.add("--native");
                         break;
                     }
@@ -549,10 +549,6 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
                     }
                     case HELP: {
                         all.add("--help");
-                        break;
-                    }
-                    case LICENSE: {
-                        all.add("--license");
                         break;
                     }
                     case RESET: {

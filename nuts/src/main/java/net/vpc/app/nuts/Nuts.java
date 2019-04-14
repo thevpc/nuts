@@ -52,15 +52,17 @@ public class Nuts {
     }
 
     /**
-     * main method This Main will call System.exit() at completion
+     * main method. 
+     * This Main will call System.exit() at completion
      *
      * @param args main arguments
      */
     public static void main(String[] args) {
         try {
-            System.exit(runWorkspace(args));
+            runWorkspace(args);
+            System.exit(0);
         } catch (Exception ex) {
-            int errorCode = 204;
+            int errorCode = NutsExecutionException.DEFAULT_ERROR_EXIT_CODE;
             boolean showTrace = false;
             for (int i = 0; i < args.length; i++) {
                 if (args[i].startsWith("-")) {
@@ -176,12 +178,11 @@ public class Nuts {
      * call System.exit()
      *
      * @param args boot arguments
-     * @return return code
      */
-    public static int runWorkspace(String... args) {
+    public static void runWorkspace(String... args) throws NutsExecutionException {
         //long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot = new NutsBootWorkspace(args);
-        return boot.run();
+        boot.run();
     }
 
 }

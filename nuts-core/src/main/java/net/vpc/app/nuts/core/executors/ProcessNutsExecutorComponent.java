@@ -60,7 +60,7 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int exec(NutsExecutionContext executionContext) {
+    public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getNutsDefinition();
         Path storeFolder = nutMainFile.getInstallation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorOptions();
@@ -92,10 +92,10 @@ public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
             }
         }
         String directory = CoreStringUtils.isBlank(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
-        return CoreIOUtils.execAndWait(
+        CoreIOUtils.execAndWait(
                 nutMainFile, executionContext.getWorkspace(), executionContext.getSession(), executionContext.getExecutorProperties(),
                 app.toArray(new String[0]),
-                osEnv, directory, executionContext.getTerminal(), showCommand, executionContext.isFailFast()
+                osEnv, directory, executionContext.getTerminal(), showCommand, true
         );
     }
 }

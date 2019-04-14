@@ -6,22 +6,22 @@
     version [[${nuts.workspace-runtime.version}]]
 
 ==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
-and non Java world. It helps discovering, downloading, assembling and executing  remote packages in
+and non Java world. It helps discovering, downloading, assembling and executing  remote components (packages) in
 a very handy way.
-Each managed package  is also called a ==nuts== which  is a **Network Updatable Thing Service** .
-==nuts== packages are  stored  into repositories. A  __repository__  may be local for  storing local ==nuts==
-or remote for accessing  remote packages (good examples  are  remote maven  repositories). It may
-also be a proxy __repository__ so that remote packages are fetched and cached locally to save network
+Each managed component  is also called a ==nuts== which  is a **Network Updatable Thing Service** .
+==nuts== components are  stored  into repositories. A  __repository__  may be local for  storing local ==nuts==
+or remote for accessing  remote components (good examples  are  remote maven  repositories). It may
+also be a proxy __repository__ so that remote components are fetched and cached locally to save network
 resources.
-One manages a set of repositories called a  __workspace__. Managed ==nuts==  (packages)  have descriptors
+One manages a set of repositories called a  __workspace__. Managed ==nuts==  (components)  have descriptors
 that depicts dependencies between them. This dependency is seamlessly handled by  ==nuts==  (tool) to
 resolve and download on-need dependencies over the wire.
 
 ==nuts== is a swiss army knife tool as it acts like (and supports) maven __build tool__ to have an abstract
-view of the the  packages __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
-to __install__ and __uninstall__ packages allowing multiple versions of the very same package to  be installed.
+view of the the  components __dependency__ and like  {{zypper}}/{{apt-get}}/{{pip}}/{{npm}}  __package manager tools__
+to __install__ and __uninstall__ components allowing multiple versions of the very same components to  be installed.
 
-Although ==nuts== focuses on java packages, it still supports, by design, native and all non java packages.
+Although ==nuts== focuses on java components, it still supports, by design, native and all non java components.
 Dependencies are fetched according to the current operating system type, distribution and hardware
 architectures.
 
@@ -34,10 +34,10 @@ With container concepts in mind, ==nuts== is the perfect java application tool f
 and other __container managers__.
 
 @@COMMON VERBS:@@
-deploy, undeploy  : to handle packages (package installers) on the local repositories
-install,uninstall : to install/uninstall a package (using its fetched/deployed installer)
+deploy, undeploy  : to handle components (component installers) on the local repositories
+install,uninstall : to install/uninstall a component (using its fetched/deployed installer)
 fetch,push        : download, upload to remote repositories
-find              : searches for existing/installable packages
+find              : searches for existing/installable components
 
 @@SYNOPSIS:@@
 ==nuts== \[Nuts Options\]... {{\<command\>}} {{\<args\>}} ...
@@ -48,7 +48,7 @@ Boot Runtime Version: ${nuts.workspace-runtime.version}
 Java         Version: ${java.version} (${java.vm.name})
 
 @@NUTS OPTIONS:@@
- Thre are three (3) types of options : 
+ There are three (3) types of options : 
  * [[create   options]]
  * [[create exported options]]
  * [[open options]]
@@ -298,7 +298,7 @@ Java         Version: ${java.version} (${java.vm.name})
       equivalent to 
 
  [[--term-system]] or [[-S]]
-      uses default (system's) terminal (may be or may be not {{formatted}} terminal)
+      uses default (system\'s) terminal (may be or may be not {{formatted}} terminal)
 
  [[--term-formatted]] or [[-L]]
       uses formatted (colorful) terminal (as far as it is possible)
@@ -395,8 +395,8 @@ Java         Version: ${java.version} (${java.vm.name})
 
 @@NUTS COMMAND:@@
 
- [[-]]
-   runs a nut's shell (nsh) command with the remaining arguments
+ [[-]] {{\<args\>}}...
+   runs a nut\'s shell (nsh) command with the remaining arguments
 
  [[--version]] or [[-version]] or [[-v]]
       show version
@@ -410,14 +410,19 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--license]]
       show license info
 
+ [[--exec]] ...
+ [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
+      runs command with the given executor options (it will be considered an option if it 
+      starts with '-'). This is helpful to issue JVM Options to executor for instance
+
  [[info]]
       show workspace detailed information (paths and libraries)
 
- [[install]] {{\<nuts-package\>}}...
-      install ==nuts== package {{\<nuts-package\>}}
+ [[install]] {{\<nuts-component\>}}...
+      install ==nuts== package {{\<nuts-component\>}}
 
- [[uninstall]] {{\<nuts-package\>}}...
-      uninstall  ==nuts== package {{\<nuts-package\>}}
+ [[uninstall]] {{\<nuts-component\>}}...
+      uninstall  ==nuts== package {{\<nuts-component\>}}
 
  [[update]]
        check if a newer version of ==nuts== is available in the current workspace and perform update
@@ -425,22 +430,24 @@ Java         Version: ${java.version} (${java.vm.name})
  [[check-updates]]
        check if a newer version of ==nuts== is available in the current workspace without performing updates
 
- [[--exec]] ...
- [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
-      runs command with the given options (it will be considered an option if it 
-      starts with '-')
 
  [[--!...]] or [[-!...]] 
       option will be discarded (and all of its parameters)
 
 
 @@EXAMPLES:@@
-       ==nuts== [[--help]]
+        ==nuts== [[--help]]
             shows this help and exit
-       ==nuts== [[--workspace]] /home/me/some-folder [[--archetype]] minimal
+       
+        ==nuts== [[--workspace]] /home/me/some-folder [[--archetype]] minimal
             A minimal ('minimal' archetype) workspace will be created 
             and saved if no workspace was resolved. The workspace handles local 
             packages only (because of 'minimal' archetype)
-       ==nuts== [[--workspace]] /home/me/some-folder  [[update]]
+       
+        ==nuts== [[--workspace]] /home/me/some-folder  [[update]]
             updates ==nuts== to the very latest version using workspace location
             /home/me/some-folder.
+
+        ==nuts== [[--workspace]] /home/me/some-folder  [[--yes]] [[-e]] -Xmx1G netbeans-launcher
+            runs netbeans-launcher with JVM option  -Xmx1G. If the component is not installed
+            it will be automatically installed ( [[--yes]] modifier helps bypassing interactive mode)

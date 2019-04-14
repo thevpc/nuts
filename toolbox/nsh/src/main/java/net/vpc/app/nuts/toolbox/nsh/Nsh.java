@@ -41,12 +41,12 @@ public class Nsh extends NutsApplication {
         CommandLine cmd = new CommandLine(applicationContext);
         Argument a;
         boolean force = false;
-        boolean silent = false;
+        boolean trace = true;
         while (cmd.hasNext()) {
             if ((a = cmd.readBooleanOption("-f", "--force")) != null) {
                 force = a.getBooleanValue();
-            } else if ((a = cmd.readBooleanOption("-s", "--silent")) != null) {
-                silent = a.getBooleanValue();
+            } else if ((a = cmd.readBooleanOption("-t", "--trace")) != null) {
+                trace = a.getBooleanValue();
             } else {
                 cmd.unexpectedArgument("nsh on-install");
             }
@@ -66,32 +66,31 @@ public class Nsh extends NutsApplication {
 //        );
         NutsJavaShell c = new NutsJavaShell(applicationContext);
         NutsCommand[] commands = c.getCommands();
-        int reinstalledCount = 0;
-        int firstInstallCount = 0;
+        Set<String> reinstalled = new TreeSet<>();
+        Set<String> firstInstalled = new TreeSet<>();
         for (NutsCommand command : commands) {
             if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (cfg.installCommand(
+                if (cfg.addCommand(
                         new NutsWorkspaceCommandConfig()
                                 .setFactoryId("nsh")
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId()),
-                        new net.vpc.app.nuts.NutsInstallCommandOptions().setForce(force), null
+                        new net.vpc.app.nuts.NutsInstallCommandOptions().setForce(force).setTrace(false), null
                 )) {
-                    reinstalledCount++;
+                    reinstalled.add(command.getName());
                 } else {
-                    firstInstallCount++;
+                    firstInstalled.add(command.getName());
                 }
             }
         }
-        if (!silent) {
-            if (reinstalledCount == 0) {
-                applicationContext.out().printf("Installed ==%s== nsh commands.\n", reinstalledCount + firstInstallCount);
-            } else if (firstInstallCount == 0) {
-                applicationContext.out().printf("Reinstalled ==%s== nsh commands.\n", reinstalledCount + firstInstallCount);
-            } else {
-                applicationContext.out().printf("Installed ==%s== and Reinstalled ==%s== nsh commands.\n", firstInstallCount, reinstalledCount);
+        if (trace) {
+            if (firstInstalled.size() > 0) {
+                applicationContext.out().printf("Installed ==%s== nsh commands : ==%s== \n", firstInstalled.size(), firstInstalled.toString());
+            }
+            if (reinstalled.size() > 0) {
+                applicationContext.out().printf("Reinstalled ==%s== nsh commands : ==%s== \n", reinstalled.size(), reinstalled.toString());
             }
         }
         cfg.save(false);
@@ -108,13 +107,13 @@ public class Nsh extends NutsApplication {
         try {
             NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
             try {
-                cfg.uninstallCommandFactory("nsh", null);
+                cfg.removeCommandFactory("nsh", null);
             } catch (Exception notFound) {
                 //ignore!
             }
             for (NutsWorkspaceCommand command : cfg.findCommands(applicationContext.getAppId())) {
                 try {
-                    cfg.uninstallCommand(command.getName(), new net.vpc.app.nuts.NutsUninstallOptions(), null);
+                    cfg.removeCommand(command.getName(), new net.vpc.app.nuts.NutsUninstallOptions(), null);
                 } catch (Exception ex) {
                     applicationContext.out().printf("Unable to uninstall ==%s== .\n", command.getName());
                 }

@@ -52,6 +52,7 @@ import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
  */
 public class CorePlatformUtils {
 
+    private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
     public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86", "ia64", "amd64", "ppc", "sparc"));
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "mac", "sunos", "freebsd"));
@@ -601,8 +602,28 @@ public class CorePlatformUtils {
         }
     }
 
-    public static NutsExecutionEntry[] parseMainClasses(InputStream jarStream) {
+    public static NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
+        MainClassType mainClass = null;
+        try {
+            mainClass = getMainClassType(classStream);
+        } catch (Exception ex) {
+            log.log(java.util.logging.Level.SEVERE, "Invalid file format {0}", sourceName);
+            log.log(java.util.logging.Level.FINER, "Invalid file format " + sourceName, ex);
+        }
+        if (mainClass != null) {
+            return new NutsExecutionEntry(
+                    mainClass.getName(),
+                    false,
+                    mainClass.isApp() && mainClass.isMain()
+            );
+        }
+        return null;
+    }
 
+    public static NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName) {
+        if(!(jarStream instanceof BufferedInputStream)){
+           jarStream=new BufferedInputStream(jarStream);
+        }
         final List<NutsExecutionEntry> classes = new ArrayList<>();
         final List<String> manifiestClass = new ArrayList<>();
         try {
@@ -616,13 +637,9 @@ public class CorePlatformUtils {
                 @Override
                 public boolean visit(String path, InputStream inputStream) throws IOException {
                     if (path.endsWith(".class")) {
-                        int mainClass = getMainClassType(inputStream);
-                        if (mainClass == 1 || mainClass == 3) {
-                            classes.add(new NutsExecutionEntry(
-                                    path.replace('/', '.').substring(0, path.length() - ".class".length()),
-                                    false,
-                                    mainClass == 3
-                            ));
+                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path);
+                        if (mainClass != null) {
+                            classes.add(mainClass);
                         }
                     } else {
                         try (BufferedReader b = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -659,35 +676,68 @@ public class CorePlatformUtils {
         return entries.toArray(new NutsExecutionEntry[0]);
     }
 
+    public static class MainClassType {
+
+        private String name;
+        private boolean app;
+        private boolean main;
+
+        public MainClassType(String name, boolean main, boolean app) {
+            this.name = name;
+            this.app = app;
+            this.main = main;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isApp() {
+            return app;
+        }
+
+        public boolean isMain() {
+            return main;
+        }
+
+    }
+
     /**
      * @param stream
      * @return
      * @throws IOException
      */
-    public static int getMainClassType(InputStream stream) throws IOException {
-        final List<Boolean> mainClass = new ArrayList<>(1);
-        final List<Boolean> nutsApp = new ArrayList<>(1);
+    public static MainClassType getMainClassType(InputStream stream) throws IOException {
+        final Ref<Boolean> mainClass = new Ref<>();
+        final Ref<Boolean> nutsApp = new Ref<>();
+        final Ref<String> className = new Ref<>();
         SimpleClassStream.Visitor cl = new SimpleClassStream.Visitor() {
             String lastClass = null;
 
             @Override
-            public void visitMethod(int access, String name, String desc, SimpleClassStream.MethodAttribute[] attributes) {
+            public void visitMethod(int access, String name, String desc) {
+//                System.out.println("\t::: visit method "+name);
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {
-                    mainClass.add(true);
+                    mainClass.set(true);
                 }
             }
 
             @Override
             public void visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
+//                System.out.println("::: visit class "+name);
                 if (superName != null && superName.equals("net/vpc/app/nuts/app/NutsApplication")) {
-                    nutsApp.add(true);
+                    nutsApp.set(true);
                 }
+                className.set(name.replace('/', '.'));
             }
         };
-        SimpleClassStream classReader = new SimpleClassStream(stream, cl);
-        return ((mainClass.isEmpty()) ? 0 : 1) + (nutsApp.isEmpty() ? 0 : 2);
+        SimpleClassStream classReader = new SimpleClassStream(new BufferedInputStream(stream), cl);
+        if (mainClass.isSet() || nutsApp.isSet()) {
+            return new MainClassType(className.get(), mainClass.isSet(), nutsApp.isSet());
+        }
+        return null;
     }
 
 //    /**

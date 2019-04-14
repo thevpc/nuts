@@ -38,5 +38,5 @@ public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
 
     NutsId getId();
 
-    int exec(NutsExecutionContext executionContext);
+    void exec(NutsExecutionContext executionContext) throws NutsExecutionException;
 }
