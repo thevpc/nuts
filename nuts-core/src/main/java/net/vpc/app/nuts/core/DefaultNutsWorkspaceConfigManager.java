@@ -275,7 +275,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public boolean addSdk(String name, NutsSdkLocation location) {
+    public boolean addSdk(String sdkType, NutsSdkLocation location) {
         if (location != null) {
             if (CoreStringUtils.isBlank(location.getName())) {
                 throw new NutsIllegalArgumentException("Sdk Name should not be null");
@@ -286,10 +286,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             if (CoreStringUtils.isBlank(location.getPath())) {
                 throw new NutsIllegalArgumentException("Sdk Path should not be null");
             }
-            List<NutsSdkLocation> list = getSdk().get(name);
+            List<NutsSdkLocation> list = getSdk().get(sdkType);
             if (list == null) {
                 list = new ArrayList<>();
-                configSdks.put(name, list);
+                configSdks.put(sdkType, list);
             }
             if (list.contains(location)) {
                 return false;
@@ -302,9 +302,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByName(String name, String locationName) {
+    public NutsSdkLocation findSdkByName(String sdkType, String locationName) {
         if (locationName != null) {
-            List<NutsSdkLocation> list = getSdk().get(name);
+            List<NutsSdkLocation> list = getSdk().get(sdkType);
             if (list != null) {
                 for (NutsSdkLocation location : list) {
                     if (location.getName().equals(locationName)) {
@@ -317,9 +317,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByPath(String name, Path path) {
+    public NutsSdkLocation findSdkByPath(String sdkType, Path path) {
         if (path != null) {
-            List<NutsSdkLocation> list = getSdk().get(name);
+            List<NutsSdkLocation> list = getSdk().get(sdkType);
             if (list != null) {
                 for (NutsSdkLocation location : list) {
                     if (location.getPath().equals(path)) {
@@ -332,9 +332,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdkByVersion(String name, String version) {
+    public NutsSdkLocation findSdkByVersion(String sdkType, String version) {
         if (version != null) {
-            List<NutsSdkLocation> list = getSdk().get(name);
+            List<NutsSdkLocation> list = getSdk().get(sdkType);
             if (list != null) {
                 for (NutsSdkLocation location : list) {
                     if (location.getVersion().equals(version)) {
@@ -347,9 +347,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation removeSdk(String name, NutsSdkLocation location) {
+    public NutsSdkLocation removeSdk(String sdkType, NutsSdkLocation location) {
         if (location != null) {
-            List<NutsSdkLocation> list = getSdk().get(name);
+            List<NutsSdkLocation> list = getSdk().get(sdkType);
             if (list != null) {
                 for (Iterator<NutsSdkLocation> iterator = list.iterator(); iterator.hasNext();) {
                     NutsSdkLocation location2 = iterator.next();
@@ -365,9 +365,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsSdkLocation findSdk(String name, NutsSdkLocation location) {
+    public NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location) {
         if (location != null) {
-            List<NutsSdkLocation> list = getSdk().get(name);
+            List<NutsSdkLocation> list = getSdk().get(sdkType);
             if (list != null) {
                 for (NutsSdkLocation location2 : list) {
                     if (location2.equals(location)) {
@@ -744,17 +744,26 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, PrintStream out) {
-        return NutsWorkspaceUtils.searchJdkLocations(ws, out);
+        if ("java".equals(sdkType)) {
+            return NutsWorkspaceUtils.searchJdkLocations(ws, out);
+        }
+        return new NutsSdkLocation[0];
     }
 
     @Override
     public NutsSdkLocation[] searchSdkLocations(String sdkType, Path path, PrintStream out) {
-        return NutsWorkspaceUtils.searchJdkLocations(ws, path, out);
+        if ("java".equals(sdkType)) {
+            return NutsWorkspaceUtils.searchJdkLocations(ws, path, out);
+        }
+        return new NutsSdkLocation[0];
     }
 
     @Override
-    public NutsSdkLocation resolveSdkLocation(Path path) {
-        return NutsWorkspaceUtils.resolveJdkLocation(ws, path);
+    public NutsSdkLocation resolveSdkLocation(String sdkType, Path path) {
+        if ("java".equals(sdkType)) {
+            return NutsWorkspaceUtils.resolveJdkLocation(ws, path);
+        }
+        return null;
     }
 
     @Override
@@ -1779,5 +1788,5 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsWorkspaceConfig getStoredConfig() {
         return config;
     }
-    
+
 }

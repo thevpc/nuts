@@ -41,12 +41,12 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     extraLocations.add(cmdLine.read().getExpression());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NutsSdkLocation loc : conf.searchSdkLocations(sdkType, out)) {
+                    for (NutsSdkLocation loc : conf.searchSdkLocations("java", out)) {
                         conf.addSdk("java", loc);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : conf.searchSdkLocations(sdkType, ws.io().path(extraLocation), out)) {
+                        for (NutsSdkLocation loc : conf.searchSdkLocations("java", ws.io().path(extraLocation), out)) {
                             conf.addSdk("java", loc);
                         }
                     }
@@ -57,7 +57,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = conf.resolveSdkLocation(ws.io().path(cmdLine.read().getExpression()));
+                    NutsSdkLocation loc = conf.resolveSdkLocation("java", ws.io().path(cmdLine.read().getExpression()));
                     if (loc != null) {
                         conf.addSdk("java", loc);
                     }

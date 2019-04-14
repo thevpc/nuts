@@ -154,12 +154,12 @@ Java         Version: ${java.version} (${java.vm.name})
       Defines store strategy used for persisting config and data of the repositories.
       Valid values of {{\<store-strategy\>}} are {{exploded}}, {{standalone}}.
       {{exploded}}   : use distinct folders for temp, var, lib, config ... folders (this is the default) 
-      {{standalone}} : use a self contained folder for all types of data of the repository (under repository's main folder). 
+      {{standalone}} : use a self contained folder for all types of data of the repository (under repository\'s main folder). 
                    This is interesting for sharing 
                    workspaces across multiple machines.
 
  [[--standalone-repositories]]
-       will boot with standalone strategy so that all file will be stored in the repository's folder
+       will boot with standalone strategy so that all file will be stored in the repository\'s folder
        overriding workspace config. same as  [[--repo-store-strategy]] {{standalone}}
  
  [[--exploded-repositories]] or [[--exploded-strategy]]
@@ -191,7 +191,7 @@ Java         Version: ${java.version} (${java.vm.name})
         temp     : temporary files folder
         cache    : cache folder
       
-     In the Windows layout, default (home) locations resolve to ($HOME is the user's home folder)
+     In the Windows layout, default (home) locations resolve to ($HOME is the user\'s home folder)
         programs : $HOME/AppData/Roaming/nuts
         lib      : $HOME/AppData/Roaming/nuts
         config   : $HOME/AppData/Roaming/nuts
@@ -200,7 +200,7 @@ Java         Version: ${java.version} (${java.vm.name})
         temp     : $java.io.tmpdir/nuts
         cache    : $HOME/AppData/Local/nuts
 
-     In the Linux layout, default locations resolve to ($HOME is the user's home folder)
+     In the Linux layout, default locations resolve to ($HOME is the user\'s home folder)
         programs : $HOME/.nuts
         lib      : $HOME/.nuts
         config   : $HOME/.nuts
@@ -247,7 +247,7 @@ Java         Version: ${java.version} (${java.vm.name})
        same as  [[--store-layout]] {{\<store-layout\>}} {{linux}}
 
  More tuning of these folders may be done by defining the folders location directly 
- instead of the folder's home locations using the following options :
+ instead of the folder\'s home locations using the following options :
             [[--programs-location]] {{\<path\>}}
             [[--lib-location]] {{\<path\>}}
             [[--config-location]] {{\<path\>}}
@@ -261,7 +261,7 @@ Java         Version: ${java.version} (${java.vm.name})
  
 @@NUTS OPEN EXPORTED OPTIONS:@@
  [[--global]]  or [[-g]]
-      uses root/system wide workspace instead of user's own workspace. 
+      uses root/system wide workspace instead of user\'s own workspace. 
       requires admin privileges as it uses.
       Use shared workspace is located at :
       Windows    : $ProgramFiles/nuts/system-workspace/repositories/local

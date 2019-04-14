@@ -767,7 +767,10 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                 return new InternalExecutable(cmdName, args) {
                     @Override
                     public void execute() {
-                        session.getTerminal().getFormattedOut().println(ws.getHelpText());
+                        PrintStream out = session.getTerminal().getFormattedOut();
+                        ws.formatter().createWorkspaceVersionFormat()
+                                .parseOptions(args)
+                                .println(out);
                     }
                 };
             }
@@ -1118,7 +1121,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
         public InternalExecutable(String name, String[] args) {
             super(name, NutsExecutableType.INTERNAL);
-            this.args=args;
+            this.args = args;
         }
 
         @Override

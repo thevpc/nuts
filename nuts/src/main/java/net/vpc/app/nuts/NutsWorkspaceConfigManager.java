@@ -152,10 +152,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     /**
      * verify if the path is a valid a
+     * @param sdkType
      * @param path
      * @return null if not a valid jdk path
      */
-    NutsSdkLocation resolveSdkLocation(Path path);
+    NutsSdkLocation resolveSdkLocation(String sdkType, Path path);
 
     NutsWorkspaceOptions getOptions();
 
