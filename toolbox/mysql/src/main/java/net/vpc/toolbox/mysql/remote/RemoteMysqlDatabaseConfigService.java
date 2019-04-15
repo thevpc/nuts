@@ -134,7 +134,7 @@ public class RemoteMysqlDatabaseConfigService {
         b.addCommand("--nuts");
         b.addCommand(this.config.getServer());
         b.addCommand(cmd);
-        context.out().printf("[[EXEC]] %s\n", b.getCommandString(new NutsCommandStringFormatterAdapter() {
+        context.out().printf("[[EXEC]] %s\n", b.setCommandStringFormatter(new NutsCommandStringFormatterAdapter() {
             @Override
             public String replaceEnvValue(String envName, String envValue) {
                 if (
@@ -145,7 +145,7 @@ public class RemoteMysqlDatabaseConfigService {
                 }
                 return null;
             }
-        }));
+        }).getCommandString());
         b.redirectErrorStream()
                 .failFast();
         return b.exec().getResult();
