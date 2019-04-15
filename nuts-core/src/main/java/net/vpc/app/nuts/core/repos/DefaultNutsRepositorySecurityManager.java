@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsWorkspaceConfigManager;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *

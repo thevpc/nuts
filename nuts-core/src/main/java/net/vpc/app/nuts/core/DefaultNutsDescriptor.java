@@ -30,10 +30,10 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 
 import java.util.*;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 1/5/17.

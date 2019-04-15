@@ -29,6 +29,10 @@
  */
 package net.vpc.app.nuts.core.bridges.maven;
 
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
+import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 
@@ -39,7 +43,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.

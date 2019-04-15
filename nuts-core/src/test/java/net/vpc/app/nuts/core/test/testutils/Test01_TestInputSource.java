@@ -5,8 +5,8 @@
  */
 package net.vpc.app.nuts.core.test.testutils;
 
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.InputSource;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.InputSource;
 import org.junit.Assert;
 import org.junit.Test;
 

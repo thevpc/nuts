@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.NutsIdGraph;
 import net.vpc.app.nuts.*;
 
 public class NutsIdAndNutsDependencyFilterItem {

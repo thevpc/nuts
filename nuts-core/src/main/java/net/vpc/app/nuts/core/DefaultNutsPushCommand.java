@@ -31,7 +31,7 @@ import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 

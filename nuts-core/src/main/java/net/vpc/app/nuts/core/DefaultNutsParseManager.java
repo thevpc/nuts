@@ -2,15 +2,15 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.fprint.util.FormattedPrintStreamUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.fprint.util.FormattedPrintStreamUtils;
 
 public class DefaultNutsParseManager implements NutsParseManager {
 

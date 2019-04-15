@@ -20,12 +20,12 @@ import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.io.UnzipOptions;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
+import net.vpc.app.nuts.core.util.io.UnzipOptions;
+import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
  *

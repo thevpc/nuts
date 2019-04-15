@@ -3,13 +3,13 @@ package net.vpc.app.nuts.core.filters.id;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class NutsIdFilterAnd implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 

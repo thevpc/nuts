@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

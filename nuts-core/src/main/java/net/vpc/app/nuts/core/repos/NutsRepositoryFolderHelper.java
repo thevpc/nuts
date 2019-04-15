@@ -32,10 +32,10 @@ import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.log;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreSecurityUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 
 /**

@@ -30,15 +30,15 @@
 package net.vpc.app.nuts.core.executors;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.

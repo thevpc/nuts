@@ -36,8 +36,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils.MapToFunction;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils.MapToFunction;
 
 /**
  * Created by vpc on 2/19/17.

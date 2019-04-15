@@ -6,8 +6,8 @@ import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 

@@ -31,9 +31,9 @@ package net.vpc.app.nuts.core.filters.version;
 
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.JavascriptHelper;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.JavascriptHelper;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;

@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {

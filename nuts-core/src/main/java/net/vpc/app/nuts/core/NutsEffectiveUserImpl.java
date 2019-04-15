@@ -9,7 +9,7 @@ import net.vpc.app.nuts.NutsEffectiveUser;
 import net.vpc.app.nuts.NutsUserConfig;
 
 import java.util.Arrays;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *

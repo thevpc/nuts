@@ -15,11 +15,11 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.*;
 import static net.vpc.app.nuts.core.DefaultNutsWorkspace.NOT_INSTALLED;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.TraceResult;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.TraceResult;
+import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 
 public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
@@ -237,6 +237,15 @@ public class DefaultNutsFetch extends DefaultNutsQueryBaseOptions<NutsFetchComma
 
     public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options) {
         long startTime = System.currentTimeMillis();
+        if(CoreStringUtils.isBlank(id.getGroup())){
+            throw new NutsIllegalArgumentException("Missing Group");
+        }
+        if(CoreStringUtils.isBlank(id.getName())){
+            throw new NutsIllegalArgumentException("Missing Name");
+        }
+        if(DefaultNutsVersion.isBlank(id.getVersion().getValue())){
+            throw new NutsIllegalArgumentException("Missing Version");
+        }
         options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());

@@ -23,8 +23,8 @@ import net.vpc.app.nuts.NutsQuestion;
 import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
@@ -426,7 +426,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
             List<NutsDefinition> defsAll = new ArrayList<>();
             List<NutsDefinition> defsToInstall = new ArrayList<>();
             for (NutsId id : this.getIds()) {
-                emptyCommand = true;
+                emptyCommand = false;
                 NutsDefinition def = ws.fetch().id(id).session(session).setAcceptOptional(false).includeDependencies().setIncludeInstallInformation(true).getResultDefinition();
                 if (def != null && def.getPath() != null) {
                     boolean installed = false;
@@ -448,7 +448,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                 dws.installImpl(def, this.getArgs(), null, session, true, this.isTrace(), isDefaultVersion());
             }
             if (emptyCommand) {
-                throw new NutsExecutionException("Missing components to update", 1);
+                throw new NutsExecutionException("Missing components to install", 1);
             }
             result = defsAll.toArray(new NutsDefinition[0]);
         }

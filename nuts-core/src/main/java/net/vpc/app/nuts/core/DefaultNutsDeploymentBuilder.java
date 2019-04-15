@@ -10,14 +10,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.InputSource;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ZipOptions;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
+import net.vpc.app.nuts.core.util.io.ZipOptions;
+import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
 

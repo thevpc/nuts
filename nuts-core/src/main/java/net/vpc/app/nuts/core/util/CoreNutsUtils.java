@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import net.vpc.app.nuts.core.util.common.TraceResult;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.*;
 import net.vpc.app.nuts.core.filters.dependency.*;

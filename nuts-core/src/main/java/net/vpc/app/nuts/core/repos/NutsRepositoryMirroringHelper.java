@@ -26,9 +26,9 @@ import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.core.NutsWorkspaceExt;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.util.LazyIterator;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
+import net.vpc.app.nuts.core.util.common.LazyIterator;
 
 /**
  *

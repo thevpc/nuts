@@ -29,6 +29,10 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 
@@ -41,8 +45,8 @@ import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomId;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomIdResolver;
+import net.vpc.app.nuts.core.util.mvn.PomId;
+import net.vpc.app.nuts.core.util.mvn.PomIdResolver;
 
 /**
  * @author vpc

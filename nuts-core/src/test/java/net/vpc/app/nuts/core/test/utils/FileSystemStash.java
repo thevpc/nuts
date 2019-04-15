@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  *

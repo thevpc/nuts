@@ -32,7 +32,7 @@ package net.vpc.app.nuts.core.bridges.maven;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.TraceResult;
+import net.vpc.app.nuts.core.util.common.TraceResult;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,9 +42,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.InputSource;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadata;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.InputSource;
+import net.vpc.app.nuts.core.util.mvn.MavenMetadata;
 
 /**
  * Created by vpc on 1/15/17.

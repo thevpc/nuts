@@ -2,7 +2,7 @@ package net.vpc.app.nuts.core.filters.repository;
 
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;

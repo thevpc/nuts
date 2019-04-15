@@ -30,8 +30,8 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -43,8 +43,8 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *

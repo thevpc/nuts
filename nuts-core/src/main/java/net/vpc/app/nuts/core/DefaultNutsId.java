@@ -32,7 +32,7 @@ package net.vpc.app.nuts.core;
 import java.util.ArrayList;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 import java.io.File;
 import java.net.MalformedURLException;

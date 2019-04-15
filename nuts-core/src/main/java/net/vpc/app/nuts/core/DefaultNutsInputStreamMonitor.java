@@ -11,9 +11,9 @@ import net.vpc.app.nuts.NutsWorkspace;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamEvent;
-import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamMonitor;
-import net.vpc.app.nuts.core.util.bundledlibs.util.BytesSizeFormat;
+import net.vpc.app.nuts.core.util.io.InputStreamEvent;
+import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
+import net.vpc.app.nuts.core.util.common.BytesSizeFormat;
 
 /**
  * @author vpc

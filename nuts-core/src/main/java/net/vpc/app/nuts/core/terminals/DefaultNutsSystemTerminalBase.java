@@ -1,8 +1,8 @@
 package net.vpc.app.nuts.core.terminals;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.bundledlibs.fprint.AnsiPrintStreamSupport;
-import net.vpc.app.nuts.core.util.bundledlibs.fprint.FPrint;
+import net.vpc.app.nuts.core.util.fprint.AnsiPrintStreamSupport;
+import net.vpc.app.nuts.core.util.fprint.FPrint;
 
 import java.io.InputStream;
 import java.io.PrintStream;

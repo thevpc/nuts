@@ -1,14 +1,14 @@
 package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 

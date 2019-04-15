@@ -15,10 +15,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 

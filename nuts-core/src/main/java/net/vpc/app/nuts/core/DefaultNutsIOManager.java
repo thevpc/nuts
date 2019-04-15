@@ -1,9 +1,14 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.io.InputStreamMetadataAware;
+import net.vpc.app.nuts.core.util.io.NullInputStream;
 import com.google.gson.*;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
-import net.vpc.app.nuts.core.util.NullOutputStream;
+import net.vpc.app.nuts.core.util.io.NullOutputStream;
 import net.vpc.app.nuts.core.util.*;
 
 import java.io.*;
@@ -18,8 +23,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
-import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamEvent;
-import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamMonitor;
+import net.vpc.app.nuts.core.util.io.InputStreamEvent;
+import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 

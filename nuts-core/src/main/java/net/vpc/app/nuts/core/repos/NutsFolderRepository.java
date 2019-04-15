@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.repos;
 
+import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 
@@ -36,7 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  * Created by vpc on 1/5/17.

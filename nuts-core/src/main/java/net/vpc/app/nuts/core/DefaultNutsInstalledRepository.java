@@ -29,11 +29,11 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
-import net.vpc.app.nuts.core.util.bundledlibs.util.LazyIterator;
+import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.LazyIterator;
 
 /**
  *

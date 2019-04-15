@@ -3,7 +3,7 @@ package net.vpc.app.nuts.core.filters.dependency;
 import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyFilter;
 import net.vpc.app.nuts.NutsId;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 public class OptionalNutsDependencyFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 

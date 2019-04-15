@@ -5,7 +5,7 @@ import net.vpc.app.nuts.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Class for managing a Workspace list

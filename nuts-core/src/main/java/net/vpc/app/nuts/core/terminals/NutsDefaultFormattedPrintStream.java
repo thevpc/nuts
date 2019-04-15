@@ -29,12 +29,12 @@
  */
 package net.vpc.app.nuts.core.terminals;
 
+import net.vpc.app.nuts.core.util.fprint.FormattedPrintStream;
 import net.vpc.app.nuts.NutsFormattedPrintStream;
 import net.vpc.app.nuts.NutsOutputStreamTransparentAdapter;
-import net.vpc.app.nuts.core.util.bundledlibs.fprint.*;
 
 import java.io.*;
-import net.vpc.app.nuts.core.util.NullOutputStream;
+import net.vpc.app.nuts.core.util.io.NullOutputStream;
 
 /**
  * Created by vpc on 2/20/17.

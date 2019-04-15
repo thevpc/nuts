@@ -5,6 +5,8 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;

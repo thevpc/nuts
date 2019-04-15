@@ -36,8 +36,8 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.core.filters.version.DefaultNutsVersionFilter;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -396,7 +396,7 @@ public class DefaultNutsVersion implements NutsVersion {
         if (CoreStringUtils.isBlank(pattern)) {
             return true;
         }
-        return NutsConstants.Versions.LATEST.equals(pattern) || "RELEASE".equals(pattern);
+        return NutsConstants.Versions.LATEST.equals(pattern) || NutsConstants.Versions.RELEASE.equals(pattern);
     }
 
     public static boolean isStaticVersionPattern(String pattern) {

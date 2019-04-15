@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.MapStringMapper;
+import net.vpc.app.nuts.core.util.common.ObservableMap;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSystemTerminalBase;
 import net.vpc.app.nuts.core.terminals.DefaultSystemTerminal;
@@ -44,8 +49,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsFindCommand;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomId;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomIdResolver;
+import net.vpc.app.nuts.core.util.mvn.PomId;
+import net.vpc.app.nuts.core.util.mvn.PomIdResolver;
 
 /**
  * Created by vpc on 1/6/17.

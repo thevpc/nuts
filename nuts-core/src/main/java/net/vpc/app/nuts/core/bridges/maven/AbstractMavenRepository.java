@@ -31,15 +31,15 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
-import net.vpc.app.nuts.core.util.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
 import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.InputSource;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.InputSource;
 
 /**
  * Created by vpc on 2/20/17.

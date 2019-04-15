@@ -60,24 +60,32 @@ java -jar nuts-0.5.3.jar
 ## Change Log
 ### nuts 0.5.4.0 (IN PROGRESS)
     - Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
-    - Removed dependencies to common,strings, io and utils. From Now on only gson and jansi are retained.
+    - Removed dependencies to common,strings, io and utils (utility classes).
+    - Removed dependencies to asm (bytecode manipulation).
+    - From Now on only gson and jansi are retained.
     - Layout changes
         * from now on configuration will be version specific. some migration should be done to import previous configs
         * system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json
-    - Better support for JDK 8+ (New IO)
+        * added MacOs Layout. Help is needed for testing this !
+    - Better support for JDK 8+ (New IO,Predicates, Streams, ...)
+    - Migrated from File to New I/O Path
     - Added Stream Support ("findStream" in NutsQuery)
-    - Introduced delayed search results while getting asap items (using iterators anywhere this makes sense)
+    - Added Comprehensive implementation of Iterator (Stream Like) to better handle result iteration while search is in progress
     - Introduced NutsSearchIdFilter to speedup search time
     - Added JUnit test battery
+    - Added support to JSON,PROPS and PLAIN result, implemented in version and info. Should continue implementing in other commands.
+    - Removed --license, --update, --instal, ... options, replaced by workspace "internal" commands new concept.
+    - Workspaces handle several type of executables that will be resolved in that order : "internal command","aliases : aka workspace commands", "components",
+      "path/unmanaged components" and system/native commands.
     - Several Fixes
         * Fixed Problem with Layout
+        * Fixed Problem coloring (fprint embedded library)
         * All System properties now start with "nuts."
         * System properties starting with "nuts.export." are exported to children processes
         * Added watch dog agains infinite child process creation
     - TODO
         * Add maven-github repository type support (web API)
         * FIX : executable and appExecutable are not well supported in nfind!
-        * FIX : Migrating from File to New I/O Path
 
 ### nuts 0.5.3.0
     1- (WINDOWS) First support to Windows platform

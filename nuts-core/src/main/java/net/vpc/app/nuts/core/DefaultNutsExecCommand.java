@@ -3,7 +3,7 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.io.*;

@@ -32,13 +32,13 @@ package net.vpc.app.nuts.core.filters.id;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.core.DefaultNutsId;
-import net.vpc.app.nuts.core.util.JavascriptHelper;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.JavascriptHelper;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 1/7/17.

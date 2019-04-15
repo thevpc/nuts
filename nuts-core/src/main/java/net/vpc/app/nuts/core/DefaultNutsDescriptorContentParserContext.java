@@ -38,8 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import net.vpc.app.nuts.NutsFetchCommand;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.InputSource;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.InputSource;
 
 /**
  * Created by vpc on 1/29/17.

@@ -31,8 +31,8 @@ package net.vpc.app.nuts.core.filters.descriptor;
 
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 

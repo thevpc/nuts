@@ -235,16 +235,17 @@ public class NFindMain extends NutsApplication {
         if (findWhat.nonjs.isEmpty() && findWhat.jsCode == null) {
             findWhat.nonjs.add("*");
         }
-        NutsFindCommand query = findContext.context.getWorkspace().find().addScripts(findWhat.jsCode)
-                .addIds(findWhat.nonjs.toArray(new String[0]))
-                .addArchs(findContext.arch)
-                .addPackagings(findContext.pack)
-                .addRepositories(findContext.repos)
-                .setSort(findContext.sort)
-                .setIncludeAllVersions(findContext.allVersions)
-                .setIncludeDuplicateVersions(findContext.duplicateVersions)
+        NutsFindCommand query = findContext.context.getWorkspace().find()
+                .scripts(findWhat.jsCode)
+                .ids(findWhat.nonjs.toArray(new String[0]))
+                .archs(findContext.arch)
+                .packagings(findContext.pack)
+                .repositories(findContext.repos)
+                .sort(findContext.sort)
+                .allVersions(findContext.allVersions)
+                .duplicateVersions(findContext.duplicateVersions)
                 .setSession(findContext.context.getSession())
-                .setTransitive(findContext.transitive);
+                .transitive(findContext.transitive);
 
         NutsWorkspace ws = findContext.context.getWorkspace();
         switch (findContext.fetchMode) {
@@ -675,7 +676,7 @@ public class NFindMain extends NutsApplication {
                 .addId(info.nuts)
                 .scopes(findContext.scopes)
                 .setDependencyFilter(findContext.equivalentDependencyFilter)
-                .setIncludeAllVersions(findContext.allVersions)
+                .setAllVersions(findContext.allVersions)
                 .setAcceptOptional(findContext.acceptOptional)
                 .dependenciesOnly()
                 .sort()

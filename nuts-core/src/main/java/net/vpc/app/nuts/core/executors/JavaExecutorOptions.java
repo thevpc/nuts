@@ -1,7 +1,7 @@
 package net.vpc.app.nuts.core.executors;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public class JavaExecutorOptions {
     private String javaVersion = null;//runnerProps.getProperty("java.version");

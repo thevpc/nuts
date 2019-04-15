@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core.util;
 
+import net.vpc.app.nuts.core.util.io.InputSource;
 import net.vpc.app.nuts.NutsDescriptor;
 
 import java.io.IOException;

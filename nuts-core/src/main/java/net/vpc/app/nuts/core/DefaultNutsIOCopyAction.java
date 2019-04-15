@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsTerminalProvider;
 import net.vpc.app.nuts.NutsPathCopyAction;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.InputSource;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.InputSource;
 
 /**
  *

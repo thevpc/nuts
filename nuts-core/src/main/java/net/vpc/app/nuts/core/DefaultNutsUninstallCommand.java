@@ -24,7 +24,7 @@ import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUninstallCommand;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -134,7 +134,7 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     }
 
     @Override
-    public NutsUninstallCommand args(List<String> args) {
+    public NutsUninstallCommand args(Collection<String> args) {
         return addArgs(args);
     }
 

@@ -35,7 +35,7 @@ import java.util.Comparator;
 import java.util.Set;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -161,7 +161,9 @@ public interface NutsFindCommand {
      */
     NutsFindCommand latestVersions();
 
-    NutsFindCommand setIncludeAllVersions(boolean allVersions);
+    NutsFindCommand allVersions(boolean allVersions);
+    
+    NutsFindCommand setAllVersions(boolean allVersions);
 
     NutsFindCommand setDependencyFilter(NutsDependencyFilter filter);
 
@@ -189,7 +191,11 @@ public interface NutsFindCommand {
 
     NutsFindCommand sort(Comparator<NutsId> comparator);
 
-    NutsFindCommand setIncludeDuplicateVersions(boolean includeDuplicateVersions);
+    NutsFindCommand duplicateVersions();
+
+    NutsFindCommand duplicateVersions(boolean includeDuplicateVersions);
+
+    NutsFindCommand setDuplicateVersions(boolean includeDuplicateVersions);
 
     NutsFindCommand copyFrom(NutsFindCommand other);
 
@@ -227,11 +233,11 @@ public interface NutsFindCommand {
 
     Comparator<NutsId> getSortIdComparator();
 
-    boolean isIncludeDuplicatedVersions();
+    boolean isDuplicatedVersions();
 
     boolean isIncludeMain();
 
-    boolean isIncludeAllVersions();
+    boolean isAllVersions();
 
     NutsFetchCommand toFetch();
 

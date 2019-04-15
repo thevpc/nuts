@@ -30,7 +30,7 @@
 package net.vpc.app.nuts.core.archetypes;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
 /**
  * Created by vpc on 1/23/17.

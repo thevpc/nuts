@@ -8,7 +8,7 @@ package net.vpc.app.nuts.core;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -20,9 +20,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.util.ListMap;
+import net.vpc.app.nuts.core.util.common.ListMap;
 
 /**
  * @author vpc

@@ -33,7 +33,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.bridges.maven.MavenUtils;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.Ref;
+import net.vpc.app.nuts.core.util.common.Ref;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,10 +46,10 @@ import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
-import net.vpc.app.nuts.core.util.bundledlibs.io.InputStreamVisitor;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
+import net.vpc.app.nuts.core.util.io.InputStreamVisitor;
+import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
  * Created by vpc on 1/15/17.

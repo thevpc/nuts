@@ -35,7 +35,7 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 1/5/17.

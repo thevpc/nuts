@@ -44,9 +44,9 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsResultFormatType;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.NutsUpdateCommand;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
@@ -754,7 +754,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
                 //ignore
             }
             try {
-                newFile = ws.fetch().id(NutsConstants.Ids.NUTS_API + "#" + v).session(session).wired().getResultDefinition();
+                newFile = ws.find().id(NutsConstants.Ids.NUTS_API + "#" + v).session(session).wired().latestVersions().getResultDefinitions().first();
                 newId = newFile.getId();
             } catch (NutsNotFoundException ex) {
                 //ignore

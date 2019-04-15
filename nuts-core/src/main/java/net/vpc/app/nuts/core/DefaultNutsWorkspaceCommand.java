@@ -9,8 +9,8 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommand;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
 

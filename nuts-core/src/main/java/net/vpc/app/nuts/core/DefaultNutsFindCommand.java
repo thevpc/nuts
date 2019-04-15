@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.util.NutsIdGraph;
 import net.vpc.app.nuts.core.util.NutsCollectionFindResult;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.filters.dependency.NutsDependencyJavascriptFilter;
@@ -42,7 +43,7 @@ import net.vpc.app.nuts.core.filters.id.NutsJavascriptIdFilter;
 import net.vpc.app.nuts.core.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.core.filters.repository.ExprNutsRepositoryFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.io.File;
 import java.io.UncheckedIOException;
@@ -58,8 +59,8 @@ import static net.vpc.app.nuts.core.util.CoreNutsUtils.And;
 import static net.vpc.app.nuts.core.util.CoreNutsUtils.simplify;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorUtils;
+import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
  * @author vpc
@@ -354,8 +355,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             this.idFilter = o.getIdFilter();
             this.repositoryFilter = o.getRepositoryFilter();
             this.lenient = o.isLenient();
-            this.includeAllVersions = o.isIncludeAllVersions();
-            this.includeDuplicatedVersions = o.isIncludeDuplicatedVersions();
+            this.includeAllVersions = o.isAllVersions();
+            this.includeDuplicatedVersions = o.isDuplicatedVersions();
             this.includeMain = o.isIncludeMain();
             this.sort = o.isSort();
             this.arch.clear();
@@ -401,21 +402,27 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     @Override
-    public boolean isIncludeAllVersions() {
+    public boolean isAllVersions() {
         return includeAllVersions;
     }
 
     @Override
     public NutsFindCommand latestVersions() {
-        return setIncludeAllVersions(false);
+        return setAllVersions(false);
     }
 
     @Override
     public NutsFindCommand allVersions() {
-        return setIncludeAllVersions(true);
+        return setAllVersions(true);
     }
 
-    public NutsFindCommand setIncludeAllVersions(boolean includeAllVersions) {
+    @Override
+    public NutsFindCommand allVersions(boolean includeAllVersions) {
+        return setAllVersions(includeAllVersions);
+    }
+    
+    @Override
+    public NutsFindCommand setAllVersions(boolean includeAllVersions) {
         this.includeAllVersions = includeAllVersions;
         return this;
     }
@@ -898,12 +905,23 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     @Override
-    public boolean isIncludeDuplicatedVersions() {
+    public boolean isDuplicatedVersions() {
         return includeDuplicatedVersions;
     }
 
     @Override
-    public NutsFindCommand setIncludeDuplicateVersions(boolean includeDuplicateVersion) {
+    public NutsFindCommand duplicateVersions() {
+        return duplicateVersions(true);
+    }
+
+    @Override
+    public NutsFindCommand duplicateVersions(boolean includeDuplicateVersions) {
+        return setDuplicateVersions(includeDuplicateVersions);
+    }
+
+    
+    @Override
+    public NutsFindCommand setDuplicateVersions(boolean includeDuplicateVersion) {
         this.includeDuplicatedVersions = includeDuplicateVersion;
         return this;
     }

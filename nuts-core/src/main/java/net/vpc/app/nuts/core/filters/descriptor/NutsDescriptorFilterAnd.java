@@ -3,13 +3,13 @@ package net.vpc.app.nuts.core.filters.descriptor;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 

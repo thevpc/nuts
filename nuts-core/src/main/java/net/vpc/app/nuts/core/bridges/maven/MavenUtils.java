@@ -35,7 +35,7 @@ import net.vpc.app.nuts.core.DefaultNutsDependency;
 import net.vpc.app.nuts.core.DefaultNutsId;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.MapStringMapper;
+import net.vpc.app.nuts.core.util.common.MapStringMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -43,18 +43,18 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.ArchetypeCatalogParser;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadata;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.MavenMetadataParser;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.Pom;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomDependency;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomId;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomIdFilter;
-import net.vpc.app.nuts.core.util.bundledlibs.mvn.PomXmlParser;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.mvn.ArchetypeCatalogParser;
+import net.vpc.app.nuts.core.util.mvn.MavenMetadata;
+import net.vpc.app.nuts.core.util.mvn.MavenMetadataParser;
+import net.vpc.app.nuts.core.util.mvn.Pom;
+import net.vpc.app.nuts.core.util.mvn.PomDependency;
+import net.vpc.app.nuts.core.util.mvn.PomId;
+import net.vpc.app.nuts.core.util.mvn.PomIdFilter;
+import net.vpc.app.nuts.core.util.mvn.PomXmlParser;
 
 /**
  * Created by vpc on 2/20/17.

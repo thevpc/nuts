@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts.core.repos;
 
+import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.*;
 
@@ -38,7 +41,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.util.bundledlibs.util.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 public class NutsHttpSrvRepository extends AbstractNutsRepository {

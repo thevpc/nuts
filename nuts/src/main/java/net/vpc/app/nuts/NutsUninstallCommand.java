@@ -63,7 +63,7 @@ public interface NutsUninstallCommand {
 
     NutsUninstallCommand addArg(String arg);
 
-    NutsUninstallCommand args(List<String> args);
+    NutsUninstallCommand args(Collection<String> args);
 
     NutsUninstallCommand addArgs(Collection<String> args);
 

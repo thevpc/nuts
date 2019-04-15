@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
+import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
  * Created by vpc on 1/15/17.

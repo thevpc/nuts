@@ -35,8 +35,8 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDefinition;
 
 import java.nio.file.Path;
-import net.vpc.app.nuts.core.util.bundledlibs.io.UnzipOptions;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ZipUtils;
+import net.vpc.app.nuts.core.util.io.UnzipOptions;
+import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
  * Created by vpc on 1/7/17.

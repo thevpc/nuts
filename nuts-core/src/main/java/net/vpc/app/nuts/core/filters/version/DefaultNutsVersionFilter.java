@@ -33,8 +33,8 @@ import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsVersionInterval;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.Simplifiable;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.io.Serializable;
 import java.util.ArrayList;

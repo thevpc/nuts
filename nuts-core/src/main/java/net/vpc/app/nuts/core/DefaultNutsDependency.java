@@ -33,7 +33,7 @@ import net.vpc.app.nuts.NutsDependency;
 import net.vpc.app.nuts.NutsDependencyBuilder;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsVersion;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 import java.util.*;
 

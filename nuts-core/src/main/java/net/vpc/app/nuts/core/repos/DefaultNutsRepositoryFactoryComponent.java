@@ -30,8 +30,8 @@
 package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  * Created by vpc on 1/15/17.

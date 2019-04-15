@@ -12,7 +12,7 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.util.Map;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsIdFormat implements NutsIdFormat {
 

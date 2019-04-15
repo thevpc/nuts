@@ -31,7 +31,7 @@ package net.vpc.app.nuts.core;
 
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsWorkspaceExtension;
-import net.vpc.app.nuts.core.util.bundledlibs.util.ListMap;
+import net.vpc.app.nuts.core.util.common.ListMap;
 
 /**
  * Created by vpc on 1/15/17.

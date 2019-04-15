@@ -16,8 +16,8 @@ import java.util.*;
 import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
-import net.vpc.app.nuts.core.util.CoreStringUtils;
-import net.vpc.app.nuts.core.util.bundledlibs.io.ByteArrayPrintStream;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
 

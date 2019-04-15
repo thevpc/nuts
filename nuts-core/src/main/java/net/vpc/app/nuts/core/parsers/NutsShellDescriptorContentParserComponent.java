@@ -32,7 +32,7 @@ package net.vpc.app.nuts.core.parsers;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorBuilder;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.JsonStringBuffer;
+import net.vpc.app.nuts.core.util.common.JsonStringBuffer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

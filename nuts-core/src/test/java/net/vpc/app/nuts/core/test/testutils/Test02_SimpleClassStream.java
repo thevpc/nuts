@@ -14,9 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
-import net.vpc.app.nuts.core.util.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.CorePlatformUtils;
-import net.vpc.app.nuts.core.util.SimpleClassStream;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
+import net.vpc.app.nuts.core.util.io.SimpleClassStream;
 import org.junit.Test;
 
 /**
