@@ -54,7 +54,7 @@ public class VersionCommand extends AbstractNutsCommand {
         boolean fancy = false;
         boolean min = false;
         CommandLine cmdLine = new CommandLine(args);
-        NutsFormatType ft = NutsFormatType.PLAIN;
+        NutsResultFormatType ft = NutsResultFormatType.PLAIN;
         Argument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
@@ -62,11 +62,11 @@ public class VersionCommand extends AbstractNutsCommand {
             } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
                 min = true;
             } else if ((a = cmdLine.readBooleanOption("--json")) != null) {
-                ft = NutsFormatType.JSON;
+                ft = NutsResultFormatType.JSON;
             } else if ((a = cmdLine.readBooleanOption("--plain")) != null) {
-                ft = NutsFormatType.PLAIN;
+                ft = NutsResultFormatType.PLAIN;
             } else if ((a = cmdLine.readBooleanOption("--props")) != null) {
-                ft = NutsFormatType.PROPS;
+                ft = NutsResultFormatType.PROPS;
             } else {
                 cmdLine.unexpectedArgument(getName());
             }
