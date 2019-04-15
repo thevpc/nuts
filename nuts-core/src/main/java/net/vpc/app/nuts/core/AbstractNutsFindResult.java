@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core;
 import java.util.Iterator;
 import net.vpc.app.nuts.NutsFindResult;
 import net.vpc.app.nuts.NutsMissingElementsException;
+import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsTooManyElementsException;
 
 /**
@@ -16,6 +17,21 @@ import net.vpc.app.nuts.NutsTooManyElementsException;
  * @param <T>
  */
 public abstract class AbstractNutsFindResult<T> implements NutsFindResult<T> {
+
+    private String nutsBase;
+
+    public AbstractNutsFindResult(String nutsBase) {
+        this.nutsBase = nutsBase;
+    }
+
+    @Override
+    public T item() throws NutsNotFoundException {
+        Iterator<T> it = iterator();
+        if (it.hasNext()) {
+            return it.next();
+        }
+        throw new NutsNotFoundException(nutsBase);
+    }
 
     @Override
     public T first() {

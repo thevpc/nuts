@@ -64,6 +64,16 @@ public interface NutsFindResult<T> extends Iterable<T> {
      * an incorrect value such as null as the result is already consumed or
      * throw an Exception)
      *
+     * @return the first value or NutsNotFoundException if not found
+     */
+    T item() throws NutsNotFoundException;
+    
+    /**
+     *
+     * Calling this method twice will result in unexpected behavior (may return
+     * an incorrect value such as null as the result is already consumed or
+     * throw an Exception)
+     *
      * @return the first value while checking that there are no more elements to
      * consume. An IllegalArgumentException is thrown if there are no elements
      * to consume. An IllegalArgumentException is also thrown if the are more

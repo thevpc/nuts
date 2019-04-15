@@ -29,12 +29,14 @@ public class NutsCollectionFindResult<T> extends AbstractNutsFindResult<T> {
     private final Object o;
     private final char type;
 
-    public NutsCollectionFindResult() {
+    public NutsCollectionFindResult(String nutsBase) {
+        super(nutsBase);
             this.o = null;
             this.type = 'n';
     }
     
-    public NutsCollectionFindResult(Iterator<T> o) {
+    public NutsCollectionFindResult(String nutsBase,Iterator<T> o) {
+        super(nutsBase);
         if (o == null) {
             this.o = null;
             this.type = 'n';
@@ -44,7 +46,8 @@ public class NutsCollectionFindResult<T> extends AbstractNutsFindResult<T> {
         }
     }
 
-    public NutsCollectionFindResult(Collection<T> o) {
+    public NutsCollectionFindResult(String nutsBase,Collection<T> o) {
+        super(nutsBase);
         if (o == null) {
             this.o = null;
             this.type = 'n';
@@ -54,7 +57,8 @@ public class NutsCollectionFindResult<T> extends AbstractNutsFindResult<T> {
         }
     }
 
-    public NutsCollectionFindResult(List<T> o) {
+    public NutsCollectionFindResult(String nutsBase,List<T> o) {
+        super(nutsBase);
         if (o == null) {
             this.o = null;
             this.type = 'n';

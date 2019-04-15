@@ -26,11 +26,11 @@ public class MvnClient {
             case INIT:{
                 status=Status.DIRTY;
                 try {
-                    ws.fetch().id(NET_VPC_APP_NUTS_MVN).setSession(session.copy())
+                    NutsDefinition ff = ws.find().id(NET_VPC_APP_NUTS_MVN).setSession(session.copy())
                             .wired()
                             .setAcceptOptional(false)
-                            .includeDependencies().getResultDefinition();
-                    for (NutsId nutsId : ws.find().mainAndDependencies().getResultIds()) {
+                            .includeDependencies().latestVersions().getResultDefinitions().item();
+                    for (NutsId nutsId : ws.find().id(ff.getId()).mainAndDependencies().getResultIds()) {
                         ws.fetch().id(nutsId).setSession(session)
                                 .wired()
                                 .setAcceptOptional(false)

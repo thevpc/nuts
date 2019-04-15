@@ -878,9 +878,9 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     protected NutsExecutableImpl ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
         NutsDefinition def = null;
         NutsId nid = ws.parser().parseId(commandName);
-        def = ws.fetch().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(true).installed().getResultDefinition();
+        def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(true).installed().getResultDefinitions().first();
         if (def == null) {
-            def = ws.fetch().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(false).wired().getResultDefinition();
+            def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(false).wired().getResultDefinitions().item();
         }
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, embedded);
     }

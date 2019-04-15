@@ -397,7 +397,8 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                                     if (companionCount == 0) {
                                         out.println("Installation of Nuts companion tools...");
                                     }
-                                    String d = ws.fetch().id(companionTool).getResultDescriptor().getDescription();
+                                    String d = ws.find().id(companionTool).latestVersions()
+                                            .getResultDefinitions().item().getDescriptor().getDescription();
                                     out.printf("##\\### Installing ==%s== (%s)...\n", companionTool, d);
                                 }
                                 if (log.isLoggable(Level.CONFIG)) {
@@ -427,7 +428,8 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
             List<NutsDefinition> defsToInstall = new ArrayList<>();
             for (NutsId id : this.getIds()) {
                 emptyCommand = false;
-                NutsDefinition def = ws.fetch().id(id).session(session).setAcceptOptional(false).includeDependencies().setIncludeInstallInformation(true).getResultDefinition();
+                NutsDefinition def = ws.find().id(id).session(session).setAcceptOptional(false)
+                        .includeDependencies().includeInstallInformation().latestVersions().getResultDefinitions().item();
                 if (def != null && def.getPath() != null) {
                     boolean installed = false;
                     if (def.getInstallation().isInstalled()) {

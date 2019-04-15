@@ -442,15 +442,19 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 //        }
 //        throw new NutsIllegalArgumentException("Inaccessible runtime info : " + bootUrls);
 //    }
+    @Override
     public boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(this, session);
         NutsDefinition nutToInstall = null;
         try {
-            nutToInstall = fetch().id(id).setSession(session).setTransitive(false).includeDependencies(checkDependencies)
+            nutToInstall = find().id(id).setSession(session).setTransitive(false).includeDependencies(checkDependencies)
                     .offline()
                     .setAcceptOptional(false)
                     .setIncludeInstallInformation(true)
-                    .getResultDefinition();
+                    .getResultDefinitions().first();
+            if(nutToInstall==null){
+                return false;
+            }
         } catch (NutsNotFoundException e) {
             return false;
         } catch (Exception e) {

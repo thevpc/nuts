@@ -420,7 +420,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     public NutsFindCommand allVersions(boolean includeAllVersions) {
         return setAllVersions(includeAllVersions);
     }
-    
+
     @Override
     public NutsFindCommand setAllVersions(boolean includeAllVersions) {
         this.includeAllVersions = includeAllVersions;
@@ -716,15 +716,19 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindResult<NutsDefinition> getResultDefinitions() {
-        return new NutsDefinitionNutsFindResult();
+        return new NutsDefinitionNutsFindResult(resolveFindIdBase());
+    }
+
+    private String resolveFindIdBase() {
+        return ids.isEmpty() ? null : ids.get(0) == null ? null : ids.get(0).toString();
     }
 
     private NutsCollectionFindResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr) {
         if (includeAllVersions && includeDuplicatedVersions) {
-            return new NutsCollectionFindResult<NutsId>(curr);
+            return new NutsCollectionFindResult<NutsId>(resolveFindIdBase(),curr);
             //nothind
         } else if (includeAllVersions && !includeDuplicatedVersions) {
-            return new NutsCollectionFindResult<NutsId>(
+            return new NutsCollectionFindResult<NutsId>(resolveFindIdBase(),
                     IteratorBuilder.of(curr).unique(new Function<NutsId, String>() {
                         @Override
                         public String apply(NutsId nutsId) {
@@ -741,7 +745,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                     visited.put(k, nutsId);
                 }
             }
-            return new NutsCollectionFindResult<NutsId>(visited.values());
+            return new NutsCollectionFindResult<NutsId>(resolveFindIdBase(),visited.values());
         } else if (!includeAllVersions && includeDuplicatedVersions) {
             Map<String, List<NutsId>> visited = new LinkedHashMap<>();
             while (curr.hasNext()) {
@@ -758,7 +762,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             for (List<NutsId> li : visited.values()) {
                 list.addAll(li);
             }
-            return new NutsCollectionFindResult<NutsId>(list);
+            return new NutsCollectionFindResult<NutsId>(resolveFindIdBase(),list);
         }
         throw new NutsUnexpectedException();
     }
@@ -766,10 +770,10 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     private NutsCollectionFindResult<NutsId> findBasket() {
         Iterator<NutsId> base0 = findIterator(build());
         if (base0 == null) {
-            return new NutsCollectionFindResult<NutsId>();
+            return new NutsCollectionFindResult<NutsId>(resolveFindIdBase());
         }
         if (includeAllVersions && includeDuplicatedVersions && !sort && !isIncludeDependencies()) {
-            return new NutsCollectionFindResult<NutsId>(base0);
+            return new NutsCollectionFindResult<NutsId>(resolveFindIdBase(),base0);
         }
         NutsCollectionFindResult<NutsId> a = applyVersionFlagFilters(base0);
         Iterator<NutsId> curr = a.iterator();
@@ -817,7 +821,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         if (sort) {
             List<NutsId> listToSort = curr2.list();
             listToSort.sort(idComparator == null ? DefaultNutsIdComparator.INSTANCE : idComparator);
-            curr2 = new NutsCollectionFindResult<NutsId>(listToSort);
+            curr2 = new NutsCollectionFindResult<NutsId>(resolveFindIdBase(),listToSort);
         }
         return curr2;
     }
@@ -919,7 +923,6 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         return setDuplicateVersions(includeDuplicateVersions);
     }
 
-    
     @Override
     public NutsFindCommand setDuplicateVersions(boolean includeDuplicateVersion) {
         this.includeDuplicatedVersions = includeDuplicateVersion;
@@ -938,7 +941,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     private class NutsDefinitionNutsFindResult extends AbstractNutsFindResult<NutsDefinition> {
 
-        public NutsDefinitionNutsFindResult() {
+        public NutsDefinitionNutsFindResult(String nutsBase) {
+            super(nutsBase);
         }
 
         @Override

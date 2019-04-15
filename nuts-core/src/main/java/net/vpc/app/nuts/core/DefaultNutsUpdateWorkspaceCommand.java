@@ -572,8 +572,8 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         r.setId(id.getSimpleNameId());
 
         final PrintStream out = CoreIOUtils.resolveOut(ws, session);
-        NutsDefinition d0 = ws.fetch().id(id).setSession(session).offline().setAcceptOptional(false).setLenient(true).getResultDefinition();
-        NutsDefinition d1 = ws.fetch().id(id).setSession(session).setAcceptOptional(false).includeDependencies().setLenient(true).getResultDefinition();
+        NutsDefinition d0 = ws.find().id(id).setSession(session).offline().setAcceptOptional(false).setLenient(true).getResultDefinitions().first();
+        NutsDefinition d1 = ws.find().id(id).setSession(session).setAcceptOptional(false).includeDependencies().setLenient(true).getResultDefinitions().first();
         r.setLocal(d0);
         r.setAvailable(d1);
         final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
