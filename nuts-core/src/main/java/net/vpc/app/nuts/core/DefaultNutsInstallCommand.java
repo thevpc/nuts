@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
+import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
@@ -429,7 +430,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
             for (NutsId id : this.getIds()) {
                 emptyCommand = false;
                 NutsDefinition def = ws.find().id(id).session(session).setAcceptOptional(false)
-                        .includeDependencies().includeInstallInformation().latestVersions().getResultDefinitions().item();
+                        .includeDependencies().scope(NutsDependencyScope.PROFILE_RUN).includeInstallInformation().latestVersions().getResultDefinitions().item();
                 if (def != null && def.getPath() != null) {
                     boolean installed = false;
                     if (def.getInstallation().isInstalled()) {
