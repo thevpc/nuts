@@ -31,7 +31,11 @@ package net.vpc.app.nuts;
 
 import java.util.*;
 import java.util.logging.Level;
-
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public final class NutsArgumentsParser {
 
     private NutsArgumentsParser() {
@@ -246,6 +250,12 @@ public final class NutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--macos-layout": {
+                        if (enabled) {
+                            o.setStoreLocationLayout(NutsStoreLocationLayout.MACOS);
+                        }
+                        break;
+                    }
                     case "--linux-layout": {
                         if (enabled) {
                             o.setStoreLocationLayout(NutsStoreLocationLayout.LINUX);
@@ -280,6 +290,13 @@ public final class NutsArgumentsParser {
                     case "--windows-temp-home":
                     case "--windows-cache-home":
                     case "--windows-lib-home":
+                    case "--macos-programs-home":
+                    case "--macos-config-home":
+                    case "--macos-var-home":
+                    case "--macos-logs-home":
+                    case "--macos-temp-home":
+                    case "--macos-cache-home":
+                    case "--macos-lib-home":
                     case "--linux-programs-home":
                     case "--linux-config-home":
                     case "--linux-var-home":

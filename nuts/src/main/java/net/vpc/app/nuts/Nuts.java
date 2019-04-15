@@ -32,7 +32,11 @@ package net.vpc.app.nuts;
 import java.util.Arrays;
 
 /**
- * Nuts Boot Class Created by vpc on 1/5/17.
+ * Nuts Top Class.
+ * Nuts is a Package manager for Java Applications and Nuts 
+ * class is it's main class for creating and opening nuts workspaces.
+ * Created by vpc on 1/5/17.
+ * @since 0.1.0
  */
 public class Nuts {
 
@@ -47,6 +51,10 @@ public class Nuts {
         }
     }
 
+    /**
+     * current nuts version
+     * @return current nuts version
+     */
     public static String getVersion() {
         return version;
     }
@@ -96,7 +104,7 @@ public class Nuts {
 
     /**
      * opens a workspace using "--nuts-boot-args" configuration argument. This
-     * method is to be called by child processes of nuts to inherit workspace
+     * method is to be called by child processes of nuts in order to inherit workspace
      * configuration.
      *
      * @param args arguments
@@ -174,7 +182,7 @@ public class Nuts {
     }
 
     /**
-     * runs Nuts application with the provided arguments This Main will never
+     * run Nuts application with the provided arguments. This Main will never
      * call System.exit()
      *
      * @param args boot arguments

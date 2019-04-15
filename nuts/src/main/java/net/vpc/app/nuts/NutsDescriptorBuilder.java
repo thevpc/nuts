@@ -37,6 +37,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * Created by vpc on 2/19/17.
+ * @since 0.5.4
  */
 public interface NutsDescriptorBuilder extends Serializable {
 

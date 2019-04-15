@@ -32,6 +32,11 @@ package net.vpc.app.nuts;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsRepositoryConfig implements Serializable {
 
     private static final long serialVersionUID = 2;

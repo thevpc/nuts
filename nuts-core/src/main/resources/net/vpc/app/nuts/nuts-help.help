@@ -48,7 +48,7 @@ Boot Runtime Version: ${nuts.workspace-runtime.version}
 Java         Version: ${java.version} (${java.vm.name})
 
 @@NUTS OPTIONS:@@
- There are three (3) types of options : 
+ There are four (4) types of options : 
  * [[create   options]]
  * [[create exported options]]
  * [[open options]]
@@ -58,7 +58,7 @@ Java         Version: ${java.version} (${java.vm.name})
                     they will be persisted. If they are specified later they will override persisted values without persisting the changes
 
  [[create options]] are considered solely when creating a new workspace. They will be persisted then (to the configuration file)
-                    but They will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
+                    but they will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
 
  [[open exported options]] are open (so transient, non persistent) options that will override any configured value (if any) 
                       having the ability to be exported to any java child process (as system property -D...) 
@@ -168,10 +168,10 @@ Java         Version: ${java.version} (${java.vm.name})
        same as  [[--repo-store-strategy]] {{exploded}}
 
  [[--standalone]]
-    Equivalent of [[--standalone-workspace]] and [--standalone-repositories]]
+    Equivalent of [[--standalone-workspace]] and [[--standalone-repositories]]
 
  [[--exploded]]
-    Equivalent of [[--exploded-workspace]] and [--exploded-repositories]]
+    Equivalent of [[--exploded-workspace]] and [[--exploded-repositories]]
 
  [[--store-layout]] {{\<store-layout\>}}
       Defines store layout relatively to the running operating system. This resolve root locations of data folders.
@@ -262,8 +262,8 @@ Java         Version: ${java.version} (${java.vm.name})
 @@NUTS OPEN EXPORTED OPTIONS:@@
  [[--global]]  or [[-g]]
       uses root/system wide workspace instead of user\'s own workspace. 
-      requires admin privileges as it uses.
-      Use shared workspace is located at :
+      requires admin privileges.
+      Uses shared workspace located at :
       Windows    : $ProgramFiles/nuts/system-workspace/repositories/local
       Linux/Unix : /usr/share/nuts/system-workspace/repositories/local
       More generally folder homes are defines as follows :
@@ -362,10 +362,9 @@ Java         Version: ${java.version} (${java.vm.name})
 
  [[--recover]]  or [[-0]]
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.
- [[--reset]] or [[-r]]
-       reset (delete) ==nuts== workspace folder
- [[--cleanup]] or [[-c]]
-       clean (delete) ==nuts== cache folders
+
+ [[--init=]]reset|cleanup
+       reset (delete) ==nuts== workspace folder befaore starting the workspace
 
  [[--perf]]
       show startup time in ms
@@ -373,10 +372,10 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--embedded]]  or [[-b]]
       when invoking a nuts component, it will be executed in the current process (no JVM process wil be spawn)
 
- [[--external]]  or [[-x]]
+ [[--external]]  or [[--spawn]] or [[-x]]
       when invoking a nuts component, it will alway be executed in a newly created process (this is the default)
 
- [[--native]]  or [[-n]]
+ [[--native]]  or [[--syscall]] or [[-n]]
       the command is considered as a native command (not a nuts) and will be passed to the os as is.
 
  [[--open-mode]]  {{\<mode\>}}
@@ -398,7 +397,7 @@ Java         Version: ${java.version} (${java.vm.name})
  [[-]] {{\<args\>}}...
    runs a nut\'s shell (nsh) command with the remaining arguments
 
- [[--version]] or [[-version]] or [[-v]]
+ [[version]] or [[--version]] or [[-version]] or [[-v]]
       show version
 
  [[--reset]]
@@ -407,16 +406,17 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--help]] or [[-?]] or [[-h]]
       show this help and exit
 
- [[--license]]
-      show license info
-
+ [[exec]] ...
  [[--exec]] ...
  [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
-      runs command with the given executor options (it will be considered an option if it 
-      starts with '-'). This is helpful to issue JVM Options to executor for instance
+      runs command with the given executor options \( it will be considered an option if it 
+      starts with '-' \). This is helpful to issue JVM Options to executor for instance
 
  [[info]]
       show workspace detailed information (paths and libraries)
+
+ [[license]]
+      show license info
 
  [[install]] {{\<nuts-component\>}}...
       install ==nuts== package {{\<nuts-component\>}}

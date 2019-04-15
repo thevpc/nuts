@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsUpdateOptions {
     private boolean trace=true;
     private boolean enableMajorUpdates=false;

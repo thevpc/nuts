@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsResponseParser {
     Object[] getDefaultAcceptedValues(Class type);
 

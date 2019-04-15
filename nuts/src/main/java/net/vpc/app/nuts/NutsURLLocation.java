@@ -33,14 +33,18 @@ import java.net.URL;
 
 /**
  * Convenient class to hold information about base path and expanded url
- *@author vpc
+ *
+ * @author vpc
+ * @since 0.5.4
  */
 public class NutsURLLocation {
-    private String path;
-    private URL url;
+
+    private final String path;
+    private final URL url;
 
     /**
      * sole constructor
+     *
      * @param path url path
      * @param url url
      */
@@ -51,6 +55,7 @@ public class NutsURLLocation {
 
     /**
      * base path
+     *
      * @return base path
      */
     public String getPath() {
@@ -59,6 +64,7 @@ public class NutsURLLocation {
 
     /**
      * expanded url
+     *
      * @return expanded url
      */
     public URL getUrl() {

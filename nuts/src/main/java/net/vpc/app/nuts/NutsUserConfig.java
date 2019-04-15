@@ -34,6 +34,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public final class NutsUserConfig implements Serializable {
 
     private static transient final long serialVersionUID = 1;

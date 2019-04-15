@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsWorkspaceCommand {
 
     String getFactoryId();
@@ -38,4 +43,6 @@ public interface NutsWorkspaceCommand {
     String getName();
 
     void exec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
+    
+    String getHelpText() throws NutsExecutionException;
 }

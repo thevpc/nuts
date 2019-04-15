@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Thrown to indicate that the component is already installed and should not be reinstalled
  * Created by vpc on 1/15/17.
+ * @since 0.5.4
  */
 public class NutsAlreadyInstalledException extends NutsElementNotFoundException {
 

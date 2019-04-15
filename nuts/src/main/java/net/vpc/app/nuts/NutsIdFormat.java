@@ -34,6 +34,11 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.Path;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsIdFormat {
 
     boolean isOmitNamespace();

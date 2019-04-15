@@ -33,6 +33,7 @@ import java.io.Serializable;
 
 /**
  * Created by vpc on 2/1/17.
+ * @since 0.5.4
  */
 public class NutsVersionInterval implements Serializable{
     private static final long serialVersionUID= 1L;

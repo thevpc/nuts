@@ -33,6 +33,11 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.1.0
+ */
 public interface NutsId extends Serializable {
 
     boolean equalsSimpleName(NutsId other);

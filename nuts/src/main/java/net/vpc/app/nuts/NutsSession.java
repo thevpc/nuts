@@ -31,11 +31,12 @@ package net.vpc.app.nuts;
 
 import java.util.Map;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvider {
-
-//    boolean isTransitive();
-
-//    NutsSession setTransitive(boolean transitive);
 
     NutsSession copy();
 
@@ -46,10 +47,6 @@ public interface NutsSession extends NutsTerminalProvider, NutsPropertiesProvide
     <T extends NutsListener> T[] getListeners(Class<T> type);
 
     NutsListener[] getListeners();
-
-//    boolean isIndexed();
-
-//    NutsSession setIndexed(boolean indexEnabled);
 
     NutsSession setTerminal(NutsSessionTerminal terminal);
 

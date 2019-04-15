@@ -36,6 +36,31 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     }
 
     @Override
+    public PrintStream fout() {
+        return getFormattedOut();
+    }
+
+    @Override
+    public PrintStream ferr() {
+        return getFormattedErr();
+    }
+
+    @Override
+    public PrintStream out() {
+        return getOut();
+    }
+
+    @Override
+    public PrintStream err() {
+        return getErr();
+    }
+
+    @Override
+    public InputStream in() {
+       return getIn();
+    }
+
+    @Override
     public PrintStream getFormattedOut() {
         return getFormattedOut(false);
     }

@@ -76,7 +76,9 @@ public class Nsh extends NutsApplication {
                                 .setFactoryId("nsh")
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
-                                .setOwner(applicationContext.getAppId()),
+                                .setOwner(applicationContext.getAppId())
+                                .setHelpCommand(nshIdStr, "-c", "help",command.getName())
+                        ,
                         new net.vpc.app.nuts.NutsInstallCommandOptions().setForce(force).setTrace(false), null
                 )) {
                     reinstalled.add(command.getName());

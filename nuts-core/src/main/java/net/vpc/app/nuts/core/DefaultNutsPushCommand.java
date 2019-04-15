@@ -29,6 +29,7 @@ import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
+import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
@@ -50,6 +51,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     private NutsSession session;
     private final NutsWorkspace ws;
     private String repository;
+    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
 
     public DefaultNutsPushCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -467,4 +469,37 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
         return setOffline(enable);
     }
 
+     @Override
+    public NutsPushCommand formatType(NutsResultFormatType formatType) {
+        return setFormatType(formatType);
+    }
+
+    @Override
+    public NutsPushCommand setFormatType(NutsResultFormatType formatType) {
+        if(formatType==null){
+            formatType=NutsResultFormatType.PLAIN;
+        }
+        this.formatType=formatType;
+        return this;
+    }
+
+    @Override
+    public NutsPushCommand json() {
+        return setFormatType(NutsResultFormatType.JSON);
+    }
+
+    @Override
+    public NutsPushCommand plain() {
+        return setFormatType(NutsResultFormatType.PLAIN);
+    }
+
+    @Override
+    public NutsPushCommand props() {
+        return setFormatType(NutsResultFormatType.PROPS);
+    }
+
+    @Override
+    public NutsResultFormatType getFormatType() {
+        return this.formatType;
+    }
 }

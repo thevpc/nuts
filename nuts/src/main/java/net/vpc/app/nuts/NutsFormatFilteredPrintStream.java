@@ -32,6 +32,11 @@ package net.vpc.app.nuts;
 
 import java.io.PrintStream;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsFormatFilteredPrintStream extends NutsComponent<Object> {
     PrintStream getUnformattedInstance();
 }

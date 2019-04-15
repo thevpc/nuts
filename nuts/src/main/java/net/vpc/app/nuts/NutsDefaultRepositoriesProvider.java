@@ -28,7 +28,11 @@
  * ====================================================================
  */
 package net.vpc.app.nuts;
-
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 @NutsSingleton
 public interface NutsDefaultRepositoriesProvider extends NutsComponent<NutsWorkspace> {
 

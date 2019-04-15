@@ -32,7 +32,11 @@ package net.vpc.app.nuts;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 final class NutsWorkspaceClassPath {
 
     private NutsBootId id;

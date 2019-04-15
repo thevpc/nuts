@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import net.vpc.app.nuts.NutsCommandExecOptions;
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsWorkspaceCommand;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.CoreStringUtils;
 
 public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
 
@@ -16,6 +18,8 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     private NutsId owner;
     private String factoryId;
     private String[] command;
+    private String[] helpCommand;
+    private String helpText;
     private String[] executorOptions;
     private NutsWorkspace ws;
 
@@ -51,6 +55,24 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     public DefaultNutsWorkspaceCommand setFactoryId(String factoryId) {
         this.factoryId = factoryId;
         return this;
+    }
+
+    public DefaultNutsWorkspaceCommand setHelpCommand(String[] helpCommand) {
+        this.helpCommand = helpCommand;
+        return this;
+    }
+
+    public DefaultNutsWorkspaceCommand setHelpText(String helpText) {
+        this.helpText = helpText;
+        return this;
+    }
+
+    public NutsWorkspace getWs() {
+        return ws;
+    }
+
+    public void setWs(NutsWorkspace ws) {
+        this.ws = ws;
     }
 
     public String[] getCommand() {
@@ -95,8 +117,30 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     }
 
     @Override
+    public String getHelpText() throws NutsExecutionException {
+        if (!CoreStringUtils.isBlank(helpText)) {
+            return helpText;
+        }
+        if (helpCommand != null && helpCommand.length > 0) {
+            try{
+            return ws.exec()
+                    .command(helpCommand)
+                    .failFast(false)
+                    .redirectErrorStream()
+                    .grabOutputString()
+                    .exec()
+                    .getOutputString();
+            }catch(Exception ex){
+                //ignore
+                return "Failed to retrieve help for "+getName();
+            }
+        }
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + command + ", executorOptions=" + executorOptions + '}';
     }
-    
+
 }

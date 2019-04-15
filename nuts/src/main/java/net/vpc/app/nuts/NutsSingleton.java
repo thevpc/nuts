@@ -37,6 +37,7 @@ import java.lang.annotation.Target;
 /**
  * classes that are marked with this annotation will be created once by the factory
  * Created by vpc on 1/24/17.
+ * @since 0.5.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

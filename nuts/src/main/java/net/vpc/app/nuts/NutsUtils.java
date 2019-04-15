@@ -53,6 +53,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 1/15/17.
+ * @since 0.5.4
  */
 final class NutsUtils {
 
@@ -494,6 +495,20 @@ final class NutsUtils {
                                     }
                                     String t = k.substring(0, k.length() - "WindowsHome".length()).toUpperCase();
                                     c.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.valueOf(t), val);
+                                    break;
+                                }
+                                case "programsMacOsHome":
+                                case "configMacOsHome":
+                                case "varMacOsHome":
+                                case "logsMacOsHome":
+                                case "tempMacOsHome":
+                                case "cacheMacOsHome":
+                                case "libMacOsHome": {
+                                    if (log.isLoggable(Level.FINEST)) {
+                                        log.log(Level.FINEST, "\t Loaded Workspace Config Property {0}={1}", new Object[]{k, val});
+                                    }
+                                    String t = k.substring(0, k.length() - "MacOsHome".length()).toUpperCase();
+                                    c.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.valueOf(t), val);
                                     break;
                                 }
                                 case "programsLinuxHome":

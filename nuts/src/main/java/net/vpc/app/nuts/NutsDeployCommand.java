@@ -34,6 +34,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsDeployCommand {
 
     NutsDeployCommand content(InputStream stream);
@@ -136,4 +141,16 @@ public interface NutsDeployCommand {
     NutsSession getSession();
 
     NutsId deploy();
+
+    NutsDeployCommand formatType(NutsResultFormatType formatType);
+
+    NutsDeployCommand setFormatType(NutsResultFormatType formatType);
+
+    NutsDeployCommand json();
+
+    NutsDeployCommand plain();
+
+    NutsDeployCommand props();
+
+    NutsResultFormatType getFormatType();
 }

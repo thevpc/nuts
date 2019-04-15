@@ -32,6 +32,11 @@ package net.vpc.app.nuts;
 import java.io.File;
 import java.util.Arrays;
 
+/**
+ * Nuts Boot editable configuration object
+ * @author vpc
+ * @since 0.5.4
+ */
 public final class NutsBootConfig implements Cloneable {
 
     private String apiVersion = null;

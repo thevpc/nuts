@@ -34,6 +34,7 @@ import java.io.UncheckedIOException;
 
 /**
  * Created by vpc on 1/21/17.
+ * @since 0.5.4
  */
 public interface NutsHttpConnectionFacade {
 

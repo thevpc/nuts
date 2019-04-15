@@ -31,7 +31,6 @@ package net.vpc.app.nuts;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -54,7 +53,8 @@ import java.util.zip.ZipFile;
  * initial nuts-core.jar and its dependencies and for creating workspaces using
  * the method {@link #openWorkspace()}.
  * <p>
- * Created by vpc on 1/6/17.
+ * @author vpc
+ * @since 0.5.4
  */
 public class NutsBootWorkspace {
 

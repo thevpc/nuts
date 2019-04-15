@@ -35,6 +35,11 @@ import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Properties;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat addProperty(String key, String value);
@@ -79,7 +84,7 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat setMinimal(boolean minimal);
 
-    NutsFormatType getFormatType();
+    NutsResultFormatType getFormatType();
 
-    NutsWorkspaceInfoFormat setFormatType(NutsFormatType formatType);
+    NutsWorkspaceInfoFormat setFormatType(NutsResultFormatType formatType);
 }

@@ -17,15 +17,14 @@ import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
-import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsNotFoundException;
+import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUninstallCommand;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -42,6 +41,7 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     private List<NutsId> ids = new ArrayList<>();
     private NutsSession session;
     private NutsWorkspace ws;
+    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
 
     public DefaultNutsUninstallCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -351,4 +351,38 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return this;
     }
 
+     @Override
+    public NutsUninstallCommand formatType(NutsResultFormatType formatType) {
+        return setFormatType(formatType);
+    }
+
+    @Override
+    public NutsUninstallCommand setFormatType(NutsResultFormatType formatType) {
+        if(formatType==null){
+            formatType=NutsResultFormatType.PLAIN;
+        }
+        this.formatType=formatType;
+        return this;
+    }
+
+    @Override
+    public NutsUninstallCommand json() {
+        return setFormatType(NutsResultFormatType.JSON);
+    }
+
+    @Override
+    public NutsUninstallCommand plain() {
+        return setFormatType(NutsResultFormatType.PLAIN);
+    }
+
+    @Override
+    public NutsUninstallCommand props() {
+        return setFormatType(NutsResultFormatType.PROPS);
+    }
+
+    @Override
+    public NutsResultFormatType getFormatType() {
+        return this.formatType;
+    }
+    
 }

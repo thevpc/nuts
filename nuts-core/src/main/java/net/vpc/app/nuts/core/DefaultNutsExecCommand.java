@@ -43,9 +43,21 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     private NutsExecutionType executionType = NutsExecutionType.SPAWN;
     private boolean redirectErrorStream;
     private boolean failFast;
+    private NutsCommandStringFormatter commandStringFormatter;
 
     public DefaultNutsExecCommand(DefaultNutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public NutsCommandStringFormatter getCommandStringFormatter() {
+        return commandStringFormatter;
+    }
+
+    @Override
+    public NutsExecCommand setCommandStringFormatter(NutsCommandStringFormatter commandStringFormatter) {
+        this.commandStringFormatter = commandStringFormatter;
+        return this;
     }
 
     @Override
@@ -371,7 +383,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
     @Override
     public NutsExecCommand exec() {
-        NutsExecutable exec = (NutsExecutable) which();
+        NutsExecutableImpl exec = (NutsExecutableImpl) which();
         executed = true;
         try {
             exec.execute();
@@ -388,7 +400,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
     }
 
     @Override
-    public NutsWhichExec which() {
+    public NutsExecutableInfo which() {
         if (this.session == null) {
             this.session = ws.createSession();
         }
@@ -411,7 +423,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         terminal.getOut().flush();
         terminal.getErr().flush();
         String[] ts = command.toArray(new String[0]);
-        NutsExecutable exec = null;
+        NutsExecutableImpl exec = null;
         switch (executionType) {
             case SYSCALL: {
                 exec = new SystemExecutable(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), session.copy().setTerminal(terminal));
@@ -618,11 +630,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
     @Override
     public String getCommandString() {
-        return getCommandString(null);
-    }
-
-    @Override
-    public String getCommandString(NutsCommandStringFormatter f) {
+        NutsCommandStringFormatter f=getCommandStringFormatter();
         StringBuilder sb = new StringBuilder();
         if (env != null) {
             for (Map.Entry<Object, Object> e : env.entrySet()) {
@@ -712,15 +720,15 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         return s;
     }
 
-    public NutsExecutable execExternal(String[] cmd, String[] executorOptions, NutsSession session) {
+    public NutsExecutableImpl execExternal(String[] cmd, String[] executorOptions, NutsSession session) {
         return execEmbeddedOrExternal(cmd, executorOptions, session, false);
     }
 
-    public NutsExecutable execEmbedded(String[] cmd, String[] executorOptions, NutsSession session) {
+    public NutsExecutableImpl execEmbedded(String[] cmd, String[] executorOptions, NutsSession session) {
         return execEmbeddedOrExternal(cmd, executorOptions, session, true);
     }
 
-    private NutsExecutable execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession session, boolean embedded) {
+    private NutsExecutableImpl execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession session, boolean embedded) {
         if (cmd == null || cmd.length == 0) {
             throw new NutsIllegalArgumentException("Missing command");
         }
@@ -786,7 +794,24 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                 return new InternalExecutable(cmdName, args) {
                     @Override
                     public void execute() {
-                        session.getTerminal().getFormattedOut().println(ws.getHelpText());
+                        if (args.length == 0) {
+                            session.getTerminal().fout().println(ws.getHelpText());
+                        }
+                        for (String arg : args) {
+                            NutsExecutableInfo w=null;
+                            try {
+                                w = ws.exec().command(arg).which();
+                                
+                            } catch (Exception ex) {
+                            }
+                            if(w!=null){
+                                
+                                session.getTerminal().fout().println(arg+" :");
+                                session.getTerminal().fout().println(w.getHelpText());
+                            }else{
+                                session.getTerminal().ferr().println(arg+" : Not found");
+                            }
+                        }
                     }
                 };
             }
@@ -850,7 +875,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 //            }
 //        }
 //    }
-    protected NutsExecutable ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
+    protected NutsExecutableImpl ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
         NutsDefinition def = null;
         NutsId nid = ws.parser().parseId(commandName);
         def = ws.fetch().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(true).installed().getResultDefinition();
@@ -952,9 +977,41 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         throw new NutsNotFoundException(nutToRun == null ? null : nutToRun.getId());
     }
 
-    public static interface NutsExecutable extends NutsWhichExec {
+    public static interface NutsExecutableImpl extends NutsExecutableInfo {
 
         void execute();
+    }
+
+    public abstract class AbstractExecutable implements NutsExecutableImpl {
+
+        private NutsExecutableType type;
+        private String name;
+
+        public AbstractExecutable(String name, NutsExecutableType type) {
+            this.type = type;
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public NutsExecutableType getType() {
+            return type;
+        }
+
+        @Override
+        public String getDescription() {
+            return toString();
+        }
+
+        @Override
+        public String getHelpText() {
+            return "No help available. Try '" + getName() + " --help'";
+        }
+
     }
 
     public class AliasExecutable extends AbstractExecutable {
@@ -982,36 +1039,19 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         }
 
         @Override
+        public String getHelpText() {
+            String t = command.getHelpText();
+            if (t != null) {
+                return t;
+            }
+            return "No help available. Try '" + getName() + " --help'";
+        }
+
+        @Override
         public String toString() {
             return "CMD " + command.getName() + " @ " + command.getOwner();
         }
 
-    }
-
-    public abstract class AbstractExecutable implements NutsExecutable {
-
-        private NutsExecutableType type;
-        private String name;
-
-        public AbstractExecutable(String name, NutsExecutableType type) {
-            this.type = type;
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public NutsExecutableType getType() {
-            return type;
-        }
-
-        @Override
-        public String getDescription() {
-            return toString();
-        }
     }
 
     public class PathComponentExecutable extends AbstractExecutable {
@@ -1128,6 +1168,11 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         public NutsId getId() {
             return null;
         }
+
+        @Override
+        public String getHelpText() {
+            return getName() + " is an internal command. Help is accessible via 'nuts help'";
+        }
     }
 
     public class SystemExecutable extends AbstractExecutable {
@@ -1158,6 +1203,18 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                     e2,
                     ws.io().path(directory),
                     session.getTerminal(), true, true);
+        }
+
+        @Override
+        public String getHelpText() {
+            switch (NutsPlatformUtils.getPlatformOsFamily()) {
+                case WINDOWS: {
+                    return "No help available. Try " + getName() + " /help";
+                }
+                default: {
+                    return "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'";
+                }
+            }
         }
 
         @Override

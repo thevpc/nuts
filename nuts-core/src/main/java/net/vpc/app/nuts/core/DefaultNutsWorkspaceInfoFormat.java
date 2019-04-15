@@ -25,7 +25,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     private NutsWorkspace ws;
     private Properties extraProperties = new Properties();
     private boolean minimal = false;
-    private NutsFormatType formatType = null;
+    private NutsResultFormatType formatType = null;
     boolean fancy = false;
 
     public DefaultNutsWorkspaceInfoFormat(NutsWorkspace ws) {
@@ -59,15 +59,15 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                     break;
                 }
                 case "--json": {
-                    this.setFormatType(NutsFormatType.JSON);
+                    this.setFormatType(NutsResultFormatType.JSON);
                     break;
                 }
                 case "--props": {
-                    this.setFormatType(NutsFormatType.PROPS);
+                    this.setFormatType(NutsResultFormatType.PROPS);
                     break;
                 }
                 case "--plain": {
-                    this.setFormatType(NutsFormatType.PLAIN);
+                    this.setFormatType(NutsResultFormatType.PLAIN);
                     break;
                 }
                 default: {
@@ -111,12 +111,12 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     @Override
-    public NutsFormatType getFormatType() {
+    public NutsResultFormatType getFormatType() {
         return formatType;
     }
 
     @Override
-    public NutsWorkspaceInfoFormat setFormatType(NutsFormatType formatType) {
+    public NutsWorkspaceInfoFormat setFormatType(NutsResultFormatType formatType) {
         this.formatType = formatType;
         return this;
     }
@@ -213,9 +213,9 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     private void format0(Writer w) {
-        NutsFormatType t = formatType;
+        NutsResultFormatType t = formatType;
         if (t == null) {
-            t = NutsFormatType.PLAIN;
+            t = NutsResultFormatType.PLAIN;
         }
         switch (t) {
             case PLAIN:

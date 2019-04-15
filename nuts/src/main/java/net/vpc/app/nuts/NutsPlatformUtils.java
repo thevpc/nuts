@@ -34,6 +34,7 @@ import java.util.Locale;
 /**
  *
  * @author vpc
+ * @since 0.5.4
  */
 public class NutsPlatformUtils {
 
@@ -64,7 +65,7 @@ public class NutsPlatformUtils {
                     case LINUX:
                     case MACOS:
                     case UNIX:
-                    case UNKNOWN:{
+                    case UNKNOWN: {
                         return "/opt/nuts/programs";
                     }
                     case WINDOWS: {
@@ -207,10 +208,23 @@ public class NutsPlatformUtils {
         boolean wasSystem = false;
         if (storeLocationLayout == null || storeLocationLayout == NutsStoreLocationLayout.SYSTEM) {
             wasSystem = true;
-            if ("windows".equals(NutsPlatformUtils.getPlatformOsFamily())) {
-                storeLocationLayout = NutsStoreLocationLayout.WINDOWS;
-            } else {
-                storeLocationLayout = NutsStoreLocationLayout.LINUX;
+            switch (NutsPlatformUtils.getPlatformOsFamily()) {
+                case WINDOWS: {
+                    storeLocationLayout = NutsStoreLocationLayout.WINDOWS;
+                    break;
+                }
+                case MACOS: {
+                    storeLocationLayout = NutsStoreLocationLayout.MACOS;
+                    break;
+                }
+                case LINUX: {
+                    storeLocationLayout = NutsStoreLocationLayout.LINUX;
+                    break;
+                }
+                default: {
+                    storeLocationLayout = NutsStoreLocationLayout.LINUX;
+                    break;
+                }
             }
         }
         String s;
@@ -239,31 +253,47 @@ public class NutsPlatformUtils {
                         case WINDOWS: {
                             return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Roaming/nuts");
                         }
-                        case LINUX:
+                        case MACOS:{
                             return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
+                        }
+                        case LINUX:{
+                            return System.getProperty("user.home") + NutsUtils.syspath("/.nuts");
+                        }
                     }
                     break;
                 }
                 case CACHE: {
                     switch (storeLocationLayout) {
-                        case WINDOWS:
+                        case WINDOWS:{
                             return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
-                        case LINUX:
+                        }
+                        case MACOS:{
                             return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts");
+                        }
+                        case LINUX:{
+                            return System.getProperty("user.home") + NutsUtils.syspath("/.cache/nuts");
+                        }
                     }
                     break;
                 }
                 case TEMP: {
                     switch (storeLocationLayout) {
                         case WINDOWS:
-                            if (NutsPlatformUtils.getPlatformOsFamily().equals("windows")) {
+                            if (NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS)) {
                                 //on windows temp folder is user defined
                                 return System.getProperty("java.io.tmpdir") + NutsUtils.syspath("/nuts");
                             } else {
                                 return System.getProperty("user.home") + NutsUtils.syspath("/AppData/Local/nuts");
                             }
+                        case MACOS:
+                            if (NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.MACOS)) {
+                                //on linux temp folder is shared. will add user folder as discriminator
+                                return System.getProperty("java.io.tmpdir") + NutsUtils.syspath(("/" + System.getProperty("user.name") + "/nuts"));
+                            } else {
+                                return System.getProperty("user.home") + NutsUtils.syspath("/tmp/nuts");
+                            }
                         case LINUX:
-                            if (NutsPlatformUtils.getPlatformOsFamily().equals("linux")) {
+                            if (NutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.LINUX)) {
                                 //on linux temp folder is shared. will add user folder as discriminator
                                 return System.getProperty("java.io.tmpdir") + NutsUtils.syspath(("/" + System.getProperty("user.name") + "/nuts"));
                             } else {

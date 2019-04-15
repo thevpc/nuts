@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/15/17.
+ * @since 0.5.4
  */
 public class NutsNotExecutableException extends NutsExecutionException {
 

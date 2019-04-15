@@ -32,6 +32,11 @@ package net.vpc.app.nuts;
 
 import java.util.Map;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsWorkspaceCommandFactoryConfig {
     private String factoryId;
     private String factoryType;

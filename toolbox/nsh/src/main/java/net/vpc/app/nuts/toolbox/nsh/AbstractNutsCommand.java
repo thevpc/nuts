@@ -29,7 +29,6 @@
  */
 package net.vpc.app.nuts.toolbox.nsh;
 
-import net.vpc.app.nuts.NutsComponent;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.common.commandline.CommandAutoComplete;
 import net.vpc.common.commandline.CommandLine;
@@ -40,7 +39,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

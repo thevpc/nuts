@@ -28,7 +28,11 @@
  * ====================================================================
  */
 package net.vpc.app.nuts;
-
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsUserCancelException extends NutsException {
     public NutsUserCancelException() {
         super("User cancelled operation");

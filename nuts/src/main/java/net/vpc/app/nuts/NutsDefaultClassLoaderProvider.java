@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * Default NutsClassLoaderProvider implementation which points to
  * <code>Thread.currentThread().getContextClassLoader()</code>
+ * @since 0.5.4
  */
 public class NutsDefaultClassLoaderProvider implements NutsClassLoaderProvider {
 

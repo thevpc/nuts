@@ -29,10 +29,15 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsExecutionEntry {
-    private String name;
-    private boolean defaultEntry;
-    private boolean app;
+    private final String name;
+    private final boolean defaultEntry;
+    private final boolean app;
 
     public NutsExecutionEntry(String name, boolean defaultEntry, boolean app) {
         this.name = name;

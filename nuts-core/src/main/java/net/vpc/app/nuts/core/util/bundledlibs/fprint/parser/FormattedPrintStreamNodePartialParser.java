@@ -21,6 +21,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
     List<FDocNode> all = new ArrayList<>();
     StringBuilder curr = new StringBuilder();
     Stack<ParseAction> statusStack = new Stack<>();
+    private boolean lineMode = false;
 
     public FormattedPrintStreamNodePartialParser() {
         statusStack.push(new AllParseAction());
@@ -56,7 +57,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         while (true) {
             ParseAction s = statusStack.peek();
             if (!(s instanceof AllParseAction)) {
-                s.forceEnding();
+                if (s != null) {
+                    s.forceEnding();
+                }
                 ParseAction tt = statusStack.pop();
                 ParseAction parent = statusStack.peek();
                 parent.appendChild(tt);
@@ -268,11 +271,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 if (c == start.charAt(0)) {
                     if (start.length() < 4) {
                         start.append(c);
-                        return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                     } else {
                         started = true;
                         p.applyStart(c);
-                        return;//new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
                     }
                 } else {
                     char endChar = endOf(start.charAt(0));
@@ -281,13 +282,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                         end.append(c);
                         if (end.length() >= start.length()) {
                             p.applyPop();
-                            return;//new ConsumeResut(ConsumeResutType.POP, null);
-                        } else {
-                            return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                         }
                     } else {
                         p.applyStart(c);
-                        return;//new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
                     }
                 }
             } else {
@@ -295,25 +292,19 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 if (c == endChar) {
                     if (end.length() >= start.length()) {
                         p.applyPopReject(c);
-                        return;//new ConsumeResut(ConsumeResutType.POP_REJECT, null, c);
                     } else {
                         end.append(c);
                         if (end.length() >= start.length()) {
                             p.applyPop();
-                            return;//new ConsumeResut(ConsumeResutType.POP, null);
-                        } else {
-                            return;//new ConsumeResut(ConsumeResutType.CONTINUE, null);
                         }
                     }
                 } else {
                     if (end.length() == 0) {
                         p.applyStart(c);
-                        return;//new ConsumeResut(ConsumeResutType.PUSH, consumeStart(c));
                     } else {
                         String y = end.toString();
                         end.delete(0, end.length());
                         p.applyPush(new TypedParseAction(y));
-                        return;//new ConsumeResut(ConsumeResutType.PUSH, new TypedParseAction(y));
                     }
                 }
             }
@@ -450,7 +441,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 case '\r': {
                     value.append(c);
                     p.applyPop();
-                    p.forceEnding();
+                    if (p.lineMode) {
+                        p.forceEnding();
+                    }
                     return;
                 }
                 case '\\': {
@@ -568,7 +561,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             case '\r': {
                 this.applyPush(new PlainParseAction(c));
                 applyPop();
-                forceEnding();
+                if (lineMode) {
+                    forceEnding();
+                }
                 break;
             }
             default: {

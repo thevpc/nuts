@@ -35,6 +35,7 @@ import java.net.URL;
  * Private API
  *
  * @author vpc
+ * @since 0.5.4
  */
 public interface NutsWorkspaceImpl extends NutsWorkspace{
 

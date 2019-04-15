@@ -29,12 +29,19 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsWorkspaceCommandConfig {
     private NutsId owner;
     private String name;
     private String factoryId;
     private String[] command;
     private String[] executorOptions;
+    private String[] helpCommand;
+    private String helpText;
 
     public NutsId getOwner() {
         return owner;
@@ -80,4 +87,23 @@ public class NutsWorkspaceCommandConfig {
         this.executorOptions = executorOptions;
         return this;
     }
+
+    public String[] getHelpCommand() {
+        return helpCommand;
+    }
+
+    public NutsWorkspaceCommandConfig setHelpCommand(String ... helpCommand) {
+        this.helpCommand = helpCommand;
+        return this;
+    }
+
+    public String getHelpText() {
+        return helpText;
+    }
+
+    public NutsWorkspaceCommandConfig setHelpText(String helpText) {
+        this.helpText = helpText;
+        return this;
+    }
+    
 }

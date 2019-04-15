@@ -32,6 +32,11 @@ package net.vpc.app.nuts;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public final class NutsWorkspaceConfig implements Serializable {
 
     private static final long serialVersionUID = 2;
@@ -73,6 +78,14 @@ public final class NutsWorkspaceConfig implements Serializable {
     private String logsWindowsHome = null;
     private String tempWindowsHome = null;
     private String cacheWindowsHome = null;
+
+    private String programsMacOsHome = null;
+    private String configMacOsHome = null;
+    private String varMacOsHome = null;
+    private String libMacOsHome = null;
+    private String logsMacOsHome = null;
+    private String tempMacOsHome = null;
+    private String cacheMacOsHome = null;
 
     private String programsLinuxHome = null;
     private String configLinuxHome = null;
@@ -120,6 +133,14 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.logsWindowsHome = other.getLogsWindowsHome();
         this.tempWindowsHome = other.getTempWindowsHome();
         this.cacheWindowsHome = other.getCacheWindowsHome();
+
+        this.programsMacOsHome = other.getProgramsMacOsHome();
+        this.configMacOsHome = other.getConfigMacOsHome();
+        this.varMacOsHome = other.getVarMacOsHome();
+        this.libMacOsHome = other.getLibMacOsHome();
+        this.logsMacOsHome = other.getLogsMacOsHome();
+        this.tempMacOsHome = other.getTempMacOsHome();
+        this.cacheMacOsHome = other.getCacheMacOsHome();
 
         this.programsLinuxHome = other.getProgramsLinuxHome();
         this.configLinuxHome = other.getConfigLinuxHome();
@@ -504,6 +525,69 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     public NutsWorkspaceConfig setCacheWindowsHome(String cacheWindowsHome) {
         this.cacheWindowsHome = cacheWindowsHome;
+        return this;
+    }
+
+    public String getProgramsMacOsHome() {
+        return programsMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setProgramsMacOsHome(String programsMacOsHome) {
+        this.programsMacOsHome = programsMacOsHome;
+        return this;
+    }
+
+    public String getConfigMacOsHome() {
+        return configMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setConfigMacOsHome(String configMacOsHome) {
+        this.configMacOsHome = configMacOsHome;
+        return this;
+    }
+
+    public String getVarMacOsHome() {
+        return varMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setVarMacOsHome(String varMacOsHome) {
+        this.varMacOsHome = varMacOsHome;
+        return this;
+    }
+
+    public String getLibMacOsHome() {
+        return libMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setLibMacOsHome(String libMacOsHome) {
+        this.libMacOsHome = libMacOsHome;
+        return this;
+    }
+
+    public String getLogsMacOsHome() {
+        return logsMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setLogsMacOsHome(String logsMacOsHome) {
+        this.logsMacOsHome = logsMacOsHome;
+        return this;
+    }
+
+    public String getTempMacOsHome() {
+        return tempMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setTempMacOsHome(String tempMacOsHome) {
+        this.tempMacOsHome = tempMacOsHome;
+        return this;
+    }
+
+    public String getCacheMacOsHome() {
+        return cacheMacOsHome;
+    }
+
+    public NutsWorkspaceConfig setCacheMacOsHome(String cacheMacOsHome) {
+        this.cacheMacOsHome = cacheMacOsHome;
         return this;
     }
 

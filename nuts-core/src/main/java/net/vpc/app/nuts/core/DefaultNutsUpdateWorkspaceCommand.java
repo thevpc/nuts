@@ -43,6 +43,7 @@ import net.vpc.app.nuts.NutsWorkspaceUpdateResult;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsDependencyScope;
+import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
@@ -66,6 +67,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     private boolean updateExtensions = false;
     private boolean updateInstalled = false;
     private boolean includeOptional = false;
+    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
     private String forceBootAPIVersion;
     private List<String> args;
     private List<NutsDependencyScope> scopes = new ArrayList<>();
@@ -1215,5 +1217,40 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         }
         return this;
     }
+
+    @Override
+    public NutsUpdateCommand formatType(NutsResultFormatType formatType) {
+        return setFormatType(formatType);
+    }
+
+    @Override
+    public NutsUpdateCommand setFormatType(NutsResultFormatType formatType) {
+        if(formatType==null){
+            formatType=NutsResultFormatType.PLAIN;
+        }
+        this.formatType=formatType;
+        return this;
+    }
+
+    @Override
+    public NutsUpdateCommand json() {
+        return setFormatType(NutsResultFormatType.JSON);
+    }
+
+    @Override
+    public NutsUpdateCommand plain() {
+        return setFormatType(NutsResultFormatType.PLAIN);
+    }
+
+    @Override
+    public NutsUpdateCommand props() {
+        return setFormatType(NutsResultFormatType.PROPS);
+    }
+
+    @Override
+    public NutsResultFormatType getFormatType() {
+        return this.formatType;
+    }
+    
 
 }

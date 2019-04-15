@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/23/17.
+ * @since 0.5.4
  */
 @NutsSingleton
 public interface NutsWorkspaceArchetypeComponent extends NutsComponent<Object> {

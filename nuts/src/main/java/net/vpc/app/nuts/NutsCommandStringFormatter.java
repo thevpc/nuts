@@ -29,7 +29,16 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * Formatted used to format command line by {@link NutsExecCommand}
+ * 
+ * @see NutsExecCommand#setCommandStringFormatter(net.vpc.app.nuts.NutsCommandStringFormatter)
+ * @see NutsExecCommand#getCommandString()
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsCommandStringFormatter {
+
     boolean acceptArgument(int argIndex, String arg);
 
     String replaceArgument(int argIndex, String arg);

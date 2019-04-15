@@ -32,6 +32,7 @@ package net.vpc.app.nuts;
 /**
  * static NutsClassLoaderProvider that will always return the same instance.
  * Class loader may be null in which case default class loader will be used
+ * @since 0.5.4
  */
 public class NutsSingletonClassLoaderProvider implements NutsClassLoaderProvider {
 

@@ -820,7 +820,10 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 .setFactoryId(c.getFactoryId())
                 .setOwner(c.getOwner())
                 .setExecutorOptions(c.getExecutorOptions())
-                .setName(c.getName());
+                .setName(c.getName())
+                .setHelpCommand(c.getHelpCommand())
+                .setHelpText(c.getHelpText())
+                ;
     }
 
     @Override
@@ -1207,6 +1210,42 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     }
                     case LIB: {
                         config.setLibWindowsHome(location);
+                        break;
+                    }
+                    default: {
+                        throw new NutsIllegalArgumentException("Invalid folder type " + folderType);
+                    }
+                }
+                break;
+            }
+            case MACOS: {
+                switch (folderType) {
+                    case PROGRAMS: {
+                        config.setProgramsMacOsHome(location);
+                        break;
+                    }
+                    case CACHE: {
+                        config.setCacheMacOsHome(location);
+                        break;
+                    }
+                    case CONFIG: {
+                        config.setConfigMacOsHome(location);
+                        break;
+                    }
+                    case LOGS: {
+                        config.setLogsMacOsHome(location);
+                        break;
+                    }
+                    case TEMP: {
+                        config.setTempMacOsHome(location);
+                        break;
+                    }
+                    case VAR: {
+                        config.setVarMacOsHome(location);
+                        break;
+                    }
+                    case LIB: {
+                        config.setLibMacOsHome(location);
                         break;
                     }
                     default: {

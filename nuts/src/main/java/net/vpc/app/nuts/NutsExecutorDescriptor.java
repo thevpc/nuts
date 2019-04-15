@@ -34,6 +34,7 @@ import java.util.Properties;
 
 /**
  * Created by vpc on 1/5/17.
+ * @since 0.5.4
  */
 public class NutsExecutorDescriptor implements Serializable{
     private static final long serialVersionUID= 1L;

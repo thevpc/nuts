@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
 import net.vpc.app.nuts.core.util.InputSource;
@@ -33,6 +32,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     private boolean transitive = true;
     private NutsWorkspace ws;
     private NutsSession session;
+    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
 
     public DefaultNutsDeploymentBuilder(NutsWorkspace ws) {
         this.ws = ws;
@@ -319,8 +319,6 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     public NutsDeployCommand transitive(boolean transitive) {
         return setTransitive(transitive);
     }
-    
-    
 
     @Override
     public NutsId deploy() {
@@ -377,7 +375,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
                                     CoreIOUtils.createInputSource(contentFile).multi(),
-                                     fetchOptions, session);
+                                    fetchOptions, session);
                         }
                         if (descriptor == null) {
                             descriptor = descriptor2;
@@ -424,7 +422,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                     if (CoreStringUtils.isBlank(repository)) {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
-                        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws,NutsRepositorySupportedAction.FIND, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
+                        for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
                             effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
@@ -510,4 +508,37 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
         }
     }
 
+    @Override
+    public NutsDeployCommand formatType(NutsResultFormatType formatType) {
+        return setFormatType(formatType);
+    }
+
+    @Override
+    public NutsDeployCommand setFormatType(NutsResultFormatType formatType) {
+        if (formatType == null) {
+            formatType = NutsResultFormatType.PLAIN;
+        }
+        this.formatType = formatType;
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand json() {
+        return setFormatType(NutsResultFormatType.JSON);
+    }
+
+    @Override
+    public NutsDeployCommand plain() {
+        return setFormatType(NutsResultFormatType.PLAIN);
+    }
+
+    @Override
+    public NutsDeployCommand props() {
+        return setFormatType(NutsResultFormatType.PROPS);
+    }
+
+    @Override
+    public NutsResultFormatType getFormatType() {
+        return this.formatType;
+    }
 }

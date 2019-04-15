@@ -52,6 +52,7 @@ public class HelpCommand extends AbstractNutsCommand {
         super("help", DEFAULT_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         CommandLine cmdLine = cmdLine(args, context);
         boolean showColors = false;

@@ -38,7 +38,7 @@ import net.vpc.common.mvn.PomIdResolver;
 
 import java.io.PrintStream;
 import java.util.Properties;
-import net.vpc.app.nuts.NutsFormatType;
+import net.vpc.app.nuts.NutsResultFormatType;
 
 /**
  * Created by vpc on 1/7/17.

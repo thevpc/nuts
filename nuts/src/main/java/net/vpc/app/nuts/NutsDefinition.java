@@ -34,6 +34,7 @@ import java.nio.file.Path;
 
 /**
  * Created by vpc on 1/6/17.
+ * @since 0.5.4
  */
 public interface NutsDefinition extends Serializable, Comparable<NutsDefinition> {
 

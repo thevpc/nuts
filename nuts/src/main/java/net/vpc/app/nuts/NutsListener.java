@@ -29,5 +29,9 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ */
 public interface NutsListener {
 }

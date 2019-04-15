@@ -31,6 +31,11 @@ package net.vpc.app.nuts;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsVersion extends Serializable,Comparable<NutsVersion>{
 
     String getValue();

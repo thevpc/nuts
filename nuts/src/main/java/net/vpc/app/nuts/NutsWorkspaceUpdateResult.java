@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 /**
  * Created by vpc on 6/23/17.
+ * @since 0.5.4
  */
 public final class NutsWorkspaceUpdateResult /*implements Iterable<NutsWorkspaceUpdateResultItem>*/ {
 

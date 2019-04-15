@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsRepositoryDefinition {
 
     public static final int ORDER_USER_LOCAL = 1000;

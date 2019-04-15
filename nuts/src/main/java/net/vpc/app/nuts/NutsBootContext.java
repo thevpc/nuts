@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * Nuts read-only configuration
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsBootContext {
 
     String getWorkspace();

@@ -29,6 +29,12 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @param <T> 
+ * @since 0.5.4
+ */
 public class NutsQuestion<T> {
 
     private String message;

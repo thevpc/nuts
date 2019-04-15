@@ -29,6 +29,11 @@
  */
 package net.vpc.app.nuts;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsAuthenticationAgent extends NutsComponent<String> {
 
     void checkCredentials(String credentialsId, String password, NutsEnvProvider envProvider);

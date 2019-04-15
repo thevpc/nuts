@@ -39,6 +39,7 @@ import java.util.logging.Level;
 
 /**
  * @author vpc
+ * @since 0.5.4
  */
 public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 

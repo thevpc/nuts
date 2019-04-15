@@ -47,6 +47,32 @@ public class UnmodifiableTerminal implements NutsSessionTerminal {
     }
 
     @Override
+    public PrintStream fout() {
+        return base.fout();
+    }
+
+    @Override
+    public PrintStream ferr() {
+        return base.ferr();
+    }
+
+    @Override
+    public PrintStream out() {
+        return base.out();
+    }
+
+    @Override
+    public PrintStream err() {
+        return base.err();
+    }
+
+    @Override
+    public InputStream in() {
+        return base.in();
+    }
+    
+
+    @Override
     public void setIn(InputStream in) {
 
     }

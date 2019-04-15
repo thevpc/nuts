@@ -34,6 +34,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public class NutsMinimalCommandLine {
     protected LinkedList<String> args = new LinkedList<>();
 

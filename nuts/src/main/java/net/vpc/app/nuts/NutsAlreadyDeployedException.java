@@ -33,6 +33,7 @@ package net.vpc.app.nuts;
  * Exception fired in {@link NutsWorkspace#deploy(NutsDeployment, NutsSession)} method
  * if the nuts is the package is already deployed
  * Created by vpc on 1/15/17.
+ * @since 0.5.4
  */
 public class NutsAlreadyDeployedException extends NutsElementNotFoundException {
 

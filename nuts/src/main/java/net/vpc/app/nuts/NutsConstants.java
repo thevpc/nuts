@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/14/17.
+ * @since 0.1.0
  */
 public final class NutsConstants {
 

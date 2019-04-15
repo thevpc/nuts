@@ -36,6 +36,11 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.file.Path;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsDescriptorFormat {
 
     boolean isPretty();

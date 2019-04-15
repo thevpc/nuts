@@ -765,6 +765,14 @@ public class CoreNutsUtils {
         bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CACHE, wconfig.getCacheWindowsHome());
         bconfig.setHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LIB, wconfig.getLibWindowsHome());
 
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.PROGRAMS, wconfig.getProgramsMacOsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CONFIG, wconfig.getConfigMacOsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.VAR, wconfig.getVarMacOsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LOGS, wconfig.getLogsMacOsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.TEMP, wconfig.getTempMacOsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CACHE, wconfig.getCacheMacOsHome());
+        bconfig.setHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LIB, wconfig.getLibMacOsHome());
+
         bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.PROGRAMS, wconfig.getProgramsLinuxHome());
         bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CONFIG, wconfig.getConfigLinuxHome());
         bconfig.setHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.VAR, wconfig.getVarLinuxHome());
@@ -798,6 +806,14 @@ public class CoreNutsUtils {
         wconfig.setTempWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.TEMP));
         wconfig.setCacheWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.CACHE));
         wconfig.setLibWindowsHome(options.getHomeLocation(NutsStoreLocationLayout.WINDOWS, NutsStoreLocation.LIB));
+
+        wconfig.setProgramsMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.PROGRAMS));
+        wconfig.setConfigMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CONFIG));
+        wconfig.setVarMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.VAR));
+        wconfig.setLogsMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LOGS));
+        wconfig.setTempMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.TEMP));
+        wconfig.setCacheMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.CACHE));
+        wconfig.setLibMacOsHome(options.getHomeLocation(NutsStoreLocationLayout.MACOS, NutsStoreLocation.LIB));
 
         wconfig.setProgramsLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.PROGRAMS));
         wconfig.setConfigLinuxHome(options.getHomeLocation(NutsStoreLocationLayout.LINUX, NutsStoreLocation.CONFIG));

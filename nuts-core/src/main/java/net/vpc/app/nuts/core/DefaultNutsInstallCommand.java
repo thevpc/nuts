@@ -14,11 +14,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
+import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsQuestion;
+import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.CoreCommonUtils;
@@ -44,6 +46,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     private NutsSession session;
     private final NutsWorkspace ws;
     private NutsDefinition[] result;
+    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -358,12 +361,14 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     @Override
     public NutsInstallCommand install() {
         if (result == null) {
+            boolean emptyCommand = true;
             NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
             NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
             PrintStream out = CoreIOUtils.resolveOut(ws, session);
             ws.security().checkAllowed(NutsConstants.Rights.INSTALL, "install");
 
             if (this.isIncludeCompanions()) {
+                emptyCommand = false;
                 boolean companions = true;
                 if (ws.config().getOptions().isYes()) {
                     //ok;
@@ -421,6 +426,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
             List<NutsDefinition> defsAll = new ArrayList<>();
             List<NutsDefinition> defsToInstall = new ArrayList<>();
             for (NutsId id : this.getIds()) {
+                emptyCommand = true;
                 NutsDefinition def = ws.fetch().id(id).session(session).setAcceptOptional(false).includeDependencies().setIncludeInstallInformation(true).getResultDefinition();
                 if (def != null && def.getPath() != null) {
                     boolean installed = false;
@@ -441,6 +447,9 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
             for (NutsDefinition def : defsToInstall) {
                 dws.installImpl(def, this.getArgs(), null, session, true, this.isTrace(), isDefaultVersion());
             }
+            if (emptyCommand) {
+                throw new NutsExecutionException("Missing components to update", 1);
+            }
             result = defsAll.toArray(new NutsDefinition[0]);
         }
         return this;
@@ -455,5 +464,39 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     public NutsDefinition[] getInstallResult() {
         install();
         return result;
+    }
+
+    @Override
+    public DefaultNutsInstallCommand formatType(NutsResultFormatType formatType) {
+        return setFormatType(formatType);
+    }
+
+    @Override
+    public DefaultNutsInstallCommand setFormatType(NutsResultFormatType formatType) {
+        if (formatType == null) {
+            formatType = NutsResultFormatType.PLAIN;
+        }
+        this.formatType = formatType;
+        return this;
+    }
+
+    @Override
+    public DefaultNutsInstallCommand json() {
+        return setFormatType(NutsResultFormatType.JSON);
+    }
+
+    @Override
+    public DefaultNutsInstallCommand plain() {
+        return setFormatType(NutsResultFormatType.PLAIN);
+    }
+
+    @Override
+    public DefaultNutsInstallCommand props() {
+        return setFormatType(NutsResultFormatType.PROPS);
+    }
+
+    @Override
+    public NutsResultFormatType getFormatType() {
+        return this.formatType;
     }
 }

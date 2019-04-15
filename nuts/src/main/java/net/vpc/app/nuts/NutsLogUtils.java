@@ -43,6 +43,7 @@ import java.util.logging.Formatter;
  *
  * @author Taha BEN SALAH <taha.bensalah@gmail.com>
  * @creationdate 9/16/12 10:00 PM
+ * @since 0.5.4
  */
 public final class NutsLogUtils {
 

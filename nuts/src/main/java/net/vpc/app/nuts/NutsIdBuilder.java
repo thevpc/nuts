@@ -33,6 +33,11 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsIdBuilder extends Serializable {
 
     NutsIdBuilder setGroup(String newGroupId);

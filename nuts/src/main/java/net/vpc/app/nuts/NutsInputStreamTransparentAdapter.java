@@ -34,7 +34,8 @@ import java.io.InputStream;
 /**
  * Interface to enable marking system streams.
  * When creating new processes nuts will dereference NutsInputStreamTransparentAdapter
- * to check if the InputStream i a system io. In that cas nuts will "inherit" input stream
+ * to check if the InputStream i a system io. In that case nuts will "inherit" input stream
+ * @since 0.5.4
  */
 public interface NutsInputStreamTransparentAdapter {
     /**

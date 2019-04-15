@@ -35,6 +35,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsExecCommand {
 
     NutsExecCommand failFast();
@@ -176,9 +181,7 @@ public interface NutsExecCommand {
 
     String getCommandString();
 
-    String getCommandString(NutsCommandStringFormatter f);
-
-    NutsWhichExec which();
+    NutsExecutableInfo which();
 
     String[] getExecutorOptions();
 
@@ -189,5 +192,9 @@ public interface NutsExecCommand {
     NutsExecCommand syscall();
 
     NutsExecCommand spawn();
+
+    NutsCommandStringFormatter getCommandStringFormatter();
+
+    NutsExecCommand setCommandStringFormatter(NutsCommandStringFormatter commandStringFormatter);
 
 }

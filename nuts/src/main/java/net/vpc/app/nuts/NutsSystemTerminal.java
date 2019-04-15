@@ -32,6 +32,11 @@ package net.vpc.app.nuts;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsSystemTerminal extends NutsSystemTerminalBase,NutsTerminal {
     void setMode(NutsTerminalMode mode);
 

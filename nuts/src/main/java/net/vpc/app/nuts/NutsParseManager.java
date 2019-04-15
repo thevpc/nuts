@@ -35,6 +35,11 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Path;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public interface NutsParseManager {
 
     NutsId parseId(String id);

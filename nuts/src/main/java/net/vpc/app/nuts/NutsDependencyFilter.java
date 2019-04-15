@@ -31,6 +31,7 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 3/19/17.
+ * @since 0.5.4
  */
 public interface NutsDependencyFilter {
     boolean accept(NutsId from, NutsDependency dependency);

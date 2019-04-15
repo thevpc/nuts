@@ -34,6 +34,7 @@ import javax.security.auth.callback.CallbackHandler;
 /**
  *
  * @author vpc
+ * @since 0.5.4
  */
 public interface NutsWorkspaceSecurityManager {
 

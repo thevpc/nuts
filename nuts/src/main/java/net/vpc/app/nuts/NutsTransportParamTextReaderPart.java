@@ -33,6 +33,7 @@ import java.io.Reader;
 
 /**
  * Created by vpc on 1/8/17.
+ * @since 0.5.4
  */
 public class NutsTransportParamTextReaderPart extends NutsTransportParamPart {
 

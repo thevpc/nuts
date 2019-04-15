@@ -33,6 +33,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 
+/**
+ * 
+ * @author vpc
+ * @since 0.5.4
+ */
 public enum NutsDependencyScope {
     /**
      * dependencies needed for running/executing the nuts : includes

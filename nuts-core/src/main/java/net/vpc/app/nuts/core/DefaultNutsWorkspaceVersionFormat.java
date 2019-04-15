@@ -13,7 +13,7 @@ import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
 import java.util.*;
-import net.vpc.app.nuts.NutsFormatType;
+import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.util.CoreStringUtils;
@@ -23,7 +23,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     private NutsWorkspace ws;
     private Properties extraProperties = new Properties();
-    private NutsFormatType formatType = null;
+    private NutsResultFormatType formatType = null;
     private boolean minimal = false;
     private boolean pretty = true;
 
@@ -40,15 +40,15 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
                     break;
                 }
                 case "--json": {
-                    this.setFormatType(NutsFormatType.JSON);
+                    this.setFormatType(NutsResultFormatType.JSON);
                     break;
                 }
                 case "--props": {
-                    this.setFormatType(NutsFormatType.PROPS);
+                    this.setFormatType(NutsResultFormatType.PROPS);
                     break;
                 }
                 case "--plain": {
-                    this.setFormatType(NutsFormatType.PLAIN);
+                    this.setFormatType(NutsResultFormatType.PLAIN);
                     break;
                 }
                 default: {
@@ -87,11 +87,11 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
         return this;
     }
 
-    public NutsFormatType getFormatType() {
+    public NutsResultFormatType getFormatType() {
         return formatType;
     }
 
-    public NutsWorkspaceVersionFormat setFormatType(NutsFormatType formatType) {
+    public NutsWorkspaceVersionFormat setFormatType(NutsResultFormatType formatType) {
         this.formatType = formatType;
         return this;
     }
@@ -196,9 +196,9 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public void print(Writer out) {
-        NutsFormatType t = formatType;
+        NutsResultFormatType t = formatType;
         if (t == null) {
-            t = NutsFormatType.PLAIN;
+            t = NutsResultFormatType.PLAIN;
         }
         switch (t) {
             case PLAIN:
