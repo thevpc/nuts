@@ -47,7 +47,7 @@ public class PushCommand extends AbstractNutsCommand {
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         String repo = null;
-        net.vpc.app.nuts.NutsPushCommand options = context.getWorkspace().push().setSession(context.getSession());
+        net.vpc.app.nuts.NutsPushCommand push = context.getWorkspace().push().setSession(context.getSession());
         Argument a;
         do {
             if (context.configure(cmdLine)) {
@@ -55,11 +55,11 @@ public class PushCommand extends AbstractNutsCommand {
             } else if (cmdLine.readAllOnce("--repo", "-r")) {
                 repo = cmdLine.readRequiredNonOption(new RepositoryNonOption("Repository", context.getWorkspace())).getStringExpression();
             } else if (cmdLine.readAllOnce("--force", "-f")) {
-                options.setForce(true);
+                push.setForce(true);
             } else {
                 String id = cmdLine.readRequiredNonOption(new DefaultNonOption("NewNutsId")).toString();
                 if (cmdLine.isExecMode()) {
-                    options.id(id).push();
+                    push.id(id).run();
                     context.out().printf("%s pushed successfully\n", id);
                 }
             }

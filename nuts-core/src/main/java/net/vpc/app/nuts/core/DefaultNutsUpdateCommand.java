@@ -26,9 +26,11 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsBootConfig;
 import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsBootContextType;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
@@ -44,7 +46,7 @@ import net.vpc.app.nuts.NutsWorkspaceUpdateResult;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.NutsDependencyScope;
-import net.vpc.app.nuts.NutsResultFormatType;
+import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -53,11 +55,12 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
+ * type: Command Class
  * @author vpc
  */
-public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
+public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsUpdateWorkspaceCommand.class.getName());
+    public static final Logger log = Logger.getLogger(DefaultNutsUpdateCommand.class.getName());
 
     private boolean ask = true;
     private boolean trace = true;
@@ -68,18 +71,18 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     private boolean updateExtensions = false;
     private boolean updateInstalled = false;
     private boolean includeOptional = false;
-    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
     private String forceBootAPIVersion;
     private List<String> args;
-    private List<NutsDependencyScope> scopes = new ArrayList<>();
-    private List<NutsId> frozenIds = new ArrayList<>();
+    private final List<NutsDependencyScope> scopes = new ArrayList<>();
+    private final List<NutsId> frozenIds = new ArrayList<>();
     private NutsSession session;
-    private NutsWorkspace ws;
-    private List<NutsId> ids = new ArrayList<>();
+    private final NutsWorkspace ws;
+    private final List<NutsId> ids = new ArrayList<>();
 
     private NutsWorkspaceUpdateResult result;
 
-    public DefaultNutsUpdateWorkspaceCommand(NutsWorkspace ws) {
+    public DefaultNutsUpdateCommand(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -920,6 +923,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     public NutsUpdateCommand workspace() {
         setUpdateApi(true);
         setUpdateRuntime(true);
+        setUpdateExtensions(true);
         return this;
     }
 
@@ -1154,64 +1158,76 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
 
     @Override
     public NutsUpdateCommand parseOptions(String... args) {
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                switch (args[i]) {
-                    case "-a":
-                    case "--all": {
-                        this.all();
-                        break;
-                    }
-                    case "-i":
-                    case "--installed": {
-                        this.all();
-                        break;
-                    }
-                    case "-w":
-                    case "--ws":
-                    case "--workspace": {
-                        this.workspace();
-                        break;
-                    }
-                    case "-r":
-                    case "--runtime": {
-                        this.runtime();
-                        break;
-                    }
-                    case "-A":
-                    case "--api": {
-                        this.runtime();
-                        break;
-                    }
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().getString()) {
+                case "-a":
+                case "--all": {
+                    this.all();
+                    break;
+                }
+                case "-w":
+                case "--ws":
+                case "--workspace": {
+                    this.workspace();
+                    break;
+                }
+                case "-i":
+                case "--installed": {
+                    this.installed(a.getBooleanValue());
+                    break;
+                }
+                case "-r":
+                case "--runtime": {
+                    this.runtime(a.getBooleanValue());
+                    break;
+                }
+                case "-A":
+                case "--api": {
+                    this.runtime(a.getBooleanValue());
+                    break;
+                }
 
-                    case "-e":
-                    case "--extensions": {
-                        this.extensions();
-                        break;
+                case "-e":
+                case "--extensions": {
+                    this.extensions(a.getBooleanValue());
+                    break;
+                }
+                case "-v":
+                case "--version": {
+                    this.setApiVersion(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "-g": 
+                case "--args": 
+                {
+                    while (cmd.hasNext()) {
+                        this.addArg(cmd.next().getString());
                     }
-                    case "-v":
-                    case "--version": {
-                        i++;
-                        this.setApiVersion(args[i]);
-                        break;
-                    }
-                    case "--args": {
-                        while (i < args.length) {
-                            this.addArg(args[i]);
-                            i++;
-                        }
-                        break;
-                    }
-                    case "--help": {
-                        //
-                        break;
-                    }
-                    default: {
-                        if (args[i].startsWith("-")) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + args[i]);
-                        } else {
-                            id(args[i]);
-                        }
+                    break;
+                }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                    break;
+                }
+                case "--json": {
+                    this.setOutputFormat(NutsOutputFormat.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    break;
+                }
+                default: {
+                    if (a.isOption()) {
+                        throw new NutsIllegalArgumentException("Unsupported option " + a);
+                    } else {
+                        id(a.getString());
                     }
                 }
             }
@@ -1220,38 +1236,37 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public NutsUpdateCommand formatType(NutsResultFormatType formatType) {
-        return setFormatType(formatType);
+    public NutsUpdateCommand outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
     }
 
     @Override
-    public NutsUpdateCommand setFormatType(NutsResultFormatType formatType) {
-        if(formatType==null){
-            formatType=NutsResultFormatType.PLAIN;
+    public NutsUpdateCommand setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
         }
-        this.formatType=formatType;
+        this.outputFormat = outputFormat;
         return this;
     }
 
     @Override
     public NutsUpdateCommand json() {
-        return setFormatType(NutsResultFormatType.JSON);
+        return setOutputFormat(NutsOutputFormat.JSON);
     }
 
     @Override
     public NutsUpdateCommand plain() {
-        return setFormatType(NutsResultFormatType.PLAIN);
+        return setOutputFormat(NutsOutputFormat.PLAIN);
     }
 
     @Override
     public NutsUpdateCommand props() {
-        return setFormatType(NutsResultFormatType.PROPS);
+        return setOutputFormat(NutsOutputFormat.PROPS);
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return this.formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
     }
-    
 
 }

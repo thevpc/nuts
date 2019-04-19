@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public enum NutsResultFormatType {
+public enum NutsOutputFormat {
     JSON,
     PROPS,
     PLAIN

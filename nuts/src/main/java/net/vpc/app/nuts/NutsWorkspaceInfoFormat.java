@@ -85,7 +85,9 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat setMinimal(boolean minimal);
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 
-    NutsWorkspaceInfoFormat setFormatType(NutsResultFormatType formatType);
+    NutsWorkspaceInfoFormat outputFormat(NutsOutputFormat outputFormat);
+    
+    NutsWorkspaceInfoFormat setOutputFormat(NutsOutputFormat outputFormat);
 }

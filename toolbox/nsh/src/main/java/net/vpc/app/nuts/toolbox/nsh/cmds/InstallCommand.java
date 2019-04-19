@@ -82,7 +82,7 @@ public class InstallCommand extends AbstractNutsCommand {
                                         .setDescriptor(descriptorFile)
                                         .setRepository(repositoryId)
                                         .setSession(context.getSession())
-                                        .getResult();
+                                        .getResult()[0];
                                 context.out().printf("File %s deployed successfully as %N\n", s, ws.formatter().createIdFormat().toString(deployedId));
                             }
                         } else {
@@ -93,9 +93,9 @@ public class InstallCommand extends AbstractNutsCommand {
                                     NutsId deployedId = ws.deploy()
                                             .setContent(s)
                                             .setDescriptor(descriptorFile)
-                                            .setRepository(repositoryId)
+                                            .repository(repositoryId)
                                             .setSession(context.getSession())
-                                            .getResult();
+                                            .getResult()[0];
                                     context.out().printf("File %s deployed successfully as %N\n", s,ws.formatter().createIdFormat().toString(deployedId));
                                     s = deployedId.toString();
                                 }

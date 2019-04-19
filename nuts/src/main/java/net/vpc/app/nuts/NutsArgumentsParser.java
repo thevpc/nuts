@@ -31,8 +31,9 @@ package net.vpc.app.nuts;
 
 import java.util.*;
 import java.util.logging.Level;
+
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -54,20 +55,13 @@ public final class NutsArgumentsParser {
         HashSet<String> tempRepositories = new HashSet<>();
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
-        NutsMinimalCommandLine.Arg cmdArg;
+        NutsCommandArg a;
         List<String> applicationArguments = new ArrayList<>();
-        NutsMinimalCommandLine cmdArgList = new NutsMinimalCommandLine(bootArguments);
-        while ((cmdArg = cmdArgList.next()) != null) {
-            if (cmdArg.isOption()) {
-                String k = cmdArg.getKey();
-                boolean enabled = true;
-                if (k.startsWith("--!")) {
-                    k = "--" + k.substring(3);
-                    enabled = false;
-                } else if (k.startsWith("-!")) {
-                    k = "-" + k.substring(2);
-                    enabled = false;
-                }
+        NutsCommandLine cmdArgList = new NutsCommandLine(bootArguments);
+        while ((a = cmdArgList.next()) != null) {
+            if (a.isOption()) {
+                boolean enabled = !a.isComment();
+                String k = a.getKey().getString();
                 switch (k) {
                     //**********************************
                     //*
@@ -82,7 +76,7 @@ public final class NutsArgumentsParser {
 
                     case "-w":
                     case "--workspace": {
-                        String file = cmdArgList.getValueFor(cmdArg);
+                        String file = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setWorkspace(file);
                         }
@@ -90,7 +84,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--login":
                     case "-o": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setLogin(v);
                         }
@@ -98,7 +92,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--password":
                     case "-p": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setPassword(v);
                         }
@@ -107,14 +101,14 @@ public final class NutsArgumentsParser {
                     case "-V":
                     case "--boot-version":
                     case "--boot-api-version": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setRequiredBootVersion(v);
                         }
                         break;
                     }
                     case "--boot-runtime": {
-                        String br = cmdArgList.getValueFor(cmdArg);
+                        String br = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             if (br.indexOf("#") > 0) {
                                 //this is a full id
@@ -126,7 +120,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--runtime-source-url": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setBootRuntimeSourceURL(v);
                         }
@@ -135,7 +129,7 @@ public final class NutsArgumentsParser {
                     case "--java":
                     case "--boot-java":
                     case "-j": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setBootJavaCommand(v);
                         }
@@ -144,7 +138,7 @@ public final class NutsArgumentsParser {
                     case "--java-home":
                     case "--boot-java-home":
                     case "--J": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setBootJavaCommand(NutsUtils.resolveJavaCommand(v));
                         }
@@ -153,7 +147,7 @@ public final class NutsArgumentsParser {
                     case "--java-options":
                     case "--boot-java-options":
                     case "-O": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setBootJavaOptions(v);
                         }
@@ -171,14 +165,14 @@ public final class NutsArgumentsParser {
                     // exists : configured parameters will be in use.
                     case "--archetype":
                     case "-A": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setArchetype(v);
                         }
                         break;
                     }
                     case "--store-strategy": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
                         }
@@ -213,7 +207,7 @@ public final class NutsArgumentsParser {
                     }
 
                     case "--repo-store-strategy": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setRepositoryStoreLocationStrategy(v.isEmpty() ? null : NutsStoreLocationStrategy.valueOf(v.toUpperCase()));
                         }
@@ -232,7 +226,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--store-layout": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setStoreLocationLayout(v.isEmpty() ? null : NutsStoreLocationLayout.valueOf(v.toUpperCase()));
                         }
@@ -269,7 +263,7 @@ public final class NutsArgumentsParser {
                     case "--temp-location":
                     case "--cache-location":
                     case "--lib-location": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-')).toUpperCase());
                             o.setStoreLocation(m, v);
@@ -304,7 +298,7 @@ public final class NutsArgumentsParser {
                     case "--linux-temp-home":
                     case "--linux-cache-home":
                     case "--linux-lib-home": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         NutsStoreLocationLayout layout = NutsStoreLocationLayout.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                         NutsStoreLocation folder = NutsStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
                         if (enabled) {
@@ -333,7 +327,7 @@ public final class NutsArgumentsParser {
                     case "-g":
                     case "--global": {
                         if (enabled) {
-                            o.setGlobal(true);
+                            o.setGlobal(a.getBooleanValue());
                         }
                         break;
                     }
@@ -341,7 +335,7 @@ public final class NutsArgumentsParser {
                     case "--color":
                     case "-C": {
                         if (enabled) {
-                            String v = cmdArg.getValue();
+                            String v = a.getValue().getString();
                             switch (NutsUtils.trim(v).toLowerCase()) {
                                 case "":
                                 case "always":
@@ -404,7 +398,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--term":
                     case "-t": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             if (v.isEmpty()) {
                                 o.setTerminalMode(null);
@@ -417,7 +411,7 @@ public final class NutsArgumentsParser {
                     case "-R":
                     case "--read-only": {
                         if (enabled) {
-                            o.setReadOnly(true);
+                            o.setReadOnly(a.getBooleanValue());
                         }
                         break;
                     }
@@ -440,11 +434,11 @@ public final class NutsArgumentsParser {
                         if (enabled) {
                             logConfig = new NutsLogConfig();
                         }
-                        parseLogLevel(logConfig, cmdArg, cmdArgList, enabled);
+                        parseLogLevel(logConfig, a, cmdArgList, enabled);
                         break;
                     }
                     case "--exclude-extension": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             excludedExtensions.add(v);
                         }
@@ -452,7 +446,7 @@ public final class NutsArgumentsParser {
                     }
 
                     case "--exclude-repository": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             excludedRepositories.add(v);
                         }
@@ -460,7 +454,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--repository":
                     case "-P": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             tempRepositories.add(v);
                         }
@@ -502,7 +496,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--init":
                     case "-I": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             o.setInitMode(NutsBootInitMode.valueOf(v.toUpperCase()));
                         }
@@ -510,7 +504,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--perf": {
                         if (enabled) {
-                            o.setPerf(true);
+                            o.setPerf(a.getBooleanValue());
                         }
                         break;
                     }
@@ -524,8 +518,7 @@ public final class NutsArgumentsParser {
                     }
                     case "--external":
                     case "--spawn":
-                    case "-x": 
-                    {
+                    case "-x": {
                         if (enabled) {
                             o.setExecutionType(NutsExecutionType.SPAWN);
                         }
@@ -540,7 +533,7 @@ public final class NutsArgumentsParser {
                         break;
                     }
                     case "--open-mode": {
-                        String v = cmdArgList.getValueFor(cmdArg);
+                        String v = cmdArgList.getValueFor(a).getString();
                         if (enabled) {
                             v = v.toUpperCase().replace('-', '_').replace('/', '_');
                             switch (v) {
@@ -594,8 +587,8 @@ public final class NutsArgumentsParser {
                     //**********************************
                     case "-": {
                         if (enabled) {
-                            if (cmdArg.getValue() != null) {
-                                throw new NutsIllegalArgumentException("Invalid argument for workspace : " + cmdArg.getArg());
+                            if (a.getValue() != null) {
+                                throw new NutsIllegalArgumentException("Invalid argument for workspace : " + a.getString());
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             applicationArguments.add("-c");
@@ -630,11 +623,11 @@ public final class NutsArgumentsParser {
                     case "--exec": {
                         if (enabled) {
                             o.setBootCommand(NutsBootCommand.EXEC);
-                            while ((cmdArg = cmdArgList.next()) != null) {
-                                if (cmdArg.isOption()) {
-                                    executorOptions.add(cmdArg.getArg());
+                            while ((a = cmdArgList.next()) != null) {
+                                if (a.isOption()) {
+                                    executorOptions.add(a.getString());
                                 } else {
-                                    applicationArguments.add(cmdArg.getArg());
+                                    applicationArguments.add(a.getString());
                                     applicationArguments.addAll(cmdArgList.removeAll());
                                 }
                             }
@@ -658,11 +651,11 @@ public final class NutsArgumentsParser {
                     //ERRORS
                     default: {
 
-                        showError.add("nuts: invalid option [[" + cmdArg.getArg() + "]]");
+                        showError.add("nuts: invalid option [[" + a.getString() + "]]");
                     }
                 }
             } else {
-                applicationArguments.add(cmdArg.getArg());
+                applicationArguments.add(a.getString());
                 applicationArguments.addAll(cmdArgList.removeAll());
             }
         }
@@ -686,10 +679,10 @@ public final class NutsArgumentsParser {
         o.setExecutorOptions(executorOptions.toArray(new String[0]));
     }
 
-    private static void parseLogLevel(NutsLogConfig logConfig, NutsMinimalCommandLine.Arg cmdArg, NutsMinimalCommandLine cmdArgList, boolean enabled) {
-        switch (cmdArg.getKey()) {
+    private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandArg arg, NutsCommandLine cmdArgList, boolean enabled) {
+        switch (arg.getKey().getString()) {
             case "--log-size": {
-                String v = cmdArgList.getValueFor(cmdArg);
+                String v = cmdArgList.getValueFor(arg).getString();
                 if (enabled) {
                     logConfig.setLogSize(Integer.parseInt(v));
                 }
@@ -697,7 +690,7 @@ public final class NutsArgumentsParser {
             }
 
             case "--log-count": {
-                String v = cmdArgList.getValueFor(cmdArg);
+                String v = cmdArgList.getValueFor(arg).getString();
                 if (enabled) {
                     logConfig.setLogCount(Integer.parseInt(v));
                 }
@@ -705,7 +698,7 @@ public final class NutsArgumentsParser {
             }
 
             case "--log-name": {
-                String v = cmdArgList.getValueFor(cmdArg);
+                String v = cmdArgList.getValueFor(arg).getString();
                 if (enabled) {
                     logConfig.setLogName(v);
                 }
@@ -713,7 +706,7 @@ public final class NutsArgumentsParser {
             }
 
             case "--log-folder": {
-                String v = cmdArgList.getValueFor(cmdArg);
+                String v = cmdArgList.getValueFor(arg).getString();
                 if (enabled) {
                     logConfig.setLogFolder(v);
                 }
@@ -737,18 +730,18 @@ public final class NutsArgumentsParser {
             case "--log-all":
             case "--log-off": {
                 if (enabled) {
-                    String id = cmdArg.getKey();
-                    if (cmdArg.getKey().startsWith("--log-")) {
+                    String id = arg.getKey().getString();
+                    if (arg.getKey().getString().startsWith("--log-")) {
                         id = id.substring("--log-".length());
-                    } else if (cmdArg.getKey().equals("--log")) {
-                        id = cmdArg.getValue();
+                    } else if (arg.getKey().getString().equals("--log")) {
+                        id = arg.getValue().getString();
                         if (id == null) {
                             id = "";
                         }
                     } else if (id.startsWith("--")) {
-                        id = cmdArg.getKey().substring(2);
+                        id = arg.getKey().getString().substring(2);
                     } else {
-                        id = cmdArg.getKey();
+                        id = arg.getKey().getString();
                     }
                     switch (id.toLowerCase()) {
                         case "verbose": {

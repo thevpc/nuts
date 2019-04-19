@@ -70,9 +70,9 @@ public interface NutsUndeployCommand {
 
     NutsUndeployCommand setTransitive(boolean transitive);
 
-    NutsUndeployCommand formatType(NutsResultFormatType formatType);
+    NutsUndeployCommand outputFormat(NutsOutputFormat outputFormat);
 
-    NutsUndeployCommand setFormatType(NutsResultFormatType formatType);
+    NutsUndeployCommand setOutputFormat(NutsOutputFormat outputFormat);
 
     NutsUndeployCommand json();
 
@@ -80,21 +80,21 @@ public interface NutsUndeployCommand {
 
     NutsUndeployCommand props();
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 
     NutsUndeployCommand run();
 
     NutsSession getSession();
 
-    NutsId getId();
+    NutsId[] getIds();
 
     NutsUndeployCommand id(NutsId id);
 
     NutsUndeployCommand id(String id);
 
-    NutsUndeployCommand setId(NutsId id);
+    NutsUndeployCommand addId(NutsId id);
 
-    NutsUndeployCommand setId(String id);
+    NutsUndeployCommand addId(String id);
 
     NutsUndeployCommand offline(boolean offline);
 
@@ -103,5 +103,17 @@ public interface NutsUndeployCommand {
     NutsUndeployCommand setOffline(boolean offline);
 
     boolean isOffline();
+
+    NutsUndeployCommand ids(String... values);
+
+    NutsUndeployCommand addIds(String... values);
+
+    NutsUndeployCommand ids(NutsId... values);
+
+    NutsUndeployCommand addIds(NutsId... value);
+
+    NutsUndeployCommand clearIds();
+
+    NutsUndeployCommand parseOptions(String... args);
 
 }

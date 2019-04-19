@@ -106,9 +106,9 @@ public class DeployCommand extends AbstractNutsCommand {
                 nid = ws.deploy()
                         .setContent(s)
                         .setDescriptor(descriptorFile)
-                        .setRepository(to)
+                        .to(to)
                         .setSession(context.getSession())
-                        .getResult();
+                        .getResult()[0];
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
             }
         } else if (idMode) {
@@ -121,9 +121,9 @@ public class DeployCommand extends AbstractNutsCommand {
                     NutsId nid = ws.deploy()
                             .setContent(fetched.getPath())
                             .setDescriptor(fetched.getDescriptor())
-                            .setRepository(to)
+                            .to(to)
                             .setSession(context.getSession())
-                            .getResult();
+                            .getResult()[0];
                     out.printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);
                 }
             }

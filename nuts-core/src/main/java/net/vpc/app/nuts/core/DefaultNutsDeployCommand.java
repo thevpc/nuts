@@ -5,10 +5,15 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
@@ -21,19 +26,21 @@ import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 public class DefaultNutsDeployCommand implements NutsDeployCommand {
 
-    private NutsId result;
+    private List<NutsId> result;
     private Object content;
     private Object descriptor;
     private String sha1;
-    private String descSHA1;
-    private String repository;
+    private String descSha1;
+    private String fromRepository;
+    private String toRepository;
     private boolean trace = true;
     private boolean force = false;
     private boolean offline = false;
     private boolean transitive = true;
     private NutsWorkspace ws;
     private NutsSession session;
-    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
+    private final List<NutsId> ids = new ArrayList<>();
 
     public DefaultNutsDeployCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -93,6 +100,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         return this;
     }
 
+    @Override
     public String getSha1() {
         return sha1;
     }
@@ -104,13 +112,13 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         return this;
     }
 
-    public String getDescSHA1() {
-        return descSHA1;
+    public String getDescSha1() {
+        return descSha1;
     }
 
     @Override
-    public NutsDeployCommand setDescSHA1(String descSHA1) {
-        this.descSHA1 = descSHA1;
+    public NutsDeployCommand setDescSha1(String descSha1) {
+        this.descSha1 = descSha1;
         invalidateResult();
         return this;
     }
@@ -138,13 +146,45 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     }
 
     @Override
-    public String getRepository() {
-        return repository;
+    public String getTargetRepository() {
+        return toRepository;
+    }
+
+    @Override
+    public NutsDeployCommand to(String repository) {
+        return targetRepository(repository);
+    }
+
+    @Override
+    public NutsDeployCommand targetRepository(String repository) {
+        return setTargetRepository(repository);
     }
 
     @Override
     public NutsDeployCommand setRepository(String repository) {
-        this.repository = repository;
+        return setTargetRepository(repository);
+    }
+    
+    @Override
+    public NutsDeployCommand setTargetRepository(String repository) {
+        this.toRepository = repository;
+        invalidateResult();
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand from(String repository) {
+        return sourceRepository(repository);
+    }
+
+    @Override
+    public NutsDeployCommand sourceRepository(String repository) {
+        return setSourceRepository(repository);
+    }
+
+    @Override
+    public NutsDeployCommand setSourceRepository(String repository) {
+        this.fromRepository = repository;
         invalidateResult();
         return this;
     }
@@ -250,7 +290,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
 
     @Override
     public NutsDeployCommand setDescriptor(Path path) {
-        this.descriptor=path;
+        this.descriptor = path;
         invalidateResult();
         return this;
     }
@@ -276,8 +316,8 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     }
 
     @Override
-    public NutsDeployCommand descSHA1(String descSHA1) {
-        return setDescSHA1(descSHA1);
+    public NutsDeployCommand descSha1(String descSha1) {
+        return setDescSha1(descSha1);
     }
 
     @Override
@@ -292,7 +332,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
 
     @Override
     public NutsDeployCommand repository(String repository) {
-        return setRepository(repository);
+        return setTargetRepository(repository);
     }
 
     @Override
@@ -340,27 +380,65 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         return setTransitive(transitive);
     }
 
-    public NutsId getResult() {
+    public NutsId[] getResult() {
         if (result == null) {
             run();
         }
-        return result;
+        return result.toArray(new NutsId[0]);
     }
-    
-    private void invalidateResult(){
-        result=null;
+
+    private void invalidateResult() {
+        result = null;
     }
 
     @Override
     public NutsDeployCommand run() {
+        if (content != null || descriptor != null || sha1 != null || descSha1 != null) {
+            runDeployFile();
+        }
+        for (NutsId nutsId : ws.find().setSession(getSession()).addIds(ids.toArray(new NutsId[0])).latestVersions().setRepository(fromRepository).getResultIds()) {
+            NutsDefinition fetched = ws.fetch().id(nutsId).setSession(getSession()).getResultDefinition();
+            if (fetched.getPath() != null) {
+                runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
+            }
+        }
+        if (trace) {
+            if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
+                session = NutsWorkspaceUtils.validateSession(ws, getSession());
+                if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
+                    switch (getOutputFormat()) {
+                        case JSON: {
+                            session.getTerminal().out().printf(ws.io().toJsonString(result, true));
+                            break;
+                        }
+                        case PROPS: {
+                            Properties props = new Properties();
+                            for (int i = 0; i < result.size(); i++) {
+                                props.put(String.valueOf(i + 1), result.get(i).toString());
+                            }
+                            CoreIOUtils.storeProperties(props, session.getTerminal().out());
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+        return this;
+    }
+
+    private NutsDeployCommand runDeployFile() {
+        return runDeployFile(getContent(), getDescriptor(), getDescSha1());
+    }
+
+    private NutsDeployCommand runDeployFile(Object content, Object descriptor0, String descSHA1) {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsWorkspaceUtils.checkReadOnly(ws);
         try {
             Path tempFile = null;
-            Object content = this.getContent();
             InputSource contentSource;
             contentSource = CoreIOUtils.createInputSource(content).multi();
-            NutsDescriptor descriptor = buildDescriptor();
+            NutsDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
             CharacterizedFile characterizedFile = null;
             Path contentFile2 = null;
@@ -379,7 +457,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                 contentFile2 = tempFile;
 
                 Path contentFile0 = contentFile2;
-                String repository = this.getRepository();
+                String repository = this.getTargetRepository();
 
                 NutsWorkspaceUtils.checkReadOnly(ws);
                 Path contentFile = contentFile0;
@@ -453,7 +531,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                                             .setTrace(this.isTrace())
                                             .setTransitive(this.isTransitive())
                                             .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository), rsession);
-                            result = effId;
+                            addResult(effId);
                             return this;
                         }
                     } else {
@@ -473,7 +551,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                                 .setTrace(this.isTrace())
                                 .setTransitive(this.isTransitive())
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository), rsession);
-                        result = effId;
+                        addResult(effId);
                         return this;
                     }
                     throw new NutsRepositoryNotFoundException(repository);
@@ -494,28 +572,42 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                     CoreIOUtils.delete(tempFile);
                 }
             }
+
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
 
     }
 
-    protected NutsDescriptor buildDescriptor() {
+    private void addResult(NutsId nid) {
+        if (trace) {
+            if (result == null) {
+                result = new ArrayList<>();
+            }
+            result.add(nid);
+            session = NutsWorkspaceUtils.validateSession(ws, getSession());
+            if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
+                session.getTerminal().out().printf("Nuts %N deployed successfully to ==%s==\n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
+            }
+        }
+    }
+
+    protected NutsDescriptor buildDescriptor(Object descriptor, String descSHA1) {
         if (descriptor == null) {
             return null;
         }
         NutsDescriptor mdescriptor = null;
         if (NutsDescriptor.class.isInstance(descriptor)) {
             mdescriptor = (NutsDescriptor) descriptor;
-            if (getDescSHA1() != null && !ws.io().getSHA1(mdescriptor).equals(getDescSHA1())) {
+            if (descSHA1 != null && !ws.io().getSHA1(mdescriptor).equals(descSHA1)) {
                 throw new NutsIllegalArgumentException("Invalid Content Hash");
             }
             return mdescriptor;
         } else if (CoreIOUtils.isValidInputStreamSource(descriptor.getClass())) {
             InputSource inputStreamSource = CoreIOUtils.createInputSource(descriptor);
-            if (getDescSHA1() != null) {
+            if (descSHA1 != null) {
                 inputStreamSource = inputStreamSource.multi();
-                if (!CoreIOUtils.evalSHA1(inputStreamSource.open(), true).equalsIgnoreCase(getDescSHA1())) {
+                if (!CoreIOUtils.evalSHA1(inputStreamSource.open(), true).equalsIgnoreCase(descSHA1)) {
                     throw new NutsIllegalArgumentException("Invalid Content Hash");
                 }
             }
@@ -531,36 +623,222 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     }
 
     @Override
-    public NutsDeployCommand formatType(NutsResultFormatType formatType) {
-        return setFormatType(formatType);
+    public NutsDeployCommand outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
     }
 
     @Override
-    public NutsDeployCommand setFormatType(NutsResultFormatType formatType) {
-        if (formatType == null) {
-            formatType = NutsResultFormatType.PLAIN;
+    public NutsDeployCommand setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
         }
-        this.formatType = formatType;
+        this.outputFormat = outputFormat;
         return this;
     }
 
     @Override
     public NutsDeployCommand json() {
-        return setFormatType(NutsResultFormatType.JSON);
+        return setOutputFormat(NutsOutputFormat.JSON);
     }
 
     @Override
     public NutsDeployCommand plain() {
-        return setFormatType(NutsResultFormatType.PLAIN);
+        return setOutputFormat(NutsOutputFormat.PLAIN);
     }
 
     @Override
     public NutsDeployCommand props() {
-        return setFormatType(NutsResultFormatType.PROPS);
+        return setOutputFormat(NutsOutputFormat.PROPS);
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return this.formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
     }
+
+    @Override
+    public NutsDeployCommand ids(String... values) {
+        return addIds(values);
+    }
+
+    @Override
+    public NutsDeployCommand addIds(String... values) {
+        if (values != null) {
+            for (String s : values) {
+                if (!CoreStringUtils.isBlank(s)) {
+                    ids.add(ws.parser().parseRequiredId(s));
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand ids(NutsId... values) {
+        return addIds(values);
+    }
+
+    @Override
+    public NutsDeployCommand addIds(NutsId... value) {
+        if (value != null) {
+            for (NutsId s : value) {
+                if (s != null) {
+                    ids.add(s);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand clearIds() {
+        ids.clear();
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand id(NutsId id) {
+        return addId(id);
+    }
+
+    @Override
+    public NutsDeployCommand addId(NutsId id) {
+        if (id != null) {
+            addId(id.toString());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand removeId(NutsId id) {
+        if (id != null) {
+            removeId(id.toString());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand id(String id) {
+        return addId(id);
+    }
+
+    @Override
+    public NutsDeployCommand removeId(String id) {
+        ids.remove(ws.parser().parseId(id));
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand addId(String id) {
+        if (!CoreStringUtils.isBlank(id)) {
+            ids.add(ws.parser().parseRequiredId(id));
+        }
+        return this;
+    }
+
+    @Override
+    public NutsId[] getIds() {
+        return this.ids.toArray(new NutsId[0]);
+    }
+
+    @Override
+    public NutsDeployCommand parseOptions(String... args) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().getString()) {
+                case "-f":
+                case "--force": {
+                    setForce(a.getBooleanValue());
+                    break;
+                }
+                case "-T":
+                case "--transitive": {
+                    setTransitive(a.getBooleanValue());
+                    break;
+                }
+                case "-o":
+                case "--offline": {
+                    setOffline(a.getBooleanValue());
+                    break;
+                }
+                case "-t":
+                case "--trace": {
+                    setTrace(a.getBooleanValue());
+                    break;
+                }
+                case "-d":
+                case "--desc": {
+                    setDescriptor(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "-s":
+                case "--source":
+                case "--from": {
+                    from(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "-r":
+                case "--target":
+                case "--to": {
+                    to(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "--desc-sha1": {
+                    this.setDescSha1(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "--desc-sha1-file": {
+                    try {
+                        this.setDescSha1(new String(Files.readAllBytes(Paths.get(cmd.getValueFor(a).getString()))));
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                    break;
+                }
+                case "--sha1": {
+                    this.setSha1(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "--sha1-file": {
+                    try {
+                        this.setSha1(new String(Files.readAllBytes(Paths.get(cmd.getValueFor(a).getString()))));
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                    break;
+                }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                    break;
+                }
+                case "--json": {
+                    this.setOutputFormat(NutsOutputFormat.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    break;
+                }
+                default: {
+                    if (a.isOption()) {
+                        throw new NutsIllegalArgumentException("Unsupported option " + a);
+                    } else {
+                        String idOrPath = a.getString();
+                        if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
+                            setContent(idOrPath);
+                        } else {
+                            id(idOrPath);
+                        }
+                    }
+                }
+            }
+        }
+        return this;
+    }
+
 }

@@ -20,12 +20,17 @@ import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
+/**
+ * 
+ * type: Command Class
+ * @author vpc
+ */
 public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
-    private NutsWorkspace ws;
-    private Properties extraProperties = new Properties();
+    private final NutsWorkspace ws;
+    private final Properties extraProperties = new Properties();
     private boolean minimal = false;
-    private NutsResultFormatType formatType = null;
+    private NutsOutputFormat outputFormat = null;
     boolean fancy = false;
 
     public DefaultNutsWorkspaceInfoFormat(NutsWorkspace ws) {
@@ -48,8 +53,10 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
     @Override
     public NutsWorkspaceInfoFormat parseOptions(String... args) {
-        for (String arg : args) {
-            switch (arg) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().toString()) {
                 case "--min": {
                     this.setMinimal(true);
                     break;
@@ -58,30 +65,29 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                     this.setFancy(true);
                     break;
                 }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                    break;
+                }
                 case "--json": {
-                    this.setFormatType(NutsResultFormatType.JSON);
+                    this.setOutputFormat(NutsOutputFormat.JSON);
                     break;
                 }
                 case "--props": {
-                    this.setFormatType(NutsResultFormatType.PROPS);
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
                     break;
                 }
                 case "--plain": {
-                    this.setFormatType(NutsResultFormatType.PLAIN);
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    break;
+                }
+                case "--add": {
+                    NutsCommandArg r = cmd.getValueFor(a);
+                    extraProperties.put(r.getKey(), r.getValue());
                     break;
                 }
                 default: {
-                    if (arg.startsWith("--add:")) {
-                        String kv = arg.substring("--add:".length());
-                        int i = kv.indexOf('=');
-                        if (i >= 0) {
-                            extraProperties.put(kv.substring(0, i), kv.substring(i + 1));
-                        } else {
-                            extraProperties.put(kv, "");
-                        }
-                    } else {
-                        //ignore!
-                    }
+                    throw new NutsIllegalArgumentException("Unsupported argument " + a);
                 }
             }
         }
@@ -111,13 +117,18 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return outputFormat;
     }
 
     @Override
-    public NutsWorkspaceInfoFormat setFormatType(NutsResultFormatType formatType) {
-        this.formatType = formatType;
+    public NutsWorkspaceInfoFormat outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat setOutputFormat(NutsOutputFormat outputFormat) {
+        this.outputFormat = outputFormat;
         return this;
     }
 
@@ -213,9 +224,9 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     private void format0(Writer w) {
-        NutsResultFormatType t = formatType;
+        NutsOutputFormat t = outputFormat;
         if (t == null) {
-            t = NutsResultFormatType.PLAIN;
+            t = NutsOutputFormat.PLAIN;
         }
         switch (t) {
             case PLAIN:

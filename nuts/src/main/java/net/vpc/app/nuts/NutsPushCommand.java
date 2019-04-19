@@ -150,11 +150,11 @@ public interface NutsPushCommand {
      *
      * @return <code>this</code> instance
      */
-    NutsPushCommand push();
+    NutsPushCommand run();
 
-    NutsPushCommand formatType(NutsResultFormatType formatType);
+    NutsPushCommand outputFormat(NutsOutputFormat outputFormat);
 
-    NutsPushCommand setFormatType(NutsResultFormatType formatType);
+    NutsPushCommand setOutputFormat(NutsOutputFormat outputFormat);
 
     NutsPushCommand json();
 
@@ -162,6 +162,8 @@ public interface NutsPushCommand {
 
     NutsPushCommand props();
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
+
+    NutsPushCommand parseOptions(String... args);
 
 }

@@ -162,7 +162,7 @@ public interface NutsFindCommand {
     NutsFindCommand latestVersions();
 
     NutsFindCommand allVersions(boolean allVersions);
-    
+
     NutsFindCommand setAllVersions(boolean allVersions);
 
     NutsFindCommand setDependencyFilter(NutsDependencyFilter filter);
@@ -206,7 +206,7 @@ public interface NutsFindCommand {
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
-    String[] getIds();
+    NutsId[] getIds();
 
     boolean isSort();
 
@@ -271,6 +271,12 @@ public interface NutsFindCommand {
     NutsFindCommand transitive(boolean transitive);
 
     NutsFindCommand transitive();
+
+    NutsFindCommand setTrace(boolean trace);
+
+    NutsFindCommand trace(boolean trace);
+
+    NutsFindCommand trace();
 
     /**
      * cache enabled
@@ -418,5 +424,23 @@ public interface NutsFindCommand {
 
     boolean isTransitive();
 
+    boolean isTrace();
+
     boolean isCached();
+
+    NutsFindCommand outputFormat(NutsOutputFormat outputFormat);
+
+    NutsFindCommand setOutputFormat(NutsOutputFormat outputFormat);
+
+    NutsOutputFormat getOutputFormat();
+
+    NutsFindCommand parseOptions(String... args);
+
+    NutsFindCommand setTraceFormat(NutsTraceFormat traceFormat);
+
+    NutsFindCommand traceFormat(NutsTraceFormat traceFormat);
+
+    NutsTraceFormat getTraceFormat();
+
+    NutsFindCommand run();
 }

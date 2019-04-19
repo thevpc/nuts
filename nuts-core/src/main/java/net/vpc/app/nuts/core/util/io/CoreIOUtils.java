@@ -30,14 +30,8 @@
 package net.vpc.app.nuts.core.util.io;
 
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
-import net.vpc.app.nuts.core.util.io.FixedInputStreamMetadata;
-import net.vpc.app.nuts.core.util.io.InputStreamMetadataAwareImpl;
-import net.vpc.app.nuts.core.util.io.InputStreamTee;
-import net.vpc.app.nuts.core.util.io.InputSource;
-import net.vpc.app.nuts.core.util.io.InputStreamMetadataAware;
 import net.vpc.app.nuts.core.util.common.DefaultPersistentMap;
 import net.vpc.app.nuts.core.util.common.PersistentMap;
-import net.vpc.app.nuts.core.util.io.MultiInputSource;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 
@@ -170,7 +164,7 @@ public class CoreIOUtils {
         for (String arg : args) {
             String s = CoreStringUtils.trim(CoreStringUtils.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NutsMinimalCommandLine.parseCommandLine(s));
+                Collections.addAll(args2, NutsCommandLine.parseCommandLine(s));
             } else {
                 args2.add(s);
             }
@@ -1714,6 +1708,16 @@ public class CoreIOUtils {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
+        }
+    }
+
+    public static void storeProperties(Properties props, OutputStream out) {
+        OutputStreamWriter w = new OutputStreamWriter(out);
+        try {
+            props.store(w, null);
+            w.flush();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
     }
 }

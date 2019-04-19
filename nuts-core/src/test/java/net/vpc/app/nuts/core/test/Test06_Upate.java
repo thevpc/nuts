@@ -22,7 +22,7 @@ import net.vpc.app.nuts.NutsBootWorkspace;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsCreateRepositoryOptions;
 import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsMinimalCommandLine;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryConfig;
 import net.vpc.app.nuts.NutsStoreLocation;
@@ -173,7 +173,7 @@ public class Test06_Upate {
                 "--min",
                 "--json"
         );
-        System.out.println(NutsMinimalCommandLine.escapeArguments(b.createProcessCommandLine()));
+        System.out.println(NutsCommandLine.escapeArguments(b.createProcessCommandLine()));
         ProcessBuilder2 cb = new ProcessBuilder2().setCommand(b.createProcessCommandLine());
         String ss = cb.setRedirectErrorStream().grabOutputString().start().waitFor().getOutputString();
         System.out.println("================");

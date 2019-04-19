@@ -21,7 +21,6 @@ import net.vpc.app.nuts.NutsUnsupportedOperationException;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.UnzipOptions;
@@ -63,7 +62,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.setId(d.getId().setVersion(oldVersion + ".1"));
             }
-            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult();
+            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.formatter().createDescriptorFormat().setPretty(true).print(d, file);
             try {
                 CoreIOUtils.delete(folder);

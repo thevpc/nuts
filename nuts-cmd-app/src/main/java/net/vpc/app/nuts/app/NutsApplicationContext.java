@@ -61,7 +61,7 @@ public class NutsApplicationContext implements CommandLineContext {
     public NutsApplicationContext(NutsWorkspace workspace, String[] args,Class appClass, String storeId) {
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            String[] execModeCommand = NutsMinimalCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
+            String[] execModeCommand = NutsCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.length > 0) {
                 switch (execModeCommand[0]) {
                     case "auto-complete": {
@@ -428,9 +428,9 @@ public class NutsApplicationContext implements CommandLineContext {
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
-                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsMinimalCommandLine.escapeArgument(v));
+                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v));
             } else {
-                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsMinimalCommandLine.escapeArgument(v) + " " + NutsMinimalCommandLine.escapeArgument(d));
+                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v) + " " + NutsCommandLine.escapeArgument(d));
             }
             return c;
         }

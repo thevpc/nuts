@@ -151,6 +151,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.effectiveDescriptor = effectiveDescriptor;
     }
 
+    @Override
     public NutsRepository getRepository() {
         return repository;
     }

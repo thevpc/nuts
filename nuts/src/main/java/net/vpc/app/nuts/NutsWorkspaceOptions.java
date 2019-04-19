@@ -368,7 +368,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     }
 
     public String getBootArgumentsString(boolean exportedOptions, boolean runtimeOptions, boolean createOptions) {
-        return NutsMinimalCommandLine.escapeArguments(getBootArguments(exportedOptions, runtimeOptions, createOptions));
+        return NutsCommandLine.escapeArguments(getBootArguments(exportedOptions, runtimeOptions, createOptions));
     }
 
     public String[] getBootArguments(boolean exportedOptions, boolean runtimeOptions, boolean createOptions) {

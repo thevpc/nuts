@@ -35,7 +35,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
@@ -81,9 +81,9 @@ public interface NutsDeployCommand {
 
     NutsDeployCommand setSha1(String sha1);
 
-    NutsDeployCommand descSHA1(String descSHA1);
+    NutsDeployCommand descSha1(String descSHA1);
 
-    NutsDeployCommand setDescSHA1(String descSHA1);
+    NutsDeployCommand setDescSha1(String descSHA1);
 
     NutsDeployCommand content(URL url);
 
@@ -96,13 +96,14 @@ public interface NutsDeployCommand {
     NutsDeployCommand repository(String repository);
 
     NutsDeployCommand setRepository(String repository);
+    
+    NutsDeployCommand setTargetRepository(String repository);
 
     NutsDeployCommand session(NutsSession session);
 
     NutsDeployCommand setSession(NutsSession session);
 
-//    NutsDeployment build();
-    String getRepository();
+    String getTargetRepository();
 
     boolean isForce();
 
@@ -142,9 +143,9 @@ public interface NutsDeployCommand {
 
     NutsDeployCommand run();
 
-    NutsDeployCommand formatType(NutsResultFormatType formatType);
+    NutsDeployCommand outputFormat(NutsOutputFormat outputFormat);
 
-    NutsDeployCommand setFormatType(NutsResultFormatType formatType);
+    NutsDeployCommand setOutputFormat(NutsOutputFormat outputFormat);
 
     NutsDeployCommand json();
 
@@ -152,7 +153,43 @@ public interface NutsDeployCommand {
 
     NutsDeployCommand props();
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 
-    NutsId getResult();
+    NutsId[] getResult();
+
+    NutsId[] getIds();
+
+    NutsDeployCommand addId(String id);
+
+    NutsDeployCommand removeId(String id);
+
+    NutsDeployCommand id(String id);
+
+    NutsDeployCommand removeId(NutsId id);
+
+    NutsDeployCommand addId(NutsId id);
+
+    NutsDeployCommand id(NutsId id);
+
+    NutsDeployCommand clearIds();
+
+    NutsDeployCommand addIds(NutsId... value);
+
+    NutsDeployCommand ids(NutsId... values);
+
+    NutsDeployCommand addIds(String... values);
+
+    NutsDeployCommand ids(String... values);
+
+    NutsDeployCommand to(String repository);
+
+    NutsDeployCommand targetRepository(String repository);
+
+    NutsDeployCommand from(String repository);
+
+    NutsDeployCommand sourceRepository(String repository);
+
+    NutsDeployCommand setSourceRepository(String repository);
+
+    NutsDeployCommand parseOptions(String... args);
 }

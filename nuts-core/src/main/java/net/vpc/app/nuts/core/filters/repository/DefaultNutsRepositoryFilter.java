@@ -1,26 +1,32 @@
 package net.vpc.app.nuts.core.filters.repository;
 
+import java.util.HashSet;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
 import java.util.Set;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
 
     private final Set<String> repos;
 
     public DefaultNutsRepositoryFilter(Set<String> repos) {
-        this.repos = repos;
+        this.repos = new HashSet<>();
+        for (String repo : repos) {
+            if (!CoreStringUtils.isBlank(repo)) {
+                this.repos.add(repo);
+            }
+        }
     }
 
     @Override
     public boolean accept(NutsRepository repository) {
         return repos.isEmpty()
                 || repos.contains(repository.getUuid())
-                || repos.contains(repository.config().getName())
-                ;
+                || repos.contains(repository.config().getName());
     }
 
     @Override
@@ -60,6 +66,5 @@ public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simpli
         }
         return true;
     }
-    
-    
+
 }

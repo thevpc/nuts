@@ -76,9 +76,9 @@ public interface NutsWorkspaceVersionFormat {
 
     void println(File file);
 
-    NutsWorkspaceVersionFormat setFormatType(NutsResultFormatType formatType);
+    NutsWorkspaceVersionFormat setOutputFormat(NutsOutputFormat outputFormat);
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 
     NutsWorkspaceVersionFormat parseOptions(String[] args);
     
@@ -89,4 +89,6 @@ public interface NutsWorkspaceVersionFormat {
     NutsWorkspaceVersionFormat setPretty(boolean pretty);
 
     boolean isPretty();
+
+    NutsWorkspaceVersionFormat outputFormat(NutsOutputFormat outputFormat);
 }

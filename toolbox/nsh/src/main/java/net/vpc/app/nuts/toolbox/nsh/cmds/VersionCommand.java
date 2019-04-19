@@ -36,9 +36,7 @@ import net.vpc.common.commandline.Argument;
 import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.mvn.PomIdResolver;
 
-import java.io.PrintStream;
-import java.util.Properties;
-import net.vpc.app.nuts.NutsResultFormatType;
+import net.vpc.app.nuts.NutsOutputFormat;
 
 /**
  * Created by vpc on 1/7/17.
@@ -54,7 +52,7 @@ public class VersionCommand extends AbstractNutsCommand {
         boolean fancy = false;
         boolean min = false;
         CommandLine cmdLine = new CommandLine(args);
-        NutsResultFormatType ft = NutsResultFormatType.PLAIN;
+        NutsOutputFormat ft = NutsOutputFormat.PLAIN;
         Argument a;
         while (cmdLine.hasNext()) {
             if (context.configure(cmdLine)) {
@@ -62,11 +60,11 @@ public class VersionCommand extends AbstractNutsCommand {
             } else if ((a = cmdLine.readBooleanOption("-m", "--min")) != null) {
                 min = true;
             } else if ((a = cmdLine.readBooleanOption("--json")) != null) {
-                ft = NutsResultFormatType.JSON;
+                ft = NutsOutputFormat.JSON;
             } else if ((a = cmdLine.readBooleanOption("--plain")) != null) {
-                ft = NutsResultFormatType.PLAIN;
+                ft = NutsOutputFormat.PLAIN;
             } else if ((a = cmdLine.readBooleanOption("--props")) != null) {
-                ft = NutsResultFormatType.PROPS;
+                ft = NutsOutputFormat.PROPS;
             } else {
                 cmdLine.unexpectedArgument(getName());
             }
@@ -75,7 +73,7 @@ public class VersionCommand extends AbstractNutsCommand {
 
         ws.formatter().createWorkspaceVersionFormat()
                 .setMinimal(min)
-                .setFormatType(ft)
+                .setOutputFormat(ft)
                 .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
                 .println(context.out());
         return 0;

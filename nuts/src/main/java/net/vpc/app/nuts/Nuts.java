@@ -119,7 +119,7 @@ public class Nuts {
         String d = System.getProperty("nuts.boot.args");
         if (d != null) {
 //                System.out.println("OPEN INHERITED : GOT FROM PROPS : -Dnuts.boot.args="+d);
-            boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(d));
+            boot = new NutsBootWorkspace(NutsCommandLine.parseCommandLine(d));
             boot.getOptions().setApplicationArguments(args);
         } else {
 //                System.out.println("OPEN INHERITED : NO PARAMS");

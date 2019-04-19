@@ -138,9 +138,9 @@ public interface NutsInstallCommand {
 
     NutsDefinition[] getResult();
 
-    NutsInstallCommand formatType(NutsResultFormatType formatType);
+    NutsInstallCommand outputFormat(NutsOutputFormat outputFormat);
 
-    NutsInstallCommand setFormatType(NutsResultFormatType formatType);
+    NutsInstallCommand setOutputFormat(NutsOutputFormat outputFormat);
 
     NutsInstallCommand json();
 
@@ -148,5 +148,5 @@ public interface NutsInstallCommand {
 
     NutsInstallCommand props();
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 }

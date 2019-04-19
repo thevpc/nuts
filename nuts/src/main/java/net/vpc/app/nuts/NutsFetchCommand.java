@@ -73,6 +73,14 @@ public interface NutsFetchCommand {
 
     NutsFetchCommand lenient();
 
+    NutsFetchCommand setTrace(boolean trace);
+
+    NutsFetchCommand trace(boolean trace);
+
+    NutsFetchCommand trace();
+    
+    boolean isTrace();
+
 //    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
     // Getter
@@ -261,5 +269,25 @@ public interface NutsFetchCommand {
     boolean isTransitive();
 
     boolean isCached();
+
+    NutsFetchCommand repositories(Collection<String> value);
+
+    NutsFetchCommand repositories(String... values);
+
+    NutsFetchCommand addRepositories(Collection<String> value);
+
+    NutsFetchCommand removeRepository(String value);
+
+    NutsFetchCommand addRepositories(String... value);
+
+    NutsFetchCommand clearRepositories();
+
+    NutsFetchCommand addRepository(String value);
+
+    NutsFetchCommand repository(String value);
+
+    NutsFetchCommand parseOptions(String... args);
+    
+    NutsFetchCommand run();
 
 }

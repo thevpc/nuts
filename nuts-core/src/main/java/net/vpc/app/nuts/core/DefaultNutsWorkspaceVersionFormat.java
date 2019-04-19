@@ -15,17 +15,25 @@ import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 import java.util.*;
 import net.vpc.app.nuts.NutsBootContext;
 import net.vpc.app.nuts.NutsBootContextType;
-import net.vpc.app.nuts.NutsResultFormatType;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
+import net.vpc.app.nuts.NutsIllegalArgumentException;
+import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
+/**
+ * 
+ * type: Command Class
+ * @author vpc
+ */
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
 
     private final NutsWorkspace ws;
     private final Properties extraProperties = new Properties();
-    private NutsResultFormatType formatType = null;
+    private NutsOutputFormat outputFormat = null;
     private boolean minimal = false;
     private boolean pretty = true;
 
@@ -35,36 +43,41 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public NutsWorkspaceVersionFormat parseOptions(String[] args) {
-        for (String arg : args) {
-            switch (arg) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().getString()) {
                 case "--min": {
-                    this.setMinimal(true);
+                    this.setMinimal(a.getBooleanValue());
+                    break;
+                }
+                case "--pretty": {
+                    this.setPretty(a.getBooleanValue());
+                    break;
+                }
+                case "--add": {
+                    NutsCommandArg r = cmd.getValueFor(a);
+                    extraProperties.put(r.getKey(), r.getValue());
+                    break;
+                }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
                     break;
                 }
                 case "--json": {
-                    this.setFormatType(NutsResultFormatType.JSON);
+                    this.setOutputFormat(NutsOutputFormat.JSON);
                     break;
                 }
                 case "--props": {
-                    this.setFormatType(NutsResultFormatType.PROPS);
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
                     break;
                 }
                 case "--plain": {
-                    this.setFormatType(NutsResultFormatType.PLAIN);
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
                     break;
                 }
                 default: {
-                    if (arg.startsWith("--add:")) {
-                        String kv = arg.substring("--add:".length());
-                        int i = kv.indexOf('=');
-                        if (i >= 0) {
-                            extraProperties.put(kv.substring(0, i), kv.substring(i + 1));
-                        } else {
-                            extraProperties.put(kv, "");
-                        }
-                    } else {
-                        //ignore!
-                    }
+                    throw new NutsIllegalArgumentException("Unsupported argument " + a);
                 }
             }
         }
@@ -94,13 +107,18 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return outputFormat;
     }
 
     @Override
-    public NutsWorkspaceVersionFormat setFormatType(NutsResultFormatType formatType) {
-        this.formatType = formatType;
+    public NutsWorkspaceVersionFormat outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
+    }
+    
+    @Override
+    public NutsWorkspaceVersionFormat setOutputFormat(NutsOutputFormat outputFormat) {
+        this.outputFormat = outputFormat;
         return this;
     }
 
@@ -204,9 +222,9 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public void print(Writer out) {
-        NutsResultFormatType t = formatType;
+        NutsOutputFormat t = outputFormat;
         if (t == null) {
-            t = NutsResultFormatType.PLAIN;
+            t = NutsOutputFormat.PLAIN;
         }
         switch (t) {
             case PLAIN:

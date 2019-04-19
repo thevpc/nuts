@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependencyScope;
@@ -21,16 +23,16 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.NutsResultFormatType;
+import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
+ * type: Command Class
  * @author vpc
  */
 public class DefaultNutsInstallCommand implements NutsInstallCommand {
@@ -47,7 +49,7 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     private NutsSession session;
     private final NutsWorkspace ws;
     private NutsDefinition[] result;
-    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -314,44 +316,55 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
 
     @Override
     public NutsInstallCommand parseOptions(String... args) {
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                switch (arg) {
-                    case "-f":
-                    case "--force": {
-                        this.setForce(true);
-                        break;
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().getString()) {
+                case "-f":
+                case "--force": {
+                    this.setForce(a.getBooleanValue());
+                    break;
+                }
+                case "-t": 
+                case "--trace": {
+                    this.setTrace(a.getBooleanValue());
+                    break;
+                }
+                case "-c": 
+                case "--companions": 
+                {
+                    this.setIncludeCompanions(a.getBooleanValue());
+                    break;
+                }
+                case "-g": 
+                case "--args": 
+                {
+                    while ((a = cmd.next()) != null) {
+                        this.addArg(a.getString());
                     }
-                    case "--trace": {
-                        this.setTrace(false);
-                        break;
-                    }
-                    case "--silent": {
-                        this.setTrace(false);
-                        break;
-                    }
-                    case "--companions": {
-                        this.setIncludeCompanions(true);
-                        break;
-                    }
-                    case "--args": {
-                        while (i < args.length) {
-                            this.addArg(args[i]);
-                            i++;
-                        }
-                        break;
-                    }
-                    case "--help": {
-
-                        break;
-                    }
-                    default: {
-                        if (args[i].startsWith("-")) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + args[i]);
-                        } else {
-                            id(args[i]);
-                        }
+                    break;
+                }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                    break;
+                }
+                case "--json": {
+                    this.setOutputFormat(NutsOutputFormat.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    break;
+                }
+                default: {
+                    if (a.isOption()) {
+                        throw new NutsIllegalArgumentException("Unsupported option " + a);
+                    } else {
+                        id(a.getString());
                     }
                 }
             }
@@ -470,36 +483,36 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     }
 
     @Override
-    public DefaultNutsInstallCommand formatType(NutsResultFormatType formatType) {
-        return setFormatType(formatType);
+    public DefaultNutsInstallCommand outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
     }
 
     @Override
-    public DefaultNutsInstallCommand setFormatType(NutsResultFormatType formatType) {
-        if (formatType == null) {
-            formatType = NutsResultFormatType.PLAIN;
+    public DefaultNutsInstallCommand setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
         }
-        this.formatType = formatType;
+        this.outputFormat = outputFormat;
         return this;
     }
 
     @Override
     public DefaultNutsInstallCommand json() {
-        return setFormatType(NutsResultFormatType.JSON);
+        return setOutputFormat(NutsOutputFormat.JSON);
     }
 
     @Override
     public DefaultNutsInstallCommand plain() {
-        return setFormatType(NutsResultFormatType.PLAIN);
+        return setOutputFormat(NutsOutputFormat.PLAIN);
     }
 
     @Override
     public DefaultNutsInstallCommand props() {
-        return setFormatType(NutsResultFormatType.PROPS);
+        return setOutputFormat(NutsOutputFormat.PROPS);
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return this.formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
     }
 }

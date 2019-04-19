@@ -18,6 +18,11 @@ import net.vpc.app.nuts.core.executors.JavaExecutorOptions;
 import net.vpc.app.nuts.core.terminals.DefaultNutsSessionTerminal;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
+/**
+ * 
+ * type: Command Class
+ * @author vpc
+ */
 public class DefaultNutsExecCommand implements NutsExecCommand {
 
     public static final Logger log = Logger.getLogger(DefaultNutsExecCommand.class.getName());
@@ -482,16 +487,17 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
     @Override
     public NutsExecCommand parseOptions(String... args) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("-")) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            if (a.isOption()) {
                 if (command.isEmpty()) {
-                    executorOptions.add(arg);
+                    executorOptions.add(a.getString());
                 } else {
                     throw new NutsIllegalArgumentException("Unexpected option here");
                 }
             } else {
-                command.add(arg);
+                command.add(a.getString());
             }
         }
         return this;
@@ -741,7 +747,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                 return new InternalExecutable(cmdName, args) {
                     @Override
                     public void execute() {
-                        ws.update().parseOptions(args)
+                        ws.update().session(session).trace().parseOptions(args)
                                 .update();
                     }
                 };
@@ -750,7 +756,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                 return new InternalExecutable(cmdName, args) {
                     @Override
                     public void execute() {
-                        ws.update().parseOptions(args)
+                        ws.update().session(session).trace().parseOptions(args)
                                 .checkUpdates();
                     }
                 };
@@ -759,7 +765,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                 return new InternalExecutable(cmdName, args) {
                     @Override
                     public void execute() {
-                        ws.install().parseOptions(args).run();
+                        ws.install().session(session).trace().parseOptions(args).run();
                     }
                 };
             }
@@ -767,7 +773,47 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                 return new InternalExecutable(cmdName, args) {
                     @Override
                     public void execute() {
-                        ws.uninstall().parseOptions(args).run();
+                        ws.uninstall().session(session).trace().parseOptions(args).run();
+                    }
+                };
+            }
+            case "deploy": {
+                return new InternalExecutable(cmdName, args) {
+                    @Override
+                    public void execute() {
+                        ws.deploy().session(session).trace().parseOptions(args).run();
+                    }
+                };
+            }
+            case "undeploy": {
+                return new InternalExecutable(cmdName, args) {
+                    @Override
+                    public void execute() {
+                        ws.undeploy().trace().parseOptions(args).run();
+                    }
+                };
+            }
+            case "push": {
+                return new InternalExecutable(cmdName, args) {
+                    @Override
+                    public void execute() {
+                        ws.push().session(session).trace().parseOptions(args).run();
+                    }
+                };
+            }
+            case "fetch": {
+                return new InternalExecutable(cmdName, args) {
+                    @Override
+                    public void execute() {
+                        ws.fetch().session(session).trace().parseOptions(args).run();
+                    }
+                };
+            }
+            case "find": {
+                return new InternalExecutable(cmdName, args) {
+                    @Override
+                    public void execute() {
+                        ws.find().session(session).trace().parseOptions(args).run();
                     }
                 };
             }
@@ -839,6 +885,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
                     @Override
                     public void execute() {
                         DefaultNutsExecCommand.this.copy()
+                                .session(session)
                                 .clearCommand()
                                 .parseOptions(args)
                                 .failFast()
@@ -1109,7 +1156,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
         @Override
         public String toString() {
-            return "NUTS " + cmdName + " " + NutsMinimalCommandLine.escapeArguments(args);
+            return "NUTS " + cmdName + " " + NutsCommandLine.escapeArguments(args);
         }
 
     }
@@ -1159,7 +1206,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
         @Override
         public String toString() {
-            return "NUTS " + getId().toString() + " " + NutsMinimalCommandLine.escapeArguments(appArgs);
+            return "NUTS " + getId().toString() + " " + NutsCommandLine.escapeArguments(appArgs);
         }
     }
 
@@ -1227,7 +1274,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
 
         @Override
         public String toString() {
-            return "SYSEXEC " + NutsMinimalCommandLine.escapeArguments(cmd);
+            return "SYSEXEC " + NutsCommandLine.escapeArguments(cmd);
         }
 
     }

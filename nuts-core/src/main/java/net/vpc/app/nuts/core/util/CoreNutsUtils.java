@@ -503,7 +503,6 @@ public class CoreNutsUtils {
         };
     }
 
-
     public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
         if (parent != null) {
             boolean modified = false;
@@ -685,7 +684,6 @@ public class CoreNutsUtils {
         return 0;
     }
 
-
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
             return false;
@@ -854,5 +852,48 @@ public class CoreNutsUtils {
         String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
         log.log(Level.FINEST, tracePhaseString + fetchString
                 + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
+    }
+
+    public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
+        NutsIdFormat idFormat = ws.formatter().createIdFormat();
+        return idFormat.toString(id);
+    }
+
+    public static String tracePlainNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
+        NutsIdFormat idFormat = ws.formatter().createIdFormat();
+        return idFormat.toString(id.getId());
+    }
+
+    public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
+        NutsIdFormat idFormat = ws.formatter().createIdFormat();
+        return idFormat.toString(id.getId());
+    }
+
+    public static Map<String, Object> traceJsonNutsDefinition(NutsWorkspace ws, NutsDefinition def) {
+        Map<String, Object> x = new LinkedHashMap<>();
+        x.put("id", tracePlainNutsDefinition(ws, def));
+        if (def.getContent() != null) {
+            if (def.getContent().getPath() != null) {
+                x.put("path", def.getContent().getPath().toString());
+            }
+            x.put("cached", def.getContent().isCached());
+            x.put("tomporary", def.getContent().isTemporary());
+        }
+        if (def.getInstallation() != null) {
+            if (def.getInstallation().getInstallFolder() != null) {
+                x.put("install-folder", def.getInstallation().getInstallFolder().toString());
+            }
+            x.put("installed", def.getInstallation().isInstalled());
+            x.put("just-installed", def.getInstallation().isJustInstalled());
+        }
+        if (def.getRepository() != null) {
+            x.put("repository-name", def.getRepository().config().name());
+            x.put("repository-uuid", def.getRepository().config().uuid());
+        }
+        if (def.getDescriptor() != null) {
+            x.put("descriptor", ws.formatter().createDescriptorFormat().toString(def.getDescriptor()));
+            x.put("effective-descriptor", ws.formatter().createDescriptorFormat().toString(def.getEffectiveDescriptor()));
+        }
+        return x;
     }
 }

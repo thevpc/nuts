@@ -13,7 +13,7 @@ import net.vpc.app.nuts.core.util.fprint.parser.FormattedPrintStreamNodePartialP
 public class FormattedPrintStreamUtils {
 
     // %[argument_index$][flags][width][.precision][t]conversion
-    private static final Pattern PRINTF_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tTN])?([a-zA-Z%])");
+    private static final Pattern PRINTF_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
     private static final Logger log = Logger.getLogger(FormattedPrintStreamUtils.class.getName());
 
     /**

@@ -386,7 +386,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
     @Override
     public NutsUpdateCommand update() {
-        return new DefaultNutsUpdateWorkspaceCommand(this);
+        return new DefaultNutsUpdateCommand(this);
     }
 
     @Override
@@ -1056,7 +1056,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
     @Override
     public NutsFetchCommand fetch() {
-        return new DefaultNutsFetch(this);
+        return new DefaultNutsFetchCommand(this);
     }
 
     @Override

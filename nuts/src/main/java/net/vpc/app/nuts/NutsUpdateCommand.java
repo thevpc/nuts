@@ -38,9 +38,9 @@ import java.util.Collection;
  */
 public interface NutsUpdateCommand {
 
-    NutsUpdateCommand formatType(NutsResultFormatType id);
+    NutsUpdateCommand outputFormat(NutsOutputFormat outputFormat);
 
-    NutsUpdateCommand setFormatType(NutsResultFormatType id);
+    NutsUpdateCommand setOutputFormat(NutsOutputFormat outputFormat);
 
     NutsUpdateCommand json();
 
@@ -48,7 +48,7 @@ public interface NutsUpdateCommand {
 
     NutsUpdateCommand props();
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 
     NutsUpdateCommand id(NutsId id);
 

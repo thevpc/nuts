@@ -33,17 +33,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsMinimalCommandLine {
+public class NutsCommandLine {
+
     protected LinkedList<String> args = new LinkedList<>();
 
-    public NutsMinimalCommandLine(String[] args) {
-        this.args.addAll(Arrays.asList(args));
+    public NutsCommandLine(String[] args) {
+        if (args != null) {
+            this.args.addAll(Arrays.asList(args));
+        }
     }
 
     public static String escapeArgument(String arg) {
@@ -106,21 +110,25 @@ public class NutsMinimalCommandLine {
         return x;
     }
 
-    public String getValueFor(Arg cmdArg) {
-        String v = cmdArg.getValue();
-        if (v == null) {
-            Arg next = next();
-            if (next == null) {
-                throw new NutsIllegalArgumentException("Missing argument for : " + cmdArg.getKey());
-            }
-            v = next.getArg();
+    public NutsCommandArg getValueFor(NutsCommandArg cmdArg) {
+        NutsCommandArg v = cmdArg.getValue();
+        if (v.isNull()) {
+            return next(true);
         }
         return v;
     }
 
-    public Arg next() {
+    public NutsCommandArg next(boolean required) {
+        NutsCommandArg v = next();
+        if (required && v == null) {
+            throw new NoSuchElementException("Missing argument");
+        }
+        return v;
+    }
+
+    public NutsCommandArg next() {
         if (!args.isEmpty()) {
-            return new Arg(args.removeFirst());
+            return new NutsCommandArg(args.removeFirst());
         }
         return null;
     }
@@ -206,7 +214,7 @@ public class NutsMinimalCommandLine {
                             break;
                         }
                         case '\\': {
-                            i=readEscaped(charArray, i+1, sb);
+                            i = readEscaped(charArray, i + 1, sb);
                             //ignore
                             break;
                         }
@@ -228,7 +236,7 @@ public class NutsMinimalCommandLine {
                             break;
                         }
                         case '\\': {
-                            i=readEscaped(charArray, i+1, sb);
+                            i = readEscaped(charArray, i + 1, sb);
                             //ignore
                             break;
                         }
@@ -257,61 +265,34 @@ public class NutsMinimalCommandLine {
         return args.toArray(new String[0]);
     }
 
-    private static int readEscaped(char[] charArray,int i,StringBuilder sb){
+    private static int readEscaped(char[] charArray, int i, StringBuilder sb) {
         char c = charArray[i];
-        switch (c){
-            case 'n':{
+        switch (c) {
+            case 'n': {
                 sb.append('\n');
                 break;
             }
-            case 't':{
+            case 't': {
                 sb.append('\t');
                 break;
             }
-            case 'r':{
+            case 'r': {
                 sb.append('\r');
                 break;
             }
-            case 'f':{
+            case 'f': {
                 sb.append('\f');
                 break;
             }
-            default:{
+            default: {
                 sb.append(c);
             }
         }
         return i;
     }
 
-    public static class Arg {
-        private final String line;
-
-        public Arg(String line) {
-            this.line = line;
-        }
-
-        public boolean isOption() {
-            return line.startsWith("-");
-        }
-
-        public String getArg() {
-            return line;
-        }
-
-        public String getKey() {
-            int x = line.indexOf('=');
-            if (x >= 0) {
-                return line.substring(0, x);
-            }
-            return line;
-        }
-
-        public String getValue() {
-            int x = line.indexOf('=');
-            if (x >= 0) {
-                return line.substring(x + 1);
-            }
-            return null;
-        }
+    public boolean hasNext() {
+        return !args.isEmpty();
     }
+
 }

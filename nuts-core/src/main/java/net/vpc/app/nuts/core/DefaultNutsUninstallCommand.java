@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsExecutionContext;
@@ -19,7 +21,7 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.NutsNotFoundException;
-import net.vpc.app.nuts.NutsResultFormatType;
+import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsUninstallCommand;
@@ -29,6 +31,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
  *
+ * type: Command Class
  * @author vpc
  */
 public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
@@ -41,24 +44,28 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     private List<NutsId> ids = new ArrayList<>();
     private NutsSession session;
     private NutsWorkspace ws;
-    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     public DefaultNutsUninstallCommand(NutsWorkspace ws) {
         this.ws = ws;
     }
 
+    @Override
     public NutsUninstallCommand id(String id) {
         return addId(id);
     }
 
+    @Override
     public NutsUninstallCommand id(NutsId id) {
         return addId(id);
     }
 
+    @Override
     public NutsUninstallCommand addId(String id) {
         return addId(id == null ? null : ws.parser().parseId(id));
     }
 
+    @Override
     public NutsUninstallCommand addId(NutsId id) {
         if (id == null) {
             throw new NutsNotFoundException(id);
@@ -68,6 +75,7 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return this;
     }
 
+    @Override
     public NutsUninstallCommand addIds(String... ids) {
         for (String id : ids) {
             addId(id);
@@ -75,6 +83,7 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return this;
     }
 
+    @Override
     public NutsUninstallCommand addIds(NutsId... ids) {
         for (NutsId id : ids) {
             addId(id);
@@ -82,28 +91,34 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return this;
     }
 
+    @Override
     public boolean isTrace() {
         return trace;
     }
 
+    @Override
     public NutsUninstallCommand setTrace(boolean trace) {
         this.trace = trace;
         return this;
     }
 
+    @Override
     public boolean isForce() {
         return force;
     }
 
+    @Override
     public NutsUninstallCommand setForce(boolean forceInstall) {
         this.force = forceInstall;
         return this;
     }
 
+    @Override
     public boolean isAsk() {
         return ask;
     }
 
+    @Override
     public NutsUninstallCommand setAsk(boolean ask) {
         this.ask = ask;
         return this;
@@ -281,11 +296,11 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
                     throw new UncheckedIOException(ex);
                 }
                 if (this.isTrace()) {
-                    out.printf("%N uninstalled ##successfully##\n",ws.formatter().createIdFormat().toString(id));
+                    out.printf("%N uninstalled ##successfully##\n", ws.formatter().createIdFormat().toString(id));
                 }
             } else {
                 if (this.isTrace()) {
-                    out.printf("%N @@could not@@ be uninstalled\n",ws.formatter().createIdFormat().toString(id));
+                    out.printf("%N @@could not@@ be uninstalled\n", ws.formatter().createIdFormat().toString(id));
                 }
             }
         }
@@ -305,45 +320,53 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
 
     @Override
     public NutsUninstallCommand parseOptions(String... args) {
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                switch (arg) {
-                    case "-f":
-                    case "--force": {
-                        this.setForce(true);
-                        break;
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().getString()) {
+                case "-f":
+                case "--force": {
+                    this.setForce(a.getBooleanValue());
+                    break;
+                }
+                case "-e":
+                case "--earse": {
+                    this.setErase(a.getBooleanValue());
+                    break;
+                }
+                case "--trace": {
+                    this.setTrace(a.getBooleanValue());
+                    break;
+                }
+                case "-g": 
+                case "--args": 
+                {
+                    while (cmd.hasNext()) {
+                        this.addArg(cmd.next().getString());
                     }
-                    case "-e":
-                    case "--earse": {
-                        this.setErase(true);
-                        break;
-                    }
-                    case "--trace": {
-                        this.setTrace(true);
-                        break;
-                    }
-                    case "--silent": {
-                        this.setTrace(false);
-                        break;
-                    }
-                    case "--args": {
-                        while (i < args.length) {
-                            this.addArg(args[i]);
-                            i++;
-                        }
-                        break;
-                    }
-                    case "--help": {
-
-                        break;
-                    }
-                    default: {
-                        if (args[i].startsWith("-")) {
-                            throw new NutsIllegalArgumentException("Unsupported option " + args[i]);
-                        } else {
-                            id(args[i]);
-                        }
+                    break;
+                }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                    break;
+                }
+                case "--json": {
+                    this.setOutputFormat(NutsOutputFormat.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    break;
+                }
+                default: {
+                    if (a.isOption()) {
+                        throw new NutsIllegalArgumentException("Unsupported option " + a);
+                    } else {
+                        id(a.getString());
                     }
                 }
             }
@@ -351,38 +374,38 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         return this;
     }
 
-     @Override
-    public NutsUninstallCommand formatType(NutsResultFormatType formatType) {
-        return setFormatType(formatType);
+    @Override
+    public NutsUninstallCommand outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
     }
 
     @Override
-    public NutsUninstallCommand setFormatType(NutsResultFormatType formatType) {
-        if(formatType==null){
-            formatType=NutsResultFormatType.PLAIN;
+    public NutsUninstallCommand setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
         }
-        this.formatType=formatType;
+        this.outputFormat = outputFormat;
         return this;
     }
 
     @Override
     public NutsUninstallCommand json() {
-        return setFormatType(NutsResultFormatType.JSON);
+        return setOutputFormat(NutsOutputFormat.JSON);
     }
 
     @Override
     public NutsUninstallCommand plain() {
-        return setFormatType(NutsResultFormatType.PLAIN);
+        return setOutputFormat(NutsOutputFormat.PLAIN);
     }
 
     @Override
     public NutsUninstallCommand props() {
-        return setFormatType(NutsResultFormatType.PROPS);
+        return setOutputFormat(NutsOutputFormat.PROPS);
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return this.formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
     }
-    
+
 }

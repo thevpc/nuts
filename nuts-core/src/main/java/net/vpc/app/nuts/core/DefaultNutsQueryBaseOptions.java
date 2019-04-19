@@ -13,6 +13,7 @@ import java.util.Set;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsFetchStrategy;
+import net.vpc.app.nuts.NutsOutputFormat;
 
 /**
  *
@@ -25,7 +26,7 @@ public class DefaultNutsQueryBaseOptions<T> {
     private boolean cached = true;
     private Boolean indexed = null;
     private NutsFetchStrategy mode = null;
-    private NutsSession session;
+    protected NutsSession session;
     private Boolean acceptOptional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
     private boolean includeContent = true;
@@ -33,6 +34,8 @@ public class DefaultNutsQueryBaseOptions<T> {
     private boolean effective = false;
     private boolean includeInstallInfo = true;
     private Path location = null;
+    private boolean trace = false;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     //@Override
     protected T copyFrom0(DefaultNutsQueryBaseOptions other) {
@@ -102,7 +105,7 @@ public class DefaultNutsQueryBaseOptions<T> {
     public T fetchStratery(NutsFetchStrategy mode) {
         return setFetchStratery(mode);
     }
-    
+
     //@Override
     public T setFetchStratery(NutsFetchStrategy mode) {
         this.mode = mode;
@@ -162,7 +165,7 @@ public class DefaultNutsQueryBaseOptions<T> {
     public T indexed(Boolean indexEnabled) {
         return setIndexed(indexEnabled);
     }
-    
+
     //@Override
     public T setIndexed(Boolean indexEnabled) {
         this.indexed = indexEnabled;
@@ -402,4 +405,38 @@ public class DefaultNutsQueryBaseOptions<T> {
         this.location = null;
         return (T) this;
     }
+
+    public T outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
+    }
+
+    public T setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
+        }
+        this.outputFormat = outputFormat;
+        return (T) this;
+    }
+
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
+    }
+
+    public boolean isTrace() {
+        return trace;
+    }
+
+    public T setTrace(boolean trace) {
+        this.trace = trace;
+        return (T) this;
+    }
+
+    public T trace(boolean trace) {
+        return setTrace(trace);
+    }
+
+    public T trace() {
+        return trace(true);
+    }
+
 }

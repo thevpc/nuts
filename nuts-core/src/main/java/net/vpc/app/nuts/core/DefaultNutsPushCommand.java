@@ -13,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
@@ -29,7 +31,7 @@ import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
-import net.vpc.app.nuts.NutsResultFormatType;
+import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
@@ -51,7 +53,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     private NutsSession session;
     private final NutsWorkspace ws;
     private String repository;
-    private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
+    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     public DefaultNutsPushCommand(NutsWorkspace ws) {
         this.ws = ws;
@@ -271,7 +273,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public NutsPushCommand push() {
+    public NutsPushCommand run() {
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
@@ -294,7 +296,7 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHEK ME, why offline?
                 boolean ok = false;
-                for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws,NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
+                for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.DEPLOY, file.getId(), repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
                     NutsDescriptor descr = null;
                     NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                     try {
@@ -469,37 +471,111 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
         return setOffline(enable);
     }
 
-     @Override
-    public NutsPushCommand formatType(NutsResultFormatType formatType) {
-        return setFormatType(formatType);
+    @Override
+    public NutsPushCommand outputFormat(NutsOutputFormat outputFormat) {
+        return setOutputFormat(outputFormat);
     }
 
     @Override
-    public NutsPushCommand setFormatType(NutsResultFormatType formatType) {
-        if(formatType==null){
-            formatType=NutsResultFormatType.PLAIN;
+    public NutsPushCommand setOutputFormat(NutsOutputFormat outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsOutputFormat.PLAIN;
         }
-        this.formatType=formatType;
+        this.outputFormat = outputFormat;
         return this;
     }
 
     @Override
     public NutsPushCommand json() {
-        return setFormatType(NutsResultFormatType.JSON);
+        return setOutputFormat(NutsOutputFormat.JSON);
     }
 
     @Override
     public NutsPushCommand plain() {
-        return setFormatType(NutsResultFormatType.PLAIN);
+        return setOutputFormat(NutsOutputFormat.PLAIN);
     }
 
     @Override
     public NutsPushCommand props() {
-        return setFormatType(NutsResultFormatType.PROPS);
+        return setOutputFormat(NutsOutputFormat.PROPS);
     }
 
     @Override
-    public NutsResultFormatType getFormatType() {
-        return this.formatType;
+    public NutsOutputFormat getOutputFormat() {
+        return this.outputFormat;
+    }
+
+    @Override
+    public NutsPushCommand parseOptions(String... args) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.getKey().getString()) {
+                case "-f":
+                case "--force": {
+                    setForce(a.getBooleanValue());
+                    break;
+                }
+                case "-k":
+                case "--ask": {
+                    setAsk(a.getBooleanValue());
+                    break;
+                }
+                case "-o":
+                case "--offline": {
+                    setOffline(a.getBooleanValue());
+                    break;
+                }
+                case "-x":
+                case "--freeze": {
+                    for (String id : cmd.getValueFor(a).toString().split(",")) {
+                        frozenId(id);
+                    }
+                    break;
+                }
+                case "-r":
+                case "-repository":
+                case "--from": {
+                    setRepository(cmd.getValueFor(a).getString());
+                    break;
+                }
+                case "-g":
+                case "--args": {
+                    while ((a = cmd.next()) != null) {
+                        this.addArg(a.getString());
+                    }
+                    break;
+                }
+                case "-t":
+                case "--trace": {
+                    setTrace(a.getBooleanValue());
+                    break;
+                }
+                case "--trace-format": {
+                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
+                    break;
+                }
+                case "--json": {
+                    this.setOutputFormat(NutsOutputFormat.JSON);
+                    break;
+                }
+                case "--props": {
+                    this.setOutputFormat(NutsOutputFormat.PROPS);
+                    break;
+                }
+                case "--plain": {
+                    this.setOutputFormat(NutsOutputFormat.PLAIN);
+                    break;
+                }
+                default: {
+                    if (a.isOption()) {
+                        throw new NutsIllegalArgumentException("Unsupported option " + a);
+                    } else {
+                        id(a.getString());
+                    }
+                }
+            }
+        }
+        return this;
     }
 }

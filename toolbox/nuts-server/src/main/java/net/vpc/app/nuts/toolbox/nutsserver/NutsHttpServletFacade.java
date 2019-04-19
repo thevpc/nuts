@@ -280,7 +280,7 @@ public class NutsHttpServletFacade {
                         .setSha1(receivedContentHash)
                         .setDescriptor(descriptor)
                         .setSession(context.getSession().copy())
-                        .getResult();
+                        .getResult()[0];
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
             }

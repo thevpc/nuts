@@ -116,7 +116,7 @@ public interface NutsUninstallCommand {
 
     NutsUninstallCommand run();
 
-    NutsResultFormatType getFormatType();
+    NutsOutputFormat getOutputFormat();
 
     NutsUninstallCommand props();
 
@@ -124,8 +124,8 @@ public interface NutsUninstallCommand {
 
     NutsUninstallCommand json();
 
-    NutsUninstallCommand setFormatType(NutsResultFormatType formatType);
+    NutsUninstallCommand setOutputFormat(NutsOutputFormat outputFormat);
 
-    NutsUninstallCommand formatType(NutsResultFormatType formatType);
+    NutsUninstallCommand outputFormat(NutsOutputFormat outputFormat);
 
 }

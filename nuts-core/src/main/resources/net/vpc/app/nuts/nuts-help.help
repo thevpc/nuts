@@ -399,39 +399,83 @@ Java         Version: ${java.version} (${java.vm.name})
 
  [[version]] or [[--version]] or [[-version]] or [[-v]]
       show version
+       
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+
+ [[info]]
+      show workspace detailed information (paths and libraries)
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
 
  [[--reset]]
        reset (delete) ==nuts== workspace folder and exit
 
- [[--help]] or [[-?]] or [[-h]]
+ [[help]] or [[--help]] or [[-?]] or [[-h]]
       show this help and exit
 
- [[exec]] ...
- [[--exec]] ...
+ [[exec]] \[-options\]... {{\<args\>}}...
+ [[--exec]] \[-options\]... {{\<args\>}}...
  [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
       runs command with the given executor options \( it will be considered an option if it 
       starts with '-' \). This is helpful to issue JVM Options to executor for instance
 
- [[info]]
-      show workspace detailed information (paths and libraries)
 
  [[license]]
-      show license info
+      show license info and exit
 
- [[install]] {{\<nuts-component\>}}...
+ [[install]] {{\<nuts-component\>}}... [[--args]] ...
       install ==nuts== package {{\<nuts-component\>}}
+       [[-f]] or [[--force]] : install or reinstall if already installed
+       [[-t]] or [[--trace]] : enable trace operation with a meaning message (or disable it with [[--!trace] or [[--trace=false]] )
+       [[--args]] ...        : provide arguments to pass to installer
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
 
- [[uninstall]] {{\<nuts-component\>}}...
+ [[uninstall]] {{\<nuts-component\>}}... [[--args]] ...        
       uninstall  ==nuts== package {{\<nuts-component\>}}
+       [[-f]] or [[--force]] : ignore non existing components
+       [[-e]] or [[--erase]] : enable erase mode to delete all of component\'s config data as well
+       [[-t]] or [[--trace]] : enable trace operation with a meaning message (or disable it with [[--!trace] or [[--trace=false]] )
+       [[--args]] ...        : provide arguments to pass to uninstaller
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
 
- [[update]]
-       check if a newer version of ==nuts== is available in the current workspace and perform update
-
- [[check-updates]]
+ [[update]]  \[Options\]... {{\<ids\>}} ...  [[--args]] ...
+       check if a newer version of ==nuts== or any of the provided {{\<ids\>}} 
+       is available in the current workspace and perform update by downloading (fetch) 
+       and installing the component. The updated version is promoted to 'default' version.
+       [[-a]] or [[--all]] : force updates of both workspace\'s api, runtime extensions and installed components
+       [[-w]] or [[--ws]] or [[-workspace]] : force updates installed workspace\'s api, runtime and extensions
+       [[-i]] or [[--installed]] : force updates installed components
+       [[-e]] or [[--extensions]] : force updates installed workspace\'s extensions
+       [[-r]] or [[--runtime]] : force updates installed workspace\'s runtime
+       [[-A]] or [[--api]] : force updates installed workspace\'s runtime
+       [[-v]] {{\<arguments\>}}
+       or [[--version]] {{\<version\>}}
+            : force updates to the provided {{\<version\>}}
+       [[--args]] ...        : provide arguments to pass to updater
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+            
+ [[check-updates]]  \[Options\]... {{\<ids\>}} ...
        check if a newer version of ==nuts== is available in the current workspace without performing updates
-
+       Take the same arguments and options as [[update]] command
 
  [[--!...]] or [[-!...]] 
+      option will negated if boolean. Actually, [[--!option]] is equivalent to [[--option=false]]
+
+ [[--//...]] or [[-//...]] 
       option will be discarded (and all of its parameters)
 
 

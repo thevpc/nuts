@@ -217,7 +217,7 @@ public class NutsBootWorkspace {
         }
         cmd.add(jc);
         boolean showCommand = false;
-        for (String c : NutsMinimalCommandLine.parseCommandLine(options.getBootJavaOptions())) {
+        for (String c : NutsCommandLine.parseCommandLine(options.getBootJavaOptions())) {
             if (!c.isEmpty()) {
                 if (c.equals("--show-command")) {
                     showCommand = true;
