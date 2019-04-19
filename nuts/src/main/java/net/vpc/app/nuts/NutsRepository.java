@@ -34,6 +34,7 @@ import java.util.Iterator;
 
 /**
  * Created by vpc on 1/5/17.
+ *
  * @since 0.5.4
  */
 public interface NutsRepository {
@@ -47,6 +48,7 @@ public interface NutsRepository {
     String getRepositoryType();
 
     String getUuid();
+
     String uuid();
 
     NutsWorkspace getWorkspace();
@@ -58,6 +60,8 @@ public interface NutsRepository {
     NutsRepositorySecurityManager security();
 
     void deploy(NutsRepositoryDeploymentOptions options, NutsRepositorySession session);
+
+    void undeploy(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session);
 
     void push(NutsId id, NutsPushCommand options, NutsRepositorySession session);
 

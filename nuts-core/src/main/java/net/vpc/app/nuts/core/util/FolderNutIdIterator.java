@@ -47,57 +47,78 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
 
     private final String repository;
     private NutsId last;
-    private final Stack<Path> stack = new Stack<>();
+
+    private static class PathAndDepth {
+
+        private Path path;
+        private int depth;
+
+        public PathAndDepth(Path path, int depth) {
+            this.path = path;
+            this.depth = depth;
+        }
+
+    }
+    private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
     private final NutsRepositorySession session;
     private final NutsWorkspace workspace;
     private final FolderNutIdIteratorModel model;
     private long visitedFoldersCount;
     private long visitedFilesCount;
-    private boolean deep;
+    private int maxDepth;
 
-    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model, boolean deep) {
+    public FolderNutIdIterator(NutsWorkspace workspace, String repository, Path folder, NutsIdFilter filter, NutsRepositorySession session, FolderNutIdIteratorModel model, int maxDepth) {
         this.repository = repository;
         this.session = session;
         this.filter = filter;
         this.workspace = workspace;
         this.model = model;
-        this.deep = deep;
+        this.maxDepth = maxDepth;
         if (folder == null) {
             throw new NullPointerException("Could not iterate over null folder");
         }
-        stack.push(folder);
+        stack.push(new PathAndDepth(folder, 0));
     }
 
     @Override
     public boolean hasNext() {
         last = null;
         while (!stack.isEmpty()) {
-            Path file = stack.pop();
-            if (Files.isDirectory(file)) {
+            PathAndDepth file = stack.pop();
+            if (Files.isDirectory(file.path)) {
                 visitedFoldersCount++;
-                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file, new DirectoryStream.Filter<Path>() {
+                boolean deep = file.depth < maxDepth;
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.path, new DirectoryStream.Filter<Path>() {
                     @Override
                     public boolean accept(Path pathname) throws IOException {
                         try {
-                            return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
+                            return 
+                                    (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                         } catch (Exception e) {
                             //ignore
                             return false;
                         }
                     }
                 })) {
+
                     for (Path item : stream) {
-                        stack.push(item);
+                        if (Files.isDirectory(item)) {
+                            if (file.depth < maxDepth) {
+                                stack.push(new PathAndDepth(item, file.depth + 1));
+                            }
+                        } else {
+                            stack.push(new PathAndDepth(item, file.depth));
+                        }
                     }
-                }catch(IOException ex){
+                } catch (IOException ex) {
                     //
                 }
             } else {
                 visitedFilesCount++;
                 NutsDescriptor t = null;
                 try {
-                    t = model.parseDescriptor(file, session);
+                    t = model.parseDescriptor(file.path, session);
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }

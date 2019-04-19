@@ -72,4 +72,21 @@ public interface NutsRepositoryDeploymentOptions {
     
     NutsRepositoryDeploymentOptions copy();
     
+    NutsRepositoryDeploymentOptions offline(boolean offline);
+
+    NutsRepositoryDeploymentOptions offline();
+
+    NutsRepositoryDeploymentOptions force(boolean force);
+
+    NutsRepositoryDeploymentOptions force();
+
+    NutsRepositoryDeploymentOptions trace(boolean trace);
+
+    NutsRepositoryDeploymentOptions trace();
+
+    NutsRepositoryDeploymentOptions repository(String repository);
+
+    NutsRepositoryDeploymentOptions id(NutsId id);
+
+    NutsRepositoryDeploymentOptions transitive(boolean transitive);
 }

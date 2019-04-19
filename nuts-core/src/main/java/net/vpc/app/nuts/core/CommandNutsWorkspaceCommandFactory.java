@@ -15,7 +15,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
     private String[] execCommand;
     private String[] listCommand;
 
-    public void configure(NutsWorkspaceCommandFactoryConfig config) {
+    public void configure(NutsCommandAliasFactoryConfig config) {
         factoryId = config.getFactoryId();
         factoryId = "command";
         priority = config.getPriority();
@@ -79,7 +79,7 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
     }
 
     @Override
-    public NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace) {
+    public NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace) {
         if(findCommand.length>0 && execCommand.length>0){
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
@@ -87,10 +87,10 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
 //                        .setExecutorOptions("--show-command")
                     .redirectErrorStream()
                     .grabOutputString()
-                    .exec();
+                    .run();
             int r = exec.getResult();
             if (r == 0) {
-                return new NutsWorkspaceCommandConfig()
+                return new NutsCommandAliasConfig()
                         .setFactoryId(getFactoryId())
                         .setOwner(CoreNutsUtils.parseNutsId(ec[0]))
                         .setName(name)
@@ -102,18 +102,18 @@ class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFactory 
     }
 
     @Override
-    public List<NutsWorkspaceCommandConfig> findCommands(NutsWorkspace workspace) {
-        List<NutsWorkspaceCommandConfig> c = new ArrayList<>();
+    public List<NutsCommandAliasConfig> findCommands(NutsWorkspace workspace) {
+        List<NutsCommandAliasConfig> c = new ArrayList<>();
         if(listCommand.length>0) {
             NutsExecCommand b = workspace.exec().command(listCommand)
                     .redirectErrorStream()
                     .grabOutputString();
-            int r = b.exec().getResult();
+            int r = b.run().getResult();
             if (r == 0) {
                 for (String s : b.getOutputString().split("\n")) {
                     s = s.trim();
                     if (s.length() > 0) {
-                        c.add(new NutsWorkspaceCommandConfig().setName(s).setCommand(new String[]{"nsh", s}));
+                        c.add(new NutsCommandAliasConfig().setName(s).setCommand(new String[]{"nsh", s}));
                     }
                 }
             }

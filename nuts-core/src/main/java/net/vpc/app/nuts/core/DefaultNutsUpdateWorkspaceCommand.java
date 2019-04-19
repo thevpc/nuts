@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import net.vpc.app.nuts.NutsBootConfig;
 import net.vpc.app.nuts.NutsBootContext;
+import net.vpc.app.nuts.NutsBootContextType;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDependency;
@@ -387,12 +388,12 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public int getUpdateResultCount() {
-        return getUpdateResult().getUpdatesCount();
+    public int getResultCount() {
+        return getResult().getUpdatesCount();
     }
 
     @Override
-    public NutsWorkspaceUpdateResult getUpdateResult() {
+    public NutsWorkspaceUpdateResult getResult() {
         if (result == null) {
             checkUpdates();
         }
@@ -404,7 +405,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
 
     @Override
     public NutsUpdateCommand update() {
-        applyResult(getUpdateResult());
+        applyResult(getResult());
         return this;
     }
 
@@ -475,13 +476,13 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
     @Override
     public NutsUpdateCommand checkUpdates() {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsBootContext actualBootConfig = ws.config().getRunningContext();
+        NutsBootContext actualBootConfig = ws.config().getContext(NutsBootContextType.RUNTIME);
 //        NutsBootContext jsonBootConfig = getConfigManager().getBootContext();
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         Map<String, NutsUpdateResult> allUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> extUpdates = new LinkedHashMap<>();
         NutsUpdateResult apiUpdate = null;
-        String bootVersion0 = ws.config().getRunningContext().getApiId().getVersion().getValue();
+        String bootVersion0 = ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().getValue();
         String bootVersion = bootVersion0;
         if (!CoreStringUtils.isBlank(this.getApiVersion())) {
             bootVersion = this.getApiVersion();
@@ -627,7 +628,7 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         if (result.getUpdatesCount() == 0) {
             return;
         }
-        NutsBootContext actualBootConfig = ws.config().getRunningContext();
+        NutsBootContext actualBootConfig = ws.config().getContext(net.vpc.app.nuts.NutsBootContextType.RUNTIME);
         Path bootstrapFolder = ws.config().getWorkspaceLocation().resolve(NutsConstants.Folders.BOOT);
         if (apiUpdate != null && !apiUpdate.isUpdateApplied()) {
             if (apiUpdate.getAvailable() != null) {
@@ -739,8 +740,8 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
         List<NutsId> dependencies = new ArrayList<>();
 //        NutsSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         if (id.getSimpleName().equals(NutsConstants.Ids.NUTS_API)) {
-            oldId = ws.config().getConfigContext().getApiId();
-            NutsId confId = ws.config().getConfigContext().getApiId();
+            oldId = ws.config().getContext(NutsBootContextType.CONFIG).getApiId();
+            NutsId confId = ws.config().getContext(NutsBootContextType.CONFIG).getApiId();
             if (confId != null) {
                 oldId = confId;
             }
@@ -760,8 +761,8 @@ public class DefaultNutsUpdateWorkspaceCommand implements NutsUpdateCommand {
                 //ignore
             }
         } else if (id.getSimpleName().equals(NutsConstants.Ids.NUTS_RUNTIME)) {
-            oldId = ws.config().getRunningContext().getRuntimeId();
-            NutsId confId = ws.config().getConfigContext().getRuntimeId();
+            oldId = ws.config().getContext(NutsBootContextType.RUNTIME).getRuntimeId();
+            NutsId confId = ws.config().getContext(NutsBootContextType.CONFIG).getRuntimeId();
             if (confId != null) {
                 oldId = confId;
             }

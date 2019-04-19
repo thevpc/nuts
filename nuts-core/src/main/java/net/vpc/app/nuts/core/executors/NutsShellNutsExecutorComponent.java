@@ -101,7 +101,7 @@ public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
                 .env(executionContext.getEnv())
                 .directory(directory==null?null:directory.getPath())
                 .failFast()
-                .exec();
+                .run();
     }
 
 }

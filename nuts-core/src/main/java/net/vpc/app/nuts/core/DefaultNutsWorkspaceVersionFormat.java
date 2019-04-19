@@ -13,6 +13,8 @@ import net.vpc.app.nuts.NutsWorkspaceConfigManager;
 import net.vpc.app.nuts.NutsWorkspaceVersionFormat;
 
 import java.util.*;
+import net.vpc.app.nuts.NutsBootContext;
+import net.vpc.app.nuts.NutsBootContextType;
 import net.vpc.app.nuts.NutsResultFormatType;
 import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
@@ -21,8 +23,8 @@ import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
 
-    private NutsWorkspace ws;
-    private Properties extraProperties = new Properties();
+    private final NutsWorkspace ws;
+    private final Properties extraProperties = new Properties();
     private NutsResultFormatType formatType = null;
     private boolean minimal = false;
     private boolean pretty = true;
@@ -69,28 +71,34 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
         return this;
     }
 
+    @Override
     public boolean isPretty() {
         return pretty;
     }
 
+    @Override
     public NutsWorkspaceVersionFormat setPretty(boolean pretty) {
         this.pretty = pretty;
         return this;
     }
 
+    @Override
     public boolean isMinimal() {
         return minimal;
     }
 
+    @Override
     public NutsWorkspaceVersionFormat setMinimal(boolean minimal) {
         this.minimal = minimal;
         return this;
     }
 
+    @Override
     public NutsResultFormatType getFormatType() {
         return formatType;
     }
 
+    @Override
     public NutsWorkspaceVersionFormat setFormatType(NutsResultFormatType formatType) {
         this.formatType = formatType;
         return this;
@@ -134,12 +142,12 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
 
     @Override
     public void print(NutsTerminal terminal) {
-        print(terminal.getOut());
+        print(terminal.out());
     }
 
     @Override
     public void println(NutsTerminal terminal) {
-        println(terminal.getOut());
+        println(terminal.out());
     }
 
     @Override
@@ -217,17 +225,18 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     public Map<String, String> buildProps() {
         LinkedHashMap<String, String> props = new LinkedHashMap<>();
         NutsWorkspaceConfigManager configManager = ws.config();
+        NutsBootContext rtcontext = configManager.getContext(NutsBootContextType.RUNTIME);
         if (isMinimal()) {
-            props.put("nuts-boot-api-version", configManager.getRunningContext().getApiId().getVersion().toString());
-            props.put("nuts-boot-runtime-version", configManager.getRunningContext().getRuntimeId().getVersion().toString());
+            props.put("nuts-api-version", rtcontext.getApiId().getVersion().toString());
+            props.put("nuts-runtime-version", rtcontext.getRuntimeId().getVersion().toString());
             return props;
         }
         Set<String> extraKeys = new TreeSet<>();
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        props.put("nuts-boot-api-version", configManager.getRunningContext().getApiId().getVersion().toString());
-        props.put("nuts-boot-runtime-version", configManager.getRunningContext().getRuntimeId().getVersion().toString());
+        props.put("nuts-api-version", rtcontext.getApiId().getVersion().toString());
+        props.put("nuts-runtime-version", rtcontext.getRuntimeId().getVersion().toString());
         props.put("java-version", System.getProperty("java.version"));
         props.put("os-version", ws.config().getPlatformOs().getVersion().toString());
         for (String extraKey : extraKeys) {
@@ -254,7 +263,8 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
         PrintWriter out = (w instanceof PrintWriter) ? ((PrintWriter) w) : new PrintWriter(w);
         NutsWorkspaceConfigManager configManager = ws.config();
         if (isMinimal()) {
-            out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
+            NutsBootContext rtcontext = configManager.getContext(NutsBootContextType.RUNTIME);
+            out.printf("%s/%s", rtcontext.getApiId().getVersion(), rtcontext.getRuntimeId().getVersion());
         } else {
             int len = 23;
             Map<String, String> props = buildProps();

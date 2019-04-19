@@ -40,15 +40,9 @@ public interface NutsTerminalBase extends NutsComponent<Object> {
 
     void install(NutsWorkspace workspace);
 
-//    String readLine(String prompt, Object... params);
-//
-//    String readPassword(String prompt, Object... params);
-    
     String readLine(PrintStream out, String prompt, Object... params);
 
     String readPassword(PrintStream out, String prompt, Object... params);
-
-//    <T> T ask(NutsQuestion<T> question);
 
     InputStream getIn();
 

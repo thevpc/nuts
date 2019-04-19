@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.repos;
 
 import net.vpc.app.nuts.core.util.io.CommonRootsHelper;
 import net.vpc.app.nuts.*;
-import net.vpc.app.nuts.core.util.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,8 +87,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
         List<Iterator<NutsId>> li = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
-            li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep(), session));
-            li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep(), session));
+            li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep()?Integer.MAX_VALUE:2, session));
+            li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep()?Integer.MAX_VALUE:2, session));
         }
         return mirroring.find(IteratorUtils.concat(li), filter, session);
     }
@@ -118,8 +117,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void undeployImpl(NutsId id, NutsRepositorySession session) {
-        lib.undeploy(id, session);
+    protected void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
+        lib.undeploy(options, session);
     }
 
     @Override

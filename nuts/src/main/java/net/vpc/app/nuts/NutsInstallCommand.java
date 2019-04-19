@@ -132,11 +132,11 @@ public interface NutsInstallCommand {
 
     NutsInstallCommand parseOptions(String... args);
 
-    NutsInstallCommand install();
+    NutsInstallCommand run();
 
-    int getInstallResultCount();
+    int getResultCount();
 
-    NutsDefinition[] getInstallResult();
+    NutsDefinition[] getResult();
 
     NutsInstallCommand formatType(NutsResultFormatType formatType);
 

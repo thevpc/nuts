@@ -67,10 +67,12 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         }
 
         //simple rights for minimal utilization
+        NutsUpdateUserCommand uu = workspace.security().updateUser(NutsConstants.Names.USER_ANONYMOUS);
         for (String right : NutsConstants.Rights.RIGHTS) {
             if (!NutsConstants.Rights.ADMIN.equals(right)) {
-                workspace.security().addUserRights(NutsConstants.Names.USER_ANONYMOUS, right);
+                uu.addRights(right);
             }
         }
+        uu.run();
     }
 }

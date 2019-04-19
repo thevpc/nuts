@@ -34,27 +34,52 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsUninstallOptions {
+public interface NutsRepositoryUndeploymentOptions {
 
-    private boolean trace = true;
-    private boolean erase = false;
+    NutsId getId();
 
-    public boolean isTrace() {
-        return trace;
-    }
+    String getRepository();
 
-    public NutsUninstallOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
+    boolean isForce();
 
-    public boolean isErase() {
-        return erase;
-    }
+    boolean isTrace();
 
-    public NutsUninstallOptions setErase(boolean erase) {
-        this.erase = erase;
-        return this;
-    }
+    boolean isTransitive();
 
+    NutsRepositoryUndeploymentOptions setForce(boolean force);
+
+    NutsRepositoryUndeploymentOptions setId(NutsId id);
+
+    NutsRepositoryUndeploymentOptions setRepository(String repository);
+
+    NutsRepositoryUndeploymentOptions setTrace(boolean trace);
+
+    NutsRepositoryUndeploymentOptions setTransitive(boolean transitive);
+    
+    NutsRepositoryUndeploymentOptions copy();
+
+    boolean isOffline();
+
+    NutsRepositoryUndeploymentOptions setOffline(boolean offline);
+
+    NutsRepositoryUndeploymentOptions offline(boolean offline);
+
+    NutsRepositoryUndeploymentOptions offline();
+
+    NutsRepositoryUndeploymentOptions force(boolean force);
+
+    NutsRepositoryUndeploymentOptions force();
+
+    NutsRepositoryUndeploymentOptions trace(boolean trace);
+
+    NutsRepositoryUndeploymentOptions trace();
+
+    NutsRepositoryUndeploymentOptions repository(String repository);
+
+    NutsRepositoryUndeploymentOptions id(NutsId id);
+
+    NutsRepositoryUndeploymentOptions transitive();
+
+    NutsRepositoryUndeploymentOptions transitive(boolean transitive);
+    
 }

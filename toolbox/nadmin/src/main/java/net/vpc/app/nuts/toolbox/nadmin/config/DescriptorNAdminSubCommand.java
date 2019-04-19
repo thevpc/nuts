@@ -227,7 +227,7 @@ public class DescriptorNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
             } else {
-                context.getTerminal().getFormattedOut().printf("%s\n", ws.formatter().createDescriptorFormat().setPretty(true).toString(desc.build()));
+                context.getTerminal().fout().printf("%s\n", ws.formatter().createDescriptorFormat().setPretty(true).toString(desc.build()));
             }
         }
         return true;

@@ -29,81 +29,68 @@
  */
 package net.vpc.app.nuts;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsWorkspaceCommandConfig {
-    private NutsId owner;
-    private String name;
-    private String factoryId;
-    private String[] command;
-    private String[] executorOptions;
-    private String[] helpCommand;
-    private String helpText;
+public class NutsUpdateUserOptions {
 
-    public NutsId getOwner() {
-        return owner;
+    private boolean trace = true;
+    private boolean force = false;
+    private String login;
+    private String password;
+    private Set<String> rights=new HashSet<String>();
+    private NutsSession session;
+
+    public boolean isTrace() {
+        return trace;
     }
 
-    public NutsWorkspaceCommandConfig setOwner(NutsId owner) {
-        this.owner = owner;
+    public NutsUpdateUserOptions trace() {
+        return trace(true);
+    }
+
+    public NutsUpdateUserOptions trace(boolean trace) {
+        return setTrace(trace);
+    }
+
+    public NutsUpdateUserOptions setTrace(boolean trace) {
+        this.trace = trace;
         return this;
     }
 
-    public String getFactoryId() {
-        return factoryId;
+    public boolean isForce() {
+        return force;
     }
 
-    public NutsWorkspaceCommandConfig setFactoryId(String factoryId) {
-        this.factoryId = factoryId;
+    public NutsUpdateUserOptions force() {
+        return force(true);
+    }
+
+    public NutsUpdateUserOptions force(boolean force) {
+        return setForce(force);
+    }
+
+    public NutsUpdateUserOptions setForce(boolean force) {
+        this.force = force;
         return this;
     }
 
-    public String[] getCommand() {
-        return command;
+    public NutsSession getSession() {
+        return session;
     }
 
-    public NutsWorkspaceCommandConfig setCommand(String... command) {
-        this.command = command;
+    public NutsUpdateUserOptions session(NutsSession session) {
+        return setSession(session);
+    }
+
+    public NutsUpdateUserOptions setSession(NutsSession session) {
+        this.session = session;
         return this;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public NutsWorkspaceCommandConfig setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String[] getExecutorOptions() {
-        return executorOptions;
-    }
-
-    public NutsWorkspaceCommandConfig setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
-        return this;
-    }
-
-    public String[] getHelpCommand() {
-        return helpCommand;
-    }
-
-    public NutsWorkspaceCommandConfig setHelpCommand(String ... helpCommand) {
-        this.helpCommand = helpCommand;
-        return this;
-    }
-
-    public String getHelpText() {
-        return helpText;
-    }
-
-    public NutsWorkspaceCommandConfig setHelpText(String helpText) {
-        this.helpText = helpText;
-        return this;
-    }
-    
 }

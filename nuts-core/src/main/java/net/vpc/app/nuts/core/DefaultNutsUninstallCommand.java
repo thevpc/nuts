@@ -247,7 +247,7 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     }
 
     @Override
-    public NutsUninstallCommand uninstall() {
+    public NutsUninstallCommand run() {
         NutsWorkspaceUtils.checkReadOnly(ws);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
@@ -281,11 +281,11 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
                     throw new UncheckedIOException(ex);
                 }
                 if (this.isTrace()) {
-                    out.printf(ws.formatter().createIdFormat().toString(id) + " uninstalled ##successfully##\n");
+                    out.printf("%N uninstalled ##successfully##\n",ws.formatter().createIdFormat().toString(id));
                 }
             } else {
                 if (this.isTrace()) {
-                    out.printf(ws.formatter().createIdFormat().toString(id) + " @@could not@@ be uninstalled\n");
+                    out.printf("%N @@could not@@ be uninstalled\n",ws.formatter().createIdFormat().toString(id));
                 }
             }
         }

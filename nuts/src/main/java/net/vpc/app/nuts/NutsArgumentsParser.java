@@ -423,6 +423,7 @@ public final class NutsArgumentsParser {
                     }
 
                     case "--verbose":
+                    case "--debug":
                     case "--log-finest":
                     case "--log-finer":
                     case "--log-fine":
@@ -726,6 +727,7 @@ public final class NutsArgumentsParser {
                 break;
             }
             case "--verbose":
+            case "--debug":
             case "--log-finest":
             case "--log-finer":
             case "--log-fine":
@@ -751,6 +753,11 @@ public final class NutsArgumentsParser {
                     switch (id.toLowerCase()) {
                         case "verbose": {
                             logConfig.setLogLevel(Level.FINEST);
+                            break;
+                        }
+                        case "debug": {
+                            logConfig.setLogLevel(Level.FINEST);
+                            logConfig.setDebug(true);
                             break;
                         }
                         case "finest": {

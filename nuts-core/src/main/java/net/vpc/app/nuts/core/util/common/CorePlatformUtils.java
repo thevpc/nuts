@@ -526,7 +526,7 @@ public class CorePlatformUtils {
                             try {
                                 Class<?> aClass = (classLoader == null ? Thread.currentThread().getContextClassLoader() : classLoader).loadClass(clz);
                                 if (terminal != null) {
-                                    terminal.getOut().printf("Loaded %s from %s\n", aClass, file);
+                                    terminal.out().printf("Loaded %s from %s\n", aClass, file);
                                 }
                                 return true;
                             } catch (ClassNotFoundException e) {

@@ -60,7 +60,7 @@ public class NutsApplicationContext implements CommandLineContext {
 
     public NutsApplicationContext(NutsWorkspace workspace, String[] args,Class appClass, String storeId) {
         int wordIndex = -1;
-        if (args.length > 0 && args[0].startsWith("--nuts-execution-mode=")) {
+        if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
             String[] execModeCommand = NutsMinimalCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.length > 0) {
                 switch (execModeCommand[0]) {
@@ -91,7 +91,7 @@ public class NutsApplicationContext implements CommandLineContext {
                         break;
                     }
                     default: {
-                        throw new NutsExecutionException("Unsupported nuts-execution-mode : " + args[0], 205);
+                        throw new NutsExecutionException("Unsupported nuts-exec-mode : " + args[0], 205);
                     }
                 }
             }
@@ -108,8 +108,8 @@ public class NutsApplicationContext implements CommandLineContext {
         this.setStoreId(storeId == null ? getAppId().toString() : storeId);
         setSession(workspace.createSession());
         terminal = getSession().getTerminal();
-        setOut0(getTerminal().getFormattedOut());
-        setErr0(getTerminal().getFormattedErr());
+        setOut0(getTerminal().fout());
+        setErr0(getTerminal().ferr());
         setOut(getOut0());
         setErr(getErr0());
         setProgramsFolder(workspace.config().getStoreLocation(getStoreId(), NutsStoreLocation.PROGRAMS));

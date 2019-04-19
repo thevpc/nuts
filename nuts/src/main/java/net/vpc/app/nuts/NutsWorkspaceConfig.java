@@ -97,7 +97,7 @@ public final class NutsWorkspaceConfig implements Serializable {
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsId> extensions;
-    private List<NutsWorkspaceCommandFactoryConfig> commandFactories;
+    private List<NutsCommandAliasFactoryConfig> commandFactories;
     private Properties env = new Properties();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
@@ -204,7 +204,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public NutsWorkspaceConfig setCommandFactories(List<NutsWorkspaceCommandFactoryConfig> commandFactories) {
+    public NutsWorkspaceConfig setCommandFactories(List<NutsCommandAliasFactoryConfig> commandFactories) {
         this.commandFactories = commandFactories;
         return this;
     }
@@ -299,7 +299,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         return this;
     }
 
-    public List<NutsWorkspaceCommandFactoryConfig> getCommandFactories() {
+    public List<NutsCommandAliasFactoryConfig> getCommandFactories() {
         return commandFactories;
     }
 

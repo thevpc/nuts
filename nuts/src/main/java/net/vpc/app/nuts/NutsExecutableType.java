@@ -40,7 +40,7 @@ public enum NutsExecutableType {
      */
     INTERNAL, 
     /**
-     * workspace configured command using {@link NutsWorkspaceConfigManager#}
+     * workspace configured command using {@link NutsWorkspaceConfigManager#addCommandAlias(net.vpc.app.nuts.NutsCommandAliasConfig, net.vpc.app.nuts.NutsAddCommandAliasOptions, net.vpc.app.nuts.NutsSession) }
      */
     ALIAS, 
     COMPONENT, 

@@ -29,6 +29,8 @@
  */
 package net.vpc.app.nuts;
 
+import java.nio.file.Path;
+
 /**
  * Nuts read-only configuration
  * @author vpc
@@ -95,4 +97,6 @@ public interface NutsBootContext {
     String getJavaOptions();
     
     boolean isGlobal();
+
+    Path getNutsJar();
 }

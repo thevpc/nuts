@@ -30,8 +30,8 @@ public class Test02_SimpleClassStream {
 
     @Test
     public void test1() throws Exception {
-        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
-//        parseAnyFile(Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"));
+//        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
+        parseAnyFile(Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"));
 //        parseAnyFile(Paths.get("/home/vpc/.m2/repository/com/ibm/icu/icu4j/2.6.1/icu4j-2.6.1.jar"));
 
         ///home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar

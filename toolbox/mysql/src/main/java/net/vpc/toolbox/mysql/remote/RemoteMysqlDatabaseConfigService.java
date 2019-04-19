@@ -103,7 +103,7 @@ public class RemoteMysqlDatabaseConfigService {
                 .redirectErrorStream()
                 .grabOutputString()
                 .failFast()
-                .exec();
+                .run();
         context.out().printf("==[%s]== remote restore %s\n", name, remoteFilePath);
         execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:mysql",
@@ -148,7 +148,7 @@ public class RemoteMysqlDatabaseConfigService {
         }).getCommandString());
         b.redirectErrorStream()
                 .failFast();
-        return b.exec().getResult();
+        return b.run().getResult();
 
     }
 

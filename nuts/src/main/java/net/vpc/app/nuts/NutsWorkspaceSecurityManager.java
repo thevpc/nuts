@@ -48,25 +48,11 @@ public interface NutsWorkspaceSecurityManager {
 
     void logout();
 
-    void setUserCredentials(String login, String password, String oldPassword);
+    NutsAddUserCommand addUser(String name);
 
-    void addUser(String user, String password, String... rights);
-
-    void setUserRights(String user, String... rights);
-
-    void addUserRights(String user, String... rights);
-
-    void removeUserRights(String user, String... rights);
-
-    void setUserRemoteIdentity(String user, String mappedIdentity);
-
-    void setUserCredentials(String user, String credentials);
-
-    void setUserGroups(String user, String... groups);
-
-    void addUserGroups(String user, String... groups);
-
-    void removeUserGroups(String user, String... groups);
+    NutsUpdateUserCommand updateUser(String name);
+    
+    NutsRemoveUserCommand removeUser(String name);
 
     NutsEffectiveUser[] findUsers();
 
@@ -74,7 +60,7 @@ public interface NutsWorkspaceSecurityManager {
 
     boolean isAllowed(String right);
 
-    void checkAllowed(String right,String operationName);
+    void checkAllowed(String right, String operationName);
 
     boolean switchUnsecureMode(String adminPassword);
 
@@ -85,5 +71,7 @@ public interface NutsWorkspaceSecurityManager {
     void setAuthenticationAgent(String authenticationAgent);
 
     NutsAuthenticationAgent getAuthenticationAgent();
+
+    boolean isSecure();
 
 }

@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
@@ -146,7 +147,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 return null;
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, true, session);
+                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id), idFilter, Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {
 //                errors.append(ex).append(" \n");
             }
@@ -197,14 +198,14 @@ public class MavenFolderRepository extends AbstractMavenRepository {
         return super.findLatestVersion(id, filter, session);
     }
 
-    protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+    protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             return null;//Collections.emptyIterator();
         }
         return new FolderNutIdIterator(getWorkspace(), config().getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
-                MavenFolderRepository.this.undeploy(id, session);
+                MavenFolderRepository.this.undeploy(new DefaultNutsRepositoryUndeploymentOptions().id(id), session);
             }
 
             @Override
@@ -216,7 +217,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
                 return parsePomDescriptor(pathname, session);
             }
-        }, deep);
+        }, maxDepth);
     }
 
     @Override
@@ -228,7 +229,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             List<Iterator<NutsId>> list = new ArrayList<>();
 
             for (CommonRootsHelper.PathBase root : roots) {
-                list.add(findInFolder(locationFolder.resolve(root.getName()), filter, root.isDeep(), session));
+                list.add(findInFolder(locationFolder.resolve(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             }
 
             return IteratorUtils.concat(list);

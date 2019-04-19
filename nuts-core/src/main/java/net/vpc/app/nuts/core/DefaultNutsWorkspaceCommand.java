@@ -110,7 +110,7 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
                 .env(options.getEnv())
                 .executionType(options.getExecutionType())
                 .failFast()
-                .exec();
+                .run();
 
         //load all needed dependencies!
 //        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
@@ -128,7 +128,7 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
                     .failFast(false)
                     .redirectErrorStream()
                     .grabOutputString()
-                    .exec()
+                    .run()
                     .getOutputString();
             }catch(Exception ex){
                 //ignore

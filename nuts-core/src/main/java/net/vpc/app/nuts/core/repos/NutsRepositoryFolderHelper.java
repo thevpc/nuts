@@ -29,12 +29,14 @@ import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositorySession;
+import net.vpc.app.nuts.NutsRepositoryUndeploymentOptions;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
+import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.log;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 
@@ -191,10 +193,12 @@ public class NutsRepositoryFolderHelper {
             }
             return null;
         }
-        return findInFolder(getLocalGroupAndArtifactFile(id), filter, deep, session);
+        return findInFolder(getLocalGroupAndArtifactFile(id), filter, 
+                deep?Integer.MAX_VALUE:1
+                , session);
     }
 
-    public Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+    public Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         folder = rootPath.resolve(folder);
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             //            return Collections.emptyIterator();
@@ -204,9 +208,11 @@ public class NutsRepositoryFolderHelper {
             @Override
             public void undeploy(NutsId id, NutsRepositorySession session) {
                 if (repo == null) {
-                    NutsRepositoryFolderHelper.this.undeploy(id, session);
+                    NutsRepositoryFolderHelper.this.undeploy(
+                            new DefaultNutsRepositoryUndeploymentOptions().id(id)
+                            , session);
                 } else {
-                    repo.undeploy(id, session);
+                    repo.undeploy(new DefaultNutsRepositoryUndeploymentOptions().id(id), session);
                 }
             }
 
@@ -219,7 +225,7 @@ public class NutsRepositoryFolderHelper {
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
                 return getWorkspace().parser().parseDescriptor(pathname);
             }
-        }, deep);
+        }, maxDepth);
     }
 
     public Path getStoreLocation() {
@@ -275,8 +281,8 @@ public class NutsRepositoryFolderHelper {
 
     }
 
-    public void undeploy(NutsId id, NutsRepositorySession session) {
-        Path localFolder = getIdLocalFile(id);
+    public void undeploy(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
+        Path localFolder = getIdLocalFile(options.getId());
         if (localFolder != null && Files.exists(localFolder)) {
             try {
                 CoreIOUtils.delete(localFolder);
@@ -314,14 +320,14 @@ public class NutsRepositoryFolderHelper {
                 p.println(file);
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
         try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
             for (String file : folders) {
                 p.println(file);
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

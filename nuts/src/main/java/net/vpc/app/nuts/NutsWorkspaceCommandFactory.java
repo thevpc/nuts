@@ -37,14 +37,14 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NutsWorkspaceCommandFactory {
-    void configure(NutsWorkspaceCommandFactoryConfig config);
+    void configure(NutsCommandAliasFactoryConfig config);
 
     int getPriority();
 
     String getFactoryId();
 
-    NutsWorkspaceCommandConfig findCommand(String name, NutsWorkspace workspace);
+    NutsCommandAliasConfig findCommand(String name, NutsWorkspace workspace);
 
-    List<NutsWorkspaceCommandConfig> findCommands(NutsWorkspace workspace);
+    List<NutsCommandAliasConfig> findCommands(NutsWorkspace workspace);
 
 }

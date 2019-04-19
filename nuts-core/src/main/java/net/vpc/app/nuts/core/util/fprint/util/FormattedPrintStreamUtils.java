@@ -13,9 +13,15 @@ import net.vpc.app.nuts.core.util.fprint.parser.FormattedPrintStreamNodePartialP
 public class FormattedPrintStreamUtils {
 
     // %[argument_index$][flags][width][.precision][t]conversion
-    private static final Pattern printfPattern = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
+    private static final Pattern PRINTF_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tTN])?([a-zA-Z%])");
     private static final Logger log = Logger.getLogger(FormattedPrintStreamUtils.class.getName());
 
+    /**
+     * extract plain text from formatted text
+     *
+     * @param text
+     * @return
+     */
     public static String filterText(String text) {
         if (text == null) {
             text = "";
@@ -52,6 +58,13 @@ public class FormattedPrintStreamUtils {
         }
     }
 
+    /**
+     * transform plain text to formatted text so that the result is rendered as
+     * is
+     *
+     * @param str
+     * @return 
+     */
     public static String escapeText(String str) {
         if (str == null) {
             return str;
@@ -80,6 +93,10 @@ public class FormattedPrintStreamUtils {
                 case '[':
                 case '{':
                 case '<':
+                case ')':
+                case ']':
+                case '}':
+                case '>':
                 case '\\': {
                     sb.append('\\').append(c);
                     break;
@@ -95,7 +112,7 @@ public class FormattedPrintStreamUtils {
     public static String format(Locale locale, String format, Object... args) {
 
         StringBuilder sb = new StringBuilder();
-        Matcher m = printfPattern.matcher(format);
+        Matcher m = PRINTF_PATTERN.matcher(format);
         int x = 0;
         for (int i = 0, len = format.length(); i < len;) {
             if (m.find(i)) {
@@ -107,7 +124,14 @@ public class FormattedPrintStreamUtils {
                     sb.append(format.substring(i, m.start()));
                 }
                 Object arg = x < args.length ? args[x] : "MISSING_ARG_" + x;
-                sb.append(escapeText(format0(locale, m.group(), arg)));
+                String g = m.group();
+                
+                if (g.endsWith("N")) {
+                    //no escape...
+                    sb.append(arg);
+                } else {
+                    sb.append(escapeText(format0(locale, g, arg)));
+                }
                 x++;
                 i = m.end();
             } else {

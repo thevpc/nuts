@@ -55,7 +55,7 @@ public class NdiMain extends NutsApplication {
                         trace = a.getBooleanValue();
                     } else if ((a = cmd.readBooleanOption("-t", "--fetch")) != null) {
                         fetch = a.getBooleanValue();
-                    } else if ((a = cmd.readBooleanOption("-x", "--external")) != null) {
+                    } else if ((a = cmd.readBooleanOption("-x", "--external", "--spawn")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SPAWN;
                         }
@@ -63,7 +63,7 @@ public class NdiMain extends NutsApplication {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.EMBEDDED;
                         }
-                    } else if ((a = cmd.readBooleanOption("-n", "--native")) != null) {
+                    } else if ((a = cmd.readBooleanOption("-n", "--native", "--syscall")) != null) {
                         if (a.getBooleanValue()) {
                             execType = NutsExecutionType.SYSCALL;
                         }
@@ -119,7 +119,7 @@ public class NdiMain extends NutsApplication {
             } else if ((a = cmd.readBooleanOption("--trace")) != null) {
                 trace = a.getBooleanValue();
             } else {
-                cmd.unexpectedArgument("ndi --nuts-execution-mode=on-install");
+                cmd.unexpectedArgument("ndi --nuts-exec-mode=on-install");
             }
         }
         SystemNdi ndi = createNdi(applicationContext);

@@ -42,7 +42,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             return true;
         } else {
-            PrintStream out = context.getTerminal().getFormattedOut();
+            PrintStream out = context.getTerminal().fout();
             if (cmdLine.readAll("list extensions", "lx")) {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getWorkspace().extensions().getWorkspaceExtensions()) {

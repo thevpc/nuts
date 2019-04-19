@@ -70,11 +70,6 @@ import net.vpc.app.nuts.core.DefaultHttpTransportComponent;
 import net.vpc.app.nuts.core.DefaultNutsDescriptorContentParserContext;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
-import net.vpc.app.nuts.core.util.io.MonitoredInputStream;
-import net.vpc.app.nuts.core.util.io.ProcessBuilder2;
-import net.vpc.app.nuts.core.util.io.ZipOptions;
-import net.vpc.app.nuts.core.util.io.ZipUtils;
 
 /**
  * Created by vpc on 5/16/17.
@@ -237,9 +232,9 @@ public class CoreIOUtils {
     }
 
     public static int execAndWait(NutsWorkspace ws, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal terminal, boolean showCommand, boolean failFast) {
-        PrintStream out = terminal.getOut();
-        PrintStream err = terminal.getErr();
-        InputStream in = terminal.getIn();
+        PrintStream out = terminal.out();
+        PrintStream err = terminal.err();
+        InputStream in = terminal.in();
         if (ws.getSystemTerminal().isStandardOutputStream(out)) {
             out = null;
         }
@@ -265,12 +260,12 @@ public class CoreIOUtils {
             log.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
         if (showCommand) {
-            if (terminal.getOut() instanceof NutsFormattedPrintStream) {
-                terminal.getOut().print("==[exec]== ");
+            if (terminal.out() instanceof NutsFormattedPrintStream) {
+                terminal.out().print("==[exec]== ");
             } else {
-                terminal.getOut().print("exec ");
+                terminal.out().print("exec ");
             }
-            terminal.getOut().printf("%s\n", pb.getCommandString());
+            terminal.out().printf("%s\n", pb.getCommandString());
         }
         try {
             return pb.start().waitFor().getResult();
@@ -334,28 +329,6 @@ public class CoreIOUtils {
         return "unknown";
     }
 
-//    public static void copy(URL url, File to) throws IOException {
-//        try {
-//            InputStream in = url.openStream();
-//            if (in == null) {
-//                throw new IOException("Empty Stream " + url);
-//            }
-//            if (to.getParentFile() != null) {
-//                if (!to.getParentFile().isDirectory()) {
-//                    boolean mkdirs = to.getParentFile().mkdirs();
-//                    if (!mkdirs) {
-//                        log.log(Level.CONFIG, "[ERROR  ] Error creating folder {0}", new Object[]{url});
-//                    }
-//                }
-//            }
-//            ReadableByteChannel rbc = Channels.newChannel(in);
-//            FileOutputStream fos = new FileOutputStream(to);
-//            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-//        } catch (IOException ex) {
-//            log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
-//            throw ex;
-//        }
-//    }
     public static URL[] toURL(String[] all) throws MalformedURLException {
         List<URL> urls = new ArrayList<>();
         if (all != null) {
@@ -711,7 +684,7 @@ public class CoreIOUtils {
 
     public static PrintStream resolveOut(NutsWorkspace ws, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(ws, session);
-        return (session == null || session.getTerminal() == null) ? ws.io().nullPrintStream() : session.getTerminal().getOut();
+        return (session == null || session.getTerminal() == null) ? ws.io().nullPrintStream() : session.getTerminal().out();
     }
 
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(NutsWorkspace ws, InputSource localPath, NutsFetchCommand queryOptions, NutsSession session) {
@@ -763,7 +736,7 @@ public class CoreIOUtils {
     }
 
     /**
-     * copy le flux d'entree dans le lux de sortie
+     * copy input stream to output stream using the buffer size in bytes
      *
      * @param in entree
      * @param out sortie

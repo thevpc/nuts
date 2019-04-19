@@ -111,7 +111,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void undeployImpl(NutsId id, NutsRepositorySession session) {
+    protected void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 

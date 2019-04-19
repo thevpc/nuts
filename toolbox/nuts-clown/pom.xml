@@ -39,11 +39,11 @@
       <artifactId>nuts</artifactId>
       <version>0.5.4</version>
     </dependency>
-    <dependency>
+<!--    <dependency>
       <groupId>net.vpc.common</groupId>
       <artifactId>vpc-common-io</artifactId>
       <version>1.3.11</version>
-    </dependency>
+    </dependency>-->
   </dependencies>
 
   <build>

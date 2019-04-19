@@ -1,6 +1,9 @@
 package net.vpc.app.nuts.core;
 
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
@@ -19,13 +22,15 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     private final String[] storeLocations;
     private final String[] homeLocations;
     private final boolean global;
+    private NutsWorkspace ws;
 
-    public DefaultNutsBootContext(String workspace, NutsId bootAPI, NutsId bootRuntime,
+    public DefaultNutsBootContext(NutsWorkspace ws,String workspace, NutsId bootAPI, NutsId bootRuntime,
             String bootRuntimeDependencies, String bootRepositories, String bootJavaCommand, String bootJavaOptions,
             String[] locations, String[] homeLocations, NutsStoreLocationStrategy storeLocationStrategy,
             NutsStoreLocationLayout storeLocationLayout, NutsStoreLocationStrategy repositoryStoreLocationStrategy,
             boolean global
     ) {
+        this.ws = ws;
         this.workspace = workspace;
         this.bootAPI = bootAPI;
         this.bootRuntime = bootRuntime;
@@ -53,7 +58,8 @@ public final class DefaultNutsBootContext implements NutsBootContext {
         this.global = global;
     }
 
-    public DefaultNutsBootContext(NutsBootConfig c) {
+    public DefaultNutsBootContext(NutsWorkspace ws,NutsBootConfig c) {
+        this.ws = ws;
         this.workspace = c.getWorkspace();
         this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         this.bootRuntime = c.getRuntimeId() == null ? null : c.getRuntimeId().contains("#")
@@ -144,5 +150,38 @@ public final class DefaultNutsBootContext implements NutsBootContext {
     @Override
     public NutsStoreLocationLayout getStoreLocationLayout() {
         return storeLocationLayout;
+    }
+    
+     @Override
+    public Path getNutsJar() {
+        return ws.fetch().id(bootAPI).getResultPath();
+//        try {
+//            NutsId baseId = ws.parser().parseRequiredId(NutsConstants.Ids.NUTS_API);
+//            String urlPath = "/META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
+//            URL resource = Nuts.class.getResource(urlPath);
+//            if (resource != null) {
+//                URL runtimeURL = CoreIOUtils.resolveURLFromResource(Nuts.class, urlPath);
+//                return CoreIOUtils.resolveLocalPathFromURL(runtimeURL);
+//            }
+//        } catch (Exception e) {
+//            //e.printStackTrace();
+//        }
+//        // This will happen when running app from  nuts dev project so that classes folder is considered as
+//        // binary class path instead of a single jar file.
+//        // In that case we will gather nuts from maven .m2 repository
+//        PomId m = PomIdResolver.resolvePomId(Nuts.class, null);
+//        if (m != null) {
+//            Path f = ws.io().path(System.getProperty("user.home"), ".m2", "repository", m.getGroupId().replace('.', '/'), m.getArtifactId(), m.getVersion(),
+//                    ws.config().getDefaultIdFilename(
+//                            ws.createIdBuilder().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
+//                                    .setFaceComponent()
+//                                    .setPackaging("jar")
+//                                    .build()
+//                    ));
+//            if (Files.exists(f)) {
+//                return f;
+//            }
+//        }
+//        return null;
     }
 }

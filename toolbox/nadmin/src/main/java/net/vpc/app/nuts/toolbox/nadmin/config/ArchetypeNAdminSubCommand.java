@@ -20,7 +20,7 @@ public class ArchetypeNAdminSubCommand extends AbstractNAdminSubCommand {
     @Override
     public boolean exec(CommandLine cmdLine, NAdminMain config, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.readAll("list archetypes", "la")) {
-            PrintStream out = context.getTerminal().getFormattedOut();
+            PrintStream out = context.getTerminal().fout();
             if (cmdLine.isExecMode()) {
                 for (String archetype : context.getWorkspace().config().getAvailableArchetypes()) {
                     out.printf("%s\n", archetype);

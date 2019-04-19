@@ -75,7 +75,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
                     .session(executionContext.getSession())
                     .env(executionContext.getExecutorProperties())
                     .directory(installFolder.toString())
-                    .exec().getResult();
+                    .run().getResult();
         }
     }
 

@@ -71,15 +71,15 @@ public class Nsh extends NutsApplication {
         for (NutsCommand command : commands) {
             if (!INTERNAL_COMMANDS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (cfg.addCommand(
-                        new NutsWorkspaceCommandConfig()
+                if (cfg.addCommandAlias(
+                        new NutsCommandAliasConfig()
                                 .setFactoryId("nsh")
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId())
                                 .setHelpCommand(nshIdStr, "-c", "help",command.getName())
                         ,
-                        new net.vpc.app.nuts.NutsInstallCommandOptions().setForce(force).setTrace(false), null
+                        new net.vpc.app.nuts.NutsAddOptions().setForce(force).setTrace(false)
                 )) {
                     reinstalled.add(command.getName());
                 } else {
@@ -109,13 +109,13 @@ public class Nsh extends NutsApplication {
         try {
             NutsWorkspaceConfigManager cfg = applicationContext.getWorkspace().config();
             try {
-                cfg.removeCommandFactory("nsh", null);
+                cfg.removeCommandAliasFactory("nsh", null);
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCommand command : cfg.findCommands(applicationContext.getAppId())) {
+            for (NutsWorkspaceCommand command : cfg.findCommandAliases(applicationContext.getAppId())) {
                 try {
-                    cfg.removeCommand(command.getName(), new net.vpc.app.nuts.NutsUninstallOptions(), null);
+                    cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {
                     applicationContext.out().printf("Unable to uninstall ==%s== .\n", command.getName());
                 }

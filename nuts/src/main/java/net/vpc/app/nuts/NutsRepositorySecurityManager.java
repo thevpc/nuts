@@ -38,26 +38,14 @@ public interface NutsRepositorySecurityManager {
 
     boolean isAllowed(String right);
 
-    void checkAllowed(String right) throws SecurityException;
+    void checkAllowed(String right, String operationName) throws SecurityException;
 
-    void addUser(String user, String password, String... rights);
+    NutsAddUserCommand addUser(String name);
 
-    void setUserRights(String user, String... rights);
-
-    void addUserRights(String user, String... rights);
-
-    void removeUserRights(String user, String... rights);
-
-    void setUserRemoteIdentity(String user, String mappedIdentity);
-
-    void setUserGroups(String user, String... groups);
-
-    void addUserGroups(String user, String... groups);
-
-    void removeUserGroups(String user, String... groups);
-
-    void setUserCredentials(String login, String password, String oldPassword);
-
+    NutsUpdateUserCommand updateUser(String name);
+    
+    NutsRemoveUserCommand removeUser(String name);
+    
     NutsEffectiveUser[] findUsers();
 
     NutsEffectiveUser getEffectiveUser(String username);

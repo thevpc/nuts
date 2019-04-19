@@ -91,6 +91,6 @@ public class ExecCommand extends AbstractNutsCommand {
                 .env(context.consoleContext().env().getEnv())
                 .directory(context.consoleContext().getShell().getCwd())
                 .session(context.getSession())
-                .exec().getResult();
+                .getResult();
     }
 }

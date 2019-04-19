@@ -133,12 +133,12 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
     @Override
     public void print(NutsTerminal terminal) {
-        print(terminal.getOut());
+        print(terminal.out());
     }
 
     @Override
     public void println(NutsTerminal terminal) {
-        println(terminal.getOut());
+        println(terminal.out());
     }
 
     @Override
@@ -257,18 +257,19 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         String prefix = null;
         LinkedHashMap<String, Object> props = new LinkedHashMap<>();
         NutsWorkspaceConfigManager configManager = ws.config();
+        NutsBootContext rtcontext = configManager.getContext(NutsBootContextType.RUNTIME);
         if (isMinimal()) {
-            props.put("nuts-api", configManager.getRunningContext().getApiId().toString());
-            props.put("nuts-runtime", configManager.getRunningContext().getRuntimeId().toString());
+            props.put("nuts-api", rtcontext.getApiId().toString());
+            props.put("nuts-runtime", rtcontext.getRuntimeId().toString());
         } else {
             Set<String> extraKeys = new TreeSet<>();
             if (extraProperties != null) {
                 extraKeys = new TreeSet(extraProperties.keySet());
             }
 
-            props.put("nuts-boot-api-version", configManager.getRunningContext().getApiId().getVersion().toString());
-            props.put("nuts-boot-api-id", configManager.getRunningContext().getApiId().toString());
-            props.put("nuts-boot-runtime-id", configManager.getRunningContext().getRuntimeId().toString());
+            props.put("nuts-api-version", rtcontext.getApiId().getVersion().toString());
+            props.put("nuts-api-id", rtcontext.getApiId().toString());
+            props.put("nuts-runtime-id", rtcontext.getRuntimeId().toString());
             URL[] cl = configManager.getBootClassWorldURLs();
             List<String> runtimeClassPath = new ArrayList<>();
             if (cl != null) {
@@ -285,10 +286,10 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
             }
 
-            props.put("nuts-boot-runtime-path", CoreStringUtils.join(";", runtimeClassPath));
+            props.put("nuts-runtime-path", CoreStringUtils.join(";", runtimeClassPath));
             props.put("nuts-workspace", configManager.getWorkspaceLocation().toString());
             props.put("nuts-workspace-id", configManager.getUuid());
-            props.put("nuts-secure", String.valueOf(configManager.isSecure()));
+            props.put("nuts-secure", String.valueOf(ws.security().isSecure()));
             props.put("nuts-store-layout", String.valueOf(configManager.getStoreLocationLayout()));
             props.put("nuts-store-strategy", String.valueOf(configManager.getStoreLocationStrategy()));
             props.put("nuts-repo-store-strategy", String.valueOf(configManager.getRepositoryStoreLocationStrategy()));
@@ -343,7 +344,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
         NutsWorkspaceConfigManager configManager = ws.config();
         if (isMinimal()) {
-            out.printf("%s/%s", configManager.getRunningContext().getApiId().getVersion(), configManager.getRunningContext().getRuntimeId().getVersion());
+            out.printf("%s/%s", configManager.getContext(NutsBootContextType.RUNTIME).getApiId().getVersion(), configManager.getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion());
         } else {
             Map<String, Object> props = buildWorkspaceMap(false, false);
             printMap(out, "", props);

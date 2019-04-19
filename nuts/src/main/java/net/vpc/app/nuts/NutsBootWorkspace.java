@@ -118,16 +118,6 @@ public class NutsBootWorkspace {
         this.options = options;
         this.bootId = NutsBootId.parse(NutsConstants.Ids.NUTS_API + "#" + actualVersion);
         newInstanceRequirements = 0;
-//        if (options.getBootCommand() != null) {
-//            switch (options.getBootCommand()) {
-//                case UPDATE:
-//                case CHECK_UPDATES:
-//                case CLEANUP:
-//                case RESET: {
-//                    newInstanceRequirements = false;
-//                }
-//            }
-//        }
         runningBootConfig = new NutsBootConfig(options);
         NutsLogUtils.bootstrap(options.getLogConfig());
         log.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.getBootArgumentsString(true, true, true));
@@ -236,11 +226,8 @@ public class NutsBootWorkspace {
                 }
             }
         }
-//        Collections.addAll(cmd, NutsMinimalCommandLine.parseCommandLine(options.getBootJavaOptions()));
-//        cmd.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005");
         cmd.add("-jar");
         cmd.add(file.getPath());
-        //cmd.add("--verbose");
         cmd.addAll(Arrays.asList(options.getBootArguments(true, true, true)));
         if (showCommand) {
             StringBuilder sb = new StringBuilder();
@@ -431,8 +418,8 @@ public class NutsBootWorkspace {
 //        System.out.println("openWorkspace() ===> programs=" + NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.PROGRAMS), runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS)));
         if (log.isLoggable(Level.CONFIG)) {
             log.log(Level.CONFIG, "Open Workspace with command line  : {0}", options.getBootArgumentsString(true, true, true));
-            log.log(Level.CONFIG, "Open Workspace with config        :");
-            log.log(Level.CONFIG, "\t nuts-boot-api                  : {0}", actualVersion);
+            log.log(Level.CONFIG, "Open Workspace with config        : ");
+            log.log(Level.CONFIG, "\t nuts-api-version               : {0}", actualVersion);
             log.log(Level.CONFIG, "\t nuts-workspace                 : {0}", NutsUtils.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
             log.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", NutsUtils.formatLogValue(options.getStoreLocationStrategy(), runningBootConfig.getStoreLocationStrategy()));
             log.log(Level.CONFIG, "\t nuts-repos-store-strategy      : {0}", NutsUtils.formatLogValue(options.getRepositoryStoreLocationStrategy(), runningBootConfig.getRepositoryStoreLocationStrategy()));
@@ -1032,7 +1019,7 @@ public class NutsBootWorkspace {
                     System.out.println("nuts-version :" + actualVersion);
                     return;
                 }
-                workspace.exec().command("version").command(o.getApplicationArguments()).failFast().exec();
+                workspace.exec().command("version").command(o.getApplicationArguments()).failFast().run();
                 return;
             }
 
@@ -1044,7 +1031,7 @@ public class NutsBootWorkspace {
                     System.out.println("Try to reinstall nuts (with internet access available) and type 'nuts help' to get a list of global options and commands");
                     return;
                 }
-                workspace.exec().command("help").command(o.getApplicationArguments()).failFast().exec();
+                workspace.exec().command("help").command(o.getApplicationArguments()).failFast().run();
                 return;
             }
             case RESET: {
@@ -1060,8 +1047,7 @@ public class NutsBootWorkspace {
             throw new NutsExecutionException("Workspace boot command not available : " + o.getBootCommand(), 1);
         }
         if (o.getApplicationArguments().length == 0) {
-            workspace.exec().command("version").failFast().exec();
-//            workspace.getTerminal().getFormattedOut().println(workspace.getWelcomeText());
+            workspace.exec().command("welcome").failFast().run();
             return;
         }
         workspace.exec()
@@ -1069,7 +1055,7 @@ public class NutsBootWorkspace {
                 .executorOptions(o.getExecutorOptions())
                 .executionType(o.getExecutionType())
                 .failFast()
-                .exec();
+                .run();
     }
 
     private void actionReset(NutsWorkspace workspace, String[] readArguments) {
@@ -1119,7 +1105,7 @@ public class NutsBootWorkspace {
                 if (workspace == null) {
                     System.err.println("reset cancelled (applied '--no' argument)");
                 } else {
-                    workspace.getTerminal().getOut().println(" cancelled (applied '--no' argument)");
+                    workspace.getTerminal().out().println(" cancelled (applied '--no' argument)");
                 }
                 throw new NutsUserCancelException();
             }

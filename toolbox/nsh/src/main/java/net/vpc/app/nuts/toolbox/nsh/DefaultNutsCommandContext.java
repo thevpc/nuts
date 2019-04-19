@@ -105,7 +105,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
             return true;
         } else if ((a = cmd.readBooleanOption("--version")) != null) {
             if (cmd.isExecMode()) {
-                consoleContext.getTerminal().getFormattedOut().printf("%s\n", consoleContext.getShell().getVersion());
+                consoleContext.getTerminal().fout().printf("%s\n", consoleContext.getShell().getVersion());
             }
             cmd.skipAll();
             return true;

@@ -34,27 +34,74 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsInstallCommandOptions {
+public interface NutsUndeployCommand {
 
-    private boolean trace = true;
-    private boolean force = false;
+    NutsUndeployCommand repository(String repository);
 
-    public boolean isTrace() {
-        return trace;
-    }
+    NutsUndeployCommand setRepository(String repository);
 
-    public NutsInstallCommandOptions setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
+    NutsUndeployCommand session(NutsSession session);
 
-    public boolean isForce() {
-        return force;
-    }
+    NutsUndeployCommand setSession(NutsSession session);
 
-    public NutsInstallCommandOptions setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
+    String getRepository();
+
+    boolean isForce();
+
+    boolean isTrace();
+
+    boolean isTransitive();
+
+    NutsUndeployCommand force();
+
+    NutsUndeployCommand force(boolean force);
+
+    NutsUndeployCommand setForce(boolean force);
+
+    NutsUndeployCommand trace();
+
+    NutsUndeployCommand trace(boolean trace);
+
+    NutsUndeployCommand setTrace(boolean trace);
+
+    NutsUndeployCommand transitive();
+
+    NutsUndeployCommand transitive(boolean transitive);
+
+    NutsUndeployCommand setTransitive(boolean transitive);
+
+    NutsUndeployCommand formatType(NutsResultFormatType formatType);
+
+    NutsUndeployCommand setFormatType(NutsResultFormatType formatType);
+
+    NutsUndeployCommand json();
+
+    NutsUndeployCommand plain();
+
+    NutsUndeployCommand props();
+
+    NutsResultFormatType getFormatType();
+
+    NutsUndeployCommand run();
+
+    NutsSession getSession();
+
+    NutsId getId();
+
+    NutsUndeployCommand id(NutsId id);
+
+    NutsUndeployCommand id(String id);
+
+    NutsUndeployCommand setId(NutsId id);
+
+    NutsUndeployCommand setId(String id);
+
+    NutsUndeployCommand offline(boolean offline);
+
+    NutsUndeployCommand offline();
+
+    NutsUndeployCommand setOffline(boolean offline);
+
+    boolean isOffline();
 
 }

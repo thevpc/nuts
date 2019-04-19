@@ -43,12 +43,6 @@ public interface NutsSessionTerminal extends NutsSessionTerminalBase, NutsTermin
 
     PrintStream ferr();
 
-    PrintStream out();
-
-    PrintStream err();
-
-    InputStream in();
-
     PrintStream getFormattedOut();
 
     PrintStream getFormattedErr();

@@ -19,8 +19,9 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.ZipOptions;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
-public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
+public class DefaultNutsDeployCommand implements NutsDeployCommand {
 
+    private NutsId result;
     private Object content;
     private Object descriptor;
     private String sha1;
@@ -34,7 +35,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     private NutsSession session;
     private NutsResultFormatType formatType = NutsResultFormatType.PLAIN;
 
-    public DefaultNutsDeploymentBuilder(NutsWorkspace ws) {
+    public DefaultNutsDeployCommand(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -53,36 +54,42 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setContent(File file) {
         content = file;
+        invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(Path file) {
         content = file;
+        invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setDescriptor(InputStream stream) {
         descriptor = stream;
+        invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setDescriptor(String path) {
         descriptor = path;
+        invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setDescriptor(File file) {
         descriptor = file;
+        invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setDescriptor(URL url) {
         descriptor = url;
+        invalidateResult();
         return this;
     }
 
@@ -93,6 +100,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setSha1(String sha1) {
         this.sha1 = sha1;
+        invalidateResult();
         return this;
     }
 
@@ -103,6 +111,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setDescSHA1(String descSHA1) {
         this.descSHA1 = descSHA1;
+        invalidateResult();
         return this;
     }
 
@@ -113,6 +122,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setContent(URL url) {
         content = url;
+        invalidateResult();
         return this;
     }
 
@@ -123,6 +133,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setDescriptor(NutsDescriptor descriptor) {
         this.descriptor = descriptor;
+        invalidateResult();
         return this;
     }
 
@@ -134,6 +145,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setRepository(String repository) {
         this.repository = repository;
+        invalidateResult();
         return this;
     }
 
@@ -145,6 +157,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setTrace(boolean trace) {
         this.trace = trace;
+        invalidateResult();
         return this;
     }
 
@@ -156,6 +169,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setForce(boolean force) {
         this.force = force;
+        invalidateResult();
         return this;
     }
 
@@ -167,6 +181,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setOffline(boolean offline) {
         this.offline = offline;
+        invalidateResult();
         return this;
     }
 
@@ -178,6 +193,7 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setTransitive(boolean transitive) {
         this.transitive = transitive;
+        invalidateResult();
         return this;
     }
 
@@ -187,11 +203,13 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
 
     public void setWs(NutsWorkspace ws) {
         this.ws = ws;
+        invalidateResult();
     }
 
     @Override
     public NutsDeployCommand setSession(NutsSession session) {
         this.session = session;
+        invalidateResult();
         return this;
     }
 
@@ -232,7 +250,9 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
 
     @Override
     public NutsDeployCommand setDescriptor(Path path) {
-        return setDescriptor(path);
+        this.descriptor=path;
+        invalidateResult();
+        return this;
     }
 
     @Override
@@ -320,19 +340,19 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
         return setTransitive(transitive);
     }
 
-    @Override
-    public NutsId deploy() {
-//        DefaultNutsDeployment deployment = new DefaultNutsDeployment(ws);
-//        deployment.setContent(content);
-//        deployment.setDescriptor(descriptor);
-//        deployment.setDescSHA1(descSHA1);
-//        deployment.setRepository(repository);
-//        deployment.setSha1(sha1);
-//        deployment.setTrace(trace);
-//        deployment.setForce(force);
-//        deployment.setOffline(offline);
-//        deployment.setTransitive(transitive);
+    public NutsId getResult() {
+        if (result == null) {
+            run();
+        }
+        return result;
+    }
+    
+    private void invalidateResult(){
+        result=null;
+    }
 
+    @Override
+    public NutsDeployCommand run() {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsWorkspaceUtils.checkReadOnly(ws);
         try {
@@ -433,7 +453,8 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                                             .setTrace(this.isTrace())
                                             .setTransitive(this.isTransitive())
                                             .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository), rsession);
-                            return effId;
+                            result = effId;
+                            return this;
                         }
                     } else {
 
@@ -452,7 +473,8 @@ public class DefaultNutsDeploymentBuilder implements NutsDeployCommand {
                                 .setTrace(this.isTrace())
                                 .setTransitive(this.isTransitive())
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor).setRepository(repository), rsession);
-                        return effId;
+                        result = effId;
+                        return this;
                     }
                     throw new NutsRepositoryNotFoundException(repository);
                 } finally {

@@ -148,7 +148,7 @@ public class DerbyMain extends NutsApplication {
                 .executorOptions(executorOptions)
                 .command(command)
                 .failFast()
-                .exec().getResult();
+                .run().getResult();
     }
 
     private Path download(String id) {
@@ -158,11 +158,11 @@ public class DerbyMain extends NutsApplication {
         if (!Files.exists(targetFile)) {
             appContext.getWorkspace().fetch().location(targetFile).id(id).getResultPath();
             if (appContext.isVerbose()) {
-                appContext.getSession().getTerminal().getOut().println("downloading " + id + " to " + targetFile);
+                appContext.getSession().getTerminal().out().println("downloading " + id + " to " + targetFile);
             }
         } else {
             if (appContext.isVerbose()) {
-                appContext.getSession().getTerminal().getOut().println("using " + id + " form " + targetFile);
+                appContext.getSession().getTerminal().out().println("using " + id + " form " + targetFile);
             }
         }
         return targetFile;

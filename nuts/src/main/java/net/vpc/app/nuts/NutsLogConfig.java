@@ -43,6 +43,7 @@ public class NutsLogConfig {
     private String logName = null;
     private String logFolder = null;
     private boolean logInherited = false;
+    private boolean debug = false;
 
     public Level getLogLevel() {
         return logLevel;
@@ -97,4 +98,14 @@ public class NutsLogConfig {
         this.logInherited = logInherited;
         return this;
     }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public NutsLogConfig setDebug(boolean debug) {
+        this.debug = debug;
+        return this;
+    }
+    
 }

@@ -161,7 +161,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                             if (log.isLoggable(Level.CONFIG)) {
                                 log.log(Level.CONFIG, "Failed to create HTTPS port");
                             }
-                            terminal.getFormattedErr().printf("**Failed to create HTTPS port**");
+                            terminal.ferr().printf("**Failed to create HTTPS port**");
                         }
                     }
                 });
@@ -222,7 +222,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         });
         server.start();
-        PrintStream out = terminal.getFormattedOut();
+        PrintStream out = terminal.fout();
         out.printf("Nuts Http Service '%s' running at %s\n", serverId, inetSocketAddress);
         out.printf("Serving workspaces: \n");
         for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {

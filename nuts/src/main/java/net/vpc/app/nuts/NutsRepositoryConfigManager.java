@@ -155,13 +155,5 @@ public interface NutsRepositoryConfigManager extends NutsEnvProvider {
 
     int getFindSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive);
 
-    NutsRepositoryConfigManager removeUser(String userId);
-
-    NutsRepositoryConfigManager setUser(NutsUserConfig user);
-
-    NutsUserConfig getUser(String userId);
-
-    NutsUserConfig[] getUsers();
-
     NutsStoreLocationStrategy getStoreLocationStrategy();
 }

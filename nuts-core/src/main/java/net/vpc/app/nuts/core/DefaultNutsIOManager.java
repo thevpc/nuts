@@ -16,7 +16,6 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -51,23 +50,41 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 case "home.logs":
                     return ws.config().getHomeLocation(NutsStoreLocation.LOGS).toString();
                 case "workspace":
-                    return ws.config().getRunningContext().getWorkspace();
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
                 case "user.home":
                     return System.getProperty("user.home");
                 case "config":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.CONFIG);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CONFIG);
                 case "lib":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.LIB);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LIB);
                 case "programs":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.PROGRAMS);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.PROGRAMS);
                 case "cache":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.CACHE);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.CACHE);
                 case "temp":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.TEMP);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.TEMP);
                 case "logs":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.LOGS);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.LOGS);
                 case "var":
-                    return ws.config().getRunningContext().getStoreLocation(NutsStoreLocation.VAR);
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getStoreLocation(NutsStoreLocation.VAR);
+                case "nuts.boot.version":
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().toString();
+                case "nuts.boot.id":
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getApiId().toString();
+                case "nuts.workspace-boot.version":
+                    return ws.config().getContext(NutsBootContextType.BOOT).getApiId().getVersion().toString();
+                case "nuts.workspace-boot.id":
+                    return ws.config().getContext(NutsBootContextType.BOOT).getApiId().toString();
+                case "nuts.workspace-runtime.version":
+                    return ws.config().getContext(NutsBootContextType.BOOT).getRuntimeId().getVersion().toString();
+                case "nuts.workspace-runtime.id":
+                    return ws.config().getContext(NutsBootContextType.BOOT).getRuntimeId().toString();
+                case "nuts.workspace-location":
+                    return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
+            }
+            String v = System.getProperty(from);
+            if(v!=null){
+                return v;
             }
             return "${" + from + "}";
         }
@@ -123,7 +140,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             if (session == null) {
                 session = ws.createSession();
             }
-            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
+            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out()));
         } else {
             return stream;
         }
@@ -135,7 +152,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             if (session == null) {
                 session = ws.createSession();
             }
-            return CoreIOUtils.monitor(stream, null, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut()));
+            return CoreIOUtils.monitor(stream, null, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out()));
         } else {
             return stream;
         }
@@ -167,7 +184,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         DefaultNutsInputStreamMonitor monitor = null;
         if (monitorable && log.isLoggable(Level.INFO)) {
-            monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().getOut());
+            monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out());
         }
         boolean verboseMode
                 = CoreCommonUtils.getSystemBoolean("nuts.monitor.start", false)
@@ -399,9 +416,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (help == null) {
             help = defaultValue;//"no help found";
         }
-        HashMap<String, String> props = new HashMap<>((Map) System.getProperties());
-        props.putAll(ws.config().getRuntimeProperties());
-        help = CoreStringUtils.replaceDollarPlaceHolders(help, props);
+        help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
         return help;
     }
 
@@ -555,15 +570,15 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         try {
             temp = File.createTempFile(name, Long.toString(System.nanoTime()), folder);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         }
         if (!(temp.delete())) {
-            throw new RuntimeException("Could not delete temp file: " + temp.getAbsolutePath());
+            throw new UncheckedIOException(new IOException("Could not delete temp file: " + temp.getAbsolutePath()));
         }
 
         if (!(temp.mkdir())) {
-            throw new RuntimeException("Could not create temp directory: " + temp.getAbsolutePath());
+            throw new UncheckedIOException(new IOException("Could not create temp directory: " + temp.getAbsolutePath()));
         }
 
         return (temp.toPath());
@@ -612,12 +627,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     public static GsonBuilder prepareBuilder() {
         return new GsonBuilder()
-                //                .registerTypeHierarchyAdapter(NutsDescriptor.class, new JsonDeserializer<NutsDescriptor>() {
-                //                    @Override
-                //                    public NutsDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                //                        return context.deserialize(json,DefaultNutsDescriptor.class);
-                //                    }
-                //                })
                 .registerTypeHierarchyAdapter(NutsId.class, new NutsIdJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsVersion.class, new NutsVersionJsonAdapter())
                 .registerTypeHierarchyAdapter(NutsDescriptor.class, new NutsDescriptorJsonAdapter())

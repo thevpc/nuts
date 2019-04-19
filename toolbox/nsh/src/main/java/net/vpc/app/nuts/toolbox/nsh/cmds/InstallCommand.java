@@ -82,8 +82,8 @@ public class InstallCommand extends AbstractNutsCommand {
                                         .setDescriptor(descriptorFile)
                                         .setRepository(repositoryId)
                                         .setSession(context.getSession())
-                                        .deploy();
-                                context.out().printf("File %s deployed successfully as " + ws.formatter().createIdFormat().toString(deployedId) + "\n", s, deployedId);
+                                        .getResult();
+                                context.out().printf("File %s deployed successfully as %N\n", s, ws.formatter().createIdFormat().toString(deployedId));
                             }
                         } else {
 
@@ -95,8 +95,8 @@ public class InstallCommand extends AbstractNutsCommand {
                                             .setDescriptor(descriptorFile)
                                             .setRepository(repositoryId)
                                             .setSession(context.getSession())
-                                            .deploy();
-                                    context.out().printf("File %s deployed successfully as " + ws.formatter().createIdFormat().toString(deployedId) + "\n", s);
+                                            .getResult();
+                                    context.out().printf("File %s deployed successfully as %N\n", s,ws.formatter().createIdFormat().toString(deployedId));
                                     s = deployedId.toString();
                                 }
                                 logInstallStatus(s, context, options);
@@ -110,11 +110,11 @@ public class InstallCommand extends AbstractNutsCommand {
         return 0;
     }
 
-    private NutsDefinition logInstallStatus(String s, NutsCommandContext context, NutsInstallCommand options) {
+    private NutsDefinition logInstallStatus(String s, NutsCommandContext context, NutsInstallCommand installCommand) {
         NutsDefinition file = null;
         NutsWorkspace ws = context.getWorkspace();
         try {
-            file = options.id(s).install().getInstallResult()[0];
+            file = installCommand.id(s).getResult()[0];
         } catch (NutsAlreadyInstalledException ex) {
             context.out().printf("%s already installed\n", s);
             return null;

@@ -3,28 +3,28 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <p>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <p>
  * Copyright (C) 2016-2017 Taha BEN SALAH
  * <p>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * <p>
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  * ====================================================================
  */
 package net.vpc.app.nuts.toolbox.nsh;
@@ -89,11 +89,11 @@ public class NutsJavaShell extends JavaShell {
         workspace.getUserProperties().put(NutsConsoleContext.class.getName(), context);
         context.setSession(session);
         //add default commands
-        List<Command> allCommand=new ArrayList<>();
+        List<Command> allCommand = new ArrayList<>();
         allCommand.add(new ExitCmd());
 
         for (NutsCommand command : workspace.extensions().
-                createServiceLoader(NutsCommand.class,NutsJavaShell.class,NutsCommand.class.getClassLoader())
+                createServiceLoader(NutsCommand.class, NutsJavaShell.class, NutsCommand.class.getClassLoader())
                 .loadAll(this)) {
             NutsCommand old = findCommand(command.getName());
             if (old != null && old.getSupportLevel(this) >= command.getSupportLevel(this)) {
@@ -106,18 +106,18 @@ public class NutsJavaShell extends JavaShell {
         javaShellContext = createContext(this.context, null, null, new Env(), new String[0]);
         context.getUserProperties().put(ConsoleContext.class.getName(), javaShellContext);
         try {
-            histFile=workspace.config().getStoreLocation(workspace.resolveIdForClass(NutsJavaShell.class)
-                    .getSimpleNameId(), NutsStoreLocation.VAR).resolve("nsh.history").toFile();
+            histFile = workspace.config().getStoreLocation(workspace.resolveIdForClass(NutsJavaShell.class),
+                    NutsStoreLocation.VAR).resolve("nsh.history").toFile();
             getHistory().setHistoryFile(histFile);
             if (histFile.exists()) {
                 getHistory().load(histFile);
             }
         } catch (Exception ex) {
             //ignore
+            log.log(Level.SEVERE, "Error resolving history file", ex);
         }
-        workspace.getUserProperties().put(ShellHistory.class.getName(),getHistory());
+        workspace.getUserProperties().put(ShellHistory.class.getName(), getHistory());
     }
-
 
     @Override
     public boolean containsCommand(String cmd) {
@@ -141,17 +141,17 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public void declareCommands(Command... cmds) {
-        StringBuilder installed=new StringBuilder();
-        StringBuilder reinstalled=new StringBuilder();
-        int installedCount=0;
-        int reinstalledCount=0;
+        StringBuilder installed = new StringBuilder();
+        StringBuilder reinstalled = new StringBuilder();
+        int installedCount = 0;
+        int reinstalledCount = 0;
         boolean loggable = log.isLoggable(Level.FINE);
         for (Command command : cmds) {
             if (!(command instanceof NutsCommand)) {
                 command = new ShellToNutsCommand(command);
             }
             boolean b = commands.put(command.getName(), (NutsCommand) command) == null;
-            if(loggable) {
+            if (loggable) {
                 if (b) {
                     if (installed.length() > 0) {
                         installed.append(", ");
@@ -168,10 +168,10 @@ public class NutsJavaShell extends JavaShell {
             }
         }
         if (loggable) {
-            if(installed.length()>0){
-                installed.insert(0,"Installing "+installedCount+" Command"+(installedCount>1?"s":"")+" : ");
+            if (installed.length() > 0) {
+                installed.insert(0, "Installing " + installedCount + " Command" + (installedCount > 1 ? "s" : "") + " : ");
             }
-            if(reinstalled.length()>0){
+            if (reinstalled.length() > 0) {
                 installed.append(" ; Re-installing ").append(reinstalledCount).append(" Command").append(reinstalledCount > 1 ? "s" : "").append(" : ");
                 installed.append(reinstalled);
             }
@@ -214,7 +214,6 @@ public class NutsJavaShell extends JavaShell {
         return new NutsJavaShellEvalContext(this, args, root, parent, commandContext, workspace, workspace.createSession(), env);
     }
 
-
     @Override
     public String errorToMessage(Throwable th) {
         return StringUtils.exceptionToString(th);
@@ -222,7 +221,7 @@ public class NutsJavaShell extends JavaShell {
 
     @Override
     public void onErrorImpl(String message, Throwable th) {
-        context.getTerminal().getFormattedErr().printf("@@@%s@@@\n", message);
+        context.getTerminal().ferr().printf("@@@%s@@@\n", message);
     }
 
     @Override
@@ -237,7 +236,6 @@ public class NutsJavaShell extends JavaShell {
     public void setCwd(String cwd) {
         super.setCwd(cwd);
     }
-
 
     protected int evalBinaryPipeOperation(InstructionNode left, InstructionNode right, ConsoleContext context) {
         final PrintStream nout;
@@ -273,11 +271,9 @@ public class NutsJavaShell extends JavaShell {
         return a[1];
     }
 
-
     public NutsCommand[] getCommands() {
         return commands.values().toArray(new NutsCommand[0]);
     }
-
 
     public int runFile(String file, String[] args) {
         return executeFile(file, createContext(javaShellContext).setArgs(args), false);
@@ -291,7 +287,6 @@ public class NutsJavaShell extends JavaShell {
         context.setWorkspace(workspace);
     }
 
-
     public int runLine(String line) {
         return executeLine(line, javaShellContext);
     }
@@ -299,8 +294,8 @@ public class NutsJavaShell extends JavaShell {
     @Override
     public int run(String[] args) {
         NutsSessionTerminal terminal = context.getTerminal();
-        PrintStream out = terminal.getFormattedOut();
-        PrintStream err = terminal.getFormattedErr();
+        PrintStream out = terminal.fout();
+        PrintStream err = terminal.ferr();
         List<String> nonOptions = new ArrayList<>();
         boolean interactive = false;
         boolean perf = false;
@@ -312,12 +307,12 @@ public class NutsJavaShell extends JavaShell {
         while (cmd.hasNext()) {
             if (nonOptions.isEmpty()) {
                 if ((a = cmd.readOption("--help")) != null) {
-                    command=true;
+                    command = true;
                     nonOptions.add("help");
                 } else if (appContext != null && appContext.configure(cmd)) {
                     //ok
                 } else if ((a = cmd.readStringOption("-c", "--command")) != null) {
-                    command=true;
+                    command = true;
                     nonOptions.add(a.getStringValue());
                 } else if ((a = cmd.readBooleanOption("-i", "--interactive")) != null) {
                     interactive = a.getBooleanValue();
@@ -327,9 +322,9 @@ public class NutsJavaShell extends JavaShell {
                     getOptions().setXtrace(a.getBooleanValue());
                 } else if ((a = cmd.readBooleanOption("-c")) != null) {
                     nonOptions.add(cmd.read().getStringExpression());
-                } else if(cmd.isOption()){
+                } else if (cmd.isOption()) {
                     cmd.unexpectedArgument("nsh");
-                }else{
+                } else {
                     nonOptions.add(cmd.read().getStringExpression());
                 }
             } else {
@@ -340,10 +335,10 @@ public class NutsJavaShell extends JavaShell {
         if (nonOptions.isEmpty()) {
             interactive = true;
         }
-        if(!cmd.isExecMode()){
+        if (!cmd.isExecMode()) {
             return 0;
         }
-        if(appContext!=null){
+        if (appContext != null) {
             javaShellContext.setTerminalMode(appContext.getTerminalMode());
             javaShellContext.setVerbose(appContext.isVerbose());
         }
@@ -353,14 +348,14 @@ public class NutsJavaShell extends JavaShell {
                 nonOptions.remove(0);
                 javaShellContext.setArgs(nonOptions.toArray(new String[0]));
                 if (perf) {
-                    terminal.getFormattedOut().printf("**Nsh** loaded in [[%s]]\n",
+                    terminal.fout().printf("**Nsh** loaded in [[%s]]\n",
                             Chronometer.formatPeriodMilli(System.currentTimeMillis() - startMillis)
                     );
                 }
                 ret = executeFile(c, javaShellContext, false);
             } else {
                 if (perf) {
-                    terminal.getFormattedOut().printf("**Nsh** loaded in [[%s]]\n",
+                    terminal.fout().printf("**Nsh** loaded in [[%s]]\n",
                             Chronometer.formatPeriodMilli(System.currentTimeMillis() - startMillis)
                     );
                 }
@@ -369,7 +364,7 @@ public class NutsJavaShell extends JavaShell {
         }
         if (interactive) {
             if (perf) {
-                terminal.getFormattedOut().printf("**Nsh** loaded in [[%s]]\n",
+                terminal.fout().printf("**Nsh** loaded in [[%s]]\n",
                         Chronometer.formatPeriodMilli(System.currentTimeMillis() - startMillis)
                 );
             }
@@ -401,7 +396,7 @@ public class NutsJavaShell extends JavaShell {
             try {
                 line = terminal.readLine(prompt);
             } catch (InterruptShellException ex) {
-                terminal.getFormattedErr().printf("@@Exit Shell@@: ==%s==\n", ex.getMessage());
+                terminal.ferr().printf("@@Exit Shell@@: ==%s==\n", ex.getMessage());
                 break;
             }
             if (line == null) {
@@ -412,7 +407,9 @@ public class NutsJavaShell extends JavaShell {
                     runLine(line);
                 } catch (QuitShellException q) {
                     try {
-                        getHistory().save(histFile);
+                        if (histFile != null) {
+                            getHistory().save(histFile);
+                        }
                     } catch (IOException e) {
                         //e.printStackTrace();
                     }
@@ -425,7 +422,7 @@ public class NutsJavaShell extends JavaShell {
 
     protected PrintStream printHeader(PrintStream out) {
         return out.printf("##Nuts## shell (**Network Updatable Things Services**) [[v%s]] (c) vpc 2018\n",
-                context.getWorkspace().config().getRunningContext().getRuntimeId().getVersion().toString());
+                context.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString());
     }
 
     //    @Override
@@ -446,11 +443,9 @@ public class NutsJavaShell extends JavaShell {
         return executeArguments(args, true, createContext(javaShellContext).setArgs(args));
     }
 
-
     public String getVersion() {
         return PomIdResolver.resolvePomId(getClass(), new PomId("", "", "dev")).getVersion();
     }
-
 
     public NutsCommand findCommand(String command) {
         return commands.get(command);

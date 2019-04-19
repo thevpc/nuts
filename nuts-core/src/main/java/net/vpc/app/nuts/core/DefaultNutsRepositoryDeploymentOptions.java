@@ -97,6 +97,42 @@ public class DefaultNutsRepositoryDeploymentOptions implements NutsRepositoryDep
         return this;
     }
 
+    public NutsRepositoryDeploymentOptions id(NutsId id) {
+        return setId(id);
+    }
+
+    public NutsRepositoryDeploymentOptions repository(String repository) {
+        return setRepository(repository);
+    }
+
+    public NutsRepositoryDeploymentOptions trace() {
+        return trace(true);
+    }
+
+    public NutsRepositoryDeploymentOptions trace(boolean trace) {
+        return setTrace(trace);
+    }
+
+    public NutsRepositoryDeploymentOptions force() {
+        return force(true);
+    }
+
+    public NutsRepositoryDeploymentOptions force(boolean force) {
+        return setForce(force);
+    }
+
+    public NutsRepositoryDeploymentOptions offline() {
+        return offline(true);
+    }
+
+    public NutsRepositoryDeploymentOptions offline(boolean offline) {
+        return setOffline(offline);
+    }
+
+    public NutsRepositoryDeploymentOptions transitive(boolean transitive) {
+        return setTransitive(transitive);
+    }
+
     @Override
     public NutsRepositoryDeploymentOptions copy() {
         return new DefaultNutsRepositoryDeploymentOptions()

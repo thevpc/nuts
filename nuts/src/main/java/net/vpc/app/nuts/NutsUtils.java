@@ -829,7 +829,7 @@ final class NutsUtils {
                         if (!force && !refForceAll[0]) {
                             if (header != null) {
                                 if (term != null) {
-                                    term.getOut().println(header);
+                                    term.out().println(header);
                                 } else {
                                     System.out.println(header);
                                 }

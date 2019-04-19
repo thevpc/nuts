@@ -19,10 +19,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import net.vpc.common.io.IOUtils;
 
 @RestController
 @RequestMapping("ws/components")
@@ -154,13 +152,7 @@ public class NutsComponentService {
                 .setScope(scope)
                 .setAlternative(alternative)
                 .build();
-        NutsFetchCommand fetch = ws.fetch().id(id);
-        Path filePath = fetch.getResultPath();
-        try {
-            IOUtils.delete(filePath.getParent());
-        } catch (IOException ex) {
-            Logger.getLogger(NutsComponentService.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        ws.undeploy().id(id).run();
         String URL = String.format("http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/delete"
                 + "?workspace=%s&name=%s&namespace=%s&group=%s&version=%s&"
                 + "face=%s&os=%s&osdist=%s&scope=%s&alternative=%s&arch=",

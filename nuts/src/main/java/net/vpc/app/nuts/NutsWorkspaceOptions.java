@@ -33,9 +33,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/23/17.
+ *
  * @since 0.5.4
  */
 public final class NutsWorkspaceOptions implements Serializable, Cloneable {
@@ -423,7 +425,15 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
             }
             if (logConfig != null) {
                 if (logConfig.getLogLevel() != null) {
-                    all.add("--log-" + logConfig.getLogLevel().toString().toLowerCase());
+                    if (logConfig.getLogLevel() == Level.FINEST) {
+                        if (logConfig.isDebug()) {
+                            all.add("--debug");
+                        } else {
+                            all.add("--verbose");
+                        }
+                    } else {
+                        all.add("--log-" + logConfig.getLogLevel().toString().toLowerCase());
+                    }
                 }
                 if (logConfig.getLogCount() > 0) {
                     all.add("--log-count");
@@ -568,7 +578,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     }
 
     public String[] getApplicationArguments() {
-        return applicationArguments==null?new String[0]:Arrays.copyOf(applicationArguments, applicationArguments.length);
+        return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
     }
 
     public NutsWorkspaceOptions setApplicationArguments(String[] applicationArguments) {
@@ -778,6 +788,5 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     public String[] getHomeLocations() {
         return Arrays.copyOf(homeLocations, homeLocations.length);
     }
-
 
 }

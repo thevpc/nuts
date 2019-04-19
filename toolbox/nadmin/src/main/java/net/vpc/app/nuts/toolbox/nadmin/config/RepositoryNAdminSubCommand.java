@@ -71,7 +71,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             return true;
 
         } else {
-            PrintStream out = context.getTerminal().getFormattedOut();
+            PrintStream out = context.getTerminal().fout();
             if (cmdLine.readAll("add repo", "ar")) {
                 boolean proxy = false;
                 boolean pattern = false;

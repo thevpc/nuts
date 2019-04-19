@@ -74,12 +74,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     public PrintStream getFormattedOut(boolean forceNoColors) {
         if (forceNoColors) {
             if (out_getFormatted_Force == null) {
-                out_getFormatted_Force = ws.io().createPrintStream(getOut(), NutsTerminalMode.FILTERED);
+                out_getFormatted_Force = ws.io().createPrintStream(out(), NutsTerminalMode.FILTERED);
             }
             return out_getFormatted_Force;
         } else {
             if (out_getFormatted_NoForce == null) {
-                out_getFormatted_NoForce = ws.io().createPrintStream(getOut(), NutsTerminalMode.FORMATTED);
+                out_getFormatted_NoForce = ws.io().createPrintStream(out(), NutsTerminalMode.FORMATTED);
             }
             return out_getFormatted_NoForce;
         }
@@ -89,12 +89,12 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     public PrintStream getFormattedErr(boolean forceNoColors) {
         if (forceNoColors) {
             if (err_getFormatted_Force == null) {
-                err_getFormatted_Force = ws.io().createPrintStream(getErr(), NutsTerminalMode.FILTERED);
+                err_getFormatted_Force = ws.io().createPrintStream(err(), NutsTerminalMode.FILTERED);
             }
             return err_getFormatted_Force;
         } else {
             if (err_getFormatted_NoForce == null) {
-                err_getFormatted_NoForce = ws.io().createPrintStream(getErr(), NutsTerminalMode.FORMATTED);
+                err_getFormatted_NoForce = ws.io().createPrintStream(err(), NutsTerminalMode.FORMATTED);
             }
             return err_getFormatted_NoForce;
         }
@@ -167,7 +167,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
     @Override
     public String readLine(PrintStream out, String prompt, Object... params) {
         if (out == null) {
-            out = getOut();
+            out = out();
         }
         if (out == null) {
             out = System.out;
@@ -202,18 +202,18 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     @Override
     public String readLine(String prompt, Object... params) {
-        return readLine(getOut(), prompt, params);
+        return readLine(out(), prompt, params);
     }
 
     @Override
     public String readPassword(String prompt, Object... params) {
-        return readPassword(getOut(), prompt, params);
+        return readPassword(out(), prompt, params);
     }
 
     @Override
     public String readPassword(PrintStream out, String prompt, Object... params) {
         if (out == null) {
-            out = getOut();
+            out = out();
         }
         if (out == null) {
             out = System.out;
@@ -264,7 +264,7 @@ public class DefaultNutsSessionTerminal implements NutsSessionTerminal {
 
     @Override
     public <T> T ask(NutsQuestion<T> question) {
-        return new DefaultNutsQuestionExecutor<T>(ws, question, this, getFormattedOut())
+        return new DefaultNutsQuestionExecutor<T>(ws, question, this, fout())
                 .execute();
     }
 

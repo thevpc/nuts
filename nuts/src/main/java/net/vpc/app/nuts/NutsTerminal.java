@@ -29,6 +29,9 @@
  */
 package net.vpc.app.nuts;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+
 /**
  * Created by vpc on 2/20/17.
  * @since 0.5.4
@@ -40,4 +43,10 @@ public interface NutsTerminal extends NutsTerminalBase {
     String readPassword(String prompt, Object... params);
 
     <T> T ask(NutsQuestion<T> question);
+
+    InputStream in();
+
+    PrintStream out();
+
+    PrintStream err();
 }

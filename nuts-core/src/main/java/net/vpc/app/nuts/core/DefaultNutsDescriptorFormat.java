@@ -133,12 +133,12 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public void print(NutsDescriptor descriptor, NutsTerminal terminal) {
-        print(descriptor, terminal.getOut());
+        print(descriptor, terminal.out());
     }
 
     @Override
     public void println(NutsDescriptor descriptor, NutsTerminal terminal) {
-        println(descriptor, terminal.getOut());
+        println(descriptor, terminal.out());
     }
 
     @Override

@@ -66,7 +66,7 @@ public class NutsHttpServletFacade {
                                 .setNamespace(context.getServerId())
                                 .setGroup("net.vpc.app.nuts")
                                 .setName("nuts-server")
-                                .setVersion(context.getWorkspace().config().getRunningContext().getRuntimeId().getVersion().toString())
+                                .setVersion(context.getWorkspace().config().getContext(NutsBootContextType.RUNTIME).getRuntimeId().getVersion().toString())
                                 .build().toString()
                 );
             }
@@ -280,7 +280,7 @@ public class NutsHttpServletFacade {
                         .setSha1(receivedContentHash)
                         .setDescriptor(descriptor)
                         .setSession(context.getSession().copy())
-                        .deploy();
+                        .getResult();
 //                NutsId id = workspace.deploy(content, descriptor, null);
                 context.sendResponseText(200, id.toString());
             }
@@ -329,7 +329,7 @@ public class NutsHttpServletFacade {
                 int result = ws.exec()
                         .command(cmd)
                         .session(session)
-                        .exec().getResult();
+                        .run().getResult();
 
                 context.sendResponseText(200, String.valueOf(result) + "\n" + new String(out.toByteArray()));
             }

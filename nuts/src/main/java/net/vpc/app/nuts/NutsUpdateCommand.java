@@ -193,9 +193,9 @@ public interface NutsUpdateCommand {
      */
     NutsUpdateCommand checkUpdates(boolean applyUpdates);
 
-    NutsWorkspaceUpdateResult getUpdateResult();
+    NutsWorkspaceUpdateResult getResult();
 
-    int getUpdateResultCount();
+    int getResultCount();
 
     NutsUpdateCommand workspace();
 

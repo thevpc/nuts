@@ -140,7 +140,7 @@ public interface NutsDeployCommand {
 
     NutsSession getSession();
 
-    NutsId deploy();
+    NutsDeployCommand run();
 
     NutsDeployCommand formatType(NutsResultFormatType formatType);
 
@@ -153,4 +153,6 @@ public interface NutsDeployCommand {
     NutsDeployCommand props();
 
     NutsResultFormatType getFormatType();
+
+    NutsId getResult();
 }

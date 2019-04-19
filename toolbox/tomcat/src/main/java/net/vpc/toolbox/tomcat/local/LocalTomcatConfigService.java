@@ -237,8 +237,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (catalinaBaseUpdated) {
             context.out().printf("==[%s]== Updated catalina base ==%s==\n", getName(), catalinaBase);
         }
-        b.setOutput(context.getSession().getTerminal().getOut());
-        b.setErr(context.getSession().getTerminal().getErr());
+        b.setOutput(context.getSession().getTerminal().out());
+        b.setErr(context.getSession().getTerminal().err());
         return b;
     }
 
@@ -297,7 +297,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 public void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) {
                     context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
                 }
-            })).install().getInstallResult()[0];
+            })).run().getResult()[0];
         }
         return catalinaNutsDefinition;
     }

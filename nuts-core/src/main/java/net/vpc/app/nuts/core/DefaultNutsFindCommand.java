@@ -1078,7 +1078,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                     coalesce.add(NutsWorkspaceExt.of(ws).getInstalledRepository().findAll(idFilter, rsession));
                 } else {
                     List<Iterator<NutsId>> all = new ArrayList<>();
-                    for (NutsRepository repo : ws.getEnabledRepositories(repositoryFilter)) {
+                    for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, null, repositoryFilter, mode, search.getOptions())) {
                         if (repositoryFilter == null || repositoryFilter.accept(repo)) {
                             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, mode, search.getOptions());
                             NutsIdFilter filter = new DefaultNutsIdMultiFilter(null, idFilter, descriptorFilter, repo, rsession).simplify();

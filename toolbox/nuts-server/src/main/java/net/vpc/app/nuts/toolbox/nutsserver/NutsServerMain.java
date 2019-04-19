@@ -13,6 +13,7 @@ import net.vpc.common.strings.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,7 +127,7 @@ public class NutsServerMain extends NutsApplication {
                 }
                 if (cmdLine.isExecMode()) {
                     if (servers.isEmpty()) {
-                        appContext.getTerminal().getFormattedErr().printf("No Server config found.\n");
+                        appContext.getTerminal().ferr().printf("No Server config found.\n");
                         throw new NutsExecutionException("No Server config found", 1);
                     }
                     Map<String, NutsWorkspace> allWorkspaces = new HashMap<>();
@@ -211,7 +212,7 @@ public class NutsServerMain extends NutsApplication {
                 cmdLine.unexpectedArgument("nuts-server list");
                 if (cmdLine.isExecMode()) {
                     List<NutsServer> servers = serverManager.getServers();
-                    PrintStream out = appContext.getTerminal().getFormattedOut();
+                    PrintStream out = appContext.getTerminal().fout();
                     if (servers.isEmpty()) {
                         out.printf("No Server is Running\n");
                     }
@@ -228,7 +229,7 @@ public class NutsServerMain extends NutsApplication {
             }
             cmdLine.unexpectedArgument("nuts-server");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 }

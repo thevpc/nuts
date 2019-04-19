@@ -126,7 +126,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         args.addAll(joptions.getJvmArgs());
 
         if (!CoreStringUtils.isBlank(bootArgumentsString)) {
-            String Dnuts_boot_args = "-Dnuts.export.boot.args=" + bootArgumentsString;
+            String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
             xargs.add(Dnuts_boot_args);
             args.add(Dnuts_boot_args);
         }
@@ -148,7 +148,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         xargs.addAll(joptions.getApp());
         args.addAll(joptions.getApp());
         if (joptions.isShowCommand()) {
-            PrintStream out = executionContext.getTerminal().getOut();
+            PrintStream out = executionContext.getTerminal().fout();
 //            out.println("==[nuts-exec]== " + NutsArgumentsParser.escapeArguments(xargs.toArray(new String[0])));
             out.println("==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {

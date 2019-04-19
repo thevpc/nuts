@@ -15,7 +15,6 @@ import net.vpc.common.commandline.CommandLine;
 import net.vpc.common.commandline.format.TableFormatter;
 
 import java.io.PrintStream;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,7 +31,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             autoSave = false;
         }
         NutsWorkspace ws = context.getWorkspace();
-        PrintStream out = context.getTerminal().getFormattedOut();
+        PrintStream out = context.getTerminal().fout();
         NutsWorkspaceConfigManager conf = ws.config();
         if (cmdLine.readAll("add java")) {
             if (cmdLine.readAll("--search")) {
@@ -42,12 +41,12 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
                 if (extraLocations.isEmpty()) {
                     for (NutsSdkLocation loc : conf.searchSdkLocations("java", out)) {
-                        conf.addSdk("java", loc);
+                        conf.addSdk(loc,null);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
                         for (NutsSdkLocation loc : conf.searchSdkLocations("java", ws.io().path(extraLocation), out)) {
-                            conf.addSdk("java", loc);
+                            conf.addSdk(loc,null);
                         }
                     }
                 }
@@ -59,7 +58,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                 while (cmdLine.hasNext()) {
                     NutsSdkLocation loc = conf.resolveSdkLocation("java", ws.io().path(cmdLine.read().getExpression()));
                     if (loc != null) {
-                        conf.addSdk("java", loc);
+                        conf.addSdk(loc,null);
                     }
                 }
                 if (autoSave) {
@@ -78,7 +77,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 if (loc != null) {
-                    conf.removeSdk("java", loc);
+                    conf.removeSdk(loc,null);
                 }
             }
             if (autoSave) {

@@ -153,7 +153,7 @@ public interface NutsExecCommand {
 
     PrintStream err();
 
-    NutsExecCommand exec();
+    NutsExecCommand run();
 
     NutsExecutionType getExecutionType();
 

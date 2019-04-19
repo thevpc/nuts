@@ -36,12 +36,4 @@ package net.vpc.app.nuts;
 @NutsPrototype
 public interface NutsSessionTerminalBase extends NutsComponent<Object>, NutsTerminalBase {
 
-//    @Override
-//    String readLine(PrintStream out, String prompt, Object... params);
-//
-//    @Override
-//    String readPassword(PrintStream out, String prompt, Object... params);
-//
-//    @Override
-//    void install(NutsWorkspace workspace);
 }

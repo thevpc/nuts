@@ -265,7 +265,7 @@ public class DefaultNutsIdFormat implements NutsIdFormat {
 
     @Override
     public void format(NutsId id, NutsTerminal terminal) {
-        format(id, terminal.getOut());
+        format(id, terminal.out());
     }
 
     @Override

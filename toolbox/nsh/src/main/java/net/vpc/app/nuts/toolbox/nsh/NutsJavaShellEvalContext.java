@@ -261,10 +261,10 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                             .command(
                                     selectedId
                                             .getLongName(),
-                                    "--nuts-execution-mode=auto-complete " + wordIndex
+                                    "--nuts-exec-mode=auto-complete " + wordIndex
                             )
                             .addCommand(autoCompleteWords)
-                            .exec();
+                            .run();
                     if (t.getResult() == 0) {
                         String rr = t.getOutputString();
                         for (String s : rr.split("\n")) {

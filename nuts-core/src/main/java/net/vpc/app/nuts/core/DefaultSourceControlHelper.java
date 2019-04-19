@@ -63,7 +63,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.setId(d.getId().setVersion(oldVersion + ".1"));
             }
-            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).deploy();
+            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult();
             ws.formatter().createDescriptorFormat().setPretty(true).print(d, file);
             try {
                 CoreIOUtils.delete(folder);

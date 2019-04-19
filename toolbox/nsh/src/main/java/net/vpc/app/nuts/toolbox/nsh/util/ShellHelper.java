@@ -49,7 +49,7 @@ public class ShellHelper {
         public WsSshListener(NutsWorkspace ws, NutsSession session) {
             this.ws = ws;
             this.session = session;
-            out = session.getTerminal().getFormattedOut();
+            out = session.getTerminal().fout();
         }
 
         @Override

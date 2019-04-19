@@ -108,7 +108,7 @@ public class DeployCommand extends AbstractNutsCommand {
                         .setDescriptor(descriptorFile)
                         .setRepository(to)
                         .setSession(context.getSession())
-                        .deploy();
+                        .getResult();
                 out.printf("File ==%s== deployed successfully as ==%s== to ==%s==\n" + nid, s, nid, to == null ? "<default-repo>" : to);
             }
         } else if (idMode) {
@@ -123,7 +123,7 @@ public class DeployCommand extends AbstractNutsCommand {
                             .setDescriptor(fetched.getDescriptor())
                             .setRepository(to)
                             .setSession(context.getSession())
-                            .deploy();
+                            .getResult();
                     out.printf("Nuts ==%s== deployed successfully to ==%s==\n" + nid, nutsId, to == null ? "<default-repo>" : to);
                 }
             }

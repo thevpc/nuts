@@ -57,7 +57,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
                         localWarPath,
                         srvp.setPath(remoteFilePath).toString()
                 ).setSession(context.getSession())
-                .exec();
+                .run();
         String v = config.getVersionCommand();
         if (StringUtils.isEmpty(v)) {
             v = "nsh file-version --color=never %file";
@@ -77,7 +77,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
                 .exec()
                 .redirectErrorStream()
                 .grabOutputString()
-                .command(cmd).exec();
+                .command(cmd).run();
         if (s.getResult() == 0) {
             client.execRemoteNuts(
                     "net.vpc.app.nuts.toolbox:tomcat",

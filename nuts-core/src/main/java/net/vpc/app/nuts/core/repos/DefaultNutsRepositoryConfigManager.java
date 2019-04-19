@@ -8,11 +8,12 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
-public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager {
+public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager, NutsRepositoryConfigManagerExt {
 
     private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
@@ -63,6 +64,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         setConfig(config);
     }
 
+    @Override
     public String getName() {
         return repositoryName;
     }
@@ -374,7 +376,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         boolean ok = false;
         if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.checkReadOnly(repository.getWorkspace());
-            repository.security().checkAllowed(NutsConstants.Rights.SAVE_REPOSITORY);
+            repository.security().checkAllowed(NutsConstants.Rights.SAVE_REPOSITORY,"save");
             Path file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
             if (!Files.exists(file)) {

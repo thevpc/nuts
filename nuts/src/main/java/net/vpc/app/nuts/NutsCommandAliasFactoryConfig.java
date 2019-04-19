@@ -37,7 +37,7 @@ import java.util.Map;
  * @author vpc
  * @since 0.5.4
  */
-public class NutsWorkspaceCommandFactoryConfig {
+public class NutsCommandAliasFactoryConfig {
     private String factoryId;
     private String factoryType;
     private int priority;
@@ -47,7 +47,7 @@ public class NutsWorkspaceCommandFactoryConfig {
         return factoryId;
     }
 
-    public NutsWorkspaceCommandFactoryConfig setFactoryId(String factoryId) {
+    public NutsCommandAliasFactoryConfig setFactoryId(String factoryId) {
         this.factoryId = factoryId;
         return this;
     }
@@ -56,7 +56,7 @@ public class NutsWorkspaceCommandFactoryConfig {
         return factoryType;
     }
 
-    public NutsWorkspaceCommandFactoryConfig setFactoryType(String factoryType) {
+    public NutsCommandAliasFactoryConfig setFactoryType(String factoryType) {
         this.factoryType = factoryType;
         return this;
     }
@@ -65,7 +65,7 @@ public class NutsWorkspaceCommandFactoryConfig {
         return parameters;
     }
 
-    public NutsWorkspaceCommandFactoryConfig setParameters(Map<String, String> parameters) {
+    public NutsCommandAliasFactoryConfig setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
         return this;
     }
@@ -74,7 +74,7 @@ public class NutsWorkspaceCommandFactoryConfig {
         return priority;
     }
 
-    public NutsWorkspaceCommandFactoryConfig setPriority(int priority) {
+    public NutsCommandAliasFactoryConfig setPriority(int priority) {
         this.priority = priority;
         return this;
     }

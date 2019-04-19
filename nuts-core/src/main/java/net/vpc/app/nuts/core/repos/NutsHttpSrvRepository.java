@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
+import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 
 public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
@@ -245,7 +246,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
     private String[] resolveEncryptedAuth() {
         String login = getWorkspace().security().getCurrentLogin();
-        NutsUserConfig security = config().getUser(login);
+        NutsUserConfig security = NutsRepositoryConfigManagerExt.of(config()).getUser(login);
         String newLogin = "";
         String credentials = "";
         if (security == null) {
@@ -278,7 +279,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     @Override
-    protected void undeployImpl(NutsId id, NutsRepositorySession session) {
+    protected void undeployImpl(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
         throw new NutsUnsupportedOperationException();
     }
 

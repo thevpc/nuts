@@ -41,5 +41,5 @@ cd $h
 
 
 cp $base/nuts-bootstrap/nuts.jar $HOME/bin/nuts.jar
-cp $base/nuts-bootstrap/nuts $HOME/bin/nuts
+cp $base/nuts-bootstrap/nuts $HOME/bin/nuts0
 cp $base/nuts-bootstrap/nuts-debug $HOME/bin/nuts-debug

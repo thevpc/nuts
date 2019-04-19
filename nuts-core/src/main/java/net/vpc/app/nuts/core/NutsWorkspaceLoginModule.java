@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import com.sun.security.auth.UserPrincipal;
 import net.vpc.app.nuts.*;
 
@@ -100,7 +101,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 return true;
             }
 
-            NutsUserConfig registeredUser = workspace.config().getUser(name);
+            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config()).getUser(name);
             if (registeredUser != null) {
                 try {
                     workspace.security().getAuthenticationAgent()

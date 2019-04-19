@@ -73,7 +73,7 @@ public class CustomNutsExecutorComponent implements NutsExecutorComponent {
                 .env(executionContext.getEnv())
                 .directory(executionContext.getCwd())
                 .failFast(true)
-                .exec()
+                .run()
         ;
     }
 

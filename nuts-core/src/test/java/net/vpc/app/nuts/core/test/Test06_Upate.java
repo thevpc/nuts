@@ -95,7 +95,7 @@ public class Test06_Upate {
                 .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
                 .setDescriptor(api.getDescriptor().setId(api.getId().setVersion(apiv2)))
                 //                        .setRepository("local")
-                .deploy();
+                .run();
 
         uws.deploy()
                 .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws))
@@ -106,7 +106,7 @@ public class Test06_Upate {
                                         x -> x.setVersion(apiv2)
                                 )
                 )
-                .deploy();
+                .run();
 
         System.out.println("[LOCAL]");
         System.out.println(uws.config().getRepository("local").config().getStoreLocationStrategy());
@@ -134,11 +134,11 @@ public class Test06_Upate {
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().all().checkUpdates();
 
-        Assert.assertEquals(2, foundUpdates == null ? 0 : foundUpdates.getUpdateResultCount());
+        Assert.assertEquals(2, foundUpdates == null ? 0 : foundUpdates.getResultCount());
         foundUpdates.update();
 
-        final String newApiVersion = foundUpdates.getUpdateResult().getApi().getAvailable().getId().getVersion().toString();
-        final String newRuntimeVersion = foundUpdates.getUpdateResult().getRuntime().getAvailable().getId().getVersion().toString();
+        final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
+        final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
         Assert.assertEquals(true, Files.exists(Paths.get(workpacePath).resolve(NutsConstants.Folders.BOOT + "/net/vpc/app/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));

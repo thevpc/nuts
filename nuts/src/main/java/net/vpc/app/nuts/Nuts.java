@@ -32,10 +32,10 @@ package net.vpc.app.nuts;
 import java.util.Arrays;
 
 /**
- * Nuts Top Class.
- * Nuts is a Package manager for Java Applications and Nuts 
- * class is it's main class for creating and opening nuts workspaces.
- * Created by vpc on 1/5/17.
+ * Nuts Top Class. Nuts is a Package manager for Java Applications and Nuts
+ * class is it's main class for creating and opening nuts workspaces. Created by
+ * vpc on 1/5/17.
+ *
  * @since 0.1.0
  */
 public class Nuts {
@@ -53,6 +53,7 @@ public class Nuts {
 
     /**
      * current nuts version
+     *
      * @return current nuts version
      */
     public static String getVersion() {
@@ -60,8 +61,7 @@ public class Nuts {
     }
 
     /**
-     * main method. 
-     * This Main will call System.exit() at completion
+     * main method. This Main will call System.exit() at completion
      *
      * @param args main arguments
      */
@@ -104,8 +104,8 @@ public class Nuts {
 
     /**
      * opens a workspace using "--nuts-boot-args" configuration argument. This
-     * method is to be called by child processes of nuts in order to inherit workspace
-     * configuration.
+     * method is to be called by child processes of nuts in order to inherit
+     * workspace configuration.
      *
      * @param args arguments
      * @return NutsWorkspace instance
@@ -114,22 +114,16 @@ public class Nuts {
         long startTime = System.currentTimeMillis();
 //        System.out.println("OPEN INHERITED : "+NutsMinimalCommandLine.escapeArguments(args));
         NutsBootWorkspace boot = null;
-        if (args.length > 0 && args[0].startsWith("--nuts-boot-args=")) {
-//            System.out.println("OPEN INHERITED : GOT FROM ARGS : "+args[0]);
-            boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(args[0].substring("--nuts-boot-args=".length())));
-            boot.getOptions().setApplicationArguments(Arrays.copyOfRange(args, 1, args.length));
+        String d = System.getProperty("nuts.boot.args");
+        if (d != null) {
+//                System.out.println("OPEN INHERITED : GOT FROM PROPS : -Dnuts.boot.args="+d);
+            boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(d));
+            boot.getOptions().setApplicationArguments(args);
         } else {
-            String d = System.getProperty("nuts.export.boot.args");
-            if (d != null) {
-//                System.out.println("OPEN INHERITED : GOT FROM PROPS : -Dnuts.export.boot.args="+d);
-                boot = new NutsBootWorkspace(NutsMinimalCommandLine.parseCommandLine(d));
-                boot.getOptions().setApplicationArguments(args);
-            } else {
 //                System.out.println("OPEN INHERITED : NO PARAMS");
-                NutsWorkspaceOptions t = new NutsWorkspaceOptions();
-                t.setApplicationArguments(args);
-                boot = new NutsBootWorkspace(t);
-            }
+            NutsWorkspaceOptions t = new NutsWorkspaceOptions();
+            t.setApplicationArguments(args);
+            boot = new NutsBootWorkspace(t);
         }
         if (boot.hasUnsatisfiedRequirements()) {
             throw new NutsUnsatisfiedRequirementsExeption("Unable to open a distinct version " + boot.getOptions().getRequiredBootVersion());

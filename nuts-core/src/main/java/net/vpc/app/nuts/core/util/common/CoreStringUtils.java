@@ -530,7 +530,7 @@ public class CoreStringUtils {
             try {
                 r = readToken(reader, eqSeparators + entrySeparators, key);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
             String t = key.toString();
             if (r == -1) {
@@ -545,7 +545,7 @@ public class CoreStringUtils {
                     try {
                         r = readToken(reader, entrySeparators, value);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                     m.put(t, value.toString());
                     if (r == -1) {

@@ -65,7 +65,7 @@ public class MvnClient {
                             "get",
                             id.toString(),
                             repoURL == null ? "" : repoURL
-                    ).setSession(session).exec();
+                    ).setSession(session).run();
             return (b.getResult() == 0);
         }catch (Exception ex){
             return false;

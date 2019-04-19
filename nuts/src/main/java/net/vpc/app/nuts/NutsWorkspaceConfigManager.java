@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -43,33 +42,36 @@ import java.util.logging.Level;
  */
 public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
-    /**
-     * boot time context information of loaded and running context
-     *
-     * @return
-     */
-    NutsBootContext getRunningContext();
+    String getUuid();
+
 
     /**
-     * boot time context information of requested context (from config)
+     * context information for the context type
      *
+     * @param contextType
      * @return
      */
-    NutsBootContext getBootContext();
+    NutsBootContext getContext(NutsBootContextType contextType);
 
-    /**
-     * current context information of requested context (from config) now
-     *
-     * @return
-     */
-    NutsBootContext getConfigContext();
+    ClassLoader getBootClassLoader();
 
+    URL[] getBootClassWorldURLs();
+
+//    Path getBootNutsJar();
+//
     /**
-     * current context information of requested context (from config)
+     * return a copy of workspace boot configuration
      *
-     * @return
+     * @return a copy of workspace boot configuration
      */
     NutsBootConfig getBootConfig();
+
+    /**
+     * update workspace boot configuration
+     *
+     * @param other
+     */
+    void setBootConfig(NutsBootConfig other);
 
     boolean isValidWorkspaceFolder();
 
@@ -78,10 +80,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     boolean isReadOnly();
 
     void setEnv(String property, String value);
-
-    Map<String, String> getRuntimeProperties();
-
-    Path resolveNutsJarFile();
 
     void addImports(String... importExpression);
 
@@ -104,42 +102,19 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void save();
 
-    URL[] getBootClassWorldURLs();
-
-    NutsUserConfig getUser(String userId);
-
-    NutsUserConfig[] getUsers();
-
-    void setUser(NutsUserConfig config);
-
-    boolean isSecure();
-
-    void setSecure(boolean secure);
-
-//    void addRepositoryRef(NutsRepositoryRef repository);
-//
-//    void removeRepositoryRef(String repositoryName);
-//
-//    NutsRepositoryRef getRepositoryRef(String repositoryName);
-    void removeUser(String userId);
-
-    void setUsers(NutsUserConfig[] users);
-
-    void setBootConfig(NutsBootConfig other);
-
     void setLogLevel(Level levek);
 
     String[] getSdkTypes();
 
-    boolean addSdk(String sdkType, NutsSdkLocation location);
+    boolean addSdk(NutsSdkLocation location, NutsAddOptions options);
+
+    NutsSdkLocation removeSdk(NutsSdkLocation location, NutsRemoveOptions options);
 
     NutsSdkLocation findSdkByName(String sdkType, String locationName);
 
     NutsSdkLocation findSdkByPath(String sdkType, Path path);
 
     NutsSdkLocation findSdkByVersion(String sdkType, String version);
-
-    NutsSdkLocation removeSdk(String sdkType, NutsSdkLocation location);
 
     NutsSdkLocation findSdk(String sdkType, NutsSdkLocation location);
 
@@ -153,6 +128,7 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     /**
      * verify if the path is a valid a
+     *
      * @param sdkType
      * @param path
      * @return null if not a valid jdk path
@@ -165,19 +141,19 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     byte[] encryptString(byte[] input);
 
-    void addCommandFactory(NutsWorkspaceCommandFactoryConfig commandFactory, NutsSession session);
+    void addCommandAliasFactory(NutsCommandAliasFactoryConfig commandFactory, NutsAddOptions options);
 
-    boolean removeCommandFactory(String name, NutsSession session);
+    boolean removeCommandAliasFactory(String name, NutsRemoveOptions options);
 
-    boolean addCommand(NutsWorkspaceCommandConfig command, NutsInstallCommandOptions options, NutsSession session);
+    boolean addCommandAlias(NutsCommandAliasConfig command, NutsAddOptions options);
 
-    boolean removeCommand(String name, NutsUninstallOptions options, NutsSession session);
+    boolean removeCommandAlias(String name, NutsRemoveOptions options);
 
-    NutsWorkspaceCommand findCommand(String name);
+    NutsWorkspaceCommand findCommandAliases(String name);
 
-    List<NutsWorkspaceCommand> findCommands();
+    List<NutsWorkspaceCommand> findCommandAliases();
 
-    List<NutsWorkspaceCommand> findCommands(NutsId id);
+    List<NutsWorkspaceCommand> findCommandAliases(NutsId id);
 
     Path getHomeLocation(NutsStoreLocation folderType);
 
@@ -223,11 +199,8 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     NutsId createComponentFaceId(NutsId id, NutsDescriptor desc);
 
-    String getUuid();
 
-    ClassLoader getBootClassLoader();
-
-    NutsWorkspaceCommandFactoryConfig[] getCommandFactories();
+    NutsCommandAliasFactoryConfig[] getCommandFactories();
 
     NutsRepositoryRef[] getRepositoryRefs();
 
@@ -255,6 +228,13 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
     NutsRepository getRepository(String repositoryIdPath) throws NutsRepositoryNotFoundException;
 
     void removeRepository(String locationOrRepositoryId);
+
+    /**
+     * update statistics of a nuts repository folder folder
+     *
+     * @param repositoryPath
+     */
+    void updateStatistics(Path repositoryPath);
 
     NutsRepository[] getRepositories();
 

@@ -30,7 +30,6 @@
 package net.vpc.app.nuts;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -115,7 +114,7 @@ public interface NutsUninstallCommand {
 
     NutsUninstallCommand parseOptions(String... args);
 
-    NutsUninstallCommand uninstall();
+    NutsUninstallCommand run();
 
     NutsResultFormatType getFormatType();
 

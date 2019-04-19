@@ -148,7 +148,7 @@ public class WhichCommand extends AbstractNutsCommand {
                 cp_nutsCoreFile = core.getPath().toString();
             }
         }
-        map.put("nuts.workspace.version", workspace.config().getRunningContext().getApiId().getVersion().getValue());
+        map.put("nuts.workspace.version", workspace.config().getContext(NutsBootContextType.RUNTIME).getApiId().getVersion().getValue());
         map.put("nuts.workspace.api-component", cp_nutsFile);
         map.put("nuts.workspace.core-component", cp_nutsCoreFile);
         map.put("nuts.workspace.location", workspace.config().getWorkspaceLocation().toString());

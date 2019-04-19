@@ -28,9 +28,9 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .command(id.setNamespace(null).toString(), "--nuts-execution-mode=on-install")
+                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-install")
                     .addExecutorOptions().addCommand(executionContext.getArgs())
-                    .failFast().exec();
+                    .failFast().run();
         }
         //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
         //            NutsWorkspaceCommand c = cc.findCommand(id.getName());
@@ -55,8 +55,8 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-execution-mode=on-uninstall").addCommand(executionContext.getArgs()).exec().getResult();
-                    executionContext.getWorkspace().getTerminal().getFormattedOut().printf("Installation Exited with code : " + r);
+                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-exec-mode=on-uninstall").addCommand(executionContext.getArgs()).run().getResult();
+                    executionContext.getWorkspace().getTerminal().fout().printf("Installation Exited with code : " + r);
                 }
             }
         }

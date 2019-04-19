@@ -61,7 +61,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         if (p instanceof NutsTerminal) {
             return ((NutsTerminal) p).readLine(promptFormat, params);
         } else {
-            return getParent().readLine(getOut(), promptFormat, params);
+            return getParent().readLine(out(), promptFormat, params);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         if (p instanceof NutsTerminal) {
             return ((NutsTerminal) p).readLine(prompt, params);
         } else {
-            return p.readLine(getOut(), prompt, params);
+            return p.readLine(out(), prompt, params);
         }
     }
 
@@ -91,6 +91,21 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
     }
 
     @Override
+    public InputStream in() {
+        return getIn();
+    }
+
+    @Override
+    public PrintStream out() {
+        return getOut();
+    }
+
+    @Override
+    public PrintStream err() {
+        return getErr();
+    }
+
+    @Override
     public <T> T ask(NutsQuestion<T> question) {
         NutsSystemTerminalBase p = getParent();
         if (p instanceof NutsTerminal) {
@@ -98,7 +113,7 @@ public abstract class AbstractSystemTerminalAdapter implements NutsSystemTermina
         } else {
             return new DefaultNutsQuestionExecutor<T>(
                     ws,
-                    question, this, getOut())
+                    question, this, out())
                     .execute();
         }
     }

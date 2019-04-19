@@ -120,7 +120,7 @@ public class DefaultNutsInstalledRepository {
         return contains(id, NUTS_INSTALL_FILE);
     }
 
-    protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, boolean deep, NutsRepositorySession session) {
+    protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             return null;//Collections.emptyIterator();
         }
@@ -150,12 +150,12 @@ public class DefaultNutsInstalledRepository {
                 }
                 return null;
             }
-        }, deep);
+        }, maxDepth);
     }
 
     public Iterator<NutsId> findAll(NutsIdFilter all, NutsRepositorySession session) {
         final Path path = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
-        return findInFolder(path, all, true, session);
+        return findInFolder(path, all, Integer.MAX_VALUE, session);
 //        try {
 //            return Files.walk(path)
 //                    .map(p -> p.resolve(".nuts-install.log")).filter(p -> Files.exists(p))

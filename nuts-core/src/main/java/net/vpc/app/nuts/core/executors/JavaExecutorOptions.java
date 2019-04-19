@@ -122,10 +122,10 @@ public class JavaExecutorOptions {
 
         if (this.jar) {
             if (this.mainClass != null) {
-                session.getTerminal().getFormattedErr().printf("Ignored main-class=%s. running jar!\n", getMainClass());
+                session.getTerminal().ferr().printf("Ignored main-class=%s. running jar!\n", getMainClass());
             }
             if (!classPath0.isEmpty()) {
-                session.getTerminal().getFormattedErr().printf("Ignored class-path=%s. running jar!\n", classPath0);
+                session.getTerminal().ferr().printf("Ignored class-path=%s. running jar!\n", classPath0);
             }
             if(this.excludeBase) {
                 throw new NutsIllegalArgumentException("Cannot exclude base with jar modifier");
@@ -171,7 +171,7 @@ public class JavaExecutorOptions {
                         break;
                     default:
                         while (true) {
-                            PrintStream out = session.getTerminal().getFormattedOut();
+                            PrintStream out = session.getTerminal().fout();
                             out.printf("Multiple runnable classes detected  - actually [[%s]] . Select one :\n", possibleClasses.size());
                             for (int i = 0; i < possibleClasses.size(); i++) {
                                 out.printf("==[%s]== [[%s]]\n", (i + 1), possibleClasses.get(i));

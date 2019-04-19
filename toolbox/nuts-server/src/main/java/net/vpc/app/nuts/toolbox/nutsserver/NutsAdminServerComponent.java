@@ -96,7 +96,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        PrintStream out = terminal.getFormattedOut();
+        PrintStream out = terminal.fout();
         out.printf("Nuts Admin Service '%s' running at %s\n", serverId, inetSocketAddress);
         out.printf("Serving workspace : %s\n", invokerWorkspace.config().getWorkspaceLocation());
         MyNutsServer myNutsServer = new MyNutsServer(serverId, port, backlog, address, executor, invokerWorkspace, terminal);
@@ -191,7 +191,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     cli.declareCommand(new AbstractNutsCommand("stop-server", DEFAULT_SUPPORT) {
                                         @Override
                                         public int exec(String[] args, NutsCommandContext context) throws Exception {
-                                            PrintStream out2 = MyNutsServer.this.terminal.getFormattedOut();
+                                            PrintStream out2 = MyNutsServer.this.terminal.fout();
                                             out2.println("Stopping Server ...");
                                             finalServerSocket.close();
                                             return 0;
@@ -200,12 +200,12 @@ public class NutsAdminServerComponent implements NutsServerComponent {
                                     cli.runCommand(args);
                                     finalAccept.close();
                                 } catch (IOException e) {
-                                    terminal.getFormattedErr().printf("%s\n", e);
+                                    terminal.ferr().printf("%s\n", e);
                                 }
                             }
                         });
                     } catch (Exception ex) {
-                        terminal.getFormattedErr().printf("%s\n", ex);
+                        terminal.ferr().printf("%s\n", ex);
                     }
                 }
             } finally {

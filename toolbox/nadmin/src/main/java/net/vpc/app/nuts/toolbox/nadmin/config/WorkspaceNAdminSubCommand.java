@@ -27,14 +27,14 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
         if (cmdLine.readAllOnce("show location")) {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
-                PrintStream out = session.getTerminal().getFormattedOut();
+                PrintStream out = session.getTerminal().fout();
                 out.printf("%s\n", context.getWorkspace().config().getWorkspaceLocation());
             }
             return true;
         }
         if (cmdLine.readAllOnce("check updates")) {
             if (cmdLine.isExecMode()) {
-                PrintStream out = context.getTerminal().getFormattedOut();
+                PrintStream out = context.getTerminal().fout();
                 if (context.getWorkspace()
                         .update()
                         .all()
@@ -51,7 +51,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             boolean force = true;
             String version = null;
             if (cmdLine.isExecMode()) {
-                PrintStream out = context.getTerminal().getFormattedOut();
+                PrintStream out = context.getTerminal().fout();
                 if (context.getWorkspace().update()
                                 .api()
                                 .setApiVersion(version)

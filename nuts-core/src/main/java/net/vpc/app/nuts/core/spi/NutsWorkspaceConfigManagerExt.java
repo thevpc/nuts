@@ -1,12 +1,17 @@
-package net.vpc.app.nuts.core;
+package net.vpc.app.nuts.core.spi;
 
 import net.vpc.app.nuts.*;
 
 import java.net.URL;
 import java.nio.file.Path;
+import net.vpc.app.nuts.core.DefaultNutsBootContext;
 
 public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManager {
 
+    public static NutsWorkspaceConfigManagerExt of(NutsWorkspaceConfigManager wsc){
+        return (NutsWorkspaceConfigManagerExt)wsc;
+    }
+    
     void setStartCreateTimeMillis(long currentTimeMillis);
 
     void onInitializeWorkspace(NutsWorkspaceOptions options, DefaultNutsBootContext defaultNutsBootContext, DefaultNutsBootContext defaultNutsBootContext1, URL[] bootClassWorldURLs, ClassLoader classLoader);
@@ -29,5 +34,17 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 
     void setBootRepositories(String value);
 
-    public boolean isGlobal();
+    NutsUserConfig getUser(String userId);
+
+    NutsUserConfig[] getUsers();
+
+    void setUser(NutsUserConfig config);
+
+    void removeUser(String userId);
+
+    void setUsers(NutsUserConfig[] users);
+
+    boolean isSecure();
+
+    void setSecure(boolean secure);
 }
