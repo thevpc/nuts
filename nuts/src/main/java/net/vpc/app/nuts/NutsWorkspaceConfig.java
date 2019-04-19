@@ -155,7 +155,7 @@ public final class NutsWorkspaceConfig implements Serializable {
         this.bootJavaCommand = other.getBootJavaCommand();
         this.bootJavaOptions = other.getBootJavaOptions();
         this.global = other.isGlobal();
-        this.repositories = other.getRepositories() == null ? null : new ArrayList<>(other.getRepositories());;
+        this.repositories = other.getRepositories() == null ? null : new ArrayList<>(other.getRepositories());
         this.users = other.getUsers() == null ? null : new ArrayList<>(other.getUsers());
         this.sdk = other.getSdk() == null ? null : new ArrayList<>(other.getSdk());
         this.extensions = other.getExtensions() == null ? null : new ArrayList<>(other.getExtensions());

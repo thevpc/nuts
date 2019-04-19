@@ -33,8 +33,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- *
+ * Find Result items from find command
+ * @see NutsFindCommand#getResultIds() 
  * @author vpc
+ * @param <T> Result Type
  * @since 0.5.4
  */
 public interface NutsFindResult<T> extends Iterable<T> {
@@ -66,7 +68,7 @@ public interface NutsFindResult<T> extends Iterable<T> {
      *
      * @return the first value or NutsNotFoundException if not found
      */
-    T item() throws NutsNotFoundException;
+    T required() throws NutsNotFoundException;
     
     /**
      *
@@ -79,7 +81,7 @@ public interface NutsFindResult<T> extends Iterable<T> {
      * to consume. An IllegalArgumentException is also thrown if the are more
      * than one element consumed
      */
-    T singleton() throws NutsTooManyElementsException, NutsMissingElementsException;
+    T singleton() throws NutsTooManyElementsException, NutsNotFoundException;
 
     /**
      *

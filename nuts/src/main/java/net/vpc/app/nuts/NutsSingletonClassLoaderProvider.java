@@ -36,7 +36,7 @@ package net.vpc.app.nuts;
  */
 public class NutsSingletonClassLoaderProvider implements NutsClassLoaderProvider {
 
-    private ClassLoader classLoader;
+    private final ClassLoader classLoader;
 
     public NutsSingletonClassLoaderProvider(ClassLoader classLoader) {
         this.classLoader = classLoader;

@@ -48,7 +48,7 @@ import java.util.logging.Formatter;
 public final class NutsLogUtils {
 
     private static boolean verboseLog = NutsUtils.getSystemBoolean("nuts.export.log.verbose", false);
-    public static final LogFormatter LOG_FORMATTER = new LogFormatter();
+    public static final Formatter LOG_FORMATTER = new LogFormatter();
     public static final Filter NUTS_LOG_FILTER = new Filter() {
         @Override
         public boolean isLoggable(LogRecord record) {
@@ -157,7 +157,7 @@ public final class NutsLogUtils {
                 parentFile.mkdirs();
             }
             updatedHandler = true;
-            Handler handler = null;
+            Handler handler;
             boolean consoleAdded = false;
             try {
                 if (!consoleOnly) {
@@ -239,8 +239,8 @@ public final class NutsLogUtils {
     private static final class LogFormatter extends Formatter {
 
         private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-        private Map<Level, String> logLevelCache = new HashMap<>();
-        private Map<String, String> classNameCache = new HashMap<>();
+        private final Map<Level, String> logLevelCache = new HashMap<>();
+        private final Map<String, String> classNameCache = new HashMap<>();
         private long lastMillis = -1;
 
         private String logLevel(Level l) {
@@ -323,9 +323,9 @@ public final class NutsLogUtils {
             if (record.getThrown() != null) {
                 try {
                     StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    record.getThrown().printStackTrace(pw);
-                    pw.close();
+                    try (PrintWriter pw = new PrintWriter(sw)) {
+                        record.getThrown().printStackTrace(pw);
+                    }
                     sb.append(sw.toString());
                 } catch (Exception ex) {
                     // ignore

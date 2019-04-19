@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -45,7 +44,7 @@ import java.util.logging.Logger;
 public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
     public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
-    private static final Logger log = Logger.getLogger(DefaultHttpTransportComponent.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultHttpTransportComponent.class.getName());
 
     @Override
     public int getSupportLevel(String url) {

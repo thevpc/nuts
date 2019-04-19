@@ -29,7 +29,7 @@ public class MvnClient {
                     NutsDefinition ff = ws.find().id(NET_VPC_APP_NUTS_MVN).setSession(session.copy())
                             .wired()
                             .setAcceptOptional(false)
-                            .includeDependencies().latestVersions().getResultDefinitions().item();
+                            .includeDependencies().latestVersions().getResultDefinitions().required();
                     for (NutsId nutsId : ws.find().id(ff.getId()).mainAndDependencies().getResultIds()) {
                         ws.fetch().id(nutsId).setSession(session)
                                 .wired()

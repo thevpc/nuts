@@ -745,29 +745,30 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             nutsListener.onInstall(def, reinstall, session);
         }
         def.getInstallation().setJustInstalled(true);
+        if (updateDefaultVersion) {
+            getInstalledRepository().setDefaultVersion(def.getId());
+        }
         if (trace) {
+            String setAsDefaultString="";
+            if(updateDefaultVersion){
+                setAsDefaultString=" set as ##default##.";
+            }
             if (!def.getInstallation().isInstalled()) {
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
-                        out.printf("%N installed ##successfully## from temporarily file %s\n", formatter().createIdFormat().toString(def.getId()), def.getPath());
+                        out.printf("%N installed ##successfully## from temporarily file %s.%N\n", formatter().createIdFormat().toString(def.getId()), def.getPath(),setAsDefaultString);
                     } else {
-                        out.printf("%N installed ##successfully## from remote repository\n", formatter().createIdFormat().toString(def.getId()));
+                        out.printf("%N installed ##successfully## from remote repository.%N\n", formatter().createIdFormat().toString(def.getId()),setAsDefaultString);
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
-                        out.printf("%N installed from local temporarily file %s \n", formatter().createIdFormat().toString(def.getId()), def.getPath());
+                        out.printf("%N installed from local temporarily file %s.%N\n", formatter().createIdFormat().toString(def.getId()), def.getPath(),setAsDefaultString);
                     } else {
-                        out.printf("%N installed from local repository\n", formatter().createIdFormat().toString(def.getId()));
+                        out.printf("%N installed from local repository.%N\n", formatter().createIdFormat().toString(def.getId()),setAsDefaultString);
                     }
                 }
             } else {
-                out.printf("%N installed ##successfully##\n", formatter().createIdFormat().toString(def.getId()));
-            }
-        }
-        if (updateDefaultVersion) {
-            getInstalledRepository().setDefaultVersion(def.getId());
-            if (trace) {
-                out.printf("Set default version as %N...\n", formatter().createIdFormat().toString(def.getId()));
+                out.printf("%N installed ##successfully##.%N\n", formatter().createIdFormat().toString(def.getId()),setAsDefaultString);
             }
         }
     }

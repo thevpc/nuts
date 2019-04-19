@@ -178,7 +178,7 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
                     .duplicateVersions(false)
                     .lenient(false)
                     .getResultDefinitions()
-                    .item();
+                    .required();
             NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, p.getRepository(), NutsFetchMode.LOCAL, fetchOptions);
             p.getRepository().undeploy(new DefaultNutsRepositoryUndeploymentOptions()
                     .id(p.getId())

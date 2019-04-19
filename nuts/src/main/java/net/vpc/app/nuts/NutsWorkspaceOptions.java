@@ -214,6 +214,7 @@ public final class NutsWorkspaceOptions implements Serializable, Cloneable {
     public NutsWorkspaceOptions() {
     }
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public NutsWorkspaceOptions(String[] args) {
         NutsArgumentsParser.parseNutsArguments(args, this);
     }

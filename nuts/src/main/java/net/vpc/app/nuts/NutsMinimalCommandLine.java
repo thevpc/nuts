@@ -284,7 +284,7 @@ public class NutsMinimalCommandLine {
     }
 
     public static class Arg {
-        private String line;
+        private final String line;
 
         public Arg(String line) {
             this.line = line;

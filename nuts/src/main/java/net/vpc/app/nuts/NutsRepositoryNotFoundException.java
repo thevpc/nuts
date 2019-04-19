@@ -35,7 +35,7 @@ package net.vpc.app.nuts;
  */
 public class NutsRepositoryNotFoundException extends NutsElementNotFoundException {
 
-    private String repository;
+    private final String repository;
 
     public NutsRepositoryNotFoundException(String repository) {
         super("No such repository " + (repository == null ? "<null>" : repository));

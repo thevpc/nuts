@@ -281,25 +281,23 @@ public final class NutsBootConfig implements Cloneable {
             }
             sb.append("workspace='").append(workspace).append('\'');
         }
-        for (int i = 0; i < NutsStoreLocation.values().length; i++) {
-            String s = getStoreLocation(NutsStoreLocation.values()[i]);
+        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+            String s = getStoreLocation(value);
             if (!NutsUtils.isBlank(s)) {
                 if (sb.length() > 0) {
                     sb.append(", ");
                 }
-                sb.append(NutsStoreLocation.values()[i].name().toLowerCase()).append("StoreLocation='").append(s).append('\'');
+                sb.append(value.name().toLowerCase()).append("StoreLocation='").append(s).append('\'');
             }
         }
-        for (int i = 0; i < NutsStoreLocationLayout.values().length; i++) {
-            for (int j = 0; j < NutsStoreLocation.values().length; j++) {
-                String s = getHomeLocation(NutsStoreLocationLayout.values()[i], NutsStoreLocation.values()[j]);
+        for (NutsStoreLocationLayout value : NutsStoreLocationLayout.values()) {
+            for (NutsStoreLocation value1 : NutsStoreLocation.values()) {
+                String s = getHomeLocation(value, value1);
                 if (!NutsUtils.isBlank(s)) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
-                    sb.append(NutsStoreLocation.values()[j].name().toLowerCase())
-                            .append(NutsUtils.capiltalize(NutsStoreLocationLayout.values()[i].name().toLowerCase()))
-                            .append("Home='").append(s).append('\'');
+                    sb.append(value1.name().toLowerCase()).append(NutsUtils.capiltalize(value.name().toLowerCase())).append("Home='").append(s).append('\'');
                 }
             }
         }

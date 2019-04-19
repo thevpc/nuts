@@ -48,6 +48,7 @@ public interface NutsWorkspaceInfoFormat {
 
     NutsWorkspaceInfoFormat parseOptions(String... o);
 
+    @Override
     String toString();
 
     String format();

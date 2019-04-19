@@ -888,7 +888,7 @@ public class DefaultNutsExecCommand implements NutsExecCommand {
         NutsId nid = ws.parser().parseId(commandName);
         def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(true).installed().getResultDefinitions().first();
         if (def == null) {
-            def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(false).wired().getResultDefinitions().item();
+            def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(false).wired().getResultDefinitions().required();
         }
         return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, embedded);
     }

@@ -37,10 +37,10 @@ import java.util.Arrays;
  */
 public final class NutsWorkspaceUpdateResult /*implements Iterable<NutsWorkspaceUpdateResultItem>*/ {
 
-    private NutsUpdateResult api;
-    private NutsUpdateResult runtime;
-    private NutsUpdateResult[] extensions;
-    private NutsUpdateResult[] components;
+    private final NutsUpdateResult api;
+    private final NutsUpdateResult runtime;
+    private final NutsUpdateResult[] extensions;
+    private final NutsUpdateResult[] components;
 
     public NutsWorkspaceUpdateResult(NutsUpdateResult api, NutsUpdateResult runtime, NutsUpdateResult[] extensions, NutsUpdateResult[] components) {
         this.api = api;

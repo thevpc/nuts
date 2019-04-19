@@ -58,7 +58,7 @@ import java.util.zip.ZipFile;
  */
 public class NutsBootWorkspace {
 
-    public static final Logger log = Logger.getLogger(NutsBootWorkspace.class.getName());
+    public static final Logger LOG = Logger.getLogger(NutsBootWorkspace.class.getName());
     private final long creationTime = System.currentTimeMillis();
     private NutsWorkspaceOptions options;
     //    private String home;
@@ -120,7 +120,7 @@ public class NutsBootWorkspace {
         newInstanceRequirements = 0;
         runningBootConfig = new NutsBootConfig(options);
         NutsLogUtils.bootstrap(options.getLogConfig());
-        log.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.getBootArgumentsString(true, true, true));
+        LOG.log(Level.CONFIG, "Open Nuts Workspace : {0}", options.getBootArgumentsString(true, true, true));
         loadedBootConfig = expandAllPaths(runningBootConfig);
         NutsLogUtils.prepare(options.getLogConfig(), NutsUtils.syspath(runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS) + "/net/vpc/app/nuts/nuts/" + actualVersion));
 
@@ -166,10 +166,10 @@ public class NutsBootWorkspace {
     }
 
     public String[] createProcessCommandLine() {
-        log.log(Level.FINE, "Running version {0}.  {1}", new Object[]{actualVersion, getRequirementsHelpString(true)});
+        LOG.log(Level.FINE, "Running version {0}.  {1}", new Object[]{actualVersion, getRequirementsHelpString(true)});
         StringBuilder errors = new StringBuilder();
         if (NutsConstants.Versions.LATEST.equalsIgnoreCase(requiredBootVersion) || NutsConstants.Versions.RELEASE.equalsIgnoreCase(requiredBootVersion)) {
-            String releaseVersion = null;
+            String releaseVersion;
             try {
                 String NUTS_ID_BOOT_API_PATH = "/" + NutsConstants.Ids.NUTS_API.replaceAll("[.:]", "/");
                 releaseVersion = NutsUtils.resolveMavenReleaseVersion(NutsConstants.BootsrapURLs.REMOTE_NUTS_GIT, NUTS_ID_BOOT_API_PATH);
@@ -253,7 +253,7 @@ public class NutsBootWorkspace {
         if (recover) {
             if (!NutsUtils.isBlank(info.bootConfig0.getRuntimeId())
                     && !NutsUtils.isBlank(info.bootConfig0.getRuntimeDependencies())) {
-                log.log(Level.CONFIG, "[RECOV. ] Invalidating old  runtime.");
+                LOG.log(Level.CONFIG, "[RECOV. ] Invalidating old  runtime.");
             }
             info.bootConfig0.setRuntimeId(null);
             info.bootConfig0.setRuntimeDependencies(null);
@@ -264,7 +264,7 @@ public class NutsBootWorkspace {
             info.bootConfig0 = buildNutsBootConfig(info.bootConfig0, recover);
         }
         if (info.bootConfig0 != null && !actualVersion.equals(info.bootConfig0.getApiVersion())) {
-            log.log(Level.CONFIG, "Nuts Workspace version {0} does not match runtime version {1}. Resolving best dependencies.", new Object[]{info.bootConfig0.getApiVersion(), actualVersion});
+            LOG.log(Level.CONFIG, "Nuts Workspace version {0} does not match runtime version {1}. Resolving best dependencies.", new Object[]{info.bootConfig0.getApiVersion(), actualVersion});
             info.actualBootConfig = buildNutsBootConfig(info.bootConfig0, recover);
         } else {
             info.actualBootConfig = info.bootConfig0;
@@ -275,7 +275,7 @@ public class NutsBootWorkspace {
         }
 
         String workspaceBootLibFolder = runningBootConfig.getBootsrap();
-        NutsBootId bootRuntime = null;
+        NutsBootId bootRuntime;
         if (NutsUtils.isBlank(info.actualBootConfig.getRuntimeId())) {
             bootRuntime = NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + info.actualBootConfig.getRuntimeId());
         } else if (info.actualBootConfig.getRuntimeId().contains("#")) {
@@ -299,10 +299,10 @@ public class NutsBootWorkspace {
             allExtensionFiles.put(id.toString(), f);
         }
         info.bootClassWorldURLs = resolveClassWorldURLs(allExtensionFiles.values());
-        log.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : {1}", new Object[]{info.bootClassWorldURLs.length, Arrays.asList(info.bootClassWorldURLs)});
-        if (log.isLoggable(Level.CONFIG)) {
+        LOG.log(Level.CONFIG, "Loading Nuts ClassWorld from {0} jars : {1}", new Object[]{info.bootClassWorldURLs.length, Arrays.asList(info.bootClassWorldURLs)});
+        if (LOG.isLoggable(Level.CONFIG)) {
             for (URL bootClassWorldURL : info.bootClassWorldURLs) {
-                log.log(Level.CONFIG, "\t {0}", new Object[]{NutsUtils.formatURL(bootClassWorldURL)});
+                LOG.log(Level.CONFIG, "\t {0}", new Object[]{NutsUtils.formatURL(bootClassWorldURL)});
             }
         }
         info.workspaceClassLoader = info.bootClassWorldURLs.length == 0 ? getContextClassLoader() : new URLClassLoader(info.bootClassWorldURLs, getContextClassLoader());
@@ -321,7 +321,7 @@ public class NutsBootWorkspace {
             for (URL url : info.bootClassWorldURLs) {
                 System.err.printf("\t %s\n", NutsUtils.formatURL(url));
             }
-            log.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(info.bootClassWorldURLs));
+            LOG.log(Level.SEVERE, "Unable to load Workspace Component from ClassPath : {0}", Arrays.asList(info.bootClassWorldURLs));
             throw new NutsInvalidWorkspaceException(this.runningBootConfig.getWorkspace(), "Unable to load Workspace Component from ClassPath : " + Arrays.asList(info.bootClassWorldURLs));
         }
         ((NutsWorkspaceImpl) info.nutsWorkspace).initializeWorkspace(factoryInstance, info.actualBootConfig, info.bootConfig0,
@@ -350,7 +350,7 @@ public class NutsBootWorkspace {
         try {
             workspace = this.openWorkspace();
         } catch (NutsException ex) {
-            log.log(Level.SEVERE, "Open Workspace Failed", ex);
+            LOG.log(Level.SEVERE, "Open Workspace Failed", ex);
             switch (this.getOptions().getBootCommand()) {
                 case VERSION:
                 case HELP: {
@@ -416,33 +416,33 @@ public class NutsBootWorkspace {
 //        System.out.println("openWorkspace() ===> ws=" + NutsUtils.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
 //        System.out.println("openWorkspace() ===> var=" + NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.VAR), runningBootConfig.getStoreLocation(NutsStoreLocation.VAR)));
 //        System.out.println("openWorkspace() ===> programs=" + NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.PROGRAMS), runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS)));
-        if (log.isLoggable(Level.CONFIG)) {
-            log.log(Level.CONFIG, "Open Workspace with command line  : {0}", options.getBootArgumentsString(true, true, true));
-            log.log(Level.CONFIG, "Open Workspace with config        : ");
-            log.log(Level.CONFIG, "\t nuts-api-version               : {0}", actualVersion);
-            log.log(Level.CONFIG, "\t nuts-workspace                 : {0}", NutsUtils.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
-            log.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", NutsUtils.formatLogValue(options.getStoreLocationStrategy(), runningBootConfig.getStoreLocationStrategy()));
-            log.log(Level.CONFIG, "\t nuts-repos-store-strategy      : {0}", NutsUtils.formatLogValue(options.getRepositoryStoreLocationStrategy(), runningBootConfig.getRepositoryStoreLocationStrategy()));
-            log.log(Level.CONFIG, "\t nuts-store-layout              : {0}", NutsUtils.formatLogValue(options.getStoreLocationLayout(), runningBootConfig.getStoreLocationLayout()));
-            log.log(Level.CONFIG, "\t nuts-store-programs            : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.PROGRAMS), runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS)));
-            log.log(Level.CONFIG, "\t nuts-store-config              : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CONFIG), runningBootConfig.getStoreLocation(NutsStoreLocation.CONFIG)));
-            log.log(Level.CONFIG, "\t nuts-store-var                 : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.VAR), runningBootConfig.getStoreLocation(NutsStoreLocation.VAR)));
-            log.log(Level.CONFIG, "\t nuts-store-logs                : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LOGS), runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS)));
-            log.log(Level.CONFIG, "\t nuts-store-temp                : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.TEMP), runningBootConfig.getStoreLocation(NutsStoreLocation.TEMP)));
-            log.log(Level.CONFIG, "\t nuts-store-cache               : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CACHE), runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)));
-            log.log(Level.CONFIG, "\t nuts-store-lib                 : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LIB), runningBootConfig.getStoreLocation(NutsStoreLocation.LIB)));
-            log.log(Level.CONFIG, "\t option-recover                 : {0}", (options.getInitMode() == null ? "" : options.getInitMode().name().toLowerCase()));
-            log.log(Level.CONFIG, "\t option-read-only               : {0}", options.isReadOnly());
-            log.log(Level.CONFIG, "\t option-open-mode               : {0}", options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode());
-            log.log(Level.CONFIG, "\t java-home                      : {0}", System.getProperty("java.home"));
-            log.log(Level.CONFIG, "\t java-classpath                 : {0}", System.getProperty("java.class.path"));
-            log.log(Level.CONFIG, "\t java-library-path              : {0}", System.getProperty("java.library.path"));
-            log.log(Level.CONFIG, "\t os-name                        : {0}", System.getProperty("os.name"));
-            log.log(Level.CONFIG, "\t os-arch                        : {0}", System.getProperty("os.arch"));
-            log.log(Level.CONFIG, "\t os-version                     : {0}", System.getProperty("os.version"));
-            log.log(Level.CONFIG, "\t user-name                      : {0}", System.getProperty("user.name"));
-            log.log(Level.CONFIG, "\t user-dir                       : {0}", System.getProperty("user.dir"));
-            log.log(Level.CONFIG, "\t user-home                      : {0}", System.getProperty("user.home"));
+        if (LOG.isLoggable(Level.CONFIG)) {
+            LOG.log(Level.CONFIG, "Open Workspace with command line  : {0}", options.getBootArgumentsString(true, true, true));
+            LOG.log(Level.CONFIG, "Open Workspace with config        : ");
+            LOG.log(Level.CONFIG, "\t nuts-api-version               : {0}", actualVersion);
+            LOG.log(Level.CONFIG, "\t nuts-workspace                 : {0}", NutsUtils.formatLogValue(options.getWorkspace(), runningBootConfig.getWorkspace()));
+            LOG.log(Level.CONFIG, "\t nuts-store-strategy            : {0}", NutsUtils.formatLogValue(options.getStoreLocationStrategy(), runningBootConfig.getStoreLocationStrategy()));
+            LOG.log(Level.CONFIG, "\t nuts-repos-store-strategy      : {0}", NutsUtils.formatLogValue(options.getRepositoryStoreLocationStrategy(), runningBootConfig.getRepositoryStoreLocationStrategy()));
+            LOG.log(Level.CONFIG, "\t nuts-store-layout              : {0}", NutsUtils.formatLogValue(options.getStoreLocationLayout(), runningBootConfig.getStoreLocationLayout()));
+            LOG.log(Level.CONFIG, "\t nuts-store-programs            : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.PROGRAMS), runningBootConfig.getStoreLocation(NutsStoreLocation.PROGRAMS)));
+            LOG.log(Level.CONFIG, "\t nuts-store-config              : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CONFIG), runningBootConfig.getStoreLocation(NutsStoreLocation.CONFIG)));
+            LOG.log(Level.CONFIG, "\t nuts-store-var                 : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.VAR), runningBootConfig.getStoreLocation(NutsStoreLocation.VAR)));
+            LOG.log(Level.CONFIG, "\t nuts-store-logs                : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LOGS), runningBootConfig.getStoreLocation(NutsStoreLocation.LOGS)));
+            LOG.log(Level.CONFIG, "\t nuts-store-temp                : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.TEMP), runningBootConfig.getStoreLocation(NutsStoreLocation.TEMP)));
+            LOG.log(Level.CONFIG, "\t nuts-store-cache               : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.CACHE), runningBootConfig.getStoreLocation(NutsStoreLocation.CACHE)));
+            LOG.log(Level.CONFIG, "\t nuts-store-lib                 : {0}", NutsUtils.formatLogValue(options.getStoreLocation(NutsStoreLocation.LIB), runningBootConfig.getStoreLocation(NutsStoreLocation.LIB)));
+            LOG.log(Level.CONFIG, "\t option-recover                 : {0}", (options.getInitMode() == null ? "" : options.getInitMode().name().toLowerCase()));
+            LOG.log(Level.CONFIG, "\t option-read-only               : {0}", options.isReadOnly());
+            LOG.log(Level.CONFIG, "\t option-open-mode               : {0}", options.getOpenMode() == null ? NutsWorkspaceOpenMode.OPEN_OR_CREATE : options.getOpenMode());
+            LOG.log(Level.CONFIG, "\t java-home                      : {0}", System.getProperty("java.home"));
+            LOG.log(Level.CONFIG, "\t java-classpath                 : {0}", System.getProperty("java.class.path"));
+            LOG.log(Level.CONFIG, "\t java-library-path              : {0}", System.getProperty("java.library.path"));
+            LOG.log(Level.CONFIG, "\t os-name                        : {0}", System.getProperty("os.name"));
+            LOG.log(Level.CONFIG, "\t os-arch                        : {0}", System.getProperty("os.arch"));
+            LOG.log(Level.CONFIG, "\t os-version                     : {0}", System.getProperty("os.version"));
+            LOG.log(Level.CONFIG, "\t user-name                      : {0}", System.getProperty("user.name"));
+            LOG.log(Level.CONFIG, "\t user-dir                       : {0}", System.getProperty("user.dir"));
+            LOG.log(Level.CONFIG, "\t user-home                      : {0}", System.getProperty("user.home"));
         }
         OpenWorkspaceData info = new OpenWorkspaceData();
         try {
@@ -469,9 +469,7 @@ public class NutsBootWorkspace {
                 }
             }
             return info.nutsWorkspace;
-        } catch (NutsReadOnlyException ex) {
-            throw ex;
-        } catch (NutsUserCancelException ex) {
+        } catch (NutsReadOnlyException | NutsUserCancelException ex) {
             throw ex;
         } catch (Throwable ex) {
             if (info.bootConfig0 == null) {
@@ -503,7 +501,7 @@ public class NutsBootWorkspace {
         for (File file : list) {
             if (file != null) {
                 if (isLoadedClassPath(file)) {
-                    log.log(Level.WARNING, "File will not be loaded (already in classloader) : {0}", file);
+                    LOG.log(Level.WARNING, "File will not be loaded (already in classloader) : {0}", file);
                 } else {
                     try {
                         urls.add(file.toURI().toURL());
@@ -556,16 +554,16 @@ public class NutsBootWorkspace {
                         if (!NutsUtils.isBlank(wruntimeId) && !NutsUtils.isBlank(wrepositories)) {
                             runtimeId = wruntimeId;
                             repositories = wrepositories;
-                            if (log.isLoggable(Level.CONFIG)) {
-                                log.log(Level.CONFIG, "Boot {0} with repositories {1}", new Object[]{runtimeId, repositories});
+                            if (LOG.isLoggable(Level.CONFIG)) {
+                                LOG.log(Level.CONFIG, "Boot {0} with repositories {1}", new Object[]{runtimeId, repositories});
                             }
                             break;
                             //no need to log, already done in NutsUtils. loadURLProperties
                         }
                     }
                 } else {
-                    if (log.isLoggable(Level.CONFIG)) {
-                        log.log(Level.CONFIG, "[ERROR  ] Loading props file from {0}", urlString);
+                    if (LOG.isLoggable(Level.CONFIG)) {
+                        LOG.log(Level.CONFIG, "[ERROR  ] Loading props file from {0}", urlString);
                     }
                 }
             }
@@ -573,7 +571,7 @@ public class NutsBootWorkspace {
 
         if (NutsUtils.isBlank(runtimeId)) {
             runtimeId = NutsConstants.Ids.NUTS_RUNTIME + "#" + apiId.getVersion() + ".0";
-            log.log(Level.CONFIG, "[ERROR  ] Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
+            LOG.log(Level.CONFIG, "[ERROR  ] Failed to load boot props file from boot repositories. Considering defaults : {1}", new Object[]{bootAPIPropertiesPath, runtimeId});
         }
         NutsBootId _runtimeId = NutsBootId.parse(runtimeId);
 
@@ -599,24 +597,24 @@ public class NutsBootWorkspace {
                                 .setRuntimeId(id + "#" + version)
                                 .setRuntimeDependencies(dependencies)
                                 .setRepositories(repositories0 + ";" + repositories);
-                        log.log(Level.CONFIG, "[SUCCESS] Loaded config from  {0} as {1}", new Object[]{cacheFile.getPath(), goodCp});
+                        LOG.log(Level.CONFIG, "[SUCCESS] Loaded config from  {0} as {1}", new Object[]{cacheFile.getPath(), goodCp});
                         goodCp = bootConfig0.copy()
                                 .setApiVersion(apiId.getVersion())
                                 .setRuntimeId(goodCp.getRuntimeId())
                                 .setRuntimeDependencies(goodCp.getRuntimeDependencies())
                                 .setRepositories(goodCp.getRepositories());
                     } else {
-                        log.log(Level.CONFIG, "[ERROR  ] Loaded config from  {0}. missing id or version", new Object[]{cacheFile.getPath()});
+                        LOG.log(Level.CONFIG, "[ERROR  ] Loaded config from  {0}. missing id or version", new Object[]{cacheFile.getPath()});
                     }
                 }
             } catch (Exception ex) {
-                log.log(Level.CONFIG, "[ERROR  ] Failed to load runtime props file from  {0}", new Object[]{cacheFile.getPath()});
+                LOG.log(Level.CONFIG, "[ERROR  ] Failed to load runtime props file from  {0}", new Object[]{cacheFile.getPath()});
             }
         }
 
         if (goodCp == null) {
-            String runtimeVersion = null;
-            String runtimeId0 = null;
+            String runtimeVersion;
+            String runtimeId0;
             if (this.runtimeId != null) {
                 runtimeId0 = this.runtimeId;
                 runtimeVersion = NutsBootId.parse(this.runtimeId).version;
@@ -625,7 +623,7 @@ public class NutsBootWorkspace {
                 runtimeVersion = NutsBootId.parse(bootAPI).version + ".0";
                 runtimeId0 = NutsConstants.Ids.NUTS_RUNTIME + "#" + runtimeVersion;
             }
-            log.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
+            LOG.log(Level.CONFIG, "Loading Default Runtime ClassPath {0}", runtimeVersion);
             LinkedHashSet<String> jarRepositories = new LinkedHashSet();
             if (!NutsUtils.getSystemBoolean("nuts.boot.no-m2", false)) {
                 jarRepositories.add(NutsConstants.BootsrapURLs.LOCAL_MAVEN_CENTRAL);
@@ -668,9 +666,9 @@ public class NutsBootWorkspace {
                             p.setProperty("repositories", goodCp.getRepositories());
                             NutsUtils.storeProperties(p, cacheFile);
                             if (!cacheExists) {
-                                log.log(Level.CONFIG, "[CACHED ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
+                                LOG.log(Level.CONFIG, "[CACHED ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
                             } else if (recover) {
-                                log.log(Level.CONFIG, "[RECOV. ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
+                                LOG.log(Level.CONFIG, "[RECOV. ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
                             }
                         }
                         //cache boot-runtime properties
@@ -686,15 +684,15 @@ public class NutsBootWorkspace {
                             p.setProperty("project.dependencies.compile", goodCp.getRuntimeDependencies() == null ? "" : goodCp.getRuntimeDependencies());
                             NutsUtils.storeProperties(p, cacheFile);
                             if (!cacheExists) {
-                                log.log(Level.CONFIG, "[CACHED ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
+                                LOG.log(Level.CONFIG, "[CACHED ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
                             } else {
-                                log.log(Level.CONFIG, "[RECOV. ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
+                                LOG.log(Level.CONFIG, "[RECOV. ] Cached prp file {0}", new Object[]{cacheFile.getPath()});
                             }
                         }
                         break;
                     }
                 } else {
-                    log.log(Level.CONFIG, "[ERROR  ] Failed to load runtime jar dependencies from  {0}", urlString2);
+                    LOG.log(Level.CONFIG, "[ERROR  ] Failed to load runtime jar dependencies from  {0}", urlString2);
                 }
             }
         }
@@ -842,10 +840,10 @@ public class NutsBootWorkspace {
             urlPath += path;
             try {
                 NutsUtils.copy(new URL(urlPath), to);
-                log.log(Level.CONFIG, "[SUCCESS] Loading  {0}", new Object[]{urlPath});
+                LOG.log(Level.CONFIG, "[SUCCESS] Loading  {0}", new Object[]{urlPath});
                 ok = to;
             } catch (IOException ex) {
-                log.log(Level.CONFIG, "[ERROR  ] Loading  {0}", new Object[]{urlPath});
+                LOG.log(Level.CONFIG, "[ERROR  ] Loading  {0}", new Object[]{urlPath});
                 //not found
             }
             return ok;
@@ -860,11 +858,11 @@ public class NutsBootWorkspace {
             if (file.isFile()) {
                 ff = file;
             } else {
-                log.log(Level.CONFIG, "[ERROR  ] Locating {0}", new Object[]{file});
+                LOG.log(Level.CONFIG, "[ERROR  ] Locating {0}", new Object[]{file});
             }
         } else {
             File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            log.log(Level.CONFIG, "[ERROR  ] Locating {0} . Repository is not a valid folder : {1}", new Object[]{file, repoFolder});
+            LOG.log(Level.CONFIG, "[ERROR  ] Locating {0} . Repository is not a valid folder : {1}", new Object[]{file, repoFolder});
         }
 
         if (ff != null) {
@@ -885,14 +883,14 @@ public class NutsBootWorkspace {
                     }
                     if (to.isFile()) {
                         NutsUtils.copy(ff, to);
-                        log.log(Level.CONFIG, "[RECOV. ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
+                        LOG.log(Level.CONFIG, "[RECOV. ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     } else {
                         NutsUtils.copy(ff, to);
-                        log.log(Level.CONFIG, "[CACHED ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
+                        LOG.log(Level.CONFIG, "[CACHED ] Cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     }
                     return to;
                 } catch (IOException ex) {
-                    log.log(Level.CONFIG, "[ERROR  ] Caching file {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+                    LOG.log(Level.CONFIG, "[ERROR  ] Caching file {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
                     //not found
                 }
                 return ff;
@@ -925,7 +923,7 @@ public class NutsBootWorkspace {
                                     return false;
                                 }
                                 Class<?> aClass = contextClassLoader.loadClass(clz);
-                                log.log(Level.FINEST, "Class {0} Loaded successfully from {1}", new Object[]{aClass, file});
+                                LOG.log(Level.FINEST, "Class {0} Loaded successfully from {1}", new Object[]{aClass, file});
                                 return true;
                             } catch (ClassNotFoundException e) {
                                 return false;
@@ -1010,8 +1008,8 @@ public class NutsBootWorkspace {
 
     private void runWorkspaceCommand(NutsWorkspace workspace, String message) {
         NutsWorkspaceOptions o = this.getOptions();
-        if (log.isLoggable(Level.CONFIG)) {
-            log.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
+        if (LOG.isLoggable(Level.CONFIG)) {
+            LOG.log(Level.CONFIG, "Running workspace command : {0}", o.getBootCommand());
         }
         switch (o.getBootCommand()) {
             case VERSION: {
@@ -1035,8 +1033,8 @@ public class NutsBootWorkspace {
                 return;
             }
             case RESET: {
-                if (log.isLoggable(Level.SEVERE)) {
-                    log.log(Level.SEVERE, message);
+                if (LOG.isLoggable(Level.SEVERE)) {
+                    LOG.log(Level.SEVERE, message);
                 }
                 actionReset(workspace, getOptions().getApplicationArguments());
                 return;
@@ -1087,15 +1085,18 @@ public class NutsBootWorkspace {
                                 break;
                             }
                             case "all": {
-                                for (NutsStoreLocation v : NutsStoreLocation.values()) {
-                                    toDelete.add(v);
-                                }
+                                toDelete.addAll(Arrays.asList(NutsStoreLocation.values()));
                                 break;
                             }
                         }
                     }
                 }
             }
+        }
+        if (toDelete.isEmpty()) {
+            toDelete.add(NutsStoreLocation.CACHE);
+            toDelete.add(NutsStoreLocation.TEMP);
+            toDelete.add(NutsStoreLocation.LOGS);
         }
 
         boolean yes = o.isYes();
@@ -1114,17 +1115,17 @@ public class NutsBootWorkspace {
             force = true;
         }
         List<File> folders = new ArrayList<>();
-        if (log.isLoggable(Level.CONFIG)) {
-            log.log(Level.CONFIG, "Deleting all folders for Workspace : {0}", runningBootConfig.getWorkspace());
+        if (LOG.isLoggable(Level.CONFIG)) {
+            LOG.log(Level.CONFIG, "Deleting all folders for Workspace : {0}", runningBootConfig.getWorkspace());
         }
         if (conf != null) {
             folders.add(conf.getWorkspaceLocation().toFile());
-            for (NutsStoreLocation value : NutsStoreLocation.values()) {
+            for (NutsStoreLocation value : toDelete) {
                 folders.add(conf.getStoreLocation(value).toFile());
             }
         } else {
             folders.add(new File(runningBootConfig.getWorkspace()));
-            for (NutsStoreLocation value : NutsStoreLocation.values()) {
+            for (NutsStoreLocation value : toDelete) {
                 folders.add(new File(runningBootConfig.getStoreLocation(value)));
             }
         }
@@ -1138,8 +1139,8 @@ public class NutsBootWorkspace {
 
     private void fallbackInstallActionUnavailable(String message) {
         System.out.println(message);
-        if (log.isLoggable(Level.SEVERE)) {
-            log.log(Level.SEVERE, message);
+        if (LOG.isLoggable(Level.SEVERE)) {
+            LOG.log(Level.SEVERE, message);
         }
     }
 

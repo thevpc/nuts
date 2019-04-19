@@ -29,8 +29,6 @@
  */
 package net.vpc.app.nuts;
 
-import java.util.Arrays;
-
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and Nuts
  * class is it's main class for creating and opening nuts workspaces. Created by
@@ -40,6 +38,9 @@ import java.util.Arrays;
  */
 public class Nuts {
 
+    /**
+     * Running Nuts version
+     */
     public static String version;
 
     static {
@@ -65,6 +66,7 @@ public class Nuts {
      *
      * @param args main arguments
      */
+    @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
         try {
             runWorkspace(args);
@@ -72,9 +74,9 @@ public class Nuts {
         } catch (Exception ex) {
             int errorCode = NutsExecutionException.DEFAULT_ERROR_EXIT_CODE;
             boolean showTrace = false;
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].startsWith("-")) {
-                    if (args[i].equals("--verbose") || args[i].equals("--debug")) {
+            for (String arg : args) {
+                if (arg.startsWith("-")) {
+                    if (arg.equals("--verbose") || arg.equals("--debug")) {
                         showTrace = true;
                     }
                 } else {
@@ -113,7 +115,7 @@ public class Nuts {
     public static NutsWorkspace openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsExeption {
         long startTime = System.currentTimeMillis();
 //        System.out.println("OPEN INHERITED : "+NutsMinimalCommandLine.escapeArguments(args));
-        NutsBootWorkspace boot = null;
+        NutsBootWorkspace boot;
         String d = System.getProperty("nuts.boot.args");
         if (d != null) {
 //                System.out.println("OPEN INHERITED : GOT FROM PROPS : -Dnuts.boot.args="+d);

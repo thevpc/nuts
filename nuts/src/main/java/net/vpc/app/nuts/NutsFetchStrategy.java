@@ -47,7 +47,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
     LOCAL(true, NutsFetchMode.LOCAL),
     REMOTE(true, NutsFetchMode.REMOTE);
 
-    private boolean stopFast;
+    private final boolean stopFast;
     private NutsFetchMode[] all;
 
     private NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {

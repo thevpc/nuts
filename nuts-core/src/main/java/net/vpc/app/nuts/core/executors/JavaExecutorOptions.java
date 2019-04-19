@@ -223,7 +223,7 @@ public class JavaExecutorOptions {
         }
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWs()
-                    .find().id(nutsId).setSession(this.session).setIncludeInstallInformation(true).latestVersions().getResultDefinitions().item();
+                    .find().id(nutsId).setSession(this.session).setIncludeInstallInformation(true).latestVersions().getResultDefinitions().required();
             classPath.add(f.getPath().toString());
         }
     }
