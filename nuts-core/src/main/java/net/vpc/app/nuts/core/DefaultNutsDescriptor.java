@@ -145,6 +145,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
     }
 
+    @Override
     public String getAlternative() {
         return alternative;
     }
@@ -219,14 +220,17 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return arch;
     }
 
+    @Override
     public String[] getOs() {
         return os;
     }
 
+    @Override
     public String[] getOsdist() {
         return osdist;
     }
 
+    @Override
     public String[] getPlatform() {
         return platform;
     }
