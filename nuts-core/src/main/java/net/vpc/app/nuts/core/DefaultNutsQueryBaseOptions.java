@@ -6,14 +6,18 @@
 package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsFetchStrategy;
 import net.vpc.app.nuts.NutsOutputFormat;
+import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormat;
+import net.vpc.app.nuts.core.util.FailsafeNutsTraceFormat;
 
 /**
  *
@@ -36,11 +40,15 @@ public class DefaultNutsQueryBaseOptions<T> {
     private Path location = null;
     private boolean trace = false;
     private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
+    private boolean lenient = false;
+    private final List<String> repos = new ArrayList<>();
+    protected FailsafeNutsTraceFormat traceFormat = new FailsafeNutsTraceFormat(null, DefaultNutsFindTraceFormat.INSTANCE);
 
     //@Override
     protected T copyFrom0(DefaultNutsQueryBaseOptions other) {
         if (other != null) {
             this.acceptOptional = other.getAcceptOptional();
+            this.lenient = other.isLenient();
             this.session = other.getSession();
             this.mode = other.getFetchStrategy();
             this.indexed = other.getIndexed();
@@ -55,6 +63,9 @@ public class DefaultNutsQueryBaseOptions<T> {
             this.transitive = other.isTransitive();
             this.cached = other.isCached();
             this.location = other.getLocation();
+            this.traceFormat.setOther(other.traceFormat.getOther());
+            this.repos.clear();
+            this.repos.addAll(Arrays.asList(other.getRepositories()));
         }
         return (T) this;
     }
@@ -439,4 +450,66 @@ public class DefaultNutsQueryBaseOptions<T> {
         return trace(true);
     }
 
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    public T setLenient(boolean ignoreNotFound) {
+        this.lenient = ignoreNotFound;
+        return (T) this;
+    }
+
+    public T lenient() {
+        return setLenient(true);
+    }
+
+    public T lenient(boolean lenient) {
+        return setLenient(lenient);
+    }
+
+    public T repositories(Collection<String> value) {
+        return addRepositories(value);
+    }
+
+    public T repositories(String... values) {
+        return addRepositories(values);
+    }
+
+    public T addRepositories(Collection<String> value) {
+        if (value != null) {
+            addRepositories(value.toArray(new String[0]));
+        }
+        return (T) this;
+    }
+
+    public T removeRepository(String value) {
+        repos.remove(value);
+        return (T) this;
+    }
+
+    public T addRepositories(String... value) {
+        if (value != null) {
+            repos.addAll(Arrays.asList(value));
+        }
+        return (T) this;
+    }
+
+    public T clearRepositories() {
+        repos.clear();
+        return (T) this;
+    }
+
+    public T addRepository(String value) {
+        repos.add(value);
+        return (T) this;
+    }
+
+    public T repository(String value) {
+        return addRepository(value);
+    }
+
+    public String[] getRepositories() {
+        return repos.toArray(new String[0]);
+    }
+    
 }

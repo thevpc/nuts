@@ -222,7 +222,7 @@ public interface NutsFindCommand {
 
     String[] getPackaging();
 
-    String[] getRepos();
+    String[] getRepositories();
 
     /**
      * when true, NutsNotFoundException instances are ignored

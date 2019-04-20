@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core.filters.repository;
 
+import java.util.Collection;
 import java.util.HashSet;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
@@ -13,7 +14,7 @@ public class DefaultNutsRepositoryFilter implements NutsRepositoryFilter, Simpli
 
     private final Set<String> repos;
 
-    public DefaultNutsRepositoryFilter(Set<String> repos) {
+    public DefaultNutsRepositoryFilter(Collection<String> repos) {
         this.repos = new HashSet<>();
         for (String repo : repos) {
             if (!CoreStringUtils.isBlank(repo)) {

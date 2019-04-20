@@ -7,25 +7,23 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.*;
 import static net.vpc.app.nuts.core.DefaultNutsWorkspace.NOT_INSTALLED;
 import net.vpc.app.nuts.core.filters.repository.DefaultNutsRepositoryFilter;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormat;
-import net.vpc.app.nuts.core.util.FailsafeNutsTraceFormat;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
@@ -35,9 +33,6 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     public static final Logger log = Logger.getLogger(DefaultNutsFetchCommand.class.getName());
     private final DefaultNutsWorkspace ws;
     private NutsId id;
-    private boolean lenient;
-    private Set<String> repos = new HashSet<String>();
-    private FailsafeNutsTraceFormat traceFormat = new FailsafeNutsTraceFormat(null, DefaultNutsFindTraceFormat.INSTANCE);
 
     public DefaultNutsFetchCommand(DefaultNutsWorkspace ws) {
         this.ws = ws;
@@ -84,28 +79,12 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     }
 
     @Override
-    public NutsFetchCommand setLenient(boolean lenient) {
-        this.lenient = lenient;
-        return this;
-    }
-
-    @Override
-    public NutsFetchCommand lenient(boolean lenient) {
-        return setLenient(lenient);
-    }
-
-    @Override
-    public NutsFetchCommand lenient() {
-        return lenient(true);
-    }
-
-    @Override
     public NutsDefinition getResultDefinition() {
         try {
             NutsDefinition def = fetchDefinition(id, this);
             return def;
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -118,7 +97,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             NutsDefinition def = fetchDefinition(id, copy().setIncludeContent(true).setEffective(false).setIncludeInstallInformation(false));
             return def.getContent();
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -134,7 +113,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
             return def.getId();
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -153,7 +132,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 throw new UncheckedIOException(ex);
             }
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -167,7 +146,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     ws.formatter().createDescriptorFormat().toString(getResultDescriptor()).getBytes()
             ));
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -183,7 +162,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
             return def.getDescriptor();
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -200,7 +179,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
             return p;
         } catch (NutsNotFoundException ex) {
-            if (lenient) {
+            if (isLenient()) {
                 return null;
             }
             throw ex;
@@ -449,7 +428,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsFetchCommand options, NutsFetchMode mode) {
         options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsRepositoryFilter repositoryFilter = new DefaultNutsRepositoryFilter(repos).simplify();
+        NutsRepositoryFilter repositoryFilter = new DefaultNutsRepositoryFilter(Arrays.asList(getRepositories())).simplify();
         if (mode == NutsFetchMode.INSTALLED) {
             if (id.getVersion().isBlank()) {
                 String v = dws.getInstalledRepository().getDefaultVersion(id);
@@ -532,37 +511,6 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     }
 
     @Override
-    public NutsFetchCommand removeRepository(String value) {
-        repos.remove(value);
-        return this;
-    }
-
-    @Override
-    public NutsFetchCommand addRepositories(String... value) {
-        if (value != null) {
-            repos.addAll(Arrays.asList(value));
-        }
-        return this;
-    }
-
-    @Override
-    public NutsFetchCommand clearRepositories() {
-        repos.clear();
-        return this;
-    }
-
-    @Override
-    public NutsFetchCommand addRepository(String value) {
-        repos.add(value);
-        return this;
-    }
-
-    @Override
-    public NutsFetchCommand repository(String value) {
-        return addRepository(value);
-    }
-
-    @Override
     public NutsFetchCommand run() {
         getResultDefinition();
         return this;
@@ -598,8 +546,86 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     this.addRepository(cmd.getValueFor(a).getString());
                     break;
                 }
+                case "-s": 
                 case "--scope": {
                     this.addScope(NutsDependencyScope.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
+                    break;
+                }
+                case "-f": 
+                case "--fetch": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
+                    break;
+                }
+                case "--anywhere": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
+                    break;
+                }
+                case "--installed": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.INSTALLED);
+                    break;
+                }
+                case "--local": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.LOCAL);
+                    break;
+                }
+                case "--offline": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.OFFLINE);
+                    break;
+                }
+                case "--online": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.ONLINE);
+                    break;
+                }
+                case "--remote": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.REMOTE);
+                    break;
+                }
+                case "--wired": 
+                {
+                    this.setFetchStratery(NutsFetchStrategy.WIRED);
+                    break;
+                }
+                case "--optional": {
+                    NutsCommandArg v = cmd.getValueFor(a);
+                    if (CoreCommonUtils.isYes(v.getString())) {
+                        this.setAcceptOptional(true);
+                    } else if (CoreCommonUtils.isNo(v.getString())) {
+                        this.setAcceptOptional(false);
+                    } else if (CoreCommonUtils.isNo(v.getString())) {
+                        this.setAcceptOptional(null);
+                    }
+                    break;
+                }
+                case "--cached": {
+                    this.setCached(a.getBooleanValue());
+                    break;
+                }
+                case "--effective": {
+                    this.setEffective(a.getBooleanValue());
+                    break;
+                }
+                case "--indexed": {
+                    this.setIndexed(a.getBooleanValue());
+                    break;
+                }
+                case "--content": {
+                    this.setIncludeContent(a.getBooleanValue());
+                    break;
+                }
+                case "--install-info": {
+                    this.setIncludeInstallInformation(a.getBooleanValue());
+                    break;
+                }
+                case "--location": {
+                    String location = cmd.getValueFor(a).getString();
+                    this.setLocation(CoreStringUtils.isBlank(location)?null:Paths.get(location));
                     break;
                 }
                 case "--trace-format": {

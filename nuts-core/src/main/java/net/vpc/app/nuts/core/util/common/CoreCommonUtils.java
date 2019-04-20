@@ -260,4 +260,27 @@ public class CoreCommonUtils {
         }
     }
 
+    public static boolean isYes(String s) {
+        switch (s == null ? "" : s.trim().toLowerCase()) {
+            case "ok":
+            case "true":
+            case "yes":
+            case "always":
+            case "y":
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isNo(String s) {
+        switch (s == null ? "" : s.trim().toLowerCase()) {
+            case "false":
+            case "no":
+            case "none":
+            case "never":
+                return true;
+        }
+        return false;
+    }
+
 }
