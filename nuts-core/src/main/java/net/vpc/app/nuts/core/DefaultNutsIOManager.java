@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -479,8 +480,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormatFilteredPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
+                HashMap<String,Object> m=new HashMap<>();
+                m.put("workspace", this);
+                m.put("out", out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormattedPrintStream.class,
-                        Map.of("workspace", this, "out", out),
+                        m,
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
             case FILTERED: {
@@ -491,8 +495,11 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return createPrintStream(((NutsFormattedPrintStream) out).getUnformattedInstance(), mode);
                 }
                 //return new NutsDefaultFormattedPrintStream(out);
+                HashMap<String,Object> m=new HashMap<>();
+                m.put("workspace", this);
+                m.put("out", out);
                 return (PrintStream) ws.extensions().createSupported(NutsFormatFilteredPrintStream.class,
-                        Map.of("workspace", this, "out", out),
+                        m,
                         new Class[]{OutputStream.class}, new Object[]{out});
             }
             case INHERITED: {
