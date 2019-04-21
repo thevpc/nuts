@@ -34,11 +34,11 @@ import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
-import static net.vpc.app.nuts.core.repos.NutsFolderRepository.log;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
+import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
 
 /**
  *
@@ -265,10 +265,10 @@ public class NutsRepositoryFolderHelper {
             throw new NutsAlreadyDeployedException(deployment.toString());
         }
         if (Files.exists(descFile)) {
-            log.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
+            LOG.log(Level.FINE, "Nuts descriptor file Overridden {0}", descFile);
         }
         if (Files.exists(pckFile)) {
-            log.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
+            LOG.log(Level.FINE, "Nuts component  file Overridden {0}", pckFile);
         }
 
         getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(deployment.getDescriptor(), descFile);

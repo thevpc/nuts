@@ -29,7 +29,7 @@ import net.vpc.app.nuts.core.util.common.ListMap;
  */
 public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtensionManager {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsWorkspaceExtensionManager.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceExtensionManager.class.getName());
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(
                     //order is important!!because autowiring should follow this very order
@@ -167,7 +167,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         if (wired != null) {
             throw new NutsWorkspaceExtensionAlreadyRegisteredException(id.toString(), wired.toString());
         }
-        log.log(Level.FINE, "Installing extension {0}", id);
+        LOG.log(Level.FINE, "Installing extension {0}", id);
         List<NutsDefinition> nutsDefinitions = ws.find()
                 .copyFrom(options)
                 .addId(id).setSession(session)
@@ -201,10 +201,10 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             }
         }
         extensions.put(id, workspaceExtension);
-        log.log(Level.FINE, "Extension {0} installed successfully", id);
+        LOG.log(Level.FINE, "Extension {0} installed successfully", id);
         NutsSessionTerminal newTerminal = createTerminal(session.getTerminal() == null ? null : session.getTerminal().getClass());
         if (newTerminal != null) {
-            log.log(Level.FINE, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
+            LOG.log(Level.FINE, "Extension {0} changed Terminal configuration. Reloading Session Terminal", id);
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -256,7 +256,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerInstance(extensionPointType, extensionImpl);
             return true;
         }
-        log.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
+        LOG.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
         return false;
     }
 
@@ -265,7 +265,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             objectFactory.registerType(extensionPointType, extensionType);
             return true;
         }
-        log.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
+        LOG.log(Level.FINE, "Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionType.getName()});
         return false;
     }
 

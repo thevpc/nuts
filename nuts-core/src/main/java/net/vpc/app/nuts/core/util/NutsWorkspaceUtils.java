@@ -9,31 +9,45 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Array;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
+import net.vpc.app.nuts.NutsDefinition;
+import net.vpc.app.nuts.NutsDescriptor;
+import net.vpc.app.nuts.NutsDescriptorFormat;
 import net.vpc.app.nuts.NutsExecCommand;
-import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsFetchMode;
 import net.vpc.app.nuts.NutsId;
+import net.vpc.app.nuts.NutsIdFormat;
+import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsReadOnlyException;
 import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsSdkLocation;
 import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsUnsupportedOperationException;
 import net.vpc.app.nuts.NutsWorkspace;
+import static net.vpc.app.nuts.core.util.CoreNutsUtils.tracePlainNutsDefinition;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  *
@@ -257,4 +271,36 @@ public class NutsWorkspaceUtils {
             return x;
         }
     }
+
+    public static NutsIdFormat getIdFormat(NutsWorkspace ws) {
+        String k = DefaultNutsFindTraceFormatPlain.class.getName() + "#NutsIdFormat";
+        NutsIdFormat f = (NutsIdFormat) ws.getUserProperties().get(k);
+        if (f == null) {
+            f = ws.formatter().createIdFormat();
+            ws.getUserProperties().put(k, f);
+        }
+        return f;
+    }
+
+    public static NutsDescriptorFormat getDescriptorFormat(NutsWorkspace ws) {
+        String k = DefaultNutsFindTraceFormatPlain.class.getName() + "#NutsDescriptorFormat";
+        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.getUserProperties().get(k);
+        if (f == null) {
+            f = ws.formatter().createDescriptorFormat();
+            ws.getUserProperties().put(k, f);
+        }
+        return f;
+    }
+
+//    public static void traceJson(NutsWorkspace ws, Object o, PrintStream out) {
+//        ws.io().writeJson(o, out, true);
+//        out.println();
+//    }
+//
+//    public static void traceProperties(NutsWorkspace ws, Object o, PrintStream out) {
+//        ws.io().writeJson(o, out, true);
+//        out.println();
+//    }
+
+
 }

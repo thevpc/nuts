@@ -53,6 +53,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by vpc on 1/15/17.
+ *
  * @since 0.5.4
  */
 final class NutsUtils {
@@ -276,7 +277,7 @@ final class NutsUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             LOG.log(Level.CONFIG, "[ERROR  ] Loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
-                String.valueOf(url), 
+                String.valueOf(url),
                 formatPeriodMilli(time)});
             //e.printStackTrace();
         }
@@ -350,7 +351,7 @@ final class NutsUtils {
     public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder) {
         String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
         File cachedFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
-        if(cachedFile.isFile()){
+        if (cachedFile.isFile()) {
             return cachedFile;
         }
         for (String r : repositories) {
@@ -895,7 +896,7 @@ final class NutsUtils {
         //FIX ME
         return true;
     }
-    
+
     public static boolean isActualJavaCommand(String cmd) {
         if (cmd == null || cmd.trim().isEmpty()) {
             return true;
@@ -1048,21 +1049,24 @@ final class NutsUtils {
     }
 
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        String v = System.getProperty(property);
-        if (v == null || v.trim().isEmpty()) {
+        return parseBoolean(System.getProperty(property), defaultValue);
+    }
+
+    public static boolean parseBoolean(String value, boolean defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
-        v = v.trim().toLowerCase();
-        if (v.matches("true|enable|yes|always|y")) {
+        value = value.trim().toLowerCase();
+        if (value.matches("true|enable|yes|always|y|on|ok")) {
             return true;
         }
-        if (v.matches("false|disable|no|never|n")) {
+        if (value.matches("false|disable|no|none|never|n|off")) {
             return false;
         }
         return defaultValue;
     }
 
-    public static String capiltalize(String value) {
+    public static String capitalize(String value) {
         char[] c = value.toCharArray();
         c[0] = Character.toUpperCase(c[0]);
         return new String(c);

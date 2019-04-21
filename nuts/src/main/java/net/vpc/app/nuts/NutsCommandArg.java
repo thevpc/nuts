@@ -210,11 +210,17 @@ public class NutsCommandArg {
                 case "true":
                 case "yes":
                 case "always":
+                case "enable":
+                case "enabled":
+                case "on":
                 case "y":
-                    return true;
                 case "false":
                 case "no":
+                case "none":
                 case "never":
+                case "disable":
+                case "n":
+                case "off":
                     return true;
             }
         }
@@ -230,11 +236,19 @@ public class NutsCommandArg {
             case "true":
             case "yes":
             case "always":
+            case "enable":
+            case "enabled":
+            case "on":
             case "y":
                 return true;
             case "false":
             case "no":
+            case "none":
             case "never":
+            case "disable":
+            case "disabled":
+            case "n":
+            case "off":
                 return false;
         }
         return defaultValue;

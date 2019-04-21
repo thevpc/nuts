@@ -42,10 +42,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
+import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsException;
-import net.vpc.app.nuts.core.util.common.PushBackIterator;
 
 public class CoreCommonUtils {
 
@@ -136,30 +138,6 @@ public class CoreCommonUtils {
         return names;
     }
 
-    public static boolean convertToBoolean(String value, boolean defaultValue) {
-        if (CoreStringUtils.isBlank(value)) {
-            return defaultValue;
-        }
-        value = value.toLowerCase().trim();
-        switch (value) {
-            case "true":
-            case "enable":
-            case "yes":
-            case "always":
-            case "y": {
-                return true;
-            }
-            case "false":
-            case "disable":
-            case "no":
-            case "never":
-            case "n": {
-                return false;
-            }
-        }
-        return defaultValue;
-    }
-
     private static String suffix(String s) {
         char[] chars = s.toCharArray();
         chars[0] = Character.toUpperCase(chars[0]);
@@ -167,7 +145,7 @@ public class CoreCommonUtils {
     }
 
     public static boolean getSystemBoolean(String property, boolean defaultValue) {
-        return convertToBoolean(System.getProperty(property), defaultValue);
+        return new NutsCommandArg(System.getProperty(property)).getBoolean(defaultValue);
     }
 
     public static String[] concatArrays(String[]... arrays) {
@@ -281,6 +259,51 @@ public class CoreCommonUtils {
                 return true;
         }
         return false;
+    }
+
+    public static void putAllInProps(String prefix, Properties dest, Object value) {
+        if (!CoreStringUtils.isBlank(prefix)) {
+            if (value instanceof Map) {
+                for (Map.Entry<Object, Object> e : ((Map<Object, Object>) value).entrySet()) {
+                    putAllInProps(prefix + "." + e.getKey(), dest, e.getValue());
+                }
+            } else if (value instanceof List) {
+                List<Object> li = (List<Object>) value;
+                for (int i = 0; i < li.size(); i++) {
+                    putAllInProps(prefix + "." + (i + 1), dest, li.get(i));
+                }
+            } else {
+                dest.put(prefix, String.valueOf(value));
+            }
+        } else {
+            if (value instanceof Map) {
+                for (Map.Entry<Object, Object> e : ((Map<Object, Object>) value).entrySet()) {
+                    putAllInProps(String.valueOf(e.getKey()), dest, (Map) e.getValue());
+                }
+            } else if (value instanceof List) {
+                List<Object> li = (List<Object>) value;
+                for (int i = 0; i < li.size(); i++) {
+                    putAllInProps("" + (i + 1), dest, li.get(i));
+                }
+            } else {
+                dest.put("value", String.valueOf(value));
+            }
+        }
+
+    }
+
+    public static boolean parseBoolean(String value, boolean defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        value = value.trim().toLowerCase();
+        if (value.matches("true|enable|yes|always|y")) {
+            return true;
+        }
+        if (value.matches("false|disable|no|none|never|n")) {
+            return false;
+        }
+        return defaultValue;
     }
 
 }

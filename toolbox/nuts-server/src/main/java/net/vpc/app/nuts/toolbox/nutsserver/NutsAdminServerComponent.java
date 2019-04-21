@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  */
 public class NutsAdminServerComponent implements NutsServerComponent {
 
-    private static final Logger log = Logger.getLogger(NutsAdminServerComponent.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsAdminServerComponent.class.getName());
 
     @Override
     public int getSupportLevel(ServerConfig config) {

@@ -60,7 +60,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  */
 public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsUpdateCommand.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsUpdateCommand.class.getName());
 
     private boolean ask = true;
     private boolean trace = true;
@@ -728,8 +728,8 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
         }
 
         if (ws.config().save(false)) {
-            if (log.isLoggable(Level.INFO)) {
-                log.log(Level.INFO, "Workspace is updated. Nuts should be restarted for changes to take effect.");
+            if (LOG.isLoggable(Level.INFO)) {
+                LOG.log(Level.INFO, "Workspace is updated. Nuts should be restarted for changes to take effect.");
             }
         }
     }

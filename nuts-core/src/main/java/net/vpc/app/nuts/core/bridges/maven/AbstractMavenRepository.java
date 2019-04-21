@@ -46,7 +46,7 @@ import net.vpc.app.nuts.core.util.io.InputSource;
  */
 public abstract class AbstractMavenRepository extends AbstractNutsRepository {
 
-    private static final Logger log = Logger.getLogger(AbstractMavenRepository.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractMavenRepository.class.getName());
 
     public AbstractMavenRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository, int speed, String repositoryType) {
         super(options, workspace, parentRepository, speed, false, repositoryType);
@@ -73,7 +73,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
                 break;
             }
             default: {
-                log.log(Level.SEVERE, "[BUG] Unsupported Hash Type " + id.getFace(), new RuntimeException());
+                LOG.log(Level.SEVERE, "[BUG] Unsupported Hash Type " + id.getFace(), new RuntimeException());
                 throw new IOException("Unsupported hash type " + id.getFace());
             }
         }

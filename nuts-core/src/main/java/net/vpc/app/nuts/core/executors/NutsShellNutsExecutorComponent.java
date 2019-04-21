@@ -46,7 +46,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 @NutsSingleton
 public class NutsShellNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final Logger log = Logger.getLogger(NutsShellNutsExecutorComponent.class.getName());
+    public static final Logger LOG = Logger.getLogger(NutsShellNutsExecutorComponent.class.getName());
     public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-nsh");
 
     @Override

@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractNutsCommand implements NutsCommand {
 
-    private static final Logger log = Logger.getLogger(AbstractNutsCommand.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractNutsCommand.class.getName());
     private final String name;
     private final int supportLevel;
     private String help;
@@ -102,7 +102,7 @@ public abstract class AbstractNutsCommand implements NutsCommand {
                     help = IOUtils.loadString(resource);
                 }
             } catch (Exception e) {
-                log.log(Level.CONFIG, "Unable to load help for " + getName(), e);
+                LOG.log(Level.CONFIG, "Unable to load help for " + getName(), e);
             }
             if (help == null) {
                 help = "@@no help@@ found for command " + getName();

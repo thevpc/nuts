@@ -57,7 +57,7 @@ public class NutsHttpServlet extends HttpServlet {
     public static final String DEFAULT_HTTP_SERVER = "nuts-http-server";
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
 
-    private static final Logger log = Logger.getLogger(NutsHttpServlet.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsHttpServlet.class.getName());
     private NutsHttpServletFacade facade;
     private String serverId = "";
     private String workspaceLocation = null;
@@ -131,19 +131,19 @@ public class NutsHttpServlet extends HttpServlet {
                 serverConfig.setPort(adminServerPort);
                 adminServerRef = serverManager.startServer(serverConfig);
             } catch (Exception ex) {
-                log.log(Level.SEVERE, "Unable to start admin server", ex);
+                LOG.log(Level.SEVERE, "Unable to start admin server", ex);
             }
         }
     }
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        if (log.isLoggable(Level.INFO)) {
-            log.log(Level.INFO, "Starting Nuts Http Server at url http://<your-server>" + config.getServletContext().getContextPath() + "/service");
+        if (LOG.isLoggable(Level.INFO)) {
+            LOG.log(Level.INFO, "Starting Nuts Http Server at url http://<your-server>" + config.getServletContext().getContextPath() + "/service");
         }
         if (adminServer) {
-            if (log.isLoggable(Level.INFO)) {
-                log.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? DEFAULT_HTTP_SERVER_PORT : adminServerPort));
+            if (LOG.isLoggable(Level.INFO)) {
+                LOG.log(Level.INFO, "Starting Nuts admin Server at <localhost>:" + (adminServerPort < 0 ? DEFAULT_HTTP_SERVER_PORT : adminServerPort));
             }
         }
         adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
@@ -186,7 +186,7 @@ public class NutsHttpServlet extends HttpServlet {
             try {
                 adminServerRef.stop();
             } catch (Exception ex) {
-                log.log(Level.SEVERE, "Unable to stop admin server", ex);
+                LOG.log(Level.SEVERE, "Unable to stop admin server", ex);
             }
         }
     }

@@ -47,7 +47,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class NutsHttpFolderRepository extends AbstractNutsRepository {
 
-    private static final Logger log = Logger.getLogger(NutsHttpFolderRepository.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsHttpFolderRepository.class.getName());
 
     public NutsHttpFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
@@ -67,8 +67,8 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
         String url = getDescPath(id);
         if (CoreIOUtils.isPathHttp(url)) {
             String message = "Downloading maven";//: "Open local file";
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
             }
         }
         return openStream(url, id, session);
@@ -169,10 +169,10 @@ public class NutsHttpFolderRepository extends AbstractNutsRepository {
     private String httpGetString(String url) {
         try {
             String s = CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
-            log.log(Level.FINEST, "[SUCCESS] Get URL {0}", url);
+            LOG.log(Level.FINEST, "[SUCCESS] Get URL {0}", url);
             return s;
         } catch (UncheckedIOException e) {
-            log.log(Level.FINEST, "[ERROR  ] Get URL {0}", url);
+            LOG.log(Level.FINEST, "[ERROR  ] Get URL {0}", url);
             throw e;
         }
     }

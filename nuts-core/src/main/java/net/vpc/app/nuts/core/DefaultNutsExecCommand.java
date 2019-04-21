@@ -25,7 +25,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  */
 public class DefaultNutsExecCommand implements NutsExecCommand {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsExecCommand.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsExecCommand.class.getName());
     private static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
             .setPackaging("exe")

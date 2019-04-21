@@ -49,7 +49,7 @@ import java.util.logging.Logger;
  */
 public class NutsHttpServletFacade {
 
-    private static final Logger log = Logger.getLogger(NutsHttpServletFacade.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsHttpServletFacade.class.getName());
     private Map<String, NutsWorkspace> workspaces;
     private String serverId;
     private Map<String, FacadeCommand> commands = new HashMap<>();
@@ -440,11 +440,11 @@ public class NutsHttpServletFacade {
                 try {
                     facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.createSession()));
                 } catch (SecurityException ex) {
-                    log.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
+                    LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();
                     context.sendError(403, ex.toString());
                 } catch (Exception ex) {
-                    log.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
+                    LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();
                     context.sendError(500, ex.toString());
                 }

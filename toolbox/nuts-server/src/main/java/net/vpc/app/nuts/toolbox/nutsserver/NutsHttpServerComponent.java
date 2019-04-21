@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  */
 public class NutsHttpServerComponent implements NutsServerComponent {
 
-    private static final Logger log = Logger.getLogger(NutsHttpServerComponent.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsHttpServerComponent.class.getName());
     private NutsHttpServletFacade facade;
 
     @Override
@@ -158,8 +158,8 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                             SSLParameters defaultSSLParameters = c.getDefaultSSLParameters();
                             params.setSSLParameters(defaultSSLParameters);
                         } catch (Exception ex) {
-                            if (log.isLoggable(Level.CONFIG)) {
-                                log.log(Level.CONFIG, "Failed to create HTTPS port");
+                            if (LOG.isLoggable(Level.CONFIG)) {
+                                LOG.log(Level.CONFIG, "Failed to create HTTPS port");
                             }
                             terminal.ferr().printf("**Failed to create HTTPS port**");
                         }

@@ -23,7 +23,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityManager {
 
-    private static final Logger log = Logger.getLogger(DefaultNutsRepositorySecurityManager.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsRepositorySecurityManager.class.getName());
 
     private final AbstractNutsRepository repo;
 

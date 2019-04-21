@@ -58,7 +58,7 @@ import net.vpc.app.nuts.core.util.mvn.PomIdResolver;
  */
 public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, NutsWorkspaceExt {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsWorkspace.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspace.class.getName());
     public static final NutsInstallInfo NOT_INSTALLED = new NutsInstallInfo(false, null);
     private final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
     private boolean initializing;
@@ -163,8 +163,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 new NutsBootConfig(config().getContext(NutsBootContextType.BOOT)),
                 config().getBootClassWorldURLs(),
                 configManager.getBootClassLoader(), options)) {
-            if (log.isLoggable(Level.FINE)) {
-                log.log(Level.FINE, "workspace created");
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.log(Level.FINE, "workspace created");
             }
         }
         return nutsWorkspace;
@@ -255,7 +255,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         try {
             if (!reloadWorkspace(session, options.getExcludedExtensions(), options.getExcludedRepositories())) {
                 NutsWorkspaceUtils.checkReadOnly(this);
-                log.log(Level.CONFIG, "Unable to load existing workspace. Creating new one at {0}", config().getContext(NutsBootContextType.RUNTIME).getWorkspace());
+                LOG.log(Level.CONFIG, "Unable to load existing workspace. Creating new one at {0}", config().getContext(NutsBootContextType.RUNTIME).getWorkspace());
                 exists = false;
                 NutsWorkspaceConfig config = new NutsWorkspaceConfig();
                 //load from config with resolution applied
@@ -320,7 +320,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             if (!options.isReadOnly()) {
                 config().save(false);
             }
-            log.log(Level.FINE, "Nuts Workspace loaded in {0}", CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()));
+            LOG.log(Level.FINE, "Nuts Workspace loaded in {0}", CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()));
             if (options.isPerf()) {
                 getTerminal().fout().printf("**Nuts** Workspace loaded in [[%s]]\n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
@@ -333,8 +333,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
     }
 
     public void reconfigurePostInstall(NutsInstallCompanionOptions options, NutsSession session) {
-        if (log.isLoggable(Level.CONFIG)) {
-            log.log(Level.CONFIG, "Workspace created. running post creation configurator...");
+        if (LOG.isLoggable(Level.CONFIG)) {
+            LOG.log(Level.CONFIG, "Workspace created. running post creation configurator...");
         }
         if (options == null) {
             options = new NutsInstallCompanionOptions();
@@ -459,7 +459,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         } catch (NutsNotFoundException e) {
             return false;
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Error", e);
+            LOG.log(Level.SEVERE, "Error", e);
             return false;
         }
         return getInstalledRepository().isInstalled(nutToInstall.getId());
@@ -485,7 +485,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         if ((CoreStringUtils.isBlank(g)) || (CoreStringUtils.isBlank(v))) {
             NutsId[] parents = descriptor.getParents();
             for (NutsId parent : parents) {
-                NutsId p = fetch().id(parent).copyFrom(options).setEffective(true).setSession(options.getSession()).getResultId();
+                NutsId p = fetch().copyFrom(options).id(parent).setEffective(true).setSession(options.getSession()).getResultId();
                 if (CoreStringUtils.isBlank(g)) {
                     g = p.getGroup();
                 }
@@ -512,7 +512,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             all.addAll(Arrays.asList(parents));
             while (!all.isEmpty()) {
                 NutsId parent = all.pop();
-                NutsDescriptor dd = fetch().id(parent).copyFrom(options).setEffective(true).getResultDescriptor();
+                NutsDescriptor dd = fetch().copyFrom(options).id(parent).setEffective(true).getResultDescriptor();
                 bestId.apply(new MapStringMapper(dd.getProperties()));
                 if (CoreNutsUtils.isEffectiveId(bestId)) {
                     return bestId.setAlternative(descriptor.getAlternative());
@@ -839,12 +839,12 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         try {
             loadedConfig = configManager.load();
         } catch (RuntimeException ex) {
-            log.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
+            LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file " + configManager.getConfigFile() + " : " + ex.toString(), ex);
             if (!config().isReadOnly()) {
                 Path newfile = config().getWorkspaceLocation().resolve("nuts-workspace-"
                         + new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date())
                         + ".json");
-                log.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile);
+                LOG.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile);
                 try {
                     Files.move(configManager.getConfigFile(), newfile);
                 } catch (IOException e) {
@@ -883,8 +883,8 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
             NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config()).getUser(NutsConstants.Names.USER_ADMIN);
             if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
-                if (log.isLoggable(Level.CONFIG)) {
-                    log.log(Level.CONFIG, NutsConstants.Names.USER_ADMIN + " user has no credentials. reset to default");
+                if (LOG.isLoggable(Level.CONFIG)) {
+                    LOG.log(Level.CONFIG, NutsConstants.Names.USER_ADMIN + " user has no credentials. reset to default");
                 }
                 security().updateUser(NutsConstants.Names.USER_ADMIN).credentials("admin").session(session).run();
             }
@@ -892,7 +892,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 try {
                     config().addCommandAliasFactory(commandFactory, new NutsAddOptions().session(session));
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "Unable to instantiate Command Factory {0}", commandFactory);
+                    LOG.log(Level.SEVERE, "Unable to instantiate Command Factory {0}", commandFactory);
                 }
             }
             for (NutsWorkspaceListener listener : workspaceListeners) {

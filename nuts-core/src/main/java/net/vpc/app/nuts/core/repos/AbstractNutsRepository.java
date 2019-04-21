@@ -52,7 +52,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = Logger.getLogger(AbstractNutsRepository.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractNutsRepository.class.getName());
     private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
     protected Map<String, String> extensions = new HashMap<>();
     private NutsRepository parentRepository;
@@ -252,12 +252,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             if (d == null) {
                 throw new NutsNotFoundException(id);
             }
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 traceMessage(session, id, TraceResult.SUCCESS, "Fetch descriptor", startTime);
             }
             return d;
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 traceMessage(session, id, TraceResult.ERROR, "Fetch descriptor", startTime);
             }
             throw ex;
@@ -300,7 +300,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             }
         }
         String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(session.getFetchMode().name(), 7) + "] ";
-        log.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(config().getName(), 20), id == null ? "" : id.toString(), timeMessage});
+        LOG.log(Level.FINEST, "{0}{1}{2} {3} {4}{5}", new Object[]{tracePhaseString, fetchString, CoreStringUtils.alignLeft(title, 18), CoreStringUtils.alignLeft(config().getName(), 20), id == null ? "" : id.toString(), timeMessage});
     }
 
     @Override
@@ -342,16 +342,16 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 try {
                     nutsIndexStoreClient.revalidate(deployment.getId());
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error revalidating Indexer for {0} : {1}", new Object[]{config().getName(), ex});
+                    LOG.log(Level.FINEST, "[ERROR  ] Error revalidating Indexer for {0} : {1}", new Object[]{config().getName(), ex});
                 }
             }
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), deployment.getId()});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[SUCCESS] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), deployment.getId()});
             }
             deployment.getId();
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), deployment.getId()});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[ERROR  ] {0} Deploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), deployment.getId()});
             }
             throw ex;
         }
@@ -363,13 +363,13 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         security().checkAllowed(NutsConstants.Rights.PUSH,"push");
         try {
             pushImpl(id, options, session);
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] {0} Push {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), id});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[SUCCESS] {0} Push {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), id});
             }
         } catch (RuntimeException ex) {
 
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] {0} Push {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), id});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[ERROR  ] {0} Push {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), id});
             }
         }
     }
@@ -380,15 +380,15 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         security().checkAllowed(NutsConstants.Rights.FETCH_DESC,"find");
         checkAllowedFetch(null, session);
         try {
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[SUCCESS] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
             }
             if (session.isIndexed() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
                 Iterator<NutsId> o = null;
                 try {
                     o = nutsIndexStoreClient.find(filter, session);
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for {0} : {1}", new Object[]{config().getName(), ex});
+                    LOG.log(Level.FINEST, "[ERROR  ] Error find operation using Indexer for {0} : {1}", new Object[]{config().getName(), ex});
                 }
 
                 if (o != null) {
@@ -398,13 +398,13 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
             return findImpl(filter, session);
         } catch (NutsNotFoundException | SecurityException ex) {
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
             }
             throw ex;
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.SEVERE)) {
-                log.log(Level.SEVERE, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
+            if (LOG.isLoggable(Level.SEVERE)) {
+                LOG.log(Level.SEVERE, "[ERROR  ] {0} Find components", CoreStringUtils.alignLeft(config().getName(), 20));
             }
             throw ex;
         }
@@ -422,12 +422,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             if (f == null) {
                 throw new NutsNotFoundException(id);
             }
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 traceMessage(session, id, TraceResult.SUCCESS, "Fetch component", startTime);
             }
             return f;
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 traceMessage(session, id, TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
@@ -447,7 +447,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 try {
                     d = nutsIndexStoreClient.findVersions(id, session);
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{config().getName(), ex});
+                    LOG.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{config().getName(), ex});
                 }
                 if (d != null && !d.isEmpty() && idFilter != null) {
                     return IteratorBuilder.of(d.iterator()).filter(x -> idFilter.accept(x)).iterator();
@@ -456,8 +456,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             Iterator<NutsId> d = findVersionsImpl(id, idFilter, session);
             return d;
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] [{0}] {1} {2} {3}", new Object[]{CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7), CoreStringUtils.alignLeft(config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[ERROR  ] [{0}] {1} {2} {3}", new Object[]{CoreStringUtils.alignLeft(session.getFetchMode().toString(), 7), CoreStringUtils.alignLeft(config().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id});
             }
             throw ex;
         }
@@ -473,15 +473,15 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                 try {
                     nutsIndexStoreClient.invalidate(options.getId());
                 } catch (NutsException ex) {
-                    log.log(Level.FINEST, "[ERROR  ] Error invalidating Indexer for {0} : {1}", new Object[]{config().getName(), ex});
+                    LOG.log(Level.FINEST, "[ERROR  ] Error invalidating Indexer for {0} : {1}", new Object[]{config().getName(), ex});
                 }
             }
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[SUCCESS] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), options.getId()});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[SUCCESS] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), options.getId()});
             }
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
-                log.log(Level.FINEST, "[ERROR  ] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), options.getId()});
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "[ERROR  ] {0} Undeploy {1}", new Object[]{CoreStringUtils.alignLeft(config().getName(), 20), options.getId()});
             }
         }
     }
@@ -609,12 +609,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         InputStream stream = CoreIOUtils.getHttpClientFacade(getWorkspace(), path).open();
         if (stream != null) {
             if (!path.toLowerCase().startsWith("file://")) {
-                log.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
+                LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
             } else {
-                log.log(Level.FINEST, "downloading url {0} to file {1}", new Object[]{path, file});
+                LOG.log(Level.FINEST, "downloading url {0} to file {1}", new Object[]{path, file});
             }
         } else {
-            log.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
+            LOG.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
         }
         getWorkspace().io().copy().from(stream).to(file).safeCopy().run();
     }

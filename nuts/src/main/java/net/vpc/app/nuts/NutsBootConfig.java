@@ -297,7 +297,7 @@ public final class NutsBootConfig implements Cloneable {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
-                    sb.append(value1.name().toLowerCase()).append(NutsUtils.capiltalize(value.name().toLowerCase())).append("Home='").append(s).append('\'');
+                    sb.append(value1.name().toLowerCase()).append(NutsUtils.capitalize(value.name().toLowerCase())).append("Home='").append(s).append('\'');
                 }
             }
         }

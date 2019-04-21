@@ -28,7 +28,7 @@ import net.vpc.app.nuts.core.util.io.InputSource;
  */
 public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
 
-    private static final Logger log = Logger.getLogger(DefaultNutsIOCopyAction.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsIOCopyAction.class.getName());
 
     private Validator checker;
     private boolean safeCopy = true;
@@ -302,7 +302,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
+                LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         } else {
@@ -341,7 +341,7 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
                     }
                 }
             } catch (IOException ex) {
-                log.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
+                LOG.log(Level.CONFIG, "[ERROR  ] Error copying {0} to {1} : {2}", new Object[]{_source.getSource(), target.getValue(), ex.toString()});
                 throw new UncheckedIOException(ex);
             }
         }

@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 @NutsSingleton
 public class JavaNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final Logger log = Logger.getLogger(JavaNutsExecutorComponent.class.getName());
+    public static final Logger LOG = Logger.getLogger(JavaNutsExecutorComponent.class.getName());
     public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-java");
 
     @Override

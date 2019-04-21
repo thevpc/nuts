@@ -61,7 +61,7 @@ import net.vpc.app.nuts.core.util.mvn.PomXmlParser;
  */
 public class MavenUtils {
 
-    private static final Logger log = Logger.getLogger(MavenUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(MavenUtils.class.getName());
 
     public static NutsId[] toNutsId(PomId[] ids) {
         NutsId[] a = new NutsId[ids.length];
@@ -130,9 +130,9 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.CONFIG, "[SUCCESS] Loading pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                log.log(Level.CONFIG, "[SUCCESS] Loading pom file {0}", new Object[]{urlDesc});
+                LOG.log(Level.CONFIG, "[SUCCESS] Loading pom file {0}", new Object[]{urlDesc});
             }
 
             return new DefaultNutsDescriptorBuilder()
@@ -151,9 +151,9 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             if (time > 0) {
-                log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
+                LOG.log(Level.CONFIG, "[ERROR  ] Caching pom file {0} (time {1})", new Object[]{urlDesc, CoreCommonUtils.formatPeriodMilli(time)});
             } else {
-                log.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
+                LOG.log(Level.CONFIG, "[ERROR  ] Caching pom file {0}", new Object[]{urlDesc});
             }
             throw new NutsParseException("Error Parsing " + urlDesc, e);
         }

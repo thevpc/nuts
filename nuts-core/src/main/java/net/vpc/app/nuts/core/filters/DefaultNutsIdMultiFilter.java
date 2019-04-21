@@ -17,7 +17,7 @@ import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
 public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
-    private static final Logger log = Logger.getLogger(DefaultNutsIdMultiFilter.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsIdMultiFilter.class.getName());
     private final NutsIdFilter idFilter;
 
 
@@ -79,8 +79,8 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 }
             } catch (Exception ex) {
                 //suppose we cannot retrieve descriptor
-                if (log.isLoggable(Level.FINER)) {
-                    log.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.config().getName() + " : " + ex.toString());
+                if (LOG.isLoggable(Level.FINER)) {
+                    LOG.log(Level.FINER, session.getFetchMode() + " Unable to fetch Descriptor for " + id + " from repository " + repository.config().getName() + " : " + ex.toString());
                 }
                 return false;
             }

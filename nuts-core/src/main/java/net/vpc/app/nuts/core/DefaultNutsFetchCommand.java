@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.*;
@@ -26,11 +25,10 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsFetchCommand.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsFetchCommand.class.getName());
     private final DefaultNutsWorkspace ws;
     private NutsId id;
 
@@ -222,7 +220,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         options = NutsWorkspaceUtils.validateSession(ws, options);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(options.getFetchStrategy());
-        if (log.isLoggable(Level.FINEST)) {
+        if (LOG.isLoggable(Level.FINEST)) {
             CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.START, "Fetch component", 0);
         }
         DefaultNutsDefinition foundDefinition = null;
@@ -266,7 +264,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), options.getSession()));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        log.log(Level.WARNING, "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.toString(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
+                        LOG.log(Level.WARNING, "Nuts Descriptor Found, but its parent is not: {0} with parent {1}", new Object[]{id.toString(), Arrays.toString(foundDefinition.getDescriptor().getParents())});
                         foundDefinition = null;
                     }
                 }
@@ -291,7 +289,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                 if (mode.ordinal() < modeForSuccessfulDescRetreival.ordinal()) {
                                     //ignore because actually there is more chance to find it in later modes!
                                 } else {
-                                    log.log(Level.WARNING, "Nuts Descriptor Found, but component could not be resolved : {0}", id.toString());
+                                    LOG.log(Level.WARNING, "Nuts Descriptor Found, but component could not be resolved : {0}", id.toString());
                                 }
                             }
                         }
@@ -320,18 +318,18 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
             }
         } catch (NutsNotFoundException ex) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetch component", startTime);
             }
             throw ex;
         }
         if (foundDefinition != null) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.SUCCESS, "Fetch component", startTime);
             }
             if (isIncludeDependencies()) {
@@ -346,34 +344,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             }
             if (isTrace()) {
                 final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-                switch (getOutputFormat()) {
-                    case PLAIN: {
-                        out.printf("%N%n", traceFormat.format(foundDefinition, getOutputFormat(), ws));
-                        break;
-                    }
-                    case PROPS: {
-                        Properties props = new Properties();
-                        Object r = traceFormat.format(foundDefinition, getOutputFormat(), ws);
-
-                        if (r instanceof Map) {
-                            Map<Object, Object> m = (Map<Object, Object>) r;
-                            for (Map.Entry<Object, Object> e : m.entrySet()) {
-                                props.put(e.getKey(), String.valueOf(e.getValue()));
-                            }
-                        } else {
-                            props.put("result", r);
-                        }
-                        CoreIOUtils.storeProperties(props, out);
-                        break;
-                    }
-                    case JSON: {
-                        ws.io().writeJson(traceFormat.format(foundDefinition, getOutputFormat(), ws), out, true);
-                        break;
-                    }
-                    default: {
-                        throw new NutsUnsupportedArgumentException(String.valueOf(getOutputFormat()));
-                    }
-                }
+                getTraceFormat().formatElement(foundDefinition, -1, out, ws);
             }
             return foundDefinition;
         }
@@ -546,49 +517,41 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     this.addRepository(cmd.getValueFor(a).getString());
                     break;
                 }
-                case "-s": 
+                case "-s":
                 case "--scope": {
                     this.addScope(NutsDependencyScope.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
                     break;
                 }
-                case "-f": 
-                case "--fetch": 
-                {
+                case "-f":
+                case "--fetch": {
                     this.setFetchStratery(NutsFetchStrategy.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
                     break;
                 }
-                case "--anywhere": 
-                {
+                case "--anywhere": {
                     this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
                     break;
                 }
-                case "--installed": 
-                {
+                case "--installed": {
                     this.setFetchStratery(NutsFetchStrategy.INSTALLED);
                     break;
                 }
-                case "--local": 
-                {
+                case "--local": {
                     this.setFetchStratery(NutsFetchStrategy.LOCAL);
                     break;
                 }
-                case "--offline": 
-                {
+                case "--offline": {
                     this.setFetchStratery(NutsFetchStrategy.OFFLINE);
                     break;
                 }
-                case "--online": 
-                {
+                case "--online": {
                     this.setFetchStratery(NutsFetchStrategy.ONLINE);
                     break;
                 }
-                case "--remote": 
-                {
+                case "--remote": {
                     this.setFetchStratery(NutsFetchStrategy.REMOTE);
                     break;
                 }
-                case "--wired": 
-                {
+                case "--wired": {
                     this.setFetchStratery(NutsFetchStrategy.WIRED);
                     break;
                 }
@@ -625,7 +588,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                 }
                 case "--location": {
                     String location = cmd.getValueFor(a).getString();
-                    this.setLocation(CoreStringUtils.isBlank(location)?null:Paths.get(location));
+                    this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
                     break;
                 }
                 case "--trace-format": {

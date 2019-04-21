@@ -37,7 +37,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  */
 public class DefaultNutsInstallCommand implements NutsInstallCommand {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsInstallCommand.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsInstallCommand.class.getName());
 
     private boolean ask = true;
     private boolean trace = true;
@@ -398,8 +398,8 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                 String[] companionTools = dws.getCompanionTools();
                 if (companionTools.length > 0) {
                     long cr = System.currentTimeMillis();
-                    if (log.isLoggable(Level.CONFIG)) {
-                        log.log(Level.FINE, "Installing companion tools...");
+                    if (LOG.isLoggable(Level.CONFIG)) {
+                        LOG.log(Level.FINE, "Installing companion tools...");
                     }
                     int companionCount = 0;
 //        NutsCommandExecBuilder e = createExecBuilder();
@@ -414,8 +414,8 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                                         .getResultDefinitions().required().getDescriptor().getDescription();
                                 out.printf("##\\### Installing ==%s== (%s)...\n", companionTool, d);
                             }
-                            if (log.isLoggable(Level.CONFIG)) {
-                                log.log(Level.FINE, "Installing companion tool : {0}", companionTool);
+                            if (LOG.isLoggable(Level.CONFIG)) {
+                                LOG.log(Level.FINE, "Installing companion tool : {0}", companionTool);
                             }
                             ws.install().id(companionTool).args("--trace", "--force").setForce(true).setSession(session).run();
                             companionCount++;
@@ -430,8 +430,8 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                     } else {
                         out.print("All companion tools are already installed...\n");
                     }
-                    if (log.isLoggable(Level.CONFIG)) {
-                        log.log(Level.FINE, "Installed {0} companion tools in {1}...", new Object[]{companionCount, CoreCommonUtils.formatPeriodMilli(System.currentTimeMillis() - cr)});
+                    if (LOG.isLoggable(Level.CONFIG)) {
+                        LOG.log(Level.FINE, "Installed {0} companion tools in {1}...", new Object[]{companionCount, CoreCommonUtils.formatPeriodMilli(System.currentTimeMillis() - cr)});
                     }
                 }
             }

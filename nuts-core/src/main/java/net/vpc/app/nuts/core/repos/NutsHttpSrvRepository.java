@@ -47,7 +47,7 @@ import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
 
 public class NutsHttpSrvRepository extends AbstractNutsRepository {
 
-    private static final Logger log = Logger.getLogger(NutsHttpSrvRepository.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsHttpSrvRepository.class.getName());
     private NutsId remoteId;
 
     public NutsHttpSrvRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
@@ -55,7 +55,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
         try {
             remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(options.getLocation() + "/version"));
         } catch (Exception ex) {
-            log.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
+            LOG.log(Level.WARNING, "Unable to initialize Repository NutsId for repository {0}", options.getLocation());
         }
     }
 
@@ -73,7 +73,7 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
             try {
                 remoteId = CoreNutsUtils.parseRequiredNutsId(httpGetString(getUrl("/version")));
             } catch (Exception ex) {
-                log.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
+                LOG.log(Level.WARNING, "Unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false));
             }
         }
         return remoteId;
@@ -230,12 +230,12 @@ public class NutsHttpSrvRepository extends AbstractNutsRepository {
     }
 
     private String httpGetString(String url) {
-        log.log(Level.FINEST, "Get URL{0}", url);
+        LOG.log(Level.FINEST, "Get URL{0}", url);
         return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(getWorkspace(), url).open(), true);
     }
 
     private InputStream httpUpload(String url, NutsTransportParamPart... parts) {
-        log.log(Level.FINEST, "Uploading URL {0}", url);
+        LOG.log(Level.FINEST, "Uploading URL {0}", url);
         return CoreIOUtils.getHttpClientFacade(getWorkspace(), url).upload(parts);
     }
 

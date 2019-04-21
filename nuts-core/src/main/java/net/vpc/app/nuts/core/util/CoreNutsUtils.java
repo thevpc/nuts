@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
  */
 public class CoreNutsUtils {
 
-    private static final Logger log = Logger.getLogger(CoreNutsUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(CoreNutsUtils.class.getName());
 //    public static final IntegerParserConfig INTEGER_LENIENT_NULL = IntegerParserConfig.LENIENT_F.setInvalidValue(null);
     public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}-]+)://)?([a-zA-Z0-9_.${}-]+)(:([a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
@@ -850,7 +850,7 @@ public class CoreNutsUtils {
             }
         }
         String fetchString = fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
-        log.log(Level.FINEST, tracePhaseString + fetchString
+        LOG.log(Level.FINEST, tracePhaseString + fetchString
                 + CoreStringUtils.alignLeft(message, 18) + " " + id + timeMessage);
     }
 

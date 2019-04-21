@@ -46,7 +46,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtils {
 
-    private static final Logger log = Logger.getLogger(ZipUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
 
     public static void zip(String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
@@ -232,7 +232,7 @@ public class ZipUtils {
                 newFile.mkdirs();
             } else {
                 File newFile = new File(outputFolder + File.separator + fileName);
-                log.log(Level.FINEST, "file unzip : " + newFile.getAbsoluteFile());
+                LOG.log(Level.FINEST, "file unzip : " + newFile.getAbsoluteFile());
                 //create all non exists folders
                 //else you will hit FileNotFoundException for compressed folder
                 newFile.getParentFile().mkdirs();

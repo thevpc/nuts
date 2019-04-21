@@ -27,7 +27,7 @@ import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
-    private static final Logger log = Logger.getLogger(DefaultNutsIOManager.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsIOManager.class.getName());
     private NutsWorkspace ws;
     private static Gson GSON;
     private static Gson GSON_PRETTY;
@@ -83,7 +83,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
                     return ws.config().getContext(NutsBootContextType.RUNTIME).getWorkspace();
             }
             String v = System.getProperty(from);
-            if(v!=null){
+            if (v != null) {
                 return v;
             }
             return "${" + from + "}";
@@ -164,7 +164,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         boolean monitorable = true;
         Object o = session.getProperty("monitor-allowed");
         if (o != null) {
-            o = CoreCommonUtils.convertToBoolean(String.valueOf(o), false);
+            o = new NutsCommandArg(String.valueOf(o)).getBoolean();
         }
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
@@ -183,7 +183,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
             monitorable = false;
         }
         DefaultNutsInputStreamMonitor monitor = null;
-        if (monitorable && log.isLoggable(Level.INFO)) {
+        if (monitorable && LOG.isLoggable(Level.INFO)) {
             monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out());
         }
         boolean verboseMode
@@ -213,12 +213,12 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         if (stream != null) {
             if (path.toLowerCase().startsWith("file://")) {
-                log.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
+                LOG.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
             } else {
-                log.log(Level.FINEST, "[START  ] Downloading url {0}", new Object[]{path});
+                LOG.log(Level.FINEST, "[START  ] Downloading url {0}", new Object[]{path});
             }
         } else {
-            log.log(Level.FINEST, "[ERROR  ] Downloading url failed : {0}", new Object[]{path});
+            LOG.log(Level.FINEST, "[ERROR  ] Downloading url failed : {0}", new Object[]{path});
         }
 
         if (!monitorable) {
@@ -239,9 +239,9 @@ public class DefaultNutsIOManager implements NutsIOManager {
                 public void onComplete(InputStreamEvent event) {
                     finalMonitor.onComplete(event);
                     if (event.getException() != null) {
-                        log.log(Level.FINEST, "[ERROR    ] Download Failed    : {0}", new Object[]{path});
+                        LOG.log(Level.FINEST, "[ERROR    ] Download Failed    : {0}", new Object[]{path});
                     } else {
-                        log.log(Level.FINEST, "[SUCCESS  ] Download Succeeded : {0}", new Object[]{path});
+                        LOG.log(Level.FINEST, "[SUCCESS  ] Download Succeeded : {0}", new Object[]{path});
                     }
                 }
 

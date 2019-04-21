@@ -53,7 +53,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurityManager {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsWorkspaceSecurityManager.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceSecurityManager.class.getName());
     private ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNutsWorkspace ws;
 
@@ -88,8 +88,8 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
         }
         NutsEffectiveUser adminSecurity = findUser(NutsConstants.Names.USER_ADMIN);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
-            if (log.isLoggable(Level.CONFIG)) {
-                log.log(Level.CONFIG, NutsConstants.Names.USER_ADMIN + " user has no credentials. reset to default");
+            if (LOG.isLoggable(Level.CONFIG)) {
+                LOG.log(Level.CONFIG, NutsConstants.Names.USER_ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getUser(NutsConstants.Names.USER_ADMIN);
             u.setCredentials(getAuthenticationAgent().setCredentials("admin", ws.config()));

@@ -14,7 +14,7 @@ public class FormattedPrintStreamUtils {
 
     // %[argument_index$][flags][width][.precision][t]conversion
     private static final Pattern PRINTF_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
-    private static final Logger log = Logger.getLogger(FormattedPrintStreamUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(FormattedPrintStreamUtils.class.getName());
 
     /**
      * extract plain text from formatted text
@@ -37,7 +37,7 @@ public class FormattedPrintStreamUtils {
             }
             return sb.toString();
         } catch (Exception ex) {
-            log.log(Level.FINEST, "Error parsing : \n" + text, ex);
+            LOG.log(Level.FINEST, "Error parsing : \n" + text, ex);
             return text;
         }
     }

@@ -57,7 +57,10 @@ public final class NutsArgumentsParser {
         NutsLogConfig logConfig = null;
         NutsCommandArg a;
         List<String> applicationArguments = new ArrayList<>();
-        NutsCommandLine cmdArgList = new NutsCommandLine(bootArguments);
+        NutsCommandLine cmdArgList = new NutsCommandLine(bootArguments)
+                .addSpecialSimpleOption("version")
+                .expandSimpleOptions();
+        
         while ((a = cmdArgList.next()) != null) {
             if (a.isOption()) {
                 boolean enabled = !a.isComment();
@@ -340,6 +343,7 @@ public final class NutsArgumentsParser {
                                 case "":
                                 case "always":
                                 case "yes":
+                                case "enable":
                                 case "y":
                                 case "true": {
                                     o.setTerminalMode(NutsTerminalMode.FORMATTED);
@@ -350,6 +354,7 @@ public final class NutsArgumentsParser {
                                 case "none":
                                 case "false":
                                 case "filtered":
+                                case "disable":
                                 case "n": {
                                     o.setTerminalMode(NutsTerminalMode.FILTERED);
                                     break;

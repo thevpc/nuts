@@ -51,7 +51,7 @@ import net.vpc.app.nuts.core.util.mvn.MavenMetadata;
  */
 public class MavenRemoteRepository extends AbstractMavenRepository {
 
-    private static final Logger log = Logger.getLogger(MavenRemoteRepository.class.getName());
+    private static final Logger LOG = Logger.getLogger(MavenRemoteRepository.class.getName());
     private MvnClient wrapper;
 
     public MavenRemoteRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
@@ -208,7 +208,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
                     }
                 }).run();
             } catch (UncheckedIOException ex) {
-                log.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
+                LOG.log(Level.SEVERE, id.toString() + " : " + ex.getMessage());
                 throw new NutsNotFoundException(id, null, ex);
             }
             return new NutsContent(localPath, false, false);
@@ -228,7 +228,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
         long startTime = System.currentTimeMillis();
         try {
             InputStream in = getWorkspace().io().monitorInputStream(path, source, session);
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 if (CoreIOUtils.isPathHttp(path)) {
                     String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
                     message += " url=" + path;
@@ -237,7 +237,7 @@ public class MavenRemoteRepository extends AbstractMavenRepository {
             }
             return CoreIOUtils.createInputSource(in);
         } catch (RuntimeException ex) {
-            if (log.isLoggable(Level.FINEST)) {
+            if (LOG.isLoggable(Level.FINEST)) {
                 if (CoreIOUtils.isPathHttp(path)) {
                     String message = CoreIOUtils.isPathHttp(path) ? "Downloading maven" : "Open local file";
                     message += " url=" + path;

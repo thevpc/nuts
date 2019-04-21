@@ -9,11 +9,13 @@ import net.vpc.common.javashell.Env;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import net.vpc.app.nuts.NutsCommandArg;
 
 import net.vpc.app.nuts.NutsSessionTerminal;
 import net.vpc.common.strings.StringUtils;
 
 public class DefaultNutsCommandContext implements NutsCommandContext {
+
     private NutsConsoleContext consoleContext;
     private NutsCommand command;
     private NutsTerminalMode terminalMode = null;
@@ -55,14 +57,10 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
             setTerminalMode(NutsTerminalMode.FILTERED);
         } else if ((a = cmd.readImmediateStringOption("--color")) != null) {
             switch (StringUtils.trim(a.getValue()).toLowerCase()) {
-                case "always":
-                case "true":
                 case "formatted": {
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
                 }
-                case "never":
-                case "false":
                 case "filtered": {
                     setTerminalMode(NutsTerminalMode.FILTERED);
                     break;
@@ -76,6 +74,9 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
                 case "": {
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
+                }
+                default:{
+                    setTerminalMode(new NutsCommandArg(a.getValue()).getBoolean(false)?NutsTerminalMode.FORMATTED:NutsTerminalMode.FILTERED);
                 }
             }
         } else if ((a = cmd.readStringOption("--term")) != null) {
@@ -133,7 +134,7 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
         getWorkspace().getSystemTerminal().setMode(outMode);
     }
 
-
+    @Override
     public boolean isVerbose() {
         return verbose;
     }
@@ -161,7 +162,6 @@ public class DefaultNutsCommandContext implements NutsCommandContext {
     public NutsSessionTerminal getTerminal() {
         return consoleContext.getTerminal();
     }
-
 
     @Override
     public Env env() {

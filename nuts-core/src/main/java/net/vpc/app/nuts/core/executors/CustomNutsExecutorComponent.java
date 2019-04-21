@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  */
 public class CustomNutsExecutorComponent implements NutsExecutorComponent {
 
-    public static final Logger log = Logger.getLogger(CustomNutsExecutorComponent.class.getName());
+    public static final Logger LOG = Logger.getLogger(CustomNutsExecutorComponent.class.getName());
     public NutsId id;
 
     public CustomNutsExecutorComponent(NutsId id) {

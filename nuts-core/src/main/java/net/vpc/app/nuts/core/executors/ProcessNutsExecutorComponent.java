@@ -37,7 +37,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -46,7 +45,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 @NutsSingleton
 public class ProcessNutsExecutorComponent implements NutsExecutorComponent {
 
-    private static final Logger log = Logger.getLogger(ProcessNutsExecutorComponent.class.getName());
+    private static final Logger LOG = Logger.getLogger(ProcessNutsExecutorComponent.class.getName());
     public static final NutsId ID = CoreNutsUtils.parseNutsId("net.vpc.app.nuts.exec:exec-native");
 
     @Override

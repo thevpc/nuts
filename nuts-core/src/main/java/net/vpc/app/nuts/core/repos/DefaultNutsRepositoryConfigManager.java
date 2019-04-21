@@ -15,7 +15,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigManager, NutsRepositoryConfigManagerExt {
 
-    private static final Logger log = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
+    private static final Logger LOG = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
     private final AbstractNutsRepository repository;
     private final int speed;
@@ -339,8 +339,8 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         if (!CoreNutsUtils.isValidIdentifier(mirrorName)) {
             throw new NutsInvalidRepositoryException(mirrorName, "Invalid repository name : " + mirrorName);
         }
-        if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, CoreStringUtils.alignLeft(getName(), 20) + " add repo " + mirrorName);
+        if (LOG.isLoggable(Level.FINEST)) {
+            LOG.log(Level.FINEST, CoreStringUtils.alignLeft(getName(), 20) + " add repo " + mirrorName);
         }
         if (configMirrorRefs.containsKey(c.getName())) {
             throw new NutsIllegalArgumentException("Mirror with same name already exists : " + c.getName());
@@ -390,11 +390,11 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
             repository.getWorkspace().io().writeJson(config, file, true);
             configurationChanged = false;
-            if (log.isLoggable(Level.CONFIG)) {
+            if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
-                    log.log(Level.CONFIG, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Created repository " + repository.config().getName() + " at " + getStoreLocation());
+                    LOG.log(Level.CONFIG, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Created repository " + repository.config().getName() + " at " + getStoreLocation());
                 } else {
-                    log.log(Level.CONFIG, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Updated repository " + repository.config().getName() + " at " + getStoreLocation());
+                    LOG.log(Level.CONFIG, CoreStringUtils.alignLeft(repository.config().getName(), 20) + " Updated repository " + repository.config().getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;
@@ -510,8 +510,8 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         if (!updated) {
             throw new NutsRepositoryNotFoundException(repositoryId);
         }
-        if (log.isLoggable(Level.FINEST)) {
-            log.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(getName(), 20), repositoryId});
+        if (LOG.isLoggable(Level.FINEST)) {
+            LOG.log(Level.FINEST, "{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(getName(), 20), repositoryId});
         }
         removeMirrorRef(repositoryId);
         if (repo != null) {

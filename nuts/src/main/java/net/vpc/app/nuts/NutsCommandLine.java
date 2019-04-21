@@ -31,11 +31,57 @@ package net.vpc.app.nuts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
+ * Simple Command line parser implementation. The command line supports
+ * arguments in the following forms :
+ * <ul>
+ * <li> non option arguments : any argument that does not start with '-'</li>
+ *
+ * <li>
+ * long option arguments : any argument that starts with a single '--' in the
+ * form of
+ * <pre>--[//][!]?[^=]*[=.*]</pre>
+ * <ul>
+ * <li>// means disabling the option</li>
+ * <li>! means switching (to 'false') the option's value</li>
+ * <li>the string before the '=' is the option's key</li>
+ * <li>the string after the '=' is the option's value</li>
+ * </ul>
+ * Examples :
+ * <ul>
+ * <li>--!enable : option 'enable' with 'false' value</li>
+ * <li>--enable=yes : option 'enable' with 'yes' value</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown buts the result
+ * is undefined)</li>
+ * </ul>
+ * </li>
+ * <li>
+ * simple option arguments : any argument that starts with a single '-' in the
+ * form of
+ * <pre>-[//][!]?[a-z][=.*]</pre>
+ * This is actually very similar to long options if expandSimpleOptions=false.
+ * When activating expandSimpleOptions, multi characters key will be expanded 
+ * as multiple separate simple options
+ * Examples :
+ * <ul>
+ * <li>-!enable (with expandSimpleOptions=false) : option 'enable' with 'false' value</li>
+ * <li>--enable=yes : option 'enable' with 'yes' value</li>
+ * <li>--!enable=yes : invalid option (no error will be thrown buts the result
+ * is undefined)</li>
+ * </ul>
+ * 
+ * </li>
+ *
+ * <li>long option arguments : any argument that starts with a '--' </li>
+ * </ul>
+ * option may start with '!' to switch armed flags expandSimpleOptions : when
+ * activated
  *
  * @author vpc
  * @since 0.5.4
@@ -43,11 +89,36 @@ import java.util.NoSuchElementException;
 public class NutsCommandLine {
 
     protected LinkedList<String> args = new LinkedList<>();
+    protected LinkedList<NutsCommandArg> expanded = new LinkedList<>();
+    protected boolean expandSimpleOptions = true;
+    protected Set<String> specialSimpleOptions = new HashSet<>();
 
     public NutsCommandLine(String[] args) {
         if (args != null) {
             this.args.addAll(Arrays.asList(args));
         }
+    }
+
+    public NutsCommandLine addSpecialSimpleOption(String option) {
+        specialSimpleOptions.add(option);
+        return this;
+    }
+
+    public boolean isExpandSimpleOptions() {
+        return expandSimpleOptions;
+    }
+
+    public NutsCommandLine expandSimpleOptions() {
+        return expandSimpleOptions(true);
+    }
+
+    public NutsCommandLine expandSimpleOptions(boolean expand) {
+        return setExpandSimpleOptions(expand);
+    }
+
+    public NutsCommandLine setExpandSimpleOptions(boolean expand) {
+        this.expandSimpleOptions = expand;
+        return this;
     }
 
     public static String escapeArgument(String arg) {
@@ -98,37 +169,135 @@ public class NutsCommandLine {
 
     public void clear() {
         args.clear();
+        expanded.clear();
     }
 
     public List<String> getArgs() {
-        return new ArrayList<>(args);
+        ArrayList<String> p = new ArrayList<>();
+        for (NutsCommandArg a : expanded) {
+            p.add(a.toString());
+        }
+        for (String a : args) {
+            p.add(a);
+        }
+        return p;
     }
 
+    /**
+     * returns un-parsed arguments and then clears thems
+     *
+     * @return
+     */
     public List<String> removeAll() {
         List<String> x = getArgs();
         clear();
         return x;
     }
 
+    /**
+     * if the argument defines a values (with =) it will be returned : If not
+     * consumes the next argument (without expanding simple options)
+     *
+     * @param cmdArg
+     * @return
+     */
     public NutsCommandArg getValueFor(NutsCommandArg cmdArg) {
         NutsCommandArg v = cmdArg.getValue();
         if (v.isNull()) {
-            return next(true);
+            return next(true, false);
         }
         return v;
     }
 
     public NutsCommandArg next(boolean required) {
-        NutsCommandArg v = next();
-        if (required && v == null) {
-            throw new NoSuchElementException("Missing argument");
+        return next(required, expandSimpleOptions);
+    }
+
+    public boolean isSpecialOneDashOption(String v) {
+        for (String x : specialSimpleOptions) {
+            if (v.equals("-" + x) || v.startsWith("-" + x + "=")) {
+                return true;
+            }
         }
-        return v;
+        return false;
     }
 
     public NutsCommandArg next() {
+        return next(false, expandSimpleOptions);
+    }
+
+    private NutsCommandArg next(boolean required, boolean expandSimpleOptions) {
+        if (!expanded.isEmpty()) {
+            return expanded.removeFirst();
+        }
         if (!args.isEmpty()) {
-            return new NutsCommandArg(args.removeFirst());
+            // -!abc=true
+            String v = args.removeFirst();
+            if (expandSimpleOptions && (v.length() > 2 && v.charAt(0) == '-' && v.charAt(1) != '-' && !isSpecialOneDashOption(v))) {
+                char[] chars = v.toCharArray();
+                boolean negate = false;
+                Character c = null;
+                for (int i = 1; i < chars.length; i++) {
+                    switch (chars[i]) {
+                        case '!': {
+                            if (c != null) {
+                                if (negate) {
+                                    expanded.add(new NutsCommandArg("-!" + c));
+                                } else {
+                                    expanded.add(new NutsCommandArg("-" + c));
+                                }
+                                c = null;
+                            }
+                            negate = true;
+                            break;
+                        }
+                        case '=': {
+                            if (c == null) {
+                                if (negate) {
+                                    expanded.add(new NutsCommandArg("-!" + new String(chars, i, chars.length - i)));
+                                    negate = false;
+                                } else {
+                                    expanded.add(new NutsCommandArg("-" + new String(chars, i, chars.length - i)));
+                                }
+                            } else {
+                                if (negate) {
+                                    negate = false;
+                                    expanded.add(new NutsCommandArg("-!" + c + new String(chars, i, chars.length - i)));
+                                } else {
+                                    expanded.add(new NutsCommandArg("-" + c + new String(chars, i, chars.length - i)));
+                                }
+                            }
+                            c = null;
+                            i = chars.length;
+                            break;
+                        }
+                        default: {
+                            if (c != null) {
+                                if (negate) {
+                                    expanded.add(new NutsCommandArg("-!" + c));
+                                    negate = false;
+                                } else {
+                                    expanded.add(new NutsCommandArg("-" + c));
+                                }
+                            }
+                            c = chars[i];
+                        }
+                    }
+                }
+                if (c != null) {
+                    if (negate) {
+                        expanded.add(new NutsCommandArg("!" + c));
+                        negate = false;
+                    } else {
+                        expanded.add(new NutsCommandArg("" + c));
+                    }
+                }
+                return expanded.removeFirst();
+            }
+            return new NutsCommandArg(v);
+        }
+        if (required) {
+            throw new NoSuchElementException("Missing argument");
         }
         return null;
     }
@@ -292,7 +461,7 @@ public class NutsCommandLine {
     }
 
     public boolean hasNext() {
-        return !args.isEmpty();
+        return !expanded.isEmpty() || !args.isEmpty();
     }
 
 }

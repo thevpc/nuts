@@ -71,7 +71,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 public class CoreIOUtils {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
-    private static final Logger log = Logger.getLogger(CoreIOUtils.class.getName());
+    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
     public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
         @Override
         public boolean accept(Path pathname) throws IOException {
@@ -211,12 +211,12 @@ public class CoreIOUtils {
             }
             if (bestJava == null) {
                 if (!CoreStringUtils.isBlank(requestedJavaVersion)) {
-                    if (log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
+                    if (LOG.isLoggable(Level.FINE)) {
+                        LOG.log(Level.FINE, "No valid JRE found. recommended {0} . Using default java.home at {1}", new Object[]{requestedJavaVersion, System.getProperty("java.home")});
                     }
                 } else {
-                    if (log.isLoggable(Level.FINE)) {
-                        log.log(Level.FINE, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
+                    if (LOG.isLoggable(Level.FINE)) {
+                        LOG.log(Level.FINE, "No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
                     }
                 }
                 bestJava = current;
@@ -250,8 +250,8 @@ public class CoreIOUtils {
             pb.inheritIO();
         }
 
-        if (log.isLoggable(Level.FINE)) {
-            log.log(Level.FINE, "[exec] {0}", pb.getCommandString());
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.log(Level.FINE, "[exec] {0}", pb.getCommandString());
         }
         if (showCommand) {
             if (terminal.out() instanceof NutsFormattedPrintStream) {
@@ -647,10 +647,10 @@ public class CoreIOUtils {
             try {
                 conf = ws.io().readJson(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                log.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
+                LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
                 if (!ws.config().isReadOnly()) {
                     Path newfile = file.getParent().resolve("nuts-repository-" + new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()) + ".json");
-                    log.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile.toString());
+                    LOG.log(Level.SEVERE, "Erroneous config file will replace by fresh one. Old config is copied to {0}", newfile.toString());
                     try {
                         Files.move(file, newfile);
                     } catch (IOException e) {
@@ -896,10 +896,10 @@ public class CoreIOUtils {
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 try {
                     Files.delete(file);
-                    log.log(Level.FINEST, "Delete file " + file);
+                    LOG.log(Level.FINEST, "Delete file " + file);
                     deleted[0]++;
                 } catch (IOException e) {
-                    log.log(Level.FINEST, "Delete file Failed : " + file);
+                    LOG.log(Level.FINEST, "Delete file Failed : " + file);
                     deleted[2]++;
                 }
                 return FileVisitResult.CONTINUE;
@@ -914,10 +914,10 @@ public class CoreIOUtils {
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
                 try {
                     Files.delete(dir);
-                    log.log(Level.FINEST, "Delete folder " + dir);
+                    LOG.log(Level.FINEST, "Delete folder " + dir);
                     deleted[1]++;
                 } catch (IOException e) {
-                    log.log(Level.FINEST, "Delete folder Failed : " + dir);
+                    LOG.log(Level.FINEST, "Delete folder Failed : " + dir);
                     deleted[2]++;
                 }
                 return FileVisitResult.CONTINUE;

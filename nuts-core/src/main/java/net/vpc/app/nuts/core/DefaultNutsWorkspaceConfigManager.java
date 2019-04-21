@@ -53,7 +53,7 @@ import net.vpc.app.nuts.core.repos.NutsRepositoryFolderHelper;
  */
 public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManagerExt {
 
-    public static final Logger log = Logger.getLogger(DefaultNutsWorkspaceConfigManager.class.getName());
+    public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspaceConfigManager.class.getName());
 
     private final DefaultNutsWorkspace ws;
     private NutsBootContext runningBootConfig;
@@ -813,11 +813,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     private NutsWorkspaceCommand toDefaultNutsWorkspaceCommand(NutsCommandAliasConfig c) {
         if (c.getCommand() == null || c.getCommand().length == 0) {
-            log.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Command. Ignored", c.getName());
+            LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Command. Ignored", c.getName());
             return null;
         }
         if (c.getOwner() == null) {
-            log.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
+            LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
             return null;
         }
         return new DefaultNutsWorkspaceCommand(ws)

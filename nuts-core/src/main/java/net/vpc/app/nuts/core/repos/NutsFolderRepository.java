@@ -43,11 +43,11 @@ import net.vpc.app.nuts.core.util.common.IteratorUtils;
  */
 public class NutsFolderRepository extends AbstractNutsRepository {
 
-    public static final Logger log = Logger.getLogger(NutsFolderRepository.class.getName());
+    public static final Logger LOG = Logger.getLogger(NutsFolderRepository.class.getName());
 
-    private NutsRepositoryFolderHelper lib;
+    private final NutsRepositoryFolderHelper lib;
     protected NutsRepositoryFolderHelper cache;
-    private NutsRepositoryMirroringHelper mirroring;
+    private final NutsRepositoryMirroringHelper mirroring;
 
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FAST, true, NutsConstants.RepoTypes.NUTS);

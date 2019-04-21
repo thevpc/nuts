@@ -16,8 +16,7 @@ import net.vpc.app.nuts.NutsDependencyScope;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsFetchStrategy;
 import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormat;
-import net.vpc.app.nuts.core.util.FailsafeNutsTraceFormat;
+import net.vpc.app.nuts.NutsTraceFormat;
 
 /**
  *
@@ -42,7 +41,7 @@ public class DefaultNutsQueryBaseOptions<T> {
     private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
     private boolean lenient = false;
     private final List<String> repos = new ArrayList<>();
-    protected FailsafeNutsTraceFormat traceFormat = new FailsafeNutsTraceFormat(null, DefaultNutsFindTraceFormat.INSTANCE);
+    protected NutsTraceFormat[] traceFormats = new NutsTraceFormat[NutsOutputFormat.values().length];
 
     //@Override
     protected T copyFrom0(DefaultNutsQueryBaseOptions other) {
@@ -63,11 +62,36 @@ public class DefaultNutsQueryBaseOptions<T> {
             this.transitive = other.isTransitive();
             this.cached = other.isCached();
             this.location = other.getLocation();
-            this.traceFormat.setOther(other.traceFormat.getOther());
+            System.arraycopy(other.traceFormats, 0, this.traceFormats, 0, NutsOutputFormat.values().length);
             this.repos.clear();
             this.repos.addAll(Arrays.asList(other.getRepositories()));
         }
         return (T) this;
+    }
+
+    public NutsTraceFormat getTraceFormat() {
+        return traceFormats[getOutputFormat().ordinal()];
+    }
+
+    public T unsetTraceFormat(NutsOutputFormat f) {
+        traceFormats[f.ordinal()] = null;
+        return (T) this;
+    }
+
+    public T traceFormat(NutsTraceFormat traceFormat) {
+        return setTraceFormat(traceFormat);
+    }
+
+    public T setTraceFormat(NutsTraceFormat f) {
+        if (f == null) {
+            throw new NullPointerException();
+        }
+        traceFormats[f.getSupportedFormat().ordinal()] = f;
+        return (T) this;
+    }
+
+    public NutsTraceFormat[] getTraceFormats() {
+        return Arrays.copyOf(traceFormats, traceFormats.length);
     }
 
     //@Override
@@ -511,5 +535,5 @@ public class DefaultNutsQueryBaseOptions<T> {
     public String[] getRepositories() {
         return repos.toArray(new String[0]);
     }
-    
+
 }

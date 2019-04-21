@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class NutsApplicationContext implements CommandLineContext {
+
     public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "@@Candidate@@: ";
     private final Class appClass;
     private final NutsSessionTerminal terminal;
@@ -49,7 +50,6 @@ public class NutsApplicationContext implements CommandLineContext {
 
     private String[] modeArgs = new String[0];
 
-
     public NutsApplicationContext(NutsWorkspace workspace, Class appClass, String storeId) {
         this(workspace,
                 workspace.config().getOptions().getApplicationArguments(),
@@ -58,7 +58,7 @@ public class NutsApplicationContext implements CommandLineContext {
         );
     }
 
-    public NutsApplicationContext(NutsWorkspace workspace, String[] args,Class appClass, String storeId) {
+    public NutsApplicationContext(NutsWorkspace workspace, String[] args, Class appClass, String storeId) {
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
             String[] execModeCommand = NutsCommandLine.parseCommandLine(args[0].substring(args[0].indexOf('=') + 1));
@@ -129,11 +129,11 @@ public class NutsApplicationContext implements CommandLineContext {
             autoComplete = null;
         }
         tableCellFormatter = new ColoredCellFormatter(this);
-        workspace.addWorkspaceListener(new NutsWorkspaceListenerAdapter(){
+        workspace.addWorkspaceListener(new NutsWorkspaceListenerAdapter() {
             @Override
             public void onUpdateProperty(String property, Object oldValue, Object newValue) {
-                switch (property){
-                    case "systemTerminal":{
+                switch (property) {
+                    case "systemTerminal": {
                         break;
                     }
                 }
@@ -192,18 +192,15 @@ public class NutsApplicationContext implements CommandLineContext {
             switch (s) {
                 case "":
                 case "system":
-                case "auto":
-                    {
+                case "auto": {
                     setTerminalMode(null);
                     break;
                 }
-                case "filtered":
-                case "never": {
+                case "filtered": {
                     setTerminalMode(NutsTerminalMode.FILTERED);
                     break;
                 }
-                case "formatted":
-                case "always":{
+                case "formatted": {
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
                 }
@@ -222,19 +219,20 @@ public class NutsApplicationContext implements CommandLineContext {
                     setTerminalMode(null);
                     break;
                 }
-                case "filtered":
-                case "never": {
+                case "filtered": {
                     setTerminalMode(NutsTerminalMode.FILTERED);
                     break;
                 }
-                case "formatted":
-                case "always": {
+                case "formatted": {
                     setTerminalMode(NutsTerminalMode.FORMATTED);
                     break;
                 }
                 case "inherited": {
                     setTerminalMode(NutsTerminalMode.INHERITED);
                     break;
+                }
+                default: {
+                    setTerminalMode(new NutsCommandArg(s).getBoolean(false) ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
                 }
             }
             return true;
@@ -409,6 +407,7 @@ public class NutsApplicationContext implements CommandLineContext {
     }
 
     private static class AppCommandAutoComplete extends AbstractCommandAutoComplete {
+
         private ArrayList<String> words;
         int wordIndex;
         private PrintStream out0;
@@ -503,4 +502,6 @@ public class NutsApplicationContext implements CommandLineContext {
         this.cacheFolder = cacheFolder;
         return this;
     }
+
+    
 }

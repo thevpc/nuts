@@ -51,7 +51,7 @@ import net.vpc.app.nuts.core.util.common.IteratorUtils;
  */
 public class MavenFolderRepository extends AbstractMavenRepository {
 
-    public static final Logger log = Logger.getLogger(MavenFolderRepository.class.getName());
+    public static final Logger LOG = Logger.getLogger(MavenFolderRepository.class.getName());
 
     public MavenFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FAST, NutsConstants.RepoTypes.MAVEN);
@@ -164,8 +164,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
             NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(is, getWorkspace(), session, pathname.toString());
             if (nutsDescriptor.getId().getName() == null) {
                 //why name is null ? should checkout!
-                if (log.isLoggable(Level.FINE)) {
-                    log.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
+                if (LOG.isLoggable(Level.FINE)) {
+                    LOG.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
                 }
                 return null;
             }

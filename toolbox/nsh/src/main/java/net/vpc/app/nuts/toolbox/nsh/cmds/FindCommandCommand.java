@@ -47,6 +47,7 @@ public class FindCommandCommand extends AbstractNutsCommand {
         super("find-command", DEFAULT_SUPPORT);
     }
 
+    @Override
     public int exec(String[] args, NutsCommandContext context) throws Exception {
         net.vpc.common.commandline.CommandLine cmdLine = cmdLine(args, context);
         Argument a;

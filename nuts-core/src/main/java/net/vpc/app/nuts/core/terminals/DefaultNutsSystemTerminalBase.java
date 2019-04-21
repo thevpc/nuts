@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
-    private static Logger log = Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());
+    private static Logger LOG = Logger.getLogger(DefaultNutsSystemTerminalBase.class.getName());
     private Scanner scanner;
     private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
     private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
@@ -61,13 +61,13 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public void setOutMode(NutsTerminalMode mode) {
-        log.log(Level.FINEST, "Changing Terminal Out Mode : {0}", mode);
+        LOG.log(Level.FINEST, "Changing Terminal Out Mode : {0}", mode);
         FPrint.installStdOut(convertMode(this.outMode = mode));
     }
 
     @Override
     public void setErrorMode(NutsTerminalMode mode) {
-        log.log(Level.FINEST, "Changing Terminal Err Mode : {0}", mode);
+        LOG.log(Level.FINEST, "Changing Terminal Err Mode : {0}", mode);
         FPrint.installStdErr(convertMode(this.errMode = mode));
     }
 

@@ -73,7 +73,7 @@ public class Nuts {
             System.exit(0);
         } catch (Exception ex) {
             int errorCode = NutsExecutionException.DEFAULT_ERROR_EXIT_CODE;
-            boolean showTrace = false;
+            boolean showTrace = NutsUtils.getSystemBoolean("nuts.export.trace-exit-errors",false);
             for (String arg : args) {
                 if (arg.startsWith("-")) {
                     if (arg.equals("--verbose") || arg.equals("--debug")) {

@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 
 public class NutsJavaShell extends JavaShell {
 
-    private static final Logger log = Logger.getLogger(NutsJavaShell.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsJavaShell.class.getName());
     private NutsWorkspace workspace;
     private Map<String, NutsCommand> commands = new HashMap<>();
     private NutsConsoleContext context;
@@ -114,7 +114,7 @@ public class NutsJavaShell extends JavaShell {
             }
         } catch (Exception ex) {
             //ignore
-            log.log(Level.SEVERE, "Error resolving history file", ex);
+            LOG.log(Level.SEVERE, "Error resolving history file", ex);
         }
         workspace.getUserProperties().put(ShellHistory.class.getName(), getHistory());
     }
@@ -130,11 +130,11 @@ public class NutsJavaShell extends JavaShell {
             command = new ShellToNutsCommand(command);
         }
         boolean b = commands.put(command.getName(), (NutsCommand) command) == null;
-        if (log.isLoggable(Level.FINE)) {
+        if (LOG.isLoggable(Level.FINE)) {
             if (b) {
-                log.log(Level.FINE, "Installing Command : " + command.getName());
+                LOG.log(Level.FINE, "Installing Command : " + command.getName());
             } else {
-                log.log(Level.FINE, "Re-installing Command : " + command.getName());
+                LOG.log(Level.FINE, "Re-installing Command : " + command.getName());
             }
         }
     }
@@ -145,7 +145,7 @@ public class NutsJavaShell extends JavaShell {
         StringBuilder reinstalled = new StringBuilder();
         int installedCount = 0;
         int reinstalledCount = 0;
-        boolean loggable = log.isLoggable(Level.FINE);
+        boolean loggable = LOG.isLoggable(Level.FINE);
         for (Command command : cmds) {
             if (!(command instanceof NutsCommand)) {
                 command = new ShellToNutsCommand(command);
@@ -175,16 +175,16 @@ public class NutsJavaShell extends JavaShell {
                 installed.append(" ; Re-installing ").append(reinstalledCount).append(" Command").append(reinstalledCount > 1 ? "s" : "").append(" : ");
                 installed.append(reinstalled);
             }
-            log.log(Level.FINE, installed.toString());
+            LOG.log(Level.FINE, installed.toString());
         }
     }
 
     @Override
     public boolean undeclareCommand(String command) {
         boolean b = commands.remove(command) != null;
-        if (log.isLoggable(Level.FINE)) {
+        if (LOG.isLoggable(Level.FINE)) {
             if (b) {
-                log.log(Level.FINE, "Uninstalling Command : " + command);
+                LOG.log(Level.FINE, "Uninstalling Command : " + command);
             }
         }
         return b;
