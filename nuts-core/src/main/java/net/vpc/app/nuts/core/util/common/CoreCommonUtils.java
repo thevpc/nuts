@@ -261,7 +261,7 @@ public class CoreCommonUtils {
         return false;
     }
 
-    public static void putAllInProps(String prefix, Properties dest, Object value) {
+    public static void putAllInProps(String prefix, Map<String,String> dest, Object value) {
         if (!CoreStringUtils.isBlank(prefix)) {
             if (value instanceof Map) {
                 for (Map.Entry<Object, Object> e : ((Map<Object, Object>) value).entrySet()) {

@@ -29,11 +29,10 @@ import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsFetchCommand.class.getName());
-    private final DefaultNutsWorkspace ws;
     private NutsId id;
 
-    public DefaultNutsFetchCommand(DefaultNutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsFetchCommand(NutsWorkspace ws) {
+        super(ws);
     }
 
     @Override
@@ -198,7 +197,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     @Override
     public NutsFetchCommand copyFrom(NutsFetchCommand other) {
-        super.copyFrom0((DefaultNutsQueryBaseOptions) other);
+        super.copyFromDefaultNutsQueryBaseOptions((DefaultNutsQueryBaseOptions) other);
         if (other != null) {
             NutsFetchCommand o = other;
             this.id = o.getId();
@@ -492,126 +491,14 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "--lenient": {
-                    this.setLenient(a.getBooleanValue());
-                    break;
-                }
-                case "--trace": {
-                    this.setTrace(a.getBooleanValue());
-                    break;
-                }
-                case "--main-only": {
-                    this.includeDependencies(!a.getBooleanValue());
-                    break;
-                }
-                case "--main-and-dependencies": {
-                    this.includeDependencies(a.getBooleanValue());
-                    break;
-                }
-                case "--dependencies": {
-                    this.includeDependencies(a.getBooleanValue());
-                    break;
-                }
-                case "--repo": {
-                    this.addRepository(cmd.getValueFor(a).getString());
-                    break;
-                }
-                case "-s":
-                case "--scope": {
-                    this.addScope(NutsDependencyScope.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
-                    break;
-                }
-                case "-f":
-                case "--fetch": {
-                    this.setFetchStratery(NutsFetchStrategy.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
-                    break;
-                }
-                case "--anywhere": {
-                    this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
-                    break;
-                }
-                case "--installed": {
-                    this.setFetchStratery(NutsFetchStrategy.INSTALLED);
-                    break;
-                }
-                case "--local": {
-                    this.setFetchStratery(NutsFetchStrategy.LOCAL);
-                    break;
-                }
-                case "--offline": {
-                    this.setFetchStratery(NutsFetchStrategy.OFFLINE);
-                    break;
-                }
-                case "--online": {
-                    this.setFetchStratery(NutsFetchStrategy.ONLINE);
-                    break;
-                }
-                case "--remote": {
-                    this.setFetchStratery(NutsFetchStrategy.REMOTE);
-                    break;
-                }
-                case "--wired": {
-                    this.setFetchStratery(NutsFetchStrategy.WIRED);
-                    break;
-                }
-                case "--optional": {
-                    NutsCommandArg v = cmd.getValueFor(a);
-                    if (CoreCommonUtils.isYes(v.getString())) {
-                        this.setAcceptOptional(true);
-                    } else if (CoreCommonUtils.isNo(v.getString())) {
-                        this.setAcceptOptional(false);
-                    } else if (CoreCommonUtils.isNo(v.getString())) {
-                        this.setAcceptOptional(null);
-                    }
-                    break;
-                }
-                case "--cached": {
-                    this.setCached(a.getBooleanValue());
-                    break;
-                }
-                case "--effective": {
-                    this.setEffective(a.getBooleanValue());
-                    break;
-                }
-                case "--indexed": {
-                    this.setIndexed(a.getBooleanValue());
-                    break;
-                }
-                case "--content": {
-                    this.setIncludeContent(a.getBooleanValue());
-                    break;
-                }
-                case "--install-info": {
-                    this.setIncludeInstallInformation(a.getBooleanValue());
-                    break;
-                }
-                case "--location": {
-                    String location = cmd.getValueFor(a).getString();
-                    this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
-                    break;
-                }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
+            switch (a.strKey()) {
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("find: Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }

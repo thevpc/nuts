@@ -6,6 +6,9 @@
 package net.vpc.app.nuts.core.util;
 
 import java.io.PrintStream;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Properties;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsTraceFormat;
@@ -36,8 +39,8 @@ public class DefaultNutsFindTraceFormatProps implements NutsTraceFormat {
         if (canonicalBuilder == null) {
             canonicalBuilder = new CanonicalBuilder(ws).setConvertDesc(true).setConvertId(false);
         }
-        Properties p = new Properties();
-        CoreCommonUtils.putAllInProps(null, p, canonicalBuilder.toCanonical(object));
+        Map<String,String> p = new LinkedHashMap<>();
+        CoreCommonUtils.putAllInProps(String.valueOf(index+1), p, canonicalBuilder.toCanonical(object));
         CoreIOUtils.storeProperties(p, out);
         out.flush();
         out.flush();

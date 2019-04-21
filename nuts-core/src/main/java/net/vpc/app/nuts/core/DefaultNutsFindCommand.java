@@ -50,26 +50,19 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import net.vpc.app.nuts.core.filters.DefaultNutsIdMultiFilter;
-import net.vpc.app.nuts.core.util.CanonicalBuilder;
 
 import static net.vpc.app.nuts.core.util.CoreNutsUtils.And;
 import static net.vpc.app.nuts.core.util.CoreNutsUtils.simplify;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatJson;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatPlain;
-import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import static net.vpc.app.nuts.core.util.NutsWorkspaceUtils.getIdFormat;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
  * @author vpc
@@ -85,14 +78,13 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     private boolean includeDuplicatedVersions = true;
     private boolean includeMain = true;
     private boolean sort = false;
-    private final DefaultNutsWorkspace ws;
     private final List<String> arch = new ArrayList<>();
     private final List<NutsId> ids = new ArrayList<>();
     private final List<String> scripts = new ArrayList<>();
     private final List<String> packaging = new ArrayList<>();
 
-    public DefaultNutsFindCommand(DefaultNutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsFindCommand(NutsWorkspace ws) {
+        super(ws);
     }
 
     @Override
@@ -298,13 +290,13 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand copyFrom(NutsFetchCommand other) {
-        super.copyFrom0((DefaultNutsQueryBaseOptions) other);
+        super.copyFromDefaultNutsQueryBaseOptions((DefaultNutsQueryBaseOptions) other);
         return this;
     }
 
     @Override
     public NutsFindCommand copyFrom(NutsFindCommand other) {
-        super.copyFrom0((DefaultNutsQueryBaseOptions) other);
+        super.copyFromDefaultNutsQueryBaseOptions((DefaultNutsQueryBaseOptions) other);
         if (other != null) {
             NutsFindCommand o = other;
             this.idComparator = o.getSortIdComparator();
@@ -369,6 +361,11 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     @Override
     public NutsFindCommand allVersions() {
         return setAllVersions(true);
+    }
+
+    @Override
+    public NutsFindCommand setLatestVersions(boolean enable) {
+        return setAllVersions(!enable);
     }
 
     @Override
@@ -633,14 +630,13 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                 goodIds.toArray(new String[0]),
                 _repositoryFilter,
                 _idFilter, _descriptorFilter,
-                ws,
                 toFetch()
         );
     }
 
     @Override
     public NutsFetchCommand toFetch() {
-        return new DefaultNutsFetchCommand(ws).copyFrom0((DefaultNutsQueryBaseOptions) this).setSession(evalSession(true));
+        return new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions((DefaultNutsQueryBaseOptions) this).setSession(evalSession(true));
     }
 
     @Override
@@ -695,12 +691,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     private Iterator<NutsId> applyTraceDecoratorIterOfNutsId(Iterator<NutsId> curr, boolean trace) {
-        if (trace) {
-            final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-            return new TraceIterator<NutsId>(curr, ws, out, getOutputFormat(), getTraceFormat());
-        } else {
-            return curr;
-        }
+        return trace ? NutsWorkspaceUtils.decorateTrace(ws, curr, getSession(), getOutputFormat(), getTraceFormat()) : curr;
     }
 
     private NutsCollectionFindResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean trace) {
@@ -963,8 +954,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             if (!trace) {
                 return ii;
             }
-            final PrintStream out = NutsWorkspaceUtils.validateSession(ws, getSession()).getTerminal().getOut();
-            return new TraceIterator<NutsDefinition>(ii, ws, out, getOutputFormat(),getTraceFormat());
+            return NutsWorkspaceUtils.decorateTrace(ws, ii, getSession(), getOutputFormat(), getTraceFormat());
         }
 
     }
@@ -1005,7 +995,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                                                         NutsWorkspaceHelper.createNoRepositorySession(session, mode,
                                                                 search.getOptions())
                                                 ).simplify();
-                                                return ws.getInstalledRepository().findVersions(nutsId1, filter);
+                                                return NutsWorkspaceExt.of(ws)
+                                                        .getInstalledRepository().findVersions(nutsId1, filter);
                                             }
                                         }).safeIgnore().iterator());
                             } else {
@@ -1105,23 +1096,12 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         return this;
     }
 
-
-
     @Override
     public NutsFindCommand parseOptions(String... args) {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "--lenient": {
-                    this.setLenient(a.getBooleanValue());
-                    break;
-                }
-                case "-t":
-                case "--trace": {
-                    this.setTrace(a.getBooleanValue());
-                    break;
-                }
+            switch (a.strKey()) {
                 case "--all-versions": {
                     this.setAllVersions(a.getBooleanValue());
                     break;
@@ -1167,11 +1147,6 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                     this.dependenciesOnly();
                     break;
                 }
-                case "-r":
-                case "--repository": {
-                    this.addRepository(cmd.getValueFor(a).getString());
-                    break;
-                }
                 case "--arch": {
                     this.addArch(cmd.getValueFor(a).getString());
                     break;
@@ -1188,101 +1163,13 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                     this.addId(cmd.getValueFor(a).getString());
                     break;
                 }
-                case "--scope": {
-                    this.addScope(NutsDependencyScope.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
-                    break;
-                }
-                case "-f":
-                case "--fetch": {
-                    this.setFetchStratery(NutsFetchStrategy.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
-                    break;
-                }
-                case "--anywhere": {
-                    this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
-                    break;
-                }
-                case "--installed": {
-                    this.setFetchStratery(NutsFetchStrategy.INSTALLED);
-                    break;
-                }
-                case "--local": {
-                    this.setFetchStratery(NutsFetchStrategy.LOCAL);
-                    break;
-                }
-                case "--offline": {
-                    this.setFetchStratery(NutsFetchStrategy.OFFLINE);
-                    break;
-                }
-                case "--online": {
-                    this.setFetchStratery(NutsFetchStrategy.ONLINE);
-                    break;
-                }
-                case "--remote": {
-                    this.setFetchStratery(NutsFetchStrategy.REMOTE);
-                    break;
-                }
-                case "--wired": {
-                    this.setFetchStratery(NutsFetchStrategy.WIRED);
-                    break;
-                }
-                case "--optional": {
-                    NutsCommandArg v = cmd.getValueFor(a);
-                    if (CoreCommonUtils.isYes(v.getString())) {
-                        this.setAcceptOptional(true);
-                    } else if (CoreCommonUtils.isNo(v.getString())) {
-                        this.setAcceptOptional(false);
-                    } else if (CoreCommonUtils.isNo(v.getString())) {
-                        this.setAcceptOptional(null);
-                    }
-                    break;
-                }
-                case "--cached": {
-                    this.setCached(a.getBooleanValue());
-                    break;
-                }
-                case "--effective": {
-                    this.setEffective(a.getBooleanValue());
-                    break;
-                }
-                case "--indexed": {
-                    this.setIndexed(a.getBooleanValue());
-                    break;
-                }
-                case "--content": {
-                    this.setIncludeContent(a.getBooleanValue());
-                    break;
-                }
-                case "--install-info": {
-                    this.setIncludeInstallInformation(a.getBooleanValue());
-                    break;
-                }
-                case "--location": {
-                    String location = cmd.getValueFor(a).getString();
-                    this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
-                    break;
-                }
-
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("find: Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }
@@ -1290,61 +1177,4 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         return this;
     }
 
-    public static class TraceIterator<T> implements Iterator<T> {
-
-        Iterator<T> curr;
-        NutsWorkspace ws;
-        NutsTraceFormat conv;
-        PrintStream out;
-        NutsOutputFormat format;
-        long count = 0;
-
-        public TraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsTraceFormat conv) {
-            this.curr = curr;
-            this.ws = ws;
-            this.out = out;
-            this.conv = conv;
-            this.format = format;
-            if (this.conv == null) {
-                switch (this.format) {
-                    case JSON: {
-                        this.conv = new DefaultNutsFindTraceFormatJson();
-                        break;
-                    }
-                    case PROPS: {
-                        this.conv = new DefaultNutsFindTraceFormatProps();
-                        break;
-                    }
-                    case PLAIN: {
-                        this.conv = new DefaultNutsFindTraceFormatPlain();
-                        break;
-                    }
-                    default: {
-                        throw new NutsUnsupportedOperationException("Unsupported " + format);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            boolean p = curr.hasNext();
-            if (!p) {
-                conv.formatEnd(count, out, ws);
-            }
-            return p;
-        }
-
-        @Override
-        public T next() {
-            T n = curr.next();
-            if (count == 0) {
-                conv.formatStart(out, ws);
-            } else {
-                conv.formatElement(n, count, out, ws);
-            }
-            count++;
-            return n;
-        }
-    };
 }

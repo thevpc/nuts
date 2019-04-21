@@ -34,7 +34,7 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsUndeployCommand {
+public interface NutsUndeployCommand extends NutsWorkspaceCommand{
 
     NutsUndeployCommand repository(String repository);
 

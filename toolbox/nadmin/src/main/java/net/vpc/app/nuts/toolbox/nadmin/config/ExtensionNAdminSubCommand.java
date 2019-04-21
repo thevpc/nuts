@@ -46,7 +46,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.readAll("list extensions", "lx")) {
                 if (cmdLine.isExecMode()) {
                     for (NutsWorkspaceExtension extension : context.getWorkspace().extensions().getWorkspaceExtensions()) {
-                        NutsDescriptor desc = context.getWorkspace().fetch().id(extension.getWiredId()).setSession(context.getSession()).getResultDescriptor();
+                        NutsDescriptor desc = context.getWorkspace().find().id(extension.getWiredId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
                         String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
                             extDesc = " : " + extDesc;
@@ -63,7 +63,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             } else if (cmdLine.readAll("find extensions", "fx")) {
                 if (cmdLine.isExecMode()) {
                     for (NutsExtensionInfo extension : context.getWorkspace().extensions().findWorkspaceExtensions(context.getSession())) {
-                        NutsDescriptor desc = context.getWorkspace().fetch().id(extension.getId()).setSession(context.getSession()).getResultDescriptor();
+                        NutsDescriptor desc = context.getWorkspace().find().id(extension.getId()).setSession(context.getSession()).getResultDefinitions().required().getDescriptor();
                         String extDesc = StringUtils.trim(desc.getName());
                         if (!extDesc.isEmpty()) {
                             extDesc = " : " + extDesc;

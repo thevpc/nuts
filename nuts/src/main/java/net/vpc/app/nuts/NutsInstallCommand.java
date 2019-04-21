@@ -36,7 +36,7 @@ import java.util.Collection;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsInstallCommand {
+public interface NutsInstallCommand extends NutsWorkspaceCommand{
 
     NutsInstallCommand id(NutsId id);
 

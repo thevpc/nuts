@@ -247,8 +247,8 @@ public class ProcessBuilder2 {
             throw new IOException("Not started");
         }
         if (!baseIO) {
-            NonBlockingInputStreamAdapter procInput = null;
-            NonBlockingInputStreamAdapter procError = null;
+            NonBlockingInputStreamAdapter procInput;
+            NonBlockingInputStreamAdapter procError;
             NonBlockingInputStreamAdapter termIn = null;
             List<PipeThread> pipes = new ArrayList<>();
             if (out != null) {
@@ -305,7 +305,7 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    private void waitFor0() throws IOException{
+    private void waitFor0() throws IOException {
         try {
             result = proc.waitFor();
         } catch (InterruptedException e) {
@@ -547,32 +547,34 @@ public class ProcessBuilder2 {
 
     public String getCommandString(CommandStringFormatter f) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> e : env.entrySet()) {
-            String k = e.getKey();
-            String v = e.getValue();
-            if (k == null) {
-                k = "";
-            }
-            if (v == null) {
-                v = "";
-            }
-            if (f != null) {
-                if (!f.acceptEnvName(k, v)) {
-                    continue;
+        if (env != null) {
+            for (Map.Entry<String, String> e : env.entrySet()) {
+                String k = e.getKey();
+                String v = e.getValue();
+                if (k == null) {
+                    k = "";
                 }
-                String k2 = f.replaceEnvName(k, v);
-                if (k2 != null) {
-                    k = k2;
+                if (v == null) {
+                    v = "";
                 }
-                String v2 = f.replaceEnvValue(k, v);
-                if (v2 != null) {
-                    v = v2;
+                if (f != null) {
+                    if (!f.acceptEnvName(k, v)) {
+                        continue;
+                    }
+                    String k2 = f.replaceEnvName(k, v);
+                    if (k2 != null) {
+                        k = k2;
+                    }
+                    String v2 = f.replaceEnvValue(k, v);
+                    if (v2 != null) {
+                        v = v2;
+                    }
                 }
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append(enforceDoubleQuote(k)).append("=").append(enforceDoubleQuote(v));
             }
-            if (sb.length() > 0) {
-                sb.append(" ");
-            }
-            sb.append(enforceDoubleQuote(k)).append("=").append(enforceDoubleQuote(v));
         }
         for (int i = 0; i < command.size(); i++) {
             String s = command.get(i);
@@ -594,16 +596,23 @@ public class ProcessBuilder2 {
             ProcessBuilder.Redirect r;
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
-                if (r.type() == ProcessBuilder.Redirect.Type.INHERIT) {
-                    sb.append(" > ").append("{inherited}");
-                } else if (r.type() == ProcessBuilder.Redirect.Type.PIPE) {
-
-                } else if (r.type() == ProcessBuilder.Redirect.Type.WRITE) {
-                    sb.append(" > ").append(enforceDoubleQuote(r.file().getPath()));
-                } else if (r.type() == ProcessBuilder.Redirect.Type.APPEND) {
-                    sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
-                } else {
+                if (null == r.type()) {
                     sb.append(" > ").append("{?}");
+                } else switch (r.type()) {
+                //sb.append(" > ").append("{inherited}");
+                    case INHERIT:
+                        break;
+                    case PIPE:
+                        break;
+                    case WRITE:
+                        sb.append(" > ").append(enforceDoubleQuote(r.file().getPath()));
+                        break;
+                    case APPEND:
+                        sb.append(" >> ").append(enforceDoubleQuote(r.file().getPath()));
+                        break;
+                    default:
+                        sb.append(" > ").append("{?}");
+                        break;
                 }
             }
             if (f == null || f.acceptRedirectError()) {
@@ -612,30 +621,43 @@ public class ProcessBuilder2 {
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
-                        if (r.type() == ProcessBuilder.Redirect.Type.INHERIT) {
-                            sb.append(" 2> ").append("{inherited}");
-                        } else if (r.type() == ProcessBuilder.Redirect.Type.PIPE) {
-
-                        } else if (r.type() == ProcessBuilder.Redirect.Type.WRITE) {
-                            sb.append(" 2> ").append(r.file().getPath());
-                        } else if (r.type() == ProcessBuilder.Redirect.Type.APPEND) {
-                            sb.append(" 2>> ").append(enforceDoubleQuote(r.file().getPath()));
-                        } else {
+                        if (null == r.type()) {
                             sb.append(" 2> ").append("{?}");
+                        } else switch (r.type()) {
+                        //sb.append(" 2> ").append("{inherited}");
+                            case INHERIT:
+                                break;
+                            case PIPE:
+                                break;
+                            case WRITE:
+                                sb.append(" 2> ").append(r.file().getPath());
+                                break;
+                            case APPEND:
+                                sb.append(" 2>> ").append(enforceDoubleQuote(r.file().getPath()));
+                                break;
+                            default:
+                                sb.append(" 2> ").append("{?}");
+                                break;
                         }
                     }
                 }
             }
             if (f == null || f.acceptRedirectInput()) {
                 r = base.redirectInput();
-                if (r.type() == ProcessBuilder.Redirect.Type.INHERIT) {
-                    sb.append(" < ").append("{inherited}");
-                } else if (r.type() == ProcessBuilder.Redirect.Type.PIPE) {
-
-                } else if (r.type() == ProcessBuilder.Redirect.Type.READ) {
-                    sb.append(" < ").append(enforceDoubleQuote(r.file().getPath()));
-                } else {
+                if (null == r.type()) {
                     sb.append(" < ").append("{?}");
+                } else switch (r.type()) {
+                //sb.append(" < ").append("{inherited}");
+                    case INHERIT:
+                        break;
+                    case PIPE:
+                        break;
+                    case READ:
+                        sb.append(" < ").append(enforceDoubleQuote(r.file().getPath()));
+                        break;
+                    default:
+                        sb.append(" < ").append("{?}");
+                        break;
                 }
             }
         } else if (base.redirectErrorStream()) {
@@ -691,11 +713,11 @@ public class ProcessBuilder2 {
     public ProcessBuilder2 setFailFast() {
         return setFailFast(true);
     }
-    
+
     private static PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out) {
         PipeThread p = new PipeThread(name, in, out);
         p.start();
         return p;
     }
-    
+
 }

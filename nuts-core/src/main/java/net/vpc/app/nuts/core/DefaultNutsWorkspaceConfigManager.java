@@ -795,7 +795,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsWorkspaceCommand findCommandAliases(String name) {
+    public NutsWorkspaceCommandAlias findCommandAlias(String name) {
         NutsCommandAliasConfig c = defaultCommandFactory.findCommand(name, ws);
         if (c == null) {
             for (NutsWorkspaceCommandFactory commandFactory : commandFactories) {
@@ -811,7 +811,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return toDefaultNutsWorkspaceCommand(c);
     }
 
-    private NutsWorkspaceCommand toDefaultNutsWorkspaceCommand(NutsCommandAliasConfig c) {
+    private NutsWorkspaceCommandAlias toDefaultNutsWorkspaceCommand(NutsCommandAliasConfig c) {
         if (c.getCommand() == null || c.getCommand().length == 0) {
             LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Command. Ignored", c.getName());
             return null;
@@ -820,7 +820,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
             return null;
         }
-        return new DefaultNutsWorkspaceCommand(ws)
+        return new DefaultNutsWorkspaceCommandAlias(ws)
                 .setCommand(c.getCommand())
                 .setFactoryId(c.getFactoryId())
                 .setOwner(c.getOwner())
@@ -884,8 +884,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public List<NutsWorkspaceCommand> findCommandAliases() {
-        HashMap<String, NutsWorkspaceCommand> all = new HashMap<>();
+    public List<NutsWorkspaceCommandAlias> findCommandAliases() {
+        HashMap<String, NutsWorkspaceCommandAlias> all = new HashMap<>();
         for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(ws)) {
             all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
         }
@@ -980,8 +980,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public List<NutsWorkspaceCommand> findCommandAliases(NutsId id) {
-        HashMap<String, NutsWorkspaceCommand> all = new HashMap<>();
+    public List<NutsWorkspaceCommandAlias> findCommandAliases(NutsId id) {
+        HashMap<String, NutsWorkspaceCommandAlias> all = new HashMap<>();
         for (NutsCommandAliasConfig command : defaultCommandFactory.findCommands(id, ws)) {
             all.put(command.getName(), toDefaultNutsWorkspaceCommand(command));
         }

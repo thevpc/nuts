@@ -9,7 +9,7 @@ package net.vpc.app.nuts;
  *
  * @author vpc
  */
-public interface NutsRemoveUserCommand {
+public interface NutsRemoveUserCommand extends NutsWorkspaceCommand{
 
     NutsSession getSession();
 
@@ -31,4 +31,7 @@ public interface NutsRemoveUserCommand {
 
     NutsRemoveUserCommand setLogin(String login);
 
+    NutsRemoveUserCommand parseOptions(String... args);
+    
+    NutsRemoveUserCommand run();
 }

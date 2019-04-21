@@ -152,7 +152,7 @@ public class SshCommand extends AbstractNutsCommand {
                     }
 
                     if (!goodJarExists) {
-                        Path from = ws.fetch().id(ws.config().getApiId().setVersion(bootApiVersion)).getResultPath();
+                        Path from = ws.find().id(ws.config().getApiId().setVersion(bootApiVersion)).getResultDefinitions().required().getPath();
                         if (from == null) {
                             throw new NutsExecutionException("Unable to resolve Nuts Jar File", 2);
                         } else {

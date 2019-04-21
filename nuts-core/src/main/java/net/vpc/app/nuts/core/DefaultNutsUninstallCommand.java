@@ -32,22 +32,17 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 /**
  *
  * type: Command Class
+ *
  * @author vpc
  */
-public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
+public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUninstallCommand> implements NutsUninstallCommand {
 
-    private boolean ask = true;
-    private boolean trace = true;
-    private boolean force = false;
     private boolean erase = false;
     private List<String> args;
-    private List<NutsId> ids = new ArrayList<>();
-    private NutsSession session;
-    private NutsWorkspace ws;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
+    private final List<NutsId> ids = new ArrayList<>();
 
     public DefaultNutsUninstallCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     @Override
@@ -92,39 +87,6 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     }
 
     @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public NutsUninstallCommand setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public NutsUninstallCommand setForce(boolean forceInstall) {
-        this.force = forceInstall;
-        return this;
-    }
-
-    @Override
-    public boolean isAsk() {
-        return ask;
-    }
-
-    @Override
-    public NutsUninstallCommand setAsk(boolean ask) {
-        this.ask = ask;
-        return this;
-    }
-
-    @Override
     public NutsUninstallCommand removeId(NutsId id) {
         if (id != null) {
             this.ids.remove(id);
@@ -165,36 +127,6 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     }
 
     @Override
-    public NutsUninstallCommand ask() {
-        return setAsk(true);
-    }
-
-    @Override
-    public NutsUninstallCommand ask(boolean ask) {
-        return setAsk(ask);
-    }
-
-    @Override
-    public NutsUninstallCommand force() {
-        return setForce(true);
-    }
-
-    @Override
-    public NutsUninstallCommand force(boolean force) {
-        return setForce(force);
-    }
-
-    @Override
-    public NutsUninstallCommand trace() {
-        return setTrace(true);
-    }
-
-    @Override
-    public NutsUninstallCommand trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    @Override
     public NutsUninstallCommand erase() {
         return setErase(true);
     }
@@ -202,11 +134,6 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
     @Override
     public NutsUninstallCommand erase(boolean erase) {
         return setErase(erase);
-    }
-
-    @Override
-    public NutsUninstallCommand session(NutsSession session) {
-        return setSession(session);
     }
 
     @Override
@@ -242,17 +169,6 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
                 }
             }
         }
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsUninstallCommand setSession(NutsSession session) {
-        this.session = session;
         return this;
     }
 
@@ -323,89 +239,31 @@ public class DefaultNutsUninstallCommand implements NutsUninstallCommand {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "-f":
-                case "--force": {
-                    this.setForce(a.getBooleanValue());
-                    break;
-                }
+            switch (a.strKey()) {
                 case "-e":
                 case "--earse": {
                     this.setErase(a.getBooleanValue());
                     break;
                 }
-                case "--trace": {
-                    this.setTrace(a.getBooleanValue());
-                    break;
-                }
-                case "-g": 
-                case "--args": 
-                {
+                case "-g":
+                case "--args": {
                     while (cmd.hasNext()) {
                         this.addArg(cmd.next().getString());
                     }
                     break;
                 }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsUninstallCommand outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsUninstallCommand setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    @Override
-    public NutsUninstallCommand json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    @Override
-    public NutsUninstallCommand plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    @Override
-    public NutsUninstallCommand props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
     }
 
 }

@@ -858,10 +858,10 @@ final class NutsUtils {
                     System.out.printf("Do you confirm deleting %s [y/n/a] ? : ", directory);
                     line = s.nextLine();
                 }
-                if ("y".equalsIgnoreCase(line) || "yes".equalsIgnoreCase(line)) {
-                    //ok
-                } else if ("a".equalsIgnoreCase(line) && !"all".equalsIgnoreCase(line)) {
+                if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll[0] = true;
+                } else if (new NutsCommandArg(line).getBoolean()) {
+                    //ok
                 } else {
                     throw new NutsUserCancelException();
                 }

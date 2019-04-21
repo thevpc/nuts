@@ -802,7 +802,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
     public String resolveCommandName(NutsId id) {
         String nn = id.getName();
-        NutsWorkspaceCommand c = config().findCommandAliases(nn);
+        NutsWorkspaceCommandAlias c = config().findCommandAlias(nn);
         if (c != null) {
             if (c.getOwner().getLongName().equals(id.getLongName())) {
                 return nn;
@@ -811,7 +811,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             return nn;
         }
         nn = id.getName() + "-" + id.getVersion();
-        c = config().findCommandAliases(nn);
+        c = config().findCommandAlias(nn);
         if (c != null) {
             if (c.getOwner().getLongName().equals(id.getLongName())) {
                 return nn;
@@ -820,7 +820,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             return nn;
         }
         nn = id.getGroup() + "." + id.getName() + "-" + id.getVersion();
-        c = config().findCommandAliases(nn);
+        c = config().findCommandAlias(nn);
         if (c != null) {
             if (c.getOwner().getLongName().equals(id.getLongName())) {
                 return nn;

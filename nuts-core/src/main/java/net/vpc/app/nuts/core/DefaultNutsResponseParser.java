@@ -1,12 +1,14 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsResponseParser;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 
 public class DefaultNutsResponseParser implements NutsResponseParser {
-    public static final NutsResponseParser INSTANCE=new DefaultNutsResponseParser();
-    
+
+    public static final NutsResponseParser INSTANCE = new DefaultNutsResponseParser();
+
     @Override
     public Object parse(Object response, Class type) {
         if (response == null) {
@@ -15,16 +17,16 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
         if (type.isInstance(response)) {
             return response;
         }
-        if(type.isEnum()){
+        if (type.isEnum()) {
             String s = String.valueOf(response).trim();
-            if(s.isEmpty()){
+            if (s.isEmpty()) {
                 return null;
             }
             try {
                 return Enum.valueOf(type, s);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 for (Object enumConstant : type.getEnumConstants()) {
-                    if(enumConstant.toString().equalsIgnoreCase(s)){
+                    if (enumConstant.toString().equalsIgnoreCase(s.replace("-", "_"))) {
                         return enumConstant;
                     }
                 }
@@ -53,37 +55,26 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
             }
             case "boolean":
             case "java.lang.Boolean": {
-                if(!(response instanceof String)){
-                    response=String.valueOf(response);
+                if (!(response instanceof String)) {
+                    response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                if(
-                        "y".equalsIgnoreCase(sReponse)
-                                ||"yes".equalsIgnoreCase(sReponse)
-                                ||"t".equalsIgnoreCase(sReponse)
-                                ||"true".equalsIgnoreCase(sReponse)
-                ){
-                    return true;
+                NutsCommandArg a = new NutsCommandArg(sReponse);
+                if (!a.isBoolean()) {
+                    throw new NutsIllegalArgumentException("Invalid response " + sReponse);
                 }
-                if(
-                        "n".equalsIgnoreCase(sReponse)
-                                ||"no".equalsIgnoreCase(sReponse)
-                                ||"f".equalsIgnoreCase(sReponse)
-                                ||"false".equalsIgnoreCase(sReponse)
-                ){
-                    return false;
-                }
-                throw new NutsIllegalArgumentException("Invalid response "+sReponse);
+                return a.getBoolean();
             }
-            default:{
-                throw new NutsUnsupportedArgumentException("Unsupported type "+type.getName());
+
+            default: {
+                throw new NutsUnsupportedArgumentException("Unsupported type " + type.getName());
             }
         }
     }
 
     @Override
     public Object[] getDefaultAcceptedValues(Class type) {
-        if(type.isEnum()){
+        if (type.isEnum()) {
             return type.getEnumConstants();
         }
         switch (type.getName()) {
@@ -108,11 +99,20 @@ public class DefaultNutsResponseParser implements NutsResponseParser {
             }
             case "boolean":
             case "java.lang.Boolean": {
-                return new Object[]{"y","n"};
+                return new Object[]{true, false};
             }
-            default:{
-                throw new NutsUnsupportedArgumentException("Unsupported type "+type.getName());
+            default: {
+                throw new NutsUnsupportedArgumentException("Unsupported type " + type.getName());
             }
         }
     }
+
+    @Override
+    public String format(Object value) {
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? "y" : "n";
+        }
+        return String.valueOf(value);
+    }
+
 }

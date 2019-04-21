@@ -40,7 +40,7 @@ import java.util.Properties;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsExecCommand {
+public interface NutsExecCommand extends NutsWorkspaceCommand{
 
     NutsExecCommand failFast();
 

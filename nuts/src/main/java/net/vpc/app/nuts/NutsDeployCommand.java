@@ -39,7 +39,7 @@ import java.nio.file.Path;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsDeployCommand {
+public interface NutsDeployCommand extends NutsWorkspaceCommand{
 
     NutsDeployCommand content(InputStream stream);
 
@@ -192,4 +192,14 @@ public interface NutsDeployCommand {
     NutsDeployCommand setSourceRepository(String repository);
 
     NutsDeployCommand parseOptions(String... args);
+
+    NutsTraceFormat getTraceFormat();
+
+    NutsDeployCommand unsetTraceFormat(NutsOutputFormat f);
+
+    NutsDeployCommand traceFormat(NutsTraceFormat traceFormat);
+
+    NutsDeployCommand setTraceFormat(NutsTraceFormat f);
+
+    NutsTraceFormat[] getTraceFormats();
 }

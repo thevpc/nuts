@@ -36,7 +36,7 @@ import java.util.Collection;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsUpdateCommand {
+public interface NutsUpdateCommand extends NutsWorkspaceCommand{
 
     NutsUpdateCommand outputFormat(NutsOutputFormat outputFormat);
 

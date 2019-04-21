@@ -33,26 +33,21 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 /**
  *
  * type: Command Class
+ *
  * @author vpc
  */
-public class DefaultNutsInstallCommand implements NutsInstallCommand {
+public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInstallCommand> implements NutsInstallCommand {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsInstallCommand.class.getName());
 
-    private boolean ask = true;
-    private boolean trace = true;
-    private boolean force = false;
     private boolean defaultVersion = true;
     private boolean includecompanions = false;
     private List<String> args;
     private final List<NutsId> ids = new ArrayList<>();
-    private NutsSession session;
-    private final NutsWorkspace ws;
     private NutsDefinition[] result;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     @Override
@@ -97,39 +92,6 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     }
 
     @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public NutsInstallCommand setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public NutsInstallCommand setForce(boolean forceInstall) {
-        this.force = forceInstall;
-        return this;
-    }
-
-    @Override
-    public boolean isAsk() {
-        return ask;
-    }
-
-    @Override
-    public NutsInstallCommand setAsk(boolean ask) {
-        this.ask = ask;
-        return this;
-    }
-
-    @Override
     public NutsInstallCommand removeId(NutsId id) {
         if (id != null) {
             this.ids.remove(id);
@@ -161,26 +123,6 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     public NutsInstallCommand clearArgs() {
         this.args = null;
         return this;
-    }
-
-    @Override
-    public NutsInstallCommand ask() {
-        return setAsk(true);
-    }
-
-    @Override
-    public NutsInstallCommand ask(boolean ask) {
-        return setAsk(ask);
-    }
-
-    @Override
-    public NutsInstallCommand force() {
-        return setForce(force);
-    }
-
-    @Override
-    public NutsInstallCommand force(boolean force) {
-        return setForce(force);
     }
 
     @Override
@@ -218,17 +160,6 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
                 this.args.add(arg);
             }
         }
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsInstallCommand setSession(NutsSession session) {
-        this.session = session;
         return this;
     }
 
@@ -274,21 +205,6 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
     }
 
     @Override
-    public NutsInstallCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public NutsInstallCommand trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    @Override
-    public NutsInstallCommand trace() {
-        return setTrace(true);
-    }
-
-    @Override
     public NutsInstallCommand setDefaultVersion(boolean defaultVersion) {
         this.defaultVersion = defaultVersion;
         return this;
@@ -319,52 +235,26 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "-f":
-                case "--force": {
-                    this.setForce(a.getBooleanValue());
-                    break;
-                }
-                case "-t": 
-                case "--trace": {
-                    this.setTrace(a.getBooleanValue());
-                    break;
-                }
-                case "-c": 
-                case "--companions": 
-                {
+            switch (a.strKey()) {
+                case "-c":
+                case "--companions": {
                     this.setIncludeCompanions(a.getBooleanValue());
                     break;
                 }
-                case "-g": 
-                case "--args": 
-                {
+                case "-g":
+                case "--args": {
                     while ((a = cmd.next()) != null) {
                         this.addArg(a.getString());
                     }
                     break;
                 }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }
@@ -480,39 +370,5 @@ public class DefaultNutsInstallCommand implements NutsInstallCommand {
             run();
         }
         return result;
-    }
-
-    @Override
-    public DefaultNutsInstallCommand outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public DefaultNutsInstallCommand setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    @Override
-    public DefaultNutsInstallCommand json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    @Override
-    public DefaultNutsInstallCommand plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    @Override
-    public DefaultNutsInstallCommand props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
     }
 }

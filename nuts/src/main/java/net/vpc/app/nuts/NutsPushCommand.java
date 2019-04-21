@@ -36,7 +36,7 @@ import java.util.Collection;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsPushCommand {
+public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     NutsPushCommand id(NutsId id);
 
@@ -67,9 +67,11 @@ public interface NutsPushCommand {
     NutsPushCommand frozenId(String id);
 
     NutsPushCommand removeFrozenId(NutsId id);
+
     NutsPushCommand addFrozenId(NutsId id);
 
     NutsPushCommand removeFrozenId(String id);
+
     NutsPushCommand addFrozenId(String id);
 
     NutsPushCommand addFrozenIds(NutsId... ids);

@@ -41,22 +41,16 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
  *
  * @author vpc
  */
-public class DefaultNutsPushCommand implements NutsPushCommand {
+public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCommand> implements NutsPushCommand {
 
-    private boolean ask = true;
-    private boolean trace = true;
-    private boolean force = false;
     private boolean offline = false;
     private List<String> args;
     private final List<NutsId> ids = new ArrayList<>();
     private List<NutsId> frozenIds;
-    private NutsSession session;
-    private final NutsWorkspace ws;
     private String repository;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     public DefaultNutsPushCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     @Override
@@ -181,39 +175,6 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public NutsPushCommand setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public NutsPushCommand setForce(boolean forceInstall) {
-        this.force = forceInstall;
-        return this;
-    }
-
-    @Override
-    public boolean isAsk() {
-        return ask;
-    }
-
-    @Override
-    public NutsPushCommand setAsk(boolean ask) {
-        this.ask = ask;
-        return this;
-    }
-
-    @Override
     public String[] getArgs() {
         return args == null ? new String[0] : args.toArray(new String[0]);
     }
@@ -248,17 +209,6 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
                 this.args.add(arg);
             }
         }
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsPushCommand setSession(NutsSession session) {
-        this.session = session;
         return this;
     }
 
@@ -427,41 +377,6 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public NutsPushCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public NutsPushCommand ask() {
-        return ask(true);
-    }
-
-    @Override
-    public NutsPushCommand ask(boolean enable) {
-        return setAsk(enable);
-    }
-
-    @Override
-    public NutsPushCommand force() {
-        return force(true);
-    }
-
-    @Override
-    public NutsPushCommand force(boolean enable) {
-        return setForce(enable);
-    }
-
-    @Override
-    public NutsPushCommand trace() {
-        return trace(true);
-    }
-
-    @Override
-    public NutsPushCommand trace(boolean enable) {
-        return setTrace(enable);
-    }
-
-    @Override
     public NutsPushCommand offline() {
         return offline(true);
     }
@@ -472,55 +387,11 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
     }
 
     @Override
-    public NutsPushCommand outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsPushCommand setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    @Override
-    public NutsPushCommand json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    @Override
-    public NutsPushCommand plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    @Override
-    public NutsPushCommand props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
-    }
-
-    @Override
     public NutsPushCommand parseOptions(String... args) {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "-f":
-                case "--force": {
-                    setForce(a.getBooleanValue());
-                    break;
-                }
-                case "-k":
-                case "--ask": {
-                    setAsk(a.getBooleanValue());
-                    break;
-                }
+            switch (a.strKey()) {
                 case "-o":
                 case "--offline": {
                     setOffline(a.getBooleanValue());
@@ -546,32 +417,13 @@ public class DefaultNutsPushCommand implements NutsPushCommand {
                     }
                     break;
                 }
-                case "-t":
-                case "--trace": {
-                    setTrace(a.getBooleanValue());
-                    break;
-                }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }

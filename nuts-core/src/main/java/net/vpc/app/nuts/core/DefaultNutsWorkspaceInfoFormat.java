@@ -56,7 +56,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().toString()) {
+            switch (a.strKey()) {
                 case "--min": {
                     this.setMinimal(true);
                     break;
@@ -83,7 +83,7 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
                 }
                 case "--add": {
                     NutsCommandArg r = cmd.getValueFor(a);
-                    extraProperties.put(r.getKey(), r.getValue());
+                    extraProperties.put(r.getKey().getString(), r.getValue().getString());
                     break;
                 }
                 default: {

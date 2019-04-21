@@ -5,15 +5,15 @@ import net.vpc.app.nuts.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import net.vpc.app.nuts.core.util.CharacterizedFile;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
@@ -24,7 +24,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.io.ZipOptions;
 import net.vpc.app.nuts.core.util.io.ZipUtils;
 
-public class DefaultNutsDeployCommand implements NutsDeployCommand {
+public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeployCommand> implements NutsDeployCommand {
 
     private List<NutsId> result;
     private Object content;
@@ -33,17 +33,12 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     private String descSha1;
     private String fromRepository;
     private String toRepository;
-    private boolean trace = true;
-    private boolean force = false;
     private boolean offline = false;
     private boolean transitive = true;
-    private NutsWorkspace ws;
-    private NutsSession session;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
     private final List<NutsId> ids = new ArrayList<>();
 
     public DefaultNutsDeployCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     @Override
@@ -164,7 +159,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     public NutsDeployCommand setRepository(String repository) {
         return setTargetRepository(repository);
     }
-    
+
     @Override
     public NutsDeployCommand setTargetRepository(String repository) {
         this.toRepository = repository;
@@ -185,30 +180,6 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     @Override
     public NutsDeployCommand setSourceRepository(String repository) {
         this.fromRepository = repository;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public NutsDeployCommand setTrace(boolean trace) {
-        this.trace = trace;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public NutsDeployCommand setForce(boolean force) {
-        this.force = force;
         invalidateResult();
         return this;
     }
@@ -235,27 +206,6 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         this.transitive = transitive;
         invalidateResult();
         return this;
-    }
-
-    public NutsWorkspace getWs() {
-        return ws;
-    }
-
-    public void setWs(NutsWorkspace ws) {
-        this.ws = ws;
-        invalidateResult();
-    }
-
-    @Override
-    public NutsDeployCommand setSession(NutsSession session) {
-        this.session = session;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
     }
 
     @Override
@@ -336,21 +286,6 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     }
 
     @Override
-    public NutsDeployCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public NutsDeployCommand force() {
-        return setForce(true);
-    }
-
-    @Override
-    public NutsDeployCommand force(boolean force) {
-        return setForce(force);
-    }
-
-    @Override
     public NutsDeployCommand offline() {
         return setOffline(true);
     }
@@ -358,16 +293,6 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     @Override
     public NutsDeployCommand offline(boolean offline) {
         return setOffline(offline);
-    }
-
-    @Override
-    public NutsDeployCommand trace() {
-        return setTrace(true);
-    }
-
-    @Override
-    public NutsDeployCommand trace(boolean trace) {
-        return setTrace(trace);
     }
 
     @Override
@@ -380,6 +305,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         return setTransitive(transitive);
     }
 
+    @Override
     public NutsId[] getResult() {
         if (result == null) {
             run();
@@ -387,7 +313,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         return result.toArray(new NutsId[0]);
     }
 
-    private void invalidateResult() {
+    protected void invalidateResult() {
         result = null;
     }
 
@@ -402,21 +328,21 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                 runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
             }
         }
-        if (trace) {
+        if (isTrace()) {
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                session = NutsWorkspaceUtils.validateSession(ws, getSession());
+
                 if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
                     switch (getOutputFormat()) {
                         case JSON: {
-                            session.getTerminal().out().printf(ws.io().toJsonString(result, true));
+                            getValidSession().getTerminal().out().printf(ws.io().toJsonString(result, true));
                             break;
                         }
                         case PROPS: {
-                            Properties props = new Properties();
+                            Map<String, String> props = new LinkedHashMap<>();
                             for (int i = 0; i < result.size(); i++) {
                                 props.put(String.valueOf(i + 1), result.get(i).toString());
                             }
-                            CoreIOUtils.storeProperties(props, session.getTerminal().out());
+                            CoreIOUtils.storeProperties(props, getValidSession().getTerminal().out());
                             break;
                         }
 
@@ -444,8 +370,8 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
             Path contentFile2 = null;
             try {
                 if (descriptor == null) {
-                    NutsFetchCommand p = ws.fetch().setTransitive(this.isTransitive()).setSession(session);
-                    characterizedFile = CoreIOUtils.characterize(ws, contentSource, p, session);
+                    NutsFetchCommand p = ws.fetch().setTransitive(this.isTransitive()).setSession(getValidSession());
+                    characterizedFile = CoreIOUtils.characterize(ws, contentSource, p, getValidSession());
                     if (characterizedFile.descriptor == null) {
                         throw new NutsIllegalArgumentException("Missing descriptor");
                     }
@@ -461,7 +387,6 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
 
                 NutsWorkspaceUtils.checkReadOnly(ws);
                 Path contentFile = contentFile0;
-                session = NutsWorkspaceUtils.validateSession(ws, session);
                 Path tempFile2 = null;
                 NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
                 try {
@@ -473,7 +398,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                         } else {
                             descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws,
                                     CoreIOUtils.createInputSource(contentFile).multi(),
-                                    fetchOptions, session);
+                                    fetchOptions, getValidSession());
                         }
                         if (descriptor == null) {
                             descriptor = descriptor2;
@@ -498,7 +423,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                         }
                     } else {
                         if (descriptor == null) {
-                            descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, session);
+                            descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(ws, CoreIOUtils.createInputSource(contentFile).multi(), fetchOptions, getValidSession());
                         }
                     }
                     if (descriptor == null) {
@@ -510,7 +435,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                         throw new NutsIllegalArgumentException("Invalid Version " + descriptor.getId().getVersion());
                     }
 
-                    NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().setTransitive(true).session(session));
+                    NutsId effId = dws.resolveEffectiveId(descriptor, ws.fetch().setTransitive(true).session(getValidSession()));
                     for (String os : descriptor.getOs()) {
                         CorePlatformUtils.checkSupportedOs(ws.parser().parseRequiredId(os).getSimpleName());
                     }
@@ -521,7 +446,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                         NutsRepositoryFilter repositoryFilter = null;
                         //TODO CHECK ME, why offline
                         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, effId, repositoryFilter, NutsFetchMode.LOCAL, fetchOptions)) {
-                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
 
                             effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
                             repo.deploy(
@@ -543,7 +468,7 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                         if (!repo.config().isEnabled()) {
                             throw new NutsRepositoryNotFoundException("Repository " + repository + " is disabled.");
                         }
-                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
+                        NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), repo, this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE, fetchOptions);
                         effId = ws.config().createComponentFaceId(effId.unsetQuery(), descriptor).setAlternative(CoreStringUtils.trim(descriptor.getAlternative()));
                         repo.deploy(new DefaultNutsRepositoryDeploymentOptions()
                                 .setForce(this.isForce())
@@ -580,14 +505,13 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
     }
 
     private void addResult(NutsId nid) {
-        if (trace) {
+        if (isTrace()) {
             if (result == null) {
                 result = new ArrayList<>();
             }
             result.add(nid);
-            session = NutsWorkspaceUtils.validateSession(ws, getSession());
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                session.getTerminal().out().printf("Nuts %N deployed successfully to ==%s==\n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
+                getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==\n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
             }
         }
     }
@@ -620,40 +544,6 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         } else {
             throw new NutsException("Unexpected type " + descriptor.getClass().getName());
         }
-    }
-
-    @Override
-    public NutsDeployCommand outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsDeployCommand setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    @Override
-    public NutsDeployCommand json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    @Override
-    public NutsDeployCommand plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    @Override
-    public NutsDeployCommand props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
     }
 
     @Override
@@ -746,25 +636,10 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "-f":
-                case "--force": {
-                    setForce(a.getBooleanValue());
-                    break;
-                }
-                case "-T":
-                case "--transitive": {
-                    setTransitive(a.getBooleanValue());
-                    break;
-                }
+            switch (a.strKey()) {
                 case "-o":
                 case "--offline": {
                     setOffline(a.getBooleanValue());
-                    break;
-                }
-                case "-t":
-                case "--trace": {
-                    setTrace(a.getBooleanValue());
                     break;
                 }
                 case "-d":
@@ -808,31 +683,17 @@ public class DefaultNutsDeployCommand implements NutsDeployCommand {
                     }
                     break;
                 }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        String idOrPath = a.getString();
-                        if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
-                            setContent(idOrPath);
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
                         } else {
-                            id(idOrPath);
+                            String idOrPath = a.getString();
+                            if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
+                                setContent(idOrPath);
+                            } else {
+                                id(idOrPath);
+                            }
                         }
                     }
                 }

@@ -249,7 +249,7 @@ public class NutsJavaShellEvalContext extends DefaultConsoleContext implements N
                     .getResultIds().list();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = ws.fetch().id(selectedId).effective(true).session(this.getSession()).offline().getResultDefinition();
+                NutsDefinition def = ws.find().id(selectedId).effective(true).session(this.getSession()).offline().getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (d.isNutsApplication()

@@ -35,9 +35,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import net.vpc.app.nuts.NutsAddUserCommand;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsSession;
+import net.vpc.app.nuts.NutsUpdateUserCommand;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
@@ -48,82 +50,21 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsAddUserCommand implements NutsAddUserCommand {
+public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddUserCommand> implements NutsAddUserCommand {
 
-    private boolean trace = true;
-    private boolean force = false;
     private String login;
     private String remoteIdentity;
     private String password;
-    private Set<String> rights = new HashSet<String>();
-    private Set<String> groups = new HashSet<String>();
-    private NutsSession session;
+    private final Set<String> rights = new HashSet<>();
+    private final Set<String> groups = new HashSet<>();
     private NutsRepository repo;
-    private NutsWorkspace ws;
 
     public DefaultNutsAddUserCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
     public DefaultNutsAddUserCommand(NutsRepository repo) {
+        super(repo.getWorkspace());
         this.repo = repo;
-    }
-
-    @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand trace() {
-        return trace(true);
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand force() {
-        return force(true);
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand force(boolean force) {
-        return setForce(force);
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public DefaultNutsAddUserCommand setSession(NutsSession session) {
-        this.session = session;
-        return this;
     }
 
     @Override
@@ -328,4 +269,24 @@ public class DefaultNutsAddUserCommand implements NutsAddUserCommand {
         }
         return this;
     }
+
+    public NutsAddUserCommand parseOptions(String... args) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.strKey()) {
+                default: {
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            //id(a.getString());
+                        }
+                    }
+                }
+            }
+        }
+        return this;
+    }
+    
 }

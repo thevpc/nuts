@@ -8,15 +8,12 @@ public class DefaultNutsSearch {
     private final NutsIdFilter idFilter;
     private final NutsDescriptorFilter descriptorFilter;
     private final String[] ids;
-    private final DefaultNutsWorkspace ws;
     private final NutsFetchCommand options;
 
     public DefaultNutsSearch(String[] ids, NutsRepositoryFilter repositoryFilter, NutsIdFilter idFilter,
             NutsDescriptorFilter descriptorFilter,
-            DefaultNutsWorkspace ws,
             NutsFetchCommand options) {
         this.ids = ids;
-        this.ws = ws;
         this.options = options;
         this.repositoryFilter = repositoryFilter;
         this.idFilter = idFilter;

@@ -9,27 +9,20 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
 import java.io.UncheckedIOException;
-import java.lang.reflect.Array;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.NutsConstants;
-import net.vpc.app.nuts.NutsDefinition;
-import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsDescriptorFormat;
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsFetchCommand;
@@ -43,11 +36,9 @@ import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsSdkLocation;
 import net.vpc.app.nuts.NutsSession;
-import net.vpc.app.nuts.NutsUnsupportedOperationException;
+import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsWorkspace;
-import static net.vpc.app.nuts.core.util.CoreNutsUtils.tracePlainNutsDefinition;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
+import net.vpc.app.nuts.core.TraceIterator;
 
 /**
  *
@@ -301,6 +292,12 @@ public class NutsWorkspaceUtils {
 //        ws.io().writeJson(o, out, true);
 //        out.println();
 //    }
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, PrintStream out, NutsOutputFormat oformat,NutsTraceFormat format) {
+        return new TraceIterator<>(it, ws, out, oformat,format);
+    }
 
-
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat,NutsTraceFormat format) {
+        final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
+        return new TraceIterator<>(it, ws, out, oformat,format);
+    }
 }

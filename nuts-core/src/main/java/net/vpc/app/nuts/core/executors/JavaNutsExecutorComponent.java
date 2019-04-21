@@ -73,7 +73,7 @@ public class JavaNutsExecutorComponent implements NutsExecutorComponent {
         JavaExecutorOptions joptions = new JavaExecutorOptions(
                 nutsMainDef, executionContext.getArgs(),
                 executionContext.getExecutorOptions(),
-                executionContext.getCwd(),
+                CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getWorkspace(),
                 executionContext.getSession());
 

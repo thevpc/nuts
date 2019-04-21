@@ -5,7 +5,7 @@ Network Updatable Things Services
    / | / /_  __/ /______
   /  |/ / / / / __/ ___/
  / /|  / /_/ / /_(__  )
-/_/ |_/\__,_/\__/____/   version 0.5.3.0
+/_/ |_/\__,_/\__/____/   version 0.5.4.0
 </pre>
 
 nuts stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
@@ -30,7 +30,7 @@ to  install and uninstall components allowing multiple versions of the very same
 + find              : searches for existing/installable components
 
 ## Download Latest stable version
-+ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar)
++ Java or any Java enabled OS : Linux,Windows,iOS, ... :: [nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar)
 
 ## Requirements
 Java Runtime Environment (JRE) or Java Development Kit (JDK) version 8 or later
@@ -61,6 +61,7 @@ java -jar nuts-0.5.4.jar
 
 ## Latest News
 
++ 2019/04/21 	nuts 0.5.4.0 released [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar)
 + 2019/01/05 	nuts 0.5.3.0 released [nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar)
 + 2018/12/28 	nuts 0.5.2.0 released [nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar)
 + 2018/12/18 	nuts 0.5.1.0 released [nuts-0.5.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.1/nuts-0.5.1.jar)

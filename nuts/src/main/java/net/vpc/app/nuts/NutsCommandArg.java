@@ -33,6 +33,14 @@ public class NutsCommandArg {
         return stringValue.indexOf('=') >= 0;
     }
 
+    public String strKey() {
+        return getStrKey();
+    }
+    
+    public String getStrKey() {
+        return getKey().getString();
+    }
+    
     public NutsCommandArg getKey() {
         int x = stringValue.indexOf('=');
         if (x >= 0) {

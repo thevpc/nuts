@@ -34,10 +34,19 @@ package net.vpc.app.nuts;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsResponseParser {
-    String format(Object value);
-    
-    Object[] getDefaultAcceptedValues(Class type);
+public interface NutsWorkspaceCommandAlias {
 
-    Object parse(Object response, Class type);
+    String getFactoryId();
+
+    NutsId getOwner();
+
+    String getName();
+
+    void exec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
+    
+    String getHelpText() throws NutsExecutionException;
+
+    String[] getCommand();
+
+    String[] getExecutorOptions();
 }

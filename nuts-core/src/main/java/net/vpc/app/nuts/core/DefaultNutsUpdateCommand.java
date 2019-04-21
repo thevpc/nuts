@@ -56,34 +56,28 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 /**
  *
  * type: Command Class
+ *
  * @author vpc
  */
-public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
+public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdateCommand> implements NutsUpdateCommand {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsUpdateCommand.class.getName());
-
-    private boolean ask = true;
-    private boolean trace = true;
-    private boolean force = false;
     private boolean enableInstall = true;
     private boolean updateApi = false;
     private boolean updateRuntime = false;
     private boolean updateExtensions = false;
     private boolean updateInstalled = false;
     private boolean includeOptional = false;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
     private String forceBootAPIVersion;
     private List<String> args;
     private final List<NutsDependencyScope> scopes = new ArrayList<>();
     private final List<NutsId> frozenIds = new ArrayList<>();
-    private NutsSession session;
-    private final NutsWorkspace ws;
     private final List<NutsId> ids = new ArrayList<>();
 
     private NutsWorkspaceUpdateResult result;
 
     public DefaultNutsUpdateCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     @Override
@@ -199,17 +193,6 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public NutsUpdateCommand setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
     public boolean isIncludeOptional() {
         return includeOptional;
     }
@@ -217,28 +200,6 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
     @Override
     public NutsUpdateCommand setIncludeOptional(boolean includeOptional) {
         this.includeOptional = includeOptional;
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public NutsUpdateCommand setForce(boolean forceInstall) {
-        this.force = forceInstall;
-        return this;
-    }
-
-    @Override
-    public boolean isAsk() {
-        return ask;
-    }
-
-    @Override
-    public NutsUpdateCommand setAsk(boolean ask) {
-        this.ask = ask;
         return this;
     }
 
@@ -283,17 +244,6 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
                 this.args.add(arg);
             }
         }
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsUpdateCommand setSession(NutsSession session) {
-        this.session = session;
         return this;
     }
 
@@ -406,6 +356,11 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
         return result;
     }
 
+    @Override
+    public NutsUpdateCommand run() {
+        return update();
+    }
+    
     @Override
     public NutsUpdateCommand update() {
         applyResult(getResult());
@@ -845,14 +800,14 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
             return;
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        final PrintStream out = CoreIOUtils.resolveOut(ws, session);
+        final PrintStream out = CoreIOUtils.resolveOut(ws, getValidSession());
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
         final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
         if (d0 == null) {
             ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-            dws.installImpl(d1, new String[0], null, session, true, this.isTrace(), true);
+            dws.installImpl(d1, new String[0], null, getValidSession(), true, this.isTrace(), true);
             r.setUpdateApplied(true);
             if (this.isTrace()) {
                 out.printf("==%s== is [[forced]] to latest version ==%s==\n", simpleName, d1.getId().getVersion());
@@ -866,7 +821,7 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
                 //no update needed!
                 if (this.isForce()) {
                     ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-                    dws.installImpl(d1, new String[0], null, session, true, this.isTrace(), true);
+                    dws.installImpl(d1, new String[0], null, getValidSession(), true, this.isTrace(), true);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
                     if (this.isTrace()) {
@@ -875,7 +830,7 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
                 }
             } else {
                 ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-                dws.installImpl(d1, new String[0], null, session, true, this.isTrace(), true);
+                dws.installImpl(d1, new String[0], null, getValidSession(), true, this.isTrace(), true);
                 r.setUpdateApplied(true);
                 if (this.isTrace()) {
                     out.printf("==%s== is [[updated]] from ==%s== to latest version ==%s==\n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
@@ -984,31 +939,6 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public NutsUpdateCommand ask() {
-        return ask(true);
-    }
-
-    @Override
-    public NutsUpdateCommand ask(boolean ask) {
-        return setAsk(ask);
-    }
-
-    @Override
-    public NutsUpdateCommand force() {
-        return force(true);
-    }
-
-    @Override
-    public NutsUpdateCommand force(boolean forceInstall) {
-        return setForce(forceInstall);
-    }
-
-    @Override
-    public NutsUpdateCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
     public NutsUpdateCommand all() {
         setUpdateApi(true);
         setUpdateRuntime(true);
@@ -1086,16 +1016,6 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
     }
 
     @Override
-    public NutsUpdateCommand trace() {
-        return trace(true);
-    }
-
-    @Override
-    public NutsUpdateCommand trace(boolean enable) {
-        return setTrace(enable);
-    }
-
-    @Override
     public NutsUpdateCommand includeOptional() {
         return includeOptional(true);
     }
@@ -1161,7 +1081,7 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
+            switch (a.strKey()) {
                 case "-a":
                 case "--all": {
                     this.all();
@@ -1199,74 +1119,25 @@ public class DefaultNutsUpdateCommand implements NutsUpdateCommand {
                     this.setApiVersion(cmd.getValueFor(a).getString());
                     break;
                 }
-                case "-g": 
-                case "--args": 
-                {
+                case "-g":
+                case "--args": {
                     while (cmd.hasNext()) {
                         this.addArg(cmd.next().getString());
                     }
                     break;
                 }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsUpdateCommand outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsUpdateCommand setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    @Override
-    public NutsUpdateCommand json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    @Override
-    public NutsUpdateCommand plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    @Override
-    public NutsUpdateCommand props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @author vpc
  */
-public interface NutsUpdateUserCommand {
+public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand removeGroup(String group);
 
@@ -128,5 +128,7 @@ public interface NutsUpdateUserCommand {
     NutsUpdateUserCommand resetGroups(boolean resetGroups);
 
     NutsUpdateUserCommand setResetGroups(boolean resetGroups);
+
+    NutsUpdateUserCommand parseOptions(String... args);
 
 }

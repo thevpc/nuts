@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @author vpc
  */
-public interface NutsAddUserCommand {
+public interface NutsAddUserCommand extends NutsWorkspaceCommand{
 
     NutsAddUserCommand addGroup(String group);
 
@@ -90,5 +90,7 @@ public interface NutsAddUserCommand {
     NutsAddUserCommand trace(boolean trace);
 
     NutsAddUserCommand run();
+    
+    NutsAddUserCommand parseOptions(String... args);
 
 }

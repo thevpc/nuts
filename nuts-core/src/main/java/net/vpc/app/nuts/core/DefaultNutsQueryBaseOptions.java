@@ -6,30 +6,33 @@
 package net.vpc.app.nuts.core;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsDependencyScope;
-import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsFetchStrategy;
-import net.vpc.app.nuts.NutsOutputFormat;
-import net.vpc.app.nuts.NutsTraceFormat;
+import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
+import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
  *
  * @author vpc
  * @param <T>
  */
-public class DefaultNutsQueryBaseOptions<T> {
+public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceCommandBase<T> {
 
+    private boolean lenient = false;
     private boolean transitive = true;
     private boolean cached = true;
     private Boolean indexed = null;
     private NutsFetchStrategy mode = null;
-    protected NutsSession session;
     private Boolean acceptOptional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
     private boolean includeContent = true;
@@ -37,18 +40,18 @@ public class DefaultNutsQueryBaseOptions<T> {
     private boolean effective = false;
     private boolean includeInstallInfo = true;
     private Path location = null;
-    private boolean trace = false;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
-    private boolean lenient = false;
     private final List<String> repos = new ArrayList<>();
-    protected NutsTraceFormat[] traceFormats = new NutsTraceFormat[NutsOutputFormat.values().length];
+
+    public DefaultNutsQueryBaseOptions(NutsWorkspace ws) {
+        super(ws);
+    }
 
     //@Override
-    protected T copyFrom0(DefaultNutsQueryBaseOptions other) {
+    protected T copyFromDefaultNutsQueryBaseOptions(DefaultNutsQueryBaseOptions other) {
         if (other != null) {
+            super.copyFromWorkspaceCommandBase(other);
             this.acceptOptional = other.getAcceptOptional();
             this.lenient = other.isLenient();
-            this.session = other.getSession();
             this.mode = other.getFetchStrategy();
             this.indexed = other.getIndexed();
             this.includeContent = other.isIncludeContent();
@@ -62,36 +65,10 @@ public class DefaultNutsQueryBaseOptions<T> {
             this.transitive = other.isTransitive();
             this.cached = other.isCached();
             this.location = other.getLocation();
-            System.arraycopy(other.traceFormats, 0, this.traceFormats, 0, NutsOutputFormat.values().length);
             this.repos.clear();
             this.repos.addAll(Arrays.asList(other.getRepositories()));
         }
         return (T) this;
-    }
-
-    public NutsTraceFormat getTraceFormat() {
-        return traceFormats[getOutputFormat().ordinal()];
-    }
-
-    public T unsetTraceFormat(NutsOutputFormat f) {
-        traceFormats[f.ordinal()] = null;
-        return (T) this;
-    }
-
-    public T traceFormat(NutsTraceFormat traceFormat) {
-        return setTraceFormat(traceFormat);
-    }
-
-    public T setTraceFormat(NutsTraceFormat f) {
-        if (f == null) {
-            throw new NullPointerException();
-        }
-        traceFormats[f.getSupportedFormat().ordinal()] = f;
-        return (T) this;
-    }
-
-    public NutsTraceFormat[] getTraceFormats() {
-        return Arrays.copyOf(traceFormats, traceFormats.length);
     }
 
     //@Override
@@ -249,22 +226,6 @@ public class DefaultNutsQueryBaseOptions<T> {
 
     public T setIncludeOptional(boolean includeOptional) {
         return setAcceptOptional(includeOptional ? null : false);
-    }
-
-    //@Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    //@Override
-    public T session(NutsSession session) {
-        return setSession(session);
-    }
-
-    //@Override
-    public T setSession(NutsSession session) {
-        this.session = session;
-        return (T) this;
     }
 
     //@Override
@@ -441,39 +402,6 @@ public class DefaultNutsQueryBaseOptions<T> {
         return (T) this;
     }
 
-    public T outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    public T setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return (T) this;
-    }
-
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
-    }
-
-    public boolean isTrace() {
-        return trace;
-    }
-
-    public T setTrace(boolean trace) {
-        this.trace = trace;
-        return (T) this;
-    }
-
-    public T trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    public T trace() {
-        return trace(true);
-    }
-
     public boolean isLenient() {
         return lenient;
     }
@@ -534,6 +462,111 @@ public class DefaultNutsQueryBaseOptions<T> {
 
     public String[] getRepositories() {
         return repos.toArray(new String[0]);
+    }
+
+    @Override
+    protected boolean parseOption(NutsCommandArg a, NutsCommandLine cmd) {
+        if (super.parseOption(a, cmd)) {
+            return true;
+        }
+        switch (a.strKey()) {
+            case "--lenient": {
+                this.setLenient(a.getBooleanValue());
+                return true;
+            }
+            case "-r":
+            case "--repository": {
+                this.addRepository(cmd.getValueFor(a).getString());
+                return true;
+            }
+
+            case "--scope": {
+                this.addScope(NutsDependencyScope.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
+                return true;
+            }
+            case "-f":
+            case "--fetch": {
+                this.setFetchStratery(NutsFetchStrategy.valueOf(cmd.getValueFor(a).getString().toUpperCase().replace("-", "_")));
+                return true;
+            }
+            case "--main-only": {
+                this.includeDependencies(!a.getBooleanValue());
+                break;
+            }
+            case "--main-and-dependencies": {
+                this.includeDependencies(a.getBooleanValue());
+                break;
+            }
+            case "--dependencies": {
+                this.includeDependencies(a.getBooleanValue());
+                break;
+            }
+            case "--anywhere": {
+                this.setFetchStratery(NutsFetchStrategy.ANYWHERE);
+                return true;
+            }
+            case "--installed": {
+                this.setFetchStratery(NutsFetchStrategy.INSTALLED);
+                return true;
+            }
+            case "--local": {
+                this.setFetchStratery(NutsFetchStrategy.LOCAL);
+                return true;
+            }
+            case "--offline": {
+                this.setFetchStratery(NutsFetchStrategy.OFFLINE);
+                return true;
+            }
+            case "--online": {
+                this.setFetchStratery(NutsFetchStrategy.ONLINE);
+                return true;
+            }
+            case "--remote": {
+                this.setFetchStratery(NutsFetchStrategy.REMOTE);
+                return true;
+            }
+            case "--wired": {
+                this.setFetchStratery(NutsFetchStrategy.WIRED);
+                return true;
+            }
+            case "--optional": {
+                NutsCommandArg v = cmd.getValueFor(a);
+                if (CoreCommonUtils.isYes(v.getString())) {
+                    this.setAcceptOptional(true);
+                } else if (CoreCommonUtils.isNo(v.getString())) {
+                    this.setAcceptOptional(false);
+                } else if (CoreCommonUtils.isNo(v.getString())) {
+                    this.setAcceptOptional(null);
+                }
+                return true;
+            }
+            case "--cached": {
+                this.setCached(a.getBooleanValue());
+                return true;
+            }
+            case "--effective": {
+                this.setEffective(a.getBooleanValue());
+                return true;
+            }
+            case "--indexed": {
+                this.setIndexed(a.getBooleanValue());
+                return true;
+            }
+            case "--content": {
+                this.setIncludeContent(a.getBooleanValue());
+                return true;
+            }
+            case "--install-info": {
+                this.setIncludeInstallInformation(a.getBooleanValue());
+                return true;
+            }
+            case "--location": {
+                String location = cmd.getValueFor(a).getString();
+                this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
+                return true;
+            }
+        }
+        return false;
     }
 
 }

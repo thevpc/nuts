@@ -34,10 +34,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import net.vpc.app.nuts.NutsCommandArg;
+import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsConstants;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsUpdateUserCommand;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -49,10 +50,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  * @author vpc
  * @since 0.5.4
  */
-public class DefaultNutsUpdateUserCommand implements NutsUpdateUserCommand {
-
-    private boolean trace = true;
-    private boolean force = false;
+public class DefaultNutsUpdateUserCommand extends NutsWorkspaceCommandBase<NutsUpdateUserCommand> implements NutsUpdateUserCommand {
     private String login;
     private String remoteIdentity;
     private boolean remoteIdentityUpdated;
@@ -60,78 +58,19 @@ public class DefaultNutsUpdateUserCommand implements NutsUpdateUserCommand {
     private boolean resetGroups;
     private String credentials;
     private String oldCredentials;
-    private Set<String> rights = new HashSet<String>();
-    private Set<String> groups = new HashSet<String>();
-    private Set<String> rm_rights = new HashSet<String>();
-    private Set<String> rm_groups = new HashSet<String>();
-    private NutsSession session;
-    private NutsWorkspace ws;
+    private final Set<String> rights = new HashSet<>();
+    private final Set<String> groups = new HashSet<>();
+    private final Set<String> rm_rights = new HashSet<>();
+    private final Set<String> rm_groups = new HashSet<>();
     private NutsRepository repo;
 
     public DefaultNutsUpdateUserCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     public DefaultNutsUpdateUserCommand(NutsRepository repo) {
+        super(repo.getWorkspace());
         this.repo = repo;
-    }
-
-    @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand trace() {
-        return trace(true);
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand trace(boolean trace) {
-        return setTrace(trace);
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand setTrace(boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand force() {
-        return force(true);
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand force(boolean force) {
-        return setForce(force);
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand setForce(boolean force) {
-        this.force = force;
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public DefaultNutsUpdateUserCommand setSession(NutsSession session) {
-        this.session = session;
-        return this;
     }
 
     @Override
@@ -591,4 +530,24 @@ public class DefaultNutsUpdateUserCommand implements NutsUpdateUserCommand {
         }
         return this;
     }
+
+    public NutsUpdateUserCommand parseOptions(String... args) {
+        NutsCommandLine cmd = new NutsCommandLine(args);
+        NutsCommandArg a;
+        while ((a = cmd.next()) != null) {
+            switch (a.strKey()) {
+                default: {
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            //id(a.getString());
+                        }
+                    }
+                }
+            }
+        }
+        return this;
+    }
+    
 }

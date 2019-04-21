@@ -12,21 +12,16 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
-public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
+public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUndeployCommand> implements NutsUndeployCommand {
 
     private List<NutsId> result;
     private final List<NutsId> ids = new ArrayList<>();
     private String repository;
-    private boolean trace = true;
     private boolean offline = true;
-    private boolean force = false;
     private boolean transitive = true;
-    private NutsWorkspace ws;
-    private NutsSession session;
-    private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
 
     public DefaultNutsUndeployCommand(NutsWorkspace ws) {
-        this.ws = ws;
+        super(ws);
     }
 
     @Override
@@ -111,30 +106,6 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
     }
 
     @Override
-    public boolean isTrace() {
-        return trace;
-    }
-
-    @Override
-    public NutsUndeployCommand setTrace(boolean trace) {
-        this.trace = trace;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
-    public boolean isForce() {
-        return force;
-    }
-
-    @Override
-    public NutsUndeployCommand setForce(boolean force) {
-        this.force = force;
-        invalidateResult();
-        return this;
-    }
-
-    @Override
     public boolean isTransitive() {
         return transitive;
     }
@@ -146,54 +117,9 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
         return this;
     }
 
-    public NutsWorkspace getWs() {
-        return ws;
-    }
-
-    public void setWs(NutsWorkspace ws) {
-        this.ws = ws;
-        invalidateResult();
-    }
-
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsUndeployCommand setSession(NutsSession session) {
-        this.session = session;
-        invalidateResult();
-        return this;
-    }
-
     @Override
     public NutsUndeployCommand repository(String repository) {
         return setRepository(repository);
-    }
-
-    @Override
-    public NutsUndeployCommand session(NutsSession session) {
-        return setSession(session);
-    }
-
-    @Override
-    public NutsUndeployCommand force() {
-        return setForce(true);
-    }
-
-    @Override
-    public NutsUndeployCommand force(boolean force) {
-        return setForce(force);
-    }
-
-    @Override
-    public NutsUndeployCommand trace() {
-        return setTrace(true);
-    }
-
-    @Override
-    public NutsUndeployCommand trace(boolean trace) {
-        return setTrace(trace);
     }
 
     @Override
@@ -209,7 +135,7 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
     @Override
     public NutsUndeployCommand run() {
         NutsWorkspaceUtils.checkReadOnly(ws);
-        session = NutsWorkspaceUtils.validateSession(ws, session);
+
         NutsFetchCommand fetchOptions = ws.fetch().setTransitive(this.isTransitive());
         if (ids.isEmpty()) {
             throw new NutsExecutionException("No component to undeploy", 1);
@@ -223,7 +149,7 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
                     .duplicateVersions(false)
                     .lenient(false)
                     .getResultDefinitions().required();
-            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(session, p.getRepository(), NutsFetchMode.LOCAL, fetchOptions);
+            NutsRepositorySession rsession = NutsWorkspaceHelper.createRepositorySession(getValidSession(), p.getRepository(), NutsFetchMode.LOCAL, fetchOptions);
             p.getRepository().undeploy(new DefaultNutsRepositoryUndeploymentOptions()
                     .id(p.getId())
                     .force(isForce())
@@ -231,13 +157,12 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
                     rsession);
             addResult(id);
         }
-        if (trace) {
+        if (isTrace()) {
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                session = NutsWorkspaceUtils.validateSession(ws, getSession());
                 if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
                     switch (getOutputFormat()) {
                         case JSON: {
-                            session.getTerminal().out().printf(ws.io().toJsonString(result, true));
+                            getValidSession().getTerminal().out().printf(ws.io().toJsonString(result, true));
                             break;
                         }
                         case PROPS: {
@@ -245,7 +170,7 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
                             for (int i = 0; i < result.size(); i++) {
                                 props.put(String.valueOf(i + 1), result.get(i).toString());
                             }
-                            OutputStreamWriter w = new OutputStreamWriter(session.getTerminal().out());
+                            OutputStreamWriter w = new OutputStreamWriter(getValidSession().getTerminal().out());
                             try {
                                 props.store(w, null);
                                 w.flush();
@@ -267,48 +192,13 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
             result = new ArrayList<>();
         }
         result.add(id);
-        if (trace) {
+        if (isTrace()) {
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                session = NutsWorkspaceUtils.validateSession(ws, getSession());
                 if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    session.getTerminal().out().printf("Nuts %N undeployed successfully\n", ws.formatter().createIdFormat().toString(id));
+                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully\n", ws.formatter().createIdFormat().toString(id));
                 }
             }
         }
-    }
-
-    @Override
-    public NutsUndeployCommand outputFormat(NutsOutputFormat outputFormat) {
-        return setOutputFormat(outputFormat);
-    }
-
-    @Override
-    public NutsUndeployCommand setOutputFormat(NutsOutputFormat outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsOutputFormat.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    @Override
-    public NutsUndeployCommand json() {
-        return setOutputFormat(NutsOutputFormat.JSON);
-    }
-
-    @Override
-    public NutsUndeployCommand plain() {
-        return setOutputFormat(NutsOutputFormat.PLAIN);
-    }
-
-    @Override
-    public NutsUndeployCommand props() {
-        return setOutputFormat(NutsOutputFormat.PROPS);
-    }
-
-    @Override
-    public NutsOutputFormat getOutputFormat() {
-        return this.outputFormat;
     }
 
     @Override
@@ -333,7 +223,7 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
         return setOffline(offline);
     }
 
-    private void invalidateResult() {
+    protected void invalidateResult() {
         result = null;
     }
 
@@ -342,17 +232,7 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
-                case "-f":
-                case "--force": {
-                    setForce(a.getBooleanValue());
-                    break;
-                }
-                case "-T":
-                case "--transitive": {
-                    setTransitive(a.getBooleanValue());
-                    break;
-                }
+            switch (a.strKey()) {
                 case "-o":
                 case "--offline": {
                     setOffline(a.getBooleanValue());
@@ -364,32 +244,13 @@ public class DefaultNutsUndeployCommand implements NutsUndeployCommand {
                     setRepository(cmd.getValueFor(a).getString());
                     break;
                 }
-                case "-t":
-                case "--trace": {
-                    setTrace(a.getBooleanValue());
-                    break;
-                }
-                case "--trace-format": {
-                    this.setOutputFormat(NutsOutputFormat.valueOf(cmd.getValueFor(a).getString().toUpperCase()));
-                    break;
-                }
-                case "--json": {
-                    this.setOutputFormat(NutsOutputFormat.JSON);
-                    break;
-                }
-                case "--props": {
-                    this.setOutputFormat(NutsOutputFormat.PROPS);
-                    break;
-                }
-                case "--plain": {
-                    this.setOutputFormat(NutsOutputFormat.PLAIN);
-                    break;
-                }
                 default: {
-                    if (a.isOption()) {
-                        throw new NutsIllegalArgumentException("Unsupported option " + a);
-                    } else {
-                        id(a.getString());
+                    if (!super.parseOption(a, cmd)) {
+                        if (a.isOption()) {
+                            throw new NutsIllegalArgumentException("Unsupported option " + a);
+                        } else {
+                            id(a.getString());
+                        }
                     }
                 }
             }

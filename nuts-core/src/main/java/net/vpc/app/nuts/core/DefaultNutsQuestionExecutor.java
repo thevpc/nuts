@@ -7,10 +7,10 @@ import java.util.Arrays;
 
 public class DefaultNutsQuestionExecutor<T> {
 
-    private NutsQuestion<T> question;
-    private NutsTerminal terminal;
-    private PrintStream out;
-    private NutsWorkspace ws;
+    private final NutsQuestion<T> question;
+    private final NutsTerminal terminal;
+    private final PrintStream out;
+    private final NutsWorkspace ws;
 
     public DefaultNutsQuestionExecutor(NutsWorkspace ws, NutsQuestion<T> question, NutsTerminal terminal, PrintStream out) {
         this.ws = ws;
@@ -32,7 +32,7 @@ public class DefaultNutsQuestionExecutor<T> {
                 p = DefaultNutsResponseParser.INSTANCE;
             }
             Object[] acceptedValues = question.getAcceptedValues();
-            if (acceptedValues != null && acceptedValues.length > 0) {
+            if (acceptedValues == null) {
                 acceptedValues = p.getDefaultAcceptedValues(question.getValueType());
             }
             boolean first = true;
@@ -44,7 +44,7 @@ public class DefaultNutsQuestionExecutor<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is [[%s]]", question.getDefautValue());
+                out.printf("default is [[%s]]", p.format(question.getDefautValue()));
             }
 
             if (acceptedValues != null && acceptedValues.length > 0) {
@@ -54,7 +54,15 @@ public class DefaultNutsQuestionExecutor<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("accepts [[%s]]", Arrays.toString(acceptedValues));
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < acceptedValues.length; i++) {
+                    Object acceptedValue = acceptedValues[i];
+                    if(i>0){
+                        sb.append(", ");
+                    }
+                    sb.append(p.format(acceptedValue));
+                }
+                out.printf("accepts [[%s]]", sb.toString());
             }
             if (!first) {
                 out.print("\\)");

@@ -113,7 +113,7 @@ public class Nsh extends NutsApplication {
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCommand command : cfg.findCommandAliases(applicationContext.getAppId())) {
+            for (NutsWorkspaceCommandAlias command : cfg.findCommandAliases(applicationContext.getAppId())) {
                 try {
                     cfg.removeCommandAlias(command.getName(), new net.vpc.app.nuts.NutsRemoveOptions());
                 } catch (Exception ex) {

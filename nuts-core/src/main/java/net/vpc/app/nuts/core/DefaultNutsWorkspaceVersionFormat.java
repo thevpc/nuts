@@ -46,7 +46,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;
         while ((a = cmd.next()) != null) {
-            switch (a.getKey().getString()) {
+            switch (a.strKey()) {
                 case "--min": {
                     this.setMinimal(a.getBooleanValue());
                     break;
@@ -57,7 +57,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
                 }
                 case "--add": {
                     NutsCommandArg r = cmd.getValueFor(a);
-                    extraProperties.put(r.getKey(), r.getValue());
+                    extraProperties.put(r.getKey().getString(), r.getValue().getString());
                     break;
                 }
                 case "--trace-format": {

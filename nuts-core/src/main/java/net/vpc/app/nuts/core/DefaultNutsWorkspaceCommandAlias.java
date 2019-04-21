@@ -8,11 +8,11 @@ import net.vpc.app.nuts.NutsExecutionException;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.NutsWorkspaceCommand;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
+import net.vpc.app.nuts.NutsWorkspaceCommandAlias;
 
-public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
+public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAlias {
 
     private String name;
     private NutsId owner;
@@ -23,7 +23,7 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     private String[] executorOptions;
     private NutsWorkspace ws;
 
-    public DefaultNutsWorkspaceCommand(NutsWorkspace ws) {
+    public DefaultNutsWorkspaceCommandAlias(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -32,7 +32,7 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
         return name;
     }
 
-    public DefaultNutsWorkspaceCommand setName(String name) {
+    public DefaultNutsWorkspaceCommandAlias setName(String name) {
         this.name = name;
         return this;
     }
@@ -42,7 +42,7 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
         return owner;
     }
 
-    public DefaultNutsWorkspaceCommand setOwner(NutsId owner) {
+    public DefaultNutsWorkspaceCommandAlias setOwner(NutsId owner) {
         this.owner = owner;
         return this;
     }
@@ -52,17 +52,17 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
         return factoryId;
     }
 
-    public DefaultNutsWorkspaceCommand setFactoryId(String factoryId) {
+    public DefaultNutsWorkspaceCommandAlias setFactoryId(String factoryId) {
         this.factoryId = factoryId;
         return this;
     }
 
-    public DefaultNutsWorkspaceCommand setHelpCommand(String[] helpCommand) {
+    public DefaultNutsWorkspaceCommandAlias setHelpCommand(String[] helpCommand) {
         this.helpCommand = helpCommand;
         return this;
     }
 
-    public DefaultNutsWorkspaceCommand setHelpText(String helpText) {
+    public DefaultNutsWorkspaceCommandAlias setHelpText(String helpText) {
         this.helpText = helpText;
         return this;
     }
@@ -76,19 +76,19 @@ public class DefaultNutsWorkspaceCommand implements NutsWorkspaceCommand {
     }
 
     public String[] getCommand() {
-        return command;
+        return command==null?new String[0] : Arrays.copyOf(command, command.length);
     }
 
-    public DefaultNutsWorkspaceCommand setCommand(String[] command) {
+    public DefaultNutsWorkspaceCommandAlias setCommand(String[] command) {
         this.command = command;
         return this;
     }
 
     public String[] getExecutorOptions() {
-        return executorOptions;
+        return executorOptions==null?new String[0] : Arrays.copyOf(executorOptions, command.length);
     }
 
-    public DefaultNutsWorkspaceCommand setExecutorOptions(String[] executorOptions) {
+    public DefaultNutsWorkspaceCommandAlias setExecutorOptions(String[] executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }

@@ -33,7 +33,6 @@ import net.vpc.app.nuts.*;
 
 import java.io.PrintStream;
 import java.util.*;
-import net.vpc.app.nuts.core.DefaultNutsWorkspace;
 import net.vpc.app.nuts.core.NutsIdAndNutsDependencyFilterItem;
 import net.vpc.app.nuts.core.filters.dependency.NutsExclusionDependencyFilter;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -45,12 +44,12 @@ public class NutsIdGraph {
 
     private final Set<NutsId> visited = new LinkedHashSet<>();
     private final Set<NutsIdNode> wildeIds = new LinkedHashSet<>();
-    private final DefaultNutsWorkspace ws;
+    private final NutsWorkspace ws;
     private final NutsSession session;
     private final boolean ignoreNotFound;
     private int maxComplexity = 300;
 
-    public NutsIdGraph(DefaultNutsWorkspace ws, NutsSession session, boolean ignoreNotFound) {
+    public NutsIdGraph(NutsWorkspace ws, NutsSession session, boolean ignoreNotFound) {
         this.ws = ws;
         this.session = session;
         this.ignoreNotFound = ignoreNotFound;

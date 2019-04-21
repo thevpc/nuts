@@ -64,7 +64,7 @@ public final class NutsArgumentsParser {
         while ((a = cmdArgList.next()) != null) {
             if (a.isOption()) {
                 boolean enabled = !a.isComment();
-                String k = a.getKey().getString();
+                String k = a.strKey();
                 switch (k) {
                     //**********************************
                     //*
@@ -685,7 +685,7 @@ public final class NutsArgumentsParser {
     }
 
     private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandArg arg, NutsCommandLine cmdArgList, boolean enabled) {
-        switch (arg.getKey().getString()) {
+        switch (arg.strKey()) {
             case "--log-size": {
                 String v = cmdArgList.getValueFor(arg).getString();
                 if (enabled) {
@@ -735,18 +735,18 @@ public final class NutsArgumentsParser {
             case "--log-all":
             case "--log-off": {
                 if (enabled) {
-                    String id = arg.getKey().getString();
-                    if (arg.getKey().getString().startsWith("--log-")) {
+                    String id = arg.strKey();
+                    if (arg.strKey().startsWith("--log-")) {
                         id = id.substring("--log-".length());
-                    } else if (arg.getKey().getString().equals("--log")) {
+                    } else if (arg.strKey().equals("--log")) {
                         id = arg.getValue().getString();
                         if (id == null) {
                             id = "";
                         }
                     } else if (id.startsWith("--")) {
-                        id = arg.getKey().getString().substring(2);
+                        id = arg.strKey().substring(2);
                     } else {
-                        id = arg.getKey().getString();
+                        id = arg.strKey();
                     }
                     switch (id.toLowerCase()) {
                         case "verbose": {

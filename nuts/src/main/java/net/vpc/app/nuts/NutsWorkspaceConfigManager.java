@@ -149,11 +149,11 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     boolean removeCommandAlias(String name, NutsRemoveOptions options);
 
-    NutsWorkspaceCommand findCommandAliases(String name);
+    NutsWorkspaceCommandAlias findCommandAlias(String name);
 
-    List<NutsWorkspaceCommand> findCommandAliases();
+    List<NutsWorkspaceCommandAlias> findCommandAliases();
 
-    List<NutsWorkspaceCommand> findCommandAliases(NutsId id);
+    List<NutsWorkspaceCommandAlias> findCommandAliases(NutsId id);
 
     Path getHomeLocation(NutsStoreLocation folderType);
 

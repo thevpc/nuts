@@ -39,7 +39,7 @@ import java.util.Set;
  * @author vpc
  * @since 0.5.4
  */
-public interface NutsFindCommand {
+public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     ////////////////////////////////////////////////////////
     // Setters
@@ -160,6 +160,8 @@ public interface NutsFindCommand {
      * @return
      */
     NutsFindCommand latestVersions();
+    
+    NutsFindCommand setLatestVersions(boolean enable);
 
     NutsFindCommand allVersions(boolean allVersions);
 
