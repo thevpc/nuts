@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.5.4</version>
+    <version>0.5.5</version>
     <name>net.vpc.app.nuts</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -153,7 +153,9 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>  <!-- git commit message -->
+                    <!-- git commit message -->
+                    <!--<message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>-->  
+                    <message>${project.version} of ${project.groupId}:${project.artifactId}</message>
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->
@@ -189,7 +191,7 @@
                         <configuration>
                             <headerType>console</headerType>
                             <outfile>target/nuts.exe</outfile>
-                            <jar>target/nuts-0.5.4.jar</jar>
+                            <jar>target/nuts-0.5.5.jar</jar>
                             <errTitle>encc</errTitle>
                             <classPath>
                                 <mainClass>net.vpc.app.nuts.Nuts</mainClass>
@@ -203,7 +205,7 @@
                                 </opts>
                             </jre>
                             <versionInfo>
-                                <fileVersion>0.5.4.0</fileVersion>
+                                <fileVersion>0.5.5.0</fileVersion>
                                 <txtFileVersion>txt file version?</txtFileVersion>
                                 <fileDescription>a description</fileDescription>
                                 <copyright>my copyright</copyright>

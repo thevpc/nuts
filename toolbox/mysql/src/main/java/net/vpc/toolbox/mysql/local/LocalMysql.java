@@ -74,7 +74,7 @@ public class LocalMysql {
                 LocalMysqlConfigService c = loadOrCreateMysqlConfig(instance);
                 LocalMysqlDatabaseConfigService aa = c.getDatabase(app);
                 if (json) {
-                    getContext().out().printf("[[%s]] :\n", aa.getName());
+                    getContext().out().printf("[[%s]] :%n", aa.getName());
                     aa.write(getContext().out());
                     getContext().out().println();
                 } else {
@@ -83,7 +83,7 @@ public class LocalMysql {
             } else {
                 for (LocalMysqlConfigService mysqlConfig : listConfig()) {
                     if (json) {
-                        getContext().out().printf("[[%s]] :\n", mysqlConfig.getName());
+                        getContext().out().printf("[[%s]] :%n", mysqlConfig.getName());
                         mysqlConfig.write(getContext().out());
                         getContext().out().println();
                     } else {
@@ -94,10 +94,10 @@ public class LocalMysql {
         } else {
             LocalMysqlConfigService c = loadOrCreateMysqlConfig(instance);
             if (app != null) {
-                getContext().out().printf("%s\n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
+                getContext().out().printf("%s%n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
             } else {
                 for (LocalMysqlDatabaseConfigService aa : c.getDatabases()) {
-                    getContext().out().printf("[%s] %s\n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    getContext().out().printf("[%s] %s%n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
                 }
             }
         }

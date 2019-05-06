@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
@@ -28,12 +29,12 @@ public class NutsDescriptorFilterAnd implements NutsDescriptorFilter, Simplifiab
     }
 
     @Override
-    public boolean accept(NutsDescriptor id) {
+    public boolean accept(NutsDescriptor id, NutsWorkspace ws) {
         if (all.length == 0) {
             return true;
         }
         for (NutsDescriptorFilter filter : all) {
-            if (!filter.accept(id)) {
+            if (!filter.accept(id, ws)) {
                 return false;
             }
         }

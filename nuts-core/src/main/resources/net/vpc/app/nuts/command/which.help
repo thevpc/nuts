@@ -1,0 +1,9 @@
+==nuts== [[which]] \[-options\]... \[command1\] ...
+      resolves commands type
+
+@@EXAMPLES:@@
+        ==nuts== which [[--help]]
+            shows this help and exit
+       
+        ==nuts== which netbeans-launcher exec
+            show netbeans-launcher and exec types. The first is a component the latter is an internal command

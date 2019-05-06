@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.util;
 import java.util.HashMap;
 import java.util.Map;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
@@ -22,8 +23,8 @@ public class NutsIdFilterVarBuilder {
     private static final String CURR = "$CURRENT";
     private Map<String, NutsIdFilter> vars = new HashMap<String, NutsIdFilter>();
 
-    public NutsIdFilterVarBuilder js(String n, String js) {
-        return store(n, new NutsJavascriptIdFilter(js));
+    public NutsIdFilterVarBuilder js(String n, String js,NutsWorkspace ws) {
+        return store(n, new NutsJavascriptIdFilter(js,ws));
     }
 
     public NutsIdFilterVarBuilder and(String n, String... a) {

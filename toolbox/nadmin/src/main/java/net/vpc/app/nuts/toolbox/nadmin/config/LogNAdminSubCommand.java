@@ -70,7 +70,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.readAll("get loglevel")) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
-                context.getTerminal().fout().printf("%s\n", rootLogger.getLevel().toString());
+                context.getTerminal().fout().printf("%s%n", rootLogger.getLevel().toString());
             }
         }
         return false;

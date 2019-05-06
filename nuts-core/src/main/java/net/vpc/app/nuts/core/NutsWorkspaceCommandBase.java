@@ -24,7 +24,7 @@ public abstract class NutsWorkspaceCommandBase<T> {
     protected NutsWorkspace ws;
     private NutsSession session;
     private NutsSession validSession;
-    private boolean ask = true;
+    private boolean ask = false;
     private boolean trace = false;
     private boolean force = false;
     private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
@@ -205,10 +205,6 @@ public abstract class NutsWorkspaceCommandBase<T> {
     protected boolean parseOption(NutsCommandArg a, NutsCommandLine cmd) {
 
         switch (a.strKey()) {
-//            case "--lenient": {
-//                this.setLenient(a.getBooleanValue());
-//                break;
-//            }
             case "--trace": {
                 this.setTrace(a.getBooleanValue());
                 return true;

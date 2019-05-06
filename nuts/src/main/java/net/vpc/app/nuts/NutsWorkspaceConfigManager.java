@@ -229,13 +229,6 @@ public interface NutsWorkspaceConfigManager extends NutsEnvProvider {
 
     void removeRepository(String locationOrRepositoryId);
 
-    /**
-     * update statistics of a nuts repository folder folder
-     *
-     * @param repositoryPath
-     */
-    void updateStatistics(Path repositoryPath);
-
     NutsRepository[] getRepositories();
 
     NutsRepositoryDefinition[] getDefaultRepositories();

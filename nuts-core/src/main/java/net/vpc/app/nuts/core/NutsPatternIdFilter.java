@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
 import net.vpc.app.nuts.NutsVersionFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -59,7 +60,7 @@ public class NutsPatternIdFilter implements NutsIdFilter {
     }
 
     @Override
-    public boolean accept(NutsId other) {
+    public boolean accept(NutsId other, NutsWorkspace ws) {
         if (!g.matcher(other.getGroup()).matches()) {
             return false;
         }

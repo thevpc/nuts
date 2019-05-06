@@ -37,7 +37,7 @@ public class DefaultNutsFindTraceFormatJson implements NutsTraceFormat {
         if (index > 0) {
             out.print(", ");
         }
-        out.printf("%N%n", ws.io().toJsonString(object, true));
+        out.printf("%N%n", ws.io().json().pretty().toJsonString(object));
         out.flush();
     }
 

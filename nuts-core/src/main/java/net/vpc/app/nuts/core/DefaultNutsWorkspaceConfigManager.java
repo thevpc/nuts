@@ -46,7 +46,6 @@ import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.repos.NutsRepositoryFolderHelper;
 
 /**
  * @author vpc
@@ -141,8 +140,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //    public NutsBootContext getRunningContext() {
 //        return runningBootConfig;
 //    }
-
-
     @Override
     public NutsBootContext getContext(NutsBootContextType contextType) {
         if (contextType == null) {
@@ -168,7 +165,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 cc.setStoreLocationStrategy(config.getStoreLocationStrategy());
                 cc.setRepositoryStoreLocationStrategy(config.getRepositoryStoreLocationStrategy());
                 cc.setStoreLocationLayout(config.getStoreLocationLayout());
-                DefaultNutsBootContext bc = new DefaultNutsBootContext(ws,cc);
+                DefaultNutsBootContext bc = new DefaultNutsBootContext(ws, cc);
                 return bc;
             }
 
@@ -483,7 +480,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
             config.setSdk(plainSdks);
             Path file = getWorkspaceLocation().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-            ws.io().writeJson(config, file, true);
+            ws.io().json().pretty().write(config, file);
             configurationChanged = false;
             ok = true;
         }
@@ -574,7 +571,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 //        }
 //        return null;
 //    }
-
     @Override
     public String toString() {
         String s1 = "NULL";
@@ -858,7 +854,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         defaultCommandFactory.installCommand(command);
         if (options.isTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(ws, options.getSession());
-            out.printf("[[install]] command alias ==%s==\n", command.getName());
+            out.printf("[[install]] command alias ==%s==%n", command.getName());
         }
         return forced;
     }
@@ -878,7 +874,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         defaultCommandFactory.uninstallCommand(name);
         if (options.isTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(ws, options.getSession());
-            out.printf("[[uninstall]] command alias ==%s==\n", name);
+            out.printf("[[uninstall]] command alias ==%s==%n", name);
         }
         return true;
     }
@@ -1454,7 +1450,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public boolean load() {
         Path file = getConfigFile();
-        NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.io().readJson(file, NutsWorkspaceConfig.class) : null;
+        NutsWorkspaceConfig _config = Files.isRegularFile(file) ? ws.io().json().read(file, NutsWorkspaceConfig.class) : null;
         if (_config != null) {
             setConfig(_config, false);
             configurationChanged = false;
@@ -1530,17 +1526,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public void updateStatistics(Path repositoryPath) {
-        if (repositoryPath == null) {
-            throw new NutsIllegalArgumentException("Missing location " + repositoryPath);
-        }
-        if (!Files.isDirectory(repositoryPath)) {
-            throw new NutsIllegalArgumentException("Expected forlder at location " + repositoryPath);
-        }
-        new NutsRepositoryFolderHelper(null, repositoryPath).reindexFolder();
-    }
-
-    @Override
     public void removeRepository(String repositoryId) {
         ws.security().checkAllowed(NutsConstants.Rights.REMOVE_REPOSITORY, "remove-repository");
         NutsRepository removed = repositories.remove(repositoryId);
@@ -1551,8 +1536,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             }
         }
     }
+    //    @Override
 
-//    @Override
     public Path getRepositoriesRoot() {
         return ws.config().getWorkspaceLocation().resolve(NutsConstants.Folders.REPOSITORIES);
     }

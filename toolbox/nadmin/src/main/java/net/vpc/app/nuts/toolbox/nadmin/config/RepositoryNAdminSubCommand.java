@@ -123,7 +123,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                                                     .setType(repoType));
 
                             repo = ws.config().addRepository(o);
-                            out.printf("Repository added successfully\n");
+                            out.printf("Repository added successfully%n");
                             trySave(context, ws, repo, autoSave, null);
                             trySave(context, ws, null, autoSave, null);
                         }
@@ -224,7 +224,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 } else if (cmdLine.readAll("list repos", "lr")) {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
                     NutsRepository[] linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : new NutsRepository[0];
-                    out.printf("%s sub repositories.\n", linkRepositories.length);
+                    out.printf("%s sub repositories.%n", linkRepositories.length);
                     TableFormatter t = new TableFormatter(new DefaultWorkspaceCellFormatter(ws))
                             .setColumnsConfig("id", "enabled", "type", "location")
                             .addHeaderCells("==Id==", "==Enabled==", "==Type==", "==Location==");
@@ -243,9 +243,9 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                     out.printf(t.toString());
                 } else if (cmdLine.readAllOnce("-h", "-?", "--help")) {
-                    out.printf("edit repository %s add repo ...\n", repoId);
-                    out.printf("edit repository %s remove repo ...\n", repoId);
-                    out.printf("edit repository %s list repos ...\n", repoId);
+                    out.printf("edit repository %s add repo ...%n", repoId);
+                    out.printf("edit repository %s remove repo ...%n", repoId);
+                    out.printf("edit repository %s list repos ...%n", repoId);
                 } else {
                     NutsRepository editedRepo = ws.config().getRepository(repoId);
                     if (UserNAdminSubCommand.exec(editedRepo, cmdLine, config, autoSave, context)) {

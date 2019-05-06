@@ -491,14 +491,14 @@ public class CoreNutsUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t) {
+    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t,NutsWorkspace ws) {
         if (t == null) {
             return null;
         }
         return new Predicate<NutsId>() {
             @Override
             public boolean test(NutsId value) {
-                return t.accept(value);
+                return t.accept(value, ws);
             }
         };
     }
@@ -895,5 +895,19 @@ public class CoreNutsUtils {
             x.put("effective-descriptor", ws.formatter().createDescriptorFormat().toString(def.getEffectiveDescriptor()));
         }
         return x;
+    }
+    
+    public static boolean isIncludesHelpOption(String[] cmd){
+        if(cmd!=null){
+            for (String c : cmd) {
+                if(!c.startsWith("-")){
+                    break;
+                }
+                if("--help".equals(c)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -60,7 +60,12 @@ public class JavascriptHelper {
     );
 
     public static class NutScriptUtil {
+        NutsWorkspace ws;
 
+        public NutScriptUtil(NutsWorkspace ws) {
+            this.ws = ws;
+        }
+        
         public boolean matches(Object value, String pattern) {
             if (value == null) {
                 value = "";
@@ -75,17 +80,17 @@ public class JavascriptHelper {
                 return CoreStringUtils.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
-                NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern);
-                return f==null || f.accept((NutsId) value);
+                NutsJavascriptIdFilter f = NutsJavascriptIdFilter.valueOf(pattern,ws);
+                return f==null || f.accept((NutsId) value, ws);
             }
             if (value instanceof NutsDependency) {
-                NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern);
+                NutsDependencyJavascriptFilter f = NutsDependencyJavascriptFilter.valueOf(pattern,ws);
                 //TODO, how to pass parent Id for dependency?
                 NutsId from=null;
                 return f==null || f.accept(from, (NutsDependency) value);
             }
             if (value instanceof NutsVersion) {
-                NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern);
+                NutsVersionJavascriptFilter f = NutsVersionJavascriptFilter.valueOf(pattern,ws);
                 return f==null || f.accept((NutsVersion) value);
             }
             return true;
@@ -101,7 +106,7 @@ public class JavascriptHelper {
 
     }
 
-    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util) {
+    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util,NutsWorkspace ws) {
         if (blacklist == null) {
             blacklistClassNames.addAll(Arrays.asList(
                     "java.io.File",
@@ -135,7 +140,7 @@ public class JavascriptHelper {
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");
             if (util == null) {
-                util = new NutScriptUtil();
+                util = new NutScriptUtil(ws);
             }
             engine.put("util", util);
         } catch (ScriptException e) {

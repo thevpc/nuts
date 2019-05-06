@@ -36,7 +36,7 @@ public class RemoteMysqlDatabaseConfigService {
 
     public RemoteMysqlDatabaseConfigService remove() {
         client.getConfig().getDatabases().remove(name);
-        context.out().printf("==[%s]== db config removed.\n", name);
+        context.out().printf("==[%s]== db config removed.%n", name);
         return this;
 
     }
@@ -46,7 +46,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().io().writeJson(getConfig(), out, true);
+        context.getWorkspace().io().json().pretty().write(getConfig(), out);
     }
 
     public int pull() {
@@ -91,7 +91,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteFilePath = (IOUtils.concatPath('/', remoteTempPath, FileUtils.getFileName(archiveResult.path)));
         String remoteFullFilePath = new SshAddress(server).getPath(remoteFilePath).getPath();
 
-        context.out().printf("==[%s]== copy %s to %s\n", name, archiveResult.path, remoteFullFilePath);
+        context.out().printf("==[%s]== copy %s to %s%n", name, archiveResult.path, remoteFullFilePath);
         context.getWorkspace().exec()
                 .command(
                         "nsh",
@@ -104,7 +104,7 @@ public class RemoteMysqlDatabaseConfigService {
                 .grabOutputString()
                 .failFast()
                 .run();
-        context.out().printf("==[%s]== remote restore %s\n", name, remoteFilePath);
+        context.out().printf("==[%s]== remote restore %s%n", name, remoteFilePath);
         execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:mysql",
                 "restore",
@@ -114,7 +114,7 @@ public class RemoteMysqlDatabaseConfigService {
                 name,
                 remoteFilePath
         );
-        context.out().printf("==[%s]== delete %s\n", name, remoteFilePath);
+        context.out().printf("==[%s]== delete %s%n", name, remoteFilePath);
         return execRemoteNuts(
                 "nsh",
                 "rm",
@@ -134,7 +134,7 @@ public class RemoteMysqlDatabaseConfigService {
         b.addCommand("--nuts");
         b.addCommand(this.config.getServer());
         b.addCommand(cmd);
-        context.out().printf("[[EXEC]] %s\n", b.setCommandStringFormatter(new NutsCommandStringFormatterAdapter() {
+        context.out().printf("[[EXEC]] %s%n", b.setCommandStringFormatter(new NutsCommandStringFormatterAdapter() {
             @Override
             public String replaceEnvValue(String envName, String envValue) {
                 if (

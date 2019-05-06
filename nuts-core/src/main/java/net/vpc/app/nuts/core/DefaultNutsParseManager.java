@@ -75,7 +75,7 @@ public class DefaultNutsParseManager implements NutsParseManager {
     @Override
     public NutsDescriptor parseDescriptor(InputStream in, boolean closeStream) {
         try (Reader rr = new InputStreamReader(in)) {
-            return ws.io().readJson(rr, NutsDescriptor.class);
+            return ws.io().json().read(rr, NutsDescriptor.class);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

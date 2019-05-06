@@ -1,18 +1,8 @@
-#net.vpc.app.nuts.toolbox.nsh.cmds.ConsoleCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.DeployCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.ExecCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.VersionCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.InfoCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HelpCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.HistoryCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.InstallCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.FetchCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.UninstallCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.LoginCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.LogoutCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.PushCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.UpdateCommand
-net.vpc.app.nuts.toolbox.nsh.cmds.WhichCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.WhoCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.EchoCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.LsCommand
@@ -43,5 +33,3 @@ net.vpc.app.nuts.toolbox.nsh.cmds.PropsCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.MkdirCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.FindCommandCommand
 net.vpc.app.nuts.toolbox.nsh.cmds.AutocompleteCommand
-#net.vpc.app.nuts.toolbox.nsh.cmds.CheckoutCommand
-#net.vpc.app.nuts.toolbox.nsh.cmds.CommitCommand

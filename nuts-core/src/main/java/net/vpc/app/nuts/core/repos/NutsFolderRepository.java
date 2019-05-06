@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
@@ -52,8 +53,8 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     public NutsFolderRepository(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository) {
         super(options, workspace, parentRepository, SPEED_FAST, true, NutsConstants.RepoTypes.NUTS);
         extensions.put("src", "-src.zip");
-        cache = new NutsRepositoryFolderHelper(this, config().getStoreLocation(NutsStoreLocation.CACHE));
-        lib = new NutsRepositoryFolderHelper(this, config().getStoreLocation(NutsStoreLocation.LIB));
+        cache = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.CACHE));
+        lib = new NutsRepositoryFolderHelper(this, workspace, config().getStoreLocation(NutsStoreLocation.LIB));
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -87,14 +88,14 @@ public class NutsFolderRepository extends AbstractNutsRepository {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
         List<Iterator<NutsId>> li = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
-            li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep()?Integer.MAX_VALUE:2, session));
-            li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep()?Integer.MAX_VALUE:2, session));
+            li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
         }
         return mirroring.find(IteratorUtils.concat(li), filter, session);
     }
 
     @Override
-    protected NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
+    protected NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             NutsContent c = lib.fetchContentImpl(id, localPath, session);
             if (c != null) {
@@ -105,7 +106,7 @@ public class NutsFolderRepository extends AbstractNutsRepository {
                 return c;
             }
         }
-        NutsContent c = mirroring.fetchContent(id, localPath, session);
+        NutsContent c = mirroring.fetchContent(id, descriptor, localPath, session);
         if (c != null) {
             return c;
         }
@@ -157,9 +158,15 @@ public class NutsFolderRepository extends AbstractNutsRepository {
     }
 
     @Override
-    public void updateStatistics() {
-        lib.reindexFolder();
-        cache.reindexFolder();
+    public NutsUpdateRepositoryStatisticsCommand updateStatistics() {
+        return new DefaultNutsUpdateRepositoryStatisticsCommand(this) {
+            @Override
+            public NutsUpdateRepositoryStatisticsCommand run() {
+                lib.reindexFolder();
+                cache.reindexFolder();
+                return this;
+            }
+        };
     }
 
 }

@@ -144,7 +144,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
             switch (status) {
                 case 0: {
                     if (c == start.charAt(0)) {
-                        if (start.length() < 4) {
+                        if (start.length() < 1) {
                             start.append(c);
                         } else {
                             status = 2;
@@ -385,7 +385,6 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 case '§':
                 case '_':
                 case '~':
-                case '%':
                 case '¤':
                 case '@':
                 case '^':
@@ -419,6 +418,7 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
                 case '`':
                 case '"':
                 case '\'':
+                case '%':
                 case '(':
                 case '[':
                 case '{':
@@ -546,7 +546,9 @@ public class FormattedPrintStreamNodePartialParser implements FormattedPrintStre
         switch (c) {
             case '`':
             case '"':
-            case '\'': {
+            case '\'': 
+            case '%': 
+            {
                 this.applyPush(new QuotedParseAction(c));
                 break;
             }

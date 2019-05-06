@@ -78,13 +78,13 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                         security = repository.security().findUsers();
                     }
                     for (NutsEffectiveUser u : security) {
-                        out.printf("User: %s\n", u.getUser());
+                        out.printf("User: %s%n", u.getUser());
                         if (!StringUtils.isEmpty(u.getMappedUser())) {
-                            out.printf("   Mapper to  : %s\n", u.getMappedUser());
+                            out.printf("   Mapper to  : %s%n", u.getMappedUser());
                         }
-                        out.printf("   Password   : %s\n", (u.hasCredentials() ? "Set" : "None"));
-                        out.printf("   Groups     : %s\n", (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
-                        out.printf("   Rights     : %s\n", (u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
+                        out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));
+                        out.printf("   Groups     : %s%n", (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
+                        out.printf("   Rights     : %s%n", (u.getRights().length == 0 ? "None" : Arrays.asList(u.getRights())));
                     }
                 }
                 return true;

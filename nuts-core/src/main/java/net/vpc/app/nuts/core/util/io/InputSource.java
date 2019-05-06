@@ -5,7 +5,6 @@
  */
 package net.vpc.app.nuts.core.util.io;
 
-import net.vpc.app.nuts.core.util.io.MultiInputSource;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;

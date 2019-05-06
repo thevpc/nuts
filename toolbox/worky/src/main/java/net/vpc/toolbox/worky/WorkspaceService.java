@@ -31,7 +31,7 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().io().readJson(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().io().json().read(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -63,7 +63,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().io().writeJson(c, configFile, true);
+        appContext.getWorkspace().io().json().pretty().write(c, configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -258,7 +258,8 @@ public class WorkspaceService {
             if (progress) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
                 if (i > 0) {
-                    appContext.out().printf("`move-line-start;move-up`");
+                    appContext.out().printf("`move-line-start`");
+                    appContext.out().printf("`move-up`");
                 }
                 appContext.out().printf("(%s / %s) %s\n", (i + 1), all.size(), StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }

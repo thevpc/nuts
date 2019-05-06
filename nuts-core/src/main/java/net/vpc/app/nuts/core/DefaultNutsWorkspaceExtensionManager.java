@@ -93,7 +93,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
             if (u != null) {
                 NutsExtensionInfo[] s = new NutsExtensionInfo[0];
                 try (Reader rr = new InputStreamReader(u.openStream())) {
-                    s = ws.io().readJson(rr, NutsExtensionInfo[].class);
+                    s = ws.io().json().read(rr, NutsExtensionInfo[].class);
                 } catch (IOException e) {
                     //ignore!
                 }

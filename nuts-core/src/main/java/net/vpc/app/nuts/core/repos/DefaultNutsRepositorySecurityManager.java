@@ -9,7 +9,6 @@ import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.NutsEffectiveUserImpl;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsAddUserCommand;
 import net.vpc.app.nuts.core.DefaultNutsRemoveUserCommand;
@@ -25,9 +24,9 @@ class DefaultNutsRepositorySecurityManager implements NutsRepositorySecurityMana
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsRepositorySecurityManager.class.getName());
 
-    private final AbstractNutsRepository repo;
+    private final NutsRepository repo;
 
-    DefaultNutsRepositorySecurityManager(final AbstractNutsRepository outer) {
+    DefaultNutsRepositorySecurityManager(final NutsRepository outer) {
         this.repo = outer;
     }
 

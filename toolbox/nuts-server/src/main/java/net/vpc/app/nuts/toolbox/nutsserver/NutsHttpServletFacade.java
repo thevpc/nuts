@@ -255,7 +255,7 @@ public class NutsHttpServletFacade {
                             break;
                         case "content-hash":
                             try {
-                                receivedContentHash = context.getWorkspace().io().computeHash(info.getContent());
+                                receivedContentHash = context.getWorkspace().io().hash().source(info.getContent()).computeString();
                             } finally {
                                 info.getContent().close();
                             }

@@ -1,13 +1,16 @@
 package net.vpc.app.nuts.core.util.mvn;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MavenMetadata {
-
+    private String groupId;
+    private String artifactId;
     private String latest;
     private String release;
     private List<String> versions = new ArrayList<>();
+    private Date lastUpdated;
 
     public List<String> getVersions() {
         return versions;
@@ -15,6 +18,14 @@ public class MavenMetadata {
 
     public String getLatest() {
         return latest;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     public MavenMetadata setLatest(String latest) {
@@ -35,4 +46,21 @@ public class MavenMetadata {
         this.versions = versions;
         return this;
     }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+    
 }

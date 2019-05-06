@@ -31,7 +31,6 @@ package net.vpc.app.nuts.core.bridges.maven;
 
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.repos.AbstractNutsRepository;
-import net.vpc.app.nuts.core.util.io.CoreSecurityUtils;
 
 import java.io.*;
 import java.util.Map;
@@ -79,7 +78,7 @@ public abstract class AbstractMavenRepository extends AbstractNutsRepository {
         }
         try {
             String rhash = getStreamSHA1(id, session);
-            String lhash = CoreIOUtils.evalSHA1(stream, true);
+            String lhash = CoreIOUtils.evalSHA1Hex(stream, true);
             if (!rhash.equalsIgnoreCase(lhash)) {
                 throw new IOException("Invalid file hash " + id);
             }

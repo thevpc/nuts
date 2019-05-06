@@ -5,19 +5,15 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.InputStreamMetadataAware;
 import net.vpc.app.nuts.core.util.io.NullInputStream;
-import com.google.gson.*;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.AbstractSystemTerminalAdapter;
 import net.vpc.app.nuts.core.util.io.NullOutputStream;
-import net.vpc.app.nuts.core.util.*;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,8 +26,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsIOManager.class.getName());
     private NutsWorkspace ws;
-    private static Gson GSON;
-    private static Gson GSON_PRETTY;
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -101,239 +95,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public InputStream monitorInputStream(String path, String name, NutsTerminalProvider session) {
-        InputStream stream = null;
-        NutsURLHeader header = null;
-        long size = -1;
-        try {
-            if (CoreIOUtils.isURL(path)) {
-                if (CoreIOUtils.isPathFile(path)) {
-//                    path = URLUtils.toFile(new URL(path)).getPath();
-                    Path p = CoreIOUtils.toPathFile(path);
-                    size = Files.size(p);
-                    stream = Files.newInputStream(p);
-                } else {
-                    NutsHttpConnectionFacade f = CoreIOUtils.getHttpClientFacade(ws, path);
-                    try {
-
-                        header = f.getURLHeader();
-                        size = header.getContentLength();
-                    } catch (Exception ex) {
-                        //ignore error
-                    }
-                    stream = f.open();
-                }
-            } else {
-                Path p = ws.io().path(path);
-                //this is file!
-                size = Files.size(p);
-                stream = Files.newInputStream(p);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        return monitorInputStream(stream, size, (name == null ? path : name), session);
+    public NutsMonitorCommand monitor() {
+        return new DefaultNutsMonitorCommand(ws);
     }
-
+    
     @Override
-    public InputStream monitorInputStream(InputStream stream, long length, String name, NutsTerminalProvider session) {
-        if (length > 0) {
-            if (session == null) {
-                session = ws.createSession();
-            }
-            return CoreIOUtils.monitor(stream, null, (name == null ? "Stream" : name), length, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out()));
-        } else {
-            return stream;
-        }
-    }
-
-    @Override
-    public InputStream monitorInputStream(InputStream stream, NutsTerminalProvider session) {
-        if (stream instanceof InputStreamMetadataAware) {
-            if (session == null) {
-                session = ws.createSession();
-            }
-            return CoreIOUtils.monitor(stream, null, new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out()));
-        } else {
-            return stream;
-        }
-    }
-
-    @Override
-    public InputStream monitorInputStream(String path, Object source, NutsTerminalProvider session) {
-        String sourceName = String.valueOf(path);
-        boolean monitorable = true;
-        Object o = session.getProperty("monitor-allowed");
-        if (o != null) {
-            o = new NutsCommandArg(String.valueOf(o)).getBoolean();
-        }
-        if (o instanceof Boolean) {
-            monitorable = ((Boolean) o).booleanValue();
-        } else {
-            if (source instanceof NutsId) {
-                NutsId d = (NutsId) source;
-                if (NutsConstants.QueryFaces.COMPONENT_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-                if (NutsConstants.QueryFaces.DESC_HASH.equals(d.getFace())) {
-                    monitorable = false;
-                }
-            }
-        }
-        if (!CoreCommonUtils.getSystemBoolean("nuts.monitor.enabled", true)) {
-            monitorable = false;
-        }
-        DefaultNutsInputStreamMonitor monitor = null;
-        if (monitorable && LOG.isLoggable(Level.INFO)) {
-            monitor = new DefaultNutsInputStreamMonitor(ws, session.getTerminal().out());
-        }
-        boolean verboseMode
-                = CoreCommonUtils.getSystemBoolean("nuts.monitor.start", false)
-                || ws.config().getOptions().getLogConfig() != null && ws.config().getOptions().getLogConfig().getLogLevel() == Level.FINEST;
-        InputStream stream = null;
-        NutsURLHeader header = null;
-        long size = -1;
-        try {
-            if (verboseMode && monitor != null) {
-                monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
-            }
-            NutsHttpConnectionFacade f = CoreIOUtils.getHttpClientFacade(ws, path);
-            try {
-
-                header = f.getURLHeader();
-                size = header.getContentLength();
-            } catch (Exception ex) {
-                //ignore error
-            }
-            stream = f.open();
-        } catch (UncheckedIOException e) {
-            if (verboseMode && monitor != null) {
-                monitor.onComplete(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, e));
-            }
-            throw e;
-        }
-        if (stream != null) {
-            if (path.toLowerCase().startsWith("file://")) {
-                LOG.log(Level.FINE, "[START  ] Downloading file {0}", new Object[]{path});
-            } else {
-                LOG.log(Level.FINEST, "[START  ] Downloading url {0}", new Object[]{path});
-            }
-        } else {
-            LOG.log(Level.FINEST, "[ERROR  ] Downloading url failed : {0}", new Object[]{path});
-        }
-
-        if (!monitorable) {
-            return stream;
-        }
-        if (monitor != null) {
-            DefaultNutsInputStreamMonitor finalMonitor = monitor;
-            if (!verboseMode) {
-                monitor.onStart(new InputStreamEvent(source, sourceName, 0, 0, 0, 0, size, null));
-            }
-            //adapt to disable onStart call (it is already invoked)
-            return CoreIOUtils.monitor(stream, source, sourceName, size, new InputStreamMonitor() {
-                @Override
-                public void onStart(InputStreamEvent event) {
-                }
-
-                @Override
-                public void onComplete(InputStreamEvent event) {
-                    finalMonitor.onComplete(event);
-                    if (event.getException() != null) {
-                        LOG.log(Level.FINEST, "[ERROR    ] Download Failed    : {0}", new Object[]{path});
-                    } else {
-                        LOG.log(Level.FINEST, "[SUCCESS  ] Download Succeeded : {0}", new Object[]{path});
-                    }
-                }
-
-                @Override
-                public boolean onProgress(InputStreamEvent event) {
-                    return finalMonitor.onProgress(event);
-                }
-            });
-        }
-        return stream;
-
-    }
-
-    @Override
-    public String toJsonString(Object obj, boolean pretty) {
-        StringWriter w = new StringWriter();
-        writeJson(obj, w, pretty);
-        return w.toString();
-    }
-
-    @Override
-    public void writeJson(Object obj, Writer out, boolean pretty) {
-        getGson(pretty).toJson(obj, out);
-        try {
-            out.flush();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    @Override
-    public <T> T readJson(Reader reader, Class<T> cls) {
-        return getGson(true).fromJson(reader, cls);
-    }
-
-    @Override
-    public <T> T readJson(Path path, Class<T> cls) {
-        File file = path.toFile();
-        try (FileReader r = new FileReader(file)) {
-            return readJson(r, cls);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public <T> T readJson(File file, Class<T> cls) {
-        try (FileReader r = new FileReader(file)) {
-            return readJson(r, cls);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public <T> void writeJson(Object obj, File file, boolean pretty) {
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-        try (FileWriter w = new FileWriter(file)) {
-            writeJson(obj, w, pretty);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public <T> void writeJson(Object obj, Path path, boolean pretty) {
-        if (path.getParent() != null) {
-            try {
-                Files.createDirectories(path.getParent());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        try (Writer w = Files.newBufferedWriter(path)) {
-            writeJson(obj, w, pretty);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public <T> void writeJson(Object obj, PrintStream printStream, boolean pretty) {
-        Writer w = new PrintWriter(printStream);
-        writeJson(obj, w, pretty);
-        try {
-            w.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    public NutsJsonCommand json() {
+        return new DefaultNutsJsonCommand();
     }
 
     @Override
@@ -419,11 +187,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
         }
         help = CoreStringUtils.replaceDollarPlaceHolders(help, pathExpansionConverter);
         return help;
-    }
-
-    @Override
-    public String computeHash(InputStream input) {
-        return CoreIOUtils.evalSHA1(input, false);
     }
 
     @Override
@@ -626,114 +389,19 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public String getSHA1(NutsDescriptor descriptor) {
-        ByteArrayOutputStream o = new ByteArrayOutputStream();
-        ws.formatter().createDescriptorFormat().setPretty(false).print(descriptor, o);
-        return CoreIOUtils.evalSHA1(new ByteArrayInputStream(o.toByteArray()), true);
+    public NutsHashCommand hash() {
+        return new DefaultNutsHashCommand(ws);
     }
+    
+    
 
-    public static GsonBuilder prepareBuilder() {
-        return new GsonBuilder()
-                .registerTypeHierarchyAdapter(NutsId.class, new NutsIdJsonAdapter())
-                .registerTypeHierarchyAdapter(NutsVersion.class, new NutsVersionJsonAdapter())
-                .registerTypeHierarchyAdapter(NutsDescriptor.class, new NutsDescriptorJsonAdapter())
-                .registerTypeHierarchyAdapter(NutsDependency.class, new NutsNutsDependencyJsonAdapter());
-    }
-
-    private Gson getGson(boolean pretty) {
-        if (pretty) {
-            if (GSON_PRETTY == null) {
-                GSON_PRETTY = prepareBuilder().setPrettyPrinting().create();
-            }
-            return GSON_PRETTY;
-        } else {
-            if (GSON == null) {
-                GSON = prepareBuilder().create();
-            }
-            return GSON;
-        }
-    }
+   
 
     public NutsWorkspace getWorkspace() {
         return ws;
     }
 
-    private static class NutsIdJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsId>,
-            com.google.gson.JsonDeserializer<NutsId> {
-
-        @Override
-        public NutsId deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String s = context.deserialize(json, String.class);
-            if (s == null) {
-                return null;
-            }
-            return CoreNutsUtils.parseRequiredNutsId(s);
-        }
-
-        @Override
-        public JsonElement serialize(NutsId src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src == null ? null : src.toString());
-        }
-    }
-
-    private static class NutsVersionJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsVersion>,
-            com.google.gson.JsonDeserializer<NutsVersion> {
-
-        @Override
-        public NutsVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String s = context.deserialize(json, String.class);
-            if (s == null) {
-                return null;
-            }
-            return DefaultNutsVersion.valueOf(s);
-        }
-
-        @Override
-        public JsonElement serialize(NutsVersion src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src == null ? null : src.toString());
-        }
-    }
-
-    private static class NutsDescriptorJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsDescriptor>,
-            com.google.gson.JsonDeserializer<NutsDescriptor> {
-
-        @Override
-        public NutsDescriptor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            DefaultNutsDescriptorBuilder b = context.deserialize(json, DefaultNutsDescriptorBuilder.class);
-            return b.build();
-        }
-
-        @Override
-        public JsonElement serialize(NutsDescriptor src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(new DefaultNutsDescriptorBuilder(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
-    private static class NutsNutsDependencyJsonAdapter implements
-            com.google.gson.JsonSerializer<NutsDependency>,
-            com.google.gson.JsonDeserializer<NutsDependency> {
-
-        @Override
-        public NutsDependency deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            DefaultNutsDependencyBuilder b = context.deserialize(json, DefaultNutsDependencyBuilder.class);
-            return b.build();
-        }
-
-        @Override
-        public JsonElement serialize(NutsDependency src, Type typeOfSrc, JsonSerializationContext context) {
-            if (src != null) {
-                return context.serialize(new DefaultNutsDependencyBuilder(src));
-            }
-            return context.serialize(src);
-        }
-    }
-
+    
     @Override
     public NutsPathCopyAction copy() {
         return new DefaultNutsIOCopyAction(this);

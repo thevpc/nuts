@@ -42,7 +42,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
     private static final NutsRepositoryDefinition[] DEFAULTS = {
         new NutsRepositoryDefinition().setName("maven-local").setLocation(System.getProperty("maven-local", "~/.m2/repository")).setType(NutsConstants.RepoTypes.MAVEN).setProxy(CoreCommonUtils.getSystemBoolean("nuts.cache.cache-local-files", false)).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_LOCAL),
         new NutsRepositoryDefinition().setName("maven-central").setLocation("http://repo.maven.apache.org/maven2/").setType(NutsConstants.RepoTypes.MAVEN).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
-        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master").setType(NutsConstants.RepoTypes.MAVEN_GITHUB).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
+        new NutsRepositoryDefinition().setName("vpc-public-maven").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-maven/master").setType(NutsConstants.RepoTypes.MAVEN).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),
         new NutsRepositoryDefinition().setName("vpc-public-nuts").setLocation("https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master").setType(NutsConstants.RepoTypes.NUTS).setProxy(true).setReference(false).setFailSafe(false).setCreate(true).setOrder(NutsRepositoryDefinition.ORDER_USER_REMOTE),};
 
     @Override
@@ -57,8 +57,7 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
         }
         String repositoryType = criteria.getType();
         String location = criteria.getLocation();
-        if (!NutsConstants.RepoTypes.MAVEN.equals(repositoryType)
-                && !NutsConstants.RepoTypes.MAVEN_GITHUB.equals(repositoryType)) {
+        if (!NutsConstants.RepoTypes.MAVEN.equals(repositoryType)) {
             return NO_SUPPORT;
         }
         if (CoreStringUtils.isBlank(location)) {
@@ -82,12 +81,6 @@ public class MavenNutsRepositoryFactoryComponent implements NutsRepositoryFactor
             }
             if (CoreIOUtils.isPathFile(config.getLocation())) {
                 return new MavenFolderRepository(options, workspace, parentRepository);
-            }
-        } else if (NutsConstants.RepoTypes.MAVEN_GITHUB.equals(config.getType())) {
-            //TODO not yet supported. Fallback to maven http.
-            if (CoreIOUtils.isPathHttp(config.getLocation())) {
-                config.setType(NutsConstants.RepoTypes.MAVEN);
-                return (new MavenRemoteRepository(options, workspace, parentRepository));
             }
         }
         return null;

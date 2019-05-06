@@ -69,7 +69,7 @@ public class ShellHelper {
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, String name) {
-            return ws.io().monitorInputStream(stream, length, name, session);
+            return ws.io().monitor().source(stream).length(length).name(name).session(session).create();
         }
     }
 

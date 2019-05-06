@@ -200,6 +200,19 @@ final class NutsUtils {
         return false;
     }
 
+    public static Properties loadURLPropertiesFromLocalFile(File file) {
+        
+        Properties p=new Properties();
+        if(file.isFile()){
+            try(InputStream in=Files.newInputStream(file.toPath())){
+                p.load(in);
+            } catch (IOException ex) {
+                //ignore...
+            }
+        }
+        return p;
+    }
+    
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
@@ -1072,4 +1085,32 @@ final class NutsUtils {
         return new String(c);
     }
 
+    /**
+     * v1 and v2 are supposed in the following form 
+     *  nbr1.nbr2, ... 
+     * where all items (nbr) between dots are positive numbers
+     *
+     * @param v1 version 1
+     * @param v2 version 2
+     * @return 1,0 or -1
+     */
+    public static int compareRuntimeVersion(String v1, String v2) {
+        String[] a1 = v1.split("\\.");
+        String[] a2 = v2.split("\\.");
+        int max = Math.max(a1.length, a2.length);
+        for (int i = 0; i < max; i++) {
+            if (i >= a1.length) {
+                return -1;
+            }
+            if (i >= a2.length) {
+                return 1;
+            }
+            int i1 = Integer.parseInt(a1[i]);
+            int i2 = Integer.parseInt(a2[i]);
+            if (i1 != i2) {
+                return Integer.compare(i1, i2);
+            }
+        }
+        return 0;
+    }
 }

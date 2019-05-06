@@ -345,6 +345,12 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     NutsFindCommand removeScope(NutsDependencyScope scope);
 
+    NutsFindCommand  acceptDefaultVersion() ;
+
+    NutsFindCommand acceptDefaultVersion(Boolean acceptDefaultVersion) ;
+
+    NutsFindCommand setAcceptDefaultVersion(Boolean acceptDefaultVersion) ;
+
     NutsFindCommand acceptOptional();
 
     NutsFindCommand acceptOptional(Boolean acceptOptional);
@@ -402,6 +408,7 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
+
     Path getLocation();
 
     NutsFetchStrategy getFetchStrategy();
@@ -430,6 +437,8 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     boolean isCached();
 
+    Boolean getAcceptDefaultVersion() ;
+    
     NutsFindCommand outputFormat(NutsOutputFormat outputFormat);
 
     NutsFindCommand setOutputFormat(NutsOutputFormat outputFormat);

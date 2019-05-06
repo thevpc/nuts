@@ -1,0 +1,16 @@
+==nuts== [[help]] \[-options\]... {{\<command-name\>}}... 
+      show help and exit
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+
+       If no command names are provided, nuts help is displayed. Otherwise, Each command help is displayed.
+       When Command is unknown or invalid, an error message is displayed.
+
+@@EXAMPLES:@@
+        ==nuts== help [[--help]]
+            shows this help and exit
+       
+        ==nuts== help update
+            show help for update internal command

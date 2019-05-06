@@ -158,7 +158,7 @@ public class FileVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("==%s==:\n", k);
+                            out.printf("==%s==:%n", k);
                         } else {
                             out.printf("==%s==: ", k);
                         }
@@ -166,17 +166,17 @@ public class FileVersionMain extends NutsApplication {
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("[[%s]]\n", descriptor.getId().getSimpleName());
+                            out.printf("[[%s]]%n", descriptor.getId().getSimpleName());
                         } else if (idFormat) {
-                            out.printf("[[%s]]\n", descriptor.getId());
+                            out.printf("[[%s]]%n", descriptor.getId());
                         } else if (longFormat) {
-                            out.printf("[[%s]]\n", descriptor.getId());
+                            out.printf("[[%s]]%n", descriptor.getId());
                             PropertiesFormatter f = new PropertiesFormatter()
                                     .setTable(true)
                                     .setSort(true);
                             f.format(descriptor.getProperties(), out);
                         } else {
-                            out.printf("[[%s]]\n", descriptor.getId().getVersion());
+                            out.printf("[[%s]]%n", descriptor.getId().getVersion());
                         }
                         if (!all) {
                             break;
@@ -188,11 +188,11 @@ public class FileVersionMain extends NutsApplication {
                         for (String t : unsupportedFileTypes) {
                             File f = new File(context.getWorkspace().io().expandPath(t));
                             if (f.isFile()) {
-                                err.printf("%s : Unsupported File type\n", t);
+                                err.printf("%s : Unsupported File type%n", t);
                             } else if (f.isDirectory()) {
-                                err.printf("%s : Ignored Folder\n", t);
+                                err.printf("%s : Ignored Folder%n", t);
                             } else {
-                                err.printf("%s : File not found\n", t);
+                                err.printf("%s : File not found%n", t);
                             }
                         }
                     }

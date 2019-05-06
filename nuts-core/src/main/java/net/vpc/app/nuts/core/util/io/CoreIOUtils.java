@@ -259,7 +259,7 @@ public class CoreIOUtils {
             } else {
                 terminal.out().print("exec ");
             }
-            terminal.out().printf("%s\n", pb.getCommandString());
+            terminal.out().printf("%s%n", pb.getCommandString());
         }
         try {
             return pb.start().waitFor().getResult();
@@ -645,7 +645,7 @@ public class CoreIOUtils {
         NutsRepositoryConfig conf = null;
         if (Files.isRegularFile(file)) {
             try {
-                conf = ws.io().readJson(file, NutsRepositoryConfig.class);
+                conf = ws.io().json().read(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 LOG.log(Level.SEVERE, "Erroneous config file. Unable to load file {0} : {1}", new Object[]{file, ex.toString()});
                 if (!ws.config().isReadOnly()) {
@@ -974,7 +974,10 @@ public class CoreIOUtils {
     }
 
     public static String getURLName(URL url) {
-        String path = url.getFile();
+        return getURLName(url.getFile());
+    }
+    
+    public static String getURLName(String path) {
         String name;
         int index = path.lastIndexOf('/');
         if (index < 0) {
@@ -1310,6 +1313,66 @@ public class CoreIOUtils {
         }
     }
 
+    public static String evalMD5Hex(Path path) {
+        return toHexString(evalMD5(path));
+    }
+
+    public static byte[] evalMD5(Path path) {
+        try (InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+            return evalMD5(is);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static String evalMD5Hex(InputStream input) {
+        return toHexString(evalMD5(input));
+    }
+
+    public static byte[] evalHash(InputStream input,String algo) {
+
+        try {
+            MessageDigest md;
+            md = MessageDigest.getInstance(algo);
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            try {
+                len = input.read(buffer);
+                while (len != -1) {
+                    md.update(buffer, 0, len);
+                    len = input.read(buffer);
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new UncheckedIOException(new IOException(e));
+        }
+    }
+    
+    public static byte[] evalMD5(InputStream input) {
+
+        try {
+            MessageDigest md;
+            md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            try {
+                len = input.read(buffer);
+                while (len != -1) {
+                    md.update(buffer, 0, len);
+                    len = input.read(buffer);
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new UncheckedIOException(new IOException(e));
+        }
+    }
+
     public static byte[] evalMD5(byte[] bytesOfMessage) {
         try {
             MessageDigest md;
@@ -1320,9 +1383,9 @@ public class CoreIOUtils {
         }
     }
 
-    public static String evalSHA1(Path file) {
+    public static String evalSHA1Hex(Path file) {
         try {
-            return evalSHA1(Files.newInputStream(file), true);
+            return evalSHA1Hex(Files.newInputStream(file), true);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -1330,17 +1393,21 @@ public class CoreIOUtils {
 
     public static String evalSHA1(File file) {
         try {
-            return evalSHA1(new FileInputStream(file), true);
+            return evalSHA1Hex(new FileInputStream(file), true);
         } catch (FileNotFoundException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     public static String evalSHA1(String input) {
-        return evalSHA1(new ByteArrayInputStream(input.getBytes()), true);
+        return evalSHA1Hex(new ByteArrayInputStream(input.getBytes()), true);
     }
 
-    public static String evalSHA1(InputStream input, boolean closeStream) {
+    public static String evalSHA1Hex(InputStream input, boolean closeStream) {
+        return toHexString(evalSHA1(input, closeStream));
+    }
+
+    public static byte[] evalSHA1(InputStream input, boolean closeStream) {
         try {
             MessageDigest sha1 = null;
             try {
@@ -1359,7 +1426,7 @@ public class CoreIOUtils {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-            return toHexString(sha1.digest());
+            return sha1.digest();
         } finally {
             if (closeStream) {
                 if (input != null) {
@@ -1577,7 +1644,7 @@ public class CoreIOUtils {
             InputStreamTee ist = new InputStreamTee(f.open(), p, () -> {
                 if (Files.exists(outPath)) {
                     cu.put("id://" + path, s);
-                    cu.put("sha1://" + path, evalSHA1(outPath));
+                    cu.put("sha1://" + path, evalSHA1Hex(outPath));
                     try {
                         Files.move(outPath, urlContent.resolve(s), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                     } catch (IOException ex) {
@@ -1712,12 +1779,15 @@ public class CoreIOUtils {
     }
 
     public static void storeProperties(Map<String, String> props, OutputStream out) {
-        OutputStreamWriter w = new OutputStreamWriter(out);
+        storeProperties(props, new OutputStreamWriter(out));
+    }
+
+    public static void storeProperties(Map<String, String> props, Writer w) {
         try {
             for (Map.Entry<String, String> entry : props.entrySet()) {
-                w.write(saveConvert(entry.getKey(), true, true));
+                w.write(escapePropsString(entry.getKey(), true));
                 w.write("=");
-                w.write(saveConvert(entry.getValue(), false, true));
+                w.write(escapePropsString(entry.getValue(), false));
                 w.write("\n");
                 w.flush();
             }
@@ -1733,75 +1803,67 @@ public class CoreIOUtils {
      * This is a modified method from java.util.Properties because the method 
      * is private but we need call it handle special properties files
      */
-    public static String saveConvert(String theString,
-            boolean escapeSpace,
-            boolean escapeUnicode) {
+    public static String escapePropsString(String theString,
+            boolean escapeSpace) {
         if (theString == null) {
             theString = "";
         }
-        int len = theString.length();
-        int bufLen = len * 2;
-        if (bufLen < 0) {
-            bufLen = Integer.MAX_VALUE;
-        }
-        StringBuilder outBuffer = new StringBuilder(bufLen);
-
-        for (int x = 0; x < len; x++) {
-            char aChar = theString.charAt(x);
-            // Handle common case first, selecting largest block that
-            // avoids the specials below
-            if ((aChar > 61) && (aChar < 127)) {
-                if (aChar == '\\') {
-                    outBuffer.append('\\');
-                    outBuffer.append('\\');
-                    continue;
+        char[] chars = theString.toCharArray();
+        StringBuilder buffer = new StringBuilder(chars.length);
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            switch (c) {
+                case '\\': {
+                    buffer.append("\\\\");
+                    break;
                 }
-                outBuffer.append(aChar);
-                continue;
-            }
-            switch (aChar) {
-                case ' ':
-                    if (x == 0 || escapeSpace) {
-                        outBuffer.append('\\');
+                case ' ': {
+                    if (i == 0 || escapeSpace) {
+                        buffer.append('\\');
                     }
-                    outBuffer.append(' ');
+                    buffer.append(' ');
                     break;
-                case '\t':
-                    outBuffer.append('\\');
-                    outBuffer.append('t');
+                }
+                case '\t': {
+                    buffer.append("\\t");
                     break;
-                case '\n':
-                    outBuffer.append('\\');
-                    outBuffer.append('n');
+                }
+                case '\n': {
+                    buffer.append("\\n");
                     break;
-                case '\r':
-                    outBuffer.append('\\');
-                    outBuffer.append('r');
+                }
+                case '\r': {
+                    buffer.append("\\r");
                     break;
-                case '\f':
-                    outBuffer.append('\\');
-                    outBuffer.append('f');
+                }
+                case '\f': {
+                    buffer.append("\\f");
                     break;
-                case '=': // Fall through
-                case ':': // Fall through
-                case '#': // Fall through
+                }
+                case ':':
+                case '#':
                 case '!':
-                    outBuffer.append('\\');
-                    outBuffer.append(aChar);
+                case '=': {
+                    buffer.append('\\');
+                    buffer.append(c);
                     break;
-                default:
-                    if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
-                        outBuffer.append('\\');
-                        outBuffer.append('u');
-                        outBuffer.append(toHex((aChar >> 12) & 0xF));
-                        outBuffer.append(toHex((aChar >> 8) & 0xF));
-                        outBuffer.append(toHex((aChar >> 4) & 0xF));
-                        outBuffer.append(toHex(aChar & 0xF));
+                }
+                default: {
+                    if ((c > 61) && (c < 127)) {
+                        buffer.append(c);
+                    } else if (((c < 0x0020) || (c > 0x007e))) {
+                        buffer.append('\\');
+                        buffer.append('u');
+                        buffer.append(toHex((c >> 12) & 0xF));
+                        buffer.append(toHex((c >> 8) & 0xF));
+                        buffer.append(toHex((c >> 4) & 0xF));
+                        buffer.append(toHex(c & 0xF));
                     } else {
-                        outBuffer.append(aChar);
+                        buffer.append(c);
                     }
+                }
             }
         }
-        return outBuffer.toString();
+        return buffer.toString();
     }
 }

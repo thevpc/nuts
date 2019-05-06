@@ -116,8 +116,8 @@ public class CanonicalBuilder {
             return x;
         } else if (anyObject instanceof NutsDescriptor) {
             if (convertDesc) {
-                String s = ws.io().toJsonString(anyObject, true);
-                return ws.io().readJson(new StringReader(s), Map.class);
+                String s = ws.io().json().pretty().toJsonString(anyObject);
+                return ws.io().json().read(new StringReader(s), Map.class);
             }
             return anyObject;
         } else if (anyObject instanceof NutsId) {

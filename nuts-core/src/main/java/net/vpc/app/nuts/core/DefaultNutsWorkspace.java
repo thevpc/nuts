@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.spi.NutsWorkspaceConfigManagerExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
@@ -59,11 +60,11 @@ import net.vpc.app.nuts.core.util.mvn.PomIdResolver;
 public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, NutsWorkspaceExt {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspace.class.getName());
-    public static final NutsInstallInfo NOT_INSTALLED = new NutsInstallInfo(false, null);
+    public static final NutsInstallInfo NOT_INSTALLED = new DefaultNutsInstallInfo(false, null);
     private final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
     private boolean initializing;
     protected final DefaultNutsWorkspaceSecurityManager securityManager = new DefaultNutsWorkspaceSecurityManager(this);
-    protected final NutsWorkspaceConfigManagerExt configManager = new DefaultNutsWorkspaceConfigManager(this);
+    protected NutsWorkspaceConfigManagerExt configManager;
     protected DefaultNutsWorkspaceExtensionManager extensionManager;
     private final ObservableMap<String, Object> userProperties = new ObservableMap<>();
 
@@ -73,7 +74,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
     private NutsParseManager parseManager;
     private NutsFormatManager formatManager;
     private DefaultNutsInstalledRepository installedRepository;
-    private List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
+    private final List<NutsRepositoryListener> repositoryListeners = new ArrayList<>();
 
     public DefaultNutsWorkspace() {
 
@@ -175,7 +176,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         if (term == null) {
             throw new NutsExtensionMissingException(NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
-        NutsSystemTerminal syst = null;
+        NutsSystemTerminal syst;
         if ((term instanceof NutsSystemTerminal)) {
             syst = (NutsSystemTerminal) term;
         } else {
@@ -219,6 +220,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         parseManager = new DefaultNutsParseManager(this);
         formatManager = new DefaultNutsFormatManager(this);
         extensionManager = new DefaultNutsWorkspaceExtensionManager(this, factory);
+        configManager = new DefaultNutsWorkspaceConfigManager(this);
         configManager.onInitializeWorkspace(options,
                 new DefaultNutsBootContext(this, runningBootConfig),
                 new DefaultNutsBootContext(this, wsBootConfig),
@@ -322,7 +324,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             }
             LOG.log(Level.FINE, "Nuts Workspace loaded in {0}", CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis()));
             if (options.isPerf()) {
-                getTerminal().fout().printf("**Nuts** Workspace loaded in [[%s]]\n",
+                getTerminal().fout().printf("**Nuts** Workspace loaded in [[%s]]%n",
                         CoreCommonUtils.formatPeriodMilli(config().getCreationFinishTimeMillis() - config().getCreationStartTimeMillis())
                 );
             }
@@ -348,18 +350,18 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                     version.append(' ');
                 }
                 out.println("{{/------------------------------------------------------------------------------\\\\}}");
-                out.println("{{|}}==``      _   __      __        ``==                                                  {{|}}");
-                out.println("{{|}}==``     / | / /_  __/ /______  ``== ==N==etwork ==U==pdatable ==T==hings ==S==ervices                {{|}}");
-                out.println("{{|}}==``    /  |/ / / / / __/ ___/  ``== <<The Open Source Package Manager for __Java__ (TM)>>    {{|}}");
-                out.println("{{|}}==``   / /|  / /_/ / /_(__  )   ``== <<and other __things__>> ... by ==vpc==                      {{|}}");
-                out.println("{{|}}==``  /_/ |_/\\\\____/\\\\__/____/``==     __http://github.com/thevpc/nuts__                    {{|}}");
+                out.println("{{|}}==      _   _\\_      _\\_        ==                                                  {{|}}");
+                out.println("{{|}}==     / | / /_  _\\_/ /_\\_\\_\\_\\_\\_  == ==N==etwork ==U==pdatable ==T==hings ==S==ervices                {{|}}");
+                out.println("{{|}}==    /  |/ / / / / _\\_/ _\\_\\_/  == <<The Open Source Package Manager for __Java__ (TM)>>    {{|}}");
+                out.println("{{|}}==   / /|  / /_/ / /_\\(_\\_  \\)   == <<and other __things__>> ... by ==vpc==                      {{|}}");
+                out.println("{{|}}==  /_/ |_/\\\\_\\_\\_\\_/\\\\_\\_/_\\_\\_\\_/==     __http://github.com/thevpc/nuts__                    {{|}}");
                 out.println("{{|}}      version [[" + version + "]]                                       {{|}}");
                 out.println("{{|------------------------------------------------------------------------------|}}");
                 out.println("{{|}}  This is the very {{first}} time ==Nuts== has been started for this workspace...     {{|}}");
                 out.println("{{\\\\------------------------------------------------------------------------------/}}");
                 out.println();
             }
-            install().setIncludeCompanions(true).setSession(session).run();
+            install().setIncludeCompanions(true).setTrace(true).setAsk(true).setSession(session).run();
         }
     }
 
@@ -413,40 +415,13 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                 break;
             }
         }
-        if (!coreFound) {
-            return true;
-        }
-        return false;
+        return !coreFound;
     }
 
-//    private Properties getBootInfo(NutsId id) {
-//        if (id.getVersion().isEmpty()) {
-//            id = id.setVersion(NutsConstants.Versions.LATEST);
-//        }
-//        List<NutsURLLocation> bootUrls = new ArrayList<>();
-//        for (NutsURLLocation r : extensionManager.getExtensionURLLocations(id, NutsConstants.NUTS_ID_BOOT_API, "properties")) {
-//            bootUrls.add(r);
-//            if (r.getUrl() != null) {
-//                Properties p = IOUtils.loadURLProperties(r.getUrl());
-//                if (!p.isEmpty() && p.containsKey("runtimeId")) {
-//                    return p;
-//                }
-//            }
-//        }
-//        if (bootUrls.isEmpty()) {
-//            if (log.isLoggable(Level.CONFIG)) {
-//                log.log(Level.CONFIG, "Inaccessible runtime info. Fatal error");
-//            }
-//        }
-//        for (NutsURLLocation bootUrl : bootUrls) {
-//            log.log(Level.CONFIG, "Inaccessible runtime info URL : {0}", bootUrl.getPath());
-//        }
-//        throw new NutsIllegalArgumentException("Inaccessible runtime info : " + bootUrls);
-//    }
     @Override
     public boolean isInstalled(NutsId id, boolean checkDependencies, NutsSession session) {
         session = NutsWorkspaceUtils.validateSession(this, session);
-        NutsDefinition nutToInstall = null;
+        NutsDefinition nutToInstall;
         try {
             nutToInstall = find().id(id).setSession(session).setTransitive(false).includeDependencies(checkDependencies)
                     .offline()
@@ -574,8 +549,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         List<NutsDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
 
-        for (int i = 0; i < oldDependencies.length; i++) {
-            NutsDependency d = oldDependencies[i];
+        for (NutsDependency d : oldDependencies) {
             if (CoreStringUtils.isBlank(d.getScope())
                     || d.getVersion().isBlank()
                     || CoreStringUtils.isBlank(d.getOptional())) {
@@ -607,9 +581,7 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
 
             if ("import".equals(d.getScope())) {
                 someChange = true;
-                for (NutsDependency dependency : fetch().id(d.getId()).setEffective(true).setSession(session).getResultDescriptor().getDependencies()) {
-                    newDeps.add(dependency);
-                }
+                newDeps.addAll(Arrays.asList(fetch().id(d.getId()).setEffective(true).setSession(session).getResultDescriptor().getDependencies()));
             } else {
                 newDeps.add(d);
             }
@@ -732,43 +704,43 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
                     throw ex;
                 } catch (Exception ex) {
                     if (trace) {
-                        out.printf("%N @@Failed@@ to install : %s.\n", formatter().createIdFormat().toString(def.getId()), ex.toString());
+                        out.printf("%N @@Failed@@ to install : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
                     }
                     getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
                     throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex);
                 }
                 Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS);
-                ((DefaultNutsDefinition) def).setInstallation(new NutsInstallInfo(true, installFolder));
+                ((DefaultNutsDefinition) def).setInstallation(new DefaultNutsInstallInfo(true, installFolder));
             }
         }
         for (NutsInstallListener nutsListener : session.getListeners(NutsInstallListener.class)) {
             nutsListener.onInstall(def, reinstall, session);
         }
-        def.getInstallation().setJustInstalled(true);
+        ((DefaultNutsInstallInfo) def.getInstallation()).setJustInstalled(true);
         if (updateDefaultVersion) {
             getInstalledRepository().setDefaultVersion(def.getId());
         }
         if (trace) {
-            String setAsDefaultString="";
-            if(updateDefaultVersion){
-                setAsDefaultString=" set as ##default##.";
+            String setAsDefaultString = "";
+            if (updateDefaultVersion) {
+                setAsDefaultString = " set as ##default##.";
             }
             if (!def.getInstallation().isInstalled()) {
                 if (!def.getContent().isCached()) {
                     if (def.getContent().isTemporary()) {
-                        out.printf("%N installed ##successfully## from temporarily file %s.%N\n", formatter().createIdFormat().toString(def.getId()), def.getPath(),setAsDefaultString);
+                        out.printf("%N installed ##successfully## from temporarily file %s.%N%n", formatter().createIdFormat().toString(def.getId()), def.getPath(), setAsDefaultString);
                     } else {
-                        out.printf("%N installed ##successfully## from remote repository.%N\n", formatter().createIdFormat().toString(def.getId()),setAsDefaultString);
+                        out.printf("%N installed ##successfully## from remote repository.%N%n", formatter().createIdFormat().toString(def.getId()), setAsDefaultString);
                     }
                 } else {
                     if (def.getContent().isTemporary()) {
-                        out.printf("%N installed from local temporarily file %s.%N\n", formatter().createIdFormat().toString(def.getId()), def.getPath(),setAsDefaultString);
+                        out.printf("%N installed from local temporarily file %s.%N%n", formatter().createIdFormat().toString(def.getId()), def.getPath(), setAsDefaultString);
                     } else {
-                        out.printf("%N installed from local repository.%N\n", formatter().createIdFormat().toString(def.getId()),setAsDefaultString);
+                        out.printf("%N installed from local repository.%N%n", formatter().createIdFormat().toString(def.getId()), setAsDefaultString);
                     }
                 }
             } else {
-                out.printf("%N installed ##successfully##.%N\n", formatter().createIdFormat().toString(def.getId()),setAsDefaultString);
+                out.printf("%N installed ##successfully##.%N%n", formatter().createIdFormat().toString(def.getId()), setAsDefaultString);
             }
         }
     }
@@ -1076,8 +1048,14 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
         return repositoryListeners.toArray(new NutsRepositoryListener[0]);
     }
 
+    @Override
     public DefaultNutsInstalledRepository getInstalledRepository() {
         return installedRepository;
+    }
+
+    @Override
+    public NutsUpdateStatisticsCommand updateStatistics() {
+        return new DefaultNutsUpdateStatisticsCommand(this);
     }
 
     /**

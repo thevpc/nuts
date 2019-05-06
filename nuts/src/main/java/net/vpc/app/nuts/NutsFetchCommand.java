@@ -245,9 +245,16 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     NutsFetchCommand setIncludeInstallInformation(boolean includeInstallInformation);
 
+    NutsFetchCommand  acceptDefaultVersion() ;
+
+    NutsFetchCommand acceptDefaultVersion(Boolean acceptDefaultVersion) ;
+
+    NutsFetchCommand setAcceptDefaultVersion(Boolean acceptDefaultVersion) ;
+    
     ////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////
+
     Path getLocation();
 
     NutsFetchStrategy getFetchStrategy();
@@ -270,6 +277,8 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand{
 
     boolean isCached();
 
+    Boolean getAcceptDefaultVersion() ;
+    
     NutsFetchCommand repositories(Collection<String> value);
 
     NutsFetchCommand repositories(String... values);

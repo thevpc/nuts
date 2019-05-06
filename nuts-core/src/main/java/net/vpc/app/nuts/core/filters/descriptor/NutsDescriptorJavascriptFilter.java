@@ -38,6 +38,7 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -45,42 +46,45 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
  */
 public class NutsDescriptorJavascriptFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter>, JsNutsDescriptorFilter {
 
-
     private String code;
     private JavascriptHelper engineHelper;
 
-    private static final WeakHashMap<String, NutsDescriptorJavascriptFilter> cached = new WeakHashMap<>();
-
-    public static NutsDescriptorJavascriptFilter valueOf(String value) {
+    public static NutsDescriptorJavascriptFilter valueOf(String value, NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
+        }
+        String key = NutsDescriptorJavascriptFilter.class.getName() + ":cache";
+        WeakHashMap<String, NutsDescriptorJavascriptFilter> cached = (WeakHashMap) ws.getUserProperties().get(key);
+        if (cached == null) {
+            cached = new WeakHashMap<>();
+            ws.getUserProperties().put(key, cached);
         }
         synchronized (cached) {
             NutsDescriptorJavascriptFilter old = cached.get(value);
             if (old == null) {
-                old = new NutsDescriptorJavascriptFilter(value);
+                old = new NutsDescriptorJavascriptFilter(value, ws);
                 cached.put(value, old);
             }
             return old;
         }
     }
 
-    public NutsDescriptorJavascriptFilter(String code) {
-        this(code, null);
+    public NutsDescriptorJavascriptFilter(String code, NutsWorkspace ws) {
+        this(code, null, ws);
     }
 
-    public NutsDescriptorJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", blacklist, null);
+    public NutsDescriptorJavascriptFilter(String code, Set<String> blacklist, NutsWorkspace ws) {
+        engineHelper = new JavascriptHelper(code, "var descriptor=x; var id=x.getId(); var version=id.getVersion();", blacklist, null, ws);
         this.code = code;
         //check if valid
-        accept(CoreNutsUtils.SAMPLE_NUTS_DESCRIPTOR);
+        accept(CoreNutsUtils.SAMPLE_NUTS_DESCRIPTOR, ws);
     }
 
     public String getCode() {
         return code;
     }
 
-    public boolean accept(NutsDescriptor d) {
+    public boolean accept(NutsDescriptor d, NutsWorkspace ws) {
         return engineHelper.accept(d);
     }
 

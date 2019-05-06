@@ -74,7 +74,7 @@ public class RemoteMysql {
                 RemoteMysqlConfigService c = loadOrCreateMysqlConfig(instance);
                 RemoteMysqlDatabaseConfigService aa = c.getDatabase(app);
                 if (json) {
-                    context.out().printf("[[%s]] :\n", aa.getName());
+                    context.out().printf("[[%s]] :%n", aa.getName());
                     aa.write(context.out());
                     context.out().println();
                 } else {
@@ -83,7 +83,7 @@ public class RemoteMysql {
             } else {
                 for (RemoteMysqlConfigService mysqlConfig : listConfig()) {
                     if (json) {
-                        context.out().printf("[[%s]] :\n", mysqlConfig.getName());
+                        context.out().printf("[[%s]] :%n", mysqlConfig.getName());
                         mysqlConfig.write(context.out());
                         context.out().println();
                     } else {
@@ -94,10 +94,10 @@ public class RemoteMysql {
         } else {
             RemoteMysqlConfigService c = loadOrCreateMysqlConfig(instance);
             if (app != null) {
-                context.out().printf("%s\n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
+                context.out().printf("%s%n", NutsAppUtils.getPropertyValue(c.getDatabase(app).getConfig(), property));
             } else {
                 for (RemoteMysqlDatabaseConfigService aa : c.getApps()) {
-                    context.out().printf("[%s] %s\n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
+                    context.out().printf("[%s] %s%n", aa.getName(), NutsAppUtils.getPropertyValue(aa.getConfig(), property));
                 }
             }
         }

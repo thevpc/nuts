@@ -32,34 +32,16 @@ package net.vpc.app.nuts;
 import java.nio.file.Path;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
-public class NutsInstallInfo {
-    private final boolean installed;
-    private boolean justInstalled;
-    private final Path installFolder;
+public interface NutsInstallInfo {
 
-    public NutsInstallInfo(boolean installed, Path installFolder) {
-        this.installed = installed;
-        this.installFolder = installFolder;
-    }
+    boolean isInstalled();
 
-    public boolean isInstalled() {
-        return installed;
-    }
+    Path getInstallFolder();
 
-    public Path getInstallFolder() {
-        return installFolder;
-    }
+    boolean isJustInstalled();
 
-    public boolean isJustInstalled() {
-        return justInstalled;
-    }
-
-    public void setJustInstalled(boolean justInstalled) {
-        this.justInstalled = justInstalled;
-    }
-    
 }

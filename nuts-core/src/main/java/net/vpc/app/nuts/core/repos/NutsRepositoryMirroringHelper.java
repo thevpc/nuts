@@ -25,7 +25,8 @@ import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
-import net.vpc.app.nuts.core.NutsWorkspaceExt;
+import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
@@ -36,10 +37,10 @@ import net.vpc.app.nuts.core.util.common.LazyIterator;
  */
 public class NutsRepositoryMirroringHelper {
 
-    private AbstractNutsRepository repo;
+    private NutsRepository repo;
     protected NutsRepositoryFolderHelper cache;
 
-    public NutsRepositoryMirroringHelper(AbstractNutsRepository repo, NutsRepositoryFolderHelper cache) {
+    public NutsRepositoryMirroringHelper(NutsRepository repo, NutsRepositoryFolderHelper cache) {
         this.repo = repo;
         this.cache = cache;
     }
@@ -71,12 +72,12 @@ public class NutsRepositoryMirroringHelper {
         return IteratorUtils.concat(list);
     }
 
-    protected NutsContent fetchContent(NutsId id, Path localPath, NutsRepositorySession session) {
+    protected NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         Path cacheContent = cache.getIdLocalFile(id);
         if (session.isTransitive() && repo.config().isSupportedMirroring()) {
             for (NutsRepository mirror : repo.config().getMirrors()) {
                 try {
-                    NutsContent c = mirror.fetchContent(id, cacheContent, session);
+                    NutsContent c = mirror.fetchContent(id, descriptor,cacheContent, session);
                     if (c != null) {
                         if (localPath != null) {
                             getWorkspace().io().copy().from(c.getPath()).to(localPath).safeCopy().run();
@@ -98,7 +99,7 @@ public class NutsRepositoryMirroringHelper {
     }
 
     protected String getIdFilename(NutsId id) {
-        return repo.getIdFilename(id);
+        return NutsRepositoryExt.of(repo).getIdFilename(id);
     }
 
     protected NutsDescriptor fetchDescriptorImplInMirrors(NutsId id, NutsRepositorySession session) {
@@ -151,7 +152,7 @@ public class NutsRepositoryMirroringHelper {
     public void push(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
         NutsRepositorySession nonTransitiveSession = session.copy().setTransitive(false);
         NutsDescriptor desc = repo.fetchDescriptor(id, nonTransitiveSession);
-        NutsContent local = repo.fetchContent(id, null, nonTransitiveSession);
+        NutsContent local = repo.fetchContent(id, null, null, nonTransitiveSession);
         if (local == null) {
             throw new NutsNotFoundException(id);
         }
@@ -188,7 +189,7 @@ public class NutsRepositoryMirroringHelper {
                     .setTransitive(true)
                     .setOffline(options.isOffline());
             repo.deploy(dep, session);
-            ((AbstractNutsRepository) repo).fireOnPush(new NutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
+            NutsRepositoryExt.of(repo).fireOnPush(new NutsContentEvent(local.getPath(), dep, getWorkspace(), repo));
         } else {
             throw new NutsRepositoryNotFoundException(options.getRepository());
         }

@@ -41,14 +41,16 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
+import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 
 /**
  * Created by vpc on 1/18/17.
  */
-public abstract class AbstractNutsRepository implements NutsRepository {
+public abstract class AbstractNutsRepository implements NutsRepository, NutsRepositoryExt {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,6 +67,11 @@ public abstract class AbstractNutsRepository implements NutsRepository {
             NutsWorkspace workspace, NutsRepository parent,
             int speed, boolean supportedMirroring, String repositoryType) {
         init(options, workspace, parentRepository, speed, supportedMirroring, repositoryType);
+    }
+
+    @Override
+    public NutsIndexStoreClient getIndexStoreClient() {
+        return nutsIndexStoreClient;
     }
 
     protected void init(NutsCreateRepositoryOptions options, NutsWorkspace workspace, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
@@ -115,7 +122,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return securityManager;
     }
 
-    protected int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode) {
+    @Override
+    public int getFindSupportLevelCurrent(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode) {
         switch (supportedAction) {
             case FIND: {
                 switch (mode) {
@@ -219,7 +227,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session) {
         checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.FETCH_DESC,"fetch-descriptor");
+        security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getQueryMap();
         queryMap.remove(NutsConstants.QueryKeys.OPTIONAL);
         queryMap.remove(NutsConstants.QueryKeys.SCOPE);
@@ -305,7 +313,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     @Override
     public void deploy(NutsRepositoryDeploymentOptions deployment, NutsRepositorySession session) {
-        security().checkAllowed(NutsConstants.Rights.DEPLOY,"deploy");
+        security().checkAllowed(NutsConstants.Rights.DEPLOY, "deploy");
         if (deployment == null) {
             throw new NutsIllegalArgumentException("Missing Deployment");
         }
@@ -360,7 +368,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public void push(NutsId id, NutsPushCommand options, NutsRepositorySession session) {
         checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.PUSH,"push");
+        security().checkAllowed(NutsConstants.Rights.PUSH, "push");
         try {
             pushImpl(id, options, session);
             if (LOG.isLoggable(Level.FINEST)) {
@@ -377,7 +385,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public Iterator<NutsId> find(final NutsIdFilter filter, NutsRepositorySession session) {
         checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.FETCH_DESC,"find");
+        security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "find");
         checkAllowedFetch(null, session);
         try {
             if (LOG.isLoggable(Level.FINEST)) {
@@ -411,14 +419,17 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public NutsContent fetchContent(NutsId id, Path localPath, NutsRepositorySession session) {
+    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         checkSession(session);
+        if (descriptor == null) {
+            descriptor = fetchDescriptor(id, session);
+        }
         id = id.setFaceComponent();
-        security().checkAllowed(NutsConstants.Rights.FETCH_CONTENT,"fetch-content");
+        security().checkAllowed(NutsConstants.Rights.FETCH_CONTENT, "fetch-content");
         checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
-            NutsContent f = fetchContentImpl(id, localPath, session);
+            NutsContent f = fetchContentImpl(id, descriptor, localPath, session);
             if (f == null) {
                 throw new NutsNotFoundException(id);
             }
@@ -437,7 +448,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public Iterator<NutsId> findVersions(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session) {
         id = id.setFaceComponent();
-        security().checkAllowed(NutsConstants.Rights.FETCH_DESC,"find-versions");
+        security().checkAllowed(NutsConstants.Rights.FETCH_DESC, "find-versions");
         checkSession(session);
         checkNutsId(id);
         checkAllowedFetch(id, session);
@@ -450,7 +461,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
                     LOG.log(Level.FINEST, "[ERROR  ] Error find version operation with Indexer for {0} : {1}", new Object[]{config().getName(), ex});
                 }
                 if (d != null && !d.isEmpty() && idFilter != null) {
-                    return IteratorBuilder.of(d.iterator()).filter(x -> idFilter.accept(x)).iterator();
+                    return IteratorBuilder.of(d.iterator()).filter(x -> idFilter.accept(x, getWorkspace())).iterator();
                 }
             }
             Iterator<NutsId> d = findVersionsImpl(id, idFilter, session);
@@ -466,7 +477,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     @Override
     public void undeploy(NutsRepositoryUndeploymentOptions options, NutsRepositorySession session) {
         checkSession(session);
-        security().checkAllowed(NutsConstants.Rights.UNDEPLOY,"undeploy");
+        security().checkAllowed(NutsConstants.Rights.UNDEPLOY, "undeploy");
         try {
             undeployImpl(options, session);
             if (session.isIndexed() && nutsIndexStoreClient != null && nutsIndexStoreClient.isEnabled()) {
@@ -494,7 +505,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return getWorkspace().config().getDefaultIdExtension(id);
     }
 
-    protected String getIdFilename(NutsId id) {
+    public String getIdFilename(NutsId id) {
         String classifier = "";
         String ext = getIdExtension(id);
         if (!ext.equals(".nuts") && !ext.equals(".pom")) {
@@ -535,7 +546,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         return workspace;
     }
 
-    protected void fireOnUndeploy(NutsContentEvent evt) {
+    @Override
+    public void fireOnUndeploy(NutsContentEvent evt) {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onUndeploy(evt);
         }
@@ -544,7 +556,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
-    protected void fireOnDeploy(NutsContentEvent file) {
+    @Override
+    public void fireOnDeploy(NutsContentEvent file) {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onDeploy(file);
         }
@@ -553,7 +566,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
-    protected void fireOnInstall(NutsContentEvent evt) {
+    @Override
+    public void fireOnInstall(NutsContentEvent evt) {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onInstall(evt);
         }
@@ -562,7 +576,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
-    protected void fireOnPush(NutsContentEvent file) {
+    @Override
+    public void fireOnPush(NutsContentEvent file) {
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onPush(file);
         }
@@ -571,7 +586,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
-    protected void fireOnAddRepository(NutsRepository repository) {
+    @Override
+    public void fireOnAddRepository(NutsRepository repository) {
         NutsRepositoryEvent event = new NutsRepositoryEvent(getWorkspace(), this, repository);
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onAddRepository(event);
@@ -581,7 +597,8 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         }
     }
 
-    protected void fireOnRemoveRepository(NutsRepository repository) {
+    @Override
+    public void fireOnRemoveRepository(NutsRepository repository) {
         NutsRepositoryEvent event = new NutsRepositoryEvent(getWorkspace(), this, repository);
         for (NutsRepositoryListener listener : getRepositoryListeners()) {
             listener.onRemoveRepository(event);
@@ -595,7 +612,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
 
     protected abstract Iterator<NutsId> findVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsRepositorySession session);
 
-    protected abstract NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session);
+    protected abstract NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
 
     protected abstract Iterator<NutsId> findImpl(final NutsIdFilter filter, NutsRepositorySession session);
 
@@ -616,7 +633,7 @@ public abstract class AbstractNutsRepository implements NutsRepository {
         } else {
             LOG.log(Level.FINEST, "downloading url failed : {0} to file {1}", new Object[]{path, file});
         }
-        getWorkspace().io().copy().from(stream).to(file).safeCopy().run();
+        getWorkspace().io().copy().from(stream).to(file).safeCopy().monitorable().run();
     }
 
     protected String getIdRemotePath(NutsId id) {
@@ -646,7 +663,12 @@ public abstract class AbstractNutsRepository implements NutsRepository {
     }
 
     @Override
-    public void updateStatistics() {
-
+    public NutsUpdateRepositoryStatisticsCommand updateStatistics() {
+        return new DefaultNutsUpdateRepositoryStatisticsCommand(this) {
+            @Override
+            public NutsUpdateRepositoryStatisticsCommand run() {
+                return this;
+            }
+        };
     }
 }

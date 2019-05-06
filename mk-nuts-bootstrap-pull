@@ -1,0 +1,7 @@
+#!/bin/sh
+cd /home/vpc/vpc-public-nuts/
+git pull
+
+cd /home/vpc/vpc-public-maven/
+git pull
+

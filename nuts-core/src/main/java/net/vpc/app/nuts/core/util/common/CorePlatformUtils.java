@@ -222,7 +222,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                System.err.printf("Error: %s\n", e.getMessage());
+                System.err.printf("Error: %s%n", e.getMessage());
             }
         }
         Map<String, String> m = new HashMap<>();
@@ -526,7 +526,7 @@ public class CorePlatformUtils {
                             try {
                                 Class<?> aClass = (classLoader == null ? Thread.currentThread().getContextClassLoader() : classLoader).loadClass(clz);
                                 if (terminal != null) {
-                                    terminal.out().printf("Loaded %s from %s\n", aClass, file);
+                                    terminal.out().printf("Loaded %s from %s%n", aClass, file);
                                 }
                                 return true;
                             } catch (ClassNotFoundException e) {

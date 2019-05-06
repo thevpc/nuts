@@ -43,8 +43,7 @@ public class DerbyMain extends NutsApplication {
     }
 
     public static void main(String[] args) {
-        System.out.println(getAbsoluteFile("../~", "/home/vpc/data-vpc/mm"));
-        //new DerbyMain().launchAndExit(args);
+        new DerbyMain().run(args);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class DerbyMain extends NutsApplication {
         String v = derbyVersion;
         Path h = derbyDataHome;
         if (v == null) {
-            NutsId best = ws.find().addId("org.apache.derby:derbynet").latestVersions().getResultIds().singleton();
+            NutsId best = ws.find().addId("org.apache.derby:derbynet").duplicateVersions(false).latestVersions().getResultIds().singleton();
             v = best.getVersion().toString();
         }
         if (h == null) {

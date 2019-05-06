@@ -8,6 +8,7 @@ package net.vpc.app.nuts.core.util.fprint.parser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.vpc.app.nuts.core.util.fprint.FPrintCommands;
 import net.vpc.app.nuts.core.util.fprint.TextFormat;
 import net.vpc.app.nuts.core.util.fprint.TextFormats;
 
@@ -38,23 +39,28 @@ public class FDocNodeHelper {
                         // this a plain text!
                         return new TextNodePlain(p.getValue());
                     }
+                    case "%%": {
+                        // this a plain text!
+                        return new TextNodePlain(p.getValue());
+                    }
                     case "```": {
                         //this is a comment ?
                         return wrap(convert(new FDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
                     }
                     case "`": {
-                        //this a command !!
-                        //should be interpreted as
+                        //this might be a command !!
                         String v = p.getValue().trim();
-                        List<TextNode> nodes = new ArrayList<TextNode>();
-                        for (String cmd : v.split(";")) {
-                            if ("move-line-start".endsWith(cmd)) {
-                                nodes.add(new TextNodeCommand(TextFormats.MOVE_LINE_START));
-                            } else if ("move-up".endsWith(cmd)) {
-                                nodes.add(new TextNodeCommand(TextFormats.MOVE_UP));
+                        switch(v){
+                            case FPrintCommands.MOVE_LINE_START:{
+                                return new TextNodeCommand(TextFormats.MOVE_LINE_START);
+                            }
+                            case FPrintCommands.MOVE_UP:{
+                                return new TextNodeCommand(TextFormats.MOVE_UP);
+                            }
+                            default:{
+                                return wrap(convert(new FDocNode.Plain(p.getValue())), p.getStart(), p.getEnd(), TextFormats.FG_GREEN);
                             }
                         }
-                        return new TextNodeList(nodes.toArray(new TextNode[nodes.size()]));
                     }
                 }
 

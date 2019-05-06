@@ -1,0 +1,9 @@
+==nuts== [[license]]
+      show license info and exit
+
+@@EXAMPLES:@@
+        ==nuts== license [[--help]]
+            shows this help and exit
+       
+        ==nuts== license
+            show license and exit

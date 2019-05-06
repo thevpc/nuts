@@ -37,7 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Stack;
-import net.vpc.app.nuts.core.NutsWorkspaceExt;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
 
 /**

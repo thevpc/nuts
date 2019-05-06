@@ -63,7 +63,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatConfigService save() {
         NutsIOManager io = context.getWorkspace().io();
         Path f = getConfigPath();
-        io.writeJson(config, f, true);
+        io.json().pretty().write(config, f);
         return this;
     }
 
@@ -148,7 +148,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         Path f = getConfigPath();
         if (Files.exists(f)) {
             NutsIOManager io = context.getWorkspace().io();
-            config = io.readJson(f, RemoteTomcatConfig.class);
+            config = io.json().read(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NoSuchElementException("Config not found : " + name);
@@ -167,7 +167,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatConfigService write(PrintStream out) {
         NutsIOManager jsonSerializer = context.getWorkspace().io();
         PrintWriter w = new PrintWriter(out);
-        jsonSerializer.writeJson(getConfig(), new PrintWriter(out), true);
+        jsonSerializer.json().pretty().write(getConfig(), new PrintWriter(out));
         w.flush();
         return this;
     }

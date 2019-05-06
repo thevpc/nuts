@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
+import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -17,7 +18,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
 
     private static final Logger LOG = Logger.getLogger(DefaultNutsRepositoryConfigManager.class.getName());
 
-    private final AbstractNutsRepository repository;
+    private final NutsRepository repository;
     private final int speed;
     private final String storeLocation;
     private NutsRepositoryConfig config;
@@ -33,7 +34,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
     private String repositoryName;
     private String repositoryType;
 
-    public DefaultNutsRepositoryConfigManager(AbstractNutsRepository repository, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
+    public DefaultNutsRepositoryConfigManager(NutsRepository repository, String storeLocation, NutsRepositoryConfig config, int speed, int deployPriority, boolean temporary, boolean enabled, String globalName, boolean supportedMirroring, String repositoryName, String repositoryType) {
         if (CoreStringUtils.isBlank(repositoryType)) {
             throw new NutsIllegalArgumentException("Missing Repository Type");
         }
@@ -388,7 +389,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
             }
             config.setMirrors(configMirrorRefs.isEmpty() ? null : new ArrayList<>(configMirrorRefs.values()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-            repository.getWorkspace().io().writeJson(config, file, true);
+            repository.getWorkspace().io().json().pretty().write(config, file);
             configurationChanged = false;
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (created) {
@@ -458,6 +459,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         return temporary;
     }
 
+    @Override
     public NutsRepositoryConfigManager setTemporary(boolean transientRepository) {
         this.temporary = transientRepository;
         return this;
@@ -465,17 +467,17 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
 
     @Override
     public boolean isIndexSubscribed() {
-        return repository.nutsIndexStoreClient.isSubscribed(repository);
+        return NutsRepositoryExt.of(repository).getIndexStoreClient().isSubscribed(repository);
     }
 
     @Override
     public boolean subscribeIndex() {
-        return repository.nutsIndexStoreClient.subscribe();
+        return NutsRepositoryExt.of(repository).getIndexStoreClient().subscribe();
     }
 
     @Override
     public NutsRepositoryConfigManager unsubscribeIndex() {
-        repository.nutsIndexStoreClient.unsubscribe();
+        NutsRepositoryExt.of(repository).getIndexStoreClient().unsubscribe();
         return this;
     }
 
@@ -516,7 +518,7 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         removeMirrorRef(repositoryId);
         if (repo != null) {
             mirrors.remove(repositoryId);
-            ((AbstractNutsRepository) repository).fireOnRemoveRepository(repo);
+            NutsRepositoryExt.of(repository).fireOnRemoveRepository(repo);
         }
         return this;
     }
@@ -581,13 +583,13 @@ public class DefaultNutsRepositoryConfigManager implements NutsRepositoryConfigM
         //System.out.println(getName()+" -> "+repository.config().getName());
         CoreNutsUtils.validateRepositoryName(repository.config().getName(), mirrors.keySet());
         mirrors.put(repository.config().getName(), repository);
-        ((AbstractNutsRepository) repository).fireOnAddRepository(repository);
+        NutsRepositoryExt.of(repository).fireOnAddRepository(repository);
         return repository;
     }
 
     @Override
     public int getFindSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive) {
-        int namespaceSupport = ((AbstractNutsRepository) repository).getFindSupportLevelCurrent(supportedAction, id, mode);
+        int namespaceSupport = NutsRepositoryExt.of(repository).getFindSupportLevelCurrent(supportedAction, id, mode);
         if (transitive) {
             for (NutsRepository remote : mirrors.values()) {
                 int r = remote.config().getFindSupportLevel(supportedAction, id, mode, transitive);

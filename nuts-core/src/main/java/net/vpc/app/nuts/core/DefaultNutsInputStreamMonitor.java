@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import net.vpc.app.nuts.core.util.io.InputStreamEvent;
 import net.vpc.app.nuts.core.util.io.InputStreamMonitor;
 import net.vpc.app.nuts.core.util.common.BytesSizeFormat;
+import net.vpc.app.nuts.core.util.fprint.FPrintCommands;
 
 /**
  * @author vpc
@@ -58,8 +59,8 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             //if (!first) {
                 //if (event.getGlobalCount() != event.getLength() && event.getException() == null) {
                     //print command to move cursor to last line!
-                    out.print("`move-line-start`");
-//                    out.print("`move-line-start;move-up`");
+                    out.print("`"+FPrintCommands.MOVE_LINE_START+"`");
+//                    out.print("`"+FPrintCommands.MOVE_LINE_START+";"+FPrintCommands.MOVE_UP+"`");
                 //}
             //}
             double globalSeconds = event.getGlobalMillis() / 1000.0;
@@ -102,7 +103,7 @@ public class DefaultNutsInputStreamMonitor implements InputStreamMonitor, NutsOu
             if (event.getException() != null) {
                 formattedLine.append(" @@ERROR@@ ");
             }
-            formattedLine.append(" ``").append(event.getSourceName()).append("`` ");
+            formattedLine.append(" ").append(ws.parser().escapeText(event.getSourceName())).append(" ");
 //            while (formattedLine.length() < 80) {
 //                formattedLine.append(' ');
 //            }

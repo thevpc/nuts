@@ -28,7 +28,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.io().readJson(file, NutsWorkspaceListConfig.class);
+            this.config = this.defaultWorkspace.io().json().read(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
@@ -104,7 +104,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.io().writeJson(this.config, file, true);
+        this.defaultWorkspace.io().json().pretty().write(this.config, file);
     }
 
     public boolean removeWorkspace(String uuid) {

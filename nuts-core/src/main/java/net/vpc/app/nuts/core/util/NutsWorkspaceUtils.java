@@ -80,7 +80,7 @@ public class NutsWorkspaceUtils {
                     if (r != null) {
                         all.add(r);
                         if (out != null) {
-                            out.printf("Detected SDK [[%s]] at ==%s==\n", r.getVersion(), r.getPath());
+                            out.printf("Detected SDK [[%s]] at ==%s==%n", r.getVersion(), r.getPath());
                         }
                     }
                 }

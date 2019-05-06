@@ -38,63 +38,42 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 1/7/17.
  */
 public class NutsVersionJavascriptFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, JsNutsVersionFilter {
 
-//    private static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("sample", "sample", "sample", "sample", "sample");
-//    private static DefaultNutsDescriptor SAMPLE_NUTS_DESCRIPTOR = new DefaultNutsDescriptor(
-//            SAMPLE_NUTS_ID, "default",
-//            new NutsId[]{SAMPLE_NUTS_ID},
-//            "sample",
-//            true,
-//            "sample",
-//            new NutsExecutorDescriptor(
-//                    SAMPLE_NUTS_ID,
-//                    new String[]{"sample"},
-//                    null
-//            ),
-//            new NutsExecutorDescriptor(
-//                    SAMPLE_NUTS_ID,
-//                    new String[]{"sample"},
-//                    null
-//            ),
-//            "sample",
-//            "sample",
-//            new String[]{"sample"},
-//            new String[]{"sample"},
-//            new String[]{"sample"},
-//            new String[]{"sample"},
-//            null,
-//            null
-//    );
     private String code;
     private JavascriptHelper engineHelper;
 
-    private static final WeakHashMap<String, NutsVersionJavascriptFilter> cached = new WeakHashMap<>();
-
-    public static NutsVersionJavascriptFilter valueOf(String value) {
+    public static NutsVersionJavascriptFilter valueOf(String value,NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
+        }
+        String key = NutsVersionJavascriptFilter.class.getName() + ":cache";
+        WeakHashMap<String, NutsVersionJavascriptFilter> cached = (WeakHashMap) ws.getUserProperties().get(key);
+        if (cached == null) {
+            cached = new WeakHashMap<>();
+            ws.getUserProperties().put(key, cached);
         }
         synchronized (cached) {
             NutsVersionJavascriptFilter old = cached.get(value);
             if (old == null) {
-                old = new NutsVersionJavascriptFilter(value);
+                old = new NutsVersionJavascriptFilter(value,ws);
                 cached.put(value, old);
             }
             return old;
         }
     }
 
-    public NutsVersionJavascriptFilter(String code) {
-        this(code, null);
+    public NutsVersionJavascriptFilter(String code,NutsWorkspace ws) {
+        this(code, null,ws);
     }
 
-    public NutsVersionJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null);
+    public NutsVersionJavascriptFilter(String code, Set<String> blacklist,NutsWorkspace ws) {
+        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null,ws);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);

@@ -1,0 +1,16 @@
+==nuts== [[install]] {{\<nuts-component\>}}... [[--args]] ...
+      install ==nuts== package {{\<nuts-component\>}}
+       [[-f]] or [[--force]] : install or reinstall if already installed
+       [[-t]] or [[--trace]] : enable trace operation with a meaning message \( or disable it with [[--!trace]] or [[--trace=false]] \)
+       [[--args]] ...        : provide arguments to pass to installer
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+
+@@EXAMPLES:@@
+        ==nuts== install [[--help]]
+            shows this help and exit
+       
+        ==nuts== install netbeans-launcher
+            install netbeans-launcher

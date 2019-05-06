@@ -67,7 +67,7 @@ public interface NutsRepository {
 
     NutsDescriptor fetchDescriptor(NutsId id, NutsRepositorySession session);
 
-    NutsContent fetchContent(NutsId id, Path localPath, NutsRepositorySession session);
+    NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session);
 
     Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session);
 
@@ -88,5 +88,5 @@ public interface NutsRepository {
      */
     NutsRepositoryListener[] getRepositoryListeners();
 
-    void updateStatistics();
+    NutsUpdateRepositoryStatisticsCommand updateStatistics();
 }

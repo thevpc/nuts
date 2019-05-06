@@ -1,8 +1,8 @@
-==``    _   __      __       ``==
-==``   / | / /_  __/ /______ ``==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
-==``  /  |/ / / / / __/ ___/ ``==  <<The Open Source Package Manager for __Java__ (TM)>>
-==`` / /|  / /_/ / /_(__  )  ``==  <<and other __Things__>> ... by ==vpc==
-==``/_/ |_/\\__,_/\\__/____/ ``==    __http://github.com/thevpc/nuts__
+==    _   _\_      _\_       ==
+==   / | / /_  _\_/ /_\_\_\_\_\_ ==  ==N==etwork ==U==pdatable ==T==hings ==S==ervices
+==  /  |/ / / / / _\_/ _\_\_/ ==  <<The Open Source Package Manager for __Java__ (TM)>>
+== / /|  / /_/ / /_\(_\_  \)  ==  <<and other __Things__>> ... by ==vpc==
+==/_/ |_/\\_\_,_/\\_\_/_\_\_\_/ ==    __http://github.com/thevpc/nuts__
     version [[${nuts.workspace-runtime.version}]]
 
 ==nuts== stands for ==Network Updatable Things Services== tool. It is a ==__Package Manager__== for (mainly) java
@@ -34,10 +34,11 @@ With container concepts in mind, ==nuts== is the perfect java application tool f
 and other __container managers__.
 
 @@COMMON VERBS:@@
-deploy, undeploy  : to handle components (component installers) on the local repositories
-install,uninstall : to install/uninstall a component (using its fetched/deployed installer)
-fetch,push        : download, upload to remote repositories
-find              : searches for existing/installable components
+install,uninstall,update : install/uninstall/update a component (using its fetched/deployed installer)
+deploy, undeploy         : manage components on the local repositories
+fetch,push               : download, upload to remote repositories
+find                     : search for existing/installable components
+exec                     : execute a component (tool)
 
 @@SYNOPSIS:@@
 ==nuts== \[Nuts Options\]... {{\<command\>}} {{\<args\>}} ...
@@ -103,12 +104,12 @@ Java         Version: ${java.version} (${java.vm.name})
  [[--java]]      {{\<java-command\>}}
  [[--boot-java]] {{\<java-command\>}}
  [[-j]] {{\<java-command\>}}
-      java command to run new instance of nuts
+      java command to run new instance of ==nuts==
 
  [[--java-home]]      {{\<java-home\>}}
  [[--boot-java-home]] {{\<java-home\>}}
  [[-J]] {{\<java-home\>}}
-      java home to run new instance of nuts
+      java home to run new instance of ==nuts==
 
  [[--verbose]] , [[--log-finest]]  , [[--log-info]] , [[--log-fine]] ,
  
@@ -131,7 +132,7 @@ Java         Version: ${java.version} (${java.vm.name})
                     vpc-public-maven : referencing https://.../vpc-public-maven/master author\'s github maven repo (cached)
                     vpc-public-nuts  : referencing https://.../vpc-public-nuts/master  author\'s github ==nuts==  repo (cached)
           {{minimal}} : will create an almost empty workspace with a single ==nuts== local repository
-          {{server}}  : will create an almost empty workspace with a couple of users __guest_ (read support) and __contributor_
+          {{server}}  : will create an almost empty workspace with a couple of users __guest__ (read support) and __contributor__
                     (write support)
 
  [[--store-strategy]] {{\<store-strategy\>}}
@@ -146,7 +147,7 @@ Java         Version: ${java.version} (${java.vm.name})
        overriding workspace config. same as  [[--store-strategy]] {{standalone}}
  
  [[--exploded-workspace]]
-       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
+       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
        particularly will be stored elsewhere depending on on configuration.
        same as  [[--store-strategy]] {{exploded}}
 
@@ -163,7 +164,7 @@ Java         Version: ${java.version} (${java.vm.name})
        overriding workspace config. same as  [[--repo-store-strategy]] {{standalone}}
  
  [[--exploded-repositories]] or [[--exploded-strategy]]
-       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log
+       will boot with exploded strategy so that all file will be stored distinct folders (cache, and log)
        particularly will be stored elsewhere depending on on configuration.
        same as  [[--repo-store-strategy]] {{exploded}}
 
@@ -394,136 +395,83 @@ Java         Version: ${java.version} (${java.vm.name})
 
 @@NUTS COMMAND:@@
 
- [[-]] {{\<args\>}}...
-   runs a nut\'s shell (nsh) command with the remaining arguments
-
- [[version]] or [[--version]] or [[-version]] or [[-v]]
+ [[version]]  \[-options\]... 
+  or [[--version]] or [[-version]] or [[-v]]
       show version
+      for more details, type : [[nuts]] help version
        
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
-
- [[info]]
+ [[info]]  \[-options\]... 
       show workspace detailed information (paths and libraries)
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+      for more details, type : [[nuts]] help info
 
- [[--reset]]
-       reset (delete) ==nuts== workspace folder and exit
+ [[welcome]]  \[-options\]... 
+      show welcome message
+      for more details, type : [[nuts]] help welcome
 
- [[help]] or [[--help]] or [[-?]] or [[-h]]
-      show this help and exit
+ [[help]]  \[-options\]... {{\<nuts-component\>}}... 
+ or [[--help]] or [[-?]] or [[-h]]
+      if show this help and exit
+      for more details, type : [[nuts]] help help
 
- [[exec]] \[-options\]... {{\<args\>}}...
- [[--exec]] \[-options\]... {{\<args\>}}...
- [[-e]] \[-options\] \[command\] {{\<arguments\>}}...
-      runs command with the given executor options \( it will be considered an option if it 
-      starts with '-' \). This is helpful to issue JVM Options to executor for instance
-
-
- [[license]]
+ [[license]] \[-options\]... 
       show license info and exit
+      for more details, type : [[nuts]] help info
 
- [[install]] {{\<nuts-component\>}}... [[--args]] ...
+ [[install]] \[-options\]... {{\<nuts-component\>}}... [[--args]] ...
       install ==nuts== package {{\<nuts-component\>}}
-       [[-f]] or [[--force]] : install or reinstall if already installed
-       [[-t]] or [[--trace]] : enable trace operation with a meaning message (or disable it with [[--!trace] or [[--trace=false]] )
-       [[--args]] ...        : provide arguments to pass to installer
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+      for more details, type : [[nuts]] help install
 
- [[uninstall]] {{\<nuts-component\>}}... [[--args]] ...        
+ [[uninstall]] \[-options\]... {{\<nuts-component\>}}... [[--args]] ...        
       uninstall  ==nuts== package {{\<nuts-component\>}}
-       [[-f]] or [[--force]] : ignore non existing components
-       [[-e]] or [[--erase]] : enable erase mode to delete all of component\'s config data as well
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
-       [[--args]] ...        : provide arguments to pass to uninstaller
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+      for more details, type : [[nuts]] help uninstall
 
- [[update]]  \[Options\]... {{\<ids\>}} ...  [[--args]] ...
+ [[update]] \[Options\]... {{\<ids\>}} ...  [[--args]] ...
        check if a newer version of ==nuts== or any of the provided {{\<ids\>}} 
        is available in the current workspace and perform update by downloading (fetch) 
        and installing the component. The updated version is promoted to 'default' version.
-       [[-a]] or [[--all]] : force updates of both workspace\'s api, runtime extensions and installed components
-       [[-w]] or [[--ws]] or [[-workspace]] : force updates installed workspace\'s api, runtime and extensions
-       [[-i]] or [[--installed]] : force updates installed components
-       [[-e]] or [[--extensions]] : force updates installed workspace\'s extensions
-       [[-r]] or [[--runtime]] : force updates installed workspace\'s runtime
-       [[-A]] or [[--api]] : force updates installed workspace\'s runtime
-       [[-v]] {{\<arguments\>}}
-       or [[--version]] {{\<version\>}}
-            : force updates to the provided {{\<version\>}}
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
-       [[--args]] ...        : provide arguments to pass to updater
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+      for more details, type : [[nuts]] help update
             
- [[check-updates]]  \[Options\]... {{\<ids\>}} ...
+ [[check-updates]] \[Options\]... {{\<ids\>}} ...
        check if a newer version of ==nuts== is available in the current workspace without performing updates
        Take the same arguments and options as [[update]] command
+      for more details, type : [[nuts]] help check-updates
 
- [[find]]  \[Options\]... {{\<ids\>}} ...  [[--args]] ...
+ [[find]] \[Options\]... {{\<ids\>}} ...  
        search for {{\<ids\>}} 
-       [[--lenient]] : when an id is found but its descriptor and/or its file are not found, do not raise an error and continue. default 'no'
-       [[--all-versions]] : return all versions of the same ids. if 'false' will always return the ==latest== one. default 'yes'
-       [[--duplicate]] or [[--duplicate-versions]] : return the same version from distinct repositories if found. default 'true'
-       [[-L]] or [[--latest]] or [[--latest-versions]] : return latest version of each searched id. equivalent to [[--all-versions=no]]
-       [[-S]] or [[--single]] or [[--single-versions]] : return one instance of each version even if found in distinct repositories. equivalent to [[--duplicate=no]]
-       [[-s]] or [[--sort]] : sort result. defaut 'no'
-       [[--main]] : include main result. This is meaningful when one needs to find only dependencies, and hence turns this flag to 'no'. defaut 'yes'
-       [[--dependencies]] : include dependencies in result. defaut 'no'
-       [[--main-only]] : include main result and no dependencies. equivalent to [[--main=yes]] [[--dependencies=no]]
-       [[--dependencies-only]] : include dependencies and no main. equivalent to [[--main=no]] [[--dependencies=yes]]
-       [[--main-and-dependencies]] : include main result and no dependencies. equivalent to [[--main=yes]] [[--dependencies=yes]]
-       [[-r]] or [[--repository]] {{\<repo-name\>}} : include repository in the search process. if none defined, all repositories are searched.
-       [[--arch]] {{\<x86|amd64|ia64|ppc|sparc\>}} : include architecture in the search process. if none defined, all architectures are searched.
-       [[--packaging]] {{\<jar|war|...\>}} : include packaging in the search process. if none defined, all packagings are searched.
-       [[--cached]] : include cached in the search process. default 'true'
-       [[--indexed]] : include search index in the search process. default 'true'
-       [[--effective]] : compute effective descriptor. default 'false'
-       [[--content]] : include content. default 'false'
-       [[--install-info]] : include install information. default 'false'
-       [[--location]] : force found contents to be copied to location
-       [[-f]] or [[--fetch]] {{\<offline|wire|online|anywhere|installed|local|remote\>}} 
-            : include fetch mode in the search process. if none defined, all fetch modes are searched.
-       [[--offline]] {{\<offline|wire|online|anywhere|installed|local|remote\>}} 
-       [[--wired]]     : equivalent to [[--fetch]] wired
-       [[--online]]    : equivalent to [[--fetch]] online
-       [[--anywhere]]  : equivalent to [[--fetch]] anywhere
-       [[--installed]] : equivalent to [[--fetch]] installed
-       [[--local]]     : equivalent to [[--fetch]] local
-       [[--remote]]    : equivalent to [[--fetch]] remote
-       [[--optional]]  : relevant when --dependencies is armed :
-           [[--optional]]      : search for all dependencies, including optional (default)
-           [[--optional]]=yes  : search for optional dependencies only
-           [[--optional]]=no   : search for non optional dependencies only
-       [[--scope]] {{\<compile|implementation|provided|import|runtime|system|test-provided|test|runtime|profile-run\>}} 
-                             {{\<|profile-run-standalone|profile-run-test|profile-run-test-standalone|group-compile|group-test\>}} 
-                             {{\<|other|test|all\>}} 
-            : relevant when --dependencies is armed.
-              include scope in the search dependencies process. if none defined, all scopes are searched.
+      for more details, type : [[nuts]] help find
             
-       [[-v]] {{\<arguments\>}}
-       or [[--version]] {{\<version\>}}
-            : force updates to the provided {{\<version\>}}
-       [[--args]] ...        : provide arguments to pass to updater
-       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
-       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
-       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
-       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
-       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+ [[fetch]] \[Options\]... {{\<ids\>}} ...  
+      download {{\<ids\>}}  without installing them
+      for more details, type : [[nuts]] help fetch
             
+ [[deploy]] \[Options\]... {{\<id\>}} ...  
+      deploy {{\<ids\>}}  without installing them
+      for more details, type : [[nuts]] help deploy
+            
+ [[undeploy]] \[Options\]... {{\<id\>}} ...  
+      undeploy {{\<ids\>}}
+      for more details, type : [[nuts]] help deploy
+            
+ [[exec]] \[-options\]... \[command\] {{\<args\>}}...
+ [[--exec]] \[-options\]... \[command\] {{\<args\>}}...
+ [[-e]] \[-options\]... \[command\] {{\<arguments\>}}...
+      runs command with the given executor options \( it will be considered an option if it 
+      starts with '-' \). This is helpful to issue JVM Options to executor for instance
+      for more details, type : [[nuts]] help info
+
+ [[which]] \[-options\]... \[command\] ...
+      show command to be executed if run with 'exec' 
+      for more details, type : [[nuts]] help which
+            
+ [[--reset]] \[-options\]... 
+       reset (delete) ==nuts== workspace folder and exit. Will not bootstrap any workspace!
+       Actually this is a special command that is available only at boot time.
+       Available options are :
+       [[-y]] : to skip confirmation
+
+ [[-]] {{\<args\>}}...
+   runs a nut\'s shell (nsh) command with the remaining arguments
+
  [[--!...]] or [[-!...]] 
       option will negated if boolean. Actually, [[--!option]] is equivalent to [[--option=false]]
 
@@ -550,6 +498,6 @@ Java         Version: ${java.version} (${java.vm.name})
             updates ==nuts== to the very latest version using workspace location
             /home/me/some-folder.
 
-        ==nuts== [[--workspace]] /home/me/some-folder  [[--yes]] [[-e]] -Xmx1G netbeans-launcher
+        ==nuts== [[--workspace]] /home/me/some-folder  [[--yes]] [[-e]] {{-Xmx1G}} netbeans-launcher
             runs netbeans-launcher with JVM option  -Xmx1G. If the component is not installed
             it will be automatically installed ( [[--yes]] modifier helps bypassing interactive mode)

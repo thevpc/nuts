@@ -46,16 +46,15 @@ public class IndexNAdminSubCommand extends AbstractNAdminSubCommand {
     private void updateStatistics(NutsApplicationContext context, String[] repos) {
         NutsWorkspaceConfigManager cfg = context.getWorkspace().config();
         if (repos.length == 0) {
-            context.out().printf("[[%s]] Updating all indices\n", cfg.getWorkspaceLocation());
+            context.out().printf("[[%s]] Updating all indices%n", cfg.getWorkspaceLocation());
             for (NutsRepository repo : cfg.getRepositories()) {
-                context.out().printf("[[%s]] Updating index %s\n", cfg.getWorkspaceLocation(), repo);
+                context.out().printf("[[%s]] Updating index %s%n", cfg.getWorkspaceLocation(), repo);
                 repo.updateStatistics();
             }
         } else {
             for (String repo : repos) {
-                context.out().printf("[[%s]] Updating index %s\n", cfg.getWorkspaceLocation(), repo);
                 if (repo.contains("/") || repo.contains("\\")) {
-                    cfg.updateStatistics(Paths.get(repo));
+                    context.getWorkspace().updateStatistics().addPath(Paths.get(repo)).run();
                 } else {
                     cfg.getRepository(repo).updateStatistics();
                 }

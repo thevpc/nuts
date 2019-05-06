@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +32,6 @@ import net.vpc.app.nuts.NutsRepositoryFilter;
 import net.vpc.app.nuts.NutsRepositoryNotFoundException;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositorySupportedAction;
-import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
@@ -239,6 +239,9 @@ public class DefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCom
         }
         NutsFetchCommand fetchOptions = ws.fetch().setTransitive(true).setSession(session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
+        if (toProcess.isEmpty()) {
+            throw new NutsIllegalArgumentException("Missing component to push");
+        }
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();
             NutsDefinition file = entry.getValue();

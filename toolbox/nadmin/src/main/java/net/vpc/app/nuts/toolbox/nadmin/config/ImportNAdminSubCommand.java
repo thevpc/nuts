@@ -22,7 +22,7 @@ public class ImportNAdminSubCommand extends AbstractNAdminSubCommand {
             cmdLine.unexpectedArgument("config list imports");
             if (cmdLine.isExecMode()) {
                 for (String imp : (context.getWorkspace().config().getImports())) {
-                    context.getTerminal().fout().printf("%s\n", imp);
+                    context.getTerminal().fout().printf("%s%n", imp);
                 }
             }
             return true;

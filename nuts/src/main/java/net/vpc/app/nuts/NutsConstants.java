@@ -75,7 +75,6 @@ public final class NutsConstants {
         public static final String NUTS = "nuts";
         public static final String NUTS_SERVER = "nuts-server";
         public static final String MAVEN = "maven";
-        public static final String MAVEN_GITHUB = "maven-github";
     }
 
     public static final class QueryKeys {

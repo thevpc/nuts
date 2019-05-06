@@ -1,0 +1,25 @@
+==nuts== [[check-updates]]  \[Options\]... {{\<ids\>}} ...
+       check if a newer version of ==nuts== is available in the current workspace without performing updates
+       Take the same arguments and options as [[update]] command
+       [[-a]] or [[--all]] : force updates of both workspace\'s api, runtime extensions and installed components
+       [[-w]] or [[--ws]] or [[-workspace]] : update all workspace\'s related components (api, runtime and extensions)
+       [[-i]] or [[--installed]] : update all installed components
+       [[-e]] or [[--extensions]] : update all workspace\'s extensions
+       [[-r]] or [[--runtime]] : update workspace\'s runtime component (minor workspace update)
+       [[-A]] or [[--api]] : update workspace\'s api (major workspace update)
+       [[-v]] {{\<arguments\>}}
+       or [[--version]] {{\<version\>}}
+            : force updates to the provided {{\<version\>}} (may be a downgrade)
+       [[-t]] or [[--trace]] : enable trace operation/result with a meaning message (default true)
+       [[--args]] ...        : provide arguments to pass to updater
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+            
+@@EXAMPLES:@@
+        ==nuts== check-updates [[--help]]
+            shows this help and exit
+       
+        ==nuts== check-updates
+            check updates for current workspace

@@ -224,13 +224,13 @@ public class NdedMain extends NutsApplication {
         File file = new File(home, path);
         file.getParentFile().mkdirs();
         NutsDescriptor desc = b.build();
-        this.appContext.out().printf("Writing to : ==%s==[[%s]]\n", getFilePath(new File(home)), ("/" + path).replace('/', File.separatorChar));
-        this.appContext.out().printf("id         : ==%s==\n", desc.getId());
-        this.appContext.out().printf("packaging  : ==%s==\n", desc.getPackaging() == null ? "" : desc.getPackaging());
+        this.appContext.out().printf("Writing to : ==%s==[[%s]]%n", getFilePath(new File(home)), ("/" + path).replace('/', File.separatorChar));
+        this.appContext.out().printf("id         : ==%s==%n", desc.getId());
+        this.appContext.out().printf("packaging  : ==%s==%n", desc.getPackaging() == null ? "" : desc.getPackaging());
         if (desc.getLocations().length > 0) {
-            this.appContext.out().print("locations  : \n");
+            this.appContext.out().println("locations  : ");
             for (String s : b.getLocations()) {
-                this.appContext.out().printf("             ==%s==\n", s);
+                this.appContext.out().printf("             ==%s==%n", s);
             }
         }
         if (!confirm("Confirm ?")) {

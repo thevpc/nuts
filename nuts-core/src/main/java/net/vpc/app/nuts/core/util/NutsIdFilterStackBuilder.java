@@ -7,6 +7,7 @@ package net.vpc.app.nuts.core.util;
 
 import java.util.Stack;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.NutsPatternIdFilter;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterAnd;
 import net.vpc.app.nuts.core.filters.id.NutsIdFilterOr;
@@ -20,8 +21,8 @@ public class NutsIdFilterStackBuilder {
 
     private Stack<NutsIdFilter> vars = new Stack<>();
 
-    public NutsIdFilterStackBuilder js(String n, String js) {
-        return push(new NutsJavascriptIdFilter(js));
+    public NutsIdFilterStackBuilder js(String n, String js,NutsWorkspace ws) {
+        return push(new NutsJavascriptIdFilter(js,ws));
     }
 
     public NutsIdFilterStackBuilder and() {

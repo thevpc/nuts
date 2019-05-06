@@ -22,7 +22,7 @@ public class NutsIndexSubscriberListManager {
         this.name = name.trim();
         Path file = getConfigFile();
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.io().readJson(file, NutsIndexSubscriberListConfig.class);
+            this.config = this.defaultWorkspace.io().json().read(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NutsIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -103,7 +103,7 @@ public class NutsIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         Path file = getConfigFile();
-        this.defaultWorkspace.io().writeJson(this.config, file, true);
+        this.defaultWorkspace.io().json().pretty().write(this.config, file);
     }
 
     public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation) {

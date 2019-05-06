@@ -1,0 +1,10 @@
+==nuts== [[version]] or [[--version]] or [[-version]] or [[-v]]
+      show version
+
+@@EXAMPLES:@@
+        ==nuts== version [[--help]]
+            shows this help and exit
+       
+        ==nuts== -v
+            show version
+       

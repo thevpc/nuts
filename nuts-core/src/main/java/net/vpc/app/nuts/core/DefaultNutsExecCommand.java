@@ -1,9 +1,28 @@
 package net.vpc.app.nuts.core;
 
-import net.vpc.app.nuts.core.util.CharacterizedFile;
+import net.vpc.app.nuts.core.commands.ComponentExecutable;
+import net.vpc.app.nuts.core.commands.CheckUpdatesInternalExecutable;
+import net.vpc.app.nuts.core.commands.AliasExecutable;
+import net.vpc.app.nuts.core.commands.ExecInternalExecutable;
+import net.vpc.app.nuts.core.commands.InstallInternalExecutable;
+import net.vpc.app.nuts.core.commands.WelcomeInternalExecutable;
+import net.vpc.app.nuts.core.commands.PathComponentExecutable;
+import net.vpc.app.nuts.core.commands.NutsExecutableImpl;
+import net.vpc.app.nuts.core.commands.LicenseInternalExecutable;
+import net.vpc.app.nuts.core.commands.WhichInternalExecutable;
+import net.vpc.app.nuts.core.commands.FetchInternalExecutable;
+import net.vpc.app.nuts.core.commands.HelpInternalExecutable;
+import net.vpc.app.nuts.core.commands.DeployInternalExecutable;
+import net.vpc.app.nuts.core.commands.UninstallInternalExecutable;
+import net.vpc.app.nuts.core.commands.SystemExecutable;
+import net.vpc.app.nuts.core.commands.PushInternalExecutable;
+import net.vpc.app.nuts.core.commands.UpdateInternalExecutable;
+import net.vpc.app.nuts.core.commands.InfoInternalExecutable;
+import net.vpc.app.nuts.core.commands.UndeployInternalExecutable;
+import net.vpc.app.nuts.core.commands.VersionInternalExecutable;
+import net.vpc.app.nuts.core.commands.FindInternalExecutable;
 import net.vpc.app.nuts.*;
 import net.vpc.app.nuts.core.terminals.NutsDefaultFormattedPrintStream;
-import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 
 import java.io.*;
@@ -27,7 +46,7 @@ import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCommand> implements NutsExecCommand {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsExecCommand.class.getName());
-    private static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
+    public static final NutsDescriptor TEMP_DESC = new DefaultNutsDescriptorBuilder()
             .setId(CoreNutsUtils.parseNutsId("temp:exe#1.0"))
             .setPackaging("exe")
             .setExecutable(true)
@@ -393,7 +412,11 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         NutsExecutableImpl exec = null;
         switch (executionType) {
             case SYSCALL: {
-                exec = new SystemExecutable(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]), getValidSession().copy().setTerminal(terminal));
+                exec = new SystemExecutable(ts, executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]),
+                        ws,
+                        getValidSession().copy().setTerminal(terminal),
+                        this
+                );
                 break;
             }
             case SPAWN: {
@@ -459,8 +482,29 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         while ((a = cmd.next()) != null) {
             if (a.isOption()) {
                 if (command.isEmpty()) {
-                    if (!super.parseOption(a, cmd)) {
-                        executorOptions.add(a.getString());
+                    switch (a.strKey()) {
+                        case "--external":
+                        case "--spawn":
+                        case "-x": {
+                            setExecutionType(NutsExecutionType.SPAWN);
+                            break;
+                        }
+                        case "--embedded":
+                        case "-b": {
+                            setExecutionType(NutsExecutionType.EMBEDDED);
+                            break;
+                        }
+                        case "--native":
+                        case "--syscall":
+                        case "-n": {
+                            setExecutionType(NutsExecutionType.SYSCALL);
+                            break;
+                        }
+                        default: {
+                            if (!super.parseOption(a, cmd)) {
+                                executorOptions.add(a.getString());
+                            }
+                        }
                     }
                 } else {
                     throw new NutsIllegalArgumentException("Unexpected option here");
@@ -713,206 +757,56 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         //resolve internal commands!
         switch (cmdName) {
             case "update": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.update().session(session).trace().parseOptions(args)
-                                .update();
-                    }
-                };
+                return new UpdateInternalExecutable(args, ws, session);
             }
             case "check-updates": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.update().session(session).trace().parseOptions(args)
-                                .checkUpdates();
-                    }
-                };
+                return new CheckUpdatesInternalExecutable(args, ws, session);
             }
             case "install": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.install().session(session).trace().parseOptions(args).run();
-                    }
-                };
+                return new InstallInternalExecutable(args, ws, session);
             }
             case "uninstall": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.uninstall().session(session).trace().parseOptions(args).run();
-                    }
-                };
+                return new UninstallInternalExecutable(args, ws, session);
             }
             case "deploy": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.deploy().session(session).trace().parseOptions(args).run();
-                    }
-                };
+                return new DeployInternalExecutable(args, ws, session);
             }
             case "undeploy": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.undeploy().trace().parseOptions(args).run();
-                    }
-                };
+                return new UndeployInternalExecutable(args, ws, session);
             }
             case "push": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.push().session(session).trace().parseOptions(args).run();
-                    }
-                };
+                return new PushInternalExecutable(args, ws, session);
             }
             case "fetch": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.fetch().session(session).trace().parseOptions(args).run();
-                    }
-                };
+                return new FetchInternalExecutable(args, ws, session);
             }
             case "find": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        ws.find().session(session).trace().parseOptions(args).run();
-                    }
-                };
+                return new FindInternalExecutable(args, ws, session);
             }
             case "version": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        PrintStream out = session.getTerminal().fout();
-                        ws.formatter().createWorkspaceVersionFormat()
-                                .parseOptions(args)
-                                .println(out);
-                    }
-                };
+                return new VersionInternalExecutable(args, ws, session, this);
             }
             case "license": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        session.getTerminal().fout().println(NutsWorkspaceExt.of(ws).getLicenseText());
-                    }
-                };
+                return new LicenseInternalExecutable(args, ws, session);
             }
             case "help": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        if (args.length == 0) {
-                            session.getTerminal().fout().println(NutsWorkspaceExt.of(ws).getHelpText());
-                        }
-                        for (String arg : args) {
-                            NutsExecutableInfo w = null;
-                            try {
-                                w = ws.exec().command(arg).which();
-
-                            } catch (Exception ex) {
-                            }
-                            if (w != null) {
-
-                                session.getTerminal().fout().println(arg + " :");
-                                session.getTerminal().fout().println(w.getHelpText());
-                            } else {
-                                session.getTerminal().ferr().println(arg + " : Not found");
-                            }
-                        }
-                    }
-                };
+                return new HelpInternalExecutable(args, ws, session);
             }
             case "welcome": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        session.getTerminal().fout().println(NutsWorkspaceExt.of(ws).getWelcomeText());
-                    }
-                };
+                return new WelcomeInternalExecutable(args, ws, session);
             }
             case "info": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        PrintStream out = session.getTerminal().fout();
-                        ws.formatter().createWorkspaceInfoFormat()
-                                .parseOptions(args)
-                                .println(out);
-                    }
-                };
+                return new InfoInternalExecutable(args, ws, session);
             }
             case "which": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        for (String arg : this.args) {
-                            PrintStream out = session.getTerminal().fout();
-                            try {
-                                NutsExecutableInfo p = DefaultNutsExecCommand.this.copy()
-                                        .session(session)
-                                        .clearCommand()
-                                        .parseOptions(arg)
-                                        .which();
-                                boolean showDesc = false;
-                                switch (p.getType()) {
-                                    case SYSTEM: {
-                                        out.printf("[[%s]] : ==system command== %s%n", arg, p.getDescription());
-                                        break;
-                                    }
-                                    case ALIAS: {
-                                        out.printf("[[%s]] : ==nuts alias== (owner %N ) : %N%n", arg,
-                                                p.getId() == null ? null : ws.formatter().createIdFormat().toString(p.getId()),
-                                                NutsCommandLine.escapeArguments(ws.config().findCommandAlias(p.getName()).getCommand()));
-                                        break;
-                                    }
-                                    case COMPONENT: {
-                                        if (p.getId() == null) {
-                                            throw new NutsNotFoundException(arg);
-                                        }
-                                        out.printf("[[%s]] : ==nuts component== %N%n", arg, ws.formatter().createIdFormat().toString(p.getId()), p.getDescription());
-                                        break;
-                                    }
-                                    case INTERNAL: {
-                                        out.printf("[[%s]] : ==internal command== %n", arg);
-                                        break;
-                                    }
-                                }
-                                if (showDesc) {
-                                    out.printf("\t %N%n", arg, p.getDescription());
-                                }
-
-                            } catch (NutsNotFoundException ex) {
-                                out.printf("[[%s]] : @@not found@@%n", arg);
-                            }
-                        }
-
-                    }
-                };
+                return new WhichInternalExecutable(args, ws, session, this);
             }
             case "exec": {
-                return new InternalExecutable(cmdName, args) {
-                    @Override
-                    public void execute() {
-                        DefaultNutsExecCommand.this.copy()
-                                .session(session)
-                                .clearCommand()
-                                .parseOptions(args)
-                                .failFast()
-                                .run();
-                    }
-                };
+                return new ExecInternalExecutable(args, ws, session, this);
             }
         }
         if (cmdName.contains("/") || cmdName.contains("\\")) {
-            return new PathComponentExecutable(cmdName, args, executorOptions, embedded);
+            return new PathComponentExecutable(cmdName, args, executorOptions, embedded, ws, getValidSession(), this);
         } else if (cmdName.contains(":")) {
             return ws_exec(cmdName, args, executorOptions, env, directory, failFast, session, embedded);
         } else {
@@ -950,14 +844,22 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     protected NutsExecutableImpl ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
         NutsDefinition def = null;
         NutsId nid = ws.parser().parseId(commandName);
-        def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().latestVersions().setLenient(true).installed().getResultDefinitions().first();
+        NutsFindCommand ff = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().latestVersions().setLenient(true).installed();
+        //TODO update me to latest API
+        ((DefaultNutsQueryBaseOptions) ff).setAcceptDefaultVersion(true);
+        def = ff.getResultDefinitions().first();
+        if (def == null) {
+            //retest whhout checking it the version is default or not
+            // this help recovering from "invalid default version" issue
+            def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().latestVersions().setLenient(true).installed().getResultDefinitions().first();
+        }
         if (def == null) {
             def = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().setLenient(false).wired().latestVersions().getResultDefinitions().required();
         }
-        return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, session, embedded);
+        return new ComponentExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, ws, session, embedded, this);
     }
 
-    protected void ws_exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
+    public void ws_exec(NutsDefinition nutToRun, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
         ws.security().checkAllowed(NutsConstants.Rights.EXEC, commandName);
         session = NutsWorkspaceUtils.validateSession(ws, session);
         if (nutToRun != null && nutToRun.getPath() != null) {
@@ -1048,268 +950,4 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
         }
         throw new NutsNotFoundException(nutToRun == null ? null : nutToRun.getId());
     }
-
-    public static interface NutsExecutableImpl extends NutsExecutableInfo {
-
-        void execute();
-    }
-
-    public abstract class AbstractExecutable implements NutsExecutableImpl {
-
-        private NutsExecutableType type;
-        private String name;
-
-        public AbstractExecutable(String name, NutsExecutableType type) {
-            this.type = type;
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public NutsExecutableType getType() {
-            return type;
-        }
-
-        @Override
-        public String getDescription() {
-            return toString();
-        }
-
-        @Override
-        public String getHelpText() {
-            return "No help available. Try '" + getName() + " --help'";
-        }
-
-    }
-
-    public class AliasExecutable extends AbstractExecutable {
-
-        private NutsWorkspaceCommandAlias command;
-        private NutsCommandExecOptions o;
-        private NutsSession session;
-        private String[] args;
-
-        public AliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsSession session, String[] args) {
-            super(command.getName(), NutsExecutableType.ALIAS);
-            this.command = command;
-            this.o = o;
-            this.session = session;
-            this.args = args;
-        }
-
-        @Override
-        public NutsId getId() {
-            return command.getOwner();
-        }
-
-        public void execute() {
-            command.exec(args, o, session);
-        }
-
-        @Override
-        public String getHelpText() {
-            String t = command.getHelpText();
-            if (t != null) {
-                return t;
-            }
-            return "No help available. Try '" + getName() + " --help'";
-        }
-
-        @Override
-        public String toString() {
-            return "CMD " + command.getName() + " @ " + command.getOwner();
-        }
-
-    }
-
-    public class PathComponentExecutable extends AbstractExecutable {
-
-        private String cmdName;
-        private String[] args;
-        private String[] executorOptions;
-        private boolean embedded;
-
-        public PathComponentExecutable(String cmdName, String[] args, String[] executorOptions, boolean embedded) {
-            super(cmdName, NutsExecutableType.COMPONENT);
-            this.cmdName = cmdName;
-            this.args = args;
-            this.executorOptions = executorOptions;
-            this.embedded = embedded;
-        }
-
-        @Override
-        public NutsId getId() {
-            NutsFetchCommand p = ws.fetch();
-            p.setTransitive(true);
-            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createInputSource(cmdName), p, getValidSession())) {
-                return c.descriptor == null ? null : c.descriptor.getId();
-            }
-        }
-
-        @Override
-        public void execute() {
-            NutsFetchCommand p = ws.fetch();
-            p.setTransitive(true);
-
-            try (CharacterizedFile c = CoreIOUtils.characterize(ws, CoreIOUtils.createInputSource(cmdName), p, getValidSession())) {
-                if (c.descriptor == null) {
-                    //this is a native file?
-                    c.descriptor = TEMP_DESC;
-                }
-                NutsDefinition nutToRun = new DefaultNutsDefinition(
-                        ws, null,
-                        c.descriptor.getId(),
-                        c.descriptor,
-                        new NutsContent(c.getContentPath(), false, c.temps.size() > 0),
-                        null
-                );
-                ws_exec(nutToRun, cmdName, args, executorOptions, env, directory, failFast, getValidSession(), embedded);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "NUTS " + cmdName + " " + NutsCommandLine.escapeArguments(args);
-        }
-
-    }
-
-    public class ComponentExecutable extends AbstractExecutable {
-
-        private NutsDefinition def;
-        private String commandName;
-        private String[] appArgs;
-        private String[] executorOptions;
-        private Properties env;
-        private String dir;
-        private boolean failFast;
-        private NutsSession session;
-        private boolean embedded;
-
-        public ComponentExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
-            super(commandName, NutsExecutableType.COMPONENT);
-            this.def = def;
-            this.commandName = commandName;
-            this.appArgs = appArgs;
-            this.executorOptions = executorOptions;
-            this.env = env;
-            this.dir = dir;
-            this.failFast = failFast;
-            this.session = session;
-            this.embedded = embedded;
-        }
-
-        @Override
-        public NutsId getId() {
-            return def.getId();
-        }
-
-        @Override
-        public void execute() {
-            if (!def.getInstallation().isInstalled()) {
-                ws.security().checkAllowed(NutsConstants.Rights.AUTO_INSTALL, commandName);
-                if (session.getTerminal().ask(NutsQuestion.forBoolean("==%s== is not yet installed. Do you want to proceed", def.getId().getLongName()).defautValue(true))) {
-                    ws.install().id(def.getId()).args(appArgs).setForce(true).setSession(session).run();
-                } else {
-                    throw new NutsUserCancelException();
-                }
-            }
-            ws_exec(def, commandName, appArgs, executorOptions, env, directory, failFast, session, embedded);
-        }
-
-        @Override
-        public String toString() {
-            return "NUTS " + getId().toString() + " " + NutsCommandLine.escapeArguments(appArgs);
-        }
-    }
-
-    public abstract class InternalExecutable extends AbstractExecutable {
-
-        protected String[] args;
-
-        public InternalExecutable(String name, String[] args) {
-            super(name, NutsExecutableType.INTERNAL);
-            this.args = args;
-        }
-
-        @Override
-        public NutsId getId() {
-            return null;
-        }
-
-        @Override
-        public String getHelpText() {
-            return getName() + " is an internal command. Help is accessible via 'nuts help'";
-        }
-    }
-
-    public class SystemExecutable extends AbstractExecutable {
-
-        private String[] cmd;
-        private String[] executorOptions;
-        private NutsSession session;
-        private boolean showCommand = false;
-        private boolean failFast = true;
-
-        public SystemExecutable(String[] cmd, String[] executorOptions, NutsSession session) {
-            super(cmd[0], NutsExecutableType.SYSTEM);
-            this.cmd = cmd;
-            this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-            this.session = session;
-            NutsCommandLine cmdLine = new NutsCommandLine(this.executorOptions);
-            while (cmdLine.hasNext()) {
-                NutsCommandArg a = cmdLine.next();
-                switch (a.strKey()) {
-                    case "--show-command": {
-                        showCommand = a.getBooleanValue();
-                        break;
-                    }
-                    case "--fail-fast": {
-                        failFast = a.getBooleanValue();
-                        break;
-                    }
-                }
-            }
-        }
-
-        @Override
-        public NutsId getId() {
-            return null;
-        }
-
-        @Override
-        public void execute() {
-            Map<String, String> e2 = null;
-            if (env != null) {
-                e2 = new HashMap<>((Map) env);
-            }
-            CoreIOUtils.execAndWait(ws, cmd,
-                    e2,
-                    ws.io().path(directory),
-                    session.getTerminal(), showCommand, failFast);
-        }
-
-        @Override
-        public String getHelpText() {
-            switch (NutsPlatformUtils.getPlatformOsFamily()) {
-                case WINDOWS: {
-                    return "No help available. Try " + getName() + " /help";
-                }
-                default: {
-                    return "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'";
-                }
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "SYSEXEC " + NutsCommandLine.escapeArguments(cmd);
-        }
-
-    }
-
 }

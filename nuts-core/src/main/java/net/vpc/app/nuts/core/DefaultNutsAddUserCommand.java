@@ -39,7 +39,6 @@ import net.vpc.app.nuts.NutsCommandArg;
 import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsRepository;
-import net.vpc.app.nuts.NutsUpdateUserCommand;
 import net.vpc.app.nuts.NutsUserConfig;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.spi.NutsRepositoryConfigManagerExt;
@@ -270,6 +269,7 @@ public class DefaultNutsAddUserCommand extends NutsWorkspaceCommandBase<NutsAddU
         return this;
     }
 
+    @Override
     public NutsAddUserCommand parseOptions(String... args) {
         NutsCommandLine cmd = new NutsCommandLine(args);
         NutsCommandArg a;

@@ -28,11 +28,11 @@ import net.vpc.app.nuts.NutsStoreLocation;
 import net.vpc.app.nuts.NutsVersion;
 import net.vpc.app.nuts.NutsVersionFilter;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
+import net.vpc.app.nuts.core.util.common.LRUMap;
 import net.vpc.app.nuts.core.util.common.LazyIterator;
 
 /**
@@ -67,24 +67,42 @@ public class DefaultNutsInstalledRepository {
     private static final String NUTS_INSTALL_FILE = "nuts-install.json";
 
     private final NutsWorkspace ws;
+    private final Map<NutsId, String> cachedDefaultVersions = new LRUMap<>(200);
 
     public DefaultNutsInstalledRepository(NutsWorkspace ws) {
         this.ws = ws;
     }
 
+    public boolean isDefaultVersion(NutsId id) {
+        String v = getDefaultVersion(id);
+        return v.equals(id.getVersion().toString());
+    }
+    
     public String getDefaultVersion(NutsId id) {
-        Path pp = ws.config().getStoreLocation(id.setAlternative("").setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
-        if (Files.isRegularFile(pp)) {
-            try {
-                return new String(Files.readAllBytes(pp)).trim();
-            } catch (IOException ex) {
-                return "";
+        NutsId baseVersion=id.getSimpleNameId();
+        synchronized (cachedDefaultVersions) {
+            String p = cachedDefaultVersions.get(baseVersion);
+            if (p != null) {
+                return p;
             }
         }
-        return "";
+        Path pp = ws.config().getStoreLocation(id.setAlternative("").setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
+        String defaultVersion = "";
+        if (Files.isRegularFile(pp)) {
+            try {
+                defaultVersion = new String(Files.readAllBytes(pp)).trim();
+            } catch (IOException ex) {
+                defaultVersion = "";
+            }
+        }
+        synchronized (cachedDefaultVersions) {
+            cachedDefaultVersions.put(baseVersion, defaultVersion);
+        }
+        return defaultVersion;
     }
 
     public void setDefaultVersion(NutsId id) {
+        NutsId baseVersion=id.getSimpleNameId();
         String version = id.getVersion().getValue();
         Path pp = ws.config().getStoreLocation(id.setAlternative("").setVersion("ANY"), NutsStoreLocation.CONFIG).resolveSibling("default-version");
         if (CoreStringUtils.isBlank(version)) {
@@ -102,6 +120,9 @@ public class DefaultNutsInstalledRepository {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
+        }
+        synchronized (cachedDefaultVersions) {
+            cachedDefaultVersions.put(baseVersion, version);
         }
     }
 
@@ -137,7 +158,7 @@ public class DefaultNutsInstalledRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                Map<String, Object> m = ws.io().readJson(pathname, Map.class);
+                Map<String, Object> m = ws.io().json().read(pathname, Map.class);
                 if (m != null) {
                     String id = (String) m.get("id");
                     if (id != null) {
@@ -156,23 +177,6 @@ public class DefaultNutsInstalledRepository {
     public Iterator<NutsId> findAll(NutsIdFilter all, NutsRepositorySession session) {
         final Path path = ws.config().getStoreLocation(NutsStoreLocation.CONFIG);
         return findInFolder(path, all, Integer.MAX_VALUE, session);
-//        try {
-//            return Files.walk(path)
-//                    .map(p -> p.resolve(".nuts-install.log")).filter(p -> Files.exists(p))
-//                    .map(p -> {
-//                        try {
-//                            return ws.io().readJson(p, InstallInfo.class);
-//
-//                        } catch (Exception e) {
-//                            return null;
-//                        }
-//                    })
-//                    .filter(p -> p != null && p.getId() != null)
-//                    .map(p -> p.getId())
-//                    .toArray(NutsId[]::new);
-//        } catch (IOException ex) {
-//            throw new UncheckedIOException(ex);
-//        }
     }
 
     public Iterator<NutsId> findVersions(NutsId id, NutsIdFilter filter) {
@@ -189,7 +193,7 @@ public class DefaultNutsInstalledRepository {
                                     if (folder.isDirectory()
                                             && new File(folder, NUTS_INSTALL_FILE).isFile()) {
                                         NutsVersion vv = ws.parser().parseVersion(folder.getName());
-                                        if (filter0.accept(vv) && (filter == null || filter.accept(id.setVersion(vv)))) {
+                                        if (filter0.accept(vv) && (filter == null || filter.accept(id.setVersion(vv), ws))) {
                                             return (id.setVersion(folder.getName()));
                                         }
                                     }
@@ -204,37 +208,6 @@ public class DefaultNutsInstalledRepository {
             }
         };
     }
-
-//    public Iterator<NutsId> findVersions(NutsId id, NutsVersionFilter filter) {
-//        return new LazyIterator<NutsId>() {
-//            @Override
-//            protected Iterator<NutsId> iterator() {
-//                File installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).toFile().getParentFile();
-//                if (installFolder.isDirectory()) {
-//                    final NutsVersionFilter filter0 = id.getVersion().toFilter();
-//
-//                    return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
-//                            .map(new Function<File, NutsId>() {
-//                                @Override
-//                                public NutsId apply(File folder) {
-//                                    if (folder.isDirectory()
-//                                            && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-//                                        NutsVersion vv = ws.parser().parseVersion(folder.getName());
-//                                        if (filter0.accept(vv) && (filter == null || filter.accept(vv))) {
-//                                            return (id.setVersion(folder.getName()));
-//                                        }
-//                                    }
-//                                    return null;
-//                                }
-//
-//                            }).nonNull().iterator();
-//
-//                }
-//                //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
-//                return Collections.emptyIterator();
-//            }
-//        };
-//    }
 
     public NutsId[] findInstalledVersions(NutsId id) {
         Path installFolder = ws.config().getStoreLocation(id.setVersion("ANY"), NutsStoreLocation.CONFIG).getParent();
@@ -288,11 +261,11 @@ public class DefaultNutsInstalledRepository {
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz) {
-        return ws.io().readJson(getPath(id, name), clazz);
+        return ws.io().json().read(getPath(id, name), clazz);
     }
 
     public void addJson(NutsId id, String name, InstallInfo value) {
-        ws.io().writeJson(value, getPath(id, name), true);
+        ws.io().json().pretty().write(value, getPath(id, name));
     }
 
     public void remove(NutsId id, String name) {

@@ -83,7 +83,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         NutsIOManager io = context.getWorkspace().io();
         Path f = getConfigPath();
-        io.writeJson(config, f, true);
+        io.json().pretty().write(config, f);
         return this;
     }
 
@@ -243,7 +243,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     private boolean mkdirs(Path catalinaBase) {
-        if (Files.isDirectory(catalinaBase.resolve("logs"))) {
+        if (!Files.isDirectory(catalinaBase.resolve("logs"))) {
             try {
                 Files.createDirectories(catalinaBase.resolve("logs"));
             } catch (IOException ex) {
@@ -530,7 +530,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         Path f = context.getConfigFolder().resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
             NutsIOManager jsonSerializer = context.getWorkspace().io();
-            config = jsonSerializer.readJson(f, LocalTomcatConfig.class);
+            config = jsonSerializer.json().read(f, LocalTomcatConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config

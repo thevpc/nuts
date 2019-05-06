@@ -98,6 +98,7 @@ public class LocalTomcat {
                 }
             }
         }
+                        throw new NutsExecutionException("Missing tomcat command. Type help", 1);
     }
 
     public void list(CommandLine args) {

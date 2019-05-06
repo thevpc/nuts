@@ -49,8 +49,8 @@ public class NAdminMain extends NutsApplication {
                 }
                 if (cmdLine.hasNext()) {
                     PrintStream out = context.err();
-                    out.printf("Unexpected %s\n", cmdLine.get());
-                    out.printf("type for more help : config -h\n");
+                    out.printf("Unexpected %s%n", cmdLine.get());
+                    out.printf("type for more help : config -h%n");
                     throw new NutsExecutionException("Unexpected " + cmdLine.get(),1);
                 }
                 break;
@@ -58,8 +58,8 @@ public class NAdminMain extends NutsApplication {
         } while (cmdLine.hasNext());
         if (empty) {
             PrintStream out = context.err();
-            out.printf("Missing config command\n");
-            out.printf("type for more help : config -h\n");
+            out.printf("Missing config command%n");
+            out.printf("type for more help : config -h%n");
             throw new NutsExecutionException("Missing config command", 1);
         }
     }

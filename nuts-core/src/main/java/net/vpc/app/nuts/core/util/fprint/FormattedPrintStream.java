@@ -20,6 +20,9 @@ public class FormattedPrintStream extends PrintStream {
     private boolean formatEnabled = true;
     private FormattedPrintStreamParser parser;
     private FormattedPrintStreamRenderer renderer;
+    private byte[] buffer = new byte[1024];
+    private int bufferSize = 0;
+    private boolean enableBuffering = false;
 //    private FormattedPrintStreamNodePartialParser partialParser = new FormattedPrintStreamNodePartialParser();
 
     public FormattedPrintStream(OutputStream out, FormattedPrintStreamRenderer renderer, FormattedPrintStreamParser parser) {
@@ -387,9 +390,6 @@ public class FormattedPrintStream extends PrintStream {
             //do nothing!!!
         } else {
             String raw = new String(buf, off, len);
-            if (raw.contains("3,0001,\\u001B")) {
-                System.out.println("WHY");
-            }
             try {
                 parser.take(raw);
                 consumeNodes(false);
@@ -399,10 +399,31 @@ public class FormattedPrintStream extends PrintStream {
         }
     }
 
+    private final void flushBuffer() {
+        if (bufferSize > 0) {
+            super.write(buffer, 0, bufferSize);
+            bufferSize = 0;
+        }
+    }
+
     public final void writeRaw(String rawString) {
         byte[] b = rawString.getBytes();
-//        String ss = new String(b);
-        super.write(b, 0, b.length);
+        if (enableBuffering) {
+            if (b.length + bufferSize < buffer.length) {
+                System.arraycopy(b, 0, buffer, bufferSize, b.length);
+                bufferSize += b.length;
+            } else {
+                flushBuffer();
+                if (b.length >= buffer.length) {
+                    super.write(b, 0, b.length);
+                } else {
+                    System.arraycopy(b, 0, buffer, bufferSize, b.length);
+                    bufferSize += b.length;
+                }
+            }
+        } else {
+            super.write(b, 0, b.length);
+        }
     }
 
     @Override
@@ -425,6 +446,7 @@ public class FormattedPrintStream extends PrintStream {
 
     @Override
     public void flush() {
+        flushBuffer();
         super.flush();
         try {
             consumeNodes(true);

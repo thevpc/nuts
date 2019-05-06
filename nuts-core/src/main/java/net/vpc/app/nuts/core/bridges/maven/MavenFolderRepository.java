@@ -38,12 +38,17 @@ import net.vpc.app.nuts.core.util.*;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
+import net.vpc.app.nuts.core.DefaultNutsUpdateRepositoryStatisticsCommand;
 import net.vpc.app.nuts.core.util.common.IteratorUtils;
 
 /**
@@ -64,7 +69,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
     @Override
     protected String getStreamSHA1(NutsId id, NutsRepositorySession session) {
-        return CoreIOUtils.evalSHA1(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session).open(), true);
+        return CoreIOUtils.evalSHA1Hex(getStream(id.setFace(NutsConstants.QueryFaces.COMPONENT_HASH), session).open(), true);
     }
 
     @Override
@@ -98,7 +103,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
     }
 
     @Override
-    protected NutsContent fetchContentImpl(NutsId id, Path localPath, NutsRepositorySession session) {
+    protected NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, Path localPath, NutsRepositorySession session) {
         if (session.getFetchMode() != NutsFetchMode.REMOTE) {
             Path f = getIdFile(id);
             if (f != null && Files.exists(f)) {
@@ -135,8 +140,8 @@ public class MavenFolderRepository extends AbstractMavenRepository {
                 if (f != null && Files.exists(f)) {
                     NutsDescriptor d = null;
                     try {
-                        d = parsePomDescriptor(f, session);
-                    } catch (IOException ex) {
+                        d = MavenUtils.parsePomXml(f, getWorkspace(), session);
+                    } catch (Exception ex) {
                         //
                     }
                     if (d != null) {
@@ -157,20 +162,6 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        }
         return namedNutIdIterator;
 
-    }
-
-    protected NutsDescriptor parsePomDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-        try (InputStream is = Files.newInputStream(pathname)) {
-            NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(is, getWorkspace(), session, pathname.toString());
-            if (nutsDescriptor.getId().getName() == null) {
-                //why name is null ? should checkout!
-                if (LOG.isLoggable(Level.FINE)) {
-                    LOG.log(Level.FINE, "Unable to fetch Valid Nuts from " + pathname + " : resolved id was " + nutsDescriptor.getId());
-                }
-                return null;
-            }
-            return nutsDescriptor;
-        }
     }
 
     @Override
@@ -215,7 +206,7 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsRepositorySession session) throws IOException {
-                return parsePomDescriptor(pathname, session);
+                return MavenUtils.parsePomXml(pathname, getWorkspace(), session);
             }
         }, maxDepth);
     }
@@ -251,4 +242,40 @@ public class MavenFolderRepository extends AbstractMavenRepository {
 //        }
 //        return super.getStoreLocation(folderType);
 //    }
+    @Override
+    public NutsUpdateRepositoryStatisticsCommand updateStatistics() {
+        return new DefaultNutsUpdateRepositoryStatisticsCommand(this) {
+            @Override
+            public NutsUpdateRepositoryStatisticsCommand run() {
+                try {
+                    Files.walkFileTree(Paths.get(config().getLocation(true)), new FileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+                    }
+                    );
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+                return this;
+            }
+        };
+    }
 }

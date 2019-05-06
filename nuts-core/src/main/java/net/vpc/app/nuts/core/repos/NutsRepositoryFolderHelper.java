@@ -13,8 +13,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,18 +30,18 @@ import net.vpc.app.nuts.NutsContentEvent;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFilter;
+import net.vpc.app.nuts.NutsRepository;
 import net.vpc.app.nuts.NutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.NutsRepositorySession;
 import net.vpc.app.nuts.NutsRepositoryUndeploymentOptions;
 import net.vpc.app.nuts.NutsWorkspace;
-import net.vpc.app.nuts.core.DefaultNutsRepositoryDeploymentOptions;
 import net.vpc.app.nuts.core.DefaultNutsRepositoryUndeploymentOptions;
-import net.vpc.app.nuts.core.DefaultNutsVersion;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.FolderNutIdIterator;
 import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
+import net.vpc.app.nuts.core.spi.NutsRepositoryExt;
 
 /**
  *
@@ -46,13 +49,13 @@ import static net.vpc.app.nuts.core.repos.NutsFolderRepository.LOG;
  */
 public class NutsRepositoryFolderHelper {
 
-    private AbstractNutsRepository repo;
-    private NutsWorkspace workspace;
+    private NutsRepository repo;
+    private NutsWorkspace ws;
     private Path rootPath;
 
-    public NutsRepositoryFolderHelper(AbstractNutsRepository repo, Path rootPath) {
+    public NutsRepositoryFolderHelper(NutsRepository repo, NutsWorkspace ws, Path rootPath) {
         this.repo = repo;
-        this.workspace = repo.getWorkspace();
+        this.ws = ws != null ? ws : repo == null ? null : repo.getWorkspace();
         this.rootPath = rootPath;
     }
 
@@ -67,7 +70,7 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         String alt = CoreStringUtils.trim(id.getAlternative());
-        String defaultIdFilename = repo.getIdFilename(id);
+        String defaultIdFilename = NutsRepositoryExt.of(repo).getIdFilename(id);
         return (alt.isEmpty() || alt.equals(NutsConstants.QueryKeys.ALTERNATIVE_DEFAULT_VALUE)) ? getLocalVersionFolder(id).resolve(defaultIdFilename) : getLocalVersionFolder(id).resolve(alt).resolve(defaultIdFilename);
     }
 
@@ -84,14 +87,14 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return ws;
     }
 
     protected String getIdFilename(NutsId id) {
         if (repo == null) {
-            return workspace.config().getDefaultIdFilename(id);
+            return ws.config().getDefaultIdFilename(id);
         }
-        return repo.getIdFilename(id);
+        return NutsRepositoryExt.of(repo).getIdFilename(id);
     }
 
     protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsRepositorySession session) {
@@ -193,9 +196,9 @@ public class NutsRepositoryFolderHelper {
             }
             return null;
         }
-        return findInFolder(getLocalGroupAndArtifactFile(id), filter, 
-                deep?Integer.MAX_VALUE:1
-                , session);
+        return findInFolder(getLocalGroupAndArtifactFile(id), filter,
+                deep ? Integer.MAX_VALUE : 1,
+                session);
     }
 
     public Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsRepositorySession session) {
@@ -209,8 +212,8 @@ public class NutsRepositoryFolderHelper {
             public void undeploy(NutsId id, NutsRepositorySession session) {
                 if (repo == null) {
                     NutsRepositoryFolderHelper.this.undeploy(
-                            new DefaultNutsRepositoryUndeploymentOptions().id(id)
-                            , session);
+                            new DefaultNutsRepositoryUndeploymentOptions().id(id),
+                            session);
                 } else {
                     repo.undeploy(new DefaultNutsRepositoryUndeploymentOptions().id(id), session);
                 }
@@ -272,12 +275,10 @@ public class NutsRepositoryFolderHelper {
         }
 
         getWorkspace().formatter().createDescriptorFormat().setPretty(true).print(deployment.getDescriptor(), descFile);
-        getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().getSHA1(deployment.getDescriptor()).getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
+        getWorkspace().io().copy().from(new ByteArrayInputStream(getWorkspace().io().hash().sha1().source(deployment.getDescriptor()).computeString().getBytes())).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).safeCopy().run();
         getWorkspace().io().copy().from(deployment.getContent()).to(pckFile).safeCopy().run();
-        getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
-        if (repo instanceof AbstractNutsRepository) {
-            ((AbstractNutsRepository) repo).fireOnDeploy(new NutsContentEvent(pckFile, deployment, getWorkspace(), repo));
-        }
+        getWorkspace().io().copy().from(new ByteArrayInputStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes())).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).safeCopy().run();
+        NutsRepositoryExt.of(repo).fireOnDeploy(new NutsContentEvent(pckFile, deployment, getWorkspace(), repo));
 
     }
 
@@ -298,37 +299,62 @@ public class NutsRepositoryFolderHelper {
     }
 
     private void reindexFolder(Path path) {
-        File folder = path.toFile();
-        File[] children = folder.listFiles();
-        TreeSet<String> files = new TreeSet<>();
-        TreeSet<String> folders = new TreeSet<>();
-        if (children != null) {
-            for (File child : children) {
-                if (!child.getName().startsWith(".") && 
-                        DefaultNutsVersion.isBlank(child.getName())) {
-                    if (child.isDirectory()) {
-                        reindexFolder(child.toPath());
-                        folders.add(child.getName());
-                    } else if (child.isFile()) {
-                        files.add(child.getName());
-                    }
-                }
-            }
-        }
-        try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
-            for (String file : files) {
-                p.println(file);
-            }
-        } catch (FileNotFoundException e) {
-            throw new UncheckedIOException(e);
-        }
-        try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
-            for (String file : folders) {
-                p.println(file);
-            }
-        } catch (FileNotFoundException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
 
+        try {
+            Files.walkFileTree(path, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    File folder = dir.toFile();
+                    File[] children = folder.listFiles();
+                    TreeSet<String> files = new TreeSet<>();
+                    TreeSet<String> folders = new TreeSet<>();
+                    if (children != null) {
+                        for (File child : children) {
+                            //&& !DefaultNutsVersion.isBlank(child.getName())
+                            if (!child.getName().startsWith(".")) {
+                                if (child.isDirectory()) {
+                                    folders.add(child.getName());
+                                } else if (child.isFile()) {
+                                    files.add(child.getName());
+                                }
+                            }
+                        }
+                    }
+                    try (PrintStream p = new PrintStream(new File(folder, ".files"))) {
+                        for (String file : files) {
+                            p.println(file);
+                        }
+                    } catch (FileNotFoundException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    try (PrintStream p = new PrintStream(new File(folder, ".folders"))) {
+                        for (String file : folders) {
+                            p.println(file);
+                        }
+                    } catch (FileNotFoundException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+
+    }
 }

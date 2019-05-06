@@ -1,16 +1,18 @@
 package net.vpc.app.nuts.core;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import net.vpc.app.nuts.*;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUndeployCommand> implements NutsUndeployCommand {
 
@@ -162,21 +164,15 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
                 if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
                     switch (getOutputFormat()) {
                         case JSON: {
-                            getValidSession().getTerminal().out().printf(ws.io().toJsonString(result, true));
+                            getValidSession().getTerminal().out().printf(ws.io().json().pretty().toJsonString(result));
                             break;
                         }
                         case PROPS: {
-                            Properties props = new Properties();
+                            Map<String, String> props = new LinkedHashMap<>();
                             for (int i = 0; i < result.size(); i++) {
                                 props.put(String.valueOf(i + 1), result.get(i).toString());
                             }
-                            OutputStreamWriter w = new OutputStreamWriter(getValidSession().getTerminal().out());
-                            try {
-                                props.store(w, null);
-                                w.flush();
-                            } catch (IOException ex) {
-                                throw new UncheckedIOException(ex);
-                            }
+                            CoreIOUtils.storeProperties(props, getValidSession().getTerminal().out());
                             break;
                         }
 
@@ -195,7 +191,7 @@ public class DefaultNutsUndeployCommand extends NutsWorkspaceCommandBase<NutsUnd
         if (isTrace()) {
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
                 if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully\n", ws.formatter().createIdFormat().toString(id));
+                    getValidSession().getTerminal().out().printf("Nuts %N undeployed successfully%n", ws.formatter().createIdFormat().toString(id));
                 }
             }
         }

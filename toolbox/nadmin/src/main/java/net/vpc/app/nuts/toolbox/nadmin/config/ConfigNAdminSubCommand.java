@@ -80,7 +80,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
     private void deleteFolder(NutsApplicationContext context, Path storeLocation, String name, boolean force) {
         if (storeLocation != null) {
             if (Files.exists(storeLocation)) {
-                context.out().printf("@@Deleting@@ ##%s## folder %s ...\n", name, storeLocation);
+                context.out().printf("@@Deleting@@ ##%s## folder %s ...%n", name, storeLocation);
                 if (force
                         || context.getWorkspace().config().getOptions().isYes()
                         || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefautValue(false))) {
@@ -115,7 +115,7 @@ public class ConfigNAdminSubCommand extends AbstractNAdminSubCommand {
         Path s = repository.config().getStoreLocation(NutsStoreLocation.CACHE);
         if (s != null) {
             if (Files.exists(s)) {
-                context.out().printf("@@Deleting@@ ##cache## folder %s ...\n", s);
+                context.out().printf("@@Deleting@@ ##cache## folder %s ...%n", s);
                 if (force
                         || context.getWorkspace().config().getOptions().isYes()
                         || context.getTerminal().ask(NutsQuestion.forBoolean("Force Delete").setDefautValue(false))) {

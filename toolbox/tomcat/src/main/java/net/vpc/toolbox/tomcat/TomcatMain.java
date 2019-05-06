@@ -20,9 +20,6 @@ public class TomcatMain extends NutsApplication {
     @Override
     public void run(NutsApplicationContext appContext) {
         String[] args = appContext.getArgs();
-        if (args.length == 0) {
-            throw new NutsExecutionException("Expected --local or --remote", 2);
-        }
         List<String> argsList = new ArrayList<>();
         CommandLine cmd = new CommandLine(args);
         Boolean local = null;
@@ -31,9 +28,9 @@ public class TomcatMain extends NutsApplication {
             if (local == null) {
                 if (appContext.configure(cmd)) {
                     //
-                } else if (a.getExpression().equals("--remote") || a.getExpression().equals("-r")) {
+                } else if ((a.getExpression().equals("--remote") || a.getExpression().equals("-r"))) {
                     local = false;
-                } else if (a.getExpression().equals("--local") || a.getExpression().equals("-l")) {
+                } else if ((a.getExpression().equals("--local") || a.getExpression().equals("-l"))) {
                     local = true;
                 } else if (a.isOption()) {
                     argsList.add(a.getExpression());

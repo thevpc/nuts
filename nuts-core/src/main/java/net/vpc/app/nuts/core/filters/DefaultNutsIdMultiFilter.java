@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.vpc.app.nuts.core.NutsWorkspaceExt;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.filters.id.NutsScriptAwareIdFilter;
 
@@ -57,9 +57,9 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
     }
 
     @Override
-    public boolean accept(NutsId id) {
+    public boolean accept(NutsId id, NutsWorkspace ws) {
         if (idFilter != null) {
-            if (!idFilter.accept(id)) {
+            if (!idFilter.accept(id,ws)) {
                 return false;
             }
         }
@@ -70,7 +70,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                     NutsDescriptor nutsDescriptor = null;
                     try {
-                        NutsWorkspace ws = repository.getWorkspace();
+                        //NutsWorkspace ws = repository.getWorkspace();
                         nutsDescriptor = NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(descriptor, session.getSession());
                     } catch (Exception e) {
                         //throw new NutsException(e);
@@ -84,7 +84,7 @@ public class DefaultNutsIdMultiFilter implements NutsIdFilter, Simplifiable<Nuts
                 }
                 return false;
             }
-            if (!descriptorFilter.accept(descriptor)) {
+            if (!descriptorFilter.accept(descriptor, ws)) {
                 return false;
             }
         }

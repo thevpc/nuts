@@ -39,6 +39,7 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -51,28 +52,27 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
     private String code;
     private JavascriptHelper engineHelper;
 
-    private static final WeakHashMap<String, NutsDependencyJavascriptFilter> cached = new WeakHashMap<>();
-
-    public static NutsDependencyJavascriptFilter valueOf(String value) {
+    public static NutsDependencyJavascriptFilter valueOf(String value, NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
         }
+        final WeakHashMap<String, NutsDependencyJavascriptFilter> cached = new WeakHashMap<>();
         synchronized (cached) {
             NutsDependencyJavascriptFilter old = cached.get(value);
             if (old == null) {
-                old = new NutsDependencyJavascriptFilter(value);
+                old = new NutsDependencyJavascriptFilter(value, ws);
                 cached.put(value, old);
             }
             return old;
         }
     }
 
-    public NutsDependencyJavascriptFilter(String code) {
-        this(code, null);
+    public NutsDependencyJavascriptFilter(String code, NutsWorkspace ws) {
+        this(code, null, ws);
     }
 
-    public NutsDependencyJavascriptFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null);
+    public NutsDependencyJavascriptFilter(String code, Set<String> blacklist, NutsWorkspace ws) {
+        engineHelper = new JavascriptHelper(code, "var dependency=x; var id=x.getId(); var version=id.getVersion();", blacklist, null, ws);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);
@@ -128,5 +128,4 @@ public class NutsDependencyJavascriptFilter implements NutsDependencyFilter, Sim
         return true;
     }
 
-    
 }

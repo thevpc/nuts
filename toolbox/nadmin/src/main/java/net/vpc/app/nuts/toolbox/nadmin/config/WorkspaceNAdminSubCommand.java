@@ -28,39 +28,7 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
             if (cmdLine.isExecMode()) {
                 NutsSession session = context.getSession();
                 PrintStream out = session.getTerminal().fout();
-                out.printf("%s\n", context.getWorkspace().config().getWorkspaceLocation());
-            }
-            return true;
-        }
-        if (cmdLine.readAllOnce("check updates")) {
-            if (cmdLine.isExecMode()) {
-                PrintStream out = context.getTerminal().fout();
-                if (context.getWorkspace()
-                        .update()
-                        .all()
-                        .setSession(context.getSession())
-                        .setTrace(true)
-                        .setUpdateExtensions(true)
-                        .checkUpdates()==null) {
-                    out.printf("workspace **upto-date**\n");
-                }
-            }
-            return true;
-        }
-        if (cmdLine.readAllOnce("update")) {
-            boolean force = true;
-            String version = null;
-            if (cmdLine.isExecMode()) {
-                PrintStream out = context.getTerminal().fout();
-                if (context.getWorkspace().update()
-                                .api()
-                                .setApiVersion(version)
-                                .setTrace(true)
-                                .setUpdateExtensions(true)
-                        .setSession(context.getSession())
-                        .update()==null) {
-                    out.printf("workspace **upto-date**\n");
-                }
+                out.printf("%s%n", context.getWorkspace().config().getWorkspaceLocation());
             }
             return true;
         }
@@ -128,8 +96,8 @@ public class WorkspaceNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.readAll("get workspace version", "gwv")) {
             cmdLine.unexpectedArgument("config get workspace version");
             NutsBootConfig c = context.getWorkspace().config().getBootConfig();
-            context.out().printf("boot-version  : %s\n", StringUtils.trim(c.getApiVersion()));
-            context.out().printf("runtime-id    : %s\n", StringUtils.trim(c.getRuntimeId()));
+            context.out().printf("boot-version  : %s%n", StringUtils.trim(c.getApiVersion()));
+            context.out().printf("runtime-id    : %s%n", StringUtils.trim(c.getRuntimeId()));
         } else if (cmdLine.readAll("set workspace", "sw")) {
             boolean createIfNotFound = false;
             boolean save = true;

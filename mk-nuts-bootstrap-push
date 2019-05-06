@@ -1,0 +1,6 @@
+#!/bin/sh
+cd /home/vpc/vpc-public-nuts/
+git add * ; git commit -m "updated index" ; git push
+
+cd /home/vpc/vpc-public-maven/
+git add * ; git commit -m "updated index" ; git push

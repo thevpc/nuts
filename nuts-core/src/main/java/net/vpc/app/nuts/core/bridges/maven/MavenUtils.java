@@ -40,9 +40,13 @@ import net.vpc.app.nuts.core.util.common.MapStringMapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static net.vpc.app.nuts.core.bridges.maven.MavenFolderRepository.LOG;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CorePlatformUtils;
@@ -165,7 +169,25 @@ public class MavenUtils {
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsRepositorySession session, String urlDesc) throws IOException {
+    public static NutsDescriptor parsePomXml(Path path, NutsWorkspace ws, NutsRepositorySession session) throws IOException {
+        try {
+            try (InputStream is = Files.newInputStream(path)) {
+                NutsDescriptor nutsDescriptor = MavenUtils.parsePomXml(is, ws, session, path.toString());
+                if (nutsDescriptor.getId().getName() == null) {
+                    //why name is null ? should checkout!
+                    if (LOG.isLoggable(Level.FINE)) {
+                        LOG.log(Level.FINE, "Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
+                    }
+                    return null;
+                }
+                return nutsDescriptor;
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static NutsDescriptor parsePomXml(InputStream stream, NutsWorkspace ws, NutsRepositorySession session, String urlDesc) {
         NutsDescriptor nutsDescriptor = null;
 //        if (session == null) {
 //            session = ws.createSession();
@@ -269,17 +291,19 @@ public class MavenUtils {
                     stream.close();
                 }
             }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
         } catch (Exception ex) {
             throw new NutsParseException("Error Parsing " + urlDesc, ex);
         }
         return nutsDescriptor;
     }
 
-    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose) {
+    public static Iterator<NutsId> createArchetypeCatalogIterator(InputStream stream, NutsIdFilter filter, boolean autoClose,NutsWorkspace ws) {
         Iterator<PomId> it = ArchetypeCatalogParser.createArchetypeCatalogIterator(stream, filter == null ? null : new PomIdFilter() {
             @Override
             public boolean accept(PomId id) {
-                return filter.accept(MavenUtils.toNutsId(id));
+                return filter.accept(MavenUtils.toNutsId(id), ws);
             }
         }, autoClose);
         return new Iterator<NutsId>() {

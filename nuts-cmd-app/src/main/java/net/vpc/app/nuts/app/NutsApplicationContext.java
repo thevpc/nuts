@@ -173,7 +173,7 @@ public class NutsApplicationContext implements CommandLineContext {
             throw new NutsExecutionException("Help", 0);
         } else if ((a = cmd.readBooleanOption("--version")) != null) {
             if (cmd.isExecMode()) {
-                out().printf("%s\n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
+                out().printf("%s%n", getWorkspace().resolveIdForClass(getClass()).getVersion().toString());
                 cmd.skipAll();
             }
             throw new NutsExecutionException("Help", 0);
@@ -427,9 +427,9 @@ public class NutsApplicationContext implements CommandLineContext {
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
-                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v));
+                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v));
             } else {
-                out0.printf("%s\n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v) + " " + NutsCommandLine.escapeArgument(d));
+                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLine.escapeArgument(v) + " " + NutsCommandLine.escapeArgument(d));
             }
             return c;
         }

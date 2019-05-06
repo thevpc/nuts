@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
 import net.vpc.app.nuts.Nuts;
 import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsWorkspace;

@@ -83,13 +83,13 @@ public class DefaultNutsDescriptorFormat implements NutsDescriptorFormat {
 
     @Override
     public void print(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().writeJson(descriptor, out, pretty);
+        ws.io().json().pretty(pretty).write(descriptor, out);
 
     }
 
     @Override
     public void println(NutsDescriptor descriptor, Writer out) throws UncheckedIOException {
-        ws.io().writeJson(descriptor, out, pretty);
+        ws.io().json().pretty(pretty).write(descriptor, out);
         try {
             out.write("\n");
         } catch (IOException ex) {

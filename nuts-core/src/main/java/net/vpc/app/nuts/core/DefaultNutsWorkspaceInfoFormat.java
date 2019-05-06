@@ -21,8 +21,9 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
 
 /**
- * 
+ *
  * type: Command Class
+ *
  * @author vpc
  */
 public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
@@ -243,17 +244,15 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     }
 
     public void printProps(Writer w) {
-        Properties p = new Properties();
-        p.putAll(buildWorkspaceMap(true, true));
-        try {
-            p.store(w, null);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+        Map<String, String> p = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : buildWorkspaceMap(true, true).entrySet()) {
+            p.put(e.getKey(), e.getValue()==null?"":String.valueOf(e.getValue()));
         }
+        CoreIOUtils.storeProperties(p, w);
     }
 
     public void printJson(Writer w) {
-        ws.io().writeJson(buildWorkspaceMap(true, false), w, true);
+        ws.io().json().pretty().write(buildWorkspaceMap(true, false), w);
     }
 
     private static String key(String prefix, String key) {

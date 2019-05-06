@@ -1,0 +1,13 @@
+==nuts== [[info]]
+      show workspace detailed information (paths and libraries)
+       [[--trace-format]]=[[props|plain|json]] : define the format to trace operation
+       [[--plain]]: trace operation as plain text. equivalent to [[--trace-format]]=[[plain]]
+       [[--json]]: trace operation as json. equivalent to [[--trace-format]]=[[json]]
+       [[--props]]: trace operation as (java) properties, key value list. equivalent to [[--trace-format]]=[[props]]
+
+@@EXAMPLES:@@
+        ==nuts== info [[--help]]
+            shows this help and exit
+       
+        ==nuts== info --json
+            show info injson format

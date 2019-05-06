@@ -75,8 +75,9 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         this.ws = ws;
     }
 
+    @Override
     public String[] getCommand() {
-        return command==null?new String[0] : Arrays.copyOf(command, command.length);
+        return command == null ? new String[0] : Arrays.copyOf(command, command.length);
     }
 
     public DefaultNutsWorkspaceCommandAlias setCommand(String[] command) {
@@ -84,8 +85,9 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return this;
     }
 
+    @Override
     public String[] getExecutorOptions() {
-        return executorOptions==null?new String[0] : Arrays.copyOf(executorOptions, command.length);
+        return executorOptions == null ? new String[0] : Arrays.copyOf(executorOptions, command.length);
     }
 
     public DefaultNutsWorkspaceCommandAlias setExecutorOptions(String[] executorOptions) {
@@ -122,17 +124,18 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
             return helpText;
         }
         if (helpCommand != null && helpCommand.length > 0) {
-            try{
-            return ws.exec()
-                    .command(helpCommand)
-                    .failFast(false)
-                    .redirectErrorStream()
-                    .grabOutputString()
-                    .run()
-                    .getOutputString();
-            }catch(Exception ex){
+            try {
+                String ss = ws.exec()
+                        .command(helpCommand)
+                        .failFast(false)
+                        .redirectErrorStream()
+                        .grabOutputString()
+                        .run()
+                        .getOutputString();
+                return ss;//ws.parser().escapeText(ss);
+            } catch (Exception ex) {
                 //ignore
-                return "Failed to retrieve help for "+getName();
+                return "Failed to retrieve help for " + getName();
             }
         }
         return null;
@@ -140,7 +143,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
 
     @Override
     public String toString() {
-        return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + command + ", executorOptions=" + executorOptions + '}';
+        return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + Arrays.toString(command) + ", executorOptions=" + Arrays.toString(executorOptions) + '}';
     }
 
 }

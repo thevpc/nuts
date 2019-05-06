@@ -60,7 +60,7 @@ public class TestUtils {
 
     public static void unsetNutsSystemProperties() {
         final Properties props = System.getProperties();
-        for (Object k : props.keySet()) {
+        for (Object k : new HashSet(props.keySet())) {
             String ks = String.valueOf(k);
             if (ks.startsWith("nuts.")) {
                 System.out.println("## removed " + ks + "=" + props.getProperty(ks));

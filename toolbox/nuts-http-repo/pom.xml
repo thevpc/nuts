@@ -7,19 +7,19 @@
     <groupId>net.vpc.app.nuts</groupId>
     <artifactId>nuts-http-repo</artifactId>
     <name>net.vpc.app.nuts.nuts-http-repo</name>
-    <version>0.5.4.0</version>
+    <version>0.5.5.0</version>
     <packaging>war</packaging>
     <description>Nuts Web Front End</description>
     <dependencies>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.4</version>
+            <version>0.5.5</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-servlet</artifactId>
-            <version>0.5.4.0</version>
+            <version>0.5.5.0</version>
         </dependency>
     </dependencies>
 

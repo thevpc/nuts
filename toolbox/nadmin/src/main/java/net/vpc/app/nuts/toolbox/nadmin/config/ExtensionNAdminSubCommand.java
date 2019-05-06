@@ -55,7 +55,7 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
                             out.printf("%s (%s) : ", extension.getId(), extension.getWiredId());
                             out.println(extDesc);
                         } else {
-                            out.printf("%s%s\n", extension.getId(), extDesc);
+                            out.printf("%s%s", extension.getId(), extDesc);
                         }
                     }
                 }
@@ -76,15 +76,15 @@ public class ExtensionNAdminSubCommand extends AbstractNAdminSubCommand {
             } else if (cmdLine.readAll("list extension points", "lxp")) {
                 if (cmdLine.isExecMode()) {
                     for (Class extension : context.getWorkspace().extensions().getExtensionPoints()) {
-                        out.printf("[[%s]]:\n", extension.getName());
+                        out.printf("[[%s]]:%n", extension.getName());
                         for (Class impl : context.getWorkspace().extensions().getExtensionTypes(extension)) {
-                            out.printf("\t%s\n", impl.getName());
+                            out.printf("\t%s%n", impl.getName());
                         }
                         for (Object impl : context.getWorkspace().extensions().getExtensionObjects(extension)) {
                             if (impl != null) {
-                                out.printf("\t%s :: %s\n", impl.getClass().getName(), impl);
+                                out.printf("\t%s :: %s%n", impl.getClass().getName(), impl);
                             } else {
-                                out.printf("\tnull\n");
+                                out.printf("\tnull%n");
                             }
                         }
                     }

@@ -32,8 +32,9 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     private boolean transitive = true;
     private boolean cached = true;
     private Boolean indexed = null;
-    private NutsFetchStrategy mode = null;
+    private NutsFetchStrategy fetchStrategy = null;
     private Boolean acceptOptional = null;
+    private Boolean acceptDefaultVersion = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
     private boolean includeContent = true;
     private boolean includeDependencies = false;
@@ -52,7 +53,7 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
             super.copyFromWorkspaceCommandBase(other);
             this.acceptOptional = other.getAcceptOptional();
             this.lenient = other.isLenient();
-            this.mode = other.getFetchStrategy();
+            this.fetchStrategy = other.getFetchStrategy();
             this.indexed = other.getIndexed();
             this.includeContent = other.isIncludeContent();
             this.includeDependencies = other.isIncludeDependencies();
@@ -120,7 +121,7 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
 
     //@Override
     public T setFetchStratery(NutsFetchStrategy mode) {
-        this.mode = mode;
+        this.fetchStrategy = mode;
         return (T) this;
     }
 
@@ -161,7 +162,7 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
 
     //@Override
     public NutsFetchStrategy getFetchStrategy() {
-        return mode;
+        return fetchStrategy;
     }
 
     //@Override
@@ -192,6 +193,25 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
     //@Override
     public T indexed(boolean indexed) {
         return setIndexed(indexed);
+    }
+
+    public Boolean getAcceptDefaultVersion() {
+        return acceptDefaultVersion;
+    }
+    
+    public T acceptDefaultVersion() {
+        return acceptDefaultVersion(true);
+    }
+
+    //@Override
+    public T acceptDefaultVersion(Boolean acceptDefaultVersion) {
+        return setAcceptDefaultVersion(acceptDefaultVersion);
+    }
+
+    //@Override
+    public T setAcceptDefaultVersion(Boolean acceptDefaultVersion) {
+        this.acceptOptional = acceptDefaultVersion;
+        return (T) this;
     }
 
     //@Override

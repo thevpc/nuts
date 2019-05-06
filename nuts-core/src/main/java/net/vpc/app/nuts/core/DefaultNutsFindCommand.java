@@ -29,6 +29,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.core.util.NutsIdGraph;
 import net.vpc.app.nuts.core.util.NutsCollectionFindResult;
 import net.vpc.app.nuts.*;
@@ -448,7 +449,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand setDependencyFilter(String filter) {
-        this.dependencyFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDependencyJavascriptFilter(filter);
+        this.dependencyFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDependencyJavascriptFilter(filter,getWs());
         return this;
     }
 
@@ -482,7 +483,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand setDescriptorFilter(String filter) {
-        this.descriptorFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDescriptorJavascriptFilter(filter);
+        this.descriptorFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDescriptorJavascriptFilter(filter,getWs());
         return this;
     }
 
@@ -499,7 +500,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand setIdFilter(String filter) {
-        this.idFilter = CoreStringUtils.isBlank(filter) ? null : new NutsJavascriptIdFilter(filter);
+        this.idFilter = CoreStringUtils.isBlank(filter) ? null : new NutsJavascriptIdFilter(filter,getWs());
         return this;
     }
 
@@ -594,11 +595,11 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         for (String j : this.getScripts()) {
             if (!CoreStringUtils.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    _descriptorFilter = simplify(And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j)));
+                    _descriptorFilter = simplify(And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j,getWs())));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j)));
+                    depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j,getWs())));
                 } else {
-                    _idFilter = simplify(And(_idFilter, NutsJavascriptIdFilter.valueOf(j)));
+                    _idFilter = simplify(And(_idFilter, NutsJavascriptIdFilter.valueOf(j,getWs())));
                 }
             }
         }
@@ -620,18 +621,19 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         NutsRepositoryFilter _repositoryFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(rfilter, this.getRepositoryFilter()));
         _descriptorFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_descriptorFilter, this.getDescriptorFilter()));
         _idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_idFilter, idFilter0));
-
+        if(getAcceptDefaultVersion()!=null){
+            _idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_idFilter, new NutsDefaultVersionIdFilter(getAcceptDefaultVersion(),ws)));
+        }
         if (!wildcardIds.isEmpty()) {
             for (String wildcardId : wildcardIds) {
                 _idFilter = CoreNutsUtils.simplify(new NutsIdFilterOr(_idFilter, new NutsPatternIdFilter(ws.parser().parseId(wildcardId))));
             }
         }
+        NutsFetchCommand k = toFetch();
         return new DefaultNutsSearch(
                 goodIds.toArray(new String[0]),
                 _repositoryFilter,
-                _idFilter, _descriptorFilter,
-                toFetch()
-        );
+                _idFilter, _descriptorFilter, k);
     }
 
     @Override

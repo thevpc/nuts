@@ -1,5 +1,6 @@
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import net.vpc.app.nuts.*;
 
 import java.io.File;
@@ -322,11 +323,16 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         if (content != null || descriptor != null || sha1 != null || descSha1 != null) {
             runDeployFile();
         }
-        for (NutsId nutsId : ws.find().setSession(getSession()).addIds(ids.toArray(new NutsId[0])).latestVersions().setRepository(fromRepository).getResultIds()) {
-            NutsDefinition fetched = ws.fetch().id(nutsId).setSession(getSession()).getResultDefinition();
-            if (fetched.getPath() != null) {
-                runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
+        if (ids.size() > 0) {
+            for (NutsId nutsId : ws.find().setSession(getSession()).addIds(ids.toArray(new NutsId[0])).latestVersions().setRepository(fromRepository).getResultIds()) {
+                NutsDefinition fetched = ws.fetch().id(nutsId).setSession(getSession()).getResultDefinition();
+                if (fetched.getPath() != null) {
+                    runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
+                }
             }
+        }
+        if (result == null || result.isEmpty()) {
+            throw new NutsIllegalArgumentException("Missing component to Deploy");
         }
         if (isTrace()) {
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
@@ -334,7 +340,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
                 if (getOutputFormat() != null && getOutputFormat() != NutsOutputFormat.PLAIN) {
                     switch (getOutputFormat()) {
                         case JSON: {
-                            getValidSession().getTerminal().out().printf(ws.io().toJsonString(result, true));
+                            getValidSession().getTerminal().out().printf(ws.io().json().pretty().toJsonString(result));
                             break;
                         }
                         case PROPS: {
@@ -511,7 +517,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             }
             result.add(nid);
             if (getOutputFormat() == null || getOutputFormat() == NutsOutputFormat.PLAIN) {
-                getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==\n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
+                getValidSession().getTerminal().out().printf("Nuts %N deployed successfully to ==%s==%n", ws.formatter().createIdFormat().toString(nid), toRepository == null ? "<default-repo>" : toRepository);
             }
         }
     }
@@ -523,7 +529,7 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
         NutsDescriptor mdescriptor = null;
         if (NutsDescriptor.class.isInstance(descriptor)) {
             mdescriptor = (NutsDescriptor) descriptor;
-            if (descSHA1 != null && !ws.io().getSHA1(mdescriptor).equals(descSHA1)) {
+            if (descSHA1 != null && !ws.io().hash().sha1().source(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
                 throw new NutsIllegalArgumentException("Invalid Content Hash");
             }
             return mdescriptor;
@@ -531,8 +537,12 @@ public class DefaultNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeplo
             InputSource inputStreamSource = CoreIOUtils.createInputSource(descriptor);
             if (descSHA1 != null) {
                 inputStreamSource = inputStreamSource.multi();
-                if (!CoreIOUtils.evalSHA1(inputStreamSource.open(), true).equalsIgnoreCase(descSHA1)) {
+                try(InputStream is=inputStreamSource.open()){
+                    if(!ws.io().hash().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)){
                     throw new NutsIllegalArgumentException("Invalid Content Hash");
+                    }
+                }catch(IOException ex){
+                    throw new UncheckedIOException(ex);
                 }
             }
             try (InputStream is = inputStreamSource.open()) {

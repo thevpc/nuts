@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vpc.app.nuts.toolbox</groupId>
     <artifactId>nfind</artifactId>
-    <version>0.5.4.0</version>
+    <version>0.5.5.0</version>
     <packaging>jar</packaging>
     <name>net.vpc.app.nuts.toolbox.nfind</name>
     <description>Nuts Find companion</description>
@@ -62,12 +62,12 @@
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.5.4</version>
+            <version>0.5.5</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.app.nuts</groupId>
             <artifactId>nuts-cmd-app</artifactId>
-            <version>0.5.4.0</version>
+            <version>0.5.5.0</version>
         </dependency>
         <dependency>
             <groupId>net.vpc.common</groupId>
@@ -137,8 +137,9 @@
                 <version>0.11</version>
                 <!--<version>0.9</version>-->
                 <configuration>
-                    <message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}
-                    </message>  <!-- git commit message -->
+                    <!-- git commit message -->
+                    <!--<message>Maven artifacts for ${project.groupId}:${project.artifactId}#${project.version}</message>-->  
+                    <message>${project.version} of ${project.groupId}:${project.artifactId}</message>
                     <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
                     <outputDirectory>${project.build.directory}/vpc-public-maven
                     </outputDirectory> <!-- matches distribution management repository url above -->

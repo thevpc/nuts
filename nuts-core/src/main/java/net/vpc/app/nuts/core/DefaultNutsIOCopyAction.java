@@ -252,11 +252,11 @@ public class DefaultNutsIOCopyAction implements NutsPathCopyAction {
         }
         if (monitorable) {
             if (_source.isPath()) {
-                _source = CoreIOUtils.createInputSource(iom.monitorInputStream(_source.getPath().toString(), _source.getPath().toString(), terminalProvider));
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getPath().toString()).session(terminalProvider).create());
             } else if (_source.isURL()) {
-                _source = CoreIOUtils.createInputSource(iom.monitorInputStream(_source.getURL().toString(), _source.getSource().toString(), terminalProvider));
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.getURL().toString()).session(terminalProvider).create());
             } else {
-                _source = CoreIOUtils.createInputSource(iom.monitorInputStream(_source.open(), terminalProvider));
+                _source = CoreIOUtils.createInputSource(iom.monitor().source(_source.open()).session(terminalProvider).create());
             }
         }
         boolean _source_isPath = _source.isPath();

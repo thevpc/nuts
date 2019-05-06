@@ -1,13 +1,9 @@
 package net.vpc.app.nuts.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -22,7 +18,6 @@ import net.vpc.app.nuts.core.util.CoreNutsUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.NutsWorkspaceHelper;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
-import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
 import net.vpc.app.nuts.core.util.common.TraceResult;
 import net.vpc.app.nuts.core.util.common.IteratorBuilder;
 
@@ -121,13 +116,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     public String getResultContentHash() {
         try {
             Path f = getResultDefinition().getPath();
-            try {
-                try (InputStream in = Files.newInputStream(f)) {
-                    return ws.io().computeHash((in));
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            return ws.io().hash().source(f).computeString();
         } catch (NutsNotFoundException ex) {
             if (isLenient()) {
                 return null;
@@ -139,9 +128,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
     @Override
     public String getResultDescriptorHash() {
         try {
-            return ws.io().computeHash(new ByteArrayInputStream(
-                    ws.formatter().createDescriptorFormat().toString(getResultDescriptor()).getBytes()
-            ));
+            return ws.io().hash().source(getResultDescriptor()).computeString();
         } catch (NutsNotFoundException ex) {
             if (isLenient()) {
                 return null;
@@ -207,6 +194,9 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
 
     public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options) {
         long startTime = System.currentTimeMillis();
+        if (id == null) {
+            throw new NutsIllegalArgumentException("Missing component Id");
+        }
         if (CoreStringUtils.isBlank(id.getGroup())) {
             throw new NutsIllegalArgumentException("Missing Group");
         }
@@ -277,7 +267,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         for (NutsFetchMode mode : nutsFetchModes) {
                             try {
                                 NutsRepository repo = foundDefinition.getRepository();
-                                NutsContent content = repo.fetchContent(id1, copyTo,
+                                NutsContent content = repo.fetchContent(id1, foundDefinition.getDescriptor(), copyTo,
                                         NutsWorkspaceHelper.createRepositorySession(options.getSession(), repo, mode, options));
                                 if (content != null) {
                                     foundDefinition.setContent(content);
@@ -304,7 +294,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         }
                         if (installer != null) {
                             if (dws.getInstalledRepository().isInstalled(foundDefinition.getId())) {
-                                foundDefinition.setInstallation(new NutsInstallInfo(true,
+                                foundDefinition.setInstallation(new DefaultNutsInstallInfo(true,
                                         ws.config().getStoreLocation(foundDefinition.getId(), NutsStoreLocation.PROGRAMS)
                                 ));
                             } else {
@@ -359,7 +349,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
             Map<String, String> map = null;
             try {
                 if (Files.isRegularFile(f)) {
-                    map = ws.io().readJson(f, Map.class);
+                    map = ws.io().json().read(f, Map.class);
                 }
             } catch (Exception ex) {
                 //
@@ -380,7 +370,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.io().writeJson(map, f, true);
+                        ws.io().json().pretty().write(map, f);
                     } catch (Exception ex) {
                         //
                     }
@@ -408,17 +398,20 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                     id = id.setVersion("");
                 }
             }
-            if (id.getVersion().isBlank()) {
-                List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, null))
-                        .convert(x -> x.getVersion()).list();
-//                all.sort();
-                if (all.size() > 0) {
-                    all.sort(null);
-                    id = id.setVersion(all.get(all.size() - 1));
-                    mode = NutsFetchMode.LOCAL;
-                } else {
-                    throw new NutsNotFoundException(id);
+            NutsVersionFilter versionFilter = id.getVersion().isBlank() ? null : id.getVersion().toFilter();
+            List<NutsVersion> all = IteratorBuilder.of(dws.getInstalledRepository().findVersions(id, new NutsIdFilter() {
+                @Override
+                public boolean accept(NutsId id, NutsWorkspace ws) {
+                    return versionFilter.accept(id.getVersion());
                 }
+            }))
+                    .convert(x -> x.getVersion()).list();
+            if (all.size() > 0) {
+                all.sort(null);
+                id = id.setVersion(all.get(all.size() - 1));
+                mode = NutsFetchMode.LOCAL;
+            } else {
+                throw new NutsNotFoundException(id);
             }
         }
         for (NutsRepository repo : NutsWorkspaceUtils.filterRepositories(ws, NutsRepositorySupportedAction.FIND, id, repositoryFilter, mode, options)) {

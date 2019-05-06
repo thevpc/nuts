@@ -5,6 +5,7 @@
  */
 package net.vpc.app.nuts.core;
 
+import net.vpc.app.nuts.core.spi.NutsWorkspaceExt;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
@@ -212,11 +213,11 @@ public class DefaultNutsUninstallCommand extends NutsWorkspaceCommandBase<NutsUn
                     throw new UncheckedIOException(ex);
                 }
                 if (this.isTrace()) {
-                    out.printf("%N uninstalled ##successfully##\n", ws.formatter().createIdFormat().toString(id));
+                    out.printf("%N uninstalled ##successfully##%n", ws.formatter().createIdFormat().toString(id));
                 }
             } else {
                 if (this.isTrace()) {
-                    out.printf("%N @@could not@@ be uninstalled\n", ws.formatter().createIdFormat().toString(id));
+                    out.printf("%N @@could not@@ be uninstalled%n", ws.formatter().createIdFormat().toString(id));
                 }
             }
         }

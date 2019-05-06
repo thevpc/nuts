@@ -6,6 +6,8 @@ import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import net.vpc.app.nuts.core.filters.NutsSearchIdByDescriptor;
+import net.vpc.app.nuts.core.filters.NutsSearchIdById;
 import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
@@ -37,10 +39,10 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 
     @Override
     public List<NutsId> findVersions(NutsId id, NutsRepositorySession session) {
-        if(isInaccessible()){
+        if (isInaccessible()) {
             return null;
         }
-        String URL = "http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/allVersions"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "/allVersions"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getScope()), CoreStringUtils.trim(id.getOs()),
@@ -48,7 +50,7 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().io().readJson(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().io().json().read(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
                     .map(s -> repository.getWorkspace().parser().parseId(s.get("stringId").toString()))
                     .collect(Collectors.toList());
@@ -60,17 +62,22 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 
     @Override
     public Iterator<NutsId> find(NutsIdFilter filter, NutsRepositorySession session) {
-        if(isInaccessible()){
+        if (isInaccessible()) {
             return null;
         }
-        String URL = "http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"?repositoryUuid=" + repository.getUuid();
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "?repositoryUuid=" + repository.getUuid();
         try {
             NutsHttpConnectionFacade clientFacade = CoreIOUtils.getHttpClientFacade(repository.getWorkspace(),
                     URL);
-            Map[] array = repository.getWorkspace().io().readJson(new InputStreamReader(clientFacade.open()), Map[].class);
+            Map[] array = repository.getWorkspace().io().json().read(new InputStreamReader(clientFacade.open()), Map[].class);
             return Arrays.stream(array)
                     .map(s -> repository.getWorkspace().parser().parseId(s.get("stringId").toString()))
-                    .filter(filter != null ? filter::accept : (Predicate<NutsId>) id -> true)
+                    .filter(filter != null ? new Predicate<NutsId>() {
+                        @Override
+                        public boolean test(NutsId t) {
+                            return filter.acceptSearchId(new NutsSearchIdById(t), repository.getWorkspace());
+                        }
+                    } : (Predicate<NutsId>) id -> true)
                     .iterator();
         } catch (UncheckedIOException e) {
             setInaccessible();
@@ -90,10 +97,10 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 
     @Override
     public void invalidate(NutsId id) {
-        if(isInaccessible()){
+        if (isInaccessible()) {
             return;
         }
-        String URL = "http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/delete"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "/delete"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),
@@ -111,10 +118,10 @@ public class DefaultNutsIndexStoreClient implements NutsIndexStoreClient {
 
     @Override
     public void revalidate(NutsId id) {
-        if(isInaccessible()){
+        if (isInaccessible()) {
             return;
         }
-        String URL = "http://localhost:7070/indexer/"+NutsConstants.Folders.LIB+"/addData"
+        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.LIB + "/addData"
                 + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
                         + "&scope=%s&os=%s&osdist=%s&arch=%s&face=%s&alternative=%s", repository.getUuid(),
                         CoreStringUtils.trim(id.getName()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroup()), CoreStringUtils.trim(id.getVersion().toString()),

@@ -69,7 +69,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                     IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.out());
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!StringUtils.isEmpty(login)) {
-                        out.printf("connect ==%s %s== \n", login, password);
+                        out.printf("connect ==%s %s== %n", login, password);
                     }
                     while (true) {
                         String line = context.getTerminal().readLine("");
@@ -80,7 +80,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                             if (line.trim().equals("quit") || line.trim().equals("exit")) {
                                 break;
                             }
-                            out.printf("%s\n", line);
+                            out.printf("%s%n", line);
                         }
                     }
                 } finally {

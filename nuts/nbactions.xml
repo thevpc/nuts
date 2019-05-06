@@ -48,7 +48,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --check-updates netbeans-launcher</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init reset -y --standalone version</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>update</exec.workingdir>
                 
@@ -64,7 +64,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --check-updates netbeans-launcher</exec.args>
+                <exec.args>-classpath %classpath net.vpc.app.nuts.Nuts --init reset -y --standalone version</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>update</exec.workingdir>
             </properties>
@@ -79,7 +79,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --check-updates netbeans-launcher</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath net.vpc.app.nuts.Nuts --init reset -y --standalone version</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
                 <exec.workingdir>update</exec.workingdir>

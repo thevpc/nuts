@@ -38,6 +38,7 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 
 /**
@@ -50,31 +51,35 @@ public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsId
     private String code;
     private JavascriptHelper engineHelper;
 
-    private static final WeakHashMap<String, NutsJavascriptIdFilter> cached = new WeakHashMap<>();
-
-    public static NutsJavascriptIdFilter valueOf(String value) {
+    public static NutsJavascriptIdFilter valueOf(String value,NutsWorkspace ws) {
         if (CoreStringUtils.isBlank(value)) {
             return null;
+        }
+        String key = NutsJavascriptIdFilter.class.getName() + ":cache";
+        WeakHashMap<String, NutsJavascriptIdFilter> cached = (WeakHashMap) ws.getUserProperties().get(key);
+        if (cached == null) {
+            cached = new WeakHashMap<>();
+            ws.getUserProperties().put(key, cached);
         }
         synchronized (cached) {
             NutsJavascriptIdFilter old = cached.get(value);
             if (old == null) {
-                old = new NutsJavascriptIdFilter(value);
+                old = new NutsJavascriptIdFilter(value,ws);
                 cached.put(value, old);
             }
             return old;
         }
     }
 
-    public NutsJavascriptIdFilter(String code) {
-        this(code, null);
+    public NutsJavascriptIdFilter(String code,NutsWorkspace ws) {
+        this(code, null,ws);
     }
 
-    public NutsJavascriptIdFilter(String code, Set<String> blacklist) {
-        engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null);
+    public NutsJavascriptIdFilter(String code, Set<String> blacklist,NutsWorkspace ws) {
+        engineHelper = new JavascriptHelper(code, "var id=x.getId(); var version=id.getVersion();", blacklist, null,ws);
         this.code = code;
         //check if valid
-        accept(SAMPLE_NUTS_ID);
+        accept(SAMPLE_NUTS_ID, ws);
     }
 
     public String getCode() {
@@ -82,7 +87,7 @@ public class NutsJavascriptIdFilter implements NutsIdFilter, Simplifiable<NutsId
     }
 
     @Override
-    public boolean accept(NutsId id) {
+    public boolean accept(NutsId id, NutsWorkspace ws) {
         return engineHelper.accept(id);
     }
 

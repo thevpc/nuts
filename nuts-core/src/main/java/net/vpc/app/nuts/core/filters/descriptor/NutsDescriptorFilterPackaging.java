@@ -35,6 +35,7 @@ import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.common.Simplifiable;
 
 import java.util.Objects;
+import net.vpc.app.nuts.NutsWorkspace;
 
 /**
  * Created by vpc on 2/20/17.
@@ -52,7 +53,7 @@ public class NutsDescriptorFilterPackaging implements NutsDescriptorFilter, Simp
     }
 
     @Override
-    public boolean accept(NutsDescriptor descriptor) {
+    public boolean accept(NutsDescriptor descriptor, NutsWorkspace ws) {
         return descriptor.matchesPackaging(packaging);
     }
 

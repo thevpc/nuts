@@ -23,10 +23,12 @@ import net.vpc.app.nuts.NutsTerminal;
 import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.core.util.common.CoreStringUtils;
 import net.vpc.app.nuts.core.util.io.ByteArrayPrintStream;
+import net.vpc.app.nuts.core.util.io.CoreIOUtils;
 
 /**
- * 
+ *
  * type: Command Class
+ *
  * @author vpc
  */
 public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFormat {
@@ -115,7 +117,7 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     public NutsWorkspaceVersionFormat outputFormat(NutsOutputFormat outputFormat) {
         return setOutputFormat(outputFormat);
     }
-    
+
     @Override
     public NutsWorkspaceVersionFormat setOutputFormat(NutsOutputFormat outputFormat) {
         this.outputFormat = outputFormat;
@@ -264,17 +266,11 @@ public class DefaultNutsWorkspaceVersionFormat implements NutsWorkspaceVersionFo
     }
 
     public void printProps(Writer w) {
-        Properties p = new Properties();
-        p.putAll(buildProps());
-        try {
-            p.store(w, null);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        CoreIOUtils.storeProperties(buildProps(), w);
     }
 
     public void printJson(Writer w) {
-        ws.io().writeJson(buildProps(), w, true);
+        ws.io().json().pretty().write(buildProps(), w);
     }
 
     public void printPlain(Writer w) {

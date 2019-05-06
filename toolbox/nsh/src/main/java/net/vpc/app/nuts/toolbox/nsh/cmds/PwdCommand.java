@@ -55,7 +55,7 @@ public class PwdCommand extends AbstractNutsCommand {
             }
         }
         PrintStream out = context.out();
-        out.printf("%s\n", context.getShell().getCwd());
+        out.printf("%s%n", context.getShell().getCwd());
         return 0;
     }
 }

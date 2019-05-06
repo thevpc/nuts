@@ -99,14 +99,14 @@ public class DefaultNutsQuestionExecutor<T> {
                     parsed = (T) p.parse(question.getDefautValue(), question.getValueType());
                     return parsed;
                 } catch (Exception ex) {
-                    out.printf("@@ERROR@@ : %s\n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                    out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
                 }
             }
             try {
                 parsed = (T) p.parse(v, question.getValueType());
                 return parsed;
             } catch (Exception ex) {
-                out.printf("@@ERROR@@ : %s\n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
+                out.printf("@@ERROR@@ : %s%n", ex.getMessage() == null ? ex.toString() : ex.getMessage());
             }
             extraInfo = true;
         }
