@@ -79,6 +79,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     private boolean includeDuplicatedVersions = true;
     private boolean includeMain = true;
     private boolean sort = false;
+    private boolean longFormat = false;
     private final List<String> arch = new ArrayList<>();
     private final List<NutsId> ids = new ArrayList<>();
     private final List<String> scripts = new ArrayList<>();
@@ -449,7 +450,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand setDependencyFilter(String filter) {
-        this.dependencyFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDependencyJavascriptFilter(filter,getWs());
+        this.dependencyFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDependencyJavascriptFilter(filter, getWs());
         return this;
     }
 
@@ -483,7 +484,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand setDescriptorFilter(String filter) {
-        this.descriptorFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDescriptorJavascriptFilter(filter,getWs());
+        this.descriptorFilter = CoreStringUtils.isBlank(filter) ? null : new NutsDescriptorJavascriptFilter(filter, getWs());
         return this;
     }
 
@@ -500,7 +501,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand setIdFilter(String filter) {
-        this.idFilter = CoreStringUtils.isBlank(filter) ? null : new NutsJavascriptIdFilter(filter,getWs());
+        this.idFilter = CoreStringUtils.isBlank(filter) ? null : new NutsJavascriptIdFilter(filter, getWs());
         return this;
     }
 
@@ -595,11 +596,11 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         for (String j : this.getScripts()) {
             if (!CoreStringUtils.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    _descriptorFilter = simplify(And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j,getWs())));
+                    _descriptorFilter = simplify(And(_descriptorFilter, NutsDescriptorJavascriptFilter.valueOf(j, getWs())));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j,getWs())));
+                    depFilter = simplify(And(depFilter, NutsDependencyJavascriptFilter.valueOf(j, getWs())));
                 } else {
-                    _idFilter = simplify(And(_idFilter, NutsJavascriptIdFilter.valueOf(j,getWs())));
+                    _idFilter = simplify(And(_idFilter, NutsJavascriptIdFilter.valueOf(j, getWs())));
                 }
             }
         }
@@ -621,8 +622,8 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
         NutsRepositoryFilter _repositoryFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(rfilter, this.getRepositoryFilter()));
         _descriptorFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_descriptorFilter, this.getDescriptorFilter()));
         _idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_idFilter, idFilter0));
-        if(getAcceptDefaultVersion()!=null){
-            _idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_idFilter, new NutsDefaultVersionIdFilter(getAcceptDefaultVersion(),ws)));
+        if (getAcceptDefaultVersion() != null) {
+            _idFilter = CoreNutsUtils.simplify(CoreNutsUtils.And(_idFilter, new NutsDefaultVersionIdFilter(getAcceptDefaultVersion())));
         }
         if (!wildcardIds.isEmpty()) {
             for (String wildcardId : wildcardIds) {
@@ -693,7 +694,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
     }
 
     private Iterator<NutsId> applyTraceDecoratorIterOfNutsId(Iterator<NutsId> curr, boolean trace) {
-        return trace ? NutsWorkspaceUtils.decorateTrace(ws, curr, getSession(), getOutputFormat(), getTraceFormat()) : curr;
+        return trace ? NutsWorkspaceUtils.decorateTrace(ws, curr, getSession(), getOutputFormat(), getTraceFormat(), this) : curr;
     }
 
     private NutsCollectionFindResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean trace) {
@@ -933,6 +934,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             Iterator<NutsId> base = findBasket(false).iterator();
             NutsSession s = ws.createSession();
             NutsFetchCommand fetch = toFetch();
+            fetch.setTrace(false);
             Iterator<NutsDefinition> ii = new Iterator<NutsDefinition>() {
                 private NutsDefinition n = null;
 
@@ -956,7 +958,7 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             if (!trace) {
                 return ii;
             }
-            return NutsWorkspaceUtils.decorateTrace(ws, ii, getSession(), getOutputFormat(), getTraceFormat());
+            return NutsWorkspaceUtils.decorateTrace(ws, ii, getSession(), getOutputFormat(), getTraceFormat(), DefaultNutsFindCommand.this);
         }
 
     }
@@ -1092,9 +1094,32 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
 
     @Override
     public NutsFindCommand run() {
-        for (NutsId d : getResultIds()) {
-            //just to iterator over
+        if (isLongFormat()) {
+            for (NutsDefinition d : getResultDefinitions()) {
+                //just to iterator over
+            }
+        } else {
+            for (NutsId d : getResultIds()) {
+                //just to iterator over
+            }
         }
+        return this;
+    }
+
+    public boolean isLongFormat() {
+        return longFormat;
+    }
+
+    public NutsFindCommand longFormat() {
+        return longFormat(true);
+    }
+
+    public NutsFindCommand longFormat(boolean longFormat) {
+        return setLongFormat(longFormat);
+    }
+
+    public NutsFindCommand setLongFormat(boolean longFormat) {
+        this.longFormat = longFormat;
         return this;
     }
 
@@ -1127,6 +1152,11 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
                 case "-s":
                 case "--sort": {
                     this.sort(a.getBooleanValue());
+                    break;
+                }
+                case "-l":
+                case "--long": {
+                    this.longFormat(a.getBooleanValue());
                     break;
                 }
                 case "--main": {
@@ -1177,6 +1207,11 @@ public class DefaultNutsFindCommand extends DefaultNutsQueryBaseOptions<NutsFind
             }
         }
         return this;
+    }
+
+    @Override
+    public NutsTraceFormat getTraceFormat() {
+        return traceFormats[getOutputFormat().ordinal()];
     }
 
 }

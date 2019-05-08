@@ -60,7 +60,7 @@ import net.vpc.app.nuts.core.util.mvn.PomIdResolver;
 public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, NutsWorkspaceExt {
 
     public static final Logger LOG = Logger.getLogger(DefaultNutsWorkspace.class.getName());
-    public static final NutsInstallInfo NOT_INSTALLED = new DefaultNutsInstallInfo(false, null);
+    public static final NutsInstallInfo NOT_INSTALLED = new DefaultNutsInstallInfo(false, false, null);
     private final List<NutsWorkspaceListener> workspaceListeners = new ArrayList<>();
     private boolean initializing;
     protected final DefaultNutsWorkspaceSecurityManager securityManager = new DefaultNutsWorkspaceSecurityManager(this);
@@ -678,7 +678,16 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
     }
 
     @Override
-    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean trace, boolean updateDefaultVersion) {
+    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean trace, boolean updateDefaultVersion) {
+        installOrUpdateImpl(def, args, installerComponent, session, true, trace, updateDefaultVersion, false);
+    }
+    
+    @Override
+    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean trace, boolean updateDefaultVersion) {
+        installOrUpdateImpl(def, args, installerComponent, session, true, trace, updateDefaultVersion, true);
+    }
+    
+    public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean resolveInstaller, boolean trace, boolean updateDefaultVersion, boolean isUpdate) {
         if (def == null) {
             return;
         }
@@ -697,24 +706,41 @@ public class DefaultNutsWorkspace implements NutsWorkspace, NutsWorkspaceImpl, N
             if (def.getPath() != null) {
                 NutsExecutionContext executionContext = createNutsExecutionContext(def, args, new String[0], session, true, null);
                 getInstalledRepository().install(executionContext.getNutsDefinition().getId());
-                try {
-                    installerComponent.install(executionContext);
-//                    out.print(getFormatManager().createIdFormat().format(def.getId()) + " installed ##successfully##.\n");
-                } catch (NutsReadOnlyException ex) {
-                    throw ex;
-                } catch (Exception ex) {
-                    if (trace) {
-                        out.printf("%N @@Failed@@ to install : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
+                if (isUpdate) {
+                    try {
+                        installerComponent.update(executionContext);
+                    } catch (NutsReadOnlyException ex) {
+                        throw ex;
+                    } catch (Exception ex) {
+                        if (trace) {
+                            out.printf("%N @@Failed@@ to update : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
+                        }
+                        throw new NutsExecutionException("Unable to update " + def.getId().toString(), ex);
                     }
-                    getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
-                    throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex);
+                } else {
+                    try {
+                        installerComponent.install(executionContext);
+//                    out.print(getFormatManager().createIdFormat().format(def.getId()) + " installed ##successfully##.\n");
+                    } catch (NutsReadOnlyException ex) {
+                        throw ex;
+                    } catch (Exception ex) {
+                        if (trace) {
+                            out.printf("%N @@Failed@@ to install : %s.%n", formatter().createIdFormat().toString(def.getId()), ex.toString());
+                        }
+                        getInstalledRepository().uninstall(executionContext.getNutsDefinition().getId());
+                        throw new NutsExecutionException("Unable to install " + def.getId().toString(), ex);
+                    }
                 }
                 Path installFolder = config().getStoreLocation(def.getId(), NutsStoreLocation.PROGRAMS);
-                ((DefaultNutsDefinition) def).setInstallation(new DefaultNutsInstallInfo(true, installFolder));
+                ((DefaultNutsDefinition) def).setInstallation(new DefaultNutsInstallInfo(true, true, installFolder));
             }
         }
         for (NutsInstallListener nutsListener : session.getListeners(NutsInstallListener.class)) {
-            nutsListener.onInstall(def, reinstall, session);
+            if (isUpdate) {
+                nutsListener.onUpdate(def, session);
+            } else {
+                nutsListener.onInstall(def, reinstall, session);
+            }
         }
         ((DefaultNutsInstallInfo) def.getInstallation()).setJustInstalled(true);
         if (updateDefaultVersion) {

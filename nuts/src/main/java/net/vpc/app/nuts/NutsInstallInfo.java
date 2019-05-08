@@ -34,11 +34,13 @@ import java.nio.file.Path;
 /**
  *
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.5
  */
 public interface NutsInstallInfo {
 
     boolean isInstalled();
+    
+    boolean isDefaultVersion();
 
     Path getInstallFolder();
 

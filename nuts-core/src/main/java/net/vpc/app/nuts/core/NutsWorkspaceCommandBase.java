@@ -11,7 +11,11 @@ import net.vpc.app.nuts.NutsCommandLine;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsTraceFormat;
+import net.vpc.app.nuts.NutsUnsupportedArgumentException;
 import net.vpc.app.nuts.NutsWorkspace;
+import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatJson;
+import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatPlain;
+import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
 
 /**
@@ -28,7 +32,7 @@ public abstract class NutsWorkspaceCommandBase<T> {
     private boolean trace = false;
     private boolean force = false;
     private NutsOutputFormat outputFormat = NutsOutputFormat.PLAIN;
-    private final NutsTraceFormat[] traceFormats = new NutsTraceFormat[NutsOutputFormat.values().length];
+    protected final NutsTraceFormat[] traceFormats = new NutsTraceFormat[NutsOutputFormat.values().length];
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws) {
         this.ws = ws;
@@ -47,7 +51,22 @@ public abstract class NutsWorkspaceCommandBase<T> {
     }
 
     public NutsTraceFormat getTraceFormat() {
-        return traceFormats[getOutputFormat().ordinal()];
+        NutsTraceFormat p = traceFormats[getOutputFormat().ordinal()];
+        if(p==null){
+            switch(outputFormat){
+                case JSON:{
+                    return traceFormats[getOutputFormat().ordinal()]=new DefaultNutsFindTraceFormatJson();
+                }
+                case PROPS:{
+                    return traceFormats[getOutputFormat().ordinal()]=new DefaultNutsFindTraceFormatProps();
+                }
+                case PLAIN:{
+                    return traceFormats[getOutputFormat().ordinal()]=new DefaultNutsFindTraceFormatPlain(new DefaultNutsFindCommand(ws), session);
+                }
+                default: throw new NutsUnsupportedArgumentException("Unsupported "+String.valueOf(outputFormat));
+            }
+        }
+        return p;
     }
 
     public T unsetTraceFormat(NutsOutputFormat f) {

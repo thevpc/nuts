@@ -68,7 +68,7 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        nutsDefinition.setInstallation(new DefaultNutsInstallInfo(true, installFolder));
+        nutsDefinition.setInstallation(new DefaultNutsInstallInfo(true, true,installFolder));
         if (executionContext.getExecutorOptions().length > 0) {
             executionContext.getWorkspace()
                     .exec()
@@ -78,6 +78,10 @@ public class ZipNutsInstallerComponent implements NutsInstallerComponent {
                     .directory(installFolder.toString())
                     .run().getResult();
         }
+    }
+
+    @Override
+    public void update(NutsExecutionContext executionContext) {
     }
 
     @Override

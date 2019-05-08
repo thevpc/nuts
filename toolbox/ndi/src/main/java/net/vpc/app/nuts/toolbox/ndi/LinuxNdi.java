@@ -158,14 +158,13 @@ public class LinuxNdi implements SystemNdi {
         File nutsndirc = new File(System.getProperty("user.home"), ".nuts-ndirc");
         StringBuilder goodNdiRc = new StringBuilder();
         goodNdiRc.append("# This File is generated with nuts ndi companion tool.\n");
-        goodNdiRc.append("# Do not edit manually. All changes will be lost when ndi runs again\n");
-        goodNdiRc.append("# This file aims to prepare bash environment agains current nuts\n");
+        goodNdiRc.append("# Do not edit it manually. All changes will be lost when ndi runs again\n");
+        goodNdiRc.append("# This file aims to prepare bash environment against current nuts\n");
         goodNdiRc.append("# workspace installation.\n");
         goodNdiRc.append("#\n");
         goodNdiRc.append("\n");
         goodNdiRc.append("NUTS_WORKSPACE='").append(appContext.getWorkspace().config().getWorkspaceLocation().toString()).append("'\n");
         goodNdiRc.append("export NUTS_WORKSPACE\n");
-        goodNdiRc.append("export PATH\n");
         goodNdiRc.append("PATH='").append(programsFolder).append("':$PATH\n");
         goodNdiRc.append("export PATH\n");
 

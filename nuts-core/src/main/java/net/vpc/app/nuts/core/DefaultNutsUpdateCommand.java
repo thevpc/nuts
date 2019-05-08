@@ -495,7 +495,10 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
 
         for (NutsId id : this.getRegularIds()) {
             NutsUpdateResult updated = checkRegularUpdate(id);
-            regularUpdates.put(updated.getId().getSimpleName(), updated);
+            if (updated != null) {
+                allUpdates.put(updated.getAvailable().getId().getSimpleName(), updated);
+                regularUpdates.put(updated.getId().getSimpleName(), updated);
+            }
         }
         NutsId[] frozenIds = this.getFrozenIds();
         if (frozenIds.length > 0) {
@@ -542,7 +545,7 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsSession session = NutsWorkspaceUtils.validateSession(ws, this.getSession());
         NutsVersion version = id.getVersion();
         if (version.isSingleValue()) {
-            throw new NutsIllegalArgumentException(id+" : Version is too restrictive. You would use fetch or install instead");
+            throw new NutsIllegalArgumentException(id + " : Version is too restrictive. You would use fetch or install instead");
         }
 
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
@@ -552,8 +555,8 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         NutsFindCommand ff = ws.find().id(id).setSession(session).installed().setAcceptOptional(false).setLenient(true);
         ((DefaultNutsQueryBaseOptions) ff).setAcceptDefaultVersion(true);
         NutsDefinition d0 = ff.getResultDefinitions().first();
-        if(d0==null){
-            throw new NutsIllegalArgumentException(id+" is not yet installed to be updated.");
+        if (d0 == null) {
+            throw new NutsIllegalArgumentException(id + " is not yet installed to be updated.");
         }
         NutsDefinition d1 = ws.find().id(id).setSession(session).setAcceptOptional(false).includeDependencies()
                 .latestVersions().setLenient(true)
@@ -588,7 +591,12 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 if (this.isForce()) {
                     r.setUpdateForced(true);
                     if (this.isTrace()) {
-                        out.printf("==%s== would be [[forced]] from ==%s== to older version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                        if (v1.compareTo(v0) == 0) {
+                            out.printf("==%s== would be [[forced]] to ==%s==%n", simpleName, d0.getId().getVersion());
+
+                        } else {
+                            out.printf("==%s== would be [[forced]] from ==%s== to older version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                        }
                     }
                 } else {
                     if (this.isTrace()) {
@@ -840,10 +848,10 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
         final String simpleName = d0 != null ? d0.getId().getSimpleName() : d1 != null ? d1.getId().getSimpleName() : id.getSimpleName();
         if (d0 == null) {
             ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-            dws.installImpl(d1, new String[0], null, getValidSession(), true, this.isTrace(), true);
+            dws.updateImpl(d1, new String[0], null, getValidSession(), this.isTrace(), true);
             r.setUpdateApplied(true);
             if (this.isTrace()) {
-                out.printf("==%s== is [[forced]] to latest version ==%s==%n", simpleName, d1==null?null:d1.getId().getVersion());
+                out.printf("==%s== is [[forced]] to latest version ==%s==%n", simpleName, d1 == null ? null : d1.getId().getVersion());
             }
         } else if (d1 == null) {
             //this is very interesting. Why the hell is this happening?
@@ -854,16 +862,20 @@ public class DefaultNutsUpdateCommand extends NutsWorkspaceCommandBase<NutsUpdat
                 //no update needed!
                 if (this.isForce()) {
                     ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-                    dws.installImpl(d1, new String[0], null, getValidSession(), true, this.isTrace(), true);
+                    dws.updateImpl(d1, new String[0], null, getValidSession(), this.isTrace(), true);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
                     if (this.isTrace()) {
-                        out.printf("==%s== is [[forced]] from ==%s== to older version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                        if (v1.compareTo(v0) == 0) {
+                            out.printf("==%s== is [[forced]] to ==%s== %n", simpleName, d0.getId().getVersion());
+                        } else {
+                            out.printf("==%s== is [[forced]] from ==%s== to older version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());
+                        }
                     }
                 }
             } else {
                 ws.security().checkAllowed(NutsConstants.Rights.UPDATE, "update");
-                dws.installImpl(d1, new String[0], null, getValidSession(), true, this.isTrace(), true);
+                dws.updateImpl(d1, new String[0], null, getValidSession(), this.isTrace(), true);
                 r.setUpdateApplied(true);
                 if (this.isTrace()) {
                     out.printf("==%s== is [[updated]] from ==%s== to latest version ==%s==%n", simpleName, d0.getId().getVersion(), d1.getId().getVersion());

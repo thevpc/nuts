@@ -101,6 +101,7 @@ public class Nsh extends NutsApplication {
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
+        onInstallApplication(applicationContext);
     }
 
     @Override

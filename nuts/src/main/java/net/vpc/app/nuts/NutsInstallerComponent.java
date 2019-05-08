@@ -31,11 +31,15 @@ package net.vpc.app.nuts;
 
 /**
  * Created by vpc on 1/7/17.
+ *
  * @since 0.5.4
  */
 @NutsSingleton
 public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
+
     void install(NutsExecutionContext executionContext);
+
+    void update(NutsExecutionContext executionContext);
 
     void uninstall(NutsExecutionContext executionContext, boolean deleteData);
 }

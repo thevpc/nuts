@@ -1004,6 +1004,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
 
     @Override
     public Path getStoreLocation(NutsId id, NutsStoreLocation folderType) {
+        if (id==null) {
+            throw new NutsElementNotFoundException("Missing id");
+        }
         if (CoreStringUtils.isBlank(id.getGroup())) {
             throw new NutsElementNotFoundException("Missing group for " + id);
         }

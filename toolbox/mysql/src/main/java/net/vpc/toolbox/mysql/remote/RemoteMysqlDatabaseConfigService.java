@@ -108,7 +108,7 @@ public class RemoteMysqlDatabaseConfigService {
         execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:mysql",
                 "restore",
-                "--instance",
+                "--name",
                 client.getName(),
                 "--db",
                 name,

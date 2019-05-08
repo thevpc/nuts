@@ -30,10 +30,15 @@
 package net.vpc.app.nuts;
 
 /**
- * 
+ *
  * @author vpc
  * @since 0.5.4
  */
 public interface NutsInstallListener extends NutsListener {
-    void onInstall(NutsDefinition nutsDefinition, boolean update, NutsSession session) ;
+
+    default void onInstall(NutsDefinition nutsDefinition, boolean forceInstallation, NutsSession session) {
+    }
+
+    default void onUpdate(NutsDefinition nutsDefinition, NutsSession session) {
+    }
 }

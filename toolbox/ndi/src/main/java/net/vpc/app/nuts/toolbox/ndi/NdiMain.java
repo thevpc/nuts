@@ -152,6 +152,7 @@ public class NdiMain extends NutsApplication {
     protected void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
+        onInstallApplication(applicationContext);
     }
 
     @Override

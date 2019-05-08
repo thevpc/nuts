@@ -31,11 +31,34 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
     private final NutsWorkspace ws;
     private final Properties extraProperties = new Properties();
     private boolean minimal = false;
+    private boolean showRepositories = false;
     private NutsOutputFormat outputFormat = null;
     boolean fancy = false;
 
     public DefaultNutsWorkspaceInfoFormat(NutsWorkspace ws) {
         this.ws = ws;
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat showRepositories() {
+        showRepositories(true);
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat showRepositories(boolean enable) {
+        return setShowRepositories(enable);
+    }
+
+    @Override
+    public NutsWorkspaceInfoFormat setShowRepositories(boolean enable) {
+        this.showRepositories = true;
+        return this;
+    }
+
+    @Override
+    public boolean isShowRepositories() {
+        return showRepositories;
     }
 
     @Override
@@ -59,11 +82,15 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         while ((a = cmd.next()) != null) {
             switch (a.strKey()) {
                 case "--min": {
-                    this.setMinimal(true);
+                    this.setMinimal(a.getBooleanValue());
+                    break;
+                }
+                case "--show-repos": {
+                    this.setShowRepositories(a.getBooleanValue());
                     break;
                 }
                 case "--fancy": {
-                    this.setFancy(true);
+                    this.setFancy(a.getBooleanValue());
                     break;
                 }
                 case "--trace-format": {
@@ -245,14 +272,14 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
 
     public void printProps(Writer w) {
         Map<String, String> p = new LinkedHashMap<>();
-        for (Map.Entry<String, Object> e : buildWorkspaceMap(true, true).entrySet()) {
-            p.put(e.getKey(), e.getValue()==null?"":String.valueOf(e.getValue()));
+        for (Map.Entry<String, Object> e : buildWorkspaceMap(isShowRepositories(), true).entrySet()) {
+            p.put(e.getKey(), e.getValue() == null ? "" : String.valueOf(e.getValue()));
         }
         CoreIOUtils.storeProperties(p, w);
     }
 
     public void printJson(Writer w) {
-        ws.io().json().pretty().write(buildWorkspaceMap(true, false), w);
+        ws.io().json().pretty().write(buildWorkspaceMap(isShowRepositories(), false), w);
     }
 
     private static String key(String prefix, String key) {
@@ -358,9 +385,11 @@ public class DefaultNutsWorkspaceInfoFormat implements NutsWorkspaceInfoFormat {
         } else {
             Map<String, Object> props = buildWorkspaceMap(false, false);
             printMap(out, "", props);
-            for (NutsRepository repository : ws.config().getRepositories()) {
-                out.append("\n");
-                printRepo(out, fancy, "", repository);
+            if (isShowRepositories()) {
+                for (NutsRepository repository : ws.config().getRepositories()) {
+                    out.append("\n");
+                    printRepo(out, fancy, "", repository);
+                }
             }
         }
         out.flush();

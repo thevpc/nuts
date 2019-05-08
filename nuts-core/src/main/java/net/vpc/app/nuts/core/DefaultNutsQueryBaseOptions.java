@@ -195,22 +195,44 @@ public abstract class DefaultNutsQueryBaseOptions<T> extends NutsWorkspaceComman
         return setIndexed(indexed);
     }
 
+    /**
+     * 
+     * @since 0.5.5
+     * @return 
+     */
     public Boolean getAcceptDefaultVersion() {
         return acceptDefaultVersion;
     }
-    
+
+    /**
+     * 
+     * @since 0.5.5
+     * @return 
+     */
     public T acceptDefaultVersion() {
         return acceptDefaultVersion(true);
     }
 
+    /**
+     * 
+     * @since 0.5.5
+     * @param acceptDefaultVersion
+     * @return 
+     */
     //@Override
     public T acceptDefaultVersion(Boolean acceptDefaultVersion) {
         return setAcceptDefaultVersion(acceptDefaultVersion);
     }
 
+    /**
+     * 
+     * @since 0.5.5
+     * @param acceptDefaultVersion
+     * @return 
+     */
     //@Override
     public T setAcceptDefaultVersion(Boolean acceptDefaultVersion) {
-        this.acceptOptional = acceptDefaultVersion;
+        this.acceptDefaultVersion = acceptDefaultVersion;
         return (T) this;
     }
 

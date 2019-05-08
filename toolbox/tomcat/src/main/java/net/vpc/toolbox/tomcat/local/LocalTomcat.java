@@ -9,7 +9,6 @@ import net.vpc.toolbox.tomcat.local.config.LocalTomcatConfig;
 import net.vpc.app.nuts.app.NutsApplicationContext;
 import net.vpc.toolbox.tomcat.util.TomcatUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
@@ -155,7 +154,7 @@ public class LocalTomcat {
                 x.apps = a.getBooleanValue();
             } else if ((a = args.readBooleanOption("--domains")) != null) {
                 x.domains = a.getBooleanValue();
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 x.print(loadOrCreateTomcatConfig(a.getStringValue()));
             } else {
                 x.print(loadOrCreateTomcatConfig(args.readRequiredNonOption().getStringValue()));
@@ -270,7 +269,7 @@ public class LocalTomcat {
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(instance);
@@ -582,7 +581,7 @@ public class LocalTomcat {
         while (args.hasNext()) {
             if ((a = args.readStringOption("--file")) != null) {
                 file = a.getValue();
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
             } else if ((a = args.readStringOption("--context")) != null) {
                 contextName = a.getStringValue();
@@ -629,7 +628,7 @@ public class LocalTomcat {
         List<String> apps = new ArrayList<>();
         while (args.hasNext()) {
             Argument a = null;
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getValue();
             } else if ((a = args.readBooleanOption("--delete-out-log")) != null) {
                 deleteLog = a.getBooleanValue();
@@ -758,7 +757,7 @@ public class LocalTomcat {
 
     public LocalTomcatServiceBase readBaseServiceArg(CommandLine args) {
         Argument a;
-        if ((a = args.readStringOption("--instance")) != null) {
+        if ((a = args.readStringOption("--name")) != null) {
             return (loadOrCreateTomcatConfig(a.getStringValue()));
         } else if ((a = args.readStringOption("--app")) != null) {
             return (loadApp(a.getStringValue()));

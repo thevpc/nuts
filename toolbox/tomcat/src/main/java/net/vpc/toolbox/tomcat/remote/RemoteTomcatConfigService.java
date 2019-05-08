@@ -76,7 +76,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:tomcat",
                 "--status",
-                "--instance",
+                "--name",
                 getRemoteInstanceName()
         );
     }
@@ -85,7 +85,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         List<String> arg = new ArrayList<>();
         arg.add("net.vpc.app.nuts.toolbox:tomcat");
         arg.add("--start");
-        arg.add("--instance");
+        arg.add("--name");
         arg.add(getRemoteInstanceName());
         StringBuilder sb = new StringBuilder();
         for (String s : redeploy) {
@@ -108,7 +108,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:tomcat",
                 "--stop",
-                "--instance",
+                "--name",
                 getRemoteInstanceName()
         );
     }
@@ -122,7 +122,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         List<String> arg = new ArrayList<>();
         arg.add("net.vpc.app.nuts.toolbox:tomcat");
         arg.add("restart");
-        arg.add("--instance");
+        arg.add("--name");
         arg.add(getRemoteInstanceName());
         StringBuilder sb = new StringBuilder();
         for (String s : redeploy) {
@@ -210,7 +210,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:tomcat",
                 "--deleteOutLog",
-                "--instance",
+                "--name",
                 getRemoteInstanceName()
         );
     }

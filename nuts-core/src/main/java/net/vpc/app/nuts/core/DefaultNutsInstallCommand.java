@@ -24,7 +24,6 @@ import net.vpc.app.nuts.NutsIllegalArgumentException;
 import net.vpc.app.nuts.NutsInstallCommand;
 import net.vpc.app.nuts.NutsNotFoundException;
 import net.vpc.app.nuts.NutsQuestion;
-import net.vpc.app.nuts.NutsOutputFormat;
 import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsWorkspace;
 import net.vpc.app.nuts.core.util.common.CoreCommonUtils;
@@ -365,7 +364,7 @@ public class DefaultNutsInstallCommand extends NutsWorkspaceCommandBase<NutsInst
             }
         }
         for (NutsDefinition def : defsToInstall) {
-            dws.installImpl(def, this.getArgs(), null, session, true, this.isTrace(), isDefaultVersion());
+            dws.installImpl(def, this.getArgs(), null, session, this.isTrace(), isDefaultVersion());
         }
         for (NutsDefinition def : defsToDefVersion) {
             dws.getInstalledRepository().setDefaultVersion(def.getId());

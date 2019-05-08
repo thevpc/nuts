@@ -80,6 +80,11 @@ public interface NutsWorkspaceInfoFormat {
     boolean isFancy();
 
     boolean isMinimal();
+    
+    NutsWorkspaceInfoFormat showRepositories();
+    NutsWorkspaceInfoFormat showRepositories(boolean enable);
+    NutsWorkspaceInfoFormat setShowRepositories(boolean enable);
+    boolean isShowRepositories();
 
     NutsWorkspaceInfoFormat setFancy(boolean fancy);
 

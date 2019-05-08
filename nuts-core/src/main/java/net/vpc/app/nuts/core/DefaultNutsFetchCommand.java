@@ -264,6 +264,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         if (copyTo != null && Files.isDirectory(copyTo)) {
                             copyTo = copyTo.resolve(ws.config().getDefaultIdFilename(id1));
                         }
+                        boolean escalateMode = false;
                         for (NutsFetchMode mode : nutsFetchModes) {
                             try {
                                 NutsRepository repo = foundDefinition.getRepository();
@@ -278,13 +279,15 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                                 if (mode.ordinal() < modeForSuccessfulDescRetreival.ordinal()) {
                                     //ignore because actually there is more chance to find it in later modes!
                                 } else {
-                                    LOG.log(Level.WARNING, "Nuts Descriptor Found, but component could not be resolved : {0}", id.toString());
+                                    escalateMode = true;
                                 }
                             }
                         }
                         if (foundDefinition.getContent() == null || foundDefinition.getPath() == null) {
                             CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor but failed to fetch Component", startTime);
                             foundDefinition = null;
+                        } else if (escalateMode) {
+                            CoreNutsUtils.traceMessage(nutsFetchModes, id, TraceResult.ERROR, "Fetched Descriptor with mode escalation", startTime);
                         }
                     }
                     if (foundDefinition != null && options.isIncludeInstallInformation()) {
@@ -295,6 +298,7 @@ public class DefaultNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFet
                         if (installer != null) {
                             if (dws.getInstalledRepository().isInstalled(foundDefinition.getId())) {
                                 foundDefinition.setInstallation(new DefaultNutsInstallInfo(true,
+                                        dws.getInstalledRepository().isDefaultVersion(foundDefinition.getId()),
                                         ws.config().getStoreLocation(foundDefinition.getId(), NutsStoreLocation.PROGRAMS)
                                 ));
                             } else {

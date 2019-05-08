@@ -345,10 +345,27 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     NutsFindCommand removeScope(NutsDependencyScope scope);
 
+    /**
+     * 
+     * @return 
+     * @since v0.5.5
+     */
     NutsFindCommand  acceptDefaultVersion() ;
 
+    /**
+     * 
+     * @param acceptDefaultVersion
+     * @since v0.5.5
+     * @return 
+     */
     NutsFindCommand acceptDefaultVersion(Boolean acceptDefaultVersion) ;
 
+    /**
+     * 
+     * @param acceptDefaultVersion
+     * @return 
+     * @since v0.5.5
+     */
     NutsFindCommand setAcceptDefaultVersion(Boolean acceptDefaultVersion) ;
 
     NutsFindCommand acceptOptional();
@@ -437,6 +454,11 @@ public interface NutsFindCommand extends NutsWorkspaceCommand{
 
     boolean isCached();
 
+    /**
+     * 
+     * @since v0.5.5
+     * @return 
+     */
     Boolean getAcceptDefaultVersion() ;
     
     NutsFindCommand outputFormat(NutsOutputFormat outputFormat);

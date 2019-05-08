@@ -33,28 +33,43 @@ import java.nio.file.Path;
 import net.vpc.app.nuts.NutsInstallInfo;
 
 /**
- * 
+ *
  * @author vpc
- * @since 0.5.4
+ * @since 0.5.5
  */
-public class DefaultNutsInstallInfo implements NutsInstallInfo{
+public class DefaultNutsInstallInfo implements NutsInstallInfo {
+
     private final boolean installed;
     private boolean justInstalled;
+    private boolean defaultVersion;
     private final Path installFolder;
 
-    public DefaultNutsInstallInfo(boolean installed, Path installFolder) {
+    public DefaultNutsInstallInfo(boolean installed, boolean defaultVersion, Path installFolder) {
         this.installed = installed;
         this.installFolder = installFolder;
+        this.defaultVersion = defaultVersion;
     }
 
+    @Override
+    public boolean isDefaultVersion() {
+        return defaultVersion;
+    }
+
+    public void setDefaultVersion(boolean defaultVersion) {
+        this.defaultVersion = defaultVersion;
+    }
+
+    @Override
     public boolean isInstalled() {
         return installed;
     }
 
+    @Override
     public Path getInstallFolder() {
         return installFolder;
     }
 
+    @Override
     public boolean isJustInstalled() {
         return justInstalled;
     }
@@ -62,5 +77,5 @@ public class DefaultNutsInstallInfo implements NutsInstallInfo{
     public void setJustInstalled(boolean justInstalled) {
         this.justInstalled = justInstalled;
     }
-    
+
 }

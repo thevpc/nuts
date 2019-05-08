@@ -59,7 +59,7 @@ public class RemoteMysql {
         while (args.hasNext()) {
             if ((a = args.readBooleanOption("--json")) != null) {
                 json = a.getBooleanValue();
-            } else if ((a = args.readBooleanOption("--instance")) != null) {
+            } else if ((a = args.readBooleanOption("--name")) != null) {
                 instance = a.getStringValue();
             } else if ((a = args.readBooleanOption("--db")) != null) {
                 app = a.getStringValue();
@@ -110,7 +110,7 @@ public class RemoteMysql {
         String instanceName = null;
         Argument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 if (c == null) {
                     instanceName = a.getStringValue();
                     c = loadOrCreateMysqlConfig(instanceName);
@@ -193,7 +193,7 @@ public class RemoteMysql {
         while (args.hasNext()) {
             if ((a = args.readStringOption("--db")) != null) {
                 appName = a.getStringValue();
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
             } else {
                 args.unexpectedArgument("mysql --remote remove");
@@ -218,7 +218,7 @@ public class RemoteMysql {
         String app = null;
         Argument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 conf = a.getStringValue();
             } else if ((a = args.readStringOption("--db")) != null) {
                 app = a.getStringValue();
@@ -236,7 +236,7 @@ public class RemoteMysql {
         String app = null;
         Argument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 conf = a.getStringValue();
             } else if ((a = args.readStringOption("--db")) != null) {
                 app = a.getStringValue();

@@ -82,7 +82,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
             client.execRemoteNuts(
                     "net.vpc.app.nuts.toolbox:tomcat",
                     "install",
-                    "--instance",
+                    "--name",
                     client.getRemoteInstanceName(),
                     "--app",
                     name,
@@ -105,7 +105,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase{
         client.execRemoteNuts(
                 "net.vpc.app.nuts.toolbox:tomcat",
                 "deploy",
-                "--instance",
+                "--name",
                 client.getRemoteInstanceName(),
                 "--app",
                 name,

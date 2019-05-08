@@ -83,7 +83,7 @@ public class NutsApplicationContext implements CommandLineContext {
                         break;
                     }
                     case "on-update": {
-                        mode = "on-uninstall";
+                        mode = "on-update";
                         if (execModeCommand.length > 1) {
                             appPreviousVersion = workspace.parser().parseVersion(execModeCommand[1]);
                         }

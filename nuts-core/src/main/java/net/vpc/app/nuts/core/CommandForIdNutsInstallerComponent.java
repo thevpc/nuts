@@ -9,7 +9,6 @@ import net.vpc.app.nuts.NutsDefinition;
 import net.vpc.app.nuts.NutsDescriptor;
 import net.vpc.app.nuts.NutsExecutionContext;
 import net.vpc.app.nuts.NutsExecutionEntry;
-import net.vpc.app.nuts.NutsExecutionType;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsInstallerComponent;
 import net.vpc.app.nuts.core.util.NutsWorkspaceUtils;
@@ -28,22 +27,23 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
         if (descriptor.isNutsApplication()) {
             executionContext.getWorkspace().exec()
                     //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-install")
+                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-install", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArgs())
                     .failFast().run();
         }
-        //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
-        //            NutsWorkspaceCommand c = cc.findCommand(id.getName());
-        //            if (c != null) {
-        //
-        //            } else {
-        //                //
-        //                cc.installCommand(new DefaultNutsWorkspaceCommand()
-        //                        .setId(id.setNamespace(""))
-        //                        .setName(id.getName())
-        //                        .setCommand(new String[0])
-        //                );
-        //            }
+    }
+
+    @Override
+    public void update(NutsExecutionContext executionContext) {
+        NutsWorkspaceUtils.checkReadOnly(executionContext.getWorkspace());
+        NutsId id = executionContext.getNutsDefinition().getId();
+        NutsDescriptor descriptor = executionContext.getNutsDefinition().getDescriptor();
+        if (descriptor.isNutsApplication()) {
+            executionContext.getWorkspace().exec()
+                    .command(id.setNamespace(null).toString(), "--nuts-exec-mode=on-update", "--force")
+                    .addExecutorOptions().addCommand(executionContext.getArgs())
+                    .failFast().run();
+        }
     }
 
     @Override
@@ -55,8 +55,8 @@ class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-exec-mode=on-uninstall").addCommand(executionContext.getArgs()).run().getResult();
-                    executionContext.getWorkspace().getTerminal().fout().printf("Installation Exited with code : " + r+" %n");
+                    int r = executionContext.getWorkspace().exec().command(id.toString(), "--nuts-exec-mode=on-uninstall", "--force").addCommand(executionContext.getArgs()).run().getResult();
+                    executionContext.getWorkspace().getTerminal().fout().printf("Installation Exited with code : " + r + " %n");
                 }
             }
         }

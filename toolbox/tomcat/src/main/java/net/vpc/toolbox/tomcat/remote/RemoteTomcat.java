@@ -101,7 +101,7 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 x.print(loadOrCreateTomcatConfig(a.getStringValue()));
             } else {
                 x.print(loadOrCreateTomcatConfig(args.readRequiredNonOption().getStringValue()));
@@ -122,7 +122,7 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if (context.configure(args)) {
                 //
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 if (c == null) {
                     instanceName = a.getStringValue();
                     c = loadOrCreateTomcatConfig(instanceName);
@@ -284,7 +284,7 @@ public class RemoteTomcat {
                 deleteLog = a.getBooleanValue();
             } else if ((a = args.readBooleanOption("--install")) != null) {
                 install = a.getBooleanValue();
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
             } else if ((a = args.readStringOption("--deploy")) != null) {
                 for (String s : a.getStringValue().split(",")) {
@@ -303,7 +303,7 @@ public class RemoteTomcat {
             for (String app : apps) {
                 install(new CommandLine(
                         new String[]{
-                            "--instance",
+                            "--name",
                             instance,
                             "--app",
                             app
@@ -486,7 +486,7 @@ public class RemoteTomcat {
 
     public RemoteTomcatServiceBase readBaseServiceArg(CommandLine args) {
         Argument a;
-        if ((a = args.readStringOption("--instance")) != null) {
+        if ((a = args.readStringOption("--name")) != null) {
             return (loadOrCreateTomcatConfig(a.getStringValue()));
         } else if ((a = args.readStringOption("--app")) != null) {
             return (loadApp(a.getStringValue()));

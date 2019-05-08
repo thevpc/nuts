@@ -27,6 +27,7 @@ import net.vpc.app.nuts.NutsDescriptorFormat;
 import net.vpc.app.nuts.NutsExecCommand;
 import net.vpc.app.nuts.NutsFetchCommand;
 import net.vpc.app.nuts.NutsFetchMode;
+import net.vpc.app.nuts.NutsFindCommand;
 import net.vpc.app.nuts.NutsId;
 import net.vpc.app.nuts.NutsIdFormat;
 import net.vpc.app.nuts.NutsOutputFormat;
@@ -292,12 +293,12 @@ public class NutsWorkspaceUtils {
 //        ws.io().writeJson(o, out, true);
 //        out.println();
 //    }
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, PrintStream out, NutsOutputFormat oformat,NutsTraceFormat format) {
-        return new TraceIterator<>(it, ws, out, oformat,format);
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, PrintStream out, NutsOutputFormat oformat, NutsTraceFormat format, NutsFindCommand findCommand) {
+        return new TraceIterator<>(it, ws, out, oformat, format, findCommand, session);
     }
 
-    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat,NutsTraceFormat format) {
+    public static <T> Iterator<T> decorateTrace(NutsWorkspace ws, Iterator<T> it, NutsSession session, NutsOutputFormat oformat, NutsTraceFormat format, NutsFindCommand findCommand) {
         final PrintStream out = NutsWorkspaceUtils.validateSession(ws, session).getTerminal().getOut();
-        return new TraceIterator<>(it, ws, out, oformat,format);
+        return new TraceIterator<>(it, ws, out, oformat, format, findCommand, session);
     }
 }

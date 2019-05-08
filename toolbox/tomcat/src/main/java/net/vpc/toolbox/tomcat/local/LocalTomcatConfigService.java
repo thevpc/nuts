@@ -289,6 +289,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
             this.catalinaVersion = catalinaVersion;
+            NutsDefinition r = context.getWorkspace().find().id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
+                    .includeInstallInformation().session(context.getSession())
+                    .getResultDefinitions().first();
+            if(r!=null && r.getInstallation().isInstalled()){
+             return r;
+            }else{
             catalinaNutsDefinition = context.getWorkspace()
                     .install()
                     .id("org.apache.catalina:tomcat#" + catalinaVersion + "*")
@@ -298,6 +304,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     context.out().printf("==[%s]== Tomcat Installed to catalina home ==%s==\n", getName(), nutsDefinition.getInstallation().getInstallFolder());
                 }
             })).run().getResult()[0];
+            }
         }
         return catalinaNutsDefinition;
     }

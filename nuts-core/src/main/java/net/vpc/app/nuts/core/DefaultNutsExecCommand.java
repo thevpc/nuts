@@ -844,9 +844,9 @@ public class DefaultNutsExecCommand extends NutsWorkspaceCommandBase<NutsExecCom
     protected NutsExecutableImpl ws_exec(String commandName, String[] appArgs, String[] executorOptions, Properties env, String dir, boolean failFast, NutsSession session, boolean embedded) {
         NutsDefinition def = null;
         NutsId nid = ws.parser().parseId(commandName);
-        NutsFindCommand ff = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().latestVersions().setLenient(true).installed();
-        //TODO update me to latest API
-        ((DefaultNutsQueryBaseOptions) ff).setAcceptDefaultVersion(true);
+        NutsFindCommand ff = ws.find().id(nid).session(session).setAcceptOptional(false).includeDependencies().latestVersions().setLenient(true)
+                .acceptDefaultVersion()
+                .installed();
         def = ff.getResultDefinitions().first();
         if (def == null) {
             //retest whhout checking it the version is default or not

@@ -59,7 +59,7 @@ public class LocalMysql {
         while (args.hasNext()) {
             if ((a = args.readBooleanOption("--json")) != null) {
                 json = a.getBooleanValue();
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
             } else if ((a = args.readStringOption("--app")) != null) {
                 app = a.getStringValue();
@@ -111,7 +111,7 @@ public class LocalMysql {
 
         Argument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
                 if (c == null) {
                     c = loadOrCreateMysqlConfig(instance);
@@ -166,7 +166,7 @@ public class LocalMysql {
         while (args.hasNext()) {
             if ((a = args.readStringOption("--db")) != null) {
                 appName = a.getStringValue();
-            } else if ((a = args.readStringOption("--instance")) != null) {
+            } else if ((a = args.readStringOption("--name")) != null) {
                 conf = a.getStringValue();
             } else {
                 args.unexpectedArgument("mysql --local remove");
@@ -254,7 +254,7 @@ public class LocalMysql {
         String path = null;
         Argument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
             } else if ((a = args.readStringOption("--db")) != null) {
                 db = a.getStringValue();
@@ -273,7 +273,7 @@ public class LocalMysql {
         String path = null;
         Argument a;
         while (args.hasNext()) {
-            if ((a = args.readStringOption("--instance")) != null) {
+            if ((a = args.readStringOption("--name")) != null) {
                 instance = a.getStringValue();
             } else if ((a = args.readStringOption("--db")) != null) {
                 db = a.getStringValue();

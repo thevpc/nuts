@@ -19,11 +19,9 @@ import net.vpc.app.nuts.core.util.common.Simplifiable;
 public class NutsDefaultVersionIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter> {
 
     private final Boolean defaultVersion;
-    private NutsWorkspace ws;
 
-    public NutsDefaultVersionIdFilter(Boolean defaultVersion,NutsWorkspace ws) {
+    public NutsDefaultVersionIdFilter(Boolean defaultVersion) {
         this.defaultVersion = defaultVersion;
-        this.ws = ws;
     }
 
     @Override
@@ -31,7 +29,7 @@ public class NutsDefaultVersionIdFilter implements NutsIdFilter, Simplifiable<Nu
         if (defaultVersion == null) {
             return true;
         }
-        return NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(other);
+        return NutsWorkspaceExt.of(ws).getInstalledRepository().isDefaultVersion(other)==defaultVersion;
     }
 
     @Override

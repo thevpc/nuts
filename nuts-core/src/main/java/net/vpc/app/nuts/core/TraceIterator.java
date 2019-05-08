@@ -7,7 +7,9 @@ package net.vpc.app.nuts.core;
 
 import java.io.PrintStream;
 import java.util.Iterator;
+import net.vpc.app.nuts.NutsFindCommand;
 import net.vpc.app.nuts.NutsOutputFormat;
+import net.vpc.app.nuts.NutsSession;
 import net.vpc.app.nuts.NutsTraceFormat;
 import net.vpc.app.nuts.NutsUnsupportedOperationException;
 import net.vpc.app.nuts.NutsWorkspace;
@@ -20,41 +22,39 @@ import net.vpc.app.nuts.core.util.DefaultNutsFindTraceFormatProps;
  * @author vpc
  */
 public class TraceIterator<T> implements Iterator<T> {
-    
+
     Iterator<T> curr;
     NutsWorkspace ws;
     NutsTraceFormat conv;
     PrintStream out;
     NutsOutputFormat format;
+    NutsFindCommand findCommand;
     long count = 0;
 
-    public TraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsTraceFormat conv) {
+    public TraceIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsOutputFormat format, NutsTraceFormat conv, NutsFindCommand findCommand, NutsSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;
         this.conv = conv;
         this.format = format;
+        this.findCommand = findCommand;
         if (this.conv == null) {
             switch (this.format) {
-                case JSON:
-                    {
-                        this.conv = new DefaultNutsFindTraceFormatJson();
-                        break;
-                    }
-                case PROPS:
-                    {
-                        this.conv = new DefaultNutsFindTraceFormatProps();
-                        break;
-                    }
-                case PLAIN:
-                    {
-                        this.conv = new DefaultNutsFindTraceFormatPlain();
-                        break;
-                    }
-                default:
-                    {
-                        throw new NutsUnsupportedOperationException("Unsupported " + format);
-                    }
+                case JSON: {
+                    this.conv = new DefaultNutsFindTraceFormatJson();
+                    break;
+                }
+                case PROPS: {
+                    this.conv = new DefaultNutsFindTraceFormatProps();
+                    break;
+                }
+                case PLAIN: {
+                    this.conv = new DefaultNutsFindTraceFormatPlain(findCommand, session);
+                    break;
+                }
+                default: {
+                    throw new NutsUnsupportedOperationException("Unsupported " + format);
+                }
             }
         }
     }
@@ -78,5 +78,5 @@ public class TraceIterator<T> implements Iterator<T> {
         count++;
         return n;
     }
-    
+
 }
